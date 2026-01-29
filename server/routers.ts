@@ -1,10 +1,12 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
+import { z } from "zod";
+import * as db from "./db";
+import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
-    // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -17,12 +19,269 @@ export const appRouter = router({
     }),
   }),
 
-  // TODO: add feature routers here, e.g.
-  // todo: router({
-  //   list: protectedProcedure.query(({ ctx }) =>
-  //     db.getUserTodos(ctx.user.id)
-  //   ),
-  // }),
+  // Agent Session Management
+  agent: router({
+    // Create a new agent session
+    createSession: protectedProcedure
+      .input(z.object({
+        sessionName: z.string().min(1),
+        systemPrompt: z.string().optional(),
+        temperature: z.number().min(0).max(100).optional(),
+        model: z.string().optional(),
+        maxSteps: z.number().min(1).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        
+        await db.createAgentSession(
+          ctx.user.id,
+          input.sessionName,
+          {
+            systemPrompt: input.systemPrompt,
+            temperature: input.temperature,
+            model: input.model,
+            maxSteps: input.maxSteps,
+          }
+        );
+        
+        return { success: true };
+      }),
+
+    // Get all sessions for the current user
+    getSessions: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        return db.getUserSessions(ctx.user.id);
+      }),
+
+    // Get a specific session
+    getSession: protectedProcedure
+      .input(z.object({ sessionId: z.number() }))
+      .query(async ({ input }) => {
+        const session = await db.getAgentSession(input.sessionId);
+        if (!session) throw new TRPCError({ code: "NOT_FOUND" });
+        return session;
+      }),
+
+    // Update session configuration
+    updateSession: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        systemPrompt: z.string().optional(),
+        temperature: z.number().min(0).max(100).optional(),
+        model: z.string().optional(),
+        maxSteps: z.number().min(1).optional(),
+        status: z.enum(["idle", "reasoning", "executing", "completed", "error"]).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await db.updateAgentSession(input.sessionId, {
+          systemPrompt: input.systemPrompt,
+          temperature: input.temperature,
+          model: input.model,
+          maxSteps: input.maxSteps,
+          status: input.status,
+        });
+        return { success: true };
+      }),
+  }),
+
+  // Message Management
+  messages: router({
+    // Add a message to a session
+    addMessage: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        role: z.enum(["user", "assistant", "system"]),
+        content: z.string(),
+        metadata: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.addMessage(
+          input.sessionId,
+          input.role,
+          input.content,
+          input.metadata
+        );
+        return { success: true };
+      }),
+
+    // Get messages from a session
+    getMessages: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        limit: z.number().min(1).max(100).optional(),
+      }))
+      .query(async ({ input }) => {
+        const messages = await db.getSessionMessages(input.sessionId, input.limit);
+        return messages.reverse(); // Return in chronological order
+      }),
+  }),
+
+  // Tool Execution Tracking
+  tools: router({
+    // Create a tool execution record
+    createExecution: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        toolName: z.string(),
+        parameters: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.createToolExecution(
+          input.sessionId,
+          input.toolName,
+          input.parameters
+        );
+        return { success: true };
+      }),
+
+    // Update tool execution with result
+    updateExecution: protectedProcedure
+      .input(z.object({
+        executionId: z.number(),
+        status: z.enum(["pending", "running", "completed", "failed"]).optional(),
+        result: z.string().optional(),
+        error: z.string().optional(),
+        duration: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.updateToolExecution(input.executionId, {
+          status: input.status,
+          result: input.result,
+          error: input.error,
+          duration: input.duration,
+        });
+        return { success: true };
+      }),
+
+    // Get tool executions for a session
+    getExecutions: protectedProcedure
+      .input(z.object({ sessionId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getSessionToolExecutions(input.sessionId);
+      }),
+  }),
+
+  // API Key Management
+  apiKeys: router({
+    // Save an API key (encrypted)
+    saveKey: protectedProcedure
+      .input(z.object({
+        provider: z.string(),
+        keyName: z.string(),
+        encryptedKey: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        
+        await db.saveApiKey(
+          ctx.user.id,
+          input.provider,
+          input.keyName,
+          input.encryptedKey
+        );
+        return { success: true };
+      }),
+
+    // Get API keys for the current user
+    getKeys: protectedProcedure
+      .input(z.object({ provider: z.string().optional() }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        return db.getUserApiKeys(ctx.user.id, input.provider);
+      }),
+
+    // Delete an API key
+    deleteKey: protectedProcedure
+      .input(z.object({ keyId: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteApiKey(input.keyId);
+        return { success: true };
+      }),
+  }),
+
+  // Task History
+  tasks: router({
+    // Create a new task
+    createTask: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        taskDescription: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.createTask(input.sessionId, input.taskDescription);
+        return { success: true };
+      }),
+
+    // Update task status
+    updateTask: protectedProcedure
+      .input(z.object({
+        taskId: z.number(),
+        status: z.enum(["pending", "in_progress", "completed", "failed"]).optional(),
+        outcome: z.string().optional(),
+        duration: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.updateTask(input.taskId, {
+          status: input.status,
+          outcome: input.outcome,
+          duration: input.duration,
+          completedAt: input.status === "completed" ? new Date() : undefined,
+        });
+        return { success: true };
+      }),
+
+    // Get tasks for a session
+    getTasks: protectedProcedure
+      .input(z.object({ sessionId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getSessionTasks(input.sessionId);
+      }),
+  }),
+
+  // Persistent Memory
+  memory: router({
+    // Store a key-value pair
+    store: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        key: z.string(),
+        value: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.storeMemory(input.sessionId, input.key, input.value);
+        return { success: true };
+      }),
+
+    // Retrieve a value by key
+    retrieve: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        key: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const value = await db.retrieveMemory(input.sessionId, input.key);
+        return { value };
+      }),
+
+    // Get all memory for a session
+    getAll: protectedProcedure
+      .input(z.object({ sessionId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getSessionMemory(input.sessionId);
+      }),
+
+    // Delete a memory entry
+    delete: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        key: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.deleteMemory(input.sessionId, input.key);
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
