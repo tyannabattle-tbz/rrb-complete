@@ -12,10 +12,15 @@ import TaskHistoryTracker from "@/components/TaskHistoryTracker";
 import AgentStatusIndicator from "@/components/AgentStatusIndicator";
 import FileBrowser from "@/components/FileBrowser";
 import DeploymentConfig from "@/components/DeploymentConfig";
+import AnalyticsDashboard from "@/components/AnalyticsDashboard";
+import SessionReplay from "@/components/SessionReplay";
 import { useAgentWebSocket } from "@/hooks/useAgentWebSocket";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+
 
 export default function AgentDashboard() {
   const { user, isAuthenticated } = useAuth();
@@ -172,12 +177,15 @@ export default function AgentDashboard() {
 
           {/* Main Tabs */}
           <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className="grid w-full grid-cols-10">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
               <TabsTrigger value="tasks">Tasks</TabsTrigger>
               <TabsTrigger value="files">Files</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="replay">Replay</TabsTrigger>
+              <TabsTrigger value="export">Export</TabsTrigger>
               <TabsTrigger value="deploy">Deploy</TabsTrigger>
               <TabsTrigger value="config">Config</TabsTrigger>
             </TabsList>
@@ -214,6 +222,36 @@ export default function AgentDashboard() {
             {/* Files Tab */}
             <TabsContent value="files" className="space-y-4">
               <FileBrowser sessionId={activeSession} />
+            </TabsContent>
+
+            {/* Analytics Tab */}
+            <TabsContent value="analytics" className="space-y-4">
+              <AnalyticsDashboard sessionId={activeSession} />
+            </TabsContent>
+
+            {/* Replay Tab */}
+            <TabsContent value="replay" className="space-y-4">
+              <SessionReplay sessionId={activeSession} />
+            </TabsContent>
+
+            {/* Export Tab */}
+            <TabsContent value="export" className="space-y-4">
+              <div className="space-y-4">
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Export Session</h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    <Button className="w-full" onClick={() => toast.success("Exporting as JSON...")}>
+                      Export JSON
+                    </Button>
+                    <Button className="w-full" onClick={() => toast.success("Exporting as CSV...")}>
+                      Export CSV
+                    </Button>
+                    <Button className="w-full" onClick={() => toast.success("Exporting as HTML...")}>
+                      Export HTML
+                    </Button>
+                  </div>
+                </Card>
+              </div>
             </TabsContent>
 
             {/* Deployment Tab */}
