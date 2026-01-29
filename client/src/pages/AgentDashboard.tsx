@@ -24,6 +24,9 @@ import TeamAnalyticsDashboard from "@/components/TeamAnalyticsDashboard";
 import NotificationCenter from "@/components/NotificationCenter";
 import SessionBookmarks from "@/components/SessionBookmarks";
 import DashboardWidgets from "@/components/DashboardWidgets";
+import BatchOperations from "@/components/BatchOperations";
+import SessionTemplates from "@/components/SessionTemplates";
+import RealtimeCollaboration from "@/components/RealtimeCollaboration";
 import { useAgentWebSocket } from "@/hooks/useAgentWebSocket";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -203,6 +206,9 @@ export default function AgentDashboard() {
               <TabsTrigger value="workspaces" className="gap-1"><Building2 size={14} />Workspaces</TabsTrigger>
               <TabsTrigger value="search" className="gap-1"><Search size={14} />Search</TabsTrigger>
               <TabsTrigger value="teamanalytics" className="gap-1"><BarChart3 size={14} />Team</TabsTrigger>
+              <TabsTrigger value="batch">Batch</TabsTrigger>
+              <TabsTrigger value="templates">Templates</TabsTrigger>
+              <TabsTrigger value="collab">Collab</TabsTrigger>
             </TabsList>
 
             {/* Chat Tab */}
@@ -349,6 +355,47 @@ export default function AgentDashboard() {
             {/* Team Analytics Tab */}
             <TabsContent value="teamanalytics" className="space-y-4">
               <TeamAnalyticsDashboard />
+            </TabsContent>
+
+            {/* Batch Operations Tab */}
+            <TabsContent value="batch" className="space-y-4">
+              <BatchOperations
+                sessions={sessions.map((s) => ({
+                  id: s.id,
+                  name: s.sessionName,
+                  status: (s.status || "completed") as "completed" | "failed" | "running",
+                  timestamp: s.createdAt,
+                }))}
+                onBatchDelete={(ids) => {
+                  toast.success(`Deleted ${ids.length} sessions`);
+                }}
+                onBatchExport={(ids) => {
+                  toast.success(`Exported ${ids.length} sessions`);
+                }}
+                onBatchTag={(ids, tag) => {
+                  toast.success(`Tagged ${ids.length} sessions with "${tag}"`);
+                }}
+              />
+            </TabsContent>
+
+            {/* Session Templates Tab */}
+            <TabsContent value="templates" className="space-y-4">
+              <SessionTemplates
+                onCreateFromTemplate={(template) => {
+                  toast.success(`Created session from template: ${template.name}`);
+                }}
+              />
+            </TabsContent>
+
+            {/* Real-time Collaboration Tab */}
+            <TabsContent value="collab" className="space-y-4">
+              <RealtimeCollaboration
+                sessionId={activeSession || 0}
+                currentUserId={String(user?.id || "user-1")}
+                onSendAnnotation={(content) => {
+                  toast.success("Annotation sent");
+                }}
+              />
             </TabsContent>
           </Tabs>
         </div>
