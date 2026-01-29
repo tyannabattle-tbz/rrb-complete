@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut, Plus } from "lucide-react";
 import { useLocation } from "wouter";
 import NotificationCenter from "./NotificationCenter";
+import KeyboardShortcutsHelp from "./KeyboardShortcutsHelp";
+import ThemeToggle from "./ThemeToggle";
+import SessionComparison from "./SessionComparison";
+import { useKeyboardShortcuts, DEFAULT_SHORTCUTS } from "@/hooks/useKeyboardShortcuts";
 
 interface AgentLayoutProps {
   children: React.ReactNode;
@@ -44,6 +48,7 @@ export default function AgentLayout({
           )}
           <div className="flex items-center gap-2">
             <NotificationCenter />
+            <KeyboardShortcutsHelp />
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 hover:bg-muted/20 rounded-lg transition-colors"
@@ -95,6 +100,8 @@ export default function AgentLayout({
         {/* User Profile & Logout */}
         {sidebarOpen && (
           <div className="p-4 border-t border-border space-y-3">
+            <ThemeToggle />
+            <SessionComparison />
             <div className="px-3 py-2 bg-muted/20 rounded-lg">
               <p className="text-xs text-muted-foreground">Logged in as</p>
               <p className="text-sm font-medium truncate">{user?.name || user?.email}</p>
