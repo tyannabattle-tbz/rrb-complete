@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut, Plus } from "lucide-react";
 import { useLocation } from "wouter";
+import NotificationCenter from "./NotificationCenter";
 
 interface AgentLayoutProps {
   children: React.ReactNode;
@@ -41,12 +42,15 @@ export default function AgentLayout({
           {sidebarOpen && (
             <h1 className="text-lg font-bold gradient-text">Manus Agent</h1>
           )}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-muted/20 rounded-lg transition-colors"
-          >
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          <div className="flex items-center gap-2">
+            <NotificationCenter />
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-muted/20 rounded-lg transition-colors"
+            >
+              {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
 
         {/* New Session Button */}
