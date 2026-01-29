@@ -17,11 +17,13 @@ import SessionReplay from "@/components/SessionReplay";
 import AnalyticsFilter from "@/components/AnalyticsFilter";
 import SessionSharing from "@/components/SessionSharing";
 import SessionComments from "@/components/SessionComments";
+import WorkspaceDashboard from "@/components/WorkspaceDashboard";
+import WorkspaceManager from "@/components/WorkspaceManager";
 import { useAgentWebSocket } from "@/hooks/useAgentWebSocket";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Building2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AgentDashboard() {
@@ -179,7 +181,7 @@ export default function AgentDashboard() {
 
           {/* Main Tabs */}
           <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full grid-cols-12 gap-1">
+            <TabsList className="grid w-full grid-cols-14 gap-1">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
@@ -192,6 +194,8 @@ export default function AgentDashboard() {
               <TabsTrigger value="export">Export</TabsTrigger>
               <TabsTrigger value="deploy">Deploy</TabsTrigger>
               <TabsTrigger value="config">Config</TabsTrigger>
+              <TabsTrigger value="workspace" className="gap-1"><Building2 size={14} />Workspace</TabsTrigger>
+              <TabsTrigger value="workspaces" className="gap-1"><Building2 size={14} />Workspaces</TabsTrigger>
             </TabsList>
 
             {/* Chat Tab */}
@@ -285,6 +289,49 @@ export default function AgentDashboard() {
                 <ConfigPanel sessionId={activeSession} />
                 <MemoryBrowser sessionId={activeSession} entries={memoryEntries} />
               </div>
+            </TabsContent>
+
+            {/* Workspace Tab */}
+            <TabsContent value="workspace" className="space-y-4">
+              <WorkspaceDashboard
+                currentWorkspace={{
+                  id: 1,
+                  name: "Default Workspace",
+                  description: "Your default agent workspace",
+                  owner: user?.name || "Owner",
+                  memberCount: 1,
+                  sessionCount: sessions.length,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                }}
+                teamMembers={[
+                  {
+                    id: 1,
+                    name: user?.name || "You",
+                    email: user?.email || "user@example.com",
+                    role: "admin",
+                    joinedAt: new Date(),
+                    lastActive: new Date(),
+                  },
+                ]}
+              />
+            </TabsContent>
+
+            {/* Workspaces Tab */}
+            <TabsContent value="workspaces" className="space-y-4">
+              <WorkspaceManager
+                workspaces={[
+                  {
+                    id: 1,
+                    name: "Default Workspace",
+                    description: "Your default agent workspace",
+                    memberCount: 1,
+                    sessionCount: sessions.length,
+                    createdAt: new Date(),
+                    owner: user?.name || "Owner",
+                  },
+                ]}
+              />
             </TabsContent>
           </Tabs>
         </div>
