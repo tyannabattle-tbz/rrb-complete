@@ -19,11 +19,13 @@ import SessionSharing from "@/components/SessionSharing";
 import SessionComments from "@/components/SessionComments";
 import WorkspaceDashboard from "@/components/WorkspaceDashboard";
 import WorkspaceManager from "@/components/WorkspaceManager";
+import AdvancedSearch from "@/components/AdvancedSearch";
+import TeamAnalyticsDashboard from "@/components/TeamAnalyticsDashboard";
 import { useAgentWebSocket } from "@/hooks/useAgentWebSocket";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Building2 } from "lucide-react";
+import { Loader2, Building2, Search, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AgentDashboard() {
@@ -181,7 +183,7 @@ export default function AgentDashboard() {
 
           {/* Main Tabs */}
           <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full grid-cols-14 gap-1">
+            <TabsList className="grid w-full grid-cols-16 gap-1">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
@@ -196,6 +198,8 @@ export default function AgentDashboard() {
               <TabsTrigger value="config">Config</TabsTrigger>
               <TabsTrigger value="workspace" className="gap-1"><Building2 size={14} />Workspace</TabsTrigger>
               <TabsTrigger value="workspaces" className="gap-1"><Building2 size={14} />Workspaces</TabsTrigger>
+              <TabsTrigger value="search" className="gap-1"><Search size={14} />Search</TabsTrigger>
+              <TabsTrigger value="teamanalytics" className="gap-1"><BarChart3 size={14} />Team</TabsTrigger>
             </TabsList>
 
             {/* Chat Tab */}
@@ -332,6 +336,16 @@ export default function AgentDashboard() {
                   },
                 ]}
               />
+            </TabsContent>
+
+            {/* Search Tab */}
+            <TabsContent value="search" className="space-y-4">
+              <AdvancedSearch />
+            </TabsContent>
+
+            {/* Team Analytics Tab */}
+            <TabsContent value="teamanalytics" className="space-y-4">
+              <TeamAnalyticsDashboard />
             </TabsContent>
           </Tabs>
         </div>
