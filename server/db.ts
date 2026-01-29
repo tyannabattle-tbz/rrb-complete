@@ -117,7 +117,12 @@ export async function createAgentSession(userId: number, sessionName: string, co
     maxSteps: config.maxSteps ?? 50,
   });
   
-  return result;
+  // Get the inserted session
+  const sessions = await db.select().from(agentSessions).where(
+    eq(agentSessions.userId, userId)
+  ).orderBy(desc(agentSessions.createdAt)).limit(1);
+  
+  return sessions[0]?.id || 0;
 }
 
 export async function getAgentSession(sessionId: number) {

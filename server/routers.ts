@@ -33,7 +33,7 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
         
-        await db.createAgentSession(
+        const result = await db.createAgentSession(
           ctx.user.id,
           input.sessionName,
           {
@@ -44,7 +44,7 @@ export const appRouter = router({
           }
         );
         
-        return { success: true };
+        return { success: true, id: result };
       }),
 
     // Get all sessions for the current user

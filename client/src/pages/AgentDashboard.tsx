@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import AgentLayout from "@/components/AgentLayout";
@@ -6,216 +7,131 @@ import ChatInterface from "@/components/ChatInterface";
 import ToolDashboard from "@/components/ToolDashboard";
 import ConfigPanel from "@/components/ConfigPanel";
 import MemoryBrowser from "@/components/MemoryBrowser";
+import ActionLogViewer from "@/components/ActionLogViewer";
+import TaskHistoryTracker from "@/components/TaskHistoryTracker";
+import AgentStatusIndicator from "@/components/AgentStatusIndicator";
+import { useAgentWebSocket } from "@/hooks/useAgentWebSocket";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-interface Message {
-  id: string;
-  role: "user" | "assistant" | "system";
-  content: string;
-  timestamp: Date;
-}
-
 export default function AgentDashboard() {
-  const { user, loading: authLoading } = useAuth();
-  const [currentSessionId, setCurrentSessionId] = useState<number | undefined>();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [messageCounter, setMessageCounter] = useState(0);
-  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const { user, isAuthenticated } = useAuth();
+  const [, navigate] = useLocation();
+  const [activeSession, setActiveSession] = useState<number | null>(null);
+  const [agentStatus, setAgentStatus] = useState<"idle" | "reasoning" | "executing" | "completed" | "error">("idle");
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  // Fetch sessions
-  const { data: sessions, isLoading: sessionsLoading, refetch: refetchSessions } = trpc.agent.getSessions.useQuery(
-    undefined,
-    { enabled: !!user }
-  );
-
-  // Fetch messages for current session
-  const { data: fetchedMessages, isLoading: messagesLoading, refetch: refetchMessages } = trpc.messages.getMessages.useQuery(
-    { sessionId: currentSessionId || 0, limit: 50 },
-    { enabled: !!currentSessionId }
-  );
-
-  // Fetch tool executions
-  const { data: toolExecutions, refetch: refetchTools } = trpc.tools.getExecutions.useQuery(
-    { sessionId: currentSessionId || 0 },
-    { enabled: !!currentSessionId }
-  );
-
-  // Fetch current session config
-  const { data: currentSession } = trpc.agent.getSession.useQuery(
-    { sessionId: currentSessionId || 0 },
-    { enabled: !!currentSessionId }
-  );
-
-  // Fetch memory
-  const { data: memoryEntries, refetch: refetchMemory } = trpc.memory.getAll.useQuery(
-    { sessionId: currentSessionId || 0 },
-    { enabled: !!currentSessionId }
-  );
-
-  // Update messages when fetched
+  // Redirect if not authenticated
   useEffect(() => {
-    if (fetchedMessages) {
-      setMessages(
-        fetchedMessages.map((msg, idx) => ({
-          id: `msg-${idx}`,
-          role: msg.role,
-          content: msg.content,
-          timestamp: new Date(msg.createdAt),
-        }))
-      );
+    if (!isAuthenticated || !user) {
+      navigate("/");
     }
-  }, [fetchedMessages]);
+  }, [isAuthenticated, user, navigate]);
 
-  // Set initial session
-  useEffect(() => {
-    if (sessions && sessions.length > 0 && !currentSessionId) {
-      setCurrentSessionId(sessions[0].id);
-    }
-  }, [sessions, currentSessionId]);
+  // Get sessions
+  const { data: sessions = [], isLoading: sessionsLoading } = trpc.agent.getSessions.useQuery();
 
-  const createSessionMutation = trpc.agent.createSession.useMutation();
-  const addMessageMutation = trpc.messages.addMessage.useMutation();
+  // Get messages for active session
+  const { data: messages = [] } = trpc.messages.getMessages.useQuery(
+    { sessionId: activeSession || 0 },
+    { enabled: !!activeSession }
+  );
 
-  const handleCreateSession = async () => {
-    try {
-      const result = await createSessionMutation.mutateAsync({
-        sessionName: `Session ${new Date().toLocaleTimeString()}`,
-      });
-      await refetchSessions();
-      if (result.success) {
-        toast.success("Session created successfully");
+  // Get tool executions for active session
+  const { data: toolExecutions = [] } = trpc.tools.getExecutions.useQuery(
+    { sessionId: activeSession || 0 },
+    { enabled: !!activeSession }
+  );
+
+  // Get tasks for active session
+  const { data: tasks = [] } = trpc.tasks.getTasks.useQuery(
+    { sessionId: activeSession || 0 },
+    { enabled: !!activeSession }
+  );
+
+  // Get memory for active session
+  const { data: memoryEntries = [] } = trpc.memory.getAll.useQuery(
+    { sessionId: activeSession || 0 },
+    { enabled: !!activeSession }
+  );
+
+  // WebSocket real-time updates
+  const { isConnected } = useAgentWebSocket({
+    sessionId: activeSession || 0,
+    onStatusChange: (status) => {
+      setAgentStatus(status as any);
+      setLastUpdate(new Date());
+    },
+    onMessage: (role, content) => {
+      setLastUpdate(new Date());
+      if (role === "assistant") {
+        toast.success("Agent responded");
       }
-    } catch (error) {
-      toast.error("Failed to create session");
-      console.error(error);
-    }
+    },
+    onToolExecution: (toolName, status) => {
+      setLastUpdate(new Date());
+      if (status === "completed") {
+        toast.success(`Tool ${toolName} completed`);
+      }
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error}`);
+    },
+  });
+
+  // Create new session
+  const createSessionMutation = trpc.agent.createSession.useMutation({
+    onSuccess: (result) => {
+      if (result.success && result.id) {
+        toast.success("Session created");
+        setActiveSession(result.id);
+      }
+    },
+    onError: (error) => {
+      toast.error(`Failed to create session: ${error.message}`);
+    },
+  });
+
+  const handleCreateSession = () => {
+    createSessionMutation.mutate({
+      sessionName: `Session ${new Date().toLocaleTimeString()}`,
+      systemPrompt: "You are a helpful AI assistant.",
+      temperature: 70,
+      model: "gpt-4-turbo",
+      maxSteps: 50,
+    });
   };
 
+  const addMessageMutation = trpc.messages.addMessage.useMutation();
+
   const handleSendMessage = async (content: string) => {
-    if (!currentSessionId) return;
-
+    if (!activeSession) return;
     try {
-      // Add user message
-      const userMessage: Message = {
-        id: `msg-${messageCounter}`,
-        role: "user",
-        content,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, userMessage]);
-      setMessageCounter((c) => c + 1);
-
-      // Add message to database
       await addMessageMutation.mutateAsync({
-        sessionId: currentSessionId,
+        sessionId: activeSession,
         role: "user",
         content,
       });
-
-      // Simulate agent response (in real implementation, call agent backend)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const assistantMessage: Message = {
-        id: `msg-${messageCounter + 1}`,
-        role: "assistant",
-        content: "I received your message and I'm processing it. In a real implementation, this would be connected to the autonomous agent backend.",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-      setMessageCounter((c) => c + 2);
-
-      // Add assistant message to database
-      await addMessageMutation.mutateAsync({
-        sessionId: currentSessionId,
-        role: "assistant",
-        content: assistantMessage.content,
-      });
-
-      await refetchMessages();
-      await refetchTools();
+      toast.success("Message sent");
     } catch (error) {
       toast.error("Failed to send message");
       console.error(error);
     }
   };
 
-  const updateSessionMutation = trpc.agent.updateSession.useMutation();
-
-  const handleSaveConfig = async (config: any) => {
-    if (!currentSessionId) return;
-
-    try {
-      await updateSessionMutation.mutateAsync({
-        sessionId: currentSessionId,
-        systemPrompt: config.systemPrompt,
-        temperature: config.temperature,
-        model: config.model,
-        maxSteps: config.maxSteps,
-      });
-      toast.success("Configuration saved successfully");
-    } catch (error) {
-      toast.error("Failed to save configuration");
-      console.error(error);
+  // Set first session as active if available
+  useEffect(() => {
+    if (sessions.length > 0 && !activeSession) {
+      setActiveSession(sessions[0].id);
     }
-  };
+  }, [sessions, activeSession]);
 
-  const storeMemoryMutation = trpc.memory.store.useMutation();
+  if (!isAuthenticated) {
+    return null;
+  }
 
-  const handleAddMemory = async (key: string, value: string) => {
-    if (!currentSessionId) return;
-
-    try {
-      await storeMemoryMutation.mutateAsync({
-        sessionId: currentSessionId,
-        key,
-        value,
-      });
-      await refetchMemory();
-      toast.success("Memory entry added");
-    } catch (error) {
-      toast.error("Failed to add memory entry");
-      console.error(error);
-    }
-  };
-
-  const handleUpdateMemory = async (key: string, value: string) => {
-    if (!currentSessionId) return;
-
-    try {
-      await storeMemoryMutation.mutateAsync({
-        sessionId: currentSessionId,
-        key,
-        value,
-      });
-      await refetchMemory();
-      toast.success("Memory entry updated");
-    } catch (error) {
-      toast.error("Failed to update memory entry");
-      console.error(error);
-    }
-  };
-
-  const deleteMemoryMutation = trpc.memory.delete.useMutation();
-
-  const handleDeleteMemory = async (key: string) => {
-    if (!currentSessionId) return;
-
-    try {
-      await deleteMemoryMutation.mutateAsync({
-        sessionId: currentSessionId,
-        key,
-      });
-      await refetchMemory();
-      toast.success("Memory entry deleted");
-    } catch (error) {
-      toast.error("Failed to delete memory entry");
-      console.error(error);
-    }
-  };
-
-  if (authLoading || sessionsLoading) {
+  if (sessionsLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader2 className="animate-spin text-primary" size={40} />
@@ -225,61 +141,94 @@ export default function AgentDashboard() {
 
   return (
     <AgentLayout
-      currentSessionId={currentSessionId}
-      sessions={sessions || []}
+      sessions={sessions}
+      currentSessionId={activeSession || undefined}
+      onSelectSession={setActiveSession}
       onNewSession={handleCreateSession}
-      onSelectSession={setCurrentSessionId}
     >
-      <Tabs defaultValue="chat" className="flex-1 flex flex-col">
-        <TabsList className="w-full justify-start rounded-none border-b border-border bg-card px-6 py-4">
-          <TabsTrigger value="chat">Chat</TabsTrigger>
-          <TabsTrigger value="tools">Tools</TabsTrigger>
-          <TabsTrigger value="config">Config</TabsTrigger>
-          <TabsTrigger value="memory">Memory</TabsTrigger>
-        </TabsList>
+      {activeSession ? (
+        <div className="space-y-4">
+          {/* Real-time Status */}
+          <div className="grid grid-cols-4 gap-4">
+            <div className="col-span-3">
+              <AgentStatusIndicator
+                status={agentStatus}
+                lastUpdate={lastUpdate}
+                messageCount={messages.length}
+                toolExecutions={toolExecutions.length}
+              />
+            </div>
+            <div className="flex items-center justify-center">
+              <div className="text-center">
+                <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${isConnected ? "bg-success animate-pulse" : "bg-error"}`} />
+                <p className="text-xs text-muted-foreground">
+                  {isConnected ? "Connected" : "Disconnected"}
+                </p>
+              </div>
+            </div>
+          </div>
 
-        <div className="flex-1 overflow-hidden">
-          <TabsContent value="chat" className="h-full">
-            <ChatInterface
-              messages={messages}
-              isLoading={messagesLoading}
-              onSendMessage={handleSendMessage}
-              sessionId={currentSessionId}
-            />
-          </TabsContent>
+          {/* Main Tabs */}
+          <Tabs defaultValue="chat" className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="chat">Chat</TabsTrigger>
+              <TabsTrigger value="tools">Tools</TabsTrigger>
+              <TabsTrigger value="logs">Logs</TabsTrigger>
+              <TabsTrigger value="tasks">Tasks</TabsTrigger>
+              <TabsTrigger value="config">Config</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="tools" className="h-full">
-            <ToolDashboard
-              executions={toolExecutions || []}
-              isLoading={false}
-            />
-          </TabsContent>
+            {/* Chat Tab */}
+            <TabsContent value="chat" className="space-y-4">
+              <ChatInterface
+                sessionId={activeSession}
+                messages={messages.map((m) => ({
+                  id: `msg-${m.id}`,
+                  role: m.role,
+                  content: m.content,
+                  timestamp: new Date(m.createdAt),
+                }))}
+                onSendMessage={handleSendMessage}
+              />
+            </TabsContent>
 
-          <TabsContent value="config" className="h-full">
-            <ConfigPanel
-              sessionId={currentSessionId}
-              config={currentSession ? {
-                systemPrompt: currentSession.systemPrompt || undefined,
-                temperature: currentSession.temperature || undefined,
-                model: currentSession.model || undefined,
-                maxSteps: currentSession.maxSteps || undefined,
-              } : undefined}
-              onSaveConfig={handleSaveConfig}
-            />
-          </TabsContent>
+            {/* Tools Tab */}
+            <TabsContent value="tools" className="space-y-4">
+              <ToolDashboard executions={toolExecutions} />
+            </TabsContent>
 
-          <TabsContent value="memory" className="h-full">
-            <MemoryBrowser
-              entries={memoryEntries || []}
-              isLoading={false}
-              onAddEntry={handleAddMemory}
-              onUpdateEntry={handleUpdateMemory}
-              onDeleteEntry={handleDeleteMemory}
-              sessionId={currentSessionId}
-            />
-          </TabsContent>
+            {/* Logs Tab */}
+            <TabsContent value="logs" className="space-y-4">
+              <ActionLogViewer logs={toolExecutions} />
+            </TabsContent>
+
+            {/* Tasks Tab */}
+            <TabsContent value="tasks" className="space-y-4">
+              <TaskHistoryTracker tasks={tasks} />
+            </TabsContent>
+
+            {/* Config Tab */}
+            <TabsContent value="config" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <ConfigPanel sessionId={activeSession} />
+                <MemoryBrowser sessionId={activeSession} entries={memoryEntries} />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
-      </Tabs>
+      ) : (
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center space-y-4">
+            <p className="text-muted-foreground">No sessions available</p>
+            <button
+              onClick={handleCreateSession}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:shadow-lg transition-all"
+            >
+              Create First Session
+            </button>
+          </div>
+        </div>
+      )}
     </AgentLayout>
   );
 }
