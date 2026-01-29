@@ -10,6 +10,8 @@ import MemoryBrowser from "@/components/MemoryBrowser";
 import ActionLogViewer from "@/components/ActionLogViewer";
 import TaskHistoryTracker from "@/components/TaskHistoryTracker";
 import AgentStatusIndicator from "@/components/AgentStatusIndicator";
+import FileBrowser from "@/components/FileBrowser";
+import DeploymentConfig from "@/components/DeploymentConfig";
 import { useAgentWebSocket } from "@/hooks/useAgentWebSocket";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
@@ -170,11 +172,13 @@ export default function AgentDashboard() {
 
           {/* Main Tabs */}
           <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
               <TabsTrigger value="tasks">Tasks</TabsTrigger>
+              <TabsTrigger value="files">Files</TabsTrigger>
+              <TabsTrigger value="deploy">Deploy</TabsTrigger>
               <TabsTrigger value="config">Config</TabsTrigger>
             </TabsList>
 
@@ -205,6 +209,16 @@ export default function AgentDashboard() {
             {/* Tasks Tab */}
             <TabsContent value="tasks" className="space-y-4">
               <TaskHistoryTracker tasks={tasks} />
+            </TabsContent>
+
+            {/* Files Tab */}
+            <TabsContent value="files" className="space-y-4">
+              <FileBrowser sessionId={activeSession} />
+            </TabsContent>
+
+            {/* Deployment Tab */}
+            <TabsContent value="deploy" className="space-y-4">
+              <DeploymentConfig />
             </TabsContent>
 
             {/* Config Tab */}
