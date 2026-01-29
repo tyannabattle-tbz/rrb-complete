@@ -14,13 +14,15 @@ import FileBrowser from "@/components/FileBrowser";
 import DeploymentConfig from "@/components/DeploymentConfig";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import SessionReplay from "@/components/SessionReplay";
+import AnalyticsFilter from "@/components/AnalyticsFilter";
+import SessionSharing from "@/components/SessionSharing";
+import SessionComments from "@/components/SessionComments";
 import { useAgentWebSocket } from "@/hooks/useAgentWebSocket";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-
 
 export default function AgentDashboard() {
   const { user, isAuthenticated } = useAuth();
@@ -177,7 +179,7 @@ export default function AgentDashboard() {
 
           {/* Main Tabs */}
           <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full grid-cols-10">
+            <TabsList className="grid w-full grid-cols-12 gap-1">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
@@ -185,6 +187,8 @@ export default function AgentDashboard() {
               <TabsTrigger value="files">Files</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="replay">Replay</TabsTrigger>
+              <TabsTrigger value="share">Share</TabsTrigger>
+              <TabsTrigger value="comments">Comments</TabsTrigger>
               <TabsTrigger value="export">Export</TabsTrigger>
               <TabsTrigger value="deploy">Deploy</TabsTrigger>
               <TabsTrigger value="config">Config</TabsTrigger>
@@ -232,6 +236,22 @@ export default function AgentDashboard() {
             {/* Replay Tab */}
             <TabsContent value="replay" className="space-y-4">
               <SessionReplay sessionId={activeSession} />
+            </TabsContent>
+
+            {/* Share Tab */}
+            <TabsContent value="share" className="space-y-4">
+              <SessionSharing
+                sessionId={activeSession || 0}
+                sessionName="Current Session"
+              />
+            </TabsContent>
+
+            {/* Comments Tab */}
+            <TabsContent value="comments" className="space-y-4">
+              <SessionComments
+                sessionId={activeSession || 0}
+                currentUserId={user?.id || 1}
+              />
             </TabsContent>
 
             {/* Export Tab */}
