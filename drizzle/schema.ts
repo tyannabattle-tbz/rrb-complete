@@ -533,3 +533,142 @@ export const modelComparisons = mysqlTable("model_comparisons", {
 
 export type ModelComparison = typeof modelComparisons.$inferSelect;
 export type InsertModelComparison = typeof modelComparisons.$inferInsert;
+
+
+// ============================================================================
+// SESSION AUTO-SAVE & VERSION HISTORY
+// ============================================================================
+
+export const sessionVersions = mysqlTable("session_versions", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  versionNumber: int("versionNumber").notNull(),
+  snapshot: json("snapshot").$type<Record<string, any>>().notNull(), // Full session state
+  messageCount: int("messageCount").default(0),
+  toolExecutionCount: int("toolExecutionCount").default(0),
+  taskCount: int("taskCount").default(0),
+  description: text("description"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdBy: int("createdBy").notNull().references(() => users.id),
+});
+
+export type SessionVersion = typeof sessionVersions.$inferSelect;
+export type InsertSessionVersion = typeof sessionVersions.$inferInsert;
+
+export const autoSaveSettings = mysqlTable("auto_save_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  autoSaveEnabled: boolean("autoSaveEnabled").default(true),
+  autoSaveInterval: int("autoSaveInterval").default(60000), // milliseconds
+  maxVersions: int("maxVersions").default(50),
+  retentionDays: int("retentionDays").default(30),
+  lastAutoSave: timestamp("lastAutoSave"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AutoSaveSetting = typeof autoSaveSettings.$inferSelect;
+export type InsertAutoSaveSetting = typeof autoSaveSettings.$inferInsert;
+
+// ============================================================================
+// ADVANCED FILTERING
+// ============================================================================
+
+export const filterPresets = mysqlTable("filter_presets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  filterConfig: json("filterConfig").$type<Record<string, any>>().notNull(), // Filter criteria
+  isPublic: boolean("isPublic").default(false),
+  usageCount: int("usageCount").default(0),
+  lastUsed: timestamp("lastUsed"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FilterPreset = typeof filterPresets.$inferSelect;
+export type InsertFilterPreset = typeof filterPresets.$inferInsert;
+
+export const filterHistory = mysqlTable("filter_history", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  filterConfig: json("filterConfig").$type<Record<string, any>>().notNull(),
+  resultCount: int("resultCount").default(0),
+  executionTime: int("executionTime"), // milliseconds
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type FilterHistory = typeof filterHistory.$inferSelect;
+export type InsertFilterHistory = typeof filterHistory.$inferInsert;
+
+// ============================================================================
+// REAL-TIME NOTIFICATIONS & WEBSOCKET
+// ============================================================================
+
+export const notifications = mysqlTable("notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").references(() => agentSessions.id, { onDelete: "cascade" }),
+  type: mysqlEnum("type", ["message", "tool_execution", "task_completion", "error", "warning", "info"]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium"),
+  isRead: boolean("isRead").default(false),
+  actionUrl: varchar("actionUrl", { length: 2048 }),
+  metadata: json("metadata").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  readAt: timestamp("readAt"),
+  archivedAt: timestamp("archivedAt"),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;
+
+export const notificationPreferences = mysqlTable("notification_preferences", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  enablePushNotifications: boolean("enablePushNotifications").default(true),
+  enableSoundNotifications: boolean("enableSoundNotifications").default(true),
+  enableEmailNotifications: boolean("enableEmailNotifications").default(false),
+  soundVolume: int("soundVolume").default(70), // 0-100
+  notificationTypes: json("notificationTypes").$type<string[]>(),
+  escalationEnabled: boolean("escalationEnabled").default(true),
+  escalationDelay: int("escalationDelay").default(300000), // milliseconds
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type NotificationPreference = typeof notificationPreferences.$inferSelect;
+export type InsertNotificationPreference = typeof notificationPreferences.$inferInsert;
+
+export const escalationPolicies = mysqlTable("escalation_policies", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  triggers: json("triggers").$type<Record<string, any>>().notNull(), // Escalation triggers
+  actions: json("actions").$type<Record<string, any>>().notNull(), // Actions to take
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EscalationPolicy = typeof escalationPolicies.$inferSelect;
+export type InsertEscalationPolicy = typeof escalationPolicies.$inferInsert;
+
+export const notificationEvents = mysqlTable("notification_events", {
+  id: int("id").autoincrement().primaryKey(),
+  notificationId: int("notificationId").notNull().references(() => notifications.id, { onDelete: "cascade" }),
+  eventType: varchar("eventType", { length: 64 }).notNull(),
+  channel: mysqlEnum("channel", ["push", "email", "sound", "webhook"]).notNull(),
+  status: mysqlEnum("status", ["pending", "sent", "failed", "delivered"]).default("pending"),
+  error: text("error"),
+  sentAt: timestamp("sentAt"),
+  deliveredAt: timestamp("deliveredAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type NotificationEvent = typeof notificationEvents.$inferSelect;
+export type InsertNotificationEvent = typeof notificationEvents.$inferInsert;

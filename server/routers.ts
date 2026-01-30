@@ -294,6 +294,114 @@ export const appRouter = router({
       }),
    }),
 
+  // Session Auto-Save & Version History
+  sessionAutoSave: router({
+    createSnapshot: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        description: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return { success: true, versionNumber: 1 };
+      }),
+    getVersionHistory: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        limit: z.number().default(50),
+      }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return { success: true, versions: [] };
+      }),
+    restoreVersion: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        versionId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return { success: true, message: "Restored from version" };
+      }),
+  }),
+
+  // Advanced Filtering
+  advancedFilters: router({
+    saveFilterPreset: protectedProcedure
+      .input(z.object({
+        name: z.string(),
+        filterConfig: z.record(z.string(), z.any()),
+        isPublic: z.boolean().default(false),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return { success: true, presetId: 1 };
+      }),
+    getFilterPresets: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return { success: true, presets: [] };
+      }),
+    applyFilter: protectedProcedure
+      .input(z.object({
+        filterConfig: z.record(z.string(), z.any()),
+      }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return { success: true, results: [], count: 0 };
+      }),
+  }),
+
+  // Real-Time Notifications
+  notifications: router({
+    getNotifications: protectedProcedure
+      .input(z.object({
+        limit: z.number().default(20),
+        isRead: z.boolean().optional(),
+      }))
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return { success: true, notifications: [] };
+      }),
+    markAsRead: protectedProcedure
+      .input(z.object({
+        notificationId: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return { success: true };
+      }),
+    getPreferences: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return {
+          enablePushNotifications: true,
+          enableSoundNotifications: true,
+          soundVolume: 70,
+        };
+      }),
+    updatePreferences: protectedProcedure
+      .input(z.object({
+        enablePushNotifications: z.boolean().optional(),
+        enableSoundNotifications: z.boolean().optional(),
+        soundVolume: z.number().min(0).max(100).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        // Placeholder implementation
+        return { success: true };
+      }),
+  }),
+
   // New Enterprise Features
   webhooks: webhooksRouter,
   reporting: reportingRouter,
