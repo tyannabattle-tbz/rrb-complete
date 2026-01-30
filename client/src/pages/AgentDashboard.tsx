@@ -27,6 +27,7 @@ import DashboardWidgets from "@/components/DashboardWidgets";
 import BatchOperations from "@/components/BatchOperations";
 import SessionTemplates from "@/components/SessionTemplates";
 import RealtimeCollaboration from "@/components/RealtimeCollaboration";
+import { useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -49,13 +50,15 @@ export default function AgentDashboard() {
   const appToast = useGlobalToast();
 
   // Real-time polling for session updates
+  const handleMessagesUpdate = useCallback((count: number) => {
+    setLastUpdate(new Date());
+  }, []);
+
   const polling = useSessionPolling({
     sessionId: activeSession,
     enabled: !!activeSession,
     pollInterval: 3000,
-    onMessagesUpdate: (count) => {
-      setLastUpdate(new Date());
-    },
+    onMessagesUpdate: handleMessagesUpdate,
   });
 
   // Session persistence with auto-snapshots
