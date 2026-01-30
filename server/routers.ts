@@ -8,6 +8,9 @@ import { TRPCError } from "@trpc/server";
 import { webhooksRouter } from "./routers/webhooks";
 import { reportingRouter } from "./routers/reporting";
 import { metricsRouter } from "./routers/metrics";
+import { adminRouter } from "./routers/admin";
+import { marketplaceRouter } from "./routers/marketplace";
+import { finetuningRouter } from "./routers/finetuning";
 
 export const appRouter = router({
   system: systemRouter,
@@ -290,5 +293,8 @@ export const appRouter = router({
   webhooks: webhooksRouter,
   reporting: reportingRouter,
   metrics: metricsRouter,
+  admin: adminRouter,
+  marketplace: marketplaceRouter,
+  finetuning: finetuningRouter,
 });
 export type AppRouter = typeof appRouter;

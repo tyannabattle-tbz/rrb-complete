@@ -1,4 +1,4 @@
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, count, sum, gte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -22,6 +22,20 @@ import {
   agentSnapshots,
   integrationLogs,
   featureFlags,
+  systemMetrics,
+  systemAlerts,
+  auditLogs,
+  webhookTemplates,
+  webhookInstallations,
+  webhookMarketplaceReviews,
+  finetuningDatasets,
+  finetuningJobs,
+  finetuningModels,
+  finetuningEvaluations,
+  modelComparisons,
+  type SystemMetric,
+  type SystemAlert,
+  type AuditLog,
   type AgentSession,
   type Message,
   type ToolExecution,
@@ -790,4 +804,710 @@ export async function setFeatureFlag(
       config,
     });
   }
+}
+
+
+// ============================================================================
+// ADMIN DASHBOARD FUNCTIONS
+// ============================================================================
+
+export async function recordSystemMetric(metrics: Partial<SystemMetric>): Promise<void> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database.insert(systemMetrics).values({
+    timestamp: new Date(),
+    activeUsers: metrics.activeUsers || 0,
+    totalSessions: metrics.totalSessions || 0,
+    totalRequests: metrics.totalRequests || 0,
+    totalTokens: metrics.totalTokens || 0,
+    averageResponseTime: metrics.averageResponseTime?.toString() || "0",
+    errorRate: metrics.errorRate?.toString() || "0",
+    cpuUsage: metrics.cpuUsage?.toString() || "0",
+    memoryUsage: metrics.memoryUsage?.toString() || "0",
+    storageUsage: metrics.storageUsage?.toString() || "0",
+  });
+}
+
+export async function getLatestSystemMetric(): Promise<SystemMetric | undefined> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database
+    .select()
+    .from(systemMetrics)
+    .orderBy(desc(systemMetrics.timestamp))
+    .limit(1);
+
+  return result[0];
+}
+
+export async function getSystemMetricsHistory(hours: number = 24): Promise<SystemMetric[]> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const startTime = new Date(Date.now() - hours * 60 * 60 * 1000);
+
+  return database
+    .select()
+    .from(systemMetrics)
+    .where(gte(systemMetrics.timestamp, startTime))
+    .orderBy(desc(systemMetrics.timestamp));
+}
+
+export async function createSystemAlert(
+  severity: "critical" | "warning" | "info",
+  title: string,
+  description?: string
+): Promise<number> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.insert(systemAlerts).values({
+    severity,
+    title,
+    description,
+    status: "active",
+  });
+
+  return result[0].insertId;
+}
+
+export async function getSystemAlerts(status?: "active" | "acknowledged" | "resolved"): Promise<SystemAlert[]> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  let query = database.select().from(systemAlerts);
+
+  if (status) {
+    query = query.where(eq(systemAlerts.status, status)) as any;
+  }
+
+  return (query.orderBy(desc(systemAlerts.createdAt)) as any)
+}
+
+export async function getActiveSystemAlerts(): Promise<SystemAlert[]> {
+  return getSystemAlerts("active");
+}
+
+export async function acknowledgeSystemAlert(alertId: number, userId: number): Promise<void> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database
+    .update(systemAlerts)
+    .set({
+      status: "acknowledged",
+      acknowledgedBy: userId,
+      acknowledgedAt: new Date(),
+    })
+    .where(eq(systemAlerts.id, alertId));
+}
+
+export async function resolveSystemAlert(alertId: number): Promise<void> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database
+    .update(systemAlerts)
+    .set({
+      status: "resolved",
+      resolvedAt: new Date(),
+    })
+    .where(eq(systemAlerts.id, alertId));
+}
+
+export async function createAuditLog(data: {
+  userId?: number;
+  action: string;
+  resource: string;
+  resourceId?: string;
+  changes?: Record<string, any>;
+  status?: "success" | "failure";
+}): Promise<void> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database.insert(auditLogs).values({
+    userId: data.userId,
+    action: data.action,
+    resource: data.resource,
+    resourceId: data.resourceId,
+    changes: data.changes,
+    status: data.status || "success",
+  });
+}
+
+export async function getAuditLogs(filters?: {
+  userId?: number;
+  action?: string;
+  resource?: string;
+  status?: "success" | "failure";
+  startDate?: Date;
+  endDate?: Date;
+}): Promise<AuditLog[]> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const conditions = [];
+  if (filters?.userId) {
+    conditions.push(eq(auditLogs.userId, filters.userId));
+  }
+  if (filters?.action) {
+    conditions.push(eq(auditLogs.action, filters.action));
+  }
+  if (filters?.resource) {
+    conditions.push(eq(auditLogs.resource, filters.resource));
+  }
+  if (filters?.status) {
+    conditions.push(eq(auditLogs.status, filters.status));
+  }
+
+  let query = database.select().from(auditLogs);
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions)) as any;
+  }
+
+  return (query.orderBy(desc(auditLogs.createdAt)) as any);
+}
+
+export async function getTotalUserCount(): Promise<number> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.select({ count: count() }).from(users);
+  return result[0]?.count || 0;
+}
+
+export async function getActiveUserCount(): Promise<number> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  const result = await database
+    .select({ count: count() })
+    .from(users)
+    .where(gte(users.lastSignedIn, sevenDaysAgo));
+
+  return result[0]?.count || 0;
+}
+
+export async function getNewUsersThisMonth(): Promise<number> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const firstOfMonth = new Date();
+  firstOfMonth.setDate(1);
+  firstOfMonth.setHours(0, 0, 0, 0);
+
+  const result = await database
+    .select({ count: count() })
+    .from(users)
+    .where(gte(users.createdAt, firstOfMonth));
+
+  return result[0]?.count || 0;
+}
+
+export async function getTopUsersByActivity() {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select({
+      userId: users.id,
+      userName: users.name,
+      sessionCount: count(agentSessions.id),
+    })
+    .from(users)
+    .leftJoin(agentSessions, eq(users.id, agentSessions.userId))
+    .groupBy(users.id)
+    .orderBy(desc(count(agentSessions.id)))
+    .limit(10);
+}
+
+export async function getTotalApiRequests(): Promise<number> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.select({ total: sum(apiUsage.requestCount) }).from(apiUsage);
+
+  return result[0]?.total ? parseInt(result[0].total.toString()) : 0;
+}
+
+export async function getTotalTokensUsed(): Promise<number> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.select({ total: sum(apiUsage.tokenCount) }).from(apiUsage);
+
+  return result[0]?.total ? parseInt(result[0].total.toString()) : 0;
+}
+
+export async function getRequestsPerMinute(): Promise<number> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
+
+  const result = await database
+    .select({ count: count() })
+    .from(toolExecutions)
+    .where(gte(toolExecutions.createdAt, oneMinuteAgo));
+
+  return result[0]?.count || 0;
+}
+
+export async function getTopApiEndpoints() {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select({
+      toolName: toolExecutions.toolName,
+      count: count(toolExecutions.id),
+    })
+    .from(toolExecutions)
+    .groupBy(toolExecutions.toolName)
+    .orderBy(desc(count(toolExecutions.id)))
+    .limit(10);
+}
+
+export async function getApiErrorRate(): Promise<number> {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const total = await database.select({ count: count() }).from(toolExecutions);
+  const failed = await database
+    .select({ count: count() })
+    .from(toolExecutions)
+    .where(eq(toolExecutions.status, "failed"));
+
+  const totalCount = total[0]?.count || 0;
+  const failedCount = failed[0]?.count || 0;
+
+  return totalCount > 0 ? (failedCount / totalCount) * 100 : 0;
+}
+
+
+// ============================================================================
+// WEBHOOK MARKETPLACE FUNCTIONS
+// ============================================================================
+
+export async function getPublicWebhookTemplates() {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select()
+    .from(webhookTemplates)
+    .where(eq(webhookTemplates.isPublic, true))
+    .orderBy(desc(webhookTemplates.downloads));
+}
+
+export async function getWebhookTemplate(templateId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database
+    .select()
+    .from(webhookTemplates)
+    .where(eq(webhookTemplates.id, templateId));
+
+  return result[0];
+}
+
+export async function getAllWebhookInstallations() {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database.select().from(webhookInstallations);
+}
+
+export async function createWebhookInstallation(
+  userId: number,
+  templateId: number,
+  name: string,
+  config: Record<string, any>
+) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.insert(webhookInstallations).values({
+    userId,
+    templateId,
+    name,
+    config,
+    isActive: true,
+  });
+
+  return result[0].insertId;
+}
+
+export async function getWebhookInstallation(installationId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database
+    .select()
+    .from(webhookInstallations)
+    .where(eq(webhookInstallations.id, installationId));
+
+  return result[0];
+}
+
+export async function getUserWebhookInstallations(userId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select()
+    .from(webhookInstallations)
+    .where(eq(webhookInstallations.userId, userId));
+}
+
+export async function updateWebhookInstallation(installationId: number, config: Record<string, any>) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database
+    .update(webhookInstallations)
+    .set({ config, updatedAt: new Date() })
+    .where(eq(webhookInstallations.id, installationId));
+}
+
+export async function deleteWebhookInstallation(installationId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database.delete(webhookInstallations).where(eq(webhookInstallations.id, installationId));
+}
+
+export async function incrementTemplateDownloads(templateId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const template = await getWebhookTemplate(templateId);
+  if (template) {
+    await database
+      .update(webhookTemplates)
+      .set({ downloads: (template.downloads || 0) + 1 })
+      .where(eq(webhookTemplates.id, templateId));
+  }
+}
+
+export async function createWebhookMarketplaceReview(
+  templateId: number,
+  userId: number,
+  rating: number,
+  review?: string
+) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database.insert(webhookMarketplaceReviews).values({
+    templateId,
+    userId,
+    rating,
+    review,
+  });
+}
+
+export async function getTemplateReviews(templateId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select()
+    .from(webhookMarketplaceReviews)
+    .where(eq(webhookMarketplaceReviews.templateId, templateId));
+}
+
+export async function getTemplateInstallations(templateId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select()
+    .from(webhookInstallations)
+    .where(eq(webhookInstallations.templateId, templateId));
+}
+
+export async function updateTemplateRating(templateId: number, rating: number, reviewCount: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database
+    .update(webhookTemplates)
+    .set({ rating: rating.toString(), reviews: reviewCount })
+    .where(eq(webhookTemplates.id, templateId));
+}
+
+export async function createWebhookTemplate(data: any) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.insert(webhookTemplates).values({
+    ...data,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+
+  return result[0].insertId;
+}
+
+export async function updateTemplatePublicStatus(templateId: number, isPublic: boolean) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database
+    .update(webhookTemplates)
+    .set({ isPublic, updatedAt: new Date() })
+    .where(eq(webhookTemplates.id, templateId));
+}
+
+// ============================================================================
+// MODEL FINE-TUNING FUNCTIONS
+// ============================================================================
+
+export async function createFinetuningDataset(
+  userId: number,
+  name: string,
+  description?: string,
+  dataCount: number = 0
+) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.insert(finetuningDatasets).values({
+    userId,
+    name,
+    description,
+    dataCount,
+    status: "draft",
+    quality: "good",
+  });
+
+  return result[0].insertId;
+}
+
+export async function getFinetuningDataset(datasetId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database
+    .select()
+    .from(finetuningDatasets)
+    .where(eq(finetuningDatasets.id, datasetId));
+
+  return result[0];
+}
+
+export async function getUserFinetuningDatasets(userId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select()
+    .from(finetuningDatasets)
+    .where(eq(finetuningDatasets.userId, userId))
+    .orderBy(desc(finetuningDatasets.createdAt));
+}
+
+export async function updateFinetuningDataset(datasetId: number, updates: Partial<any>) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database
+    .update(finetuningDatasets)
+    .set({ ...updates, updatedAt: new Date() })
+    .where(eq(finetuningDatasets.id, datasetId));
+}
+
+export async function createFinetuningJob(
+  userId: number,
+  datasetId: number,
+  modelName: string,
+  baseModel: string,
+  epochs: number = 3,
+  batchSize: number = 32,
+  learningRate: string = "0.0001"
+) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.insert(finetuningJobs).values({
+    userId,
+    datasetId,
+    modelName,
+    baseModel,
+    status: "pending",
+    epochs,
+    batchSize,
+    learningRate,
+  });
+
+  return result[0].insertId;
+}
+
+export async function getFinetuningJob(jobId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database
+    .select()
+    .from(finetuningJobs)
+    .where(eq(finetuningJobs.id, jobId));
+
+  return result[0];
+}
+
+export async function getUserFinetuningJobs(userId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select()
+    .from(finetuningJobs)
+    .where(eq(finetuningJobs.userId, userId))
+    .orderBy(desc(finetuningJobs.createdAt));
+}
+
+export async function updateFinetuningJob(jobId: number, updates: Partial<any>) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  await database
+    .update(finetuningJobs)
+    .set(updates)
+    .where(eq(finetuningJobs.id, jobId));
+}
+
+export async function createFinetuningModel(
+  userId: number,
+  jobId: number,
+  name: string,
+  baseModel: string,
+  modelPath: string,
+  metrics?: Record<string, any>
+) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.insert(finetuningModels).values({
+    userId,
+    jobId,
+    name,
+    baseModel,
+    modelPath,
+    status: "active",
+  });
+
+  return result[0].insertId;
+}
+
+export async function getFinetuningModel(modelId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database
+    .select()
+    .from(finetuningModels)
+    .where(eq(finetuningModels.id, modelId));
+
+  return result[0];
+}
+
+export async function getUserFinetuningModels(userId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select()
+    .from(finetuningModels)
+    .where(eq(finetuningModels.userId, userId))
+    .orderBy(desc(finetuningModels.createdAt));
+}
+
+export async function createFinetuningEvaluation(
+  jobId: number,
+  modelId: number,
+  metrics: {
+    accuracy: number;
+    precision: number;
+    recall: number;
+    f1Score: number;
+    testDataSize?: number;
+    confusionMatrix?: number[][];
+    classReport?: Record<string, any>;
+  }
+) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const result = await database.insert(finetuningEvaluations).values({
+    jobId,
+    modelId,
+    accuracy: metrics.accuracy.toString(),
+    precision: metrics.precision.toString(),
+    recall: metrics.recall.toString(),
+    f1Score: metrics.f1Score.toString(),
+    testDataSize: metrics.testDataSize,
+    confusionMatrix: metrics.confusionMatrix,
+    classReport: metrics.classReport,
+  });
+
+  return result[0].insertId;
+}
+
+export async function getModelEvaluations(modelId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select()
+    .from(finetuningEvaluations)
+    .where(eq(finetuningEvaluations.modelId, modelId));
+}
+
+export async function createModelComparison(
+  userId: number,
+  baselineModelId: number,
+  candidateModelId: number,
+  baselineMetrics: Record<string, any>,
+  candidateMetrics: Record<string, any>
+) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  const improvement = calculateImprovement(baselineMetrics, candidateMetrics);
+
+  const result = await database.insert(modelComparisons).values({
+    userId,
+    baselineModelId,
+    candidateModelId,
+    baselineMetrics,
+    candidateMetrics,
+    improvement: improvement.toString(),
+    recommendation: improvement > 5 ? "use_candidate" : improvement < -5 ? "use_baseline" : "inconclusive",
+  });
+
+  return result[0].insertId;
+}
+
+export async function getModelComparisons(userId: number) {
+  const database = await getDb();
+  if (!database) throw new Error("Database not available");
+
+  return database
+    .select()
+    .from(modelComparisons)
+    .where(eq(modelComparisons.userId, userId))
+    .orderBy(desc(modelComparisons.comparedAt));
+}
+
+function calculateImprovement(baseline: Record<string, any>, candidate: Record<string, any>): number {
+  const baselineF1 = baseline.f1Score || 0;
+  const candidateF1 = candidate.f1Score || 0;
+  return ((candidateF1 - baselineF1) / baselineF1) * 100;
 }

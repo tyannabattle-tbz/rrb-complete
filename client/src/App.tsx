@@ -6,12 +6,18 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import AgentDashboard from "./pages/AgentDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import WebhookMarketplace from "./pages/WebhookMarketplace";
+import ModelFineTuning from "./pages/ModelFineTuning";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/marketplace" component={WebhookMarketplace} />
+      <Route path="/finetuning" component={ModelFineTuning} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
