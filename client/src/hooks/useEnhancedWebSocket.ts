@@ -9,6 +9,7 @@ export interface EnhancedWebSocketOptions {
   onError?: (error: string) => void;
   heartbeatInterval?: number;
   enableMessageQueue?: boolean;
+  enabled?: boolean;
 }
 
 export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
@@ -20,15 +21,18 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
     onError,
     heartbeatInterval = 30000,
     enableMessageQueue = true,
+    enabled = true,
   } = options;
 
   const wsRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [lastHeartbeat, setLastHeartbeat] = useState<Date | null>(null);
+  const [reconnectAttempts, setReconnectAttempts] = useState(0);
+  const [queueSize, setQueueSize] = useState(0);
+  
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartbeatTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
 
   // Message queue for offline support
@@ -36,6 +40,7 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
     maxQueueSize: 100,
     maxRetries: 3,
     onQueueChanged: (queue) => {
+      setQueueSize(queue.length);
       console.log(`[EnhancedWebSocket] Queue size: ${queue.length}`);
     },
   });
@@ -66,8 +71,10 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
 
   // Setup heartbeat
   const setupHeartbeat = useCallback(() => {
+    // Clear existing heartbeat first
     if (heartbeatTimeoutRef.current) {
-      clearTimeout(heartbeatTimeoutRef.current);
+      clearInterval(heartbeatTimeoutRef.current as any);
+      heartbeatTimeoutRef.current = null;
     }
 
     heartbeatTimeoutRef.current = setInterval(() => {
@@ -80,12 +87,20 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
           console.error("[EnhancedWebSocket] Heartbeat failed:", error);
         }
       }
-    }, heartbeatInterval);
+    }, heartbeatInterval) as any;
   }, [heartbeatInterval]);
 
   // Connect to WebSocket
   const connect = useCallback(() => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
+    // Skip if disabled or invalid sessionId
+    if (!enabled || sessionId <= 0) {
+      console.log("[EnhancedWebSocket] Skipping connection: disabled or invalid sessionId");
+      return;
+    }
+
+    // Guard against duplicate connections
+    if (wsRef.current?.readyState === WebSocket.OPEN || wsRef.current?.readyState === WebSocket.CONNECTING) {
+      console.log("[EnhancedWebSocket] Connection already in progress");
       return;
     }
 
@@ -100,7 +115,13 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
         console.log("[EnhancedWebSocket] Connected successfully");
         setIsConnected(true);
         setLastUpdate(new Date());
-        reconnectAttemptsRef.current = 0;
+        setReconnectAttempts(0);
+
+        // Clear existing heartbeat and setup new one
+        if (heartbeatTimeoutRef.current) {
+          clearInterval(heartbeatTimeoutRef.current as any);
+          heartbeatTimeoutRef.current = null;
+        }
 
         // Subscribe to session updates
         ws.send(
@@ -156,19 +177,27 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
 
       ws.onclose = () => {
         console.log("[EnhancedWebSocket] Disconnected");
+        
+        // Only process if this is the current socket
+        if (ws !== wsRef.current) {
+          console.log("[EnhancedWebSocket] Ignoring close from stale socket");
+          return;
+        }
+
         setIsConnected(false);
 
         if (heartbeatTimeoutRef.current) {
-          clearTimeout(heartbeatTimeoutRef.current);
+          clearInterval(heartbeatTimeoutRef.current as any);
+          heartbeatTimeoutRef.current = null;
         }
 
         // Attempt to reconnect with exponential backoff
-        if (reconnectAttemptsRef.current < maxReconnectAttempts) {
-          const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000);
+        if (reconnectAttempts < maxReconnectAttempts) {
+          const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
           console.log(
-            `[EnhancedWebSocket] Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current + 1}/${maxReconnectAttempts})`
+            `[EnhancedWebSocket] Reconnecting in ${delay}ms (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`
           );
-          reconnectAttemptsRef.current += 1;
+          setReconnectAttempts((prev) => prev + 1);
 
           if (reconnectTimeoutRef.current) {
             clearTimeout(reconnectTimeoutRef.current);
@@ -191,7 +220,7 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
         onError("Failed to establish WebSocket connection");
       }
     }
-  }, [sessionId, onStatusChange, onMessage, onToolExecution, onError, setupHeartbeat, processQueuedMessages]);
+  }, [sessionId, enabled, onStatusChange, onMessage, onToolExecution, onError, setupHeartbeat, processQueuedMessages, reconnectAttempts]);
 
   // Disconnect
   const disconnect = useCallback(() => {
@@ -200,7 +229,7 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
       reconnectTimeoutRef.current = null;
     }
     if (heartbeatTimeoutRef.current) {
-      clearTimeout(heartbeatTimeoutRef.current);
+      clearInterval(heartbeatTimeoutRef.current as any);
       heartbeatTimeoutRef.current = null;
     }
     if (wsRef.current) {
@@ -226,15 +255,20 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
     [enableMessageQueue, messageQueue]
   );
 
-  // Setup effect
+  // Setup effect - connect on mount and when sessionId changes
   useEffect(() => {
-    reconnectAttemptsRef.current = 0;
+    if (!enabled || sessionId <= 0) {
+      disconnect();
+      return;
+    }
+
+    setReconnectAttempts(0);
     connect();
 
     return () => {
       disconnect();
     };
-  }, [connect, disconnect, sessionId]);
+  }, [connect, disconnect, sessionId, enabled]);
 
   return {
     isConnected,
@@ -242,8 +276,8 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
     lastHeartbeat,
     send,
     disconnect,
-    reconnectAttempts: reconnectAttemptsRef.current,
+    reconnectAttempts,
     messageQueue,
-    queueSize: messageQueue.getQueueSize(),
+    queueSize,
   };
 }

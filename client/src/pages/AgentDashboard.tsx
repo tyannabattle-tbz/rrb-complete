@@ -91,6 +91,7 @@ export default function AgentDashboard() {
   // Enhanced WebSocket with message queue and heartbeat
   const { isConnected, reconnectAttempts, queueSize, lastHeartbeat } = useEnhancedWebSocket({
     sessionId: activeSession || 0,
+    enabled: !!activeSession,
     heartbeatInterval: 30000,
     enableMessageQueue: true,
     onStatusChange: (status) => {

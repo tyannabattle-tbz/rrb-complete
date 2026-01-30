@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +8,16 @@ import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Activity, Users, Zap, TrendingUp, Download } from "lucide-react";
 
 export default function AdminDashboard() {
+  const { user, isAuthenticated } = useAuth();
+  const [, navigate] = useLocation();
   const [refreshInterval, setRefreshInterval] = useState(30000);
+
+  // Redirect if not authenticated or not admin
+  useEffect(() => {
+    if (!isAuthenticated || !user || user.role !== "admin") {
+      navigate("/");
+    }
+  }, [isAuthenticated, user, navigate]);
 
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading } = trpc.admin.getDashboardStats.useQuery(undefined, {
@@ -37,6 +48,10 @@ export default function AdminDashboard() {
     // In a real app, this would trigger a download
     console.log("Report exported:", result.filename);
   };
+
+  if (!isAuthenticated || !user || user.role !== "admin") {
+    return null;
+  }
 
   if (statsLoading || healthLoading) {
     return <div className="p-6">Loading dashboard...</div>;
