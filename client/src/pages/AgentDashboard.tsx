@@ -35,6 +35,10 @@ import { toast } from "sonner";
 import { useSessionPolling } from "@/hooks/useSessionPolling";
 import { useSessionPersistence } from "@/hooks/useSessionPersistence";
 import { useGlobalToast } from "@/contexts/ToastContext";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { CommandPalette, type Command } from "@/components/CommandPalette";
+import { SessionSearch, type SessionFilter } from "@/components/SessionSearch";
+import { CollaborationIndicators, type ActiveUser } from "@/components/CollaborationIndicators";
 
 export default function AgentDashboard() {
   const { user, isAuthenticated } = useAuth();
