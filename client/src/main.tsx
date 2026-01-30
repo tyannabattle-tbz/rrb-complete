@@ -6,7 +6,7 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
-import { ToastProvider } from "./contexts/ToastContext";
+import { ToastProvider, useGlobalToast } from "./contexts/ToastContext";
 import { NotificationContainer } from "./components/NotificationToast";
 import "./index.css";
 
@@ -66,6 +66,6 @@ createRoot(document.getElementById("root")!).render(
 );
 
 function ToastNotificationContainer() {
-  const { toasts, removeToast } = require("./contexts/ToastContext").useGlobalToast();
+  const { toasts, removeToast } = useGlobalToast();
   return <NotificationContainer toasts={toasts} onDismiss={removeToast} />;
 }
