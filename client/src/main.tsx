@@ -6,6 +6,8 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
+import { ToastProvider } from "./contexts/ToastContext";
+import { NotificationContainer } from "./components/NotificationToast";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -55,7 +57,15 @@ const trpcClient = trpc.createClient({
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <ToastProvider>
+        <App />
+        <ToastNotificationContainer />
+      </ToastProvider>
     </QueryClientProvider>
   </trpc.Provider>
 );
+
+function ToastNotificationContainer() {
+  const { toasts, removeToast } = require("./contexts/ToastContext").useGlobalToast();
+  return <NotificationContainer toasts={toasts} onDismiss={removeToast} />;
+}

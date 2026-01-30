@@ -32,6 +32,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Building2, Search, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
+import { useSessionPolling } from "@/hooks/useSessionPolling";
+import { useSessionPersistence } from "@/hooks/useSessionPersistence";
+import { useGlobalToast } from "@/contexts/ToastContext";
 
 export default function AgentDashboard() {
   const { user, isAuthenticated } = useAuth();
@@ -39,6 +42,24 @@ export default function AgentDashboard() {
   const [activeSession, setActiveSession] = useState<number | null>(null);
   const [agentStatus, setAgentStatus] = useState<"idle" | "reasoning" | "executing" | "completed" | "error">("idle");
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const appToast = useGlobalToast();
+
+  // Real-time polling for session updates
+  const polling = useSessionPolling({
+    sessionId: activeSession,
+    enabled: !!activeSession,
+    pollInterval: 3000,
+    onMessagesUpdate: (count) => {
+      setLastUpdate(new Date());
+    },
+  });
+
+  // Session persistence with auto-snapshots
+  const persistence = useSessionPersistence({
+    sessionId: activeSession,
+    enabled: !!activeSession,
+    snapshotInterval: 30000,
+  });
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -78,12 +99,12 @@ export default function AgentDashboard() {
   const createSessionMutation = trpc.agent.createSession.useMutation({
     onSuccess: (result) => {
       if (result.success && result.id) {
-        toast.success("Session created");
+        appToast.success("Session created", "New session started successfully");
         setActiveSession(result.id);
       }
     },
     onError: (error) => {
-      toast.error(`Failed to create session: ${error.message}`);
+      appToast.error("Failed to create session", error.message);
     },
   });
 
@@ -107,10 +128,10 @@ export default function AgentDashboard() {
         role: "user",
         content,
       });
-      toast.success("Message sent");
+      appToast.success("Message sent", "Your message was delivered");
       setLastUpdate(new Date());
     } catch (error) {
-      toast.error("Failed to send message");
+      appToast.error("Failed to send message", String(error));
       console.error(error);
     }
   };
@@ -119,8 +140,9 @@ export default function AgentDashboard() {
   useEffect(() => {
     if (sessions.length > 0 && !activeSession) {
       setActiveSession(sessions[0].id);
+      appToast.info("Session loaded", "Using most recent session", 2000);
     }
-  }, [sessions, activeSession]);
+  }, [sessions, activeSession, appToast]);
 
   if (!isAuthenticated) {
     return null;
@@ -146,22 +168,22 @@ export default function AgentDashboard() {
 
             <TabsContent value="chat" className="mt-4">
               <ChatInterface 
-                messages={messages.map(m => ({ id: String(m.id), timestamp: m.createdAt, role: m.role, content: m.content }))} 
+                messages={polling.messages.map(m => ({ id: String(m.id), timestamp: m.createdAt, role: m.role, content: m.content }))} 
                 onSendMessage={handleSendMessage} 
-                isLoading={false} 
+                isLoading={polling.isLoading} 
               />
             </TabsContent>
 
             <TabsContent value="tools" className="mt-4">
-              <ToolDashboard executions={toolExecutions} />
+              <ToolDashboard executions={polling.toolExecutions} />
             </TabsContent>
 
             <TabsContent value="logs" className="mt-4">
-              <ActionLogViewer logs={toolExecutions} />
+              <ActionLogViewer logs={polling.toolExecutions} />
             </TabsContent>
 
             <TabsContent value="tasks" className="mt-4">
-              <TaskHistoryTracker tasks={tasks} />
+              <TaskHistoryTracker tasks={polling.tasks} />
             </TabsContent>
 
             <TabsContent value="files" className="mt-4">
