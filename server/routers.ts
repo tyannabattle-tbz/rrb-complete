@@ -14,6 +14,7 @@ import { finetuningRouter } from "./routers/finetuning";
 import { performanceTestingRouter } from "./routers/performanceTesting";
 import { productionInfrastructureRouter } from "./routers/productionInfrastructure";
 import { operationsPlatformRouter } from "./routers/operationsPlatform";
+import { infrastructurePlatformRouter } from "./routers/infrastructurePlatform";
 
 export const appRouter = router({
   system: systemRouter,
@@ -302,5 +303,6 @@ export const appRouter = router({
   performanceTesting: performanceTestingRouter,
   productionInfrastructure: productionInfrastructureRouter,
   operationsPlatform: operationsPlatformRouter,
+  infrastructurePlatform: infrastructurePlatformRouter,
 });
 export type AppRouter = typeof appRouter;
