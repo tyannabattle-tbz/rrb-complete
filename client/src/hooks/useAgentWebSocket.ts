@@ -19,6 +19,9 @@ export function useAgentWebSocket(options: UseAgentWebSocketOptions) {
   const wsRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<AgentStatusUpdate | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectAttemptsRef = useRef(0);
+  const maxReconnectAttempts = 5;
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -29,11 +32,13 @@ export function useAgentWebSocket(options: UseAgentWebSocketOptions) {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/api/ws`;
       
+      console.log(`[WebSocket] Attempting connection to ${wsUrl}...`);
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log("[WebSocket] Connected");
+        console.log("[WebSocket] Connected successfully");
         setIsConnected(true);
+        reconnectAttemptsRef.current = 0;
 
         // Subscribe to session updates
         ws.send(JSON.stringify({
@@ -67,20 +72,38 @@ export function useAgentWebSocket(options: UseAgentWebSocketOptions) {
         }
       };
 
-      ws.onerror = (error) => {
-        console.error("[WebSocket] Error:", error);
+      ws.onerror = (event) => {
+        const errorMessage = event instanceof Event 
+          ? `WebSocket error: ${ws.readyState === WebSocket.CLOSED ? "Connection closed" : "Unknown error"}`
+          : `WebSocket error: ${String(event)}`;
+        console.error("[WebSocket] Error:", errorMessage, event);
         if (options.onError) {
-          options.onError("WebSocket connection error");
+          options.onError(errorMessage);
         }
       };
 
       ws.onclose = () => {
         console.log("[WebSocket] Disconnected");
         setIsConnected(false);
-        // Attempt to reconnect after 3 seconds
-        setTimeout(() => {
-          connect();
-        }, 3000);
+        
+        // Attempt to reconnect with exponential backoff
+        if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+          const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000);
+          console.log(`[WebSocket] Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current + 1}/${maxReconnectAttempts})`);
+          reconnectAttemptsRef.current += 1;
+          
+          if (reconnectTimeoutRef.current) {
+            clearTimeout(reconnectTimeoutRef.current);
+          }
+          reconnectTimeoutRef.current = setTimeout(() => {
+            connect();
+          }, delay);
+        } else {
+          console.error("[WebSocket] Max reconnection attempts reached");
+          if (options.onError) {
+            options.onError("WebSocket connection failed after multiple attempts");
+          }
+        }
       };
 
       wsRef.current = ws;
@@ -93,6 +116,10 @@ export function useAgentWebSocket(options: UseAgentWebSocketOptions) {
   }, [options]);
 
   const disconnect = useCallback(() => {
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
     if (wsRef.current) {
       wsRef.current.close();
       wsRef.current = null;
@@ -111,6 +138,7 @@ export function useAgentWebSocket(options: UseAgentWebSocketOptions) {
   }, [send]);
 
   useEffect(() => {
+    reconnectAttemptsRef.current = 0;
     connect();
 
     return () => {
@@ -124,5 +152,6 @@ export function useAgentWebSocket(options: UseAgentWebSocketOptions) {
     send,
     ping,
     disconnect,
+    reconnectAttempts: reconnectAttemptsRef.current,
   };
 }
