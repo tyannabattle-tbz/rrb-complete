@@ -28,6 +28,8 @@ import BatchOperations from "@/components/BatchOperations";
 import SessionTemplates from "@/components/SessionTemplates";
 import RealtimeCollaboration from "@/components/RealtimeCollaboration";
 import { useAgentWebSocket } from "@/hooks/useAgentWebSocket";
+import { useEnhancedWebSocket } from "@/hooks/useEnhancedWebSocket";
+import { WebSocketStatus } from "@/components/WebSocketStatus";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
