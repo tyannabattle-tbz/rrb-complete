@@ -12,6 +12,7 @@ import { adminRouter } from "./routers/admin";
 import { marketplaceRouter } from "./routers/marketplace";
 import { finetuningRouter } from "./routers/finetuning";
 import { performanceTestingRouter } from "./routers/performanceTesting";
+import { productionInfrastructureRouter } from "./routers/productionInfrastructure";
 
 export const appRouter = router({
   system: systemRouter,
@@ -298,5 +299,6 @@ export const appRouter = router({
   marketplace: marketplaceRouter,
   finetuning: finetuningRouter,
   performanceTesting: performanceTestingRouter,
+  productionInfrastructure: productionInfrastructureRouter,
 });
 export type AppRouter = typeof appRouter;
