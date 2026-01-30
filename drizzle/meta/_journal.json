@@ -15,6 +15,13 @@
       "when": 1769723782757,
       "tag": "0001_moaning_juggernaut",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769731201303,
+      "tag": "0002_cool_layla_miller",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,9 @@ import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import { TRPCError } from "@trpc/server";
+import { webhooksRouter } from "./routers/webhooks";
+import { reportingRouter } from "./routers/reporting";
+import { metricsRouter } from "./routers/metrics";
 
 export const appRouter = router({
   system: systemRouter,
@@ -281,7 +284,11 @@ export const appRouter = router({
         await db.deleteMemory(input.sessionId, input.key);
         return { success: true };
       }),
-  }),
-});
+   }),
 
+  // New Enterprise Features
+  webhooks: webhooksRouter,
+  reporting: reportingRouter,
+  metrics: metricsRouter,
+});
 export type AppRouter = typeof appRouter;

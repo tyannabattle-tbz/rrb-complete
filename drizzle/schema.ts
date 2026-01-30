@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, decimal, json } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -113,3 +113,217 @@ export const memoryStore = mysqlTable("memory_store", {
 
 export type MemoryStore = typeof memoryStore.$inferSelect;
 export type InsertMemoryStore = typeof memoryStore.$inferInsert;
+
+// ============================================================================
+// NEW ENTERPRISE FEATURES
+// ============================================================================
+
+// Email Configuration & Scheduled Reports
+export const emailConfigs = mysqlTable("email_configs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  provider: mysqlEnum("provider", ["sendgrid", "mailgun", "smtp"]).default("sendgrid"),
+  apiKey: text("apiKey").notNull(), // Encrypted
+  fromEmail: varchar("fromEmail", { length: 255 }).notNull(),
+  fromName: varchar("fromName", { length: 255 }),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmailConfig = typeof emailConfigs.$inferSelect;
+export type InsertEmailConfig = typeof emailConfigs.$inferInsert;
+
+// Scheduled Reports
+export const scheduledReports = mysqlTable("scheduled_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  reportType: mysqlEnum("reportType", ["weekly", "monthly", "daily", "custom"]).default("weekly"),
+  schedule: varchar("schedule", { length: 255 }).notNull(), // Cron expression
+  recipients: text("recipients").notNull(), // JSON array of emails
+  includeMetrics: json("includeMetrics").$type<string[]>(), // Array of metric types
+  isActive: boolean("isActive").default(true),
+  lastRun: timestamp("lastRun"),
+  nextRun: timestamp("nextRun"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ScheduledReport = typeof scheduledReports.$inferSelect;
+export type InsertScheduledReport = typeof scheduledReports.$inferInsert;
+
+// Report History
+export const reportHistory = mysqlTable("report_history", {
+  id: int("id").autoincrement().primaryKey(),
+  reportId: int("reportId").notNull().references(() => scheduledReports.id, { onDelete: "cascade" }),
+  status: mysqlEnum("status", ["pending", "generating", "sent", "failed"]).default("pending"),
+  sentTo: text("sentTo"), // JSON array of recipients
+  error: text("error"),
+  generatedAt: timestamp("generatedAt"),
+  sentAt: timestamp("sentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ReportHistory = typeof reportHistory.$inferSelect;
+export type InsertReportHistory = typeof reportHistory.$inferInsert;
+
+// Session Webhooks
+export const webhookEndpoints = mysqlTable("webhook_endpoints", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  url: varchar("url", { length: 2048 }).notNull(),
+  events: text("events").notNull(), // JSON array of event types
+  secret: varchar("secret", { length: 255 }).notNull(), // HMAC secret
+  isActive: boolean("isActive").default(true),
+  retryCount: int("retryCount").default(3),
+  lastTriggered: timestamp("lastTriggered"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type WebhookEndpoint = typeof webhookEndpoints.$inferSelect;
+export type InsertWebhookEndpoint = typeof webhookEndpoints.$inferInsert;
+
+// Webhook Event Log
+export const webhookLogs = mysqlTable("webhook_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  webhookId: int("webhookId").notNull().references(() => webhookEndpoints.id, { onDelete: "cascade" }),
+  eventType: varchar("eventType", { length: 64 }).notNull(),
+  payload: text("payload").notNull(), // JSON
+  statusCode: int("statusCode"),
+  response: text("response"),
+  error: text("error"),
+  retryCount: int("retryCount").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type WebhookLog = typeof webhookLogs.$inferSelect;
+export type InsertWebhookLog = typeof webhookLogs.$inferInsert;
+
+// Performance Metrics
+export const performanceMetrics = mysqlTable("performance_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").references(() => agentSessions.id, { onDelete: "cascade" }),
+  metricType: varchar("metricType", { length: 64 }).notNull(), // e.g., "api_call", "tool_execution", "token_usage"
+  value: decimal("value", { precision: 15, scale: 4 }).notNull(),
+  unit: varchar("unit", { length: 32 }), // e.g., "ms", "tokens", "calls"
+  metadata: json("metadata").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PerformanceMetric = typeof performanceMetrics.$inferSelect;
+export type InsertPerformanceMetric = typeof performanceMetrics.$inferInsert;
+
+// API Usage & Rate Limiting
+export const apiUsage = mysqlTable("api_usage", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  date: timestamp("date").notNull(),
+  requestCount: int("requestCount").default(0),
+  tokenCount: int("tokenCount").default(0),
+  errorCount: int("errorCount").default(0),
+  totalDuration: int("totalDuration").default(0), // milliseconds
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ApiUsage = typeof apiUsage.$inferSelect;
+export type InsertApiUsage = typeof apiUsage.$inferInsert;
+
+// Rate Limit Quotas
+export const quotas = mysqlTable("quotas", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  requestsPerDay: int("requestsPerDay").default(10000),
+  tokensPerDay: int("tokensPerDay").default(1000000),
+  concurrentSessions: int("concurrentSessions").default(10),
+  storageGB: decimal("storageGB", { precision: 10, scale: 2 }).default("100"),
+  resetDate: timestamp("resetDate").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Quota = typeof quotas.$inferSelect;
+export type InsertQuota = typeof quotas.$inferInsert;
+
+// Agent Plugins & Extensions
+export const plugins = mysqlTable("plugins", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  type: mysqlEnum("type", ["tool", "integration", "middleware", "custom"]).default("custom"),
+  code: text("code").notNull(), // Plugin source code
+  config: json("config").$type<Record<string, any>>(),
+  isActive: boolean("isActive").default(true),
+  version: varchar("version", { length: 32 }).default("1.0.0"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Plugin = typeof plugins.$inferSelect;
+export type InsertPlugin = typeof plugins.$inferInsert;
+
+// Model Fine-tuning & Training Data
+export const trainingData = mysqlTable("training_data", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").references(() => agentSessions.id, { onDelete: "cascade" }),
+  input: text("input").notNull(),
+  output: text("output").notNull(),
+  quality: mysqlEnum("quality", ["excellent", "good", "fair", "poor"]).default("good"),
+  tags: text("tags"), // JSON array
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type TrainingData = typeof trainingData.$inferSelect;
+export type InsertTrainingData = typeof trainingData.$inferInsert;
+
+// Agent Snapshots & Checkpoints
+export const agentSnapshots = mysqlTable("agent_snapshots", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  config: json("config").$type<Record<string, any>>().notNull(), // Full agent config snapshot
+  memory: text("memory"), // Serialized memory state
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AgentSnapshot = typeof agentSnapshots.$inferSelect;
+export type InsertAgentSnapshot = typeof agentSnapshots.$inferInsert;
+
+// Integration Logs (for debugging external service calls)
+export const integrationLogs = mysqlTable("integration_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  serviceName: varchar("serviceName", { length: 255 }).notNull(),
+  action: varchar("action", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["success", "failure", "pending"]).default("pending"),
+  request: text("request"), // JSON
+  response: text("response"), // JSON
+  error: text("error"),
+  duration: int("duration"), // milliseconds
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type IntegrationLog = typeof integrationLogs.$inferSelect;
+export type InsertIntegrationLog = typeof integrationLogs.$inferInsert;
+
+// Feature Flags & Experiments
+export const featureFlags = mysqlTable("feature_flags", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  flagName: varchar("flagName", { length: 255 }).notNull(),
+  isEnabled: boolean("isEnabled").default(false),
+  rolloutPercentage: int("rolloutPercentage").default(0),
+  config: json("config").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FeatureFlag = typeof featureFlags.$inferSelect;
+export type InsertFeatureFlag = typeof featureFlags.$inferInsert;
