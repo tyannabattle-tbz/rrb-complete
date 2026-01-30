@@ -34,6 +34,7 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const heartbeatTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const maxReconnectAttempts = 5;
+  const isConnectingRef = useRef(false);
 
   // Message queue for offline support
   const messageQueue = useMessageQueue({
@@ -41,7 +42,6 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
     maxRetries: 3,
     onQueueChanged: (queue) => {
       setQueueSize(queue.length);
-      console.log(`[EnhancedWebSocket] Queue size: ${queue.length}`);
     },
   });
 
@@ -50,8 +50,6 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
     if (!enableMessageQueue || messageQueue.getQueueSize() === 0) {
       return;
     }
-
-    console.log(`[EnhancedWebSocket] Processing ${messageQueue.getQueueSize()} queued messages`);
 
     await messageQueue.processQueue(async (message) => {
       return new Promise<void>((resolve, reject) => {
@@ -82,7 +80,6 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
         try {
           wsRef.current.send(JSON.stringify({ type: "ping" }));
           setLastHeartbeat(new Date());
-          console.log("[EnhancedWebSocket] Heartbeat sent");
         } catch (error) {
           console.error("[EnhancedWebSocket] Heartbeat failed:", error);
         }
@@ -90,29 +87,47 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
     }, heartbeatInterval) as any;
   }, [heartbeatInterval]);
 
+  // Disconnect
+  const disconnect = useCallback(() => {
+    isConnectingRef.current = false;
+    
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+    if (heartbeatTimeoutRef.current) {
+      clearInterval(heartbeatTimeoutRef.current as any);
+      heartbeatTimeoutRef.current = null;
+    }
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+      setIsConnected(false);
+    }
+  }, []);
+
   // Connect to WebSocket
   const connect = useCallback(() => {
-    // Skip if disabled or invalid sessionId
-    if (!enabled || sessionId <= 0) {
-      console.log("[EnhancedWebSocket] Skipping connection: disabled or invalid sessionId");
+    // Skip if disabled, invalid sessionId, or already connecting
+    if (!enabled || sessionId <= 0 || isConnectingRef.current) {
       return;
     }
 
     // Guard against duplicate connections
     if (wsRef.current?.readyState === WebSocket.OPEN || wsRef.current?.readyState === WebSocket.CONNECTING) {
-      console.log("[EnhancedWebSocket] Connection already in progress");
       return;
     }
+
+    isConnectingRef.current = true;
 
     try {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/api/ws`;
 
-      console.log(`[EnhancedWebSocket] Attempting connection to ${wsUrl}...`);
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log("[EnhancedWebSocket] Connected successfully");
+        isConnectingRef.current = false;
         setIsConnected(true);
         setLastUpdate(new Date());
         setReconnectAttempts(0);
@@ -145,7 +160,6 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
 
           // Handle pong response
           if (data.type === "pong") {
-            console.log("[EnhancedWebSocket] Pong received");
             return;
           }
 
@@ -165,22 +179,18 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
       };
 
       ws.onerror = (event) => {
-        const errorMessage =
-          event instanceof Event
-            ? `WebSocket error: ${ws.readyState === WebSocket.CLOSED ? "Connection closed" : "Unknown error"}`
-            : `WebSocket error: ${String(event)}`;
-        console.error("[EnhancedWebSocket] Error:", errorMessage, event);
+        isConnectingRef.current = false;
+        const errorMessage = "WebSocket connection error";
         if (onError) {
           onError(errorMessage);
         }
       };
 
       ws.onclose = () => {
-        console.log("[EnhancedWebSocket] Disconnected");
+        isConnectingRef.current = false;
         
         // Only process if this is the current socket
         if (ws !== wsRef.current) {
-          console.log("[EnhancedWebSocket] Ignoring close from stale socket");
           return;
         }
 
@@ -192,11 +202,8 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
         }
 
         // Attempt to reconnect with exponential backoff
-        if (reconnectAttempts < maxReconnectAttempts) {
+        if (reconnectAttempts < maxReconnectAttempts && enabled) {
           const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
-          console.log(
-            `[EnhancedWebSocket] Reconnecting in ${delay}ms (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`
-          );
           setReconnectAttempts((prev) => prev + 1);
 
           if (reconnectTimeoutRef.current) {
@@ -205,39 +212,18 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
           }, delay);
-        } else {
-          console.error("[EnhancedWebSocket] Max reconnection attempts reached");
-          if (onError) {
-            onError("WebSocket connection failed after multiple attempts");
-          }
         }
       };
 
       wsRef.current = ws;
     } catch (error) {
+      isConnectingRef.current = false;
       console.error("[EnhancedWebSocket] Connection failed:", error);
       if (onError) {
         onError("Failed to establish WebSocket connection");
       }
     }
   }, [sessionId, enabled, onStatusChange, onMessage, onToolExecution, onError, setupHeartbeat, processQueuedMessages, reconnectAttempts]);
-
-  // Disconnect
-  const disconnect = useCallback(() => {
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
-      reconnectTimeoutRef.current = null;
-    }
-    if (heartbeatTimeoutRef.current) {
-      clearInterval(heartbeatTimeoutRef.current as any);
-      heartbeatTimeoutRef.current = null;
-    }
-    if (wsRef.current) {
-      wsRef.current.close();
-      wsRef.current = null;
-      setIsConnected(false);
-    }
-  }, []);
 
   // Send message
   const send = useCallback(
@@ -246,10 +232,7 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
         wsRef.current.send(JSON.stringify(message));
         setLastUpdate(new Date());
       } else if (enableMessageQueue) {
-        console.log("[EnhancedWebSocket] WebSocket not connected, queuing message");
         messageQueue.enqueue(message, "message");
-      } else {
-        console.error("[EnhancedWebSocket] WebSocket not connected and message queue disabled");
       }
     },
     [enableMessageQueue, messageQueue]
@@ -266,9 +249,17 @@ export function useEnhancedWebSocket(options: EnhancedWebSocketOptions) {
     connect();
 
     return () => {
-      disconnect();
+      // Don't disconnect on unmount if still enabled - just cleanup timers
+      if (heartbeatTimeoutRef.current) {
+        clearInterval(heartbeatTimeoutRef.current as any);
+        heartbeatTimeoutRef.current = null;
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
     };
-  }, [connect, disconnect, sessionId, enabled]);
+  }, [sessionId, enabled]); // Only depend on sessionId and enabled
 
   return {
     isConnected,
