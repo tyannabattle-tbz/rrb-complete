@@ -60,7 +60,7 @@ export default function ChatInterface({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex flex-col h-full bg-background">
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-elegant p-6 space-y-4 scroll-smooth" style={{ minHeight: 0 }}>
         {messages.length === 0 ? (
@@ -97,7 +97,7 @@ export default function ChatInterface({
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-border bg-card p-6 space-y-4">
+      <div className="flex-shrink-0 border-t border-border bg-card p-4 space-y-3">
         {!sessionId && (
           <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg text-sm text-warning">
             Please create or select a session to start chatting
