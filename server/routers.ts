@@ -69,6 +69,9 @@ import { speechToTextRouter } from "./routers/speechToText";
 import { voiceInputRouter } from "./routers/voiceInput";
 import { textToSpeechRouter } from "./routers/textToSpeech";
 import { conversationSummariesRouter } from "./routers/conversationSummaries";
+import { promptVersioningRouter } from './routers/promptVersioning';
+import { agentPerformanceMetricsRouter } from './routers/agentPerformanceMetrics';
+import { workflowTemplatesRouter } from './routers/workflowTemplates';
 
 export const appRouter = router({
   system: systemRouter,
