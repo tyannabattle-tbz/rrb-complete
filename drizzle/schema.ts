@@ -1472,3 +1472,84 @@ export type WebhookEvent = typeof webhookEvents.$inferSelect;
 export type InsertWebhookEvent = typeof webhookEvents.$inferInsert;
 
 
+
+
+// Monitoring & Alerting
+export const alertRules = mysqlTable("alert_rules", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  ruleName: varchar("ruleName", { length: 255 }).notNull(),
+  metricName: varchar("metricName", { length: 255 }).notNull(),
+  threshold: decimal("threshold", { precision: 15, scale: 4 }),
+  operator: mysqlEnum("operator", ["gt", "lt", "eq", "gte", "lte"]).notNull(),
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium"),
+  enabled: boolean("enabled").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AlertRule = typeof alertRules.$inferSelect;
+export type InsertAlertRule = typeof alertRules.$inferInsert;
+
+export const alerts = mysqlTable("alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  alertRuleId: int("alertRuleId").notNull().references(() => alertRules.id, { onDelete: "cascade" }),
+  status: mysqlEnum("status", ["triggered", "acknowledged", "resolved"]).default("triggered"),
+  value: decimal("value", { precision: 15, scale: 4 }),
+  message: text("message"),
+  acknowledgedAt: timestamp("acknowledgedAt"),
+  resolvedAt: timestamp("resolvedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type Alert = typeof alerts.$inferSelect;
+export type InsertAlert = typeof alerts.$inferInsert;
+
+// Multi-Tenancy
+export const workspaces = mysqlTable("workspaces", {
+  id: int("id").autoincrement().primaryKey(),
+  ownerId: int("ownerId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  workspaceName: varchar("workspaceName", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 100 }).unique().notNull(),
+  description: text("description"),
+  plan: mysqlEnum("plan", ["free", "starter", "professional", "enterprise"]).default("free"),
+  maxUsers: int("maxUsers").default(5),
+  maxAgents: int("maxAgents").default(10),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Workspace = typeof workspaces.$inferSelect;
+export type InsertWorkspace = typeof workspaces.$inferInsert;
+
+export const workspaceMembers = mysqlTable("workspace_members", {
+  id: int("id").autoincrement().primaryKey(),
+  workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  role: mysqlEnum("role", ["owner", "admin", "member", "viewer"]).default("member"),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+});
+export type WorkspaceMember = typeof workspaceMembers.$inferSelect;
+export type InsertWorkspaceMember = typeof workspaceMembers.$inferInsert;
+
+// API Rate Limiting
+export const rateLimitRules = mysqlTable("rate_limit_rules", {
+  id: int("id").autoincrement().primaryKey(),
+  workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+  endpoint: varchar("endpoint", { length: 255 }).notNull(),
+  requestsPerMinute: int("requestsPerMinute").notNull(),
+  requestsPerHour: int("requestsPerHour").notNull(),
+  requestsPerDay: int("requestsPerDay").notNull(),
+  enabled: boolean("enabled").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type RateLimitRule = typeof rateLimitRules.$inferSelect;
+export type InsertRateLimitRule = typeof rateLimitRules.$inferInsert;
+
+export const rateLimitUsage = mysqlTable("rate_limit_usage", {
+  id: int("id").autoincrement().primaryKey(),
+  workspaceId: int("workspaceId").notNull().references(() => workspaces.id, { onDelete: "cascade" }),
+  endpoint: varchar("endpoint", { length: 255 }).notNull(),
+  requestCount: int("requestCount").default(0),
+  resetAt: timestamp("resetAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type RateLimitUsage = typeof rateLimitUsage.$inferSelect;
+export type InsertRateLimitUsage = typeof rateLimitUsage.$inferInsert;
