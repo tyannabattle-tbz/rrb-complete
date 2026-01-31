@@ -49,7 +49,6 @@ import { sessionTemplatesRouter } from "./routers/sessionTemplates";
 import { agentCloningRouter } from "./routers/agentCloning";
 import { usageQuotasRouter } from "./routers/usageQuotasRouter";
 import { collaborationInvitesRouter } from "./routers/collaborationInvites";
-import { collaborationInvitesRouter } from "./routers/collaborationInvites";
 
 export const appRouter = router({
   system: systemRouter,
