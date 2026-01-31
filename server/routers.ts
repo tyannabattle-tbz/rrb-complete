@@ -38,6 +38,8 @@ import { rateLimitingRouter } from "./routers/rateLimiting";
 import { advancedSearchRouter } from "./routers/advancedSearch";
 import { customDashboardsRouter } from "./routers/customDashboards";
 import { automatedReportsRouter } from "./routers/automatedReports";
+import { costTrackingRouter } from "./routers/costTracking";
+import { sessionTemplatesRouter } from "./routers/sessionTemplates";
 
 export const appRouter = router({
   system: systemRouter,
