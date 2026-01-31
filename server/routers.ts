@@ -31,6 +31,7 @@ import { agentMarketplaceRouter } from "./routers/agentMarketplace";
 import { orchestrationRouter } from "./routers/orchestration";
 import { persistenceRouter } from "./routers/persistence";
 import { stripeIntegrationRouter } from "./routers/stripeIntegration";
+import { agentManagementRouter } from "./routers/agentManagement";
 import { adminDashboardRouter } from "./routers/adminDashboard";
 import { costOptimizationRouter } from "./routers/costOptimization";
 import { integrationMarketplaceRouter } from "./routers/integrationMarketplace";
@@ -516,6 +517,7 @@ export const appRouter = router({
   orchestration: orchestrationRouter,
     persistence: persistenceRouter,
     stripe: stripeIntegrationRouter,
+    agentManagement: agentManagementRouter,
   adminDashboard: adminDashboardRouter,
   costOptimization: costOptimizationRouter,
   integrationMarketplace: integrationMarketplaceRouter,
