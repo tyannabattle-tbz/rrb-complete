@@ -49,6 +49,9 @@ import { sessionTemplatesRouter } from "./routers/sessionTemplates";
 import { agentCloningRouter } from "./routers/agentCloning";
 import { usageQuotasRouter } from "./routers/usageQuotasRouter";
 import { collaborationInvitesRouter } from "./routers/collaborationInvites";
+import { sessionPinningRouter } from "./routers/sessionPinning";
+import { conversationSearchRouter } from "./routers/conversationSearch";
+import { feedbackSystemRouter } from "./routers/feedbackSystem";
 
 export const appRouter = router({
   system: systemRouter,
@@ -542,5 +545,8 @@ export const appRouter = router({
   websocket: websocketRouter,
   templateMarketplace: templateMarketplaceRouter,
   analyticsDashboard: analyticsDashboardRouter,
+  sessionPinning: sessionPinningRouter,
+  conversationSearch: conversationSearchRouter,
+  feedbackSystem: feedbackSystemRouter,
 });
 export type AppRouter = typeof appRouter;
