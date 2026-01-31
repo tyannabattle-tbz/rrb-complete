@@ -60,9 +60,9 @@ export default function ChatInterface({
   };
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-screen bg-background">
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto scrollbar-elegant p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-elegant p-6 space-y-4 scroll-smooth" style={{ minHeight: 0 }}>
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">

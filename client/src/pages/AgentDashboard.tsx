@@ -126,6 +126,19 @@ export default function AgentDashboard() {
   };
 
   const addMessageMutation = trpc.messages.addMessage.useMutation();
+  const renameSessionMutation = trpc.agent.renameSession.useMutation();
+
+  const handleRenameSession = async (sessionId: number, newName: string) => {
+    try {
+      await renameSessionMutation.mutateAsync({
+        sessionId,
+        sessionName: newName,
+      });
+      appToast.success("Session renamed", `Renamed to "${newName}"`);
+    } catch (error) {
+      appToast.error("Failed to rename session", String(error));
+    }
+  };
 
   const handleSendMessage = async (content: string) => {
     if (!activeSession) return;
@@ -161,6 +174,7 @@ export default function AgentDashboard() {
       sessions={sessions}
       onNewSession={handleCreateSession}
       onSelectSession={setActiveSession}
+      onRenameSession={handleRenameSession}
     >
       <div className="p-4">
         {sessionsLoading ? (

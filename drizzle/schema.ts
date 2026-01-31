@@ -1553,3 +1553,77 @@ export const rateLimitUsage = mysqlTable("rate_limit_usage", {
 });
 export type RateLimitUsage = typeof rateLimitUsage.$inferSelect;
 export type InsertRateLimitUsage = typeof rateLimitUsage.$inferInsert;
+
+
+// Saved Templates for Marketplace
+export const savedTemplates = mysqlTable("saved_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  systemPrompt: text("systemPrompt"),
+  temperature: int("temperature"),
+  model: varchar("model", { length: 64 }),
+  tags: text("tags"), // JSON array
+  isPublic: boolean("isPublic").default(false),
+  downloads: int("downloads").default(0),
+  rating: decimal("rating", { precision: 3, scale: 2 }).default("0"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SavedTemplate = typeof savedTemplates.$inferSelect;
+export type InsertSavedTemplate = typeof savedTemplates.$inferInsert;
+
+// Analytics History for Persistence
+export const analyticsHistory = mysqlTable("analytics_history", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").references(() => agentSessions.id, { onDelete: "cascade" }),
+  tokensUsed: int("tokensUsed"),
+  costUSD: decimal("costUSD", { precision: 10, scale: 4 }),
+  modelUsed: varchar("modelUsed", { length: 64 }),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+});
+export type AnalyticsRecord = typeof analyticsHistory.$inferSelect;
+export type InsertAnalyticsRecord = typeof analyticsHistory.$inferInsert;
+
+// User Collaborations for Real-Time Features
+export const userCollaborations = mysqlTable("user_collaborations", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  role: mysqlEnum("role", ["viewer", "editor", "owner"]).default("viewer"),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+  lastActiveAt: timestamp("lastActiveAt").defaultNow().notNull(),
+});
+export type UserCollaboration = typeof userCollaborations.$inferSelect;
+export type InsertUserCollaboration = typeof userCollaborations.$inferInsert;
+
+// Premium Features & Stripe Integration
+export const premiumFeatures = mysqlTable("premium_features", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  subscriptionId: varchar("subscriptionId", { length: 255 }),
+  tier: mysqlEnum("tier", ["free", "pro", "enterprise"]).default("free"),
+  tokensPerMonth: int("tokensPerMonth").default(100000),
+  tokensUsedThisMonth: int("tokensUsedThisMonth").default(0),
+  expiresAt: timestamp("expiresAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type PremiumFeature = typeof premiumFeatures.$inferSelect;
+export type InsertPremiumFeature = typeof premiumFeatures.$inferInsert;
+
+// Stripe Events Log
+export const stripeEvents = mysqlTable("stripe_events", {
+  id: int("id").autoincrement().primaryKey(),
+  eventId: varchar("eventId", { length: 255 }).notNull().unique(),
+  eventType: varchar("eventType", { length: 64 }).notNull(),
+  userId: int("userId").references(() => users.id, { onDelete: "cascade" }),
+  data: json("data"),
+  processed: boolean("processed").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type StripeEvent = typeof stripeEvents.$inferSelect;
+export type InsertStripeEvent = typeof stripeEvents.$inferInsert;

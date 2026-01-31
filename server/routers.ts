@@ -29,6 +29,8 @@ import { agentProfilingRouter } from "./routers/agentProfiling";
 import { agentCertificationRouter } from "./routers/agentCertification";
 import { agentMarketplaceRouter } from "./routers/agentMarketplace";
 import { orchestrationRouter } from "./routers/orchestration";
+import { persistenceRouter } from "./routers/persistence";
+import { stripeIntegrationRouter } from "./routers/stripeIntegration";
 import { adminDashboardRouter } from "./routers/adminDashboard";
 import { costOptimizationRouter } from "./routers/costOptimization";
 import { integrationMarketplaceRouter } from "./routers/integrationMarketplace";
@@ -118,6 +120,19 @@ export const appRouter = router({
           model: input.model,
           maxSteps: input.maxSteps,
           status: input.status,
+        });
+        return { success: true };
+      }),
+
+    // Rename a session
+    renameSession: protectedProcedure
+      .input(z.object({
+        sessionId: z.number(),
+        sessionName: z.string().min(1),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await db.updateAgentSession(input.sessionId, {
+          sessionName: input.sessionName,
         });
         return { success: true };
       }),
@@ -499,6 +514,8 @@ export const appRouter = router({
   agentCertification: agentCertificationRouter,
   agentMarketplace: agentMarketplaceRouter,
   orchestration: orchestrationRouter,
+    persistence: persistenceRouter,
+    stripe: stripeIntegrationRouter,
   adminDashboard: adminDashboardRouter,
   costOptimization: costOptimizationRouter,
   integrationMarketplace: integrationMarketplaceRouter,
