@@ -39,6 +39,9 @@ import { advancedSearchRouter } from "./routers/advancedSearch";
 import { customDashboardsRouter } from "./routers/customDashboards";
 import { automatedReportsRouter } from "./routers/automatedReports";
 import { costTrackingRouter } from "./routers/costTracking";
+import { analyticsDashboardRouter } from "./routers/analyticsDashboard";
+import { templateMarketplaceRouter } from "./routers/templateMarketplace";
+import { websocketRouter } from "./routers/websocket";
 import { sessionTemplatesRouter } from "./routers/sessionTemplates";
 
 export const appRouter = router({
