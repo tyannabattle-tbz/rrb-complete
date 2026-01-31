@@ -397,7 +397,7 @@ export const webhookTemplates = mysqlTable("webhook_templates", {
   documentation: text("documentation"),
   isPublic: boolean("isPublic").default(true),
   downloads: int("downloads").default(0),
-  rating: decimal("rating", { precision: 3, scale: 2 }).default("0"),
+  rating: decimal("rating", { precision: 3, scale: 2 }).default("0.00"),
   reviews: int("reviews").default(0),
   createdBy: int("createdBy"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -1150,3 +1150,119 @@ export const agentPerformanceMetrics = mysqlTable("agent_performance_metrics", {
 });
 export type AgentPerformanceMetrics = typeof agentPerformanceMetrics.$inferSelect;
 export type InsertAgentPerformanceMetrics = typeof agentPerformanceMetrics.$inferInsert;
+
+
+// Agent Marketplace
+export const agentMarketplace = mysqlTable("agent_marketplace", {
+  id: int("id").autoincrement().primaryKey(),
+  agentName: varchar("agentName", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }).notNull(),
+  tags: json("tags").$type<string[]>(),
+  version: varchar("version", { length: 50 }).default("1.0.0"),
+  author: varchar("author", { length: 255 }).notNull(),
+  authorId: int("authorId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  agentType: mysqlEnum("agentType", ["reasoning", "execution", "monitoring", "coordination", "custom"]).notNull(),
+  capabilities: json("capabilities").$type<string[]>(),
+  configuration: json("configuration").$type<Record<string, any>>(),
+  rating: decimal("rating", { precision: 3, scale: 2 }).default("0.00"),
+  downloads: int("downloads").default(0),
+  isPublished: boolean("isPublished").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AgentMarketplace = typeof agentMarketplace.$inferSelect;
+export type InsertAgentMarketplace = typeof agentMarketplace.$inferInsert;
+
+// Agent Reviews
+export const agentReviews = mysqlTable("agent_reviews", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentMarketplace.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  rating: int("rating").notNull(), // 1-5
+  review: text("review"),
+  helpful: int("helpful").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AgentReview = typeof agentReviews.$inferSelect;
+export type InsertAgentReview = typeof agentReviews.$inferInsert;
+
+// Agent Installations
+export const agentInstallations = mysqlTable("agent_installations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  marketplaceAgentId: int("marketplaceAgentId").notNull().references(() => agentMarketplace.id, { onDelete: "cascade" }),
+  localAgentId: int("localAgentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  version: varchar("version", { length: 50 }).notNull(),
+  status: mysqlEnum("status", ["installed", "updating", "deprecated", "uninstalled"]).default("installed"),
+  lastUpdated: timestamp("lastUpdated").defaultNow().onUpdateNow(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AgentInstallation = typeof agentInstallations.$inferSelect;
+export type InsertAgentInstallation = typeof agentInstallations.$inferInsert;
+
+// Multi-Agent Orchestration
+export const orchestrationTasks = mysqlTable("orchestration_tasks", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  taskName: varchar("taskName", { length: 255 }).notNull(),
+  description: text("description"),
+  orchestrationType: mysqlEnum("orchestrationType", ["sequential", "parallel", "hierarchical", "swarm"]).notNull(),
+  status: mysqlEnum("status", ["pending", "running", "completed", "failed", "paused"]).default("pending"),
+  priority: int("priority").default(5), // 1-10
+  assignedAgents: json("assignedAgents").$type<number[]>(),
+  result: json("result").$type<Record<string, any>>(),
+  startTime: timestamp("startTime"),
+  endTime: timestamp("endTime"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type OrchestrationTask = typeof orchestrationTasks.$inferSelect;
+export type InsertOrchestrationTask = typeof orchestrationTasks.$inferInsert;
+
+// Agent Swarm Coordination
+export const swarmCoordination = mysqlTable("swarm_coordination", {
+  id: int("id").autoincrement().primaryKey(),
+  orchestrationTaskId: int("orchestrationTaskId").notNull().references(() => orchestrationTasks.id, { onDelete: "cascade" }),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  role: mysqlEnum("role", ["leader", "worker", "monitor", "coordinator"]).notNull(),
+  status: mysqlEnum("status", ["idle", "working", "waiting", "completed", "failed"]).default("idle"),
+  taskAssignment: json("taskAssignment").$type<Record<string, any>>(),
+  result: json("result").$type<Record<string, any>>(),
+  startTime: timestamp("startTime"),
+  endTime: timestamp("endTime"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type SwarmCoordination = typeof swarmCoordination.$inferSelect;
+export type InsertSwarmCoordination = typeof swarmCoordination.$inferInsert;
+
+// Orchestration Results Aggregation
+export const orchestrationResults = mysqlTable("orchestration_results", {
+  id: int("id").autoincrement().primaryKey(),
+  orchestrationTaskId: int("orchestrationTaskId").notNull().references(() => orchestrationTasks.id, { onDelete: "cascade" }),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  resultData: json("resultData").$type<Record<string, any>>(),
+  executionTime: int("executionTime"), // milliseconds
+  tokensUsed: int("tokensUsed").default(0),
+  cost: decimal("cost", { precision: 10, scale: 4 }).default("0.0000"),
+  status: mysqlEnum("status", ["success", "partial", "failed"]).notNull(),
+  errorMessage: text("errorMessage"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type OrchestrationResult = typeof orchestrationResults.$inferSelect;
+export type InsertOrchestrationResult = typeof orchestrationResults.$inferInsert;
+
+// Orchestration Conflict Resolution
+export const conflictResolution = mysqlTable("conflict_resolution", {
+  id: int("id").autoincrement().primaryKey(),
+  orchestrationTaskId: int("orchestrationTaskId").notNull().references(() => orchestrationTasks.id, { onDelete: "cascade" }),
+  agentId1: int("agentId1").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  agentId2: int("agentId2").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  conflictType: varchar("conflictType", { length: 100 }).notNull(),
+  resolution: mysqlEnum("resolution", ["agent1_priority", "agent2_priority", "merge", "retry", "escalate"]).notNull(),
+  details: json("details").$type<Record<string, any>>(),
+  resolvedAt: timestamp("resolvedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ConflictResolution = typeof conflictResolution.$inferSelect;
+export type InsertConflictResolution = typeof conflictResolution.$inferInsert;
