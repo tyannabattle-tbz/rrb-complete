@@ -29,6 +29,8 @@ import { agentProfilingRouter } from "./routers/agentProfiling";
 import { agentCertificationRouter } from "./routers/agentCertification";
 import { agentMarketplaceRouter } from "./routers/agentMarketplace";
 import { orchestrationRouter } from "./routers/orchestration";
+import { promptLibraryRouter } from './routers/promptLibrary';
+import { multiAgentOrchestrationRouter } from './routers/multiAgentOrchestration';
 import { persistenceRouter } from "./routers/persistence";
 import { stripeIntegrationRouter } from "./routers/stripeIntegration";
 import { agentManagementRouter } from "./routers/agentManagement";
