@@ -1250,3 +1250,8 @@ The Manus Agent platform is fully production-ready with:
 - [x] Create feedback prioritization system
 - [x] Build feature request tracking
 - [x] Generate feedback reports
+
+## Phase 35: Follow-Up Features (IN PROGRESS)
+- [ ] Advanced Search & Filtering - Add search across sessions, messages, and tools with filters by date, type, status
+- [ ] Custom Dashboards - Allow users to create personalized dashboards with widgets for metrics, recent sessions, and performance
+- [ ] Automated Report Generation - Generate periodic reports with session summaries, performance metrics, and insights

@@ -5,6 +5,7 @@ import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import { TRPCError } from "@trpc/server";
+import { executeAgentTask } from "./agentBackendService";
 import { webhooksRouter } from "./routers/webhooks";
 import { reportingRouter } from "./routers/reporting";
 import { metricsRouter } from "./routers/metrics";
@@ -34,6 +35,9 @@ import { integrationMarketplaceRouter } from "./routers/integrationMarketplace";
 import { monitoringRouter } from "./routers/monitoring";
 import { multiTenancyRouter } from "./routers/multiTenancy";
 import { rateLimitingRouter } from "./routers/rateLimiting";
+import { advancedSearchRouter } from "./routers/advancedSearch";
+import { customDashboardsRouter } from "./routers/customDashboards";
+import { automatedReportsRouter } from "./routers/automatedReports";
 
 export const appRouter = router({
   system: systemRouter,
@@ -116,7 +120,7 @@ export const appRouter = router({
 
   // Message Management
   messages: router({
-    // Add a message to a session
+    // Add a message to a session and trigger agent response
     addMessage: protectedProcedure
       .input(z.object({
         sessionId: z.number(),
@@ -125,12 +129,56 @@ export const appRouter = router({
         metadata: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
+        // Store the user message
         await db.addMessage(
           input.sessionId,
           input.role,
           input.content,
           input.metadata
         );
+
+        // If this is a user message, generate an agent response
+        if (input.role === "user") {
+          try {
+            // Get the session to retrieve configuration
+            const session = await db.getAgentSession(input.sessionId);
+            if (!session) throw new Error("Session not found");
+
+            // Execute the agent to generate a response
+            const agentResponse = await executeAgentTask({
+              sessionId: input.sessionId,
+              userMessage: input.content,
+              systemPrompt: session.systemPrompt || undefined,
+              temperature: session.temperature || undefined,
+              model: session.model || undefined,
+              maxSteps: session.maxSteps || undefined,
+            });
+
+            // Store the agent response
+            if (agentResponse.success && agentResponse.agentResponse) {
+              await db.addMessage(
+                input.sessionId,
+                "assistant",
+                agentResponse.agentResponse,
+                JSON.stringify({
+                  reasoning: agentResponse.reasoning,
+                  toolsUsed: agentResponse.toolsUsed,
+                  status: agentResponse.status,
+                })
+              );
+            }
+          } catch (error) {
+            console.error("[Agent] Failed to generate response:", error);
+            // Store an error message
+            await db.addMessage(
+              input.sessionId,
+              "assistant",
+              "I encountered an error processing your request. Please try again.",
+              JSON.stringify({ error: String(error) })
+            );
+          }
+        }
+
         return { success: true };
       }),
 
@@ -452,5 +500,8 @@ export const appRouter = router({
   monitoring: monitoringRouter,
   multiTenancy: multiTenancyRouter,
   rateLimiting: rateLimitingRouter,
+  advancedSearch: advancedSearchRouter,
+  customDashboards: customDashboardsRouter,
+  automatedReports: automatedReportsRouter,
 });
 export type AppRouter = typeof appRouter;
