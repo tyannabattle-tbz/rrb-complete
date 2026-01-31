@@ -61,6 +61,9 @@ import { usageForecastingRouter } from "./routers/usageForecasting";
 import { budgetEnforcementRouter } from "./routers/budgetEnforcement";
 import { costAttributionRouter } from "./routers/costAttribution";
 import { spendingReportsRouter } from "./routers/spendingReports";
+import { chargebackAutomationRouter } from "./routers/chargebackAutomation";
+import { customDashboardBuilderRouter } from "./routers/customDashboardBuilder";
+import { speechToTextRouter } from "./routers/speechToText";
 
 export const appRouter = router({
   system: systemRouter,
@@ -566,5 +569,8 @@ export const appRouter = router({
   budgetEnforcement: budgetEnforcementRouter,
   costAttribution: costAttributionRouter,
   spendingReports: spendingReportsRouter,
+  chargebackAutomation: chargebackAutomationRouter,
+  customDashboardBuilder: customDashboardBuilderRouter,
+  speechToText: speechToTextRouter,
 });
 export type AppRouter = typeof appRouter;
