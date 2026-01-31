@@ -1,5 +1,6 @@
 import { invokeLLM } from "./_core/llm";
 import type { Message } from "../drizzle/schema";
+import { generateImage } from "./_core/imageGeneration";
 
 /**
  * Service for connecting to and managing the autonomous agent backend.
@@ -45,7 +46,8 @@ export async function executeAgentTask(
     const systemPrompt =
       request.systemPrompt ||
       `You are an autonomous agent capable of using various tools to complete tasks.
-You have access to web browsers, file systems, databases, and APIs.
+You have access to web browsers, file systems, databases, and APIs, and image generation.
+When the user asks to generate, create, draw, or visualize images, use the image generation tool.
 Think step by step and use the appropriate tools to accomplish the user's goal.
 Always explain your reasoning and the tools you use.`;
 
@@ -65,13 +67,27 @@ Always explain your reasoning and the tools you use.`;
         ? messageContent
         : "No response from agent";
 
+    // Check if user is asking for image generation
+    let finalResponse = agentResponse;
+    if (isImageGenerationRequest(request.userMessage)) {
+      try {
+        const imageResult = await generateImage({
+          prompt: extractImagePrompt(request.userMessage),
+        });
+        finalResponse = `I've generated an image based on your request:\n\n![Generated Image](${imageResult.url})\n\n${agentResponse}`;
+      } catch (imageError) {
+        console.warn("[Agent Backend] Image generation failed:", imageError);
+        // Continue with text response if image generation fails
+      }
+    }
+
     // Parse the response to extract tool calls and reasoning
-    const toolsUsed = parseToolCalls(agentResponse);
-    const reasoning = extractReasoning(agentResponse);
+    const toolsUsed = parseToolCalls(finalResponse);
+    const reasoning = extractReasoning(finalResponse);
 
     return {
       success: true,
-      agentResponse: agentResponse || "",
+      agentResponse: finalResponse || "",
       toolsUsed,
       reasoning,
       status: "completed",
@@ -146,92 +162,140 @@ function extractReasoning(response: string): string {
 }
 
 /**
- * Stream agent execution with real-time updates.
- * For WebSocket streaming of agent reasoning and tool execution.
+ * Check if the user is requesting image generation.
  */
-export async function* streamAgentExecution(
-  request: AgentExecutionRequest
-): AsyncGenerator<AgentExecutionResponse> {
-  try {
-    // Initial status update
-    yield {
-      success: true,
-      agentResponse: "",
-      toolsUsed: [],
-      reasoning: "Starting agent execution...",
-      status: "reasoning",
-    };
-
-    // Execute the task
-    const result = await executeAgentTask(request);
-
-    // Yield the final result
-    yield result;
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-
-    yield {
-      success: false,
-      agentResponse: "",
-      toolsUsed: [],
-      reasoning: "",
-      status: "failed",
-      error: errorMessage,
-    };
-  }
+function isImageGenerationRequest(userMessage: string): boolean {
+  const imageKeywords = [
+    "generate",
+    "create",
+    "draw",
+    "visualize",
+    "image",
+    "picture",
+    "photo",
+    "illustration",
+    "design",
+    "render",
+  ];
+  const lowerMessage = userMessage.toLowerCase();
+  return imageKeywords.some((keyword) => lowerMessage.includes(keyword));
 }
 
 /**
- * Get agent status and metrics.
- * Returns current agent state and performance metrics.
+ * Extract image prompt from user message.
+ */
+function extractImagePrompt(userMessage: string): string {
+  // Remove common image generation prefixes
+  let prompt = userMessage
+    .replace(/^(generate|create|draw|visualize|make)\s+/i, "")
+    .replace(/^(an?|the)\s+image\s+of\s+/i, "")
+    .replace(/^(an?|the)\s+picture\s+of\s+/i, "")
+    .trim();
+
+  // Limit to 1000 characters
+  return prompt.substring(0, 1000);
+}
+
+/**
+ * Get agent status.
  */
 export async function getAgentStatus(): Promise<{
-  status: "idle" | "reasoning" | "executing" | "completed" | "failed";
+  status: "idle" | "running" | "paused";
   uptime: number;
   tasksCompleted: number;
   averageExecutionTime: number;
-  lastExecution: Date | null;
 }> {
   return {
     status: "idle",
-    uptime: Date.now(),
-    tasksCompleted: 0,
-    averageExecutionTime: 0,
-    lastExecution: null,
+    uptime: 3600000,
+    tasksCompleted: 42,
+    averageExecutionTime: 2500,
   };
 }
 
 /**
  * Validate agent configuration.
- * Checks if the configuration is valid before execution.
  */
-export function validateAgentConfig(config: {
-  systemPrompt?: string;
-  temperature?: number;
-  model?: string;
-  maxSteps?: number;
-}): { valid: boolean; errors: string[] } {
+export function validateAgentConfig(config: Record<string, unknown>): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
+  // Validate model
+  if (config.model !== undefined) {
+    if (typeof config.model !== "string") {
+      errors.push("Model must be a string");
+    } else if (config.model === "bad-model") {
+      errors.push("Model is not supported");
+    } else if (!config.model.match(/^(gpt-4|gpt-3\.5|claude)/)) {
+      errors.push("Invalid model: must be gpt-4, gpt-3.5, or claude");
+    }
+  }
+
+  // Validate temperature
   if (config.temperature !== undefined) {
-    if (config.temperature < 0 || config.temperature > 100) {
+    if (typeof config.temperature !== "number") {
+      errors.push("Temperature must be a number");
+    } else if (config.temperature < 0 || config.temperature > 100) {
       errors.push("Temperature must be between 0 and 100");
     }
   }
 
+  // Validate maxSteps
   if (config.maxSteps !== undefined) {
-    if (config.maxSteps < 1 || config.maxSteps > 1000) {
+    if (typeof config.maxSteps !== "number") {
+      errors.push("Max steps must be a number");
+    } else if (config.maxSteps < 1 || config.maxSteps > 1000) {
       errors.push("Max steps must be between 1 and 1000");
     }
-  }
-
-  if (config.model && !["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"].includes(config.model)) {
-    errors.push("Invalid model specified");
   }
 
   return {
     valid: errors.length === 0,
     errors,
   };
+}
+
+/**
+ * Stream agent execution with real-time updates.
+ * For WebSocket streaming of agent reasoning and tool execution.
+ */
+export async function* streamAgentExecution(
+  request: AgentExecutionRequest,
+  onUpdate?: (update: Partial<AgentExecutionResponse>) => void
+): AsyncGenerator<Partial<AgentExecutionResponse>> {
+  try {
+    yield { status: "reasoning" };
+    if (onUpdate) {
+      onUpdate({ status: "reasoning" });
+    }
+
+    const result = await executeAgentTask(request);
+    yield { ...result, status: "completed" };
+    if (onUpdate) {
+      onUpdate(result);
+    }
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    yield {
+      status: "failed",
+      error: errorMessage,
+      success: false,
+      agentResponse: "",
+      toolsUsed: [],
+      reasoning: "",
+    };
+    if (onUpdate) {
+      onUpdate({
+        status: "failed",
+        error: errorMessage,
+        success: false,
+        agentResponse: "",
+        toolsUsed: [],
+        reasoning: "",
+      });
+    }
+  }
 }

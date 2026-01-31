@@ -64,6 +64,9 @@ import { spendingReportsRouter } from "./routers/spendingReports";
 import { chargebackAutomationRouter } from "./routers/chargebackAutomation";
 import { customDashboardBuilderRouter } from "./routers/customDashboardBuilder";
 import { speechToTextRouter } from "./routers/speechToText";
+import { voiceInputRouter } from "./routers/voiceInput";
+import { textToSpeechRouter } from "./routers/textToSpeech";
+import { conversationSummariesRouter } from "./routers/conversationSummaries";
 
 export const appRouter = router({
   system: systemRouter,
@@ -572,5 +575,8 @@ export const appRouter = router({
   chargebackAutomation: chargebackAutomationRouter,
   customDashboardBuilder: customDashboardBuilderRouter,
   speechToText: speechToTextRouter,
+  voiceInput: voiceInputRouter,
+  textToSpeech: textToSpeechRouter,
+  conversationSummaries: conversationSummariesRouter,
 });
 export type AppRouter = typeof appRouter;
