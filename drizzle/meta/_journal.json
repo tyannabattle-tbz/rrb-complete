@@ -43,6 +43,13 @@
       "when": 1769818239235,
       "tag": "0005_colossal_serpent_society",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1769822653434,
+      "tag": "0006_steep_susan_delgado",
+      "breakpoints": true
     }
   ]
 }

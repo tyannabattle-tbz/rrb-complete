@@ -872,3 +872,102 @@ export const quotaAlerts = mysqlTable("quota_alerts", {
 });
 export type QuotaAlert = typeof quotaAlerts.$inferSelect;
 export type InsertQuotaAlert = typeof quotaAlerts.$inferInsert;
+
+
+// ============================================================================
+// ANOMALY DETECTION & AI INSIGHTS
+// ============================================================================
+
+export const anomalyBaselines = mysqlTable("anomaly_baselines", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  metricType: mysqlEnum("metricType", ["session_duration", "tool_executions", "success_rate", "token_usage", "cost", "error_rate"]).notNull(),
+  baselineValue: decimal("baselineValue", { precision: 10, scale: 4 }).notNull(),
+  standardDeviation: decimal("standardDeviation", { precision: 10, scale: 4 }).notNull(),
+  minValue: decimal("minValue", { precision: 10, scale: 4 }),
+  maxValue: decimal("maxValue", { precision: 10, scale: 4 }),
+  sampleSize: int("sampleSize").default(0),
+  lastUpdated: timestamp("lastUpdated").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AnomalyBaseline = typeof anomalyBaselines.$inferSelect;
+export type InsertAnomalyBaseline = typeof anomalyBaselines.$inferInsert;
+
+export const detectedAnomalies = mysqlTable("detected_anomalies", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").references(() => agentSessions.id, { onDelete: "cascade" }),
+  anomalyType: mysqlEnum("anomalyType", ["performance_degradation", "unusual_tool_usage", "high_error_rate", "cost_spike", "token_spike", "success_rate_drop"]).notNull(),
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium"),
+  metricName: varchar("metricName", { length: 255 }).notNull(),
+  expectedValue: decimal("expectedValue", { precision: 10, scale: 4 }),
+  actualValue: decimal("actualValue", { precision: 10, scale: 4 }).notNull(),
+  deviationPercentage: decimal("deviationPercentage", { precision: 10, scale: 2 }).notNull(),
+  description: text("description"),
+  aiInsight: text("aiInsight"), // LLM-generated insight
+  recommendedAction: text("recommendedAction"),
+  isResolved: boolean("isResolved").default(false),
+  resolvedAt: timestamp("resolvedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type DetectedAnomaly = typeof detectedAnomalies.$inferSelect;
+export type InsertDetectedAnomaly = typeof detectedAnomalies.$inferInsert;
+
+export const anomalyPatterns = mysqlTable("anomaly_patterns", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  patternName: varchar("patternName", { length: 255 }).notNull(),
+  patternDescription: text("patternDescription"),
+  anomalyTypes: json("anomalyTypes").$type<string[]>().notNull(),
+  frequency: mysqlEnum("frequency", ["rare", "occasional", "common", "frequent"]).default("occasional"),
+  lastOccurrence: timestamp("lastOccurrence"),
+  occurrenceCount: int("occurrenceCount").default(0),
+  correlatedMetrics: json("correlatedMetrics").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AnomalyPattern = typeof anomalyPatterns.$inferSelect;
+export type InsertAnomalyPattern = typeof anomalyPatterns.$inferInsert;
+
+export const anomalyInsights = mysqlTable("anomaly_insights", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  anomalyId: int("anomalyId").notNull().references(() => detectedAnomalies.id, { onDelete: "cascade" }),
+  insightType: mysqlEnum("insightType", ["root_cause", "trend", "prediction", "recommendation", "correlation"]).notNull(),
+  content: text("content").notNull(),
+  confidence: decimal("confidence", { precision: 5, scale: 2 }).default("0"), // 0-100
+  actionItems: json("actionItems").$type<string[]>(),
+  generatedBy: varchar("generatedBy", { length: 64 }).default("llm"), // llm, statistical, ml
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AnomalyInsight = typeof anomalyInsights.$inferSelect;
+export type InsertAnomalyInsight = typeof anomalyInsights.$inferInsert;
+
+export const anomalyHistory = mysqlTable("anomaly_history", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  anomalyId: int("anomalyId").notNull().references(() => detectedAnomalies.id, { onDelete: "cascade" }),
+  action: mysqlEnum("action", ["detected", "acknowledged", "resolved", "dismissed", "escalated"]).notNull(),
+  notes: text("notes"),
+  performedBy: int("performedBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AnomalyHistory = typeof anomalyHistory.$inferSelect;
+export type InsertAnomalyHistory = typeof anomalyHistory.$inferInsert;
+
+export const anomalyRules = mysqlTable("anomaly_rules", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  ruleName: varchar("ruleName", { length: 255 }).notNull(),
+  ruleDescription: text("ruleDescription"),
+  condition: text("condition").notNull(), // JSON condition
+  threshold: decimal("threshold", { precision: 10, scale: 4 }).notNull(),
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium"),
+  isActive: boolean("isActive").default(true),
+  notifyOnTrigger: boolean("notifyOnTrigger").default(true),
+  autoResolve: boolean("autoResolve").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AnomalyRule = typeof anomalyRules.$inferSelect;
+export type InsertAnomalyRule = typeof anomalyRules.$inferInsert;

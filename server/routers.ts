@@ -19,6 +19,7 @@ import { finalOperationsRouter } from "./routers/finalOperations";
 import { analyticsRouter } from "./routers/analytics";
 import { collaborationRouter } from "./routers/collaboration";
 import { billingRouter } from "./routers/billing";
+import { anomalyDetectionRouter } from "./routers/anomalyDetection";
 
 export const appRouter = router({
   system: systemRouter,
@@ -422,5 +423,6 @@ export const appRouter = router({
   analytics: analyticsRouter,
   collaboration: collaborationRouter,
   billing: billingRouter,
+  anomalyDetection: anomalyDetectionRouter,
 });
 export type AppRouter = typeof appRouter;
