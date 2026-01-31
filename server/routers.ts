@@ -52,6 +52,9 @@ import { collaborationInvitesRouter } from "./routers/collaborationInvites";
 import { sessionPinningRouter } from "./routers/sessionPinning";
 import { conversationSearchRouter } from "./routers/conversationSearch";
 import { feedbackSystemRouter } from "./routers/feedbackSystem";
+import { sessionSharingRouter } from "./routers/sessionSharing";
+import { conversationExportRouter } from "./routers/conversationExport";
+import { performanceAnalyticsRouter } from "./routers/performanceAnalytics";
 
 export const appRouter = router({
   system: systemRouter,
@@ -548,5 +551,8 @@ export const appRouter = router({
   sessionPinning: sessionPinningRouter,
   conversationSearch: conversationSearchRouter,
   feedbackSystem: feedbackSystemRouter,
+  sessionSharing: sessionSharingRouter,
+  conversationExport: conversationExportRouter,
+  performanceAnalytics: performanceAnalyticsRouter,
 });
 export type AppRouter = typeof appRouter;
