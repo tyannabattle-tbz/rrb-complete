@@ -26,6 +26,9 @@ import { agentInfrastructureRouter } from "./routers/agentInfrastructure";
 import { agentVersioningRouter } from "./routers/agentVersioning";
 import { agentProfilingRouter } from "./routers/agentProfiling";
 import { agentCertificationRouter } from "./routers/agentCertification";
+import { adminDashboardRouter } from "./routers/adminDashboard";
+import { costOptimizationRouter } from "./routers/costOptimization";
+import { integrationMarketplaceRouter } from "./routers/integrationMarketplace";
 
 export const appRouter = router({
   system: systemRouter,
@@ -436,5 +439,8 @@ export const appRouter = router({
   agentVersioning: agentVersioningRouter,
   agentProfiling: agentProfilingRouter,
   agentCertification: agentCertificationRouter,
+  adminDashboard: adminDashboardRouter,
+  costOptimization: costOptimizationRouter,
+  integrationMarketplace: integrationMarketplaceRouter,
 });
 export type AppRouter = typeof appRouter;

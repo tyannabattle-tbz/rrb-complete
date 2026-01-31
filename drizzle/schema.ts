@@ -1381,3 +1381,94 @@ export const performanceBenchmarks = mysqlTable("performance_benchmarks", {
 });
 export type PerformanceBenchmark = typeof performanceBenchmarks.$inferSelect;
 export type InsertPerformanceBenchmark = typeof performanceBenchmarks.$inferInsert;
+
+
+// Admin Dashboard
+export const adminLogs = mysqlTable("admin_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  adminId: int("adminId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  action: varchar("action", { length: 255 }).notNull(),
+  targetType: varchar("targetType", { length: 100 }),
+  targetId: int("targetId"),
+  changes: json("changes").$type<Record<string, any>>(),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AdminLog = typeof adminLogs.$inferSelect;
+export type InsertAdminLog = typeof adminLogs.$inferInsert;
+
+
+
+// Cost Optimization
+export const costAnalysis = mysqlTable("cost_analysis", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  analysisDate: timestamp("analysisDate").defaultNow().notNull(),
+  totalCost: decimal("totalCost", { precision: 12, scale: 2 }),
+  projectedCost: decimal("projectedCost", { precision: 12, scale: 2 }),
+  savingsOpportunity: decimal("savingsOpportunity", { precision: 12, scale: 2 }),
+  savingsPercentage: decimal("savingsPercentage", { precision: 5, scale: 2 }),
+  recommendations: json("recommendations").$type<Array<{ action: string; savings: number }>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CostAnalysis = typeof costAnalysis.$inferSelect;
+export type InsertCostAnalysis = typeof costAnalysis.$inferInsert;
+
+export const costOptimizations = mysqlTable("cost_optimizations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  optimizationType: varchar("optimizationType", { length: 100 }).notNull(),
+  description: text("description"),
+  estimatedSavings: decimal("estimatedSavings", { precision: 12, scale: 2 }),
+  status: mysqlEnum("status", ["recommended", "applied", "completed", "rejected"]).default("recommended"),
+  appliedAt: timestamp("appliedAt"),
+  actualSavings: decimal("actualSavings", { precision: 12, scale: 2 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CostOptimization = typeof costOptimizations.$inferSelect;
+export type InsertCostOptimization = typeof costOptimizations.$inferInsert;
+
+// Integration Marketplace
+export const integrations = mysqlTable("integrations", {
+  id: int("id").autoincrement().primaryKey(),
+  integrationName: varchar("integrationName", { length: 255 }).notNull(),
+  integrationKey: varchar("integrationKey", { length: 100 }).unique().notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }).notNull(),
+  icon: varchar("icon", { length: 255 }),
+  documentation: text("documentation"),
+  status: mysqlEnum("status", ["active", "beta", "deprecated"]).default("active"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type Integration = typeof integrations.$inferSelect;
+export type InsertIntegration = typeof integrations.$inferInsert;
+
+export const userIntegrations = mysqlTable("user_integrations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  integrationId: int("integrationId").notNull().references(() => integrations.id, { onDelete: "cascade" }),
+  apiKey: varchar("apiKey", { length: 500 }),
+  configuration: json("configuration").$type<Record<string, any>>(),
+  webhookUrl: varchar("webhookUrl", { length: 500 }),
+  isActive: boolean("isActive").default(true),
+  lastSyncedAt: timestamp("lastSyncedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type UserIntegration = typeof userIntegrations.$inferSelect;
+export type InsertUserIntegration = typeof userIntegrations.$inferInsert;
+
+export const webhookEvents = mysqlTable("webhook_events", {
+  id: int("id").autoincrement().primaryKey(),
+  userIntegrationId: int("userIntegrationId").notNull().references(() => userIntegrations.id, { onDelete: "cascade" }),
+  eventType: varchar("eventType", { length: 100 }).notNull(),
+  payload: json("payload").$type<Record<string, any>>(),
+  status: mysqlEnum("status", ["pending", "delivered", "failed"]).default("pending"),
+  retryCount: int("retryCount").default(0),
+  lastError: text("lastError"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type WebhookEvent = typeof webhookEvents.$inferSelect;
+export type InsertWebhookEvent = typeof webhookEvents.$inferInsert;
+
+
