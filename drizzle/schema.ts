@@ -672,3 +672,203 @@ export const notificationEvents = mysqlTable("notification_events", {
 
 export type NotificationEvent = typeof notificationEvents.$inferSelect;
 export type InsertNotificationEvent = typeof notificationEvents.$inferInsert;
+
+
+// ============================================================================
+// ADVANCED ANALYTICS & METRICS
+// ============================================================================
+export const sessionMetrics = mysqlTable("session_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  duration: int("duration").notNull(), // milliseconds
+  messageCount: int("messageCount").default(0),
+  toolExecutionCount: int("toolExecutionCount").default(0),
+  successfulToolExecutions: int("successfulToolExecutions").default(0),
+  failedToolExecutions: int("failedToolExecutions").default(0),
+  successRate: decimal("successRate", { precision: 5, scale: 2 }).default("0"), // 0-100
+  averageToolDuration: int("averageToolDuration"), // milliseconds
+  totalTokensUsed: int("totalTokensUsed").default(0),
+  costEstimate: decimal("costEstimate", { precision: 10, scale: 4 }).default("0"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type SessionMetrics = typeof sessionMetrics.$inferSelect;
+export type InsertSessionMetrics = typeof sessionMetrics.$inferInsert;
+
+export const toolUsageStats = mysqlTable("tool_usage_stats", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  toolName: varchar("toolName", { length: 255 }).notNull(),
+  executionCount: int("executionCount").default(0),
+  successCount: int("successCount").default(0),
+  failureCount: int("failureCount").default(0),
+  totalDuration: int("totalDuration").default(0), // milliseconds
+  averageDuration: int("averageDuration"), // milliseconds
+  lastUsed: timestamp("lastUsed"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ToolUsageStats = typeof toolUsageStats.$inferSelect;
+export type InsertToolUsageStats = typeof toolUsageStats.$inferInsert;
+
+export const performanceTrends = mysqlTable("performance_trends", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  date: timestamp("date").notNull(),
+  sessionCount: int("sessionCount").default(0),
+  averageSessionDuration: int("averageSessionDuration"), // milliseconds
+  totalToolExecutions: int("totalToolExecutions").default(0),
+  averageSuccessRate: decimal("averageSuccessRate", { precision: 5, scale: 2 }).default("0"),
+  totalTokensUsed: int("totalTokensUsed").default(0),
+  estimatedCost: decimal("estimatedCost", { precision: 10, scale: 4 }).default("0"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type PerformanceTrend = typeof performanceTrends.$inferSelect;
+export type InsertPerformanceTrend = typeof performanceTrends.$inferInsert;
+
+// ============================================================================
+// TEAM COLLABORATION
+// ============================================================================
+export const teams = mysqlTable("teams", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  ownerId: int("ownerId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Team = typeof teams.$inferSelect;
+export type InsertTeam = typeof teams.$inferInsert;
+
+export const teamMembers = mysqlTable("team_members", {
+  id: int("id").autoincrement().primaryKey(),
+  teamId: int("teamId").notNull().references(() => teams.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  role: mysqlEnum("role", ["viewer", "editor", "admin"]).default("viewer"),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+});
+export type TeamMember = typeof teamMembers.$inferSelect;
+export type InsertTeamMember = typeof teamMembers.$inferInsert;
+
+export const sessionShares = mysqlTable("session_shares", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  sharedBy: int("sharedBy").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sharedWith: int("sharedWith").notNull().references(() => users.id, { onDelete: "cascade" }),
+  permission: mysqlEnum("permission", ["view", "edit", "admin"]).default("view"),
+  expiresAt: timestamp("expiresAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type SessionShare = typeof sessionShares.$inferSelect;
+export type InsertSessionShare = typeof sessionShares.$inferInsert;
+
+export const sessionAnnotations = mysqlTable("session_annotations", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  messageId: int("messageId").references(() => messages.id, { onDelete: "cascade" }),
+  comment: text("comment").notNull(),
+  type: mysqlEnum("type", ["note", "flag", "question", "suggestion"]).default("note"),
+  resolved: boolean("resolved").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SessionAnnotation = typeof sessionAnnotations.$inferSelect;
+export type InsertSessionAnnotation = typeof sessionAnnotations.$inferInsert;
+
+export const activityLogs = mysqlTable("activity_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").references(() => agentSessions.id, { onDelete: "cascade" }),
+  action: varchar("action", { length: 255 }).notNull(),
+  resourceType: varchar("resourceType", { length: 64 }).notNull(),
+  resourceId: int("resourceId"),
+  changes: json("changes").$type<Record<string, any>>(),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ActivityLog = typeof activityLogs.$inferSelect;
+export type InsertActivityLog = typeof activityLogs.$inferInsert;
+
+// ============================================================================
+// API RATE LIMITING & QUOTA MANAGEMENT
+// ============================================================================
+export const subscriptionTiers = mysqlTable("subscription_tiers", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 64 }).notNull().unique(),
+  displayName: varchar("displayName", { length: 255 }).notNull(),
+  description: text("description"),
+  monthlyPrice: decimal("monthlyPrice", { precision: 10, scale: 2 }).notNull(),
+  requestsPerMinute: int("requestsPerMinute").notNull(),
+  requestsPerDay: int("requestsPerDay").notNull(),
+  requestsPerMonth: int("requestsPerMonth").notNull(),
+  maxConcurrentSessions: int("maxConcurrentSessions").notNull(),
+  maxTokensPerRequest: int("maxTokensPerRequest").notNull(),
+  features: json("features").$type<string[]>().notNull(),
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SubscriptionTier = typeof subscriptionTiers.$inferSelect;
+export type InsertSubscriptionTier = typeof subscriptionTiers.$inferInsert;
+
+export const userSubscriptions = mysqlTable("user_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tierId: int("tierId").notNull().references(() => subscriptionTiers.id),
+  status: mysqlEnum("status", ["active", "inactive", "suspended", "cancelled"]).default("active"),
+  billingCycleStart: timestamp("billingCycleStart").notNull(),
+  billingCycleEnd: timestamp("billingCycleEnd").notNull(),
+  autoRenew: boolean("autoRenew").default(true),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type UserSubscription = typeof userSubscriptions.$inferSelect;
+export type InsertUserSubscription = typeof userSubscriptions.$inferInsert;
+
+export const usageQuotas = mysqlTable("usage_quotas", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  billingCycleStart: timestamp("billingCycleStart").notNull(),
+  billingCycleEnd: timestamp("billingCycleEnd").notNull(),
+  requestsUsed: int("requestsUsed").default(0),
+  requestsLimit: int("requestsLimit").notNull(),
+  tokensUsed: int("tokensUsed").default(0),
+  tokensLimit: int("tokensLimit").notNull(),
+  sessionsCreated: int("sessionsCreated").default(0),
+  sessionsLimit: int("sessionsLimit").notNull(),
+  costAccrued: decimal("costAccrued", { precision: 10, scale: 4 }).default("0"),
+  costLimit: decimal("costLimit", { precision: 10, scale: 2 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type UsageQuota = typeof usageQuotas.$inferSelect;
+export type InsertUsageQuota = typeof usageQuotas.$inferInsert;
+
+export const rateLimitEvents = mysqlTable("rate_limit_events", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  limitType: mysqlEnum("limitType", ["requests_per_minute", "requests_per_day", "tokens_per_request", "concurrent_sessions"]).notNull(),
+  limitValue: int("limitValue").notNull(),
+  currentValue: int("currentValue").notNull(),
+  action: mysqlEnum("action", ["allowed", "throttled", "blocked"]).notNull(),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type RateLimitEvent = typeof rateLimitEvents.$inferSelect;
+export type InsertRateLimitEvent = typeof rateLimitEvents.$inferInsert;
+
+export const quotaAlerts = mysqlTable("quota_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  quotaType: mysqlEnum("quotaType", ["requests", "tokens", "cost", "sessions"]).notNull(),
+  threshold: int("threshold").notNull(), // percentage (0-100)
+  isTriggered: boolean("isTriggered").default(false),
+  lastTriggeredAt: timestamp("lastTriggeredAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type QuotaAlert = typeof quotaAlerts.$inferSelect;
+export type InsertQuotaAlert = typeof quotaAlerts.$inferInsert;

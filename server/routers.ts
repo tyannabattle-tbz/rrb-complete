@@ -16,6 +16,9 @@ import { productionInfrastructureRouter } from "./routers/productionInfrastructu
 import { operationsPlatformRouter } from "./routers/operationsPlatform";
 import { infrastructurePlatformRouter } from "./routers/infrastructurePlatform";
 import { finalOperationsRouter } from "./routers/finalOperations";
+import { analyticsRouter } from "./routers/analytics";
+import { collaborationRouter } from "./routers/collaboration";
+import { billingRouter } from "./routers/billing";
 
 export const appRouter = router({
   system: systemRouter,
@@ -414,5 +417,10 @@ export const appRouter = router({
   operationsPlatform: operationsPlatformRouter,
   infrastructurePlatform: infrastructurePlatformRouter,
   finalOperations: finalOperationsRouter,
+  
+  // Advanced Features
+  analytics: analyticsRouter,
+  collaboration: collaborationRouter,
+  billing: billingRouter,
 });
 export type AppRouter = typeof appRouter;

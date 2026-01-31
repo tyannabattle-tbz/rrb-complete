@@ -36,6 +36,13 @@
       "when": 1769800659820,
       "tag": "0004_useful_night_thrasher",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1769818239235,
+      "tag": "0005_colossal_serpent_society",
+      "breakpoints": true
     }
   ]
 }
