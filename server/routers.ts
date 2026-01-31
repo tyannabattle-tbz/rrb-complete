@@ -55,6 +55,9 @@ import { feedbackSystemRouter } from "./routers/feedbackSystem";
 import { sessionSharingRouter } from "./routers/sessionSharing";
 import { conversationExportRouter } from "./routers/conversationExport";
 import { performanceAnalyticsRouter } from "./routers/performanceAnalytics";
+import { tokenBudgetingRouter } from "./routers/tokenBudgeting";
+import { webhookAlertsRouter } from "./routers/webhookAlerts";
+import { usageForecastingRouter } from "./routers/usageForecasting";
 
 export const appRouter = router({
   system: systemRouter,
@@ -554,5 +557,8 @@ export const appRouter = router({
   sessionSharing: sessionSharingRouter,
   conversationExport: conversationExportRouter,
   performanceAnalytics: performanceAnalyticsRouter,
+  tokenBudgeting: tokenBudgetingRouter,
+  webhookAlerts: webhookAlertsRouter,
+  usageForecasting: usageForecastingRouter,
 });
 export type AppRouter = typeof appRouter;
