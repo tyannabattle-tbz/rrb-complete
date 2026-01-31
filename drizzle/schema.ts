@@ -1644,3 +1644,46 @@ export const agents = mysqlTable("agents", {
 
 export type Agent = typeof agents.$inferSelect;
 export type InsertAgent = typeof agents.$inferInsert;
+
+// Usage Quotas
+
+// Collaboration Invites
+export const collaborationInvites = mysqlTable("collaboration_invites", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  invitedBy: int("invitedBy").notNull().references(() => users.id, { onDelete: "cascade" }),
+  inviteCode: varchar("inviteCode", { length: 64 }).notNull().unique(),
+  invitedEmail: varchar("invitedEmail", { length: 320 }),
+  permission: mysqlEnum("permission", ["view", "edit", "admin"]).default("view"),
+  status: mysqlEnum("status", ["pending", "accepted", "declined", "expired"]).default("pending"),
+  expiresAt: timestamp("expiresAt"),
+  acceptedAt: timestamp("acceptedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CollaborationInvite = typeof collaborationInvites.$inferSelect;
+export type InsertCollaborationInvite = typeof collaborationInvites.$inferInsert;
+
+// Session Collaborators
+export const sessionCollaborators = mysqlTable("session_collaborators", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  permission: mysqlEnum("permission", ["view", "edit", "admin"]).default("view"),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+});
+
+export type SessionCollaborator = typeof sessionCollaborators.$inferSelect;
+export type InsertSessionCollaborator = typeof sessionCollaborators.$inferInsert;
+
+// Cloned Sessions (track original and cloned relationship)
+export const clonedSessions = mysqlTable("cloned_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  originalSessionId: int("originalSessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  clonedSessionId: int("clonedSessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  clonedBy: int("clonedBy").notNull().references(() => users.id, { onDelete: "cascade" }),
+  clonedAt: timestamp("clonedAt").defaultNow().notNull(),
+});
+
+export type ClonedSession = typeof clonedSessions.$inferSelect;
+export type InsertClonedSession = typeof clonedSessions.$inferInsert;

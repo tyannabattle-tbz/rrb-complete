@@ -46,6 +46,10 @@ import { analyticsDashboardRouter } from "./routers/analyticsDashboard";
 import { templateMarketplaceRouter } from "./routers/templateMarketplace";
 import { websocketRouter } from "./routers/websocket";
 import { sessionTemplatesRouter } from "./routers/sessionTemplates";
+import { agentCloningRouter } from "./routers/agentCloning";
+import { usageQuotasRouter } from "./routers/usageQuotasRouter";
+import { collaborationInvitesRouter } from "./routers/collaborationInvites";
+import { collaborationInvitesRouter } from "./routers/collaborationInvites";
 
 export const appRouter = router({
   system: systemRouter,
@@ -59,6 +63,15 @@ export const appRouter = router({
       } as const;
     }),
   }),
+
+  // Collaboration Invites
+  collaborationInvites: collaborationInvitesRouter,
+
+  // Usage Quotas
+  usageQuotas: usageQuotasRouter,
+
+  // Agent Cloning
+  agentCloning: agentCloningRouter,
 
   // Agent Session Management
   agent: router({
