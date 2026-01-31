@@ -1266,3 +1266,118 @@ export const conflictResolution = mysqlTable("conflict_resolution", {
 });
 export type ConflictResolution = typeof conflictResolution.$inferSelect;
 export type InsertConflictResolution = typeof conflictResolution.$inferInsert;
+
+
+// Agent Versioning
+export const agentVersions = mysqlTable("agent_versions", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  version: varchar("version", { length: 50 }).notNull(),
+  versionTag: varchar("versionTag", { length: 100 }),
+  snapshot: json("snapshot").$type<Record<string, any>>(),
+  configuration: json("configuration").$type<Record<string, any>>(),
+  changes: json("changes").$type<string[]>(),
+  createdBy: int("createdBy").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  isStable: boolean("isStable").default(false),
+});
+export type AgentVersion = typeof agentVersions.$inferSelect;
+export type InsertAgentVersion = typeof agentVersions.$inferInsert;
+
+// Agent Rollback History
+export const agentRollbacks = mysqlTable("agent_rollbacks", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  fromVersion: varchar("fromVersion", { length: 50 }).notNull(),
+  toVersion: varchar("toVersion", { length: 50 }).notNull(),
+  reason: text("reason"),
+  performedBy: int("performedBy").notNull().references(() => users.id),
+  status: mysqlEnum("status", ["pending", "completed", "failed"]).default("pending"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AgentRollback = typeof agentRollbacks.$inferSelect;
+export type InsertAgentRollback = typeof agentRollbacks.$inferInsert;
+
+// Agent Performance Profiles
+export const agentProfiles = mysqlTable("agent_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  executionTime: int("executionTime"), // milliseconds
+  memoryUsage: int("memoryUsage"), // MB
+  cpuUsage: decimal("cpuUsage", { precision: 5, scale: 2 }), // percentage
+  tokensUsed: int("tokensUsed").default(0),
+  cost: decimal("cost", { precision: 10, scale: 4 }),
+  successRate: decimal("successRate", { precision: 5, scale: 2 }), // percentage
+  errorCount: int("errorCount").default(0),
+  totalExecutions: int("totalExecutions").default(1),
+  bottlenecks: json("bottlenecks").$type<string[]>(),
+  recommendations: json("recommendations").$type<string[]>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AgentProfile = typeof agentProfiles.$inferSelect;
+export type InsertAgentProfile = typeof agentProfiles.$inferInsert;
+
+// Agent Certification
+export const agentCertifications = mysqlTable("agent_certifications", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  certificationLevel: mysqlEnum("certificationLevel", ["bronze", "silver", "gold", "platinum"]).notNull(),
+  securityScore: decimal("securityScore", { precision: 5, scale: 2 }).default("0.00"),
+  performanceScore: decimal("performanceScore", { precision: 5, scale: 2 }).default("0.00"),
+  reliabilityScore: decimal("reliabilityScore", { precision: 5, scale: 2 }).default("0.00"),
+  trustScore: decimal("trustScore", { precision: 5, scale: 2 }).default("0.00"),
+  certifiedAt: timestamp("certifiedAt"),
+  expiresAt: timestamp("expiresAt"),
+  status: mysqlEnum("status", ["pending", "certified", "suspended", "revoked"]).default("pending"),
+  auditNotes: text("auditNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AgentCertification = typeof agentCertifications.$inferSelect;
+export type InsertAgentCertification = typeof agentCertifications.$inferInsert;
+
+// Certification Audit Log
+export const certificationAudits = mysqlTable("certification_audits", {
+  id: int("id").autoincrement().primaryKey(),
+  certificationId: int("certificationId").notNull().references(() => agentCertifications.id, { onDelete: "cascade" }),
+  auditType: varchar("auditType", { length: 100 }).notNull(),
+  findings: json("findings").$type<Record<string, any>>(),
+  issues: json("issues").$type<string[]>(),
+  recommendations: json("recommendations").$type<string[]>(),
+  auditorId: int("auditorId").notNull().references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CertificationAudit = typeof certificationAudits.$inferSelect;
+export type InsertCertificationAudit = typeof certificationAudits.$inferInsert;
+
+// Security Scan Results
+export const securityScans = mysqlTable("security_scans", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  scanType: varchar("scanType", { length: 100 }).notNull(),
+  vulnerabilities: json("vulnerabilities").$type<Array<{ severity: string; description: string }>>(),
+  riskScore: decimal("riskScore", { precision: 5, scale: 2 }),
+  status: mysqlEnum("status", ["passed", "warning", "failed"]).notNull(),
+  scanDate: timestamp("scanDate").defaultNow().notNull(),
+  remediationDeadline: timestamp("remediationDeadline"),
+});
+export type SecurityScan = typeof securityScans.$inferSelect;
+export type InsertSecurityScan = typeof securityScans.$inferInsert;
+
+// Performance Benchmarks
+export const performanceBenchmarks = mysqlTable("performance_benchmarks", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  benchmarkName: varchar("benchmarkName", { length: 255 }).notNull(),
+  testCases: json("testCases").$type<number>().default(0),
+  passedTests: json("passedTests").$type<number>().default(0),
+  failedTests: json("failedTests").$type<number>().default(0),
+  averageResponseTime: int("averageResponseTime"),
+  p95ResponseTime: int("p95ResponseTime"),
+  p99ResponseTime: int("p99ResponseTime"),
+  throughput: decimal("throughput", { precision: 10, scale: 2 }),
+  benchmarkDate: timestamp("benchmarkDate").defaultNow().notNull(),
+});
+export type PerformanceBenchmark = typeof performanceBenchmarks.$inferSelect;
+export type InsertPerformanceBenchmark = typeof performanceBenchmarks.$inferInsert;

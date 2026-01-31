@@ -23,6 +23,9 @@ import { anomalyDetectionRouter } from "./routers/anomalyDetection";
 import { predictiveAlertsRouter } from "./routers/predictiveAlerts";
 import { suppressionRulesRouter } from "./routers/suppressionRules";
 import { agentInfrastructureRouter } from "./routers/agentInfrastructure";
+import { agentVersioningRouter } from "./routers/agentVersioning";
+import { agentProfilingRouter } from "./routers/agentProfiling";
+import { agentCertificationRouter } from "./routers/agentCertification";
 
 export const appRouter = router({
   system: systemRouter,
@@ -430,5 +433,8 @@ export const appRouter = router({
   predictiveAlerts: predictiveAlertsRouter,
   suppressionRules: suppressionRulesRouter,
   agentInfrastructure: agentInfrastructureRouter,
+  agentVersioning: agentVersioningRouter,
+  agentProfiling: agentProfilingRouter,
+  agentCertification: agentCertificationRouter,
 });
 export type AppRouter = typeof appRouter;
