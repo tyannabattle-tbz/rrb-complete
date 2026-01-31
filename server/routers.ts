@@ -26,6 +26,8 @@ import { agentInfrastructureRouter } from "./routers/agentInfrastructure";
 import { agentVersioningRouter } from "./routers/agentVersioning";
 import { agentProfilingRouter } from "./routers/agentProfiling";
 import { agentCertificationRouter } from "./routers/agentCertification";
+import { agentMarketplaceRouter } from "./routers/agentMarketplace";
+import { orchestrationRouter } from "./routers/orchestration";
 import { adminDashboardRouter } from "./routers/adminDashboard";
 import { costOptimizationRouter } from "./routers/costOptimization";
 import { integrationMarketplaceRouter } from "./routers/integrationMarketplace";
@@ -442,6 +444,8 @@ export const appRouter = router({
   agentVersioning: agentVersioningRouter,
   agentProfiling: agentProfilingRouter,
   agentCertification: agentCertificationRouter,
+  agentMarketplace: agentMarketplaceRouter,
+  orchestration: orchestrationRouter,
   adminDashboard: adminDashboardRouter,
   costOptimization: costOptimizationRouter,
   integrationMarketplace: integrationMarketplaceRouter,

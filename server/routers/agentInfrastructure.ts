@@ -21,7 +21,7 @@ export const agentInfrastructureRouter = router({
         agentType: z.enum(["reasoning", "execution", "monitoring", "coordination", "custom"]),
         description: z.string().optional(),
         capabilities: z.array(z.string()).optional(),
-        configuration: z.record(z.any()).optional(),
+        configuration: z.record(z.string(), z.any()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -119,7 +119,7 @@ export const agentInfrastructureRouter = router({
         toolType: z.enum(["api", "database", "file_system", "computation", "external_service"]),
         description: z.string().optional(),
         endpoint: z.string().optional(),
-        parameters: z.record(z.any()).optional(),
+        parameters: z.record(z.string(), z.any()).optional(),
         rateLimit: z.number().optional(),
         timeout: z.number().optional(),
       })

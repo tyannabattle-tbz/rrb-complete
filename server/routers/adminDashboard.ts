@@ -66,7 +66,7 @@ export const adminDashboardRouter = router({
         action: z.string(),
         targetType: z.string().optional(),
         targetId: z.number().optional(),
-        changes: z.record(z.any()).optional(),
+        changes: z.record(z.string(), z.any()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -198,7 +198,7 @@ export const adminDashboardRouter = router({
 
   // Update system configuration
   updateSystemConfiguration: protectedProcedure
-    .input(z.record(z.any()))
+    .input(z.record(z.string(), z.any()))
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new Error("Unauthorized");
       const db = await getDb();

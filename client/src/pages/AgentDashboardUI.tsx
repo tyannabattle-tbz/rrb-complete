@@ -10,10 +10,13 @@ export default function AgentDashboardUI() {
   const [selectedAgent, setSelectedAgent] = useState<any>(null);
   const [metrics, setMetrics] = useState<any>(null);
 
-  const listAgents = trpc.agent.listAgents.useQuery();
-  const getMetrics = trpc.agent.getMetrics.useQuery(selectedAgent?.id || 0, {
-    enabled: !!selectedAgent,
-  });
+  const listAgents = trpc.agentMarketplace.listAgents.useQuery({});
+  const getMetrics = trpc.agentInfrastructure.getPerformanceMetrics.useQuery(
+    { agentId: selectedAgent?.id || 0 },
+    {
+      enabled: !!selectedAgent,
+    }
+  );
 
   useEffect(() => {
     if (listAgents.data) {

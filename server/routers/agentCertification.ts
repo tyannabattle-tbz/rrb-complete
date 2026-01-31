@@ -2,7 +2,7 @@ import { router, protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { getDb } from "../db";
 import { agentCertifications, certificationAudits, securityScans } from "../../drizzle/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
 export const agentCertificationRouter = router({
   // Create certification request
@@ -131,7 +131,7 @@ export const agentCertificationRouter = router({
       z.object({
         certificationId: z.number(),
         auditType: z.string(),
-        findings: z.record(z.any()),
+        findings: z.record(z.string(), z.any()),
         issues: z.array(z.string()).optional(),
         recommendations: z.array(z.string()).optional(),
       })
@@ -228,16 +228,18 @@ export const agentCertificationRouter = router({
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
 
-      let query = db
-        .select()
-        .from(agentCertifications)
-        .where(eq(agentCertifications.status, "certified" as any));
+      const conditions = [eq(agentCertifications.status, "certified" as any)];
 
       if (input.level) {
-        query = query.where(eq(agentCertifications.certificationLevel, input.level as any));
+        conditions.push(eq(agentCertifications.certificationLevel, input.level as any));
       }
 
-      const certs = await query.orderBy(desc(agentCertifications.trustScore)).limit(input.limit);
+      const certs = await db
+        .select()
+        .from(agentCertifications)
+        .where(and(...conditions))
+        .orderBy(desc(agentCertifications.trustScore))
+        .limit(input.limit);
 
       return certs;
     }),

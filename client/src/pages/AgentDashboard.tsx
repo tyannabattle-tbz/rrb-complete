@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
@@ -27,7 +27,7 @@ import DashboardWidgets from "@/components/DashboardWidgets";
 import BatchOperations from "@/components/BatchOperations";
 import SessionTemplates from "@/components/SessionTemplates";
 import RealtimeCollaboration from "@/components/RealtimeCollaboration";
-import { useCallback } from "react";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -174,11 +174,31 @@ export default function AgentDashboard() {
             </TabsList>
 
             <TabsContent value="chat" className="mt-4">
-              <ChatInterface 
-                messages={polling.messages.map(m => ({ id: String(m.id), timestamp: m.createdAt, role: m.role, content: m.content }))} 
-                onSendMessage={handleSendMessage} 
-                isLoading={polling.isLoading} 
-              />
+              {!activeSession ? (
+                <div className="flex items-center justify-center h-96">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold mb-2">No Session Active</h3>
+                    <p className="text-muted-foreground mb-4">Click "New Session" to start a chat</p>
+                    <Button onClick={handleCreateSession} disabled={createSessionMutation.isPending}>
+                      {createSessionMutation.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Creating...
+                        </>
+                      ) : (
+                        "New Session"
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <ChatInterface 
+                  messages={polling.messages.map(m => ({ id: String(m.id), timestamp: m.createdAt, role: m.role, content: m.content }))} 
+                  onSendMessage={handleSendMessage} 
+                  isLoading={polling.isLoading} 
+                  sessionId={activeSession}
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="tools" className="mt-4">

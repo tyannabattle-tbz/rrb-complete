@@ -83,7 +83,7 @@ export const integrationMarketplaceRouter = router({
     .input(
       z.object({
         integrationId: z.number(),
-        configuration: z.record(z.any()).optional(),
+        configuration: z.record(z.string(), z.any()).optional(),
         apiKey: z.string().optional(),
       })
     )
@@ -125,7 +125,7 @@ export const integrationMarketplaceRouter = router({
     .input(
       z.object({
         userIntegrationId: z.number(),
-        configuration: z.record(z.any()),
+        configuration: z.record(z.string(), z.any()),
         webhookUrl: z.string().optional(),
       })
     )
@@ -176,7 +176,7 @@ export const integrationMarketplaceRouter = router({
       const logs = await db
         .select()
         .from(integrationLogs)
-        .where(eq(integrationLogs.userIntegrationId, input.userIntegrationId))
+        .where(eq(integrationLogs.userId, ctx.user.id))
         .orderBy(desc(integrationLogs.createdAt))
         .limit(input.limit);
 
@@ -207,7 +207,7 @@ export const integrationMarketplaceRouter = router({
       z.object({
         userIntegrationId: z.number(),
         eventType: z.string(),
-        payload: z.record(z.any()),
+        payload: z.record(z.string(), z.any()),
       })
     )
     .mutation(async ({ ctx, input }) => {

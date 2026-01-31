@@ -12,7 +12,7 @@ export const agentVersioningRouter = router({
         agentId: z.number(),
         version: z.string(),
         versionTag: z.string().optional(),
-        configuration: z.record(z.any()).optional(),
+        configuration: z.record(z.string(), z.any()).optional(),
         changes: z.array(z.string()).optional(),
         isStable: z.boolean().optional(),
       })

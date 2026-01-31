@@ -61,14 +61,17 @@ export const orchestrationRouter = router({
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
 
-      await db.update(orchestrationTasks).set({ status: "running" as any, startTime: new Date() }).where(eq(orchestrationTasks.id, input.taskId));
+      await db
+        .update(orchestrationTasks)
+        .set({ status: "running" as any, startTime: new Date() })
+        .where(eq(orchestrationTasks.id, input.taskId));
 
       return { success: true };
     }),
 
   // Complete orchestration task
   completeTask: protectedProcedure
-    .input(z.object({ taskId: z.number(), result: z.record(z.any()).optional() }))
+    .input(z.object({ taskId: z.number(), result: z.record(z.string(), z.any()).optional() }))
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new Error("Unauthorized");
       const db = await getDb();
@@ -76,7 +79,7 @@ export const orchestrationRouter = router({
 
       await db
         .update(orchestrationTasks)
-        .set({ status: "completed" as any, endTime: new Date(), result: input.result })
+        .set({ status: "completed" as any, endTime: new Date(), result: input.result } as any)
         .where(eq(orchestrationTasks.id, input.taskId));
 
       return { success: true };
@@ -89,7 +92,7 @@ export const orchestrationRouter = router({
         orchestrationTaskId: z.number(),
         agentId: z.number(),
         role: z.enum(["leader", "worker", "monitor", "coordinator"]),
-        taskAssignment: z.record(z.any()).optional(),
+        taskAssignment: z.record(z.string(), z.any()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -130,7 +133,7 @@ export const orchestrationRouter = router({
       z.object({
         orchestrationTaskId: z.number(),
         agentId: z.number(),
-        resultData: z.record(z.any()),
+        resultData: z.record(z.string(), z.any()),
         executionTime: z.number().optional(),
         tokensUsed: z.number().optional(),
         cost: z.number().optional(),
@@ -195,7 +198,7 @@ export const orchestrationRouter = router({
         agentId2: z.number(),
         conflictType: z.string(),
         resolution: z.enum(["agent1_priority", "agent2_priority", "merge", "retry", "escalate"]),
-        details: z.record(z.any()).optional(),
+        details: z.record(z.string(), z.any()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

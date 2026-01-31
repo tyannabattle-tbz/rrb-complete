@@ -2,7 +2,7 @@ import { router, protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { getDb } from "../db";
 import { agentMarketplace, agentReviews, agentInstallations, agentRegistry } from "../../drizzle/schema";
-import { eq, desc, and, gte, lte, like } from "drizzle-orm";
+import { eq, desc, and, gte, lte, like, or } from "drizzle-orm";
 
 export const agentMarketplaceRouter = router({
   // List marketplace agents with filtering
@@ -21,22 +21,24 @@ export const agentMarketplaceRouter = router({
       const db = await getDb();
       if (!db) throw new Error("Database connection failed");
 
-      let query = db.select().from(agentMarketplace).where(eq(agentMarketplace.isPublished, true));
+      const conditions = [eq(agentMarketplace.isPublished, true)];
 
       if (input.category) {
-        query = query.where(eq(agentMarketplace.category, input.category));
+        conditions.push(eq(agentMarketplace.category, input.category));
       }
 
       if (input.search) {
-        query = query.where(like(agentMarketplace.agentName, `%${input.search}%`));
+        conditions.push(like(agentMarketplace.agentName, `%${input.search}%`));
       }
 
+      let query = db.select().from(agentMarketplace).where(and(...conditions)).orderBy(desc(agentMarketplace.createdAt));
+
       if (input.sortBy === "rating") {
-        query = query.orderBy(desc(agentMarketplace.rating));
+        query = db.select().from(agentMarketplace).where(and(...conditions)).orderBy(desc(agentMarketplace.rating));
       } else if (input.sortBy === "downloads") {
-        query = query.orderBy(desc(agentMarketplace.downloads));
+        query = db.select().from(agentMarketplace).where(and(...conditions)).orderBy(desc(agentMarketplace.downloads));
       } else if (input.sortBy === "recent") {
-        query = query.orderBy(desc(agentMarketplace.createdAt));
+        query = db.select().from(agentMarketplace).where(and(...conditions)).orderBy(desc(agentMarketplace.createdAt));
       }
 
       const agents = await query.limit(input.limit).offset(input.offset);
@@ -132,7 +134,7 @@ export const agentMarketplaceRouter = router({
       z.object({
         marketplaceAgentId: z.number(),
         agentName: z.string(),
-        configuration: z.record(z.any()).optional(),
+        configuration: z.record(z.string(), z.any()).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
