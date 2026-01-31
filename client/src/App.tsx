@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import AgentDashboard from "./pages/AgentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import { AdminAnalyticsDashboard } from "./pages/AdminAnalyticsDashboard";
 import WebhookMarketplace from "./pages/WebhookMarketplace";
 import ModelFineTuning from "./pages/ModelFineTuning";
 
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
       <Route path="/marketplace" component={WebhookMarketplace} />
       <Route path="/finetuning" component={ModelFineTuning} />
       <Route path="/404" component={NotFound} />

@@ -27,6 +27,9 @@ import DashboardWidgets from "@/components/DashboardWidgets";
 import BatchOperations from "@/components/BatchOperations";
 import SessionTemplates from "@/components/SessionTemplates";
 import RealtimeCollaboration from "@/components/RealtimeCollaboration";
+import { AgentCloningUI } from "@/pages/AgentCloningUI";
+import { UsageQuotasUI } from "@/pages/UsageQuotasUI";
+import { CollaborationInvitesUI } from "@/pages/CollaborationInvitesUI";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -183,13 +186,16 @@ export default function AgentDashboard() {
           </div>
         ) : (
           <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
+            <TabsList className="grid w-full grid-cols-9">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
               <TabsTrigger value="tasks">Tasks</TabsTrigger>
               <TabsTrigger value="files">Files</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="clone">Clone</TabsTrigger>
+              <TabsTrigger value="quotas">Quotas</TabsTrigger>
+              <TabsTrigger value="invites">Invites</TabsTrigger>
             </TabsList>
 
             <TabsContent value="chat" className="mt-4">
@@ -238,6 +244,18 @@ export default function AgentDashboard() {
 
             <TabsContent value="analytics" className="mt-4">
               <AnalyticsDashboard sessionId={activeSession || 0} />
+            </TabsContent>
+
+            <TabsContent value="clone" className="mt-4">
+              <AgentCloningUI />
+            </TabsContent>
+
+            <TabsContent value="quotas" className="mt-4">
+              <UsageQuotasUI />
+            </TabsContent>
+
+            <TabsContent value="invites" className="mt-4">
+              <CollaborationInvitesUI />
             </TabsContent>
           </Tabs>
         )}
