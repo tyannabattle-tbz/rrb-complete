@@ -156,21 +156,30 @@ export async function createAgentSession(userId: number, sessionName: string, co
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const result = await db.insert(agentSessions).values({
-    userId,
-    sessionName,
-    systemPrompt: config.systemPrompt,
-    temperature: config.temperature ?? 70,
-    model: config.model ?? "gpt-4-turbo",
-    maxSteps: config.maxSteps ?? 50,
-  });
-  
-  // Get the inserted session
-  const sessions = await db.select().from(agentSessions).where(
-    eq(agentSessions.userId, userId)
-  ).orderBy(desc(agentSessions.createdAt)).limit(1);
-  
-  return sessions[0]?.id || 0;
+  try {
+    const result = await db.insert(agentSessions).values({
+      userId,
+      sessionName,
+      systemPrompt: config.systemPrompt,
+      temperature: config.temperature ?? 70,
+      model: config.model ?? "gpt-4-turbo",
+      maxSteps: config.maxSteps ?? 50,
+    });
+    
+    // Get the inserted session
+    const sessions = await db.select().from(agentSessions).where(
+      eq(agentSessions.userId, userId)
+    ).orderBy(desc(agentSessions.createdAt)).limit(1);
+    
+    if (!sessions[0]) {
+      throw new Error("Failed to create session: Session not found after insert");
+    }
+    
+    return sessions[0].id;
+  } catch (error) {
+    console.error("[DB] Error creating agent session:", error);
+    throw error;
+  }
 }
 
 export async function getAgentSession(sessionId: number) {
