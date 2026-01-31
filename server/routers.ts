@@ -508,5 +508,8 @@ export const appRouter = router({
   advancedSearch: advancedSearchRouter,
   customDashboards: customDashboardsRouter,
   automatedReports: automatedReportsRouter,
+  websocket: websocketRouter,
+  templateMarketplace: templateMarketplaceRouter,
+  analyticsDashboard: analyticsDashboardRouter,
 });
 export type AppRouter = typeof appRouter;

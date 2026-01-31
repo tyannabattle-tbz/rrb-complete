@@ -156,7 +156,12 @@ export default function AgentDashboard() {
   }
 
   return (
-    <AgentLayout>
+    <AgentLayout
+      currentSessionId={activeSession || undefined}
+      sessions={sessions}
+      onNewSession={handleCreateSession}
+      onSelectSession={setActiveSession}
+    >
       <div className="p-4">
         {sessionsLoading ? (
           <div className="flex items-center justify-center h-96">
