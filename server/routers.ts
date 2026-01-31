@@ -58,6 +58,9 @@ import { performanceAnalyticsRouter } from "./routers/performanceAnalytics";
 import { tokenBudgetingRouter } from "./routers/tokenBudgeting";
 import { webhookAlertsRouter } from "./routers/webhookAlerts";
 import { usageForecastingRouter } from "./routers/usageForecasting";
+import { budgetEnforcementRouter } from "./routers/budgetEnforcement";
+import { costAttributionRouter } from "./routers/costAttribution";
+import { spendingReportsRouter } from "./routers/spendingReports";
 
 export const appRouter = router({
   system: systemRouter,
@@ -560,5 +563,8 @@ export const appRouter = router({
   tokenBudgeting: tokenBudgetingRouter,
   webhookAlerts: webhookAlertsRouter,
   usageForecasting: usageForecastingRouter,
+  budgetEnforcement: budgetEnforcementRouter,
+  costAttribution: costAttributionRouter,
+  spendingReports: spendingReportsRouter,
 });
 export type AppRouter = typeof appRouter;
