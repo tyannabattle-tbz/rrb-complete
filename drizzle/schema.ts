@@ -971,3 +971,182 @@ export const anomalyRules = mysqlTable("anomaly_rules", {
 });
 export type AnomalyRule = typeof anomalyRules.$inferSelect;
 export type InsertAnomalyRule = typeof anomalyRules.$inferInsert;
+
+
+// Predictive Anomaly Alerts
+export const predictiveAlerts = mysqlTable("predictive_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  metricType: varchar("metricType", { length: 64 }).notNull(),
+  predictedValue: decimal("predictedValue", { precision: 10, scale: 4 }).notNull(),
+  confidenceScore: decimal("confidenceScore", { precision: 5, scale: 2 }).notNull(), // 0-100
+  predictedAt: timestamp("predictedAt").notNull(),
+  expectedOccurrenceTime: timestamp("expectedOccurrenceTime").notNull(),
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium"),
+  proactiveActions: json("proactiveActions").$type<string[]>(),
+  triggered: boolean("triggered").default(false),
+  triggeredAt: timestamp("triggeredAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type PredictiveAlert = typeof predictiveAlerts.$inferSelect;
+export type InsertPredictiveAlert = typeof predictiveAlerts.$inferInsert;
+
+// Anomaly Suppression Rules
+export const suppressionRules = mysqlTable("suppression_rules", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  ruleName: varchar("ruleName", { length: 255 }).notNull(),
+  ruleDescription: text("ruleDescription"),
+  anomalyType: varchar("anomalyType", { length: 64 }).notNull(),
+  condition: text("condition").notNull(), // JSON condition
+  suppressionDuration: int("suppressionDuration"), // in minutes, null = permanent
+  startTime: timestamp("startTime"),
+  endTime: timestamp("endTime"),
+  isActive: boolean("isActive").default(true),
+  suppressionCount: int("suppressionCount").default(0),
+  lastSuppressionAt: timestamp("lastSuppressionAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SuppressionRule = typeof suppressionRules.$inferSelect;
+export type InsertSuppressionRule = typeof suppressionRules.$inferInsert;
+
+// Anomaly Reports
+export const anomalyReports = mysqlTable("anomaly_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  reportName: varchar("reportName", { length: 255 }).notNull(),
+  reportType: mysqlEnum("reportType", ["daily", "weekly", "monthly", "custom"]).notNull(),
+  startDate: timestamp("startDate").notNull(),
+  endDate: timestamp("endDate").notNull(),
+  totalAnomalies: int("totalAnomalies").default(0),
+  criticalCount: int("criticalCount").default(0),
+  highCount: int("highCount").default(0),
+  resolvedCount: int("resolvedCount").default(0),
+  trendAnalysis: json("trendAnalysis").$type<Record<string, any>>(),
+  impactAssessment: json("impactAssessment").$type<Record<string, any>>(),
+  recommendations: json("recommendations").$type<string[]>(),
+  reportContent: text("reportContent"),
+  format: mysqlEnum("format", ["pdf", "csv", "json", "html"]).default("pdf"),
+  emailDelivery: json("emailDelivery").$type<{ recipients: string[]; sent: boolean; sentAt?: string }>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AnomalyReport = typeof anomalyReports.$inferSelect;
+export type InsertAnomalyReport = typeof anomalyReports.$inferInsert;
+
+// Agent Infrastructure - Agent Registry
+export const agentRegistry = mysqlTable("agent_registry", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  agentName: varchar("agentName", { length: 255 }).notNull(),
+  agentType: mysqlEnum("agentType", ["reasoning", "execution", "monitoring", "coordination", "custom"]).notNull(),
+  description: text("description"),
+  version: varchar("version", { length: 64 }).default("1.0.0"),
+  status: mysqlEnum("status", ["active", "inactive", "maintenance", "deprecated"]).default("active"),
+  capabilities: json("capabilities").$type<string[]>(),
+  configuration: json("configuration").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AgentRegistry = typeof agentRegistry.$inferSelect;
+export type InsertAgentRegistry = typeof agentRegistry.$inferInsert;
+
+// Agent State & Memory
+export const agentMemory = mysqlTable("agent_memory", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  memoryType: mysqlEnum("memoryType", ["short_term", "long_term", "episodic", "semantic"]).notNull(),
+  key: varchar("key", { length: 255 }).notNull(),
+  value: text("value").notNull(), // JSON serialized
+  importance: int("importance").default(5), // 1-10 scale
+  accessCount: int("accessCount").default(0),
+  lastAccessedAt: timestamp("lastAccessedAt"),
+  expiresAt: timestamp("expiresAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AgentMemory = typeof agentMemory.$inferSelect;
+export type InsertAgentMemory = typeof agentMemory.$inferInsert;
+
+// Agent Tools & Integrations
+export const agentTools = mysqlTable("agent_tools", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  toolName: varchar("toolName", { length: 255 }).notNull(),
+  toolType: mysqlEnum("toolType", ["api", "database", "file_system", "computation", "external_service"]).notNull(),
+  description: text("description"),
+  endpoint: varchar("endpoint", { length: 512 }),
+  authentication: json("authentication").$type<Record<string, any>>(),
+  parameters: json("parameters").$type<Record<string, any>>(),
+  rateLimit: int("rateLimit"), // requests per minute
+  timeout: int("timeout").default(30000), // milliseconds
+  isActive: boolean("isActive").default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AgentTool = typeof agentTools.$inferSelect;
+export type InsertAgentTool = typeof agentTools.$inferInsert;
+
+// Agent Execution Logs
+export const agentExecutionLogs = mysqlTable("agent_execution_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  executionType: mysqlEnum("executionType", ["task", "tool_call", "reasoning_step", "decision_point"]).notNull(),
+  input: text("input"), // JSON
+  output: text("output"), // JSON
+  status: mysqlEnum("status", ["pending", "running", "success", "failed", "timeout"]).notNull(),
+  errorMessage: text("errorMessage"),
+  executionTime: int("executionTime"), // milliseconds
+  resourcesUsed: json("resourcesUsed").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AgentExecutionLog = typeof agentExecutionLogs.$inferSelect;
+export type InsertAgentExecutionLog = typeof agentExecutionLogs.$inferInsert;
+
+// Agent Reasoning Chains
+export const reasoningChains = mysqlTable("reasoning_chains", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  chainType: mysqlEnum("chainType", ["chain_of_thought", "tree_of_thought", "graph_of_thought"]).notNull(),
+  steps: json("steps").$type<Array<{ step: number; thought: string; action: string; result: string }>>(),
+  finalConclusion: text("finalConclusion"),
+  confidence: decimal("confidence", { precision: 5, scale: 2 }).default("0"), // 0-100
+  tokensUsed: int("tokensUsed").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ReasoningChain = typeof reasoningChains.$inferSelect;
+export type InsertReasoningChain = typeof reasoningChains.$inferInsert;
+
+// Agent Collaboration
+export const agentCollaboration = mysqlTable("agent_collaboration", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
+  initiatorAgentId: int("initiatorAgentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  collaboratorAgentId: int("collaboratorAgentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  collaborationType: mysqlEnum("collaborationType", ["sequential", "parallel", "hierarchical", "peer"]).notNull(),
+  message: text("message"),
+  response: text("response"),
+  status: mysqlEnum("status", ["pending", "acknowledged", "completed", "failed"]).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type AgentCollaboration = typeof agentCollaboration.$inferSelect;
+export type InsertAgentCollaboration = typeof agentCollaboration.$inferInsert;
+
+// Agent Performance Metrics
+export const agentPerformanceMetrics = mysqlTable("agent_performance_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull().references(() => agentRegistry.id, { onDelete: "cascade" }),
+  taskSuccessRate: decimal("taskSuccessRate", { precision: 5, scale: 2 }).default("0"), // 0-100
+  averageExecutionTime: int("averageExecutionTime").default(0), // milliseconds
+  totalTasksCompleted: int("totalTasksCompleted").default(0),
+  totalTasksFailed: int("totalTasksFailed").default(0),
+  averageTokensPerTask: int("averageTokensPerTask").default(0),
+  costPerTask: decimal("costPerTask", { precision: 10, scale: 4 }).default("0"),
+  uptime: decimal("uptime", { precision: 5, scale: 2 }).default("100"), // 0-100
+  lastHealthCheck: timestamp("lastHealthCheck"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AgentPerformanceMetrics = typeof agentPerformanceMetrics.$inferSelect;
+export type InsertAgentPerformanceMetrics = typeof agentPerformanceMetrics.$inferInsert;

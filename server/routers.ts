@@ -20,6 +20,9 @@ import { analyticsRouter } from "./routers/analytics";
 import { collaborationRouter } from "./routers/collaboration";
 import { billingRouter } from "./routers/billing";
 import { anomalyDetectionRouter } from "./routers/anomalyDetection";
+import { predictiveAlertsRouter } from "./routers/predictiveAlerts";
+import { suppressionRulesRouter } from "./routers/suppressionRules";
+import { agentInfrastructureRouter } from "./routers/agentInfrastructure";
 
 export const appRouter = router({
   system: systemRouter,
@@ -424,5 +427,8 @@ export const appRouter = router({
   collaboration: collaborationRouter,
   billing: billingRouter,
   anomalyDetection: anomalyDetectionRouter,
+  predictiveAlerts: predictiveAlertsRouter,
+  suppressionRules: suppressionRulesRouter,
+  agentInfrastructure: agentInfrastructureRouter,
 });
 export type AppRouter = typeof appRouter;
