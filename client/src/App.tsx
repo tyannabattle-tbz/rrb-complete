@@ -10,6 +10,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import { AdminAnalyticsDashboard } from "./pages/AdminAnalyticsDashboard";
 import { SettingsPanel } from "./pages/SettingsPanel";
 import { APIDocumentation } from "./pages/APIDocumentation";
+import { TeamManagement } from "./pages/TeamManagement";
+import { KeyboardShortcutsGuide } from "./components/KeyboardShortcutsGuide";
 import WebhookMarketplace from "./pages/WebhookMarketplace";
 import ModelFineTuning from "./pages/ModelFineTuning";
 
@@ -22,6 +24,7 @@ function Router() {
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
+      <Route path="/team" component={TeamManagement} />
       <Route path="/marketplace" component={WebhookMarketplace} />
       <Route path="/finetuning" component={ModelFineTuning} />
       <Route path="/404" component={NotFound} />
@@ -44,6 +47,7 @@ function App() {
       >
         <TooltipProvider>
           <Toaster />
+          <KeyboardShortcutsGuide />
           <Router />
         </TooltipProvider>
       </ThemeProvider>
