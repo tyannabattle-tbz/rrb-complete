@@ -23,35 +23,7 @@ export default function NotificationCenter({
   onNotificationClick,
 }: NotificationCenterProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: 1,
-      type: "session_update",
-      title: "Session Updated",
-      message: "Your session #42 status changed to completed",
-      read: false,
-      createdAt: new Date(Date.now() - 3600000),
-      actionUrl: "/session/42",
-    },
-    {
-      id: 2,
-      type: "team_activity",
-      title: "Team Activity",
-      message: "Alice Johnson shared a session with you",
-      read: false,
-      createdAt: new Date(Date.now() - 7200000),
-      actionUrl: "/shared",
-    },
-    {
-      id: 3,
-      type: "search_result",
-      title: "Search Complete",
-      message: 'Found 15 results for "data analysis"',
-      read: true,
-      createdAt: new Date(Date.now() - 86400000),
-      actionUrl: "/search?q=data%20analysis",
-    },
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -92,8 +64,16 @@ export default function NotificationCenter({
   };
 
   const handleDelete = (id: number) => {
-    setNotifications(notifications.filter((n) => n.id !== id));
-    toast.success("Notification deleted");
+    setNotifications((prevNotifications) => 
+      prevNotifications.filter((n) => n.id !== id)
+    );
+    toast.success("Notification dismissed");
+  };
+
+  const handleClearAll = () => {
+    setNotifications([]);
+    setIsOpen(false);
+    toast.success("All notifications cleared");
   };
 
   const handleMarkAllAsRead = () => {
@@ -133,15 +113,27 @@ export default function NotificationCenter({
           <div className="sticky top-0 bg-background border-b p-4 flex items-center justify-between">
             <h3 className="font-semibold">Notifications</h3>
             <div className="flex items-center gap-2">
-              {unreadCount > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleMarkAllAsRead}
-                  className="text-xs"
-                >
-                  Mark all as read
-                </Button>
+              {notifications.length > 0 && (
+                <>
+                  {unreadCount > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleMarkAllAsRead}
+                      className="text-xs"
+                    >
+                      Mark all as read
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleClearAll}
+                    className="text-xs"
+                  >
+                    Clear all
+                  </Button>
+                </>
               )}
               <button
                 onClick={() => setIsOpen(false)}
@@ -176,7 +168,7 @@ export default function NotificationCenter({
                       <h4 className="font-semibold text-sm">
                         {notification.title}
                       </h4>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-3 hover:line-clamp-none transition-all" title={notification.message}>
                         {notification.message}
                       </p>
                       <p className="text-xs text-muted-foreground mt-2">

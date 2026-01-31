@@ -34,7 +34,7 @@ export default function ChatMessage({
       }`}
     >
       <div
-        className={`max-w-2xl group ${
+        className={`max-w-4xl group ${
           isUser ? "order-2" : "order-1"
         }`}
       >

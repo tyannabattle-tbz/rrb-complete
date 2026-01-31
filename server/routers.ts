@@ -73,6 +73,8 @@ import { promptVersioningRouter } from './routers/promptVersioning';
 import { agentPerformanceMetricsRouter } from './routers/agentPerformanceMetrics';
 import { workflowTemplatesRouter } from './routers/workflowTemplates';
 
+import { abTestingRouter } from "./routers/abTesting";
+import { auditTrailUIRouter } from "./routers/auditTrailUI";
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -583,5 +585,7 @@ export const appRouter = router({
   voiceInput: voiceInputRouter,
   textToSpeech: textToSpeechRouter,
   conversationSummaries: conversationSummariesRouter,
+  abTesting: abTestingRouter,
+  auditTrail: auditTrailUIRouter,
 });
 export type AppRouter = typeof appRouter;
