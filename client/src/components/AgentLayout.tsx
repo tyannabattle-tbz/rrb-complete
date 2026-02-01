@@ -84,7 +84,7 @@ export default function AgentLayout({
 
       {/* Sidebar */}
       <aside
-        className={`${sidebarClass} bg-card border-r border-border transition-all duration-300 flex flex-col ${isMobile ? 'fixed left-0 top-0 h-screen z-50' : ''}`}
+        className={`${sidebarClass} bg-card border-r border-border transition-all duration-300 flex flex-col ${isMobile ? `fixed left-0 top-0 h-screen z-50 ${!sidebarOpen ? '-translate-x-full' : ''}` : ''}`}
       >
         {/* Header */}
         <div className="p-4 border-b border-border flex items-center justify-between">

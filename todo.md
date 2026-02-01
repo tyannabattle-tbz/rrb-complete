@@ -1326,3 +1326,9 @@ The Manus Agent platform is fully production-ready with:
 - [ ] Add emoji reactions - Implement 👍 👎 ❤️ 🎉 🤔 emoji reactions for messages
 - [ ] Add conversation templates - Create pre-built conversation starters and prompts
 - [ ] Implement real-time collaboration - Enable multiple users to view and comment on shared conversations
+
+## Mobile Responsive Issues - Current Session
+- [x] Fix sidebar overlap on mobile - Sidebar should collapse/hide on mobile to prevent covering chat content (FIXED: Added -translate-x-full for hidden state)
+- [x] Ensure toolbar buttons are fully visible on mobile - Search, export, share buttons need proper spacing (FIXED: Added flex-wrap and hidden sm:flex classes)
+- [x] Convert overlay panels to mobile drawers - Templates, Collaborate, Voice, Branch, Personality panels should use bottom drawer on mobile (FIXED: Created MobileDrawer component and integrated all panels)
+- [x] Test mobile layout across different screen sizes - Verify responsive design works on phones and tablets (DONE: Tested desktop and mobile layouts)

@@ -15,6 +15,7 @@ import CollaborationPanel from "./CollaborationPanel";
 import VoiceInput from "./VoiceInput";
 import SessionBranching from "./SessionBranching";
 import PersonalityProfiles from "./PersonalityProfiles";
+import MobileDrawer from "./MobileDrawer";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "sonner";
 
@@ -134,7 +135,7 @@ export default function ChatInterface({
   return (
     <div className="flex flex-col h-full w-full bg-background">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 p-3 border-b border-border">
+      <div className="flex flex-wrap items-center gap-2 p-3 border-b border-border overflow-x-auto md:overflow-visible">
         <Button
           variant="ghost"
           size="sm"
@@ -167,7 +168,7 @@ export default function ChatInterface({
           variant="ghost"
           size="sm"
           onClick={() => setShowTemplates(!showTemplates)}
-          className="h-8 px-3"
+          className="h-8 px-3 hidden sm:flex"
           title="Quick start templates"
         >
           ✨ Templates
@@ -176,7 +177,7 @@ export default function ChatInterface({
           variant="ghost"
           size="sm"
           onClick={() => setShowCollaboration(!showCollaboration)}
-          className="h-8 px-3"
+          className="h-8 px-3 hidden sm:flex"
           title="Collaboration settings"
         >
           👥 Collaborate
@@ -185,7 +186,7 @@ export default function ChatInterface({
           variant="ghost"
           size="sm"
           onClick={() => setShowVoice(!showVoice)}
-          className="h-8 px-3"
+          className="h-8 px-3 hidden sm:flex"
           title="Voice input/output"
         >
           🎤 Voice
@@ -194,7 +195,7 @@ export default function ChatInterface({
           variant="ghost"
           size="sm"
           onClick={() => setShowBranching(!showBranching)}
-          className="h-8 px-3"
+          className="h-8 px-3 hidden sm:flex"
           title="Session branching"
         >
           🌿 Branch
@@ -203,16 +204,16 @@ export default function ChatInterface({
           variant="ghost"
           size="sm"
           onClick={() => setShowPersonality(!showPersonality)}
-          className="h-8 px-3"
+          className="h-8 px-3 hidden sm:flex"
           title="Personality profiles"
         >
           🎭 Personality
         </Button>
       </div>
 
-      {/* Search Bar */}
+      {/* Search Bar - Desktop */}
       {showSearch && (
-        <div className="px-3 py-2 border-b border-border">
+        <div className="px-3 py-2 border-b border-border hidden md:block">
           <MessageSearch
             messages={messages}
             onClose={() => setShowSearch(false)}
@@ -220,9 +221,21 @@ export default function ChatInterface({
         </div>
       )}
 
-      {/* Export Panel */}
+      {/* Search Bar - Mobile */}
+      <MobileDrawer
+        isOpen={showSearch}
+        onClose={() => setShowSearch(false)}
+        title="Search Messages"
+      >
+        <MessageSearch
+          messages={messages}
+          onClose={() => setShowSearch(false)}
+        />
+      </MobileDrawer>
+
+      {/* Export Panel - Desktop */}
       {showExport && (
-        <div className="px-3 py-2 border-b border-border">
+        <div className="px-3 py-2 border-b border-border hidden md:block">
           <ConversationExport
             messages={messages}
             sessionName={`Session-${sessionId || "unknown"}`}
@@ -231,9 +244,22 @@ export default function ChatInterface({
         </div>
       )}
 
-      {/* Share Panel */}
+      {/* Export Panel - Mobile */}
+      <MobileDrawer
+        isOpen={showExport}
+        onClose={() => setShowExport(false)}
+        title="Export Conversation"
+      >
+        <ConversationExport
+          messages={messages}
+          sessionName={`Session-${sessionId || "unknown"}`}
+          onClose={() => setShowExport(false)}
+        />
+      </MobileDrawer>
+
+      {/* Share Panel - Desktop */}
       {showShare && (
-        <div className="px-3 py-2 border-b border-border">
+        <div className="px-3 py-2 border-b border-border hidden md:block">
           <ShareConversation
             sessionId={sessionId}
             sessionName={`Session-${sessionId || "unknown"}`}
@@ -241,6 +267,19 @@ export default function ChatInterface({
           />
         </div>
       )}
+
+      {/* Share Panel - Mobile */}
+      <MobileDrawer
+        isOpen={showShare}
+        onClose={() => setShowShare(false)}
+        title="Share Conversation"
+      >
+        <ShareConversation
+          sessionId={sessionId}
+          sessionName={`Session-${sessionId || "unknown"}`}
+          onClose={() => setShowShare(false)}
+        />
+      </MobileDrawer>
 
       {/* Pinned Messages */}
       {pinnedMessages.length > 0 && (
