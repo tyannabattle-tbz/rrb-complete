@@ -382,6 +382,7 @@
 
 ## Bug Fixes - Current Session
 - [x] Fix chat input field visibility - message input appears below viewport and is not accessible (FIXED: Changed ChatInterface from h-screen to h-full)
+- [x] Fix chat message scrolling - messages container is not scrollable, cutting off content at top and bottom (FIXED: Added h-full and flex constraints to parent containers)
 
 ## COMPREHENSIVE SYSTEM CHECK (COMPLETED)
 

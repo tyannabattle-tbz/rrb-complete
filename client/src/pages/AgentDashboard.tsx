@@ -182,13 +182,13 @@ export default function AgentDashboard() {
       onSelectSession={setActiveSession}
       onRenameSession={handleRenameSession}
     >
-      <div className="p-4">
+      <div className="flex flex-col h-full w-full overflow-hidden p-4">
         {sessionsLoading ? (
           <div className="flex items-center justify-center h-96">
             <Loader2 className="w-8 h-8 animate-spin" />
           </div>
         ) : (
-          <Tabs defaultValue="chat" className="w-full">
+          <Tabs defaultValue="chat" className="w-full h-full flex flex-col">
             <TabsList className="grid w-full grid-cols-9">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
@@ -201,7 +201,7 @@ export default function AgentDashboard() {
               <TabsTrigger value="invites">Invites</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="chat" className="mt-4">
+            <TabsContent value="chat" className="mt-4 flex-1 overflow-hidden">
               {!activeSession ? (
                 <div className="flex items-center justify-center h-96">
                   <div className="text-center">
