@@ -34,7 +34,14 @@ import { CollaborationInvitesUI } from "@/pages/CollaborationInvitesUI";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Building2, Search, BarChart3 } from "lucide-react";
+import { Loader2, Building2, Search, BarChart3, MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { useSessionPolling } from "@/hooks/useSessionPolling";
 import { useSessionPersistence } from "@/hooks/useSessionPersistence";
@@ -189,7 +196,8 @@ export default function AgentDashboard() {
           </div>
         ) : (
           <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full grid-cols-9">
+            {/* Desktop: Show all tabs */}
+            <TabsList className="hidden md:grid w-full grid-cols-9">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
@@ -199,6 +207,38 @@ export default function AgentDashboard() {
               <TabsTrigger value="clone">Clone</TabsTrigger>
               <TabsTrigger value="quotas">Quotas</TabsTrigger>
               <TabsTrigger value="invites">Invites</TabsTrigger>
+            </TabsList>
+
+            {/* Mobile: Show only essential tabs + More menu */}
+            <TabsList className="md:hidden grid w-full grid-cols-5 gap-1">
+              <TabsTrigger value="chat" className="text-xs">Chat</TabsTrigger>
+              <TabsTrigger value="tools" className="text-xs">Tools</TabsTrigger>
+              <TabsTrigger value="logs" className="text-xs">Logs</TabsTrigger>
+              <TabsTrigger value="tasks" className="text-xs">Tasks</TabsTrigger>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-10 px-2">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => document.querySelector('[value="files"]')?.click()}>
+                    Files
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => document.querySelector('[value="analytics"]')?.click()}>
+                    Analytics
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => document.querySelector('[value="clone"]')?.click()}>
+                    Clone
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => document.querySelector('[value="quotas"]')?.click()}>
+                    Quotas
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => document.querySelector('[value="invites"]')?.click()}>
+                    Invites
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </TabsList>
 
             <TabsContent value="chat" className="mt-4">
