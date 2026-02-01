@@ -388,6 +388,9 @@
 - [x] Add auto-scroll to latest message - Implement automatic scrolling to the newest message when new messages arrive (DONE: Fixed scroll behavior to only trigger on new messages)
 - [x] Add message timestamps with relative time - Display "2 hours ago" instead of absolute times (DONE: Implemented formatRelativeTime utility)
 - [x] Implement message reactions/feedback - Add thumbs up/down reactions to messages for user feedback (DONE: Added thumbs up/down buttons to AI messages)
+- [x] Add message search functionality - Full-text search across session messages (DONE: Implemented MessageSearch component with live search)
+- [x] Enable message editing - Allow users to edit messages and regenerate AI responses (DONE: Implemented MessageEditor component)
+- [x] Add conversation export - Download conversations as PDF or markdown (DONE: Implemented ConversationExport component with Markdown and Text formats)
 
 ## COMPREHENSIVE SYSTEM CHECK (COMPLETED)
 

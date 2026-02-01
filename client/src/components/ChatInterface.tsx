@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, Search, Download } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import TypingIndicator from "./TypingIndicator";
+import MessageSearch from "./MessageSearch";
+import MessageEditor from "./MessageEditor";
+import ConversationExport from "./ConversationExport";
 import { toast } from "sonner";
 
 interface Message {
@@ -30,6 +33,9 @@ export default function ChatInterface({
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [messageCount, setMessageCount] = useState(0);
+  const [showSearch, setShowSearch] = useState(false);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [showExport, setShowExport] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -72,8 +78,59 @@ export default function ChatInterface({
     toast.success(reaction === "thumbs_up" ? "Helpful feedback recorded!" : "Thanks for the feedback!");
   };
 
+  const handleEditMessage = async (messageId: string, newContent: string) => {
+    toast.success("Message updated (backend integration needed)");
+  };
+
+  const handleRegenerateResponse = async (messageId: string) => {
+    toast.success("Regenerating response (backend integration needed)");
+  };
+
   return (
     <div className="flex flex-col h-full w-full bg-background">
+      {/* Toolbar */}
+      <div className="flex items-center gap-2 p-3 border-b border-border">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowSearch(!showSearch)}
+          className="h-8 w-8 p-0"
+          title="Search messages"
+        >
+          <Search size={18} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowExport(!showExport)}
+          className="h-8 w-8 p-0"
+          title="Export conversation"
+        >
+          <Download size={18} />
+        </Button>
+      </div>
+
+      {/* Search Bar */}
+      {showSearch && (
+        <div className="px-3 py-2 border-b border-border">
+          <MessageSearch
+            messages={messages}
+            onClose={() => setShowSearch(false)}
+          />
+        </div>
+      )}
+
+      {/* Export Panel */}
+      {showExport && (
+        <div className="px-3 py-2 border-b border-border">
+          <ConversationExport
+            messages={messages}
+            sessionName={`Session-${sessionId || "unknown"}`}
+            onClose={() => setShowExport(false)}
+          />
+        </div>
+      )}
+
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-elegant p-4 md:p-6 space-y-4 scroll-smooth" style={{ minHeight: 0, WebkitOverflowScrolling: 'touch' }}>
         {messages.length === 0 ? (
