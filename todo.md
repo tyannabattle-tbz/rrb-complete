@@ -390,6 +390,11 @@
 - [x] Add conversation templates - Create pre-built conversation starters or prompts (DONE: Created ConversationTemplates component)
 - [x] Implement real-time collaboration - Add support for multiple users viewing and commenting on the same conversation (DONE: Created CollaborationPanel component)
 
+## Advanced Features - Phase 35 (COMPLETED)
+- [x] Add voice input/output - Enable users to speak messages and hear AI responses (DONE: Implemented VoiceInput component with speech recognition and text-to-speech)
+- [x] Implement session branching - Allow users to create alternative conversation paths from any message (DONE: Implemented SessionBranching component with branch creation and switching)
+- [x] Build custom AI personality profiles - Configure Qumus's tone, expertise, and behavior preferences (DONE: Implemented PersonalityProfiles component with tone, expertise, and behavior customization)
+
 ## New Features - Current Session
 - [x] Add auto-scroll to latest message - Implement automatic scrolling to the newest message when new messages arrive (DONE: Fixed scroll behavior to only trigger on new messages)
 - [x] Add message timestamps with relative time - Display "2 hours ago" instead of absolute times (DONE: Implemented formatRelativeTime utility)

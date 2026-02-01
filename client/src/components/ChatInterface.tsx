@@ -12,6 +12,9 @@ import ShareConversation from "./ShareConversation";
 import EmojiReactions from "./EmojiReactions";
 import ConversationTemplates from "./ConversationTemplates";
 import CollaborationPanel from "./CollaborationPanel";
+import VoiceInput from "./VoiceInput";
+import SessionBranching from "./SessionBranching";
+import PersonalityProfiles from "./PersonalityProfiles";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "sonner";
 
@@ -47,6 +50,12 @@ export default function ChatInterface({
   const [pinnedMessages, setPinnedMessages] = useState<Message[]>([]);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showCollaboration, setShowCollaboration] = useState(false);
+  const [showVoice, setShowVoice] = useState(false);
+  const [showBranching, setShowBranching] = useState(false);
+  const [showPersonality, setShowPersonality] = useState(false);
+  const [branches, setBranches] = useState<any[]>([]);
+  const [personalityProfiles, setPersonalityProfiles] = useState<any[]>([]);
+  const [activePersonalityId, setActivePersonalityId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -172,6 +181,33 @@ export default function ChatInterface({
         >
           👥 Collaborate
         </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowVoice(!showVoice)}
+          className="h-8 px-3"
+          title="Voice input/output"
+        >
+          🎤 Voice
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowBranching(!showBranching)}
+          className="h-8 px-3"
+          title="Session branching"
+        >
+          🌿 Branch
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowPersonality(!showPersonality)}
+          className="h-8 px-3"
+          title="Personality profiles"
+        >
+          🎭 Personality
+        </Button>
       </div>
 
       {/* Search Bar */}
@@ -258,6 +294,72 @@ export default function ChatInterface({
       {showCollaboration && (
         <div className="px-3 py-2 border-b border-border max-h-48 overflow-y-auto">
           <CollaborationPanel sessionId={sessionId} />
+        </div>
+      )}
+
+      {/* Voice Panel */}
+      {showVoice && (
+        <div className="px-3 py-2 border-b border-border max-h-48 overflow-y-auto">
+          <VoiceInput
+            onTranscript={(text) => setInput(text)}
+            onVoicePlay={() => toast.success("Playing audio")}
+          />
+        </div>
+      )}
+
+      {/* Branching Panel */}
+      {showBranching && (
+        <div className="px-3 py-2 border-b border-border max-h-48 overflow-y-auto">
+          <SessionBranching
+            branches={branches}
+            onCreateBranch={(fromMessageId, branchName) => {
+              const newBranch = {
+                id: `branch-${Date.now()}`,
+                name: branchName,
+                fromMessageId,
+                createdAt: new Date(),
+                messageCount: messages.length,
+              };
+              setBranches([...branches, newBranch]);
+            }}
+            onSwitchBranch={(branchId) => {
+              toast.success(`Switched to branch`);
+            }}
+            onDeleteBranch={(branchId) => {
+              setBranches(branches.filter((b) => b.id !== branchId));
+            }}
+          />
+        </div>
+      )}
+
+      {/* Personality Panel */}
+      {showPersonality && (
+        <div className="px-3 py-2 border-b border-border max-h-48 overflow-y-auto">
+          <PersonalityProfiles
+            profiles={personalityProfiles}
+            activeProfileId={activePersonalityId || undefined}
+            onSelectProfile={(profileId) => {
+              setActivePersonalityId(profileId);
+              toast.success(`Personality switched`);
+            }}
+            onCreateProfile={(profile) => {
+              const newProfile = {
+                ...profile,
+                id: `profile-${Date.now()}`,
+              };
+              setPersonalityProfiles([...personalityProfiles, newProfile]);
+            }}
+            onDeleteProfile={(profileId) => {
+              setPersonalityProfiles(personalityProfiles.filter((p) => p.id !== profileId));
+            }}
+            onUpdateProfile={(profileId, updates) => {
+              setPersonalityProfiles(
+                personalityProfiles.map((p) =>
+                  p.id === profileId ? { ...p, ...updates } : p
+                )
+              );
+            }}
+          />
         </div>
       )}
 
