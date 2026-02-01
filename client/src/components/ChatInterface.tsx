@@ -60,9 +60,9 @@ export default function ChatInterface({
   };
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-screen w-full bg-background">
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-elegant p-6 space-y-4 scroll-smooth" style={{ minHeight: 0 }}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-elegant p-4 md:p-6 space-y-4 scroll-smooth" style={{ minHeight: 0, WebkitOverflowScrolling: 'touch' }}>
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -97,28 +97,28 @@ export default function ChatInterface({
       </div>
 
       {/* Input Area */}
-      <div className="flex-shrink-0 border-t border-border bg-card p-4 space-y-3">
+      <div className="flex-shrink-0 border-t border-border bg-card p-3 md:p-4 space-y-2 md:space-y-3 safe-area-inset-bottom">
         {!sessionId && (
           <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg text-sm text-warning">
             Please create or select a session to start chatting
           </div>
         )}
 
-        <div className="flex gap-3">
+        <div className="flex gap-2 md:gap-3 items-end">
           <Input
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type your message... (Shift+Enter for new line)"
+            placeholder="Type your message..."
             disabled={isSending || !sessionId}
-            className="flex-1"
+            className="flex-1 text-sm md:text-base"
           />
           <Button
             onClick={handleSendMessage}
             disabled={isSending || !input.trim() || !sessionId}
-            size="lg"
-            className="gap-2"
+            size="sm"
+            className="gap-1 md:gap-2 shrink-0"
           >
             {isSending ? (
               <Loader2 size={20} className="animate-spin" />
@@ -128,7 +128,7 @@ export default function ChatInterface({
           </Button>
         </div>
 
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground hidden md:block">
           Press Enter to send, Shift+Enter for new line
         </p>
       </div>
