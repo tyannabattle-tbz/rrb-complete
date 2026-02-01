@@ -14,16 +14,28 @@ export function registerOAuthRoutes(app: Express) {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
 
+    console.log("[OAuth] Callback received", {
+      hasCode: !!code,
+      hasState: !!state,
+      hostname: req.hostname,
+    });
+
     if (!code || !state) {
+      console.error("[OAuth] Missing code or state");
       res.status(400).json({ error: "code and state are required" });
       return;
     }
 
     try {
+      console.log("[OAuth] Exchanging code for token");
       const tokenResponse = await sdk.exchangeCodeForToken(code, state);
+      console.log("[OAuth] Got token response");
+      
       const userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
+      console.log("[OAuth] Got user info", { openId: userInfo.openId });
 
       if (!userInfo.openId) {
+        console.error("[OAuth] Missing openId in user info");
         res.status(400).json({ error: "openId missing from user info" });
         return;
       }
@@ -42,8 +54,10 @@ export function registerOAuthRoutes(app: Express) {
       });
 
       const cookieOptions = getSessionCookieOptions(req);
+      console.log("[OAuth] Setting session cookie with options", cookieOptions);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
+      console.log("[OAuth] Callback successful, redirecting to /");
       res.redirect(302, "/");
     } catch (error) {
       console.error("[OAuth] Callback failed", error);

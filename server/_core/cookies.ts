@@ -24,29 +24,33 @@ function isSecureRequest(req: Request) {
 export function getSessionCookieOptions(
   req: Request
 ): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure"> {
-  // const hostname = req.hostname;
-  // const shouldSetDomain =
-  //   hostname &&
-  //   !LOCAL_HOSTS.has(hostname) &&
-  //   !isIpAddress(hostname) &&
-  //   hostname !== "127.0.0.1" &&
-  //   hostname !== "::1";
-
-  // const domain =
-  //   shouldSetDomain && !hostname.startsWith(".")
-  //     ? `.${hostname}`
-  //     : shouldSetDomain
-  //       ? hostname
-  //       : undefined;
-
-  const isSecure = isSecureRequest(req);
-  // When sameSite is "none", secure must be true
-  // For development, we allow non-secure cookies on localhost
   const hostname = req.hostname || "";
   const isLocalhost = LOCAL_HOSTS.has(hostname) || isIpAddress(hostname);
+  const isSecure = isSecureRequest(req);
   const secure = isSecure || isLocalhost;
 
+  // Determine domain for cookie
+  let domain: string | undefined = undefined;
+  
+  // For localhost/127.0.0.1, don't set domain (browser will use exact hostname)
+  if (!isLocalhost && hostname) {
+    // For production domains, set the domain to allow subdomains
+    if (!hostname.startsWith(".")) {
+      // Extract the main domain (e.g., "example.com" from "sub.example.com")
+      const parts = hostname.split(".");
+      if (parts.length > 1) {
+        // For multi-part domains, use the last 2 parts
+        domain = parts.slice(-2).join(".");
+      } else {
+        domain = hostname;
+      }
+    } else {
+      domain = hostname;
+    }
+  }
+
   return {
+    domain,
     httpOnly: true,
     path: "/",
     sameSite: "lax",
