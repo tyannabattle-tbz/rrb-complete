@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Loader2 } from "lucide-react";
 import ChatMessage from "./ChatMessage";
+import TypingIndicator from "./TypingIndicator";
 
 interface Message {
   id: string;
@@ -85,11 +86,7 @@ export default function ChatInterface({
               />
             ))}
             {isLoading && (
-              <ChatMessage
-                role="assistant"
-                content="Thinking..."
-                isLoading={true}
-              />
+              <TypingIndicator userName="AI Assistant" isAI={true} />
             )}
             <div ref={messagesEndRef} />
           </>

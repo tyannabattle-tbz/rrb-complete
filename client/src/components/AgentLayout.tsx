@@ -9,6 +9,7 @@ import KeyboardShortcutsHelp from "./KeyboardShortcutsHelp";
 import ThemeToggle from "./ThemeToggle";
 import SessionComparison from "./SessionComparison";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useEffect } from "react";
 
 interface AgentLayoutProps {
   children: React.ReactNode;
@@ -29,9 +30,27 @@ export default function AgentLayout({
 }: AgentLayoutProps) {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const [, navigate] = useLocation();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
+
+  // Auto-collapse sidebar on mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -50,12 +69,22 @@ export default function AgentLayout({
   };
 
   const sidebarClass = sidebarOpen ? "w-64" : "w-20";
+  const sidebarOverlay = isMobile && sidebarOpen ? "fixed inset-0 bg-black/50 z-40" : "";
 
   return (
     <div className="flex h-screen bg-background">
+      {/* Mobile Overlay */}
+      {sidebarOverlay && (
+        <div
+          className={sidebarOverlay}
+          onClick={() => setSidebarOpen(false)}
+          style={{ zIndex: 40 }}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`${sidebarClass} bg-card border-r border-border transition-all duration-300 flex flex-col`}
+        className={`${sidebarClass} bg-card border-r border-border transition-all duration-300 flex flex-col ${isMobile ? 'fixed left-0 top-0 h-screen z-50' : ''}`}
       >
         {/* Header */}
         <div className="p-4 border-b border-border flex items-center justify-between">
@@ -67,10 +96,20 @@ export default function AgentLayout({
             <KeyboardShortcutsHelp />
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-muted/20 rounded-lg transition-colors"
+              className="p-2 hover:bg-muted/20 rounded-lg transition-colors md:hidden"
+              title={sidebarOpen ? "Close sidebar" : "Open sidebar"}
             >
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
+            {!isMobile && (
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 hover:bg-muted/20 rounded-lg transition-colors hidden md:block"
+                title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+              >
+                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            )}
           </div>
         </div>
 
@@ -182,7 +221,7 @@ export default function AgentLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className={`flex-1 flex flex-col overflow-hidden ${isMobile ? 'w-full' : ''}`}>
         {children}
       </main>
     </div>
