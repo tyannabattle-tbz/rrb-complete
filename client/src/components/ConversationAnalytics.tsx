@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, MessageCircle, Clock } from 'lucide-react';
+import { BarChart3, TrendingUp, MessageCircle, Clock, Download, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface AnalyticsData {
   totalMessages: number;
@@ -14,6 +15,7 @@ interface AnalyticsData {
 export const ConversationAnalytics: React.FC = () => {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     loadAnalytics();
@@ -57,6 +59,127 @@ export const ConversationAnalytics: React.FC = () => {
 
     setAnalytics(updated);
     localStorage.setItem('qumus_analytics', JSON.stringify(updated));
+  };
+
+  const exportToCSV = () => {
+    if (!analytics) return;
+
+    setIsExporting(true);
+
+    try {
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `qumus-analytics-${timestamp}.csv`;
+
+      // Prepare CSV content
+      const csvContent = [
+        ['Qumus Conversation Analytics Report'],
+        ['Generated:', new Date().toLocaleString()],
+        [''],
+        ['Summary Statistics'],
+        ['Metric', 'Value'],
+        ['Total Messages', analytics.totalMessages],
+        ['Total Sessions', analytics.totalSessions],
+        ['Average Messages per Session', analytics.averageMessagesPerSession],
+        ['Engagement Score', `${analytics.engagementScore}%`],
+        ['Last Active', new Date(analytics.lastActiveTime).toLocaleString()],
+        [''],
+        ['Topic Frequency'],
+        ['Topic', 'Count'],
+        ...Object.entries(analytics.topicFrequency).map(([topic, count]) => [topic, count]),
+      ]
+        .map((row) => row.map((cell) => `"${cell}"`).join(','))
+        .join('\n');
+
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success('Analytics exported as CSV');
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      toast.error('Failed to export analytics');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const exportToPDF = () => {
+    if (!analytics) return;
+
+    setIsExporting(true);
+
+    try {
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `qumus-analytics-${timestamp}.txt`;
+
+      // Prepare text content
+      const textContent = `
+QUMUS CONVERSATION ANALYTICS REPORT
+====================================
+
+Generated: ${new Date().toLocaleString()}
+
+SUMMARY STATISTICS
+------------------
+Total Messages: ${analytics.totalMessages}
+Total Sessions: ${analytics.totalSessions}
+Average Messages per Session: ${analytics.averageMessagesPerSession}
+Engagement Score: ${analytics.engagementScore}%
+Last Active: ${new Date(analytics.lastActiveTime).toLocaleString()}
+
+TOPIC FREQUENCY
+---------------
+${
+  Object.entries(analytics.topicFrequency)
+    .sort(([, a], [, b]) => b - a)
+    .map(([topic, count]) => `${topic}: ${count} messages`)
+    .join('\n')
+}
+
+INSIGHTS
+--------
+- Your engagement level is ${
+        analytics.engagementScore > 75
+          ? 'very high'
+          : analytics.engagementScore > 50
+            ? 'moderate'
+            : analytics.engagementScore > 25
+              ? 'low'
+              : 'minimal'
+      }
+- You have discussed ${Object.keys(analytics.topicFrequency).length} different topics
+- Average conversation length: ${analytics.averageMessagesPerSession} messages
+`;
+
+      // Create blob and download
+      const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success('Analytics exported as text file');
+    } catch (error) {
+      console.error('Error exporting text:', error);
+      toast.error('Failed to export analytics');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   if (!analytics) return null;
@@ -140,6 +263,33 @@ export const ConversationAnalytics: React.FC = () => {
               Last active:{' '}
               {new Date(analytics.lastActiveTime).toLocaleDateString()}
             </span>
+          </div>
+
+          {/* Export Buttons */}
+          <div className="space-y-2 border-t border-border pt-3">
+            <p className="text-xs font-medium">Export Analytics</p>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={exportToCSV}
+                disabled={isExporting}
+                className="flex-1 h-8 text-xs gap-1"
+              >
+                <Download className="h-3 w-3" />
+                CSV
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={exportToPDF}
+                disabled={isExporting}
+                className="flex-1 h-8 text-xs gap-1"
+              >
+                <FileText className="h-3 w-3" />
+                Text
+              </Button>
+            </div>
           </div>
         </div>
       )}
