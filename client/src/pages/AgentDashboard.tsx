@@ -127,9 +127,8 @@ export default function AgentDashboard() {
       maxSteps: 50,
     });
   };
-  const addMessageMutation = trpc.messages.addMessage.useMutation();
-  const utils = trpc.useUtils();
 
+  const addMessageMutation = trpc.messages.addMessage.useMutation();
   const renameSessionMutation = trpc.agent.renameSession.useMutation();
 
   const handleRenameSession = async (sessionId: number, newName: string) => {
@@ -152,8 +151,6 @@ export default function AgentDashboard() {
         role: "user",
         content,
       });
-      // Invalidate and refetch messages to show the new message and agent response
-      await utils.messages.getMessages.invalidate({ sessionId: activeSession });
       appToast.success("Message sent", "Your message was delivered");
       setLastUpdate(new Date());
     } catch (error) {
