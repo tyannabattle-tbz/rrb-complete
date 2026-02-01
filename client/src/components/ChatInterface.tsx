@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Loader2, Search, Download } from "lucide-react";
+import { Send, Loader2, Search, Download, Pin, Share2 } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import TypingIndicator from "./TypingIndicator";
 import MessageSearch from "./MessageSearch";
 import MessageEditor from "./MessageEditor";
 import ConversationExport from "./ConversationExport";
+import PinnedMessages from "./PinnedMessages";
+import ShareConversation from "./ShareConversation";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "sonner";
 
 interface Message {
@@ -15,6 +18,7 @@ interface Message {
   content: string;
   timestamp: Date;
   userReaction?: "thumbs_up" | "thumbs_down" | null;
+  isPinned?: boolean;
 }
 
 interface ChatInterfaceProps {
@@ -36,6 +40,8 @@ export default function ChatInterface({
   const [showSearch, setShowSearch] = useState(false);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [showExport, setShowExport] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+  const [pinnedMessages, setPinnedMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -86,6 +92,18 @@ export default function ChatInterface({
     toast.success("Regenerating response (backend integration needed)");
   };
 
+  const handlePinMessage = (messageId: string) => {
+    const message = messages.find(m => m.id === messageId);
+    if (message && message.role !== "system" && !pinnedMessages.find(m => m.id === messageId)) {
+      setPinnedMessages([...pinnedMessages, { ...message, role: message.role as "user" | "assistant" }]);
+      toast.success("Message pinned");
+    }
+  };
+
+  const handleUnpinMessage = (messageId: string) => {
+    setPinnedMessages(pinnedMessages.filter(m => m.id !== messageId));
+  };
+
   return (
     <div className="flex flex-col h-full w-full bg-background">
       {/* Toolbar */}
@@ -108,6 +126,15 @@ export default function ChatInterface({
         >
           <Download size={18} />
         </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowShare(!showShare)}
+          className="h-8 w-8 p-0"
+          title="Share conversation"
+        >
+          <Share2 size={18} />
+        </Button>
       </div>
 
       {/* Search Bar */}
@@ -129,6 +156,25 @@ export default function ChatInterface({
             onClose={() => setShowExport(false)}
           />
         </div>
+      )}
+
+      {/* Share Panel */}
+      {showShare && (
+        <div className="px-3 py-2 border-b border-border">
+          <ShareConversation
+            sessionId={sessionId}
+            sessionName={`Session-${sessionId || "unknown"}`}
+            onClose={() => setShowShare(false)}
+          />
+        </div>
+      )}
+
+      {/* Pinned Messages */}
+      {pinnedMessages.length > 0 && (
+        <PinnedMessages
+          pinnedMessages={pinnedMessages.filter(m => m.role !== "system")}
+          onUnpin={handleUnpinMessage}
+        />
       )}
 
       {/* Messages Container */}
