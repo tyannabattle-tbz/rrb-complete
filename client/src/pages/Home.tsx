@@ -27,7 +27,7 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-6 max-w-md">
           <div>
-            <h1 className="text-4xl font-bold gradient-text mb-2">Manus Agent</h1>
+            <h1 className="text-4xl font-bold gradient-text mb-2">Qumus</h1>
             <p className="text-muted-foreground">Advanced Autonomous AI Agent Management</p>
           </div>
           <p className="text-foreground">

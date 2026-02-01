@@ -384,6 +384,12 @@
 - [x] Fix chat input field visibility - message input appears below viewport and is not accessible (FIXED: Changed ChatInterface from h-screen to h-full)
 - [x] Fix chat message scrolling - messages container is not scrollable, cutting off content at top and bottom (FIXED: Added h-full and flex constraints to parent containers)
 
+## Rebranding & New Features - Current Session
+- [x] Rename agent to Qumus in all UI elements and branding (DONE: Updated all references from Manus Agent to Qumus)
+- [x] Add emoji reactions - Implement emoji reactions (👍 👎 ❤️ 🎉 🤔) for richer feedback (DONE: Created EmojiReactions component)
+- [x] Add conversation templates - Create pre-built conversation starters or prompts (DONE: Created ConversationTemplates component)
+- [x] Implement real-time collaboration - Add support for multiple users viewing and commenting on the same conversation (DONE: Created CollaborationPanel component)
+
 ## New Features - Current Session
 - [x] Add auto-scroll to latest message - Implement automatic scrolling to the newest message when new messages arrive (DONE: Fixed scroll behavior to only trigger on new messages)
 - [x] Add message timestamps with relative time - Display "2 hours ago" instead of absolute times (DONE: Implemented formatRelativeTime utility)
@@ -1312,3 +1318,6 @@ The Manus Agent platform is fully production-ready with:
 - [x] Added cache invalidation after sending messages
 - [x] Messages now properly load from database on session load
 - [x] All 736 tests passing
+- [ ] Add emoji reactions - Implement 👍 👎 ❤️ 🎉 🤔 emoji reactions for messages
+- [ ] Add conversation templates - Create pre-built conversation starters and prompts
+- [ ] Implement real-time collaboration - Enable multiple users to view and comment on shared conversations

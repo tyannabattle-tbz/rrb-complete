@@ -89,7 +89,7 @@ export default function AgentLayout({
         {/* Header */}
         <div className="p-4 border-b border-border flex items-center justify-between">
           {sidebarOpen && (
-            <h1 className="text-lg font-bold gradient-text">Manus Agent</h1>
+            <h1 className="text-lg font-bold gradient-text">Qumus</h1>
           )}
           <div className="flex items-center gap-2">
             <NotificationCenter />

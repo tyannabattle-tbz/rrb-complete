@@ -9,6 +9,9 @@ import MessageEditor from "./MessageEditor";
 import ConversationExport from "./ConversationExport";
 import PinnedMessages from "./PinnedMessages";
 import ShareConversation from "./ShareConversation";
+import EmojiReactions from "./EmojiReactions";
+import ConversationTemplates from "./ConversationTemplates";
+import CollaborationPanel from "./CollaborationPanel";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "sonner";
 
@@ -42,6 +45,8 @@ export default function ChatInterface({
   const [showExport, setShowExport] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [pinnedMessages, setPinnedMessages] = useState<Message[]>([]);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showCollaboration, setShowCollaboration] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -104,6 +109,19 @@ export default function ChatInterface({
     setPinnedMessages(pinnedMessages.filter(m => m.id !== messageId));
   };
 
+  const handleSelectTemplate = (prompt: string) => {
+    setInput(prompt);
+    setShowTemplates(false);
+    inputRef.current?.focus();
+    toast.success("Template loaded!");
+  };
+
+  const handleEmojiReaction = (messageId: string, emoji: string) => {
+    // In a real app, this would send the reaction to the backend
+    toast.success(`Reacted with ${emoji}`);
+  };
+
+
   return (
     <div className="flex flex-col h-full w-full bg-background">
       {/* Toolbar */}
@@ -134,6 +152,25 @@ export default function ChatInterface({
           title="Share conversation"
         >
           <Share2 size={18} />
+        </Button>
+        <div className="flex-1" />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowTemplates(!showTemplates)}
+          className="h-8 px-3"
+          title="Quick start templates"
+        >
+          ✨ Templates
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowCollaboration(!showCollaboration)}
+          className="h-8 px-3"
+          title="Collaboration settings"
+        >
+          👥 Collaborate
         </Button>
       </div>
 
@@ -183,7 +220,7 @@ export default function ChatInterface({
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-foreground mb-2">
-                Welcome to Manus Agent
+                Welcome to Qumus
               </h2>
               <p className="text-muted-foreground">
                 Start a conversation to interact with your autonomous agent
@@ -209,6 +246,20 @@ export default function ChatInterface({
           </>
         )}
       </div>
+
+      {/* Templates Panel */}
+      {showTemplates && (
+        <div className="px-3 py-2 border-b border-border max-h-48 overflow-y-auto">
+          <ConversationTemplates onSelectTemplate={handleSelectTemplate} />
+        </div>
+      )}
+
+      {/* Collaboration Panel */}
+      {showCollaboration && (
+        <div className="px-3 py-2 border-b border-border max-h-48 overflow-y-auto">
+          <CollaborationPanel sessionId={sessionId} />
+        </div>
+      )}
 
       {/* Input Area */}
       <div className="flex-shrink-0 border-t border-border bg-card p-3 md:p-4 space-y-2 md:space-y-3 safe-area-inset-bottom">
