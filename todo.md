@@ -384,6 +384,11 @@
 - [x] Fix chat input field visibility - message input appears below viewport and is not accessible (FIXED: Changed ChatInterface from h-screen to h-full)
 - [x] Fix chat message scrolling - messages container is not scrollable, cutting off content at top and bottom (FIXED: Added h-full and flex constraints to parent containers)
 
+## New Features - Current Session
+- [x] Add auto-scroll to latest message - Implement automatic scrolling to the newest message when new messages arrive (DONE: Fixed scroll behavior to only trigger on new messages)
+- [x] Add message timestamps with relative time - Display "2 hours ago" instead of absolute times (DONE: Implemented formatRelativeTime utility)
+- [x] Implement message reactions/feedback - Add thumbs up/down reactions to messages for user feedback (DONE: Added thumbs up/down buttons to AI messages)
+
 ## COMPREHENSIVE SYSTEM CHECK (COMPLETED)
 
 ### Server & Infrastructure

@@ -1,8 +1,9 @@
 import React from "react";
-import { Copy, Check, Trash2 } from "lucide-react";
+import { Copy, Check, Trash2, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useState, useRef } from "react";
 import { Streamdown } from "streamdown";
 import { toast } from "sonner";
+import { formatRelativeTime } from "@/lib/formatTime";
 
 interface ChatMessageProps {
   role: "user" | "assistant" | "system";
@@ -10,6 +11,8 @@ interface ChatMessageProps {
   timestamp?: Date;
   isLoading?: boolean;
   onDelete?: () => void;
+  onReaction?: (reaction: "thumbs_up" | "thumbs_down") => void;
+  userReaction?: "thumbs_up" | "thumbs_down" | null;
 }
 
 export default function ChatMessage({
@@ -18,11 +21,20 @@ export default function ChatMessage({
   timestamp,
   isLoading,
   onDelete,
+  onReaction,
+  userReaction,
 }: ChatMessageProps) {
   const [copied, setCopied] = useState(false);
   const [swipeX, setSwipeX] = useState(0);
   const touchStartX = useRef(0);
   const messageRef = useRef<HTMLDivElement>(null);
+
+  const handleReaction = (reaction: "thumbs_up" | "thumbs_down") => {
+    if (onReaction) {
+      onReaction(reaction);
+      toast.success(reaction === "thumbs_up" ? "Helpful!" : "Thanks for feedback");
+    }
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(content);
@@ -110,6 +122,32 @@ export default function ChatMessage({
                 <Copy size={16} className="text-muted-foreground" />
               )}
             </button>
+            {!isUser && onReaction && (
+              <>
+                <button
+                  onClick={() => handleReaction("thumbs_up")}
+                  className={`p-1.5 rounded transition-colors ${
+                    userReaction === "thumbs_up"
+                      ? "bg-success/20 text-success"
+                      : "hover:bg-muted/20 text-muted-foreground"
+                  }`}
+                  title="Helpful"
+                >
+                  <ThumbsUp size={16} fill={userReaction === "thumbs_up" ? "currentColor" : "none"} />
+                </button>
+                <button
+                  onClick={() => handleReaction("thumbs_down")}
+                  className={`p-1.5 rounded transition-colors ${
+                    userReaction === "thumbs_down"
+                      ? "bg-destructive/20 text-destructive"
+                      : "hover:bg-muted/20 text-muted-foreground"
+                  }`}
+                  title="Not helpful"
+                >
+                  <ThumbsDown size={16} fill={userReaction === "thumbs_down" ? "currentColor" : "none"} />
+                </button>
+              </>
+            )}
             {isUser && onDelete && (
               <button
                 onClick={handleDeleteMessage}
@@ -124,8 +162,8 @@ export default function ChatMessage({
 
         {/* Timestamp */}
         {timestamp && (
-          <p className="text-xs text-muted-foreground mt-1">
-            {timestamp.toLocaleTimeString()}
+          <p className="text-xs text-muted-foreground mt-1" title={timestamp.toLocaleString()}>
+            {formatRelativeTime(timestamp)}
           </p>
         )}
       </div>

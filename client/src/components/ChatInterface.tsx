@@ -4,12 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Send, Loader2 } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import TypingIndicator from "./TypingIndicator";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
   role: "user" | "assistant" | "system";
   content: string;
   timestamp: Date;
+  userReaction?: "thumbs_up" | "thumbs_down" | null;
 }
 
 interface ChatInterfaceProps {
@@ -27,13 +29,19 @@ export default function ChatInterface({
 }: ChatInterfaceProps) {
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [messageCount, setMessageCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll to bottom
+  // Auto-scroll to bottom only when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (messages.length > messageCount) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 0);
+      setMessageCount(messages.length);
+    }
+  }, [messages.length, messageCount]);
 
   const handleSendMessage = async () => {
     if (!input.trim() || isSending) return;
@@ -60,6 +68,10 @@ export default function ChatInterface({
     }
   };
 
+  const handleReaction = (messageId: string, reaction: "thumbs_up" | "thumbs_down") => {
+    toast.success(reaction === "thumbs_up" ? "Helpful feedback recorded!" : "Thanks for the feedback!");
+  };
+
   return (
     <div className="flex flex-col h-full w-full bg-background">
       {/* Messages Container */}
@@ -83,6 +95,8 @@ export default function ChatInterface({
                 role={message.role}
                 content={message.content}
                 timestamp={message.timestamp}
+                onReaction={(reaction) => handleReaction(message.id, reaction)}
+                userReaction={message.userReaction}
               />
             ))}
             {isLoading && (
