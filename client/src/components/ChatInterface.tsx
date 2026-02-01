@@ -16,6 +16,9 @@ import VoiceInput from "./VoiceInput";
 import SessionBranching from "./SessionBranching";
 import PersonalityProfiles from "./PersonalityProfiles";
 import MobileDrawer from "./MobileDrawer";
+import { OfflineMode } from "./OfflineMode";
+import { BookmarkedConversations } from "./BookmarkedConversations";
+import { ConversationAnalytics } from "./ConversationAnalytics";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "sonner";
 
@@ -401,6 +404,25 @@ export default function ChatInterface({
           />
         </div>
       )}
+
+      {/* Offline Mode Indicator */}
+      <div className="px-3 py-2 border-b border-border">
+        <OfflineMode />
+      </div>
+
+      {/* Bookmarked Conversations */}
+      <div className="px-3 py-2 border-b border-border max-h-48 overflow-y-auto">
+        <BookmarkedConversations
+          onSelectBookmark={(sessionId) => {
+            toast.success(`Opened bookmarked conversation`);
+          }}
+        />
+      </div>
+
+      {/* Conversation Analytics */}
+      <div className="px-3 py-2 border-b border-border">
+        <ConversationAnalytics />
+      </div>
 
       {/* Input Area */}
       <div className="flex-shrink-0 border-t border-border bg-card p-3 md:p-4 space-y-2 md:space-y-3 safe-area-inset-bottom">
