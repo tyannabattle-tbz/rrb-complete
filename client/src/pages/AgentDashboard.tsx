@@ -186,11 +186,16 @@ export default function AgentDashboard() {
           </div>
         ) : (
           <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-9">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
               <TabsTrigger value="tasks">Tasks</TabsTrigger>
+              <TabsTrigger value="files">Files</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="clone">Clone</TabsTrigger>
+              <TabsTrigger value="quotas">Quotas</TabsTrigger>
+              <TabsTrigger value="invites">Invites</TabsTrigger>
             </TabsList>
 
             <TabsContent value="chat" className="mt-4">
@@ -233,7 +238,25 @@ export default function AgentDashboard() {
               <TaskHistoryTracker tasks={polling.tasks} />
             </TabsContent>
 
+            <TabsContent value="files" className="mt-4">
+              <FileBrowser sessionId={activeSession || 0} />
+            </TabsContent>
 
+            <TabsContent value="analytics" className="mt-4">
+              <AnalyticsDashboard sessionId={activeSession || 0} />
+            </TabsContent>
+
+            <TabsContent value="clone" className="mt-4">
+              <AgentCloningUI />
+            </TabsContent>
+
+            <TabsContent value="quotas" className="mt-4">
+              <UsageQuotasUI />
+            </TabsContent>
+
+            <TabsContent value="invites" className="mt-4">
+              <CollaborationInvitesUI />
+            </TabsContent>
           </Tabs>
         )}
       </div>
