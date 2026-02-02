@@ -5,6 +5,7 @@ import { Streamdown } from "streamdown";
 import { toast } from "sonner";
 import { formatRelativeTime } from "@/lib/formatTime";
 import ShareableLink from "@/components/ShareableLink";
+import { VideoPreviewEmbed } from "@/components/VideoPreviewEmbed";
 
 interface ChatMessageProps {
   role: "user" | "assistant" | "system";
@@ -113,6 +114,21 @@ export default function ChatMessage({
             <Streamdown className="text-sm">{content}</Streamdown>
           )}
         </div>
+
+        {/* Video Preview Embed */}
+        {videoUrl && videoId && !isUser && (
+          <div className="mt-3">
+            <VideoPreviewEmbed
+              videoUrl={videoUrl}
+              videoId={videoId}
+              duration={10}
+              resolution="1080p"
+              style="cinematic"
+              fps={24}
+              aspectRatio="16:9"
+            />
+          </div>
+        )}
 
         {/* Video Shareable Link */}
         {videoUrl && videoId && !isUser && (
