@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Loader2, Search, Download, Pin, Share2 } from "lucide-react";
+import { Send, Loader2, Search, Download, Pin, Share2, Paperclip, X } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import TypingIndicator from "./TypingIndicator";
 import MessageSearch from "./MessageSearch";
@@ -60,8 +60,10 @@ export default function ChatInterface({
   const [branches, setBranches] = useState<any[]>([]);
   const [personalityProfiles, setPersonalityProfiles] = useState<any[]>([]);
   const [activePersonalityId, setActivePersonalityId] = useState<string | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll to bottom only when new messages arrive
   useEffect(() => {
@@ -96,6 +98,22 @@ export default function ChatInterface({
       e.preventDefault();
       handleSendMessage();
     }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setUploadedFiles([...uploadedFiles, ...newFiles]);
+      toast.success(`${newFiles.length} file(s) added`);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(uploadedFiles.filter((_, i) => i !== index));
   };
 
   const handleReaction = (messageId: string, reaction: "thumbs_up" | "thumbs_down") => {
@@ -432,7 +450,44 @@ export default function ChatInterface({
           </div>
         )}
 
+        {uploadedFiles.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {uploadedFiles.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-sm"
+              >
+                <Paperclip size={14} />
+                <span className="truncate max-w-xs">{file.name}</span>
+                <button
+                  onClick={() => removeFile(index)}
+                  className="ml-1 hover:text-destructive"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="flex gap-2 md:gap-3 items-end">
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            size="sm"
+            variant="outline"
+            className="shrink-0"
+            title="Attach files"
+          >
+            <Paperclip size={20} />
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            onChange={handleFileSelect}
+            className="hidden"
+            accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.txt"
+          />
           <Input
             ref={inputRef}
             value={input}
