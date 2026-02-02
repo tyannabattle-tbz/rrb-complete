@@ -25,7 +25,8 @@ import ScheduledExportManager from "./pages/ScheduledExportManager";
 import FeatureAnalyticsDashboard from './pages/FeatureAnalyticsDashboard';
 import VideoProcessingStudio from './pages/VideoProcessingStudio';
 import AudioEditor from './pages/AudioEditor';
-import VideoTimelineEditor from './pages/VideoTimelineEditor';
+import VideoTimelineEditor from '@/pages/VideoTimelineEditor';
+import VideoQueueManager from '@/pages/VideoQueueManager';
 import MotionGenerationStudio from "./pages/MotionGenerationStudio";
 
 function Router() {
@@ -52,6 +53,7 @@ function Router() {
         <Route path="/video-processing" component={VideoProcessingStudio} />
         <Route path="/audio-editor" component={AudioEditor} />
         <Route path="/video-timeline" component={VideoTimelineEditor} />
+      <Route path="/video-queue" component={VideoQueueManager} />
       <Route path="/motion-studio" component={MotionGenerationStudio} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
