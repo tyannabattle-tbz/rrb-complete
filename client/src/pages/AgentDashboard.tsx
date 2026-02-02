@@ -43,6 +43,7 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { CommandPalette, type Command } from "@/components/CommandPalette";
 import { SessionSearch, type SessionFilter } from "@/components/SessionSearch";
 import { CollaborationIndicators, type ActiveUser } from "@/components/CollaborationIndicators";
+import MobileTabMenu from "@/components/MobileTabMenu";
 
 export default function AgentDashboard() {
   const { user, isAuthenticated } = useAuth();
@@ -189,7 +190,22 @@ export default function AgentDashboard() {
           </div>
         ) : (
           <Tabs defaultValue="chat" className="w-full h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-9">
+            <MobileTabMenu
+              tabs={[
+                { value: "chat", label: "Chat" },
+                { value: "tools", label: "Tools" },
+                { value: "logs", label: "Logs" },
+                { value: "tasks", label: "Tasks" },
+                { value: "files", label: "Files" },
+                { value: "analytics", label: "Analytics" },
+                { value: "clone", label: "Clone" },
+                { value: "quotas", label: "Quotas" },
+                { value: "invites", label: "Invites" },
+              ]}
+              activeTab="chat"
+              onTabChange={() => {}}
+            />
+            <TabsList className="hidden md:grid w-full grid-cols-9">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="tools">Tools</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>

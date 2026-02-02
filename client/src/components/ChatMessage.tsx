@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Streamdown } from "streamdown";
 import { toast } from "sonner";
 import { formatRelativeTime } from "@/lib/formatTime";
+import ShareableLink from "@/components/ShareableLink";
 
 interface ChatMessageProps {
   role: "user" | "assistant" | "system";
@@ -73,6 +74,11 @@ export default function ChatMessage({
   const isUser = role === "user";
   const isSystem = role === "system";
 
+  // Parse video metadata from content
+  const videoUrlMatch = content.match(/\[Video URL: ([^\]]+)\]/);
+  const videoUrl = videoUrlMatch ? videoUrlMatch[1] : null;
+  const videoId = videoUrl ? videoUrl.split("/").pop()?.replace(".mp4", "") : null;
+
   return (
     <div
       className={`flex gap-3 animate-slide-in-up ${
@@ -107,6 +113,18 @@ export default function ChatMessage({
             <Streamdown className="text-sm">{content}</Streamdown>
           )}
         </div>
+
+        {/* Video Shareable Link */}
+        {videoUrl && videoId && !isUser && (
+          <div className="mt-3">
+            <ShareableLink
+              videoId={videoId}
+              videoUrl={videoUrl}
+              title="Check out this video generated with Qumus"
+              description="Created with Qumus AI Video Generator"
+            />
+          </div>
+        )}
 
         {/* Message Actions */}
         {!isLoading && (
