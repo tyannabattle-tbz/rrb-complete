@@ -35,7 +35,7 @@ import { persistenceRouter } from "./routers/persistence";
 import { stripeIntegrationRouter } from "./routers/stripeIntegration";
 import { agentManagementRouter } from "./routers/agentManagement";
 import { adminDashboardRouter } from "./routers/adminDashboard";
-import { costOptimizationRouter } from "./routers/costOptimization";
+// costOptimizationRouter imported below from costOptimizationRouter.ts
 import { integrationMarketplaceRouter } from "./routers/integrationMarketplace";
 import { monitoringRouter } from "./routers/monitoring";
 import { multiTenancyRouter } from "./routers/multiTenancy";
@@ -84,6 +84,8 @@ import { llmStoryboardingRouter } from "./routers/llmStoryboardingRouter";
 import { notificationSystemRouter } from "./routers/notificationSystemRouter";
 import { analyticsExportRouter } from "./routers/analyticsExportRouter";
 import { batchTemplatesRouter } from "./routers/batchTemplatesRouter";
+import { webhookIntegrationRouter } from "./routers/webhookIntegrationRouter";
+import { costOptimizationRouter } from "./routers/costOptimizationRouter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -124,6 +126,12 @@ export const appRouter = router({
 
   // Batch Templates
   batchTemplates: batchTemplatesRouter,
+
+  // Webhook Integration
+  webhooks: webhookIntegrationRouter,
+
+  // Cost Optimization
+  costOptimization: costOptimizationRouter,
 
   // Collaboration Invites
   collaborationInvites: collaborationInvitesRouter,
@@ -522,7 +530,6 @@ export const appRouter = router({
   // Note: notifications router already defined above with notificationSystemRouter
 
   // New Enterprise Features
-  webhooks: webhooksRouter,
   reporting: reportingRouter,
   metrics: metricsRouter,
   admin: adminRouter,
@@ -551,7 +558,6 @@ export const appRouter = router({
     stripe: stripeIntegrationRouter,
     agentManagement: agentManagementRouter,
   adminDashboard: adminDashboardRouter,
-  costOptimization: costOptimizationRouter,
   integrationMarketplace: integrationMarketplaceRouter,
   monitoring: monitoringRouter,
   multiTenancy: multiTenancyRouter,

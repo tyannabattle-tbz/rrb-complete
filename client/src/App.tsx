@@ -16,6 +16,9 @@ import WebhookMarketplace from "./pages/WebhookMarketplace";
 import ModelFineTuning from "./pages/ModelFineTuning";
 import ProductionDashboard from "./pages/ProductionDashboard";
 import ChatManagement from "./pages/ChatManagement";
+import NotificationCenter from "./pages/NotificationCenter";
+import BatchTemplateManager from "./pages/BatchTemplateManager";
+import CostOptimizationDashboard from "./pages/CostOptimizationDashboard";
 import AdminMonitoringDashboard from "./pages/AdminMonitoringDashboard";
 
 function Router() {
@@ -31,7 +34,10 @@ function Router() {
       <Route path="/marketplace" component={WebhookMarketplace} />
       <Route path="/finetuning" component={ModelFineTuning} />
       <Route path="/production" component={ProductionDashboard} />
-      <Route path="/chat-management" component={ChatManagement} />
+        <Route path="/chat-management" component={ChatManagement} />
+        <Route path="/notifications" component={NotificationCenter} />
+        <Route path="/batch-templates" component={BatchTemplateManager} />
+        <Route path="/cost-optimization" component={CostOptimizationDashboard} />
       <Route path="/admin/monitoring" component={AdminMonitoringDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
