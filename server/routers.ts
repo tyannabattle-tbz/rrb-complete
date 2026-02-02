@@ -519,49 +519,7 @@ export const appRouter = router({
       }),
   }),
 
-  // Real-Time Notifications
-  notifications: router({
-    getNotifications: protectedProcedure
-      .input(z.object({
-        limit: z.number().default(20),
-        isRead: z.boolean().optional(),
-      }))
-      .query(async ({ ctx, input }) => {
-        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        // Placeholder implementation
-        return { success: true, notifications: [] };
-      }),
-    markAsRead: protectedProcedure
-      .input(z.object({
-        notificationId: z.number(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        // Placeholder implementation
-        return { success: true };
-      }),
-    getPreferences: protectedProcedure
-      .query(async ({ ctx }) => {
-        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        // Placeholder implementation
-        return {
-          enablePushNotifications: true,
-          enableSoundNotifications: true,
-          soundVolume: 70,
-        };
-      }),
-    updatePreferences: protectedProcedure
-      .input(z.object({
-        enablePushNotifications: z.boolean().optional(),
-        enableSoundNotifications: z.boolean().optional(),
-        soundVolume: z.number().min(0).max(100).optional(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        // Placeholder implementation
-        return { success: true };
-      }),
-  }),
+  // Note: notifications router already defined above with notificationSystemRouter
 
   // New Enterprise Features
   webhooks: webhooksRouter,
