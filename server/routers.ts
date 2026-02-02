@@ -85,7 +85,10 @@ import { notificationSystemRouter } from "./routers/notificationSystemRouter";
 import { analyticsExportRouter } from "./routers/analyticsExportRouter";
 import { batchTemplatesRouter } from "./routers/batchTemplatesRouter";
 import { webhookIntegrationRouter } from "./routers/webhookIntegrationRouter";
-import { costOptimizationRouter } from "./routers/costOptimizationRouter";
+import { costOptimizationRouter } from './routers/costOptimizationRouter';
+import { voiceFeedbackRouter } from './routers/voiceFeedbackRouter';
+import { scheduledExportRouter } from './routers/scheduledExportRouter';
+import { featureAnalyticsRouter } from './routers/featureAnalyticsRouter';
 import { chatExportRouter } from "./routers/chatExportRouter";
 
 export const appRouter = router({
@@ -592,5 +595,8 @@ export const appRouter = router({
   conversationSummaries: conversationSummariesRouter,
   abTesting: abTestingRouter,
   auditTrail: auditTrailUIRouter,
+  voiceFeedback: voiceFeedbackRouter,
+  scheduledExport: scheduledExportRouter,
+  featureAnalytics: featureAnalyticsRouter,
 });
 export type AppRouter = typeof appRouter;
