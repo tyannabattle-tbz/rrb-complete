@@ -61,9 +61,22 @@ export default function ChatInterface({
   const [personalityProfiles, setPersonalityProfiles] = useState<any[]>([]);
   const [activePersonalityId, setActivePersonalityId] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [fileErrors, setFileErrors] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const MAX_FILE_SIZE = 50 * 1024 * 1024;
+  const ALLOWED_TYPES = [
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+    'audio/mpeg', 'audio/wav', 'audio/ogg',
+    'video/mp4', 'video/webm', 'video/ogg',
+    'application/pdf', 'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'text/plain'
+  ];
 
   // Auto-scroll to bottom only when new messages arrive
   useEffect(() => {
@@ -112,6 +125,30 @@ export default function ChatInterface({
     }
   };
 
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      setUploadedFiles([...uploadedFiles, ...files]);
+      toast.success(`${files.length} file(s) added`);
+    }
+  };
+
   const removeFile = (index: number) => {
     setUploadedFiles(uploadedFiles.filter((_, i) => i !== index));
   };
@@ -152,10 +189,17 @@ export default function ChatInterface({
     toast.success(`Reacted with ${emoji}`);
   };
 
-
   return (
-    <div className="flex flex-col h-full w-full bg-background">
-      {/* Toolbar */}
+    <div
+      className={`flex flex-col h-full bg-background text-foreground transition-colors ${
+        isDragging ? 'bg-primary/5 border-2 border-primary/50' : ''
+      }`}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      ref={chatContainerRef}
+    >   {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-2 p-3 border-b border-border overflow-x-auto md:overflow-visible">
         <Button
           variant="ghost"
