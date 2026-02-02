@@ -16,6 +16,7 @@ import WebhookMarketplace from "./pages/WebhookMarketplace";
 import ModelFineTuning from "./pages/ModelFineTuning";
 import ProductionDashboard from "./pages/ProductionDashboard";
 import ChatManagement from "./pages/ChatManagement";
+import AdminMonitoringDashboard from "./pages/AdminMonitoringDashboard";
 
 function Router() {
   return (
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/finetuning" component={ModelFineTuning} />
       <Route path="/production" component={ProductionDashboard} />
       <Route path="/chat-management" component={ChatManagement} />
+      <Route path="/admin/monitoring" component={AdminMonitoringDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

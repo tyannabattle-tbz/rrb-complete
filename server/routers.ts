@@ -79,6 +79,8 @@ import { voiceRouter } from "./routers/voiceRouter";
 import { batchRouter } from "./routers/batchRouter";
 import { storyboardRouter } from "./routers/storyboardRouter";
 import { chatHistoryRouter } from "./routers/chatHistoryRouter";
+import { realtimeUpdatesRouter } from "./routers/realtimeUpdatesRouter";
+import { llmStoryboardingRouter } from "./routers/llmStoryboardingRouter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -104,6 +106,12 @@ export const appRouter = router({
 
   // Chat History Management
   chatHistory: chatHistoryRouter,
+
+  // Real-time Updates
+  realtime: realtimeUpdatesRouter,
+
+  // LLM Storyboarding
+  llmStoryboarding: llmStoryboardingRouter,
 
   // Collaboration Invites
   collaborationInvites: collaborationInvitesRouter,
