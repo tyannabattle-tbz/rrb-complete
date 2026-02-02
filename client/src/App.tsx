@@ -39,6 +39,7 @@ import Community from "./pages/Community";
 import CreatorOnboarding from "./pages/CreatorOnboarding";
 import VideoAnalytics from "./pages/VideoAnalytics";
 import VideoSearch from "./pages/VideoSearch";
+import CollaborativeEditor from "./pages/CollaborativeEditor";
 
 function Router() {
   return (
@@ -74,6 +75,7 @@ function Router() {
       <Route path="/creator-onboarding" component={CreatorOnboarding} />
       <Route path="/analytics" component={VideoAnalytics} />
       <Route path="/search" component={VideoSearch} />
+      <Route path="/collaborate" component={CollaborativeEditor} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
