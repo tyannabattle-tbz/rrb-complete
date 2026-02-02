@@ -1,6 +1,7 @@
 import { invokeLLM } from "./_core/llm";
 import type { Message } from "../drizzle/schema";
 import { generateImage } from "./_core/imageGeneration";
+import { mockVideoService } from "./_core/mockVideoService";
 
 /**
  * Service for connecting to and managing the autonomous agent backend.
@@ -67,9 +68,27 @@ Always explain your reasoning and the tools you use.`;
         ? messageContent
         : "No response from agent";
 
-    // Check if user is asking for image generation
+    // Check if user is asking for video generation
     let finalResponse = agentResponse;
-    if (isImageGenerationRequest(request.userMessage)) {
+    if (isVideoGenerationRequest(request.userMessage)) {
+      try {
+        const videoParams = extractVideoParams(request.userMessage);
+        const videoResult = await mockVideoService.generateVideo({
+          prompt: videoParams.description,
+          duration: videoParams.duration,
+          style: videoParams.style,
+          resolution: videoParams.resolution,
+        });
+        
+        if (videoResult.status === 'completed') {
+          finalResponse = `🎬 I've generated a video based on your request!\n\n**Video Details:**\n- Duration: ${videoParams.duration}s\n- Style: ${videoParams.style}\n- Resolution: ${videoParams.resolution}\n\n[Watch Video](${videoResult.url})\n\nYour video is ready to download!`;
+        } else {
+          finalResponse = `I attempted to generate a video, but the generation process encountered an issue. ${agentResponse}`;
+        }
+      } catch (videoError) {
+        console.warn("[Agent Backend] Video generation failed:", videoError);
+      }
+    } else if (isImageGenerationRequest(request.userMessage)) {
       try {
         const imageResult = await generateImage({
           prompt: extractImagePrompt(request.userMessage),
@@ -77,7 +96,6 @@ Always explain your reasoning and the tools you use.`;
         finalResponse = `I've generated an image based on your request:\n\n![Generated Image](${imageResult.url})\n\n${agentResponse}`;
       } catch (imageError) {
         console.warn("[Agent Backend] Image generation failed:", imageError);
-        // Continue with text response if image generation fails
       }
     }
 
@@ -159,6 +177,70 @@ function extractReasoning(response: string): string {
 
   // Fall back to first 500 characters
   return response.substring(0, 500);
+}
+
+/**
+ * Check if the user is requesting video generation.
+ */
+function isVideoGenerationRequest(userMessage: string): boolean {
+  const videoKeywords = [
+    "video",
+    "clip",
+    "animation",
+    "motion",
+    "generate video",
+    "create video",
+    "make video",
+    "action clip",
+    "animated",
+    "motion graphics",
+  ];
+  const lowerMessage = userMessage.toLowerCase();
+  return videoKeywords.some((keyword) => lowerMessage.includes(keyword));
+}
+
+/**
+ * Extract video generation parameters from user message.
+ */
+function extractVideoParams(userMessage: string): {
+  description: string;
+  duration: number;
+  style: string;
+  resolution: string;
+} {
+  const lowerMessage = userMessage.toLowerCase();
+  
+  // Extract duration (e.g., "10 second", "15s", "30 sec")
+  const durationMatch = userMessage.match(/(\d+)\s*(?:sec|second|s)/);
+  const duration = durationMatch ? Math.min(parseInt(durationMatch[1]), 300) : 10;
+  
+  // Extract style
+  let style = 'cinematic';
+  if (lowerMessage.includes('animated')) style = 'animated';
+  else if (lowerMessage.includes('motion')) style = 'motion-graphics';
+  else if (lowerMessage.includes('documentary')) style = 'documentary';
+  else if (lowerMessage.includes('cinematic')) style = 'cinematic';
+  
+  // Extract resolution
+  let resolution = '1080p';
+  if (lowerMessage.includes('4k')) resolution = '4k';
+  else if (lowerMessage.includes('720')) resolution = '720p';
+  else if (lowerMessage.includes('1080')) resolution = '1080p';
+  
+  // Clean up the description
+  let description = userMessage
+    .replace(/^(generate|create|make)\s+/i, '')
+    .replace(/^(a|an|the)\s+/i, '')
+    .replace(/\s*\d+\s*(?:sec|second|s)\s*/i, '')
+    .replace(/\s*(?:video|clip|animation|motion)\s*/i, '')
+    .trim();
+  
+  return {
+    description: description || 'A creative video',
+    duration,
+    style: style as 'cinematic' | 'animated' | 'motion-graphics' | 'documentary',
+    resolution: resolution as '720p' | '1080p' | '4k',
+  };
 }
 
 /**

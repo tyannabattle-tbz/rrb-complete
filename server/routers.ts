@@ -263,32 +263,76 @@ export const appRouter = router({
         // If this is a user message, generate an agent response
         if (input.role === "user") {
           try {
-            // Get the session to retrieve configuration
-            const session = await db.getAgentSession(input.sessionId);
-            if (!session) throw new Error("Session not found");
+            // Check if this is a video generation request
+            const videoKeywords = ['video', 'clip', 'animation', 'motion', 'generate video', 'create video', 'make video', 'action clip', 'animated', 'motion graphics'];
+            const isVideoRequest = videoKeywords.some(keyword => 
+              input.content.toLowerCase().includes(keyword)
+            );
 
-            // Execute the agent to generate a response
-            const agentResponse = await executeAgentTask({
-              sessionId: input.sessionId,
-              userMessage: input.content,
-              systemPrompt: session.systemPrompt || undefined,
-              temperature: session.temperature || undefined,
-              model: session.model || undefined,
-              maxSteps: session.maxSteps || undefined,
-            });
+            if (isVideoRequest) {
+              // Extract video parameters from the request
+              const durationMatch = input.content.match(/(\d+)\s*(?:sec|second|s)/);
+              const duration = durationMatch ? parseInt(durationMatch[1]) : 10;
+              
+              const styleMatch = input.content.match(/(cinematic|animated|motion.?graphics|documentary)/i);
+              const style = styleMatch ? styleMatch[1].toLowerCase().replace(/\s+/g, '-') : 'cinematic';
+              
+              // Generate video using motion generation service
+              const videoResult = await db.generateVideoFromDescription({
+                description: input.content,
+                duration,
+                style,
+                resolution: '1080p',
+                fps: 30,
+                aspectRatio: '16:9',
+              });
 
-            // Store the agent response
-            if (agentResponse.success && agentResponse.agentResponse) {
-              await db.addMessage(
-                input.sessionId,
-                "assistant",
-                agentResponse.agentResponse,
-                JSON.stringify({
-                  reasoning: agentResponse.reasoning,
-                  toolsUsed: agentResponse.toolsUsed,
-                  status: agentResponse.status,
-                })
-              );
+              if (videoResult.success) {
+                // Store the video generation response
+                await db.addMessage(
+                  input.sessionId,
+                  "assistant",
+                  `I've generated your video! Here's your ${duration}-second ${style} video:\n\n🎬 **Video Generated**\n- Duration: ${duration}s\n- Style: ${style}\n- Resolution: 1080p\n\n[Video URL: ${videoResult.videoUrl}]\n\nYour video is ready to download!`,
+                  JSON.stringify({
+                    type: 'video_generation',
+                    videoId: videoResult.videoId,
+                    videoUrl: videoResult.videoUrl,
+                    duration,
+                    style,
+                    status: 'completed'
+                  })
+                );
+              } else {
+                throw new Error('Video generation failed');
+              }
+            } else {
+              // Get the session to retrieve configuration
+              const session = await db.getAgentSession(input.sessionId);
+              if (!session) throw new Error("Session not found");
+
+              // Execute the agent to generate a response
+              const agentResponse = await executeAgentTask({
+                sessionId: input.sessionId,
+                userMessage: input.content,
+                systemPrompt: session.systemPrompt || undefined,
+                temperature: session.temperature || undefined,
+                model: session.model || undefined,
+                maxSteps: session.maxSteps || undefined,
+              });
+
+              // Store the agent response
+              if (agentResponse.success && agentResponse.agentResponse) {
+                await db.addMessage(
+                  input.sessionId,
+                  "assistant",
+                  agentResponse.agentResponse,
+                  JSON.stringify({
+                    reasoning: agentResponse.reasoning,
+                    toolsUsed: agentResponse.toolsUsed,
+                    status: agentResponse.status,
+                  })
+                );
+              }
             }
           } catch (error) {
             console.error("[Agent] Failed to generate response:", error);

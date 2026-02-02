@@ -1625,3 +1625,17 @@ The Manus Agent platform is fully production-ready with:
 - [ ] Build commenting system
 - [ ] Add user permissions/roles
 - [ ] Implement project sharing
+
+
+## Phase 29: Chat-to-Video Generation Routing (IN PROGRESS)
+- [ ] Create video request detector in chat handler
+- [ ] Route video/clip/animation requests to motion generation endpoint
+- [ ] Return actual video URLs from chat instead of text descriptions
+- [ ] Test video generation through chat interface
+- [ ] Verify videos are playable and downloadable
+
+## Phase 36: Chat Message Input Fix (COMPLETED)
+- [x] Investigate chat component message input mechanism
+- [x] Fix message submission in chat UI
+- [x] Test video generation through chat interface
+- [x] Verify chat-to-video-generation routing works

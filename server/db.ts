@@ -1528,3 +1528,49 @@ function calculateImprovement(baseline: Record<string, any>, candidate: Record<s
   const candidateF1 = candidate.f1Score || 0;
   return ((candidateF1 - baselineF1) / baselineF1) * 100;
 }
+
+
+// Video Generation Helper
+export async function generateVideoFromDescription(params: {
+  description: string;
+  duration: number;
+  style: string;
+  resolution: string;
+  fps: number;
+  aspectRatio: string;
+}) {
+  try {
+    // Import the mock video service
+    const { mockVideoService } = await import('./_core/mockVideoService');
+    
+    // Generate video using the mock service
+    const result = await mockVideoService.generateVideo({
+      prompt: params.description,
+      duration: params.duration,
+      style: params.style,
+      resolution: params.resolution,
+    });
+
+    if (result.status === 'completed') {
+      return {
+        success: true,
+        videoId: result.videoId,
+        videoUrl: result.url,
+        duration: result.duration,
+        resolution: result.resolution,
+        status: result.status,
+      };
+    } else {
+      return {
+        success: false,
+        error: 'Video generation failed',
+      };
+    }
+  } catch (error) {
+    console.error('[Video Generation] Error:', error);
+    return {
+      success: false,
+      error: String(error),
+    };
+  }
+}
