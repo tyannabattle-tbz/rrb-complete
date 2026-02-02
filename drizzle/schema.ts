@@ -328,6 +328,138 @@ export const featureFlags = mysqlTable("feature_flags", {
 export type FeatureFlag = typeof featureFlags.$inferSelect;
 export type InsertFeatureFlag = typeof featureFlags.$inferInsert;
 
+// ============================================================================
+// VOICE COMMANDS, BATCH PROCESSING & STORYBOARDING TABLES
+// ============================================================================
+
+// Voice Commands
+export const voiceCommands = mysqlTable("voice_commands", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: int("sessionId").references(() => agentSessions.id, { onDelete: "cascade" }),
+  transcript: text("transcript").notNull(),
+  intent: varchar("intent", { length: 64 }).notNull(),
+  confidence: decimal("confidence", { precision: 3, scale: 2 }).notNull(),
+  parameters: json("parameters").$type<Record<string, any>>(),
+  result: text("result"),
+  status: mysqlEnum("status", ["pending", "executing", "completed", "failed"]).default("pending"),
+  error: text("error"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  executedAt: timestamp("executedAt"),
+});
+
+export type VoiceCommand = typeof voiceCommands.$inferSelect;
+export type InsertVoiceCommand = typeof voiceCommands.$inferInsert;
+
+// Batch Queues
+export const batchQueues = mysqlTable("batch_queues", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  totalJobs: int("totalJobs").default(0),
+  completedJobs: int("completedJobs").default(0),
+  failedJobs: int("failedJobs").default(0),
+  isPaused: boolean("isPaused").default(false),
+  status: mysqlEnum("status", ["idle", "processing", "paused", "completed"]).default("idle"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BatchQueue = typeof batchQueues.$inferSelect;
+export type InsertBatchQueue = typeof batchQueues.$inferInsert;
+
+// Batch Jobs
+export const batchJobs = mysqlTable("batch_jobs", {
+  id: int("id").autoincrement().primaryKey(),
+  queueId: int("queueId").notNull().references(() => batchQueues.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  status: mysqlEnum("status", ["pending", "processing", "completed", "failed", "cancelled", "paused"]).default("pending"),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "critical"]).default("medium"),
+  progress: int("progress").default(0),
+  estimatedTime: int("estimatedTime").default(60), // seconds
+  elapsedTime: int("elapsedTime").default(0), // seconds
+  parameters: json("parameters").$type<Record<string, any>>(),
+  result: json("result").$type<Record<string, any>>(),
+  error: text("error"),
+  retryCount: int("retryCount").default(0),
+  maxRetries: int("maxRetries").default(3),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BatchJob = typeof batchJobs.$inferSelect;
+export type InsertBatchJob = typeof batchJobs.$inferInsert;
+
+// Storyboards
+export const storyboards = mysqlTable("storyboards", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  scriptContent: text("scriptContent").notNull(),
+  totalDuration: int("totalDuration").default(0), // seconds
+  genre: varchar("genre", { length: 64 }),
+  targetAudience: varchar("targetAudience", { length: 255 }),
+  productionStyle: varchar("productionStyle", { length: 255 }),
+  colorPalette: json("colorPalette").$type<string[]>(),
+  metadata: json("metadata").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Storyboard = typeof storyboards.$inferSelect;
+export type InsertStoryboard = typeof storyboards.$inferInsert;
+
+// Scenes
+export const scenes = mysqlTable("scenes", {
+  id: int("id").autoincrement().primaryKey(),
+  storyboardId: int("storyboardId").notNull().references(() => storyboards.id, { onDelete: "cascade" }),
+  sceneNumber: int("sceneNumber").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  location: varchar("location", { length: 255 }).notNull(),
+  timeOfDay: varchar("timeOfDay", { length: 64 }),
+  mood: varchar("mood", { length: 64 }),
+  duration: int("duration").default(0), // seconds
+  characters: json("characters").$type<string[]>(),
+  props: json("props").$type<string[]>(),
+  lighting: text("lighting"),
+  soundDesign: text("soundDesign"),
+  visualEffects: json("visualEffects").$type<string[]>(),
+  imagePrompt: text("imagePrompt"),
+  generatedImageUrl: varchar("generatedImageUrl", { length: 2048 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Scene = typeof scenes.$inferSelect;
+export type InsertScene = typeof scenes.$inferInsert;
+
+// Shots
+export const shots = mysqlTable("shots", {
+  id: int("id").autoincrement().primaryKey(),
+  sceneId: int("sceneId").notNull().references(() => scenes.id, { onDelete: "cascade" }),
+  shotNumber: int("shotNumber").notNull(),
+  description: text("description"),
+  composition: varchar("composition", { length: 64 }), // wide, medium, close-up, extreme close-up
+  angle: varchar("angle", { length: 64 }), // high, level, low, dutch
+  movement: varchar("movement", { length: 64 }), // static, pan, tilt, dolly, crane
+  duration: int("duration").default(0), // seconds
+  dialogue: json("dialogue").$type<string[]>(),
+  actions: json("actions").$type<string[]>(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Shot = typeof shots.$inferSelect;
+export type InsertShot = typeof shots.$inferInsert;
+
 
 // ============================================================================
 // ADMIN DASHBOARD TABLES
