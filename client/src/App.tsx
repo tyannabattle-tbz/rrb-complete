@@ -22,7 +22,10 @@ import CostOptimizationDashboard from "./pages/CostOptimizationDashboard";
 import AdminMonitoringDashboard from "./pages/AdminMonitoringDashboard";
 import VoiceFeedbackSettings from "./pages/VoiceFeedbackSettings";
 import ScheduledExportManager from "./pages/ScheduledExportManager";
-import FeatureAnalyticsDashboard from "./pages/FeatureAnalyticsDashboard";
+import FeatureAnalyticsDashboard from './pages/FeatureAnalyticsDashboard';
+import VideoProcessingStudio from './pages/VideoProcessingStudio';
+import AudioEditor from './pages/AudioEditor';
+import VideoTimelineEditor from './pages/VideoTimelineEditor';
 import MotionGenerationStudio from "./pages/MotionGenerationStudio";
 
 function Router() {
@@ -45,7 +48,10 @@ function Router() {
       <Route path="/admin/monitoring" component={AdminMonitoringDashboard} />
       <Route path="/voice-feedback" component={VoiceFeedbackSettings} />
       <Route path="/scheduled-exports" component={ScheduledExportManager} />
-      <Route path="/feature-analytics" component={FeatureAnalyticsDashboard} />
+        <Route path="/feature-analytics" component={FeatureAnalyticsDashboard} />
+        <Route path="/video-processing" component={VideoProcessingStudio} />
+        <Route path="/audio-editor" component={AudioEditor} />
+        <Route path="/video-timeline" component={VideoTimelineEditor} />
       <Route path="/motion-studio" component={MotionGenerationStudio} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

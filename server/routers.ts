@@ -18,7 +18,7 @@ import { operationsPlatformRouter } from "./routers/operationsPlatform";
 import { infrastructurePlatformRouter } from "./routers/infrastructurePlatform";
 import { finalOperationsRouter } from "./routers/finalOperations";
 import { analyticsRouter } from "./routers/analytics";
-import { collaborationRouter } from "./routers/collaboration";
+
 import { billingRouter } from "./routers/billing";
 import { anomalyDetectionRouter } from "./routers/anomalyDetection";
 import { predictiveAlertsRouter } from "./routers/predictiveAlerts";
@@ -96,6 +96,8 @@ import { motionGenerationRouter } from './routers/motionGenerationRouter';
 import { videoProcessingRouter } from './routers/videoProcessingRouter';
 import { audioMusicRouter } from './routers/audioMusicRouter';
 import { videoEditingRouter } from './routers/videoEditingRouter';
+import { apiIntegrationRouter } from './routers/apiIntegrationRouter';
+import { collaborationRouter } from './routers/collaborationRouter';
 
 export const appRouter = router({
   system: systemRouter,
@@ -556,7 +558,6 @@ export const appRouter = router({
   
   // Advanced Features
   analytics: analyticsRouter,
-  collaboration: collaborationRouter,
   billing: billingRouter,
   anomalyDetection: anomalyDetectionRouter,
   predictiveAlerts: predictiveAlertsRouter,
@@ -610,5 +611,7 @@ export const appRouter = router({
   videoProcessing: videoProcessingRouter,
   audioMusic: audioMusicRouter,
   videoEditing: videoEditingRouter,
+  apiIntegration: apiIntegrationRouter,
+  collaboration: collaborationRouter,
 });
 export type AppRouter = typeof appRouter;
