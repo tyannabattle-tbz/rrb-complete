@@ -36,6 +36,9 @@ import VideoGallery from "./pages/VideoGallery";
 import VideoEditor from "./components/VideoEditor";
 import UserProfile from "./pages/UserProfile";
 import Community from "./pages/Community";
+import CreatorOnboarding from "./pages/CreatorOnboarding";
+import VideoAnalytics from "./pages/VideoAnalytics";
+import VideoSearch from "./pages/VideoSearch";
 
 function Router() {
   return (
@@ -68,6 +71,9 @@ function Router() {
       <Route path="/editor/:videoId" component={() => <VideoEditor videoUrl="" videoId="" />} />
       <Route path="/profile/:userId" component={(props) => <UserProfile userId={props.userId} />} />
       <Route path="/community" component={Community} />
+      <Route path="/creator-onboarding" component={CreatorOnboarding} />
+      <Route path="/analytics" component={VideoAnalytics} />
+      <Route path="/search" component={VideoSearch} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
