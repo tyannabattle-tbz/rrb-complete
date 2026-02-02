@@ -159,9 +159,9 @@ export class VideoRecommendationEngine {
    */
   private static getRecommendationReason(
     video: VideoMetadata,
-    userPreferences: Record<string, number>
+    userPreferences: Record<string, number | string>
   ): string {
-    if (userPreferences.preferredStyle === video.style) {
+    if ((userPreferences.preferredStyle as string) === video.style) {
       return `Based on your interest in ${video.style} videos`;
     }
 
