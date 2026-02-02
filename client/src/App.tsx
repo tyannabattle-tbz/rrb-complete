@@ -33,6 +33,9 @@ import { UsageReports } from "./pages/UsageReports";
 import MotionGenerationStudio from "./pages/MotionGenerationStudio";
 import SharedVideoPage from "./pages/SharedVideoPage";
 import VideoGallery from "./pages/VideoGallery";
+import VideoEditor from "./components/VideoEditor";
+import UserProfile from "./pages/UserProfile";
+import Community from "./pages/Community";
 
 function Router() {
   return (
@@ -62,6 +65,9 @@ function Router() {
       <Route path="/motion-studio" component={MotionGenerationStudio} />
       <Route path="/share/video/:videoId" component={SharedVideoPage} />
       <Route path="/gallery" component={VideoGallery} />
+      <Route path="/editor/:videoId" component={() => <VideoEditor videoUrl="" videoId="" />} />
+      <Route path="/profile/:userId" component={(props) => <UserProfile userId={props.userId} />} />
+      <Route path="/community" component={Community} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
