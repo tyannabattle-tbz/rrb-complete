@@ -20,6 +20,9 @@ import NotificationCenter from "./pages/NotificationCenter";
 import BatchTemplateManager from "./pages/BatchTemplateManager";
 import CostOptimizationDashboard from "./pages/CostOptimizationDashboard";
 import AdminMonitoringDashboard from "./pages/AdminMonitoringDashboard";
+import VoiceFeedbackSettings from "./pages/VoiceFeedbackSettings";
+import ScheduledExportManager from "./pages/ScheduledExportManager";
+import FeatureAnalyticsDashboard from "./pages/FeatureAnalyticsDashboard";
 
 function Router() {
   return (
@@ -39,6 +42,9 @@ function Router() {
         <Route path="/batch-templates" component={BatchTemplateManager} />
         <Route path="/cost-optimization" component={CostOptimizationDashboard} />
       <Route path="/admin/monitoring" component={AdminMonitoringDashboard} />
+      <Route path="/voice-feedback" component={VoiceFeedbackSettings} />
+      <Route path="/scheduled-exports" component={ScheduledExportManager} />
+      <Route path="/feature-analytics" component={FeatureAnalyticsDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

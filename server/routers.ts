@@ -90,6 +90,8 @@ import { voiceFeedbackRouter } from './routers/voiceFeedbackRouter';
 import { scheduledExportRouter } from './routers/scheduledExportRouter';
 import { featureAnalyticsRouter } from './routers/featureAnalyticsRouter';
 import { chatExportRouter } from "./routers/chatExportRouter";
+import { emailNotificationRouter } from './routers/emailNotificationRouter';
+import { realtimeDashboardRouter } from './routers/realtimeDashboardRouter';
 
 export const appRouter = router({
   system: systemRouter,
@@ -598,5 +600,7 @@ export const appRouter = router({
   voiceFeedback: voiceFeedbackRouter,
   scheduledExport: scheduledExportRouter,
   featureAnalytics: featureAnalyticsRouter,
+  emailNotification: emailNotificationRouter,
+  realtimeDashboard: realtimeDashboardRouter,
 });
 export type AppRouter = typeof appRouter;
