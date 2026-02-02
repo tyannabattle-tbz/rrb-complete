@@ -23,6 +23,7 @@ import AdminMonitoringDashboard from "./pages/AdminMonitoringDashboard";
 import VoiceFeedbackSettings from "./pages/VoiceFeedbackSettings";
 import ScheduledExportManager from "./pages/ScheduledExportManager";
 import FeatureAnalyticsDashboard from "./pages/FeatureAnalyticsDashboard";
+import MotionGenerationStudio from "./pages/MotionGenerationStudio";
 
 function Router() {
   return (
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/voice-feedback" component={VoiceFeedbackSettings} />
       <Route path="/scheduled-exports" component={ScheduledExportManager} />
       <Route path="/feature-analytics" component={FeatureAnalyticsDashboard} />
+      <Route path="/motion-studio" component={MotionGenerationStudio} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

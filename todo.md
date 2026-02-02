@@ -1566,3 +1566,12 @@ The Manus Agent platform is fully production-ready with:
 - [ ] Check for performance issues
 - [ ] Create final checkpoint
 - [ ] Deliver to user
+
+
+## Phase 60: Motion Generation Feature (IN PROGRESS)
+- [ ] Create Motion Generation Backend Router with video/animation APIs
+- [ ] Build Motion Generation UI Component with preview
+- [ ] Integrate Video Processing Pipeline
+- [ ] Add Motion Preview and Export functionality
+- [ ] Test Motion Generation end-to-end
+- [ ] Deploy Motion Generation feature
