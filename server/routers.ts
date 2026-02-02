@@ -86,6 +86,7 @@ import { analyticsExportRouter } from "./routers/analyticsExportRouter";
 import { batchTemplatesRouter } from "./routers/batchTemplatesRouter";
 import { webhookIntegrationRouter } from "./routers/webhookIntegrationRouter";
 import { costOptimizationRouter } from "./routers/costOptimizationRouter";
+import { chatExportRouter } from "./routers/chatExportRouter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -132,6 +133,9 @@ export const appRouter = router({
 
   // Cost Optimization
   costOptimization: costOptimizationRouter,
+
+  // Chat Export
+  chatExport: chatExportRouter,
 
   // Collaboration Invites
   collaborationInvites: collaborationInvitesRouter,
