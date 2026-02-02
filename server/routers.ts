@@ -93,6 +93,9 @@ import { chatExportRouter } from "./routers/chatExportRouter";
 import { emailNotificationRouter } from './routers/emailNotificationRouter';
 import { realtimeDashboardRouter } from './routers/realtimeDashboardRouter';
 import { motionGenerationRouter } from './routers/motionGenerationRouter';
+import { videoProcessingRouter } from './routers/videoProcessingRouter';
+import { audioMusicRouter } from './routers/audioMusicRouter';
+import { videoEditingRouter } from './routers/videoEditingRouter';
 
 export const appRouter = router({
   system: systemRouter,
@@ -604,5 +607,8 @@ export const appRouter = router({
   emailNotification: emailNotificationRouter,
   realtimeDashboard: realtimeDashboardRouter,
   motionGeneration: motionGenerationRouter,
+  videoProcessing: videoProcessingRouter,
+  audioMusic: audioMusicRouter,
+  videoEditing: videoEditingRouter,
 });
 export type AppRouter = typeof appRouter;
