@@ -55,7 +55,7 @@ export const AIStoryboardingEngine: React.FC = () => {
 
   // Generate storyboard mutation
   const generateStoryboardMutation = (trpc as any).storyboard.generate.useMutation({
-    onSuccess: (generated) => {
+    onSuccess: (generated: any) => {
       setStoryboard(generated);
       if (generated.scenes.length > 0) {
         setSelectedScene(generated.scenes[0]);

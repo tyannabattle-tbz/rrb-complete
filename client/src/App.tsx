@@ -14,6 +14,8 @@ import { TeamManagement } from "./pages/TeamManagement";
 import { KeyboardShortcutsGuide } from "./components/KeyboardShortcutsGuide";
 import WebhookMarketplace from "./pages/WebhookMarketplace";
 import ModelFineTuning from "./pages/ModelFineTuning";
+import ProductionDashboard from "./pages/ProductionDashboard";
+import ChatManagement from "./pages/ChatManagement";
 
 function Router() {
   return (
@@ -27,6 +29,8 @@ function Router() {
       <Route path="/team" component={TeamManagement} />
       <Route path="/marketplace" component={WebhookMarketplace} />
       <Route path="/finetuning" component={ModelFineTuning} />
+      <Route path="/production" component={ProductionDashboard} />
+      <Route path="/chat-management" component={ChatManagement} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

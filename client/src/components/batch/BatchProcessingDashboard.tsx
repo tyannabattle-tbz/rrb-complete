@@ -71,7 +71,7 @@ export const BatchProcessingDashboard: React.FC = () => {
 
   // Create new queue
   const createQueueMutation = (trpc as any).batch.createQueue.useMutation({
-    onSuccess: (newQueue) => {
+    onSuccess: (newQueue: any) => {
       setQueues((prev) => [...prev, newQueue]);
       setSelectedQueue(newQueue.id);
       toast.success('Queue created');
@@ -80,7 +80,7 @@ export const BatchProcessingDashboard: React.FC = () => {
 
   // Add job to queue
   const addJobMutation = (trpc as any).batch.addJob.useMutation({
-    onSuccess: (job) => {
+    onSuccess: (job: any) => {
       setQueues((prev) =>
         prev.map((q) =>
           q.id === selectedQueue
@@ -99,7 +99,7 @@ export const BatchProcessingDashboard: React.FC = () => {
 
   // Add bulk jobs
   const addBulkJobsMutation = (trpc as any).batch.addBulkJobs.useMutation({
-    onSuccess: (jobs) => {
+    onSuccess: (jobs: any) => {
       setQueues((prev) =>
         prev.map((q) =>
           q.id === selectedQueue

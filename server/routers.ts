@@ -75,6 +75,11 @@ import { workflowTemplatesRouter } from './routers/workflowTemplates';
 
 import { abTestingRouter } from "./routers/abTesting";
 import { auditTrailUIRouter } from "./routers/auditTrailUI";
+import { voiceRouter } from "./routers/voiceRouter";
+import { batchRouter } from "./routers/batchRouter";
+import { storyboardRouter } from "./routers/storyboardRouter";
+import { chatHistoryRouter } from "./routers/chatHistoryRouter";
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -87,6 +92,18 @@ export const appRouter = router({
       } as const;
     }),
   }),
+
+  // Voice Commands
+  voice: voiceRouter,
+
+  // Batch Processing
+  batch: batchRouter,
+
+  // AI Storyboarding
+  storyboard: storyboardRouter,
+
+  // Chat History Management
+  chatHistory: chatHistoryRouter,
 
   // Collaboration Invites
   collaborationInvites: collaborationInvitesRouter,
