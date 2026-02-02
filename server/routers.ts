@@ -81,6 +81,9 @@ import { storyboardRouter } from "./routers/storyboardRouter";
 import { chatHistoryRouter } from "./routers/chatHistoryRouter";
 import { realtimeUpdatesRouter } from "./routers/realtimeUpdatesRouter";
 import { llmStoryboardingRouter } from "./routers/llmStoryboardingRouter";
+import { notificationSystemRouter } from "./routers/notificationSystemRouter";
+import { analyticsExportRouter } from "./routers/analyticsExportRouter";
+import { batchTemplatesRouter } from "./routers/batchTemplatesRouter";
 
 export const appRouter = router({
   system: systemRouter,
@@ -112,6 +115,15 @@ export const appRouter = router({
 
   // LLM Storyboarding
   llmStoryboarding: llmStoryboardingRouter,
+
+  // Notification System
+  notifications: notificationSystemRouter,
+
+  // Analytics Export
+  analyticsExport: analyticsExportRouter,
+
+  // Batch Templates
+  batchTemplates: batchTemplatesRouter,
 
   // Collaboration Invites
   collaborationInvites: collaborationInvitesRouter,
