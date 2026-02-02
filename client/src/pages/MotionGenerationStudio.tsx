@@ -4,16 +4,32 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Film, Zap, Wand2, Play, Download, Clock, Settings } from 'lucide-react';
 import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
 
 export default function MotionGenerationStudio() {
   const [activeTab, setActiveTab] = useState<'create' | 'templates' | 'history'>('create');
-  const [isGenerating, setIsGenerating] = useState(false);
   const [formData, setFormData] = useState({
     description: '',
     duration: 10,
-    style: 'cinematic',
-    resolution: '1080p',
+    style: 'cinematic' as const,
+    resolution: '1080p' as const,
     fps: 30,
+  });
+
+  // Use tRPC mutation for video generation
+  const generateVideoMutation = trpc.motionGeneration.generateVideoClip.useMutation({
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success('Video generated successfully!');
+        toast.info(`Video URL: ${data.videoUrl}`);
+      } else {
+        toast.error(data.message || 'Video generation failed');
+      }
+      setFormData({ ...formData, description: '' });
+    },
+    onError: (error) => {
+      toast.error(`Error: ${error.message}`);
+    },
   });
 
   const handleGenerateVideo = async () => {
@@ -22,15 +38,17 @@ export default function MotionGenerationStudio() {
       return;
     }
 
-    setIsGenerating(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-      toast.success('Video generation started! Processing your request...');
-      setFormData({ ...formData, description: '' });
+      await generateVideoMutation.mutateAsync({
+        description: formData.description,
+        duration: formData.duration,
+        style: formData.style,
+        resolution: formData.resolution,
+        fps: formData.fps,
+        aspectRatio: '16:9',
+      });
     } catch (error) {
-      toast.error('Failed to generate video');
-    } finally {
-      setIsGenerating(false);
+      console.error('Video generation error:', error);
     }
   };
 
@@ -77,6 +95,7 @@ export default function MotionGenerationStudio() {
       duration: 30,
       size: '125.5 MB',
       createdAt: '2 days ago',
+      videoUrl: '/videos/demo-1.mp4',
     },
     {
       id: 'clip-2',
@@ -85,6 +104,7 @@ export default function MotionGenerationStudio() {
       duration: 15,
       size: '45.2 MB',
       createdAt: '1 day ago',
+      videoUrl: '/videos/tutorial-1.mp4',
     },
   ];
 
@@ -169,7 +189,7 @@ export default function MotionGenerationStudio() {
                     </label>
                     <select
                       value={formData.style}
-                      onChange={(e) => setFormData({ ...formData, style: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, style: e.target.value as any })}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="cinematic">Cinematic</option>
@@ -187,7 +207,7 @@ export default function MotionGenerationStudio() {
                     </label>
                     <select
                       value={formData.resolution}
-                      onChange={(e) => setFormData({ ...formData, resolution: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, resolution: e.target.value as any })}
                       className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="720p">720p</option>
@@ -213,11 +233,11 @@ export default function MotionGenerationStudio() {
 
                 <Button
                   onClick={handleGenerateVideo}
-                  disabled={isGenerating}
+                  disabled={generateVideoMutation.isPending}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white gap-2"
                 >
                   <Wand2 className="w-4 h-4" />
-                  {isGenerating ? 'Generating...' : 'Generate Video'}
+                  {generateVideoMutation.isPending ? 'Generating...' : 'Generate Video'}
                 </Button>
               </CardContent>
             </Card>
@@ -298,31 +318,24 @@ export default function MotionGenerationStudio() {
           {recentVideos.map((video) => (
             <Card key={video.id} className="shadow-lg">
               <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Film className="w-10 h-10 text-blue-600" />
-                    <div>
-                      <h3 className="font-semibold text-slate-900">{video.title}</h3>
-                      <p className="text-sm text-slate-600">{video.createdAt}</p>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-slate-900">{video.title}</h3>
+                    <div className="flex gap-4 mt-2 text-sm text-slate-600">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {video.duration}s
+                      </span>
+                      <span>{video.size}</span>
+                      <span>{video.createdAt}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <Badge className="bg-green-100 text-green-800 mb-1">
-                        {video.status}
-                      </Badge>
-                      <p className="text-sm text-slate-600">{video.size}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="gap-1">
-                        <Play className="w-4 h-4" />
-                        Preview
-                      </Button>
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 gap-1">
-                        <Download className="w-4 h-4" />
-                        Download
-                      </Button>
-                    </div>
+                  <div className="flex gap-2">
+                    <Badge className="bg-green-100 text-green-700">{video.status}</Badge>
+                    <Button size="sm" variant="outline" className="gap-2">
+                      <Download className="w-4 h-4" />
+                      Download
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -330,28 +343,6 @@ export default function MotionGenerationStudio() {
           ))}
         </div>
       )}
-
-      {/* Features */}
-      <Card className="shadow-lg bg-slate-50">
-        <CardHeader>
-          <CardTitle>Motion Generation Features</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { icon: Wand2, title: 'AI-Powered', desc: 'Advanced AI generates videos from descriptions' },
-              { icon: Zap, title: 'Fast Processing', desc: 'Quick turnaround times for your videos' },
-              { icon: Film, title: 'Multiple Styles', desc: 'Cinematic, animated, motion graphics & more' },
-            ].map((feature, idx) => (
-              <div key={idx} className="p-4 bg-white rounded-lg">
-                <feature.icon className="w-6 h-6 text-blue-600 mb-2" />
-                <h4 className="font-semibold text-slate-900">{feature.title}</h4>
-                <p className="text-sm text-slate-600 mt-1">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
+import { fileURLToPath } from "url";
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -21,6 +22,16 @@ export async function setupVite(app: Express, server: Server) {
   });
 
   app.use(vite.middlewares);
+  
+  // Serve static video files from public/videos
+  const publicVideosPath = path.resolve(
+    import.meta.dirname,
+    "../..",
+    "public",
+    "videos"
+  );
+  app.use("/videos", express.static(publicVideosPath));
+  
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
