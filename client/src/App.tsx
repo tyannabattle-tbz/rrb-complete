@@ -26,7 +26,10 @@ import FeatureAnalyticsDashboard from './pages/FeatureAnalyticsDashboard';
 import VideoProcessingStudio from './pages/VideoProcessingStudio';
 import AudioEditor from './pages/AudioEditor';
 import VideoTimelineEditor from '@/pages/VideoTimelineEditor';
-import VideoQueueManager from '@/pages/VideoQueueManager';
+import { VideoQueueManager } from "./pages/VideoQueueManager";
+import { RateLimitingDashboard } from "./pages/RateLimitingDashboard";
+import { BackupManagement } from "./pages/BackupManagement";
+import { UsageReports } from "./pages/UsageReports";
 import MotionGenerationStudio from "./pages/MotionGenerationStudio";
 
 function Router() {

@@ -22,7 +22,7 @@ interface VideoJob {
   error?: string;
 }
 
-export default function VideoQueueManager() {
+export function VideoQueueManager() {
   const [jobs, setJobs] = useState<VideoJob[]>([]);
   const [selectedJob, setSelectedJob] = useState<VideoJob | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
