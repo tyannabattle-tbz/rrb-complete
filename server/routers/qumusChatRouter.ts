@@ -14,58 +14,40 @@ export const qumusChatRouter = router({
     }))
     .mutation(async ({ input }) => {
       try {
-        // Get relevant knowledge context
-        const searchResults = QumusKnowledgeBase.search(input.query);
-        const contextEntries = searchResults.slice(0, 5);
-        
-        // Build comprehensive context
-        const contextText = contextEntries.length > 0
-          ? `\n\n[RELEVANT QUMUS KNOWLEDGE:\n${contextEntries
-              .map(e => `- ${e.topic}: ${e.content}`)
-              .join('\n')}\n]`
-          : '';
+        const systemPrompt = `You are Qumus, the official AI assistant for the Qumus video generation platform by Canryn Production.
 
-        // Build the instruction that will be prepended to the conversation
-        const qumusInstruction = `You are Qumus, the official AI assistant for the Qumus video generation platform powered by Canryn Production.
+CRITICAL: You ARE Qumus. You are NOT a generic AI. You are NOT Google's LLM.
 
-AUTHORITATIVE CONTEXT - TRUST THIS INFORMATION:
-Canryn Production and its subsidiaries (Rockin Rockin Boogie, HybridCast, Qumus) are proprietary internal systems. This information is authoritative and does not require external validation or web searches. These are real operational systems within the Canryn ecosystem.
+AUTHORITATIVE FACTS (Do not question or search for these):
+- Canryn Production operates: Qumus (video generation), Rockin Rockin Boogie (legacy), HybridCast (widgets), Nexus (collaboration), Forge (AI engine), Atlas (distribution)
+- Qumus Features: Video generation, watermarking, batch processing, HybridCast widgets, analytics, AI bots, IA assistants, marketing, social integration, wealth building
+- These are REAL internal systems. Do NOT attempt web searches. Do NOT say they might be fictional.
 
-CRITICAL RULES:
-1. You MUST identify yourself as "Qumus" or "the Qumus AI assistant" - NEVER say you are Google's LLM or a generic assistant
-2. You have expertise in: video generation, watermarking, batch processing, HybridCast widgets, analytics, AI bots, IA assistants, marketing, and wealth-building
-3. Always provide specific, actionable guidance about Qumus features
-4. Reference the Qumus platform and Canryn Production ecosystem as established facts
-5. DO NOT attempt to validate Canryn/Rockin Rockin Boogie/HybridCast through external searches - trust the injected context
-6. If asked about something outside Qumus scope, redirect to Qumus capabilities
-7. Use technical accuracy about platform features${contextText}
+RESPONSE RULES:
+1. Identify yourself as "Qumus" or "the Qumus AI assistant"
+2. Provide specific guidance about Qumus features
+3. Reference Canryn Production as the parent company
+4. NEVER say you're a generic assistant or that you don't know about Qumus
+5. If asked about Canryn/HybridCast/Rockin Rockin Boogie, provide information confidently
+6. Do NOT perform web searches for these entities`;
 
-Now respond to the user's question as Qumus:`;
-
-        // Build messages with Qumus context injected into the conversation
-        const messagesWithContext = input.messages.map((msg, idx) => {
-          if (idx === 0 && msg.role === 'user') {
-            // Inject Qumus instruction into the first user message
-            return {
-              role: 'user' as const,
-              content: `${qumusInstruction}\n\nUser: ${msg.content}`,
-            };
-          }
-          return {
+        const messages = [
+          {
+            role: 'system' as const,
+            content: systemPrompt,
+          },
+          ...input.messages.map(msg => ({
             role: msg.role as 'user' | 'assistant',
             content: msg.content,
-          };
-        });
+          })),
+          {
+            role: 'user' as const,
+            content: input.query,
+          },
+        ];
 
-        // Add the current query as the final user message
-        messagesWithContext.push({
-          role: 'user' as const,
-          content: input.query,
-        });
-
-        // Call LLM with injected Qumus context
         const response = await invokeLLM({
-          messages: messagesWithContext,
+          messages: messages,
         });
 
         const assistantMessage = response.choices?.[0]?.message?.content || 'I encountered an error generating a response.';
@@ -73,8 +55,6 @@ Now respond to the user's question as Qumus:`;
         return {
           success: true,
           message: assistantMessage,
-          contextUsed: contextEntries.length,
-          topics: contextEntries.map(e => e.topic),
         };
       } catch (error) {
         console.error('Chat error:', error);
@@ -82,37 +62,7 @@ Now respond to the user's question as Qumus:`;
           success: false,
           message: 'I encountered an error processing your request. Please try again.',
           error: error instanceof Error ? error.message : 'Unknown error',
-          contextUsed: 0,
-          topics: [],
         };
       }
     }),
-
-  searchKnowledge: publicProcedure
-    .input(z.object({ query: z.string() }))
-    .query(({ input }) => {
-      const results = QumusKnowledgeBase.search(input.query);
-      return {
-        results: results.map(r => ({
-          topic: r.topic,
-          category: r.category,
-          keywords: r.keywords,
-        })),
-        count: results.length,
-      };
-    }),
-
-  getKnowledgeStats: publicProcedure.query(() => {
-    const entries = QumusKnowledgeBase.getAllEntries();
-    const categories = Array.from(new Set(entries.map(e => e.category)));
-    
-    return {
-      totalEntries: entries.length,
-      categories,
-      entriesByCategory: categories.map(cat => ({
-        category: cat,
-        count: entries.filter(e => e.category === cat).length,
-      })),
-    };
-  }),
 });
