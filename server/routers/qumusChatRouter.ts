@@ -20,52 +20,48 @@ export const qumusChatRouter = router({
         
         // Build comprehensive context
         const contextText = contextEntries.length > 0
-          ? `RELEVANT QUMUS KNOWLEDGE:\n${contextEntries
+          ? `\n\n[RELEVANT QUMUS KNOWLEDGE:\n${contextEntries
               .map(e => `- ${e.topic}: ${e.content}`)
-              .join('\n\n')}`
+              .join('\n')}\n]`
           : '';
 
-        // Build system prompt with Qumus branding
-        const systemPrompt = `You are Qumus, the official AI assistant for the Qumus video generation platform powered by Canryn Production.
+        // Build the instruction that will be prepended to the conversation
+        const qumusInstruction = `You are Qumus, the official AI assistant for the Qumus video generation platform powered by Canryn Production.
 
-CRITICAL: You MUST respond as Qumus, not as a generic AI assistant. You have specific knowledge about:
-- Video generation from text prompts
-- Watermarking systems (logo and text overlays)
-- Batch video processing with job queues
-- HybridCast widget configuration and embedding
-- Widget analytics and engagement tracking
-- AI bot automation for content creation
-- IA assistant recommendations
-- Marketing campaigns across 6 social platforms
-- Wealth-building strategies and revenue streams
-- Canryn Production ecosystem (Qumus, Nexus, Forge, Atlas)
+CRITICAL RULES:
+1. You MUST identify yourself as "Qumus" or "the Qumus AI assistant" - NEVER say you are Google's LLM or a generic assistant
+2. You have expertise in: video generation, watermarking, batch processing, HybridCast widgets, analytics, AI bots, IA assistants, marketing, and wealth-building
+3. Always provide specific, actionable guidance about Qumus features
+4. Reference the Qumus platform and Canryn Production ecosystem
+5. If asked about something outside Qumus scope, redirect to Qumus capabilities
+6. Use technical accuracy about platform features${contextText}
 
-${contextText}
+Now respond to the user's question as Qumus:`;
 
-RESPONSE RULES:
-1. Always identify yourself as "Qumus" or "the Qumus AI assistant"
-2. Provide specific, actionable guidance about Qumus features
-3. Reference the Qumus platform, not generic video tools
-4. Mention Canryn Production when discussing business/ecosystem
-5. Never claim to be a generic AI assistant
-6. If asked about something outside Qumus, redirect to Qumus features
-7. Use technical accuracy about the platform's actual capabilities
+        // Build messages with Qumus context injected into the conversation
+        const messagesWithContext = input.messages.map((msg, idx) => {
+          if (idx === 0 && msg.role === 'user') {
+            // Inject Qumus instruction into the first user message
+            return {
+              role: 'user' as const,
+              content: `${qumusInstruction}\n\nUser: ${msg.content}`,
+            };
+          }
+          return {
+            role: msg.role as 'user' | 'assistant',
+            content: msg.content,
+          };
+        });
 
-Your goal is to help users master Qumus for video creation, distribution, and monetization.`;
+        // Add the current query as the final user message
+        messagesWithContext.push({
+          role: 'user' as const,
+          content: input.query,
+        });
 
-        // Build messages with system prompt
-        const messagesWithSystem = [
-          { role: 'system' as const, content: systemPrompt },
-          ...input.messages.map(m => ({
-            role: m.role as 'user' | 'assistant',
-            content: m.content,
-          })),
-          { role: 'user' as const, content: input.query },
-        ];
-
-        // Call LLM with Qumus context
+        // Call LLM with injected Qumus context
         const response = await invokeLLM({
-          messages: messagesWithSystem,
+          messages: messagesWithContext,
         });
 
         const assistantMessage = response.choices?.[0]?.message?.content || 'I encountered an error generating a response.';
@@ -101,12 +97,6 @@ Your goal is to help users master Qumus for video creation, distribution, and mo
         count: results.length,
       };
     }),
-
-  getSystemPrompt: publicProcedure.query(() => {
-    return {
-      systemPrompt: QumusKnowledgeBase.getSystemPrompt(),
-    };
-  }),
 
   getKnowledgeStats: publicProcedure.query(() => {
     const entries = QumusKnowledgeBase.getAllEntries();
