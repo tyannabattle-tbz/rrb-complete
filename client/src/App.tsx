@@ -40,6 +40,9 @@ import CreatorOnboarding from "./pages/CreatorOnboarding";
 import VideoAnalytics from "./pages/VideoAnalytics";
 import VideoSearch from "./pages/VideoSearch";
 import CollaborativeEditor from "./pages/CollaborativeEditor";
+import { HybridCastConfig } from "./pages/HybridCastConfig";
+import { VideoWatermarkEditor } from "./pages/VideoWatermarkEditor";
+import { BatchVideoGenerator } from "./pages/BatchVideoGenerator";
 
 function Router() {
   return (
@@ -70,12 +73,15 @@ function Router() {
       <Route path="/share/video/:videoId" component={SharedVideoPage} />
       <Route path="/gallery" component={VideoGallery} />
       <Route path="/editor/:videoId" component={() => <VideoEditor videoUrl="" videoId="" />} />
-      <Route path="/profile/:userId" component={(props) => <UserProfile userId={props.userId} />} />
+      <Route path="/profile/:userId" component={(props: any) => <UserProfile userId={props.params.userId} />} />
       <Route path="/community" component={Community} />
       <Route path="/creator-onboarding" component={CreatorOnboarding} />
       <Route path="/analytics" component={VideoAnalytics} />
       <Route path="/search" component={VideoSearch} />
       <Route path="/collaborate" component={CollaborativeEditor} />
+      <Route path="/hybridcast-config" component={HybridCastConfig} />
+      <Route path="/watermark-editor" component={VideoWatermarkEditor} />
+      <Route path="/batch-generator" component={BatchVideoGenerator} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

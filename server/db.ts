@@ -1548,7 +1548,7 @@ export async function generateVideoFromDescription(params: {
       prompt: params.description,
       duration: params.duration,
       style: params.style,
-      resolution: params.resolution,
+      resolution: (params.resolution as '720p' | '1080p' | '4k') || '1080p',
     });
 
     if (result.status === 'completed') {
@@ -1557,7 +1557,7 @@ export async function generateVideoFromDescription(params: {
         videoId: result.videoId,
         videoUrl: result.url,
         duration: result.duration,
-        resolution: result.resolution,
+        resolution: (result.resolution as '720p' | '1080p' | '4k') || '1080p',
         status: result.status,
       };
     } else {

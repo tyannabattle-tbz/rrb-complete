@@ -77,7 +77,7 @@ Always explain your reasoning and the tools you use.`;
           prompt: videoParams.description,
           duration: videoParams.duration,
           style: videoParams.style,
-          resolution: videoParams.resolution,
+          resolution: (videoParams.resolution as '720p' | '1080p' | '4k' | undefined),
         });
         
         if (videoResult.status === 'completed') {

@@ -171,9 +171,9 @@ export default function CollectionsManager({
                 {/* Privacy Badge */}
                 <div className="absolute top-2 left-2">
                   {collection.isPublic ? (
-                    <Globe className="w-4 h-4 text-white" title="Public" />
+                    <Globe className="w-4 h-4 text-white" />
                   ) : (
-                    <Lock className="w-4 h-4 text-white" title="Private" />
+                    <Lock className="w-4 h-4 text-white" />
                   )}
                 </div>
               </div>

@@ -103,6 +103,9 @@ import { searchDiscoveryRouter } from './routers/searchDiscoveryRouter';
 import { securityRouter } from './routers/securityRouter';
 import { optimizationRouter } from './routers/optimizationRouter';
 import { billingRouter } from './routers/billingRouter';
+import { hybridCastRouter } from './routers/hybridCastRouter';
+import { watermarkRouter } from './routers/watermarkRouter';
+import { batchVideoRouter } from './routers/batchVideoRouter';
 
 export const appRouter = router({
   system: systemRouter,
@@ -667,6 +670,9 @@ export const appRouter = router({
   security: securityRouter,
   optimization: optimizationRouter,
   billing: billingRouter,
+  hybridCast: hybridCastRouter,
+  watermark: watermarkRouter,
+  batchVideo: batchVideoRouter,
 });
 export type AppRouter = typeof appRouter;
 

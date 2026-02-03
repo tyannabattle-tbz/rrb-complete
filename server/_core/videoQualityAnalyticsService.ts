@@ -81,7 +81,21 @@ export class VideoQualityAnalyticsService {
   getMetrics(resolution?: string): QualityMetrics | Map<string, QualityMetrics> {
     if (resolution) {
       const key = Array.from(this.metrics.keys()).find((k) => k.startsWith(resolution));
-      return key ? this.metrics.get(key)! : {};
+      if (key) {
+        return this.metrics.get(key)!;
+      }
+      // Return empty metrics object if not found
+      return {
+        resolution,
+        codec: '',
+        bitrate: 0,
+        frameRate: 0,
+        usageCount: 0,
+        averageProcessingTime: 0,
+        averageCost: 0,
+        userPreference: 0,
+        lastUsed: new Date(),
+      };
     }
     return this.metrics;
   }

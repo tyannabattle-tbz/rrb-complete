@@ -78,8 +78,8 @@ export class VideoRecommendationEngine {
   private static extractUserPreferences(
     viewHistory: UserViewHistory[],
     allVideos: VideoMetadata[]
-  ): Record<string, number> {
-    const preferences: Record<string, number> = {
+  ): Record<string, number | string> {
+    const preferences: Record<string, number | string> = {
       avgDuration: 0,
       preferredStyle: "",
       engagementScore: 0,
@@ -101,8 +101,8 @@ export class VideoRecommendationEngine {
       }
     });
 
-    const preferredStyle = Object.entries(styleFrequency).sort((a, b) => b[1] - a[1])[0]?.[0];
-    if (preferredStyle) preferences.preferredStyle = preferredStyle;
+    const preferredStyle = Object.entries(styleFrequency).sort((a, b) => (b[1] as number) - (a[1] as number))[0]?.[0];
+    if (preferredStyle) preferences.preferredStyle = preferredStyle as string;
 
     // Calculate engagement score (completion rate)
     const completionRate = viewHistory.filter((v) => v.completed).length / viewHistory.length;
@@ -116,7 +116,7 @@ export class VideoRecommendationEngine {
    */
   private static calculateVideoScore(
     video: VideoMetadata,
-    userPreferences: Record<string, number>,
+    userPreferences: Record<string, string | number>,
     viewHistory: UserViewHistory[],
     allVideos: VideoMetadata[]
   ): number {
