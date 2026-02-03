@@ -42,7 +42,8 @@ import VideoSearch from "./pages/VideoSearch";
 import CollaborativeEditor from "./pages/CollaborativeEditor";
 import { HybridCastConfig } from "./pages/HybridCastConfig";
 import { VideoWatermarkEditor } from "./pages/VideoWatermarkEditor";
-import { BatchVideoGenerator } from "./pages/BatchVideoGenerator";
+import { BatchVideoGenerator } from './pages/BatchVideoGenerator';
+import { QumusChatInterface } from './components/QumusChatInterface';
 
 function Router() {
   return (
@@ -81,7 +82,8 @@ function Router() {
       <Route path="/collaborate" component={CollaborativeEditor} />
       <Route path="/hybridcast-config" component={HybridCastConfig} />
       <Route path="/watermark-editor" component={VideoWatermarkEditor} />
-      <Route path="/batch-generator" component={BatchVideoGenerator} />
+      <Route path="/batch" component={BatchVideoGenerator} />
+      <Route path="/chat" component={QumusChatInterface} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

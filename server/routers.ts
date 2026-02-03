@@ -106,6 +106,7 @@ import { billingRouter } from './routers/billingRouter';
 import { hybridCastRouter } from './routers/hybridCastRouter';
 import { watermarkRouter } from './routers/watermarkRouter';
 import { batchVideoRouter } from './routers/batchVideoRouter';
+import { aiChatRouter } from './routers/aiChatRouter';
 
 export const appRouter = router({
   system: systemRouter,
@@ -673,6 +674,7 @@ export const appRouter = router({
   hybridCast: hybridCastRouter,
   watermark: watermarkRouter,
   batchVideo: batchVideoRouter,
+  aiChat: aiChatRouter,
 });
 export type AppRouter = typeof appRouter;
 
