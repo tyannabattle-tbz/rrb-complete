@@ -44,7 +44,8 @@ import { HybridCastConfig } from "./pages/HybridCastConfig";
 import { VideoWatermarkEditor } from "./pages/VideoWatermarkEditor";
 import { BatchVideoGenerator } from './pages/BatchVideoGenerator';
 import { QumusChatInterface } from './components/QumusChatInterface';
-import QumusChatPage from './pages/QumusChatPage';
+import QumusChatPage from '@/pages/QumusChatPage';
+import EnhancedChatPage from '@/pages/EnhancedChatPage';
 
 function Router() {
   return (
@@ -86,6 +87,7 @@ function Router() {
       <Route path="/batch" component={BatchVideoGenerator} />
       <Route path="/chat" component={QumusChatInterface} />
       <Route path="/qumus-chat" component={QumusChatPage} />
+      <Route path="/enhanced-chat" component={EnhancedChatPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
