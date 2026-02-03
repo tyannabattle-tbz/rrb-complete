@@ -107,6 +107,7 @@ import { hybridCastRouter } from './routers/hybridCastRouter';
 import { watermarkRouter } from './routers/watermarkRouter';
 import { batchVideoRouter } from './routers/batchVideoRouter';
 import { aiChatRouter } from './routers/aiChatRouter';
+import { qumusChatRouter } from './routers/qumusChatRouter';
 
 export const appRouter = router({
   system: systemRouter,
@@ -675,6 +676,7 @@ export const appRouter = router({
   watermark: watermarkRouter,
   batchVideo: batchVideoRouter,
   aiChat: aiChatRouter,
+  qumusChat: qumusChatRouter,
 });
 export type AppRouter = typeof appRouter;
 
