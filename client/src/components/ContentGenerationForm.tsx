@@ -32,8 +32,8 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
 
   // Use a generic mutation that handles all content types
   const generateContentMutation = trpc.contentGeneration.generatePodcast.useMutation();
-  const approveContentMutation = trpc.contentGeneration.approveContent.useMutation();
-  const publishContentMutation = trpc.contentGeneration.publishContent.useMutation();
+  const approveMutation = trpc.contentGeneration.approve.useMutation();
+  const publishMutation = trpc.contentGeneration.publish.useMutation();
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
@@ -82,8 +82,8 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
     if (!generatedContent) return;
 
     try {
-      await approveContentMutation.mutateAsync({
-        id: generatedContent?.contentId || "",
+      await approveMutation.mutateAsync({
+        contentId: generatedContent?.contentId || "",
       });
       setGeneratedContent({ ...generatedContent, status: "approved" });
     } catch (err) {
@@ -95,8 +95,8 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
     if (!generatedContent) return;
 
     try {
-      await publishContentMutation.mutateAsync({
-        id: generatedContent?.contentId || "",
+      await publishMutation.mutateAsync({
+        contentId: generatedContent?.contentId || "",
       });
       setGeneratedContent({ ...generatedContent, status: "published" });
       onContentGenerated?.(generatedContent.contentId);
@@ -274,11 +274,11 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
                 <>
                   <Button
                     onClick={handleApprove}
-                    disabled={approveContentMutation.isPending}
+                    disabled={approveMutation.isPending}
                     className="flex-1"
                     variant="outline"
                   >
-                    {approveContentMutation.isPending ? (
+                    {approveMutation.isPending ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                         Approving...
@@ -305,10 +305,10 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
               {generatedContent.status === "approved" && (
                 <Button
                   onClick={handlePublish}
-                  disabled={publishContentMutation.isPending}
+                  disabled={publishMutation.isPending}
                   className="w-full"
                 >
-                  {publishContentMutation.isPending ? (
+                  {publishMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Publishing...
