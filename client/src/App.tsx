@@ -47,6 +47,10 @@ import { QumusChatInterface } from './components/QumusChatInterface';
 import QumusChatPage from '@/pages/QumusChatPage';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
 import QumusMonitoringDashboard from '@/pages/QumusMonitoringDashboard';
+import PolicyDecisionLogging from '@/pages/PolicyDecisionLogging';
+import ComplianceAuditViewer from '@/pages/ComplianceAuditViewer';
+import ServiceHealthAlerts from '@/pages/ServiceHealthAlerts';
+import HumanOverrideSystem from '@/pages/HumanOverrideSystem';
 
 function Router() {
   return (
@@ -90,6 +94,10 @@ function Router() {
       <Route path="/qumus-chat" component={QumusChatPage} />
       <Route path="/enhanced-chat" component={EnhancedChatPage} />
       <Route path="/qumus-dashboard" component={QumusMonitoringDashboard} />
+      <Route path="/policy-decisions" component={PolicyDecisionLogging} />
+      <Route path="/compliance-audit" component={ComplianceAuditViewer} />
+      <Route path="/service-health" component={ServiceHealthAlerts} />
+      <Route path="/human-override" component={HumanOverrideSystem} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
