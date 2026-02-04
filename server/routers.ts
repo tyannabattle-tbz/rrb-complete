@@ -118,6 +118,7 @@ import { alertBroadcastingRouter } from './routers/alertBroadcasting';
 import { seedDataRouter } from './routers/seedData';
 import { qumusOrchestrationRouter } from './routers/qumusOrchestration';
 import { contentGenerationRouter } from './routers/contentGeneration';
+import { contentGenerationPolicyRouter } from './routers/contentGenerationPolicy';
 
 export const appRouter = router({
   system: systemRouter,
@@ -697,6 +698,7 @@ export const appRouter = router({
   seedData: seedDataRouter,
   qumusOrchestration: qumusOrchestrationRouter,
   contentGeneration: contentGenerationRouter,
+  contentGenerationPolicy: contentGenerationPolicyRouter,
 });
 export type AppRouter = typeof appRouter;
 
