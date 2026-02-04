@@ -3,6 +3,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Edit2, Trash2, Play, Pause, Music, Radio, Headphones, Calendar, Users, TrendingUp, Loader } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { ContentGenerationForm } from '@/components/ContentGenerationForm';
+import { ScheduledGenerationDashboard } from '@/components/ScheduledGenerationDashboard';
+import { ContentPreviewModal } from '@/components/ContentPreviewModal';
+import { AudioPlayer } from '@/components/AudioPlayer';
 
 interface ContentItem {
   id: number;
@@ -19,6 +23,8 @@ interface ContentItem {
 export default function RockinBoogieContentManager() {
   const [selectedContent, setSelectedContent] = useState<number | null>(null);
   const [showNewForm, setShowNewForm] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('content');
+  const [previewContent, setPreviewContent] = useState<any | null>(null);
   const [newContent, setNewContent] = useState({
     title: '',
     type: 'radio' as const,
