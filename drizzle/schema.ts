@@ -2035,3 +2035,37 @@ export const usersWithStripe = mysqlTable("users_stripe_mapping", {
 
 export type UserStripeMapping = typeof usersWithStripe.$inferSelect;
 export type InsertUserStripeMapping = typeof usersWithStripe.$inferInsert;
+
+
+
+// Platform Metrics History (for trend analysis)
+export const platformMetricsHistory = mysqlTable("platform_metrics_history", {
+  id: int("id").autoincrement().primaryKey(),
+  platform: mysqlEnum("platform", ["sweetMiracles", "rockinBoogie", "hybridCast"]).notNull(),
+  metric: varchar("metric", { length: 255 }).notNull(), // e.g., "donations", "listeners", "coverage"
+  value: decimal("value", { precision: 15, scale: 2 }).notNull(),
+  unit: varchar("unit", { length: 64 }), // e.g., "USD", "count", "percent"
+  metadata: text("metadata"), // JSON for additional context
+  recordedAt: timestamp("recordedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PlatformMetricsHistory = typeof platformMetricsHistory.$inferSelect;
+export type InsertPlatformMetricsHistory = typeof platformMetricsHistory.$inferInsert;
+
+// Real-time Metrics Cache
+export const realtimeMetricsCache = mysqlTable("realtime_metrics_cache", {
+  id: int("id").autoincrement().primaryKey(),
+  platform: mysqlEnum("platform", ["sweetMiracles", "rockinBoogie", "hybridCast"]).notNull(),
+  metric: varchar("metric", { length: 255 }).notNull(),
+  currentValue: decimal("currentValue", { precision: 15, scale: 2 }).notNull(),
+  previousValue: decimal("previousValue", { precision: 15, scale: 2 }),
+  changePercent: decimal("changePercent", { precision: 5, scale: 2 }),
+  unit: varchar("unit", { length: 64 }),
+  trend: mysqlEnum("trend", ["up", "down", "stable"]).default("stable"),
+  lastUpdated: timestamp("lastUpdated").defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RealtimeMetricsCache = typeof realtimeMetricsCache.$inferSelect;
+export type InsertRealtimeMetricsCache = typeof realtimeMetricsCache.$inferInsert;
