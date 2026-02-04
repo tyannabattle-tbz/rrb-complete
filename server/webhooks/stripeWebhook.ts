@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import { notifyOwner } from "../_core/notification";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2024-12-18.acpi",
+  apiVersion: "2026-01-28.clover",
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
@@ -66,7 +66,7 @@ export async function handleStripeWebhook(req: Request, res: Response) {
  * Handle successful payment
  */
 async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-  const clientRefId = paymentIntent.client_reference_id;
+  const clientRefId = (paymentIntent as any).client_reference_id;
   const customerId = paymentIntent.customer as string;
   const amount = paymentIntent.amount / 100; // Convert cents to dollars
 
