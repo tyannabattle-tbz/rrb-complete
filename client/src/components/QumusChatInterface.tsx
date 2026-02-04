@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ChatHeader } from './ChatHeader';
 import { Send, Loader } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -15,13 +16,39 @@ export function QumusChatInterface() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Welcome to Qumus! I\'m your AI assistant trained specifically for the Qumus video generation platform. I can help you with video creation, watermarking, batch processing, HybridCast widgets, analytics, marketing campaigns, and wealth-building strategies. What would you like to know?',
+      content: 'Welcome to Qumus! I\'m QUMUS, your autonomous orchestration engine. I operate at 90%+ autonomy managing 8 decision policies and 11+ service integrations. I can help you with video generation, watermarking, batch processing, HybridCast widgets, analytics, and more. What would you like to know?',
       timestamp: Date.now(),
     },
   ]);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Use tRPC mutation for chat
+  const chatMutation = trpc.qumusChat.chat.useMutation({
+    onSuccess: (data) => {
+      const messageContent = typeof data.message === 'string' 
+        ? data.message 
+        : Array.isArray(data.message) 
+          ? JSON.stringify(data.message)
+          : 'I encountered an error processing your request.';
+      
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: messageContent,
+        timestamp: Date.now(),
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    },
+    onError: (error) => {
+      console.error('Chat error:', error);
+      const errorMessage: Message = {
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
+        timestamp: Date.now(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    },
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -42,40 +69,15 @@ export function QumusChatInterface() {
 
     setMessages(prev => [...prev, userMessage]);
     setInput('');
-    setLoading(true);
 
-    try {
-      // Call the QUMUS chat API
-      const response = await fetch('/api/trpc/qumusChat.chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: messages.map(m => ({
-            role: m.role,
-            content: m.content,
-          })),
-          query: input,
-        }),
-      });
-
-      const data = await response.json();
-      const assistantMessage: Message = {
-        role: 'assistant',
-        content: data.result?.data?.message || 'I encountered an error processing your request.',
-        timestamp: Date.now(),
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      const errorMessage: Message = {
-        role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
-        timestamp: Date.now(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setLoading(false);
-    }
+    // Call the QUMUS chat API using tRPC
+    await chatMutation.mutateAsync({
+      messages: messages.map(m => ({
+        role: m.role,
+        content: m.content,
+      })),
+      query: input,
+    });
   };
 
   return (
@@ -100,9 +102,9 @@ export function QumusChatInterface() {
             </div>
           </div>
         ))}
-        {loading && (
+        {chatMutation.isPending && (
           <div className="flex justify-start">
-            <div className="bg-white text-slate-900 border border-slate-200 px-4 py-3 rounded-lg rounded-bl-none">
+            <div className="bg-white text-slate-900 border border-slate-200 rounded-bl-none px-4 py-3 rounded-lg">
               <Loader className="w-5 h-5 animate-spin" />
             </div>
           </div>
@@ -112,22 +114,30 @@ export function QumusChatInterface() {
 
       {/* Input Area */}
       <div className="border-t border-slate-200 bg-white p-4">
-        <div className="max-w-4xl mx-auto flex gap-3">
+        <div className="flex gap-2">
           <Input
             value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyPress={e => e.key === 'Enter' && handleSend()}
-            placeholder="Ask me about video generation, watermarking, analytics, or Canryn Production..."
-            className="flex-1 border-slate-300"
-            disabled={loading}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder="Type your message..."
+            disabled={chatMutation.isPending}
+            className="flex-1"
           />
           <Button
             onClick={handleSend}
-            disabled={loading || !input.trim()}
-            className="bg-blue-500 hover:bg-blue-600 text-white gap-2"
+            disabled={chatMutation.isPending || !input.trim()}
+            className="gap-2"
           >
-            <Send className="w-4 h-4" />
-            Send
+            {chatMutation.isPending ? (
+              <Loader className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </div>
       </div>
