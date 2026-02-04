@@ -1819,3 +1819,129 @@ export const clonedSessions = mysqlTable("cloned_sessions", {
 
 export type ClonedSession = typeof clonedSessions.$inferSelect;
 export type InsertClonedSession = typeof clonedSessions.$inferInsert;
+
+
+// ============================================================================
+// QUMUS PLATFORM TABLES
+// ============================================================================
+
+// Rockin' Rockin' Boogie Content
+export const rockinBoogieContent = mysqlTable("rockin_boogie_content", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  type: mysqlEnum("type", ["radio", "podcast", "audiobook"]).notNull(),
+  description: text("description"),
+  status: mysqlEnum("status", ["active", "scheduled", "archived"]).default("active"),
+  listeners: int("listeners").default(0),
+  duration: varchar("duration", { length: 64 }), // e.g., "45 min", "8h 32m"
+  schedule: varchar("schedule", { length: 255 }), // e.g., "Daily 6AM-10AM"
+  rating: decimal("rating", { precision: 3, scale: 1 }).default("0"),
+  contentUrl: varchar("contentUrl", { length: 2048 }), // S3 URL or streaming URL
+  thumbnailUrl: varchar("thumbnailUrl", { length: 2048 }),
+  metadata: json("metadata").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RockinBoogieContent = typeof rockinBoogieContent.$inferSelect;
+export type InsertRockinBoogieContent = typeof rockinBoogieContent.$inferInsert;
+
+// Emergency Alerts
+export const emergencyAlerts = mysqlTable("emergency_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  severity: mysqlEnum("severity", ["critical", "high", "medium", "low"]).notNull(),
+  regions: text("regions").notNull(), // JSON array of regions
+  status: mysqlEnum("status", ["draft", "scheduled", "active", "completed"]).default("draft"),
+  recipients: int("recipients").default(0),
+  deliveryRate: decimal("deliveryRate", { precision: 5, scale: 2 }).default("0"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  scheduledFor: timestamp("scheduledFor"),
+  completedAt: timestamp("completedAt"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EmergencyAlert = typeof emergencyAlerts.$inferSelect;
+export type InsertEmergencyAlert = typeof emergencyAlerts.$inferInsert;
+
+// HybridCast Broadcast Nodes
+export const hybridCastNodes = mysqlTable("hybridcast_nodes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  region: varchar("region", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["ready", "broadcasting", "offline"]).default("ready"),
+  coverage: decimal("coverage", { precision: 5, scale: 2 }).default("0"),
+  lastHealthCheck: timestamp("lastHealthCheck"),
+  endpoint: varchar("endpoint", { length: 2048 }),
+  metadata: json("metadata").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type HybridCastNode = typeof hybridCastNodes.$inferSelect;
+export type InsertHybridCastNode = typeof hybridCastNodes.$inferInsert;
+
+// Analytics Metrics
+export const analyticsMetrics = mysqlTable("analytics_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  period: varchar("period", { length: 64 }).notNull(), // e.g., "Mon", "Tue", "2026-02-03"
+  qumusDecisions: int("qumusDecisions").default(0),
+  hybridCastBroadcasts: int("hybridCastBroadcasts").default(0),
+  rockinBoogieListeners: int("rockinBoogieListeners").default(0),
+  avgEngagement: decimal("avgEngagement", { precision: 5, scale: 2 }).default("0"),
+  systemUptime: decimal("systemUptime", { precision: 5, scale: 2 }).default("100"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AnalyticsMetric = typeof analyticsMetrics.$inferSelect;
+export type InsertAnalyticsMetric = typeof analyticsMetrics.$inferInsert;
+
+// Policy Decisions
+export const policyDecisions = mysqlTable("policy_decisions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  policy: varchar("policy", { length: 255 }).notNull(), // e.g., "Content Policy", "Security Policy"
+  count: int("count").default(0),
+  avgTime: int("avgTime").default(0), // milliseconds
+  successRate: decimal("successRate", { precision: 5, scale: 2 }).default("0"),
+  metadata: json("metadata").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PolicyDecision = typeof policyDecisions.$inferSelect;
+export type InsertPolicyDecision = typeof policyDecisions.$inferInsert;
+
+// Content Listener History (for tracking engagement over time)
+export const contentListenerHistory = mysqlTable("content_listener_history", {
+  id: int("id").autoincrement().primaryKey(),
+  contentId: int("contentId").notNull().references(() => rockinBoogieContent.id, { onDelete: "cascade" }),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  listenerCount: int("listenerCount").notNull(),
+  engagementScore: decimal("engagementScore", { precision: 5, scale: 2 }).default("0"),
+});
+
+export type ContentListenerHistory = typeof contentListenerHistory.$inferSelect;
+export type InsertContentListenerHistory = typeof contentListenerHistory.$inferInsert;
+
+// Alert Delivery Log
+export const alertDeliveryLog = mysqlTable("alert_delivery_log", {
+  id: int("id").autoincrement().primaryKey(),
+  alertId: int("alertId").notNull().references(() => emergencyAlerts.id, { onDelete: "cascade" }),
+  nodeId: int("nodeId").references(() => hybridCastNodes.id),
+  region: varchar("region", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["pending", "delivered", "failed"]).default("pending"),
+  recipientsReached: int("recipientsReached").default(0),
+  error: text("error"),
+  deliveredAt: timestamp("deliveredAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AlertDeliveryLog = typeof alertDeliveryLog.$inferSelect;
+export type InsertAlertDeliveryLog = typeof alertDeliveryLog.$inferInsert;

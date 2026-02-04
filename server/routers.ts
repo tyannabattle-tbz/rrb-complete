@@ -109,6 +109,10 @@ import { batchVideoRouter } from './routers/batchVideoRouter';
 import { aiChatRouter } from './routers/aiChatRouter';
 import { qumusChatRouter } from './routers/qumusChatRouter';
 import { qumusIdentityRouter } from './routers/qumusIdentityRouter';
+import { rockinBoogieRouter } from './routers/rockinBoogie';
+import { emergencyAlertsRouter } from './routers/emergencyAlerts';
+import { hybridCastNodesRouter } from './routers/hybridCastNodes';
+import { analyticsReportingRouter } from './routers/analyticsReporting';
 
 export const appRouter = router({
   system: systemRouter,
@@ -679,6 +683,10 @@ export const appRouter = router({
   aiChat: aiChatRouter,
   qumusChat: qumusChatRouter,
   qumusIdentity: qumusIdentityRouter,
+  rockinBoogie: rockinBoogieRouter,
+  emergencyAlerts: emergencyAlertsRouter,
+  hybridCastNodes: hybridCastNodesRouter,
+  analyticsReporting: analyticsReportingRouter,
 });
 export type AppRouter = typeof appRouter;
 
