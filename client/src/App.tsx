@@ -61,6 +61,7 @@ import RockinBoogieContentManager from '@/pages/RockinBoogieContentManager';
 import EmergencyAlertSystem from '@/pages/EmergencyAlertSystem';
 import AnalyticsReportingDashboard from '@/pages/AnalyticsReportingDashboard';
 import PlatformMonitoringDashboard from '@/pages/PlatformMonitoringDashboard';
+import Studio from '@/pages/Studio';
 
 function Router() {
   return (
@@ -118,6 +119,7 @@ function Router() {
       <Route path="/analytics-reporting" component={AnalyticsReportingDashboard} />
       <Route path="/admin-decisions" component={AdminDecisionDashboard} />
       <Route path="/monitoring" component={PlatformMonitoringDashboard} />
+      <Route path="/studio" component={Studio} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
