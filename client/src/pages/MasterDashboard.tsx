@@ -89,7 +89,15 @@ export default function MasterDashboard() {
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-400">Logged in as: {user?.name || "Admin"}</p>
-            <Badge className="mt-2 bg-green-500">🟢 All Systems Operational</Badge>
+            <div className="mt-2 flex gap-2 justify-end">
+              <a href="/monitoring">
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Activity className="w-4 h-4 mr-2" />
+                  📊 Platform Monitoring
+                </Button>
+              </a>
+              <Badge className="bg-green-500">🟢 All Systems Operational</Badge>
+            </div>
           </div>
         </div>
       </div>

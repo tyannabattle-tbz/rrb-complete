@@ -60,6 +60,7 @@ import HybridCastBroadcastManagement from '@/pages/HybridCastBroadcastManagement
 import RockinBoogieContentManager from '@/pages/RockinBoogieContentManager';
 import EmergencyAlertSystem from '@/pages/EmergencyAlertSystem';
 import AnalyticsReportingDashboard from '@/pages/AnalyticsReportingDashboard';
+import PlatformMonitoringDashboard from '@/pages/PlatformMonitoringDashboard';
 
 function Router() {
   return (
@@ -116,6 +117,7 @@ function Router() {
       <Route path="/emergency-alerts" component={EmergencyAlertSystem} />
       <Route path="/analytics-reporting" component={AnalyticsReportingDashboard} />
       <Route path="/admin-decisions" component={AdminDecisionDashboard} />
+      <Route path="/monitoring" component={PlatformMonitoringDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

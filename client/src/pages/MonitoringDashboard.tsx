@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,14 @@ import {
   Heart,
   ArrowUp,
   ArrowDown,
+  RefreshCw,
+  Download,
+  Eye,
+  Send,
+  Play,
+  AlertTriangle as AlertIcon,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 /**
  * Real-Time Monitoring & Analytics Dashboard
@@ -160,11 +167,21 @@ export default function MonitoringDashboard() {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5 bg-slate-800 border border-slate-700">
-          <TabsTrigger value="qumus">QUMUS Metrics</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6 bg-slate-800 border border-slate-700">
+          <TabsTrigger value="qumus">QUMUS</TabsTrigger>
+          <TabsTrigger value="sweetMiracles" className="flex items-center gap-1">
+            <Heart className="w-4 h-4" />
+            <span>Sweet Miracles</span>
+          </TabsTrigger>
+          <TabsTrigger value="rockinBoogie" className="flex items-center gap-1">
+            <Radio className="w-4 h-4" />
+            <span>Rockin' Boogie</span>
+          </TabsTrigger>
+          <TabsTrigger value="hybridCast" className="flex items-center gap-1">
+            <TrendingUp className="w-4 h-4" />
+            <span>HybridCast</span>
+          </TabsTrigger>
           <TabsTrigger value="policies">Policies</TabsTrigger>
-          <TabsTrigger value="uploads">File Uploads</TabsTrigger>
-          <TabsTrigger value="platforms">Platforms</TabsTrigger>
           <TabsTrigger value="alerts">Alerts</TabsTrigger>
         </TabsList>
 
