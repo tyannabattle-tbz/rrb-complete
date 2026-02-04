@@ -53,6 +53,9 @@ import ServiceHealthAlerts from '@/pages/ServiceHealthAlerts';
 import HumanOverrideSystem from '@/pages/HumanOverrideSystem';
 import AdvancedAnalyticsDashboard from '@/pages/AdvancedAnalyticsDashboard';
 import MobileResponsiveAdminPanel from '@/pages/MobileResponsiveAdminPanel';
+import CustomDashboardBuilder from '@/pages/CustomDashboardBuilder';
+import AutomatedRemediationWorkflows from '@/pages/AutomatedRemediationWorkflows';
+import HybridCastBroadcastManagement from '@/pages/HybridCastBroadcastManagement';
 
 function Router() {
   return (
@@ -102,6 +105,9 @@ function Router() {
       <Route path="/human-override" component={HumanOverrideSystem} />
       <Route path="/analytics-advanced" component={AdvancedAnalyticsDashboard} />
       <Route path="/admin-mobile" component={MobileResponsiveAdminPanel} />
+      <Route path="/dashboard-builder" component={CustomDashboardBuilder} />
+      <Route path="/remediation-workflows" component={AutomatedRemediationWorkflows} />
+      <Route path="/hybridcast-broadcast" component={HybridCastBroadcastManagement} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
