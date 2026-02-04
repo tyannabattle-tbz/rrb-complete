@@ -1847,6 +1847,42 @@ export const rockinBoogieContent = mysqlTable("rockin_boogie_content", {
 export type RockinBoogieContent = typeof rockinBoogieContent.$inferSelect;
 export type InsertRockinBoogieContent = typeof rockinBoogieContent.$inferInsert;
 
+// Radio Stations (Canryn Production Infrastructure)
+export const radioStations = mysqlTable("radio_stations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(), // e.g., "Rockin' Rockin' Boogie"
+  operatorName: varchar("operatorName", { length: 255 }), // Canryn Production
+  description: text("description"),
+  status: mysqlEnum("status", ["active", "inactive", "maintenance"]).default("active"),
+  totalListeners: int("totalListeners").default(0),
+  metadata: json("metadata").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RadioStation = typeof radioStations.$inferSelect;
+export type InsertRadioStation = typeof radioStations.$inferInsert;
+
+// Radio Channels (Individual channels within radio stations)
+export const radioChannels = mysqlTable("radio_channels", {
+  id: int("id").autoincrement().primaryKey(),
+  stationId: int("stationId").notNull().references(() => radioStations.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(), // e.g., "Morning Drive", "Tech Talk"
+  frequency: varchar("frequency", { length: 64 }), // e.g., "101.5 FM"
+  genre: varchar("genre", { length: 128 }), // e.g., "Music", "News", "Talk"
+  status: mysqlEnum("status", ["active", "scheduled", "offline"]).default("active"),
+  currentListeners: int("currentListeners").default(0),
+  totalListeners: int("totalListeners").default(0),
+  streamUrl: varchar("streamUrl", { length: 2048 }),
+  metadata: json("metadata").$type<Record<string, any>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RadioChannel = typeof radioChannels.$inferSelect;
+export type InsertRadioChannel = typeof radioChannels.$inferInsert;
+
 // Emergency Alerts
 export const emergencyAlerts = mysqlTable("emergency_alerts", {
   id: int("id").autoincrement().primaryKey(),
@@ -1854,7 +1890,7 @@ export const emergencyAlerts = mysqlTable("emergency_alerts", {
   title: varchar("title", { length: 255 }).notNull(),
   message: text("message").notNull(),
   severity: mysqlEnum("severity", ["critical", "high", "medium", "low"]).notNull(),
-  regions: text("regions").notNull(), // JSON array of regions
+  broadcastChannelIds: text("broadcastChannelIds"), // JSON array of radio channel IDs to broadcast through
   status: mysqlEnum("status", ["draft", "scheduled", "active", "completed"]).default("draft"),
   recipients: int("recipients").default(0),
   deliveryRate: decimal("deliveryRate", { precision: 5, scale: 2 }).default("0"),
@@ -1930,7 +1966,24 @@ export const contentListenerHistory = mysqlTable("content_listener_history", {
 export type ContentListenerHistory = typeof contentListenerHistory.$inferSelect;
 export type InsertContentListenerHistory = typeof contentListenerHistory.$inferInsert;
 
-// Alert Delivery Log
+// Alert Broadcast Log (tracking HybridCast alerts broadcast through radio channels)
+export const alertBroadcastLog = mysqlTable("alert_broadcast_log", {
+  id: int("id").autoincrement().primaryKey(),
+  alertId: int("alertId").notNull().references(() => emergencyAlerts.id, { onDelete: "cascade" }),
+  channelId: int("channelId").notNull().references(() => radioChannels.id),
+  status: mysqlEnum("status", ["pending", "broadcasting", "delivered", "failed"]).default("pending"),
+  listenersReached: int("listenersReached").default(0),
+  interruptedRegularContent: boolean("interruptedRegularContent").default(false),
+  error: text("error"),
+  broadcastStartedAt: timestamp("broadcastStartedAt"),
+  broadcastEndedAt: timestamp("broadcastEndedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AlertBroadcastLog = typeof alertBroadcastLog.$inferSelect;
+export type InsertAlertBroadcastLog = typeof alertBroadcastLog.$inferInsert;
+
+// Legacy Alert Delivery Log (kept for backward compatibility)
 export const alertDeliveryLog = mysqlTable("alert_delivery_log", {
   id: int("id").autoincrement().primaryKey(),
   alertId: int("alertId").notNull().references(() => emergencyAlerts.id, { onDelete: "cascade" }),

@@ -127,6 +127,20 @@
       "when": 1770179107079,
       "tag": "0017_free_rockslide",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1770181385302,
+      "tag": "0018_rare_korg",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1770182293712,
+      "tag": "0019_clammy_the_santerians",
+      "breakpoints": true
     }
   ]
 }

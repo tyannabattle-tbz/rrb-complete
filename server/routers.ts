@@ -113,6 +113,8 @@ import { rockinBoogieRouter } from './routers/rockinBoogie';
 import { emergencyAlertsRouter } from './routers/emergencyAlerts';
 import { hybridCastNodesRouter } from './routers/hybridCastNodes';
 import { analyticsReportingRouter } from './routers/analyticsReporting';
+import { radioStationsRouter } from './routers/radioStations';
+import { alertBroadcastingRouter } from './routers/alertBroadcasting';
 
 export const appRouter = router({
   system: systemRouter,
@@ -687,6 +689,8 @@ export const appRouter = router({
   emergencyAlerts: emergencyAlertsRouter,
   hybridCastNodes: hybridCastNodesRouter,
   analyticsReporting: analyticsReportingRouter,
+  radioStations: radioStationsRouter,
+  alertBroadcasting: alertBroadcastingRouter,
 });
 export type AppRouter = typeof appRouter;
 

@@ -49,7 +49,7 @@ export async function createAlert(
     title: data.title,
     message: data.message,
     severity: data.severity,
-    regions: JSON.stringify(data.regions),
+    broadcastChannelIds: JSON.stringify(data.regions || []),
     status: data.status || "draft",
     recipients: data.recipients || 0,
     deliveryRate: data.deliveryRate ? data.deliveryRate.toString() : "0",

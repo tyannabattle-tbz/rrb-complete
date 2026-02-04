@@ -1,0 +1,241 @@
+{
+  "query": "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() ORDER BY table_name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() ORDER BY table_name;",
+  "rows": [
+    {
+      "table_name": "__drizzle_migrations"
+    },
+    {
+      "table_name": "activity_logs"
+    },
+    {
+      "table_name": "agent_collaboration"
+    },
+    {
+      "table_name": "agent_execution_logs"
+    },
+    {
+      "table_name": "agent_installations"
+    },
+    {
+      "table_name": "agent_memory"
+    },
+    {
+      "table_name": "agent_performance_metrics"
+    },
+    {
+      "table_name": "agent_registry"
+    },
+    {
+      "table_name": "agent_sessions"
+    },
+    {
+      "table_name": "agent_snapshots"
+    },
+    {
+      "table_name": "agent_tools"
+    },
+    {
+      "table_name": "alert_delivery_log"
+    },
+    {
+      "table_name": "analytics_metrics"
+    },
+    {
+      "table_name": "anomaly_baselines"
+    },
+    {
+      "table_name": "anomaly_history"
+    },
+    {
+      "table_name": "anomaly_insights"
+    },
+    {
+      "table_name": "anomaly_patterns"
+    },
+    {
+      "table_name": "anomaly_reports"
+    },
+    {
+      "table_name": "anomaly_rules"
+    },
+    {
+      "table_name": "api_keys"
+    },
+    {
+      "table_name": "api_usage"
+    },
+    {
+      "table_name": "audit_logs"
+    },
+    {
+      "table_name": "auto_save_settings"
+    },
+    {
+      "table_name": "content_listener_history"
+    },
+    {
+      "table_name": "detected_anomalies"
+    },
+    {
+      "table_name": "email_configs"
+    },
+    {
+      "table_name": "emergency_alerts"
+    },
+    {
+      "table_name": "escalation_policies"
+    },
+    {
+      "table_name": "feature_flags"
+    },
+    {
+      "table_name": "filter_history"
+    },
+    {
+      "table_name": "filter_presets"
+    },
+    {
+      "table_name": "finetuning_datasets"
+    },
+    {
+      "table_name": "finetuning_evaluations"
+    },
+    {
+      "table_name": "finetuning_jobs"
+    },
+    {
+      "table_name": "finetuning_models"
+    },
+    {
+      "table_name": "hybridcast_nodes"
+    },
+    {
+      "table_name": "integration_logs"
+    },
+    {
+      "table_name": "memory_store"
+    },
+    {
+      "table_name": "messages"
+    },
+    {
+      "table_name": "model_comparisons"
+    },
+    {
+      "table_name": "notification_events"
+    },
+    {
+      "table_name": "notification_preferences"
+    },
+    {
+      "table_name": "notifications"
+    },
+    {
+      "table_name": "performance_metrics"
+    },
+    {
+      "table_name": "performance_trends"
+    },
+    {
+      "table_name": "plugins"
+    },
+    {
+      "table_name": "policy_decisions"
+    },
+    {
+      "table_name": "predictive_alerts"
+    },
+    {
+      "table_name": "quota_alerts"
+    },
+    {
+      "table_name": "quotas"
+    },
+    {
+      "table_name": "rate_limit_events"
+    },
+    {
+      "table_name": "reasoning_chains"
+    },
+    {
+      "table_name": "report_history"
+    },
+    {
+      "table_name": "rockin_boogie_content"
+    },
+    {
+      "table_name": "scheduled_reports"
+    },
+    {
+      "table_name": "session_annotations"
+    },
+    {
+      "table_name": "session_metrics"
+    },
+    {
+      "table_name": "session_shares"
+    },
+    {
+      "table_name": "session_versions"
+    },
+    {
+      "table_name": "subscription_tiers"
+    },
+    {
+      "table_name": "suppression_rules"
+    },
+    {
+      "table_name": "system_alerts"
+    },
+    {
+      "table_name": "system_metrics"
+    },
+    {
+      "table_name": "task_history"
+    },
+    {
+      "table_name": "team_members"
+    },
+    {
+      "table_name": "teams"
+    },
+    {
+      "table_name": "tool_executions"
+    },
+    {
+      "table_name": "tool_usage_stats"
+    },
+    {
+      "table_name": "training_data"
+    },
+    {
+      "table_name": "usage_quotas"
+    },
+    {
+      "table_name": "user_subscriptions"
+    },
+    {
+      "table_name": "users"
+    },
+    {
+      "table_name": "webhook_endpoints"
+    },
+    {
+      "table_name": "webhook_installations"
+    },
+    {
+      "table_name": "webhook_logs"
+    },
+    {
+      "table_name": "webhook_marketplace_reviews"
+    },
+    {
+      "table_name": "webhook_templates"
+    }
+  ],
+  "messages": [],
+  "stdout": "table_name\n__drizzle_migrations\nactivity_logs\nagent_collaboration\nagent_execution_logs\nagent_installations\nagent_memory\nagent_performance_metrics\nagent_registry\nagent_sessions\nagent_snapshots\nagent_tools\nalert_delivery_log\nanalytics_metrics\nanomaly_baselines\nanomaly_history\nanomaly_insights\nanomaly_patterns\nanomaly_reports\nanomaly_rules\napi_keys\napi_usage\naudit_logs\nauto_save_settings\ncontent_listener_history\ndetected_anomalies\nemail_configs\nemergency_alerts\nescalation_policies\nfeature_flags\nfilter_history\nfilter_presets\nfinetuning_datasets\nfinetuning_evaluations\nfinetuning_jobs\nfinetuning_models\nhybridcast_nodes\nintegration_logs\nmemory_store\nmessages\nmodel_comparisons\nnotification_events\nnotification_preferences\nnotifications\nperformance_metrics\nperformance_trends\nplugins\npolicy_decisions\npredictive_alerts\nquota_alerts\nquotas\nrate_limit_events\nreasoning_chains\nreport_history\nrockin_boogie_content\nscheduled_reports\nsession_annotations\nsession_metrics\nsession_shares\nsession_versions\nsubscription_tiers\nsuppression_rules\nsystem_alerts\nsystem_metrics\ntask_history\nteam_members\nteams\ntool_executions\ntool_usage_stats\ntraining_data\nusage_quotas\nuser_subscriptions\nusers\nwebhook_endpoints\nwebhook_installations\nwebhook_logs\nwebhook_marketplace_reviews\nwebhook_templates\n",
+  "stderr": "",
+  "execution_time_ms": 134
+}

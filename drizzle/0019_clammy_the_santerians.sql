@@ -1,0 +1,1 @@
+ALTER TABLE `emergency_alerts` MODIFY COLUMN `broadcastChannelIds` text;
