@@ -11,8 +11,6 @@ export default function EnhancedChatPage() {
   const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const createSession = trpc.chatHistory.createSession.useMutation();
-  const addMessage = trpc.chatHistory.addMessage.useMutation();
   const sendChat = trpc.qumusChat.chat.useMutation();
 
   useEffect(() => {
@@ -35,8 +33,7 @@ export default function EnhancedChatPage() {
   }, []);
 
   const startNewSession = async () => {
-    const session = await createSession.mutateAsync({ title: `Chat ${new Date().toLocaleString()}` });
-    setSessionId(session.id);
+    setSessionId('new-' + Date.now().toString());
     setMessages([]);
   };
 
@@ -57,13 +54,7 @@ export default function EnhancedChatPage() {
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
 
-    if (sessionId) {
-      await addMessage.mutateAsync({
-        sessionId,
-        role: 'user',
-        content: userMessage,
-      });
-    }
+    // Session tracking for future persistence
 
     const response = await sendChat.mutateAsync({
       messages,
@@ -71,14 +62,8 @@ export default function EnhancedChatPage() {
     });
 
     if (response.success) {
-      setMessages(prev => [...prev, { role: 'assistant', content: response.message }]);
-      if (sessionId) {
-        await addMessage.mutateAsync({
-          sessionId,
-          role: 'assistant',
-          content: response.message,
-        });
-      }
+      setMessages(prev => [...prev, { role: 'assistant' as const, content: String(response.message) }]);
+      // Session tracking for future persistence
     }
   };
 
