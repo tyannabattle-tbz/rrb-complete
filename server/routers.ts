@@ -119,6 +119,9 @@ import { seedDataRouter } from './routers/seedData';
 import { qumusOrchestrationRouter } from './routers/qumusOrchestration';
 import { contentGenerationRouter } from './routers/contentGeneration';
 import { contentGenerationPolicyRouter } from './routers/contentGenerationPolicy';
+import { sweetMiraclesAlertsRouter } from './routers/sweetMiraclesAlerts';
+import { sweetMiraclesDonorsRouter } from './routers/sweetMiraclesDonors';
+import { sweetMiraclesGrantsRouter } from './routers/sweetMiraclesGrants';
 
 export const appRouter = router({
   system: systemRouter,
@@ -699,6 +702,9 @@ export const appRouter = router({
   qumusOrchestration: qumusOrchestrationRouter,
   contentGeneration: contentGenerationRouter,
   contentGenerationPolicy: contentGenerationPolicyRouter,
+  sweetMiraclesAlerts: sweetMiraclesAlertsRouter,
+  sweetMiraclesDonors: sweetMiraclesDonorsRouter,
+  sweetMiraclesGrants: sweetMiraclesGrantsRouter,
 });
 export type AppRouter = typeof appRouter;
 
