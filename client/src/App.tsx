@@ -56,6 +56,9 @@ import MobileResponsiveAdminPanel from '@/pages/MobileResponsiveAdminPanel';
 import CustomDashboardBuilder from '@/pages/CustomDashboardBuilder';
 import AutomatedRemediationWorkflows from '@/pages/AutomatedRemediationWorkflows';
 import HybridCastBroadcastManagement from '@/pages/HybridCastBroadcastManagement';
+import RockinBoogieContentManager from '@/pages/RockinBoogieContentManager';
+import EmergencyAlertSystem from '@/pages/EmergencyAlertSystem';
+import AnalyticsReportingDashboard from '@/pages/AnalyticsReportingDashboard';
 
 function Router() {
   return (
@@ -108,6 +111,9 @@ function Router() {
       <Route path="/dashboard-builder" component={CustomDashboardBuilder} />
       <Route path="/remediation-workflows" component={AutomatedRemediationWorkflows} />
       <Route path="/hybridcast-broadcast" component={HybridCastBroadcastManagement} />
+      <Route path="/rockin-boogie-content" component={RockinBoogieContentManager} />
+      <Route path="/emergency-alerts" component={EmergencyAlertSystem} />
+      <Route path="/analytics-reporting" component={AnalyticsReportingDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
