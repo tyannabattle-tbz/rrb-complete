@@ -1998,3 +1998,40 @@ export const alertDeliveryLog = mysqlTable("alert_delivery_log", {
 
 export type AlertDeliveryLog = typeof alertDeliveryLog.$inferSelect;
 export type InsertAlertDeliveryLog = typeof alertDeliveryLog.$inferInsert;
+
+
+// Sweet Miracles Donations
+export const donations = mysqlTable("donations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  status: mysqlEnum("status", ["pending", "completed", "failed", "refunded"]).default("pending"),
+  donorTier: mysqlEnum("donorTier", ["bronze", "silver", "gold", "platinum"]).default("bronze"),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  stripeInvoiceId: varchar("stripeInvoiceId", { length: 255 }),
+  stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
+  campaignId: varchar("campaignId", { length: 255 }),
+  message: text("message"),
+  isRecurring: boolean("isRecurring").default(false),
+  recurringFrequency: mysqlEnum("recurringFrequency", ["monthly", "quarterly", "annual"]),
+  nextRecurringDate: timestamp("nextRecurringDate"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Donation = typeof donations.$inferSelect;
+export type InsertDonation = typeof donations.$inferInsert;
+
+// Add stripeCustomerId to users table
+export const usersWithStripe = mysqlTable("users_stripe_mapping", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }).notNull().unique(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserStripeMapping = typeof usersWithStripe.$inferSelect;
+export type InsertUserStripeMapping = typeof usersWithStripe.$inferInsert;
