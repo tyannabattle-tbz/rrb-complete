@@ -116,6 +116,7 @@ import { analyticsReportingRouter } from './routers/analyticsReporting';
 import { radioStationsRouter } from './routers/radioStations';
 import { alertBroadcastingRouter } from './routers/alertBroadcasting';
 import { seedDataRouter } from './routers/seedData';
+import { qumusOrchestrationRouter } from './routers/qumusOrchestration';
 
 export const appRouter = router({
   system: systemRouter,
@@ -693,6 +694,7 @@ export const appRouter = router({
   radioStations: radioStationsRouter,
   alertBroadcasting: alertBroadcastingRouter,
   seedData: seedDataRouter,
+  qumusOrchestration: qumusOrchestrationRouter,
 });
 export type AppRouter = typeof appRouter;
 
