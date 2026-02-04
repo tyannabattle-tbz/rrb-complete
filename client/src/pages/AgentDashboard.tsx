@@ -4,6 +4,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import AgentLayout from "@/components/AgentLayout";
 import ChatInterface from "@/components/ChatInterface";
+import { QumusChatInterface } from "@/components/QumusChatInterface";
 import ToolDashboard from "@/components/ToolDashboard";
 import ConfigPanel from "@/components/ConfigPanel";
 import MemoryBrowser from "@/components/MemoryBrowser";
@@ -236,12 +237,7 @@ export default function AgentDashboard() {
                   </div>
                 </div>
               ) : (
-                <ChatInterface 
-                  messages={polling.messages.map(m => ({ id: String(m.id), timestamp: m.createdAt, role: m.role, content: m.content }))} 
-                  onSendMessage={handleSendMessage} 
-                  isLoading={polling.isLoading} 
-                  sessionId={activeSession}
-                />
+                <QumusChatInterface />
               )}
             </TabsContent>
 
