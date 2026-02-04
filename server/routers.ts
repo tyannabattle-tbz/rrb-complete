@@ -108,6 +108,7 @@ import { watermarkRouter } from './routers/watermarkRouter';
 import { batchVideoRouter } from './routers/batchVideoRouter';
 import { aiChatRouter } from './routers/aiChatRouter';
 import { qumusChatRouter } from './routers/qumusChatRouter';
+import { qumusIdentityRouter } from './routers/qumusIdentityRouter';
 
 export const appRouter = router({
   system: systemRouter,
@@ -677,6 +678,7 @@ export const appRouter = router({
   batchVideo: batchVideoRouter,
   aiChat: aiChatRouter,
   qumusChat: qumusChatRouter,
+  qumusIdentity: qumusIdentityRouter,
 });
 export type AppRouter = typeof appRouter;
 
