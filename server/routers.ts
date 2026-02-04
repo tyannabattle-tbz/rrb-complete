@@ -118,6 +118,7 @@ import { alertBroadcastingRouter } from './routers/alertBroadcasting';
 import { seedDataRouter } from './routers/seedData';
 import { qumusOrchestrationRouter } from './routers/qumusOrchestration';
 import { contentGenerationRouter } from './routers/contentGeneration';
+import { monitoringActionsRouter } from './routers/monitoringActions';
 import { contentGenerationPolicyRouter } from './routers/contentGenerationPolicy';
 import { sweetMiraclesAlertsRouter } from './routers/sweetMiraclesAlerts';
 import { sweetMiraclesDonorsRouter } from './routers/sweetMiraclesDonors';
@@ -643,6 +644,7 @@ export const appRouter = router({
   adminDashboard: adminDashboardRouter,
   integrationMarketplace: integrationMarketplaceRouter,
   monitoring: monitoringRouter,
+  monitoringActions: monitoringActionsRouter,
   multiTenancy: multiTenancyRouter,
   rateLimiting: rateLimitingRouter,
   advancedSearch: advancedSearchRouter,

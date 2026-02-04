@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,7 +17,9 @@ import {
   Eye,
   Send,
   Play,
+  Loader2,
 } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 /**
  * Platform Monitoring Dashboard
@@ -29,12 +29,137 @@ export default function PlatformMonitoringDashboard() {
   const [activeTab, setActiveTab] = useState("sweetMiracles");
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
+
+  const showNotification = (title: string, message: string) => {
+    console.log(`[${title}] ${message}`);
+    // In production, use a toast library or notification service
+    alert(`${title}: ${message}`);
+  };
+
+  // tRPC mutations for quick actions
+  const sendThankYouMutation = trpc.monitoringActions.sweetMiracles.sendThankYouEmail.useMutation();
+  const viewAnalyticsMutation = trpc.monitoringActions.sweetMiracles.viewDonorAnalytics.useQuery({});
+  const createCampaignMutation = trpc.monitoringActions.sweetMiracles.createCampaign.useMutation();
+  const startBroadcastMutation = trpc.monitoringActions.rockinBoogie.startBroadcast.useMutation();
+  const generateContentMutation = trpc.monitoringActions.rockinBoogie.generateContent.useMutation();
+  const sendAlertMutation = trpc.monitoringActions.hybridCast.sendEmergencyAlert.useMutation();
+  const checkNetworkMutation = trpc.monitoringActions.hybridCast.checkNetworkHealth.useQuery();
 
   const handleRefresh = async () => {
     setRefreshing(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setLastUpdated(new Date());
     setRefreshing(false);
+  };
+
+  // Sweet Miracles Actions
+  const handleSendThankYou = async () => {
+    setLoadingAction("thankYou");
+    try {
+      await sendThankYouMutation.mutateAsync({
+        donorId: "donor_123",
+        donorEmail: "john@example.com",
+        donorName: "John Smith",
+        donationAmount: 250,
+      });
+      showNotification("Success", "Thank you email sent successfully!");
+    } catch (error) {
+      showNotification("Error", "Failed to send thank you email");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const handleViewAnalytics = async () => {
+    setLoadingAction("analytics");
+    try {
+      const data = await viewAnalyticsMutation.refetch();
+      showNotification("Analytics Loaded", `Total donors: ${data.data?.totalDonors || 0}`);
+    } catch (error) {
+      showNotification("Error", "Failed to load analytics");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const handleCreateCampaign = async () => {
+    setLoadingAction("campaign");
+    try {
+      await createCampaignMutation.mutateAsync({
+        campaignName: "New Fundraising Campaign",
+        goal: 10000,
+        description: "Help us reach our goal!",
+      });
+      showNotification("Success", "Campaign created successfully!");
+    } catch (error) {
+      showNotification("Error", "Failed to create campaign");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  // Rockin' Boogie Actions
+  const handleStartBroadcast = async () => {
+    setLoadingAction("broadcast");
+    try {
+      await startBroadcastMutation.mutateAsync({
+        broadcastTitle: "Live Music Show",
+        description: "Tonight's live music broadcast",
+        genre: "Rock",
+      });
+      showNotification("Success", "Broadcast started successfully!");
+    } catch (error) {
+      showNotification("Error", "Failed to start broadcast");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const handleGenerateContent = async () => {
+    setLoadingAction("content");
+    try {
+      await generateContentMutation.mutateAsync({
+        contentType: "episode",
+        duration: 60,
+        style: "upbeat",
+      });
+      showNotification("Success", "Content generation started! Check back in a few minutes.");
+    } catch (error) {
+      showNotification("Error", "Failed to generate content");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  // HybridCast Actions
+  const handleSendAlert = async () => {
+    setLoadingAction("alert");
+    try {
+      await sendAlertMutation.mutateAsync({
+        alertLevel: "warning",
+        title: "Network Maintenance",
+        message: "Scheduled maintenance in progress",
+        affectedRegions: ["Northeast", "Southeast"],
+      });
+      showNotification("Success", "Emergency alert sent successfully!");
+    } catch (error) {
+      showNotification("Error", "Failed to send alert");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const handleCheckNetwork = async () => {
+    setLoadingAction("network");
+    try {
+      const data = await checkNetworkMutation.refetch();
+      showNotification("Network Status", `${data.data?.stationsOnline || 0} stations online`);
+    } catch (error) {
+      showNotification("Error", "Failed to check network health");
+    } finally {
+      setLoadingAction(null);
+    }
   };
 
   return (
@@ -161,14 +286,41 @@ export default function PlatformMonitoringDashboard() {
                     <CardTitle className="text-sm">Quick Actions</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <Button className="w-full bg-green-600 hover:bg-green-700 justify-start">
-                      <Send className="w-4 h-4 mr-2" /> Send Thank You Email
+                    <Button
+                      onClick={handleSendThankYou}
+                      disabled={loadingAction === "thankYou"}
+                      className="w-full bg-green-600 hover:bg-green-700 justify-start"
+                    >
+                      {loadingAction === "thankYou" ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Send className="w-4 h-4 mr-2" />
+                      )}
+                      Send Thank You Email
                     </Button>
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 justify-start">
-                      <Eye className="w-4 h-4 mr-2" /> View Donor Analytics
+                    <Button
+                      onClick={handleViewAnalytics}
+                      disabled={loadingAction === "analytics"}
+                      className="w-full bg-blue-600 hover:bg-blue-700 justify-start"
+                    >
+                      {loadingAction === "analytics" ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Eye className="w-4 h-4 mr-2" />
+                      )}
+                      View Donor Analytics
                     </Button>
-                    <Button className="w-full bg-purple-600 hover:bg-purple-700 justify-start">
-                      <Zap className="w-4 h-4 mr-2" /> Create Campaign
+                    <Button
+                      onClick={handleCreateCampaign}
+                      disabled={loadingAction === "campaign"}
+                      className="w-full bg-purple-600 hover:bg-purple-700 justify-start"
+                    >
+                      {loadingAction === "campaign" ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Zap className="w-4 h-4 mr-2" />
+                      )}
+                      Create Campaign
                     </Button>
                     <Button className="w-full bg-orange-600 hover:bg-orange-700 justify-start">
                       <AlertTriangle className="w-4 h-4 mr-2" /> Manage Alerts
@@ -198,7 +350,7 @@ export default function PlatformMonitoringDashboard() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Total Value</span>
-                      <span className="text-yellow-400 font-bold">$450K</span>
+                      <span className="text-yellow-400 font-bold">$2.3M</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -207,13 +359,23 @@ export default function PlatformMonitoringDashboard() {
                   <CardHeader>
                     <CardTitle className="text-sm">Wellness Check-Ins</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-2">
-                    <Button className="w-full bg-green-600 hover:bg-green-700 justify-start text-sm">
-                      <CheckCircle className="w-4 h-4 mr-2" /> Schedule Check-In
-                    </Button>
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 justify-start text-sm">
-                      <Activity className="w-4 h-4 mr-2" /> View Participants
-                    </Button>
+                  <CardContent className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Scheduled</span>
+                      <span className="text-blue-400 font-bold">156</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Completed</span>
+                      <span className="text-green-400 font-bold">142</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Pending</span>
+                      <span className="text-yellow-400 font-bold">14</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Completion Rate</span>
+                      <span className="text-purple-400 font-bold">91%</span>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -223,10 +385,10 @@ export default function PlatformMonitoringDashboard() {
 
         {/* Rockin' Boogie Tab */}
         <TabsContent value="rockinBoogie" className="space-y-4">
-          <Card className="bg-gradient-to-br from-orange-900 to-slate-800 border-orange-700">
+          <Card className="bg-gradient-to-br from-purple-900 to-slate-800 border-purple-700">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Radio className="w-5 h-5 text-orange-400" /> Rockin' Boogie Monitoring
+                <Radio className="w-5 h-5 text-purple-400" /> Rockin' Boogie Monitoring
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -234,23 +396,23 @@ export default function PlatformMonitoringDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-slate-700 p-4 rounded-lg">
                   <p className="text-gray-400 text-sm">Content Generated</p>
-                  <p className="text-3xl font-bold text-orange-400 mt-2">156</p>
-                  <p className="text-xs text-gray-500 mt-1">7 in queue</p>
+                  <p className="text-3xl font-bold text-purple-400 mt-2">156</p>
+                  <p className="text-xs text-gray-500 mt-1">Queue: 12</p>
                 </div>
                 <div className="bg-slate-700 p-4 rounded-lg">
                   <p className="text-gray-400 text-sm">Active Listeners</p>
-                  <p className="text-3xl font-bold text-pink-400 mt-2">125K</p>
-                  <p className="text-xs text-gray-500 mt-1">Right now</p>
+                  <p className="text-3xl font-bold text-purple-400 mt-2">125K</p>
+                  <p className="text-xs text-gray-500 mt-1">+8% vs yesterday</p>
                 </div>
                 <div className="bg-slate-700 p-4 rounded-lg">
                   <p className="text-gray-400 text-sm">Episodes Broadcast</p>
-                  <p className="text-3xl font-bold text-red-400 mt-2">42</p>
+                  <p className="text-3xl font-bold text-pink-400 mt-2">42</p>
                   <p className="text-xs text-gray-500 mt-1">This month</p>
                 </div>
                 <div className="bg-slate-700 p-4 rounded-lg">
                   <p className="text-gray-400 text-sm">Avg Engagement</p>
-                  <p className="text-3xl font-bold text-yellow-400 mt-2">87.3%</p>
-                  <p className="text-xs text-gray-500 mt-1">Retention rate</p>
+                  <p className="text-3xl font-bold text-blue-400 mt-2">87.3%</p>
+                  <p className="text-xs text-gray-500 mt-1">Listener retention</p>
                 </div>
               </div>
 
@@ -262,19 +424,35 @@ export default function PlatformMonitoringDashboard() {
                     <CardTitle className="text-sm">Live Broadcasts</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div>
-                      <div className="flex justify-between items-center">
-                        <p className="text-gray-300 font-semibold">Morning Vibes</p>
-                        <Badge className="bg-red-500">LIVE</Badge>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-gray-300 font-semibold">Sunrise Sessions</p>
+                        <p className="text-xs text-gray-500">6:00 AM - 8:00 AM</p>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">15,234 listeners • 2h 30m</p>
+                      <div className="text-right">
+                        <p className="text-purple-400 font-bold">3.2K</p>
+                        <Badge className="text-xs bg-green-600">Live</Badge>
+                      </div>
                     </div>
-                    <div>
-                      <div className="flex justify-between items-center">
-                        <p className="text-gray-300 font-semibold">Afternoon Mix</p>
-                        <Badge className="bg-red-500">LIVE</Badge>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-gray-300 font-semibold">Jazz Nights</p>
+                        <p className="text-xs text-gray-500">8:00 PM - 10:00 PM</p>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">12,456 listeners • 3h 15m</p>
+                      <div className="text-right">
+                        <p className="text-purple-400 font-bold">2.1K</p>
+                        <Badge className="text-xs bg-green-600">Live</Badge>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-gray-300 font-semibold">Rock Classics</p>
+                        <p className="text-xs text-gray-500">10:00 PM - 12:00 AM</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-purple-400 font-bold">1.8K</p>
+                        <Badge className="text-xs bg-gray-600">Scheduled</Badge>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -285,16 +463,34 @@ export default function PlatformMonitoringDashboard() {
                     <CardTitle className="text-sm">Quick Actions</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <Button className="w-full bg-orange-600 hover:bg-orange-700 justify-start">
-                      <Play className="w-4 h-4 mr-2" /> Start Broadcast
+                    <Button
+                      onClick={handleStartBroadcast}
+                      disabled={loadingAction === "broadcast"}
+                      className="w-full bg-green-600 hover:bg-green-700 justify-start"
+                    >
+                      {loadingAction === "broadcast" ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Play className="w-4 h-4 mr-2" />
+                      )}
+                      Start Broadcast
                     </Button>
-                    <Button className="w-full bg-pink-600 hover:bg-pink-700 justify-start">
-                      <Zap className="w-4 h-4 mr-2" /> Generate Content
+                    <Button
+                      onClick={handleGenerateContent}
+                      disabled={loadingAction === "content"}
+                      className="w-full bg-blue-600 hover:bg-blue-700 justify-start"
+                    >
+                      {loadingAction === "content" ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Zap className="w-4 h-4 mr-2" />
+                      )}
+                      Generate Content
                     </Button>
                     <Button className="w-full bg-purple-600 hover:bg-purple-700 justify-start">
-                      <TrendingUp className="w-4 h-4 mr-2" /> View Analytics
+                      <Eye className="w-4 h-4 mr-2" /> View Analytics
                     </Button>
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 justify-start">
+                    <Button className="w-full bg-orange-600 hover:bg-orange-700 justify-start">
                       <Clock className="w-4 h-4 mr-2" /> Schedule Episode
                     </Button>
                   </CardContent>
@@ -312,14 +508,21 @@ export default function PlatformMonitoringDashboard() {
                       <p className="text-gray-300 font-semibold">Sunrise Sessions</p>
                       <p className="text-xs text-gray-500">3,421 plays</p>
                     </div>
-                    <Badge className="bg-green-600">92% engagement</Badge>
+                    <Badge className="bg-purple-600">92% engagement</Badge>
                   </div>
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-gray-300 font-semibold">Jazz Nights</p>
                       <p className="text-xs text-gray-500">2,876 plays</p>
                     </div>
-                    <Badge className="bg-green-600">88% engagement</Badge>
+                    <Badge className="bg-purple-600">88% engagement</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-gray-300 font-semibold">Rock Classics</p>
+                      <p className="text-xs text-gray-500">2,345 plays</p>
+                    </div>
+                    <Badge className="bg-purple-600">85% engagement</Badge>
                   </div>
                 </CardContent>
               </Card>
@@ -341,21 +544,21 @@ export default function PlatformMonitoringDashboard() {
                 <div className="bg-slate-700 p-4 rounded-lg">
                   <p className="text-gray-400 text-sm">Stations Online</p>
                   <p className="text-3xl font-bold text-blue-400 mt-2">847</p>
-                  <p className="text-xs text-gray-500 mt-1">156 regions</p>
+                  <p className="text-xs text-gray-500 mt-1">All operational</p>
                 </div>
                 <div className="bg-slate-700 p-4 rounded-lg">
                   <p className="text-gray-400 text-sm">Active Broadcasts</p>
-                  <p className="text-3xl font-bold text-cyan-400 mt-2">23</p>
+                  <p className="text-3xl font-bold text-blue-400 mt-2">23</p>
                   <p className="text-xs text-gray-500 mt-1">Live now</p>
                 </div>
                 <div className="bg-slate-700 p-4 rounded-lg">
                   <p className="text-gray-400 text-sm">Network Coverage</p>
-                  <p className="text-3xl font-bold text-teal-400 mt-2">98.5%</p>
+                  <p className="text-3xl font-bold text-green-400 mt-2">98.5%</p>
                   <p className="text-xs text-gray-500 mt-1">Uptime</p>
                 </div>
                 <div className="bg-slate-700 p-4 rounded-lg">
                   <p className="text-gray-400 text-sm">Mesh Nodes</p>
-                  <p className="text-3xl font-bold text-indigo-400 mt-2">3,421</p>
+                  <p className="text-3xl font-bold text-blue-400 mt-2">3.4K</p>
                   <p className="text-xs text-gray-500 mt-1">Connected</p>
                 </div>
               </div>
@@ -368,19 +571,26 @@ export default function PlatformMonitoringDashboard() {
                     <CardTitle className="text-sm">Critical Alerts</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div>
-                      <div className="flex justify-between items-center">
-                        <p className="text-gray-300 font-semibold">Northeast Power Outage</p>
-                        <Badge className="bg-red-500">Critical</Badge>
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-yellow-400 mt-1" />
+                      <div>
+                        <p className="text-gray-300 font-semibold">West Region</p>
+                        <p className="text-xs text-gray-500">Coverage at 96.2%</p>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">3 zones affected • 5 min ago</p>
                     </div>
-                    <div>
-                      <div className="flex justify-between items-center">
-                        <p className="text-gray-300 font-semibold">Southeast Latency High</p>
-                        <Badge className="bg-yellow-500">Warning</Badge>
+                    <div className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-400 mt-1" />
+                      <div>
+                        <p className="text-gray-300 font-semibold">Northeast Region</p>
+                        <p className="text-xs text-gray-500">Coverage at 99.2%</p>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">Network latency • 12 min ago</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-400 mt-1" />
+                      <div>
+                        <p className="text-gray-300 font-semibold">Southeast Region</p>
+                        <p className="text-xs text-gray-500">Coverage at 98.1%</p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -391,16 +601,34 @@ export default function PlatformMonitoringDashboard() {
                     <CardTitle className="text-sm">Quick Actions</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 justify-start">
-                      <AlertTriangle className="w-4 h-4 mr-2" /> Emergency Alert
+                    <Button
+                      onClick={handleSendAlert}
+                      disabled={loadingAction === "alert"}
+                      className="w-full bg-red-600 hover:bg-red-700 justify-start"
+                    >
+                      {loadingAction === "alert" ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <AlertTriangle className="w-4 h-4 mr-2" />
+                      )}
+                      Emergency Alert
                     </Button>
-                    <Button className="w-full bg-cyan-600 hover:bg-cyan-700 justify-start">
-                      <Activity className="w-4 h-4 mr-2" /> Network Health
+                    <Button
+                      onClick={handleCheckNetwork}
+                      disabled={loadingAction === "network"}
+                      className="w-full bg-blue-600 hover:bg-blue-700 justify-start"
+                    >
+                      {loadingAction === "network" ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Activity className="w-4 h-4 mr-2" />
+                      )}
+                      Check Network Health
                     </Button>
                     <Button className="w-full bg-purple-600 hover:bg-purple-700 justify-start">
-                      <TrendingUp className="w-4 h-4 mr-2" /> Regional Stats
+                      <Eye className="w-4 h-4 mr-2" /> Regional Stats
                     </Button>
-                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700 justify-start">
+                    <Button className="w-full bg-orange-600 hover:bg-orange-700 justify-start">
                       <Zap className="w-4 h-4 mr-2" /> Mesh Config
                     </Button>
                   </CardContent>
@@ -413,24 +641,26 @@ export default function PlatformMonitoringDashboard() {
                   <CardTitle className="text-sm">Regional Status</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-gray-300 font-semibold">Northeast</p>
-                      <p className="text-xs text-gray-500">245 stations</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Northeast</span>
+                      <Badge className="bg-green-600">245 stations</Badge>
                     </div>
-                    <div className="text-right">
-                      <Badge className="bg-green-600">99.2%</Badge>
-                      <p className="text-xs text-gray-500 mt-1">coverage</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Southeast</span>
+                      <Badge className="bg-green-600">189 stations</Badge>
                     </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-gray-300 font-semibold">Southeast</p>
-                      <p className="text-xs text-gray-500">189 stations</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Midwest</span>
+                      <Badge className="bg-green-600">201 stations</Badge>
                     </div>
-                    <div className="text-right">
-                      <Badge className="bg-green-600">98.1%</Badge>
-                      <p className="text-xs text-gray-500 mt-1">coverage</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Southwest</span>
+                      <Badge className="bg-green-600">156 stations</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">West</span>
+                      <Badge className="bg-yellow-600">56 stations</Badge>
                     </div>
                   </div>
                 </CardContent>
@@ -439,17 +669,6 @@ export default function PlatformMonitoringDashboard() {
           </Card>
         </TabsContent>
       </Tabs>
-
-      {/* Footer */}
-      <div className="mt-8 p-4 bg-slate-800 border border-slate-700 rounded-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-green-400" />
-            <span className="text-gray-300">All Monitoring Systems Operational</span>
-          </div>
-          <span className="text-sm text-gray-500">Auto-refresh: Every 5 seconds</span>
-        </div>
-      </div>
     </div>
   );
 }
