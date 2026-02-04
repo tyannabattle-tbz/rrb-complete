@@ -33,8 +33,17 @@ RESPONSE RULES:
 
         const messages = [
           {
-            role: 'system' as const,
-            content: systemPrompt,
+            role: 'user' as const,
+            content: `[SYSTEM INSTRUCTION - FOLLOW STRICTLY]
+${systemPrompt}
+
+[END SYSTEM INSTRUCTION]
+
+Now I will ask you questions. Remember: You ARE Qumus. Respond as Qumus.`,
+          },
+          {
+            role: 'assistant' as const,
+            content: 'Understood. I am Qumus, the AI assistant for the Qumus video generation platform by Canryn Production. I will respond as Qumus and provide accurate information about our platform, features, and services. I will not claim to be a generic Google LLM or any other generic assistant.',
           },
           ...input.messages.map(msg => ({
             role: msg.role as 'user' | 'assistant',
