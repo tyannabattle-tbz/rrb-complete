@@ -3,13 +3,27 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ChatHeader } from './ChatHeader';
-import { Send, Loader } from 'lucide-react';
+import { Send, Loader, Upload, X, FileIcon, Music, Image as ImageIcon } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
+  fileData?: {
+    fileName: string;
+    fileType: string;
+    fileSize: number;
+    s3Url?: string;
+  };
+}
+
+interface FileUploadState {
+  file: File | null;
+  progress: number;
+  uploading: boolean;
+  error: string | null;
 }
 
 export function QumusChatInterface() {
@@ -21,6 +35,14 @@ export function QumusChatInterface() {
     },
   ]);
   const [input, setInput] = useState('');
+  const [fileUpload, setFileUpload] = useState<FileUploadState>({
+    file: null,
+    progress: 0,
+    uploading: false,
+    error: null,
+  });
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Use tRPC mutation for chat
@@ -58,6 +80,76 @@ export function QumusChatInterface() {
     scrollToBottom();
   }, [messages]);
 
+  const uploadFileMutation = trpc.qumusFileUpload.uploadFile.useMutation({
+    onSuccess: (data) => {
+      toast.success(`File uploaded: ${data.metadata.originalName}`);
+      const fileMessage: Message = {
+        role: 'user',
+        content: `Uploaded file: ${data.metadata.originalName}`,
+        timestamp: Date.now(),
+        fileData: {
+          fileName: data.metadata.originalName,
+          fileType: data.metadata.fileType,
+          fileSize: data.metadata.size,
+          s3Url: data.s3Url,
+        },
+      };
+      setMessages(prev => [...prev, fileMessage]);
+      setFileUpload({ file: null, progress: 0, uploading: false, error: null });
+    },
+    onError: (error) => {
+      const errorMsg = error.message || 'File upload failed';
+      toast.error(errorMsg);
+      setFileUpload(prev => ({ ...prev, error: errorMsg, uploading: false }));
+    },
+  });
+
+  const handleFileSelect = async (file: File) => {
+    try {
+      // Validate file - queries are synchronous in tRPC
+      // We'll skip validation for now and let the server handle it
+      setFileUpload({ file, progress: 0, uploading: true, error: null });
+
+      // Convert to base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64Data = (e.target?.result as string).split(',')[1];
+        await uploadFileMutation.mutateAsync({
+          fileName: file.name,
+          mimeType: file.type,
+          fileSize: file.size,
+          base64Data,
+          description: `File uploaded from QUMUS chat`,
+        });
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      toast.error('Failed to process file');
+      setFileUpload(prev => ({ ...prev, uploading: false }));
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -78,6 +170,12 @@ export function QumusChatInterface() {
       })),
       query: input,
     });
+  };
+
+  const getFileIcon = (fileType: string) => {
+    if (fileType === 'audio') return <Music className="w-4 h-4" />;
+    if (fileType === 'image') return <ImageIcon className="w-4 h-4" />;
+    return <FileIcon className="w-4 h-4" />;
   };
 
   return (
@@ -112,9 +210,70 @@ export function QumusChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* File Upload Display */}
+      {fileUpload.file && (
+        <div className="border-t border-slate-200 bg-blue-50 p-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {getFileIcon(fileUpload.file.type)}
+            <div className="flex-1">
+              <p className="text-sm font-medium text-slate-900">{fileUpload.file.name}</p>
+              <div className="w-48 h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 transition-all"
+                  style={{ width: `${fileUpload.progress}%` }}
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => setFileUpload({ file: null, progress: 0, uploading: false, error: null })}
+            disabled={fileUpload.uploading}
+            className="p-1 hover:bg-blue-100 rounded"
+          >
+            <X className="w-4 h-4 text-slate-500" />
+          </button>
+        </div>
+      )}
+
+      {/* Error Display */}
+      {fileUpload.error && (
+        <div className="border-t border-slate-200 bg-red-50 p-3 text-sm text-red-700">
+          {fileUpload.error}
+        </div>
+      )}
+
       {/* Input Area */}
-      <div className="border-t border-slate-200 bg-white p-4">
+      <div
+        className={`border-t border-slate-200 bg-white p-4 transition-colors ${
+          dragActive ? 'bg-blue-50' : ''
+        }`}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+      >
         <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={(e) => {
+              if (e.target.files?.[0]) {
+                handleFileSelect(e.target.files[0]);
+              }
+            }}
+            className="hidden"
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp,.mp3,.wav,.ogg,.webm,.m4a"
+          />
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={fileUpload.uploading || chatMutation.isPending}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
+            <Upload className="w-4 h-4" />
+            <span className="hidden sm:inline">Upload</span>
+          </Button>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -124,13 +283,13 @@ export function QumusChatInterface() {
                 handleSend();
               }
             }}
-            placeholder="Type your message..."
-            disabled={chatMutation.isPending}
+            placeholder="Type your message or drag files here..."
+            disabled={chatMutation.isPending || fileUpload.uploading}
             className="flex-1"
           />
           <Button
             onClick={handleSend}
-            disabled={chatMutation.isPending || !input.trim()}
+            disabled={chatMutation.isPending || !input.trim() || fileUpload.uploading}
             className="gap-2"
           >
             {chatMutation.isPending ? (

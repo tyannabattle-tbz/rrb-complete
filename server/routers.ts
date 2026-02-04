@@ -123,6 +123,7 @@ import { sweetMiraclesAlertsRouter } from './routers/sweetMiraclesAlerts';
 import { sweetMiraclesDonorsRouter } from './routers/sweetMiraclesDonors';
 import { sweetMiraclesGrantsRouter } from './routers/sweetMiraclesGrants';
 import { qumusFileUploadRouter } from './routers/qumusFileUpload';
+import { fileProcessingRouter } from './routers/fileProcessingRouter';
 
 export const appRouter = router({
   system: systemRouter,
@@ -707,6 +708,7 @@ export const appRouter = router({
   sweetMiraclesDonors: sweetMiraclesDonorsRouter,
   sweetMiraclesGrants: sweetMiraclesGrantsRouter,
   qumusFileUpload: qumusFileUploadRouter,
+  fileProcessing: fileProcessingRouter,
 });
 export type AppRouter = typeof appRouter;
 

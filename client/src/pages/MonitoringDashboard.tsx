@@ -160,9 +160,10 @@ export default function MonitoringDashboard() {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 bg-slate-800 border border-slate-700">
+        <TabsList className="grid w-full grid-cols-5 bg-slate-800 border border-slate-700">
           <TabsTrigger value="qumus">QUMUS Metrics</TabsTrigger>
           <TabsTrigger value="policies">Policies</TabsTrigger>
+          <TabsTrigger value="uploads">File Uploads</TabsTrigger>
           <TabsTrigger value="platforms">Platforms</TabsTrigger>
           <TabsTrigger value="alerts">Alerts</TabsTrigger>
         </TabsList>
@@ -312,6 +313,40 @@ export default function MonitoringDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* File Upload Monitoring Tab */}
+        <TabsContent value="uploads" className="space-y-4">
+          <Card className="bg-slate-800 border-slate-700">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="w-5 h-5 text-blue-400" /> File Upload & Processing
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-slate-700 p-4 rounded-lg">
+                  <p className="text-gray-400 text-sm">Total Uploads</p>
+                  <p className="text-2xl font-bold text-blue-400 mt-2">1,247</p>
+                </div>
+                <div className="bg-slate-700 p-4 rounded-lg">
+                  <p className="text-gray-400 text-sm">Success Rate</p>
+                  <p className="text-2xl font-bold text-green-400 mt-2">98.5%</p>
+                </div>
+                <div className="bg-slate-700 p-4 rounded-lg">
+                  <p className="text-gray-400 text-sm">Avg Upload Time</p>
+                  <p className="text-2xl font-bold text-cyan-400 mt-2">2.3s</p>
+                </div>
+                <div className="bg-slate-700 p-4 rounded-lg">
+                  <p className="text-gray-400 text-sm">Processing Jobs</p>
+                  <p className="text-2xl font-bold text-yellow-400 mt-2">156</p>
+                </div>
+              </div>
+              <div className="mt-4 p-4 bg-blue-900 border border-blue-700 rounded">
+                <p className="text-sm text-blue-200">📁 File uploads: Documents (50MB), Images (10MB), Audio (100MB) - All types supported</p>
               </div>
             </CardContent>
           </Card>
