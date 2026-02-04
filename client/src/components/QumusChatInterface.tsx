@@ -45,8 +45,8 @@ export function QumusChatInterface() {
     setLoading(true);
 
     try {
-      // Call the AI chat API
-      const response = await fetch('/api/trpc/aiChat.chat', {
+      // Call the QUMUS chat API
+      const response = await fetch('/api/trpc/qumusChat.chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

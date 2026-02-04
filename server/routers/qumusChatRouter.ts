@@ -1,6 +1,5 @@
 import { router, publicProcedure } from '../_core/trpc';
 import { z } from 'zod';
-import { QumusKnowledgeBase } from '../_core/qumusKnowledgeBase';
 import { QumusIdentitySystem } from '../_core/qumusIdentity';
 import { QumusOrchestrationEngine } from '../_core/qumusOrchestrationEngine';
 import { invokeLLM } from '../_core/llm';
@@ -21,17 +20,8 @@ export const qumusChatRouter = router({
 
         const messages = [
           {
-            role: 'user' as const,
-            content: `[SYSTEM INSTRUCTION - FOLLOW STRICTLY]
-${systemPrompt}
-
-[END SYSTEM INSTRUCTION]
-
-Now I will ask you questions. Remember: You ARE QUMUS. Respond as QUMUS.`,
-          },
-          {
-            role: 'assistant' as const,
-            content: 'Understood. I am QUMUS, the autonomous orchestration engine for Canryn Production. I operate at 90%+ autonomy and manage all platform operations through intelligent decision-making. I am currently operating Rockin\' Rockin\' Boogie and managing HybridCast integrations. I will respond as QUMUS and provide accurate information about my capabilities, decision policies, service integrations, and operations.',
+            role: 'system' as const,
+            content: systemPrompt,
           },
           ...input.messages.map(msg => ({
             role: msg.role as 'user' | 'assistant',
