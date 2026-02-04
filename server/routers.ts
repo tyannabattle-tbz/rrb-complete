@@ -115,6 +115,7 @@ import { hybridCastNodesRouter } from './routers/hybridCastNodes';
 import { analyticsReportingRouter } from './routers/analyticsReporting';
 import { radioStationsRouter } from './routers/radioStations';
 import { alertBroadcastingRouter } from './routers/alertBroadcasting';
+import { seedDataRouter } from './routers/seedData';
 
 export const appRouter = router({
   system: systemRouter,
@@ -691,6 +692,7 @@ export const appRouter = router({
   analyticsReporting: analyticsReportingRouter,
   radioStations: radioStationsRouter,
   alertBroadcasting: alertBroadcastingRouter,
+  seedData: seedDataRouter,
 });
 export type AppRouter = typeof appRouter;
 

@@ -143,13 +143,16 @@ export const alertBroadcastingRouter = router({
     .query(async ({ input }) => {
       const db = await requireDb();
 
-      let query = db.select().from(alertBroadcastLog);
+      let broadcasts: any[] = [];
 
       if (input.alertId) {
-        query = query.where(eq(alertBroadcastLog.alertId, input.alertId));
+        broadcasts = await db
+          .select()
+          .from(alertBroadcastLog)
+          .where(eq(alertBroadcastLog.alertId, input.alertId));
+      } else {
+        broadcasts = await db.select().from(alertBroadcastLog);
       }
-
-      const broadcasts = await query;
 
       return {
         totalBroadcasts: broadcasts.length,
