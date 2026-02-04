@@ -122,7 +122,6 @@ import { contentGenerationPolicyRouter } from './routers/contentGenerationPolicy
 import { sweetMiraclesAlertsRouter } from './routers/sweetMiraclesAlerts';
 import { sweetMiraclesDonorsRouter } from './routers/sweetMiraclesDonors';
 import { sweetMiraclesGrantsRouter } from './routers/sweetMiraclesGrants';
-import { stripePaymentsRouter } from './routers/stripePayments';
 
 export const appRouter = router({
   system: systemRouter,
@@ -706,7 +705,6 @@ export const appRouter = router({
   sweetMiraclesAlerts: sweetMiraclesAlertsRouter,
   sweetMiraclesDonors: sweetMiraclesDonorsRouter,
   sweetMiraclesGrants: sweetMiraclesGrantsRouter,
-  stripePayments: stripePaymentsRouter,
 });
 export type AppRouter = typeof appRouter;
 

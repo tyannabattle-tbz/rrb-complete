@@ -48,8 +48,7 @@ import QumusChatPage from '@/pages/QumusChatPage';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
 import QumusMonitoringDashboard from '@/pages/QumusMonitoringDashboard';
 import PolicyDecisionLogging from '@/pages/PolicyDecisionLogging';
-import AdminDecisionDashboard from "./pages/AdminDecisionDashboard";
-import { SweetMiraclesDashboard } from "./pages/SweetMiraclesDashboard";
+import AdminDecisionDashboard from '@/pages/AdminDecisionDashboard';
 import ComplianceAuditViewer from '@/pages/ComplianceAuditViewer';
 import ServiceHealthAlerts from '@/pages/ServiceHealthAlerts';
 import HumanOverrideSystem from '@/pages/HumanOverrideSystem';
@@ -116,8 +115,7 @@ function Router() {
       <Route path="/rockin-boogie-content" component={RockinBoogieContentManager} />
       <Route path="/emergency-alerts" component={EmergencyAlertSystem} />
       <Route path="/analytics-reporting" component={AnalyticsReportingDashboard} />
-        <Route path="/admin-decisions" component={AdminDecisionDashboard} />
-        <Route path="/sweet-miracles" component={SweetMiraclesDashboard} />
+      <Route path="/admin-decisions" component={AdminDecisionDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
