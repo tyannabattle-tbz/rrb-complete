@@ -1,4 +1,7 @@
+"use client";
+
 import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,48 +12,94 @@ const DONATION_TIERS = [
   {
     name: "Bronze",
     amount: 25,
+    priceId: "price_1SxEcmRzKOILZyAN7PCozzkE",
     color: "from-amber-600 to-amber-700",
     benefits: ["Monthly recognition", "Impact updates"],
   },
   {
     name: "Silver",
     amount: 50,
+    priceId: "price_1SxEfHRzKOILZyANZJPXhNPW",
     color: "from-gray-400 to-gray-500",
     benefits: ["Monthly recognition", "Impact updates", "Quarterly reports"],
   },
   {
     name: "Gold",
     amount: 100,
+    priceId: "price_1SxEepRzKOILZyAN6cPbC8l6",
     color: "from-yellow-400 to-yellow-600",
     benefits: ["All Silver benefits", "Exclusive events", "Direct impact tracking"],
   },
   {
     name: "Platinum",
     amount: 250,
+    priceId: "price_1SxEeWRzKOILZyANC2OBc4NS",
     color: "from-purple-500 to-purple-700",
     benefits: ["All Gold benefits", "VIP status", "Quarterly calls with leadership"],
   },
 ];
 
 export default function SweetMiraclesDashboard() {
+  const { user } = useAuth();
   const [selectedTier, setSelectedTier] = useState<string>("silver");
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleDonate = async (tier: string) => {
+    if (!user) {
+      alert("Please log in to make a donation.");
+      return;
+    }
+
     setIsProcessing(true);
     try {
-      const amount = tier === "custom" ? parseFloat(customAmount) : DONATION_TIERS.find((t) => t.name.toLowerCase() === tier)?.amount || 50;
+      if (tier === "custom") {
+        const amount = parseFloat(customAmount);
+        if (!amount || amount < 0.5) {
+          alert("Please enter a valid donation amount (minimum $0.50).");
+          setIsProcessing(false);
+          return;
+        }
 
-      if (!amount || amount < 1) {
-        alert("Please enter a valid donation amount");
-        setIsProcessing(false);
-        return;
+        const response = await fetch("/api/stripe/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: Math.round(amount * 100),
+            tier: "custom",
+          }),
+        });
+
+        const { url } = await response.json();
+        if (url) {
+          // Redirecting to checkout
+          window.open(url, "_blank");
+        }
+      } else {
+        const tierData = DONATION_TIERS.find((t) => t.name.toLowerCase() === tier);
+        if (!tierData) {
+          alert("Invalid tier selected.");
+          return;
+        }
+
+        const response = await fetch("/api/stripe/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            priceId: tierData.priceId,
+            tier: tier,
+          }),
+        });
+
+        const { url } = await response.json();
+        if (url) {
+          // Redirecting to checkout
+          window.open(url, "_blank");
+        }
       }
-
-      // In production, this would call the Stripe checkout endpoint
-      alert(`Donation of $${amount} initiated. Redirecting to Stripe checkout...`);
-      // window.location.href = `/api/stripe/checkout?amount=${Math.round(amount * 100)}&tier=${tier}`;
+    } catch (error) {
+      console.error("Donation error:", error);
+      alert("Error processing donation. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -98,139 +147,152 @@ export default function SweetMiraclesDashboard() {
             </div>
           </Card>
 
-          <Card className="p-6 border-l-4 border-l-red-600">
+          <Card className="p-6 border-l-4 border-l-orange-600">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm">Active Alerts</p>
-                <p className="text-3xl font-bold text-red-700">8</p>
+                <p className="text-gray-600 text-sm">Lives Impacted</p>
+                <p className="text-3xl font-bold text-orange-700">3,847</p>
               </div>
-              <AlertCircle className="w-8 h-8 text-red-600 opacity-20" />
+              <TrendingUp className="w-8 h-8 text-orange-600 opacity-20" />
             </div>
           </Card>
         </div>
 
-        {/* Tabs */}
+        {/* Main Content */}
         <Tabs defaultValue="donate" className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-8">
-            <TabsTrigger value="donate">💝 Donate</TabsTrigger>
-            <TabsTrigger value="donors">👥 Donors</TabsTrigger>
-            <TabsTrigger value="grants">🎁 Grants</TabsTrigger>
-            <TabsTrigger value="alerts">🚨 Alerts</TabsTrigger>
-            <TabsTrigger value="wellness">💚 Wellness</TabsTrigger>
-            <TabsTrigger value="campaigns">📊 Campaigns</TabsTrigger>
-            <TabsTrigger value="analytics">📈 Analytics</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger value="donate">Make a Donation</TabsTrigger>
+            <TabsTrigger value="impact">Our Impact</TabsTrigger>
+            <TabsTrigger value="about">About Us</TabsTrigger>
           </TabsList>
 
-          {/* Donate Tab */}
           <TabsContent value="donate" className="space-y-8">
+            {/* Donation Tiers */}
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Choose Your Donation Tier</h2>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Choose Your Impact Level</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {DONATION_TIERS.map((tier) => (
                   <Card
                     key={tier.name}
                     className={`p-6 cursor-pointer transition-all ${
                       selectedTier === tier.name.toLowerCase()
-                        ? "ring-2 ring-green-600 shadow-lg"
+                        ? "ring-2 ring-green-500 shadow-lg"
                         : "hover:shadow-md"
                     }`}
                     onClick={() => setSelectedTier(tier.name.toLowerCase())}
                   >
-                    <div className={`bg-gradient-to-br ${tier.color} text-white rounded-lg p-4 mb-4`}>
+                    <div className={`bg-gradient-to-br ${tier.color} text-white p-4 rounded-lg mb-4`}>
                       <h3 className="text-xl font-bold">{tier.name}</h3>
-                      <p className="text-2xl font-bold mt-2">${tier.amount}/mo</p>
+                      <p className="text-sm opacity-90">${tier.amount}/month</p>
                     </div>
-                    <ul className="space-y-2">
-                      {tier.benefits.map((benefit, idx) => (
-                        <li key={idx} className="text-sm text-gray-600 flex items-start">
-                          <span className="text-green-600 mr-2">✓</span>
-                          {benefit}
+                    <ul className="space-y-2 mb-6">
+                      {tier.benefits.map((benefit) => (
+                        <li key={benefit} className="text-sm text-gray-600 flex items-start">
+                          <Heart className="w-4 h-4 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
+                          <span>{benefit}</span>
                         </li>
                       ))}
                     </ul>
+                    <Button
+                      onClick={() => handleDonate(tier.name.toLowerCase())}
+                      disabled={isProcessing}
+                      className="w-full bg-green-600 hover:bg-green-700"
+                    >
+                      {isProcessing ? "Processing..." : "Donate"}
+                    </Button>
                   </Card>
                 ))}
               </div>
-
-              {/* Custom Amount */}
-              <Card className="p-6 bg-blue-50 border-blue-200 mb-8">
-                <h3 className="font-bold text-gray-900 mb-4">Or make a custom donation</h3>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Amount (USD)</label>
-                    <Input
-                      type="number"
-                      placeholder="Enter amount"
-                      value={customAmount}
-                      onChange={(e) => setCustomAmount(e.target.value)}
-                      min="1"
-                      step="0.01"
-                      className="w-full"
-                    />
-                  </div>
-                  <div className="flex items-end">
-                    <Button
-                      onClick={() => handleDonate("custom")}
-                      disabled={isProcessing || !customAmount}
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      {isProcessing ? "Processing..." : "Donate Custom"}
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Donate Button */}
-              <Button
-                onClick={() => handleDonate(selectedTier)}
-                disabled={isProcessing}
-                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-6 text-lg font-bold"
-              >
-                {isProcessing ? "Processing..." : `Donate $${DONATION_TIERS.find((t) => t.name.toLowerCase() === selectedTier)?.amount || ""}/month`}
-              </Button>
             </div>
-          </TabsContent>
 
-          {/* Other Tabs - Placeholder Content */}
-          <TabsContent value="donors" className="space-y-4">
-            <Card className="p-6">
-              <h3 className="text-lg font-bold mb-4">Top Donors</h3>
-              <p className="text-gray-600">Coming soon - Donor recognition and management</p>
+            {/* Custom Donation */}
+            <Card className="p-8 bg-white">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Custom Donation</h3>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Enter Amount ($)
+                  </label>
+                  <Input
+                    type="number"
+                    min="0.50"
+                    step="0.01"
+                    placeholder="Enter custom amount"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    disabled={isProcessing}
+                  />
+                </div>
+                <div className="flex items-end">
+                  <Button
+                    onClick={() => handleDonate("custom")}
+                    disabled={isProcessing || !customAmount}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    {isProcessing ? "Processing..." : "Donate Custom Amount"}
+                  </Button>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">Minimum donation: $0.50</p>
+            </Card>
+
+            {/* Payment Info */}
+            <Card className="p-6 bg-blue-50 border-l-4 border-l-blue-500">
+              <div className="flex gap-4">
+                <AlertCircle className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                <div>
+                  <h4 className="font-semibold text-blue-900 mb-1">Secure Payment</h4>
+                  <p className="text-sm text-blue-800">
+                    All donations are processed securely through Stripe. Your payment information is never stored on our servers.
+                  </p>
+                </div>
+              </div>
             </Card>
           </TabsContent>
 
-          <TabsContent value="grants" className="space-y-4">
-            <Card className="p-6">
-              <h3 className="text-lg font-bold mb-4">Grant Opportunities</h3>
-              <p className="text-gray-600">Coming soon - AI-powered grant discovery and matching</p>
+          <TabsContent value="impact" className="space-y-6">
+            <Card className="p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Impact</h3>
+              <div className="space-y-4 text-gray-700">
+                <p>
+                  Sweet Miracles has been transforming lives since 2022. Through the generosity of donors like you, we have:
+                </p>
+                <ul className="space-y-2 ml-4">
+                  <li className="flex items-start">
+                    <span className="text-green-600 font-bold mr-3">✓</span>
+                    <span>Provided emergency assistance to over 3,800 seniors and vulnerable individuals</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-600 font-bold mr-3">✓</span>
+                    <span>Conducted 5,200+ wellness check-ins to ensure safety and well-being</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-600 font-bold mr-3">✓</span>
+                    <span>Distributed $127,450 in direct aid and support services</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-600 font-bold mr-3">✓</span>
+                    <span>Built a community of 1,284 active supporters</span>
+                  </li>
+                </ul>
+              </div>
             </Card>
           </TabsContent>
 
-          <TabsContent value="alerts" className="space-y-4">
-            <Card className="p-6">
-              <h3 className="text-lg font-bold mb-4">Emergency Alerts</h3>
-              <p className="text-gray-600">Coming soon - Multi-region emergency broadcasting</p>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="wellness" className="space-y-4">
-            <Card className="p-6">
-              <h3 className="text-lg font-bold mb-4">Wellness Check-In</h3>
-              <p className="text-gray-600">Coming soon - "I'm Okay" system for seniors</p>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="campaigns" className="space-y-4">
-            <Card className="p-6">
-              <h3 className="text-lg font-bold mb-4">Fundraising Campaigns</h3>
-              <p className="text-gray-600">Coming soon - Campaign tracking and impact metrics</p>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-4">
-            <Card className="p-6">
-              <h3 className="text-lg font-bold mb-4">Analytics & Reports</h3>
-              <p className="text-gray-600">Coming soon - Detailed analytics and reporting</p>
+          <TabsContent value="about" className="space-y-6">
+            <Card className="p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">About Sweet Miracles</h3>
+              <div className="space-y-4 text-gray-700">
+                <p>
+                  Sweet Miracles NPO is a 501(c)(3) registered nonprofit organization dedicated to providing compassionate support to seniors and vulnerable populations in our community.
+                </p>
+                <p>
+                  Our mission is to be a voice for the voiceless, ensuring that every senior receives the care, respect, and assistance they deserve. We believe that everyone deserves dignity and support, regardless of their circumstances.
+                </p>
+                <p>
+                  Through emergency assistance, wellness check-ins, and community support programs, we work to improve the quality of life for those who need it most.
+                </p>
+              </div>
             </Card>
           </TabsContent>
         </Tabs>
