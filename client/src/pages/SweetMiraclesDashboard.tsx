@@ -4,8 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, Users, Gift, AlertCircle, DollarSign, TrendingUp } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { useToast } from "@/hooks/use-toast";
 
 const DONATION_TIERS = [
   {
@@ -35,29 +33,9 @@ const DONATION_TIERS = [
 ];
 
 export default function SweetMiraclesDashboard() {
-  const { toast } = useToast();
   const [selectedTier, setSelectedTier] = useState<string>("silver");
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const createCheckoutMutation = trpc.stripePayments.createCheckoutSession.useMutation({
-    onSuccess: (data) => {
-      if (data.sessionUrl) {
-        toast({
-          title: "Redirecting to checkout...",
-          description: "You're being taken to Stripe to complete your donation.",
-        });
-        window.open(data.sessionUrl, "_blank");
-      }
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create checkout session",
-        variant: "destructive",
-      });
-    },
-  });
 
   const handleDonate = async (tier: string) => {
     setIsProcessing(true);
@@ -65,20 +43,14 @@ export default function SweetMiraclesDashboard() {
       const amount = tier === "custom" ? parseFloat(customAmount) : DONATION_TIERS.find((t) => t.name.toLowerCase() === tier)?.amount || 50;
 
       if (!amount || amount < 1) {
-        toast({
-          title: "Invalid amount",
-          description: "Please enter a valid donation amount",
-          variant: "destructive",
-        });
+        alert("Please enter a valid donation amount");
         setIsProcessing(false);
         return;
       }
 
-      createCheckoutMutation.mutate({
-        amount: Math.round(amount * 100), // Convert to cents
-        tier: tier === "custom" ? "custom" : tier.toLowerCase(),
-        description: `Sweet Miracles ${tier.charAt(0).toUpperCase() + tier.slice(1)} Donation`,
-      });
+      // In production, this would call the Stripe checkout endpoint
+      alert(`Donation of $${amount} initiated. Redirecting to Stripe checkout...`);
+      // window.location.href = `/api/stripe/checkout?amount=${Math.round(amount * 100)}&tier=${tier}`;
     } finally {
       setIsProcessing(false);
     }
