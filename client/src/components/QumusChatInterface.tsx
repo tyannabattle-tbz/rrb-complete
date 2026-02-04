@@ -81,7 +81,7 @@ export function QumusChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col h-full bg-white">
       <ChatHeader />
 
       {/* Messages Container */}

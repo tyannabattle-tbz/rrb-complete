@@ -51,6 +51,8 @@ import PolicyDecisionLogging from '@/pages/PolicyDecisionLogging';
 import ComplianceAuditViewer from '@/pages/ComplianceAuditViewer';
 import ServiceHealthAlerts from '@/pages/ServiceHealthAlerts';
 import HumanOverrideSystem from '@/pages/HumanOverrideSystem';
+import AdvancedAnalyticsDashboard from '@/pages/AdvancedAnalyticsDashboard';
+import MobileResponsiveAdminPanel from '@/pages/MobileResponsiveAdminPanel';
 
 function Router() {
   return (
@@ -98,6 +100,8 @@ function Router() {
       <Route path="/compliance-audit" component={ComplianceAuditViewer} />
       <Route path="/service-health" component={ServiceHealthAlerts} />
       <Route path="/human-override" component={HumanOverrideSystem} />
+      <Route path="/analytics-advanced" component={AdvancedAnalyticsDashboard} />
+      <Route path="/admin-mobile" component={MobileResponsiveAdminPanel} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
