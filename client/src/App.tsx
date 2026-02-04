@@ -46,6 +46,7 @@ import { BatchVideoGenerator } from './pages/BatchVideoGenerator';
 import { QumusChatInterface } from './components/QumusChatInterface';
 import QumusChatPage from '@/pages/QumusChatPage';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
+import QumusMonitoringDashboard from '@/pages/QumusMonitoringDashboard';
 
 function Router() {
   return (
@@ -88,6 +89,7 @@ function Router() {
       <Route path="/chat" component={QumusChatInterface} />
       <Route path="/qumus-chat" component={QumusChatPage} />
       <Route path="/enhanced-chat" component={EnhancedChatPage} />
+      <Route path="/qumus-dashboard" component={QumusMonitoringDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
