@@ -63,6 +63,7 @@ import EmergencyAlertSystem from '@/pages/EmergencyAlertSystem';
 import AnalyticsReportingDashboard from '@/pages/AnalyticsReportingDashboard';
 import PlatformMonitoringDashboard from '@/pages/PlatformMonitoringDashboard';
 import Studio from '@/pages/Studio';
+import { PodcastPlayer } from '@/components/PodcastPlayer';
 
 function Router() {
   return (
@@ -121,6 +122,7 @@ function Router() {
       <Route path="/admin-decisions" component={AdminDecisionDashboard} />
       <Route path="/monitoring" component={PlatformMonitoringDashboard} />
       <Route path="/studio" component={Studio} />
+      <Route path="/podcast" component={PodcastPlayer} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
