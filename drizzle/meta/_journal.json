@@ -162,6 +162,13 @@
       "when": 1770322615552,
       "tag": "0022_wet_tarot",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1770323079555,
+      "tag": "0023_vengeful_invisible_woman",
+      "breakpoints": true
     }
   ]
 }

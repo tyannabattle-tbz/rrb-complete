@@ -2089,3 +2089,81 @@ export const webhookSubscriptions = mysqlTable("webhook_subscriptions", {
 
 export type WebhookSubscription = typeof webhookSubscriptions.$inferSelect;
 export type InsertWebhookSubscription = typeof webhookSubscriptions.$inferInsert;
+
+
+// ============================================================================
+// DASHBOARD CUSTOMIZATION TABLES
+// ============================================================================
+
+export const dashboardConfigurations = mysqlTable("dashboard_configurations", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  dashboardType: varchar("dashboardType", { length: 64 }).notNull(), // admin, compliance, user, analyst
+  layout: text("layout").notNull(), // JSON layout configuration
+  theme: varchar("theme", { length: 64 }).default("light"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DashboardConfiguration = typeof dashboardConfigurations.$inferSelect;
+export type InsertDashboardConfiguration = typeof dashboardConfigurations.$inferInsert;
+
+export const dashboardWidgets = mysqlTable("dashboard_widgets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  dashboardType: varchar("dashboardType", { length: 64 }).notNull(),
+  widgetType: varchar("widgetType", { length: 255 }).notNull(),
+  position: text("position").notNull(), // JSON {x, y}
+  size: text("size").notNull(), // JSON {width, height}
+  config: text("config"), // JSON widget-specific config
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DashboardWidget = typeof dashboardWidgets.$inferSelect;
+export type InsertDashboardWidget = typeof dashboardWidgets.$inferInsert;
+
+export const decisionFeedback = mysqlTable("decision_feedback", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  decisionId: varchar("decisionId", { length: 255 }).notNull(),
+  rating: int("rating").notNull(), // 1-5
+  comment: text("comment"),
+  actionTaken: boolean("actionTaken").default(false),
+  outcome: text("outcome"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DecisionFeedback = typeof decisionFeedback.$inferSelect;
+export type InsertDecisionFeedback = typeof decisionFeedback.$inferInsert;
+
+export const policyPerformanceMetrics = mysqlTable("policy_performance_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  policyName: varchar("policyName", { length: 255 }).notNull().unique(),
+  totalDecisions: int("totalDecisions").default(0),
+  acceptedDecisions: int("acceptedDecisions").default(0),
+  rejectedDecisions: int("rejectedDecisions").default(0),
+  averageRating: decimal("averageRating", { precision: 3, scale: 2 }).default("0.00"),
+  accuracy: decimal("accuracy", { precision: 5, scale: 2 }).default("0.00"),
+  precision: decimal("precision", { precision: 5, scale: 2 }).default("0.00"),
+  recall: decimal("recall", { precision: 5, scale: 2 }).default("0.00"),
+  f1Score: decimal("f1Score", { precision: 5, scale: 2 }).default("0.00"),
+  lastUpdated: timestamp("lastUpdated").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PolicyPerformanceMetrics = typeof policyPerformanceMetrics.$inferSelect;
+export type InsertPolicyPerformanceMetrics = typeof policyPerformanceMetrics.$inferInsert;
+
+export const rateLimitingTiers = mysqlTable("rate_limiting_tiers", {
+  id: int("id").autoincrement().primaryKey(),
+  tierName: varchar("tierName", { length: 64 }).notNull().unique(), // free, pro, enterprise
+  requestsPerMinute: int("requestsPerMinute").notNull(),
+  requestsPerMonth: int("requestsPerMonth").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).default("0.00"),
+  features: text("features"), // JSON array of features
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type RateLimitingTier = typeof rateLimitingTiers.$inferSelect;
+export type InsertRateLimitingTier = typeof rateLimitingTiers.$inferInsert;
+
