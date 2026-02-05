@@ -131,7 +131,13 @@ import { sweetMiraclesDonorsRouter } from './routers/sweetMiraclesDonors';
 import { sweetMiraclesGrantsRouter } from './routers/sweetMiraclesGrants';
 import { qumusFileUploadRouter } from './routers/qumusFileUpload';
 import { fileProcessingRouter } from './routers/fileProcessingRouter';
-import { podcastPlaybackRouter } from './routers/podcastPlayback';
+import { podcastPlaybackRouter } from "./routers/podcastPlayback";
+import { aiChatRouter as aiChatQUMUSRouter } from "./routers/aiChat";
+import { mapInteractionRouter } from "./routers/mapInteraction";
+import { dashboardStateRouter } from "./routers/dashboardState";
+import { chatFlowRouter } from "./routers/chatFlow";
+import { toolExecutionRouter } from "./routers/toolExecution";
+import { analyticsTrackingRouter } from "./routers/analyticsTracking";
 
 export const appRouter = router({
   system: systemRouter,
@@ -725,6 +731,12 @@ export const appRouter = router({
   qumusFileUpload: qumusFileUploadRouter,
   fileProcessing: fileProcessingRouter,
   podcastPlayback: podcastPlaybackRouter,
+  aiChatQUMUS: aiChatQUMUSRouter,
+  mapInteraction: mapInteractionRouter,
+  dashboardState: dashboardStateRouter,
+  chatFlow: chatFlowRouter,
+  toolExecution: toolExecutionRouter,
+  analyticsTracking: analyticsTrackingRouter,
 });
 export type AppRouter = typeof appRouter;
 
