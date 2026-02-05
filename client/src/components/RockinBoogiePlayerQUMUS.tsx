@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Settings, BarChart3, History, Heart, Search, Plus, Download, Wifi, WifiOff, Music } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 interface Episode {
   id: string;
@@ -31,6 +32,7 @@ interface PlaybackState {
 }
 
 const RockinBoogiePlayerQUMUS: React.FC = () => {
+  const { isConnected, updates } = useWebSocket();
   // Audio refs
   const audioRef = useRef<HTMLAudioElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -48,6 +50,14 @@ const RockinBoogiePlayerQUMUS: React.FC = () => {
     currentChannelId: '',
   });
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [recentUpdates, setRecentUpdates] = useState<any[]>([]);
+
+  useEffect(() => {
+    const playbackUpdates = updates.filter(u => u.type === 'policy-decision');
+    if (playbackUpdates.length > 0) {
+      setRecentUpdates(playbackUpdates.slice(0, 5));
+    }
+  }, [updates]);
   const [showSettings, setShowSettings] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
