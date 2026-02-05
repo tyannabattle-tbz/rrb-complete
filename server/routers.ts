@@ -143,6 +143,9 @@ import { analyticsTrackingRouter } from "./routers/analyticsTracking";
 import { customPoliciesRouter } from "./routers/customPolicies";
 import { policyVersioningRouter } from "./routers/policyVersioning";
 import { complianceReportingRouter } from "./routers/complianceReporting";
+import { tierDonationsRouter } from "./routers/tierDonations";
+import { emergencyTemplatesRouter } from "./routers/emergencyTemplates";
+import { crossPlatformAnalyticsRouter } from "./routers/crossPlatformAnalytics";
 
 export const appRouter = router({
   system: systemRouter,
@@ -746,6 +749,9 @@ export const appRouter = router({
   customPolicies: customPoliciesRouter,
   policyVersioning: policyVersioningRouter,
   complianceReporting: complianceReportingRouter,
+  tierDonations: tierDonationsRouter,
+  emergencyTemplates: emergencyTemplatesRouter,
+  crossPlatformAnalytics: crossPlatformAnalyticsRouter,
   stripeCheckout: stripeCheckoutRouter,
 });
 export type AppRouter = typeof appRouter;
