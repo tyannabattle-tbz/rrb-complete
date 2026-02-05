@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Play, Pause, SkipBack, SkipForward, Power } from 'lucide-react';
+import { QueueManager } from './QueueManager';
+import { ListenerMetrics } from './ListenerMetrics';
 
 interface PlaybackState {
   userId: number;
@@ -319,6 +321,22 @@ export function RockinBoogiePlayer() {
           POWER
         </Button>
       </Card>
+
+      {/* Listener Metrics */}
+      <ListenerMetrics isLive={state.isPlaying} />
+
+      {/* Queue Manager */}
+      <QueueManager
+        queue={[
+          { id: 1, title: 'Rockin\' Rockin\' Boogie', artist: 'Little Richard', duration: 180, channel: 7 },
+          { id: 2, title: 'Tutti Frutti', artist: 'Little Richard', duration: 160, channel: 7 },
+          { id: 3, title: 'Long Tall Sally', artist: 'Little Richard', duration: 170, channel: 7 },
+        ]}
+        currentIndex={state.queueIndex}
+        onReorder={(newQueue) => console.log('Queue reordered:', newQueue)}
+        onRemove={(trackId) => console.log('Remove track:', trackId)}
+        onPlayTrack={(index) => console.log('Play track at index:', index)}
+      />
 
       {/* Status Info */}
       <Card className="p-4 bg-slate-100 dark:bg-slate-900 border-slate-300 dark:border-slate-700">
