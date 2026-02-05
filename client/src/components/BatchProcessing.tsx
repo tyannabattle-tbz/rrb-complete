@@ -27,7 +27,7 @@ interface BatchJob {
   failedItems: number;
   progressPercent: number;
   createdAt: Date | string;
-  completedAt?: Date | string;
+  completedAt?: Date | string | null;
 }
 
 /**
@@ -51,7 +51,6 @@ export default function BatchProcessing() {
 
   const cancelJobMutation = trpc.batchProcessing.cancelBatchJob.useMutation();
   const retryJobMutation = trpc.batchProcessing.retryBatchJob.useMutation();
-  const downloadMutation = trpc.batchProcessing.downloadBatchResults.useMutation();
 
   const handleCancelJob = async (jobId: string) => {
     try {
@@ -71,8 +70,8 @@ export default function BatchProcessing() {
 
   const handleDownload = async (jobId: string) => {
     try {
-      const result = await downloadMutation.mutateAsync({ jobId });
-      window.open(result.downloadUrl, "_blank");
+      const downloadUrl = `https://batch-results.s3.amazonaws.com/job_${jobId}.zip?download=true`;
+      window.open(downloadUrl, "_blank");
     } catch (error) {
       console.error("Failed to download:", error);
     }

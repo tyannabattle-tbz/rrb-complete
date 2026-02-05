@@ -37,6 +37,7 @@ import { trpc } from "@/lib/trpc";
 import TimelineEditor from "@/components/TimelineEditor";
 import BatchProcessing from "@/components/BatchProcessing";
 import EditingPresets from "@/components/EditingPresets";
+import RecordingControls from "@/components/RecordingControls";
 
 /**
  * Professional Studio Component
@@ -360,7 +361,11 @@ export default function Studio() {
 
             {/* Controls Tab */}
             <TabsContent value="controls" className="flex-1 overflow-auto p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Recording Controls - Full Width */}
+                <div className="lg:col-span-3">
+                  <RecordingControls />
+                </div>
                 {/* Playback Controls */}
                 <Card className="bg-slate-800 border-slate-700">
                   <CardHeader>

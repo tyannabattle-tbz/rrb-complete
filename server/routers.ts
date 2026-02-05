@@ -21,6 +21,7 @@ import { analyticsRouter } from "./routers/analytics";
 import { studioStreamingRouter } from "./routers/studioStreaming";
 import { batchProcessingRouter } from "./routers/batchProcessing";
 import { editingPresetsRouter } from "./routers/editingPresets";
+import { recordingManagementRouter } from "./routers/recordingManagement";
 
 import { anomalyDetectionRouter } from "./routers/anomalyDetection";
 import { predictiveAlertsRouter } from "./routers/predictiveAlerts";
@@ -636,6 +637,7 @@ export const appRouter = router({
   studio: studioStreamingRouter,
   batchProcessing: batchProcessingRouter,
   editingPresets: editingPresetsRouter,
+  recordingManagement: recordingManagementRouter,
   anomalyDetection: anomalyDetectionRouter,
   predictiveAlerts: predictiveAlertsRouter,
   suppressionRules: suppressionRulesRouter,
