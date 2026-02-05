@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, AlertCircle, TrendingUp, FileText } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 export function ComplianceDashboard() {
+  const { isConnected, updates } = useWebSocket();
   const [compliance, setCompliance] = useState({
     status: 100,
     violations: 0,
@@ -62,6 +64,10 @@ export function ComplianceDashboard() {
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center gap-2 text-sm">
+        <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+        <span className="text-gray-600">{isConnected ? 'Live' : 'Offline'}</span>
+      </div>
       <div>
         <h1 className="text-3xl font-bold">Compliance Dashboard</h1>
         <p className="text-gray-600 mt-2">Policy compliance and audit tracking (Live Data)</p>
