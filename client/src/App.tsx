@@ -7,7 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { PresetProvider } from "./contexts/PresetContext";
 import Home from "./pages/Home";
 import AgentDashboard from "./pages/AgentDashboard";
-import AdminDashboardPage from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import { AdminAnalyticsDashboard } from "./pages/AdminAnalyticsDashboard";
 import { SettingsPanel } from "./pages/SettingsPanel";
 import { APIDocumentation } from "./pages/APIDocumentation";
@@ -66,20 +66,13 @@ import Studio from '@/pages/Studio';
 import { PodcastPlayer } from '@/components/PodcastPlayer';
 import PodcastDiscovery from '@/pages/PodcastDiscovery';
 import { RockinBoogiePlayerEnhanced } from '@/components/RockinBoogiePlayerEnhanced';
-import AuditDashboard from '@/components/AuditDashboard';
-import PolicyDashboard from '@/components/PolicyDashboard';
-import ComplianceReportGenerator from '@/components/ComplianceReportGenerator';
-import { AdminDashboard as AdminDashboardComponent } from '@/components/AdminDashboard';
-import { ComplianceDashboard } from '@/components/ComplianceDashboard';
-import { Pricing } from '@/pages/Pricing';
-import { PolicyMetrics } from '@/pages/PolicyMetrics';
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
-      <Route path="/admin" component={AdminDashboardPage} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
@@ -134,13 +127,6 @@ function Router() {
       <Route path="/studio" component={Studio} />
       <Route path="/podcast" component={PodcastPlayer} />
       <Route path="/podcast-discovery" component={PodcastDiscovery} />
-      <Route path="/audit" component={AuditDashboard} />
-      <Route path="/policies" component={PolicyDashboard} />
-      <Route path="/compliance" component={ComplianceReportGenerator} />
-      <Route path="/dashboards/admin" component={AdminDashboardComponent} />
-      <Route path="/dashboards/compliance" component={ComplianceDashboard} />
-      <Route path="/pricing" component={Pricing} />
-      <Route path="/metrics" component={PolicyMetrics} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -1,8 +1,6 @@
-"use client";
-
-import { useState, useEffect, useRef } from "react";
-import { Play, Pause, SkipBack, SkipForward, Volume2, Download, Plus, Heart, Wifi, WifiOff } from "lucide-react";
-import { getAllDownloadedEpisodes, downloadEpisode } from "@/services/offlineDownloadService";
+import React, { useState, useEffect, useRef } from "react";
+import { Play, Pause, SkipBack, SkipForward, Volume2, Download, Plus, Heart } from "lucide-react";
+import { getAllDownloadedEpisodes, downloadEpisode, getDownloadProgress } from "@/services/offlineDownloadService";
 
 interface Episode {
   id: string;
@@ -11,7 +9,6 @@ interface Episode {
   duration: number;
   streamUrl: string;
   channel: string;
-  imageUrl?: string;
 }
 
 interface Playlist {
@@ -41,66 +38,14 @@ export function RockinBoogiePlayerFinal() {
   const [showPlaylistModal, setShowPlaylistModal] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [offlineMode, setOfflineMode] = useState(false);
-  const [isOnline, setIsOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
 
   // Initialize player
   useEffect(() => {
     initializePlayer();
-    window.addEventListener("online", () => setIsOnline(true));
-    window.addEventListener("offline", () => setIsOnline(false));
-    return () => {
-      window.removeEventListener("online", () => setIsOnline(true));
-      window.removeEventListener("offline", () => setIsOnline(false));
-    };
   }, []);
 
-  // Update audio element when episode changes
-  useEffect(() => {
-    if (audioRef.current && currentEpisode) {
-      audioRef.current.src = currentEpisode.streamUrl;
-      if (isPlaying) {
-        audioRef.current.play().catch((e) => console.error("Play failed:", e));
-      }
-    }
-  }, [currentEpisode]);
-
-  // Update volume
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
-    }
-  }, [volume]);
-
-  // Handle audio events
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const updateProgress = () => {
-      setProgress(audio.currentTime);
-    };
-
-    const updateDuration = () => {
-      setDuration(audio.duration);
-    };
-
-    const handleEnded = () => {
-      playNext();
-    };
-
-    audio.addEventListener("timeupdate", updateProgress);
-    audio.addEventListener("loadedmetadata", updateDuration);
-    audio.addEventListener("ended", handleEnded);
-
-    return () => {
-      audio.removeEventListener("timeupdate", updateProgress);
-      audio.removeEventListener("loadedmetadata", updateDuration);
-      audio.removeEventListener("ended", handleEnded);
-    };
-  }, [currentChannel, currentEpisode]);
-
   async function initializePlayer() {
-    // Load default channels with iTunes-compatible structure
+    // Load default channels
     const defaultChannels: Channel[] = [
       {
         id: "rockin",
@@ -113,7 +58,6 @@ export function RockinBoogiePlayerFinal() {
             duration: 180,
             streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
             channel: "Rockin' Rockin' Boogie",
-            imageUrl: "https://via.placeholder.com/200?text=Little+Richard",
           },
           {
             id: "2",
@@ -122,16 +66,6 @@ export function RockinBoogiePlayerFinal() {
             duration: 160,
             streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
             channel: "Rockin' Rockin' Boogie",
-            imageUrl: "https://via.placeholder.com/200?text=Little+Richard",
-          },
-          {
-            id: "5",
-            title: "Johnny B. Goode",
-            artist: "Chuck Berry",
-            duration: 170,
-            streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
-            channel: "Rockin' Rockin' Boogie",
-            imageUrl: "https://via.placeholder.com/200?text=Chuck+Berry",
           },
         ],
       },
@@ -146,16 +80,6 @@ export function RockinBoogiePlayerFinal() {
             duration: 280,
             streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
             channel: "Blues Hour",
-            imageUrl: "https://via.placeholder.com/200?text=BB+King",
-          },
-          {
-            id: "6",
-            title: "Stormy Monday",
-            artist: "T-Bone Walker",
-            duration: 240,
-            streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
-            channel: "Blues Hour",
-            imageUrl: "https://via.placeholder.com/200?text=T-Bone+Walker",
           },
         ],
       },
@@ -170,16 +94,6 @@ export function RockinBoogiePlayerFinal() {
             duration: 320,
             streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
             channel: "Jazz Essentials",
-            imageUrl: "https://via.placeholder.com/200?text=Dave+Brubeck",
-          },
-          {
-            id: "7",
-            title: "Kind of Blue",
-            artist: "Miles Davis",
-            duration: 300,
-            streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
-            channel: "Jazz Essentials",
-            imageUrl: "https://via.placeholder.com/200?text=Miles+Davis",
           },
         ],
       },
@@ -189,31 +103,59 @@ export function RockinBoogiePlayerFinal() {
     setCurrentChannel(defaultChannels[0]);
     setCurrentEpisode(defaultChannels[0].episodes[0]);
 
-    // Load favorites and playlists from localStorage
-    const savedFavorites = localStorage.getItem("rockinBoogieFavorites");
-    if (savedFavorites) {
-      setFavorites(new Set(JSON.parse(savedFavorites)));
-    }
+    // Load downloaded episodes
+    const downloaded = await getAllDownloadedEpisodes();
+    setDownloadedEpisodes(new Set(downloaded.map((e) => e.id)));
 
+    // Load playlists from localStorage
     const savedPlaylists = localStorage.getItem("rockinBoogiePlaylists");
     if (savedPlaylists) {
       setPlaylists(JSON.parse(savedPlaylists));
     }
-
-    // Load downloaded episodes
-    const downloaded = await getAllDownloadedEpisodes();
-    setDownloadedEpisodes(new Set(downloaded.map((e) => e.id)));
   }
 
-  function togglePlayPause() {
-    if (!audioRef.current) return;
+  // Audio element event listeners
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch((e) => console.error("Play failed:", e));
+    const handleTimeUpdate = () => setProgress(audio.currentTime);
+    const handleLoadedMetadata = () => setDuration(audio.duration);
+    const handleEnded = () => {
+      playNext();
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, [currentEpisode, currentChannel]);
+
+  // Update audio src when episode changes
+  useEffect(() => {
+    if (audioRef.current && currentEpisode) {
+      audioRef.current.src = currentEpisode.streamUrl;
+      if (isPlaying) {
+        audioRef.current.play();
+      }
     }
-    setIsPlaying(!isPlaying);
+  }, [currentEpisode]);
+
+  // Handle play/pause
+  function togglePlay() {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
   }
 
   function playNext() {
@@ -221,7 +163,6 @@ export function RockinBoogiePlayerFinal() {
     const currentIndex = currentChannel.episodes.findIndex((e) => e.id === currentEpisode?.id);
     if (currentIndex < currentChannel.episodes.length - 1) {
       setCurrentEpisode(currentChannel.episodes[currentIndex + 1]);
-      setIsPlaying(true);
     }
   }
 
@@ -230,14 +171,12 @@ export function RockinBoogiePlayerFinal() {
     const currentIndex = currentChannel.episodes.findIndex((e) => e.id === currentEpisode?.id);
     if (currentIndex > 0) {
       setCurrentEpisode(currentChannel.episodes[currentIndex - 1]);
-      setIsPlaying(true);
     }
   }
 
   function switchChannel(channel: Channel) {
     setCurrentChannel(channel);
     setCurrentEpisode(channel.episodes[0]);
-    setIsPlaying(false);
   }
 
   function toggleFavorite(episodeId: string) {
@@ -248,7 +187,6 @@ export function RockinBoogiePlayerFinal() {
       newFavorites.add(episodeId);
     }
     setFavorites(newFavorites);
-    localStorage.setItem("rockinBoogieFavorites", JSON.stringify(Array.from(newFavorites)));
   }
 
   async function handleDownload(episode: Episode) {
@@ -311,98 +249,75 @@ export function RockinBoogiePlayerFinal() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   }
 
-  const favoriteEpisodes = currentChannel?.episodes.filter((e) => favorites.has(e.id)) || [];
-
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl border border-orange-500/30 shadow-2xl">
-      {/* Header with Online Status */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-white">RRB - Rockin' Rockin' Boogie</h1>
-        <div className="flex items-center gap-2">
-          {isOnline ? (
-            <div className="flex items-center gap-1 text-green-400">
-              <Wifi size={16} />
-              <span className="text-xs">Online</span>
+    <div className="w-full max-w-4xl mx-auto p-6 bg-gradient-to-b from-slate-900 to-slate-800 rounded-lg text-white">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">🎙️ RRB - Rockin' Rockin' Boogie</h1>
+        <p className="text-slate-400">Premium Podcast & Audio Platform</p>
+      </div>
+
+      {/* Current Episode Display */}
+      <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg p-6 mb-6">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold mb-1">{currentEpisode?.title}</h2>
+            <p className="text-white/80 mb-4">{currentEpisode?.artist}</p>
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-semibold">
+                {isPlaying ? "▶️ NOW PLAYING" : "⏸️ STOPPED"}
+              </span>
+              <button
+                onClick={() => toggleFavorite(currentEpisode?.id || "")}
+                className={`p-2 rounded-full transition ${
+                  favorites.has(currentEpisode?.id || "")
+                    ? "bg-red-500 text-white"
+                    : "bg-white/20 text-white hover:bg-white/30"
+                }`}
+              >
+                <Heart size={18} />
+              </button>
             </div>
-          ) : (
-            <div className="flex items-center gap-1 text-red-400">
-              <WifiOff size={16} />
-              <span className="text-xs">Offline</span>
-            </div>
+          </div>
+          {currentEpisode && (
+            <button
+              onClick={() => handleDownload(currentEpisode)}
+              className={`p-3 rounded-full transition ${
+                downloadedEpisodes.has(currentEpisode.id)
+                  ? "bg-green-500 text-white"
+                  : "bg-white/20 text-white hover:bg-white/30"
+              }`}
+              title={downloadedEpisodes.has(currentEpisode.id) ? "Downloaded" : "Download"}
+            >
+              <Download size={20} />
+            </button>
           )}
         </div>
       </div>
 
-      {/* Current Episode Display */}
-      {currentEpisode && (
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-6 mb-6">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-white mb-2">{currentEpisode.title}</h2>
-              <p className="text-orange-100 mb-4">{currentEpisode.artist}</p>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => toggleFavorite(currentEpisode.id)}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-lg transition ${
-                    favorites.has(currentEpisode.id)
-                      ? "bg-red-500 text-white"
-                      : "bg-white/20 text-white hover:bg-white/30"
-                  }`}
-                >
-                  <Heart size={16} fill={favorites.has(currentEpisode.id) ? "currentColor" : "none"} />
-                  {favorites.has(currentEpisode.id) ? "Favorited" : "Add to Favorites"}
-                </button>
-                <button
-                  onClick={() => handleDownload(currentEpisode)}
-                  disabled={downloadedEpisodes.has(currentEpisode.id)}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-lg transition ${
-                    downloadedEpisodes.has(currentEpisode.id)
-                      ? "bg-green-500 text-white"
-                      : "bg-white/20 text-white hover:bg-white/30"
-                  }`}
-                >
-                  <Download size={16} />
-                  {downloadedEpisodes.has(currentEpisode.id) ? "Downloaded" : "Download"}
-                </button>
-              </div>
-            </div>
-            {currentEpisode.imageUrl && (
-              <img src={currentEpisode.imageUrl} alt={currentEpisode.artist} className="w-32 h-32 rounded-lg ml-4" />
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Playback Status */}
-      <div className="bg-slate-700/50 rounded-lg p-4 mb-6 text-center">
-        <p className="text-orange-400 font-semibold">
-          {isPlaying ? "🎵 NOW PLAYING" : "⏸️ STOPPED"}
-        </p>
-      </div>
-
-      {/* Channels */}
-      <div className="bg-slate-700/30 rounded-lg p-4 mb-6 border border-slate-600">
-        <h3 className="text-orange-400 font-bold mb-3 uppercase text-sm">CHANNELS</h3>
-        <div className="grid grid-cols-3 gap-2">
+      {/* Channel Selection */}
+      <div className="mb-6">
+        <h3 className="text-orange-400 font-bold mb-3 uppercase text-sm">Channels</h3>
+        <div className="grid grid-cols-3 gap-3">
           {channels.map((channel) => (
             <button
               key={channel.id}
               onClick={() => switchChannel(channel)}
-              className={`px-4 py-2 rounded-lg transition font-semibold ${
+              className={`py-2 px-4 rounded-lg font-semibold transition ${
                 currentChannel?.id === channel.id
                   ? "bg-orange-500 text-white"
-                  : "bg-slate-600 text-slate-200 hover:bg-slate-500"
+                  : "bg-slate-700 text-slate-300 hover:bg-slate-600"
               }`}
             >
               {channel.name}
-              <span className="text-xs ml-1">({channel.episodes.length})</span>
+              <span className="text-xs ml-2">({channel.episodes.length})</span>
             </button>
           ))}
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-slate-700/50 rounded-lg p-3 mb-4 border border-slate-600">
+      <div className="mb-4">
         <input
           type="range"
           min="0"
@@ -413,168 +328,98 @@ export function RockinBoogiePlayerFinal() {
               audioRef.current.currentTime = parseFloat(e.target.value);
             }
           }}
-          className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-orange-500"
+          className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
         />
-        <div className="flex justify-between text-xs text-slate-400 mt-2">
+        <div className="flex justify-between text-xs text-slate-400 mt-1">
           <span>{formatTime(progress)}</span>
           <span>{formatTime(duration)}</span>
         </div>
       </div>
 
       {/* Volume Control */}
-      <div className="bg-slate-700/50 rounded-lg p-3 mb-6 border border-slate-600 flex items-center gap-3">
+      <div className="flex items-center gap-3 mb-6 bg-slate-700/50 p-3 rounded-lg">
         <Volume2 size={20} className="text-orange-400" />
         <input
           type="range"
           min="0"
           max="100"
           value={volume}
-          onChange={(e) => setVolume(parseInt(e.target.value))}
-          className="flex-1 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-orange-500"
+          onChange={(e) => {
+            const vol = parseInt(e.target.value);
+            setVolume(vol);
+            if (audioRef.current) {
+              audioRef.current.volume = vol / 100;
+            }
+          }}
+          className="flex-1 h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer"
         />
-        <span className="text-sm text-slate-300 w-8 text-right">{volume}</span>
-      </div>
-
-      {/* Audio Visualizer */}
-      <div className="bg-slate-700/50 rounded-lg p-4 mb-6 border-2 border-dashed border-orange-500/50 h-24 flex items-center justify-center">
-        <div className="flex items-center justify-center gap-1 h-full">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="w-1 bg-gradient-to-t from-orange-400 to-orange-600 rounded-full transition-all"
-              style={{
-                height: isPlaying ? `${Math.random() * 100}%` : "20%",
-                animation: isPlaying ? `pulse 0.5s ease-in-out ${i * 0.05}s infinite` : "none",
-              }}
-            />
-          ))}
-        </div>
+        <span className="text-sm font-semibold w-8 text-right">{volume}</span>
       </div>
 
       {/* Playback Controls */}
-      <div className="flex gap-3 mb-6">
+      <div className="flex items-center justify-center gap-4 mb-6">
         <button
           onClick={playPrev}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition font-semibold"
+          className="p-3 bg-slate-700 hover:bg-slate-600 rounded-full transition"
         >
-          <SkipBack size={20} />
-          PREV
+          <SkipBack size={24} />
         </button>
         <button
-          onClick={togglePlayPause}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition font-semibold text-lg"
+          onClick={togglePlay}
+          className="p-4 bg-orange-500 hover:bg-orange-600 rounded-full transition text-white"
         >
-          {isPlaying ? (
-            <>
-              <Pause size={20} />
-              PAUSE
-            </>
-          ) : (
-            <>
-              <Play size={20} />
-              PLAY
-            </>
-          )}
+          {isPlaying ? <Pause size={28} /> : <Play size={28} />}
         </button>
         <button
           onClick={playNext}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition font-semibold"
+          className="p-3 bg-slate-700 hover:bg-slate-600 rounded-full transition"
         >
-          NEXT
-          <SkipForward size={20} />
+          <SkipForward size={24} />
         </button>
       </div>
 
-      {/* Offline Mode Toggle */}
-      {downloadedEpisodes.size > 0 && (
-        <button
-          onClick={() => setOfflineMode(!offlineMode)}
-          className={`w-full px-4 py-2 rounded-lg transition font-semibold mb-6 ${
-            offlineMode
-              ? "bg-green-600 hover:bg-green-700 text-white"
-              : "bg-slate-600 hover:bg-slate-500 text-slate-200"
-          }`}
-        >
-          {offlineMode ? "📱 Offline Mode ON" : "🌐 Online Mode"}
-        </button>
-      )}
-
-      {/* Favorite Episodes */}
-      {favoriteEpisodes.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-orange-400 font-bold mb-3 uppercase text-sm">❤️ Favorite Episodes</h3>
-          <div className="space-y-2">
-            {favoriteEpisodes.map((episode) => (
-              <div
-                key={episode.id}
-                onClick={() => setCurrentEpisode(episode)}
-                className="p-3 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700 transition border border-orange-500/30"
-              >
-                <p className="font-semibold text-white">{episode.title}</p>
-                <p className="text-sm text-slate-400">{episode.artist}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Playlists */}
-      {playlists.length > 0 && (
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-orange-400 font-bold uppercase text-sm">📋 Your Playlists</h3>
-            <button
-              onClick={() => setShowPlaylistModal(true)}
-              className="flex items-center gap-1 px-3 py-1 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition text-sm"
-            >
-              <Plus size={16} />
-              New
-            </button>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {playlists.map((playlist) => (
-              <div key={playlist.id} className="bg-slate-700/50 p-3 rounded-lg border border-slate-600">
-                <p className="font-semibold text-white">{playlist.name}</p>
-                <p className="text-xs text-slate-400">{playlist.episodes.length} episodes</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Create Playlist Button */}
-      {playlists.length === 0 && (
+      {/* Playlist Controls */}
+      <div className="flex gap-2 mb-6">
         <button
           onClick={() => setShowPlaylistModal(true)}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition font-semibold mb-6"
+          className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition"
         >
-          <Plus size={20} />
-          Create Playlist
+          <Plus size={18} /> Create Playlist
         </button>
-      )}
+        <button
+          onClick={() => setOfflineMode(!offlineMode)}
+          className={`px-4 py-2 rounded-lg transition font-semibold ${
+            offlineMode
+              ? "bg-green-600 text-white"
+              : "bg-slate-700 hover:bg-slate-600 text-slate-300"
+          }`}
+        >
+          {offlineMode ? "📡 Offline Mode" : "🌐 Online"}
+        </button>
+      </div>
 
       {/* Playlist Modal */}
       {showPlaylistModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-slate-800 p-6 rounded-lg max-w-sm w-full border border-orange-500/30">
-            <h3 className="text-xl font-bold mb-4 text-white">Create New Playlist</h3>
+          <div className="bg-slate-800 p-6 rounded-lg max-w-sm w-full">
+            <h3 className="text-xl font-bold mb-4">Create New Playlist</h3>
             <input
               type="text"
               value={newPlaylistName}
               onChange={(e) => setNewPlaylistName(e.target.value)}
               placeholder="Playlist name..."
-              className="w-full px-4 py-2 bg-slate-700 rounded-lg mb-4 text-white placeholder-slate-400 border border-slate-600"
+              className="w-full px-4 py-2 bg-slate-700 rounded-lg mb-4 text-white placeholder-slate-400"
             />
             <div className="flex gap-2">
               <button
                 onClick={createPlaylist}
-                className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg transition font-semibold text-white"
+                className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg transition font-semibold"
               >
                 Create
               </button>
               <button
                 onClick={() => setShowPlaylistModal(false)}
-                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition text-slate-200"
+                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition"
               >
                 Cancel
               </button>
@@ -583,82 +428,61 @@ export function RockinBoogiePlayerFinal() {
         </div>
       )}
 
-      {/* Episodes List */}
-      {!offlineMode && (
-        <div>
-          <h3 className="text-orange-400 font-bold mb-3 uppercase text-sm">Episodes</h3>
-          <div className="space-y-2">
-            {currentChannel?.episodes.map((episode) => (
-              <div
-                key={episode.id}
-                onClick={() => setCurrentEpisode(episode)}
-                className={`p-3 rounded-lg cursor-pointer transition border ${
-                  currentEpisode?.id === episode.id
-                    ? "bg-orange-500/20 border-orange-500"
-                    : "bg-slate-700/50 border-slate-600 hover:bg-slate-700"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="font-semibold text-white">{episode.title}</p>
-                    <p className="text-sm text-slate-400">{episode.artist}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-slate-400">{formatTime(episode.duration)}</span>
-                    {downloadedEpisodes.has(episode.id) && (
-                      <span className="text-xs bg-green-600 px-2 py-1 rounded text-white">Downloaded</span>
-                    )}
-                  </div>
+      {/* Episode List */}
+      <div className="mt-8">
+        <h3 className="text-orange-400 font-bold mb-4 uppercase text-sm">Episodes</h3>
+        <div className="space-y-2">
+          {currentChannel?.episodes.map((episode) => (
+            <div
+              key={episode.id}
+              onClick={() => setCurrentEpisode(episode)}
+              className={`p-4 rounded-lg cursor-pointer transition ${
+                currentEpisode?.id === episode.id
+                  ? "bg-orange-500/20 border-l-4 border-orange-500"
+                  : "bg-slate-700/50 hover:bg-slate-700"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="font-semibold">{episode.title}</p>
+                  <p className="text-sm text-slate-400">{episode.artist}</p>
                 </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-400">{formatTime(episode.duration)}</span>
+                  {downloadedEpisodes.has(episode.id) && (
+                    <span className="text-xs bg-green-600 px-2 py-1 rounded">Downloaded</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Playlists Display */}
+      {playlists.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-orange-400 font-bold mb-4 uppercase text-sm">Your Playlists</h3>
+          <div className="grid grid-cols-2 gap-4">
+            {playlists.map((playlist) => (
+              <div key={playlist.id} className="bg-slate-700/50 p-4 rounded-lg">
+                <p className="font-semibold">{playlist.name}</p>
+                <p className="text-sm text-slate-400">{playlist.episodes.length} episodes</p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Offline Episodes List */}
-      {offlineMode && (
-        <div>
-          <h3 className="text-orange-400 font-bold mb-3 uppercase text-sm">📱 Downloaded Episodes</h3>
-          <div className="space-y-2">
-            {currentChannel?.episodes
-              .filter((e) => downloadedEpisodes.has(e.id))
-              .map((episode) => (
-                <div
-                  key={episode.id}
-                  onClick={() => setCurrentEpisode(episode)}
-                  className={`p-3 rounded-lg cursor-pointer transition border ${
-                    currentEpisode?.id === episode.id
-                      ? "bg-green-500/20 border-green-500"
-                      : "bg-slate-700/50 border-slate-600 hover:bg-slate-700"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <p className="font-semibold text-white">{episode.title}</p>
-                      <p className="text-sm text-slate-400">{episode.artist}</p>
-                    </div>
-                    <span className="text-sm text-slate-400">{formatTime(episode.duration)}</span>
-                  </div>
-                </div>
-              ))}
-            {currentChannel?.episodes.filter((e) => downloadedEpisodes.has(e.id)).length === 0 && (
-              <p className="text-slate-400 text-center py-4">No downloaded episodes in this channel</p>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Hidden Audio Element */}
-      <audio ref={audioRef} crossOrigin="anonymous" />
-
-      {/* CSS for visualizer animation */}
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { height: 20%; }
-          50% { height: 80%; }
-        }
-      `}</style>
+      <audio
+        ref={audioRef}
+        crossOrigin="anonymous"
+        onVolumeChange={(e) => {
+          const audio = e.target as HTMLAudioElement;
+          setVolume(Math.round(audio.volume * 100));
+        }}
+      />
     </div>
   );
 }

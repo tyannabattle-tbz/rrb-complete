@@ -4,9 +4,6 @@ import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
 import { eq, desc } from "drizzle-orm";
 import { auditLogs } from "../../drizzle/schema";
-import {
-  getAuditLogs as getRedisAuditLogs,
-} from "../_core/redis";
 
 export const auditLoggingRouter = router({
   // Get audit logs
@@ -148,58 +145,4 @@ export const auditLoggingRouter = router({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(error) });
       }
     }),
-
-  // Export audit trail (QUMUS)
-  exportAuditTrail: protectedProcedure
-    .input(z.object({ format: z.enum(["csv", "json"]).default("csv") }))
-    .mutation(async ({ ctx, input }) => {
-      try {
-        const logs = await getRedisAuditLogs(10000);
-
-        if (input.format === "json") {
-          return JSON.stringify(logs, null, 2);
-        }
-
-        const headers = [
-          "Timestamp",
-          "User ID",
-          "Decision ID",
-          "Policy",
-          "Action",
-          "Reason",
-          "Success",
-        ];
-
-        const rows = logs.map((log: any) => [
-          log.timestamp,
-          log.userId,
-          log.decisionId,
-          log.policy,
-          log.action,
-          log.reason || "",
-          log.success ? "Yes" : "No",
-        ]);
-
-        const csv = [
-          headers.join(","),
-          ...rows.map((row: any[]) =>
-            row
-              .map((cell) => {
-                if (typeof cell === "string" && cell.includes(",")) {
-                  return `"${cell}"`;
-                }
-                return cell;
-              })
-              .join(",")
-          ),
-        ].join("\n");
-
-        console.log(`[Audit] Exported ${logs.length} QUMUS audit logs`);
-        return csv;
-      } catch (error) {
-        console.error("[Audit] Failed to export audit trail:", error);
-        throw error;
-      }
-    }),
 });
-

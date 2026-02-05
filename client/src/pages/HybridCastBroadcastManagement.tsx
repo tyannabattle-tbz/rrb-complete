@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Radio, Wifi, WifiOff, Server, CheckCircle, AlertCircle, Clock } from 'lucide-react';
-import { useWebSocket } from '@/hooks/useWebSocket';
 
 interface EmergencyBroadcastNode {
   id: string;
@@ -27,7 +26,6 @@ interface BroadcastMetrics {
 }
 
 export default function HybridCastBroadcastManagement() {
-  const { isConnected, updates } = useWebSocket();
   const [nodes, setNodes] = useState<EmergencyBroadcastNode[]>([
     {
       id: 'node1',

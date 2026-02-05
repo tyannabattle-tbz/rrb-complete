@@ -48,7 +48,6 @@ import { advancedSearchRouter } from "./routers/advancedSearch";
 import { customDashboardsRouter } from "./routers/customDashboards";
 import { automatedReportsRouter } from "./routers/automatedReports";
 import { costTrackingRouter } from "./routers/costTracking";
-import { stripeCheckoutRouter } from "./routers/stripeCheckout";
 import { analyticsDashboardRouter } from "./routers/analyticsDashboard";
 import { templateMarketplaceRouter } from "./routers/templateMarketplace";
 import { websocketRouter } from "./routers/websocket";
@@ -80,7 +79,6 @@ import { workflowTemplatesRouter } from './routers/workflowTemplates';
 
 import { abTestingRouter } from "./routers/abTesting";
 import { auditTrailUIRouter } from "./routers/auditTrailUI";
-import { auditLoggingRouter } from "./routers/auditLogging";
 import { voiceRouter } from "./routers/voiceRouter";
 import { batchRouter } from "./routers/batchRouter";
 import { storyboardRouter } from "./routers/storyboardRouter";
@@ -133,19 +131,7 @@ import { sweetMiraclesDonorsRouter } from './routers/sweetMiraclesDonors';
 import { sweetMiraclesGrantsRouter } from './routers/sweetMiraclesGrants';
 import { qumusFileUploadRouter } from './routers/qumusFileUpload';
 import { fileProcessingRouter } from './routers/fileProcessingRouter';
-import { podcastPlaybackRouter } from "./routers/podcastPlayback";
-import { aiChatRouter as aiChatQUMUSRouter } from "./routers/aiChat";
-import { mapInteractionRouter } from "./routers/mapInteraction";
-import { dashboardStateRouter } from "./routers/dashboardState";
-import { chatFlowRouter } from "./routers/chatFlow";
-import { toolExecutionRouter } from "./routers/toolExecution";
-import { analyticsTrackingRouter } from "./routers/analyticsTracking";
-import { customPoliciesRouter } from "./routers/customPolicies";
-import { policyVersioningRouter } from "./routers/policyVersioning";
-import { complianceReportingRouter } from "./routers/complianceReporting";
-import { tierDonationsRouter } from "./routers/tierDonations";
-import { emergencyTemplatesRouter } from "./routers/emergencyTemplates";
-import { crossPlatformAnalyticsRouter } from "./routers/crossPlatformAnalytics";
+import { podcastPlaybackRouter } from './routers/podcastPlayback';
 
 export const appRouter = router({
   system: systemRouter,
@@ -739,20 +725,6 @@ export const appRouter = router({
   qumusFileUpload: qumusFileUploadRouter,
   fileProcessing: fileProcessingRouter,
   podcastPlayback: podcastPlaybackRouter,
-  aiChatQUMUS: aiChatQUMUSRouter,
-  mapInteraction: mapInteractionRouter,
-  dashboardState: dashboardStateRouter,
-  chatFlow: chatFlowRouter,
-  toolExecution: toolExecutionRouter,
-  analyticsTracking: analyticsTrackingRouter,
-  auditLogging: auditLoggingRouter,
-  customPolicies: customPoliciesRouter,
-  policyVersioning: policyVersioningRouter,
-  complianceReporting: complianceReportingRouter,
-  tierDonations: tierDonationsRouter,
-  emergencyTemplates: emergencyTemplatesRouter,
-  crossPlatformAnalytics: crossPlatformAnalyticsRouter,
-  stripeCheckout: stripeCheckoutRouter,
 });
 export type AppRouter = typeof appRouter;
 
