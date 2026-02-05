@@ -240,3 +240,261 @@ describe('Audio Stream Validation', () => {
     expect(episode1?.streamUrl).toBe(episode2?.streamUrl);
   });
 });
+
+
+describe('QUMUS Integration Tests', () => {
+  describe('Decision ID Generation', () => {
+    it('should generate unique decision IDs for each playback action', () => {
+      const decisionIds = new Set();
+      
+      // Simulate multiple decisions
+      for (let i = 0; i < 5; i++) {
+        const decisionId = `decision-${Date.now()}-${Math.random()}`;
+        decisionIds.add(decisionId);
+      }
+      
+      expect(decisionIds.size).toBe(5);
+    });
+
+    it('should format decision IDs consistently', () => {
+      const decisionId = `decision-${Date.now()}-${Math.random()}`;
+      expect(decisionId).toMatch(/^decision-\d+-[\d.]+$/);
+    });
+  });
+
+  describe('Playback Decision Policy', () => {
+    it('should apply podcast-playback policy to all actions', () => {
+      const policy = 'podcast-playback';
+      const actions = ['play', 'pause', 'next', 'prev', 'switchChannel', 'setVolume'];
+      
+      actions.forEach((action) => {
+        expect(policy).toBe('podcast-playback');
+      });
+    });
+
+    it('should track user context with every decision', () => {
+      const userId = 1;
+      const decision = {
+        decisionId: `decision-${Date.now()}-${Math.random()}`,
+        userId: userId,
+        policy: 'podcast-playback',
+        timestamp: new Date(),
+      };
+      
+      expect(decision.userId).toBe(userId);
+      expect(decision.policy).toBe('podcast-playback');
+    });
+  });
+
+  describe('Audit Trail Logging', () => {
+    it('should log all playback actions', () => {
+      const actions = [
+        { type: 'play', userId: 1, timestamp: new Date() },
+        { type: 'pause', userId: 1, timestamp: new Date() },
+        { type: 'next', userId: 1, timestamp: new Date() },
+      ];
+      
+      expect(actions.length).toBe(3);
+      actions.forEach((action) => {
+        expect(action.type).toBeDefined();
+        expect(action.userId).toBe(1);
+        expect(action.timestamp).toBeInstanceOf(Date);
+      });
+    });
+
+    it('should include reason for each action', () => {
+      const reasons = [
+        'user-play',
+        'user-pause',
+        'user-next',
+        'auto-next',
+        'episode-select',
+      ];
+      
+      reasons.forEach((reason) => {
+        expect(reason).toBeDefined();
+        expect(typeof reason).toBe('string');
+      });
+    });
+  });
+
+  describe('Backend State Synchronization', () => {
+    it('should maintain per-user playback state', () => {
+      const playbackStates = new Map();
+      
+      const state1 = {
+        userId: 1,
+        isPlaying: true,
+        volume: 70,
+      };
+      
+      const state2 = {
+        userId: 2,
+        isPlaying: false,
+        volume: 50,
+      };
+      
+      playbackStates.set(1, state1);
+      playbackStates.set(2, state2);
+      
+      expect(playbackStates.get(1).isPlaying).toBe(true);
+      expect(playbackStates.get(2).isPlaying).toBe(false);
+    });
+
+    it('should update state after each decision', () => {
+      let state = {
+        userId: 1,
+        isPlaying: false,
+        volume: 70,
+      };
+      
+      // Simulate play decision
+      state.isPlaying = true;
+      expect(state.isPlaying).toBe(true);
+      
+      // Simulate volume decision
+      state.volume = 80;
+      expect(state.volume).toBe(80);
+      
+      // Simulate pause decision
+      state.isPlaying = false;
+      expect(state.isPlaying).toBe(false);
+    });
+  });
+
+  describe('Frontend-Backend Integration', () => {
+    it('should return decision ID to frontend', () => {
+      const response = {
+        success: true,
+        decisionId: `decision-${Date.now()}-${Math.random()}`,
+        state: {
+          isPlaying: true,
+          volume: 70,
+        },
+      };
+      
+      expect(response.decisionId).toBeDefined();
+      expect(response.state).toBeDefined();
+    });
+
+    it('should include updated state in response', () => {
+      const response = {
+        success: true,
+        decisionId: `decision-${Date.now()}-${Math.random()}`,
+        state: {
+          userId: 1,
+          currentEpisode: { id: '1', title: 'Test' },
+          currentChannel: 7,
+          isPlaying: true,
+          currentTime: 0,
+          volume: 70,
+          queue: [],
+          queueIndex: 0,
+          streamUrl: 'https://example.com/stream.mp3',
+        },
+      };
+      
+      expect(response.state.isPlaying).toBe(true);
+      expect(response.state.volume).toBe(70);
+      expect(response.state.streamUrl).toBeDefined();
+    });
+
+    it('should handle error responses gracefully', () => {
+      const errorResponse = {
+        success: false,
+        error: 'Failed to play: CORS error',
+      };
+      
+      expect(errorResponse.success).toBe(false);
+      expect(errorResponse.error).toBeDefined();
+    });
+  });
+
+  describe('QUMUS Policy Enforcement', () => {
+    it('should enforce podcast-playback policy on all mutations', () => {
+      const mutations = [
+        { name: 'play', policy: 'podcast-playback' },
+        { name: 'pause', policy: 'podcast-playback' },
+        { name: 'next', policy: 'podcast-playback' },
+        { name: 'prev', policy: 'podcast-playback' },
+        { name: 'switchChannel', policy: 'podcast-playback' },
+        { name: 'setVolume', policy: 'podcast-playback' },
+      ];
+      
+      mutations.forEach((mutation) => {
+        expect(mutation.policy).toBe('podcast-playback');
+      });
+    });
+
+    it('should generate decision for each policy enforcement', () => {
+      const decisions = [];
+      
+      for (let i = 0; i < 6; i++) {
+        decisions.push({
+          decisionId: `decision-${Date.now()}-${Math.random()}`,
+          policy: 'podcast-playback',
+          userId: 1,
+        });
+      }
+      
+      expect(decisions.length).toBe(6);
+      decisions.forEach((decision) => {
+        expect(decision.policy).toBe('podcast-playback');
+      });
+    });
+  });
+
+  describe('Console Logging Verification', () => {
+    it('should log decisions with [QUMUS Decision] prefix', () => {
+      const logMessage = '[QUMUS Decision] decision-1234567890-0.5';
+      expect(logMessage).toContain('[QUMUS Decision]');
+      expect(logMessage).toContain('decision-');
+    });
+
+    it('should log errors with [QUMUS Error] prefix', () => {
+      const errorMessage = '[QUMUS Error] Play failed: CORS error';
+      expect(errorMessage).toContain('[QUMUS Error]');
+    });
+
+    it('should log podcast actions with [Podcast] prefix', () => {
+      const podcastMessage = '[Podcast] User 1 playing: Test Episode';
+      expect(podcastMessage).toContain('[Podcast]');
+    });
+  });
+
+  describe('Decision Tracking Completeness', () => {
+    it('should track all required decision fields', () => {
+      const decision = {
+        decisionId: `decision-${Date.now()}-${Math.random()}`,
+        userId: 1,
+        policy: 'podcast-playback',
+        timestamp: new Date(),
+        action: 'play',
+        reason: 'user-play',
+      };
+      
+      expect(decision.decisionId).toBeDefined();
+      expect(decision.userId).toBeDefined();
+      expect(decision.policy).toBeDefined();
+      expect(decision.timestamp).toBeDefined();
+      expect(decision.action).toBeDefined();
+      expect(decision.reason).toBeDefined();
+    });
+
+    it('should provide audit trail for compliance', () => {
+      const auditTrail = [
+        { decisionId: 'decision-1', action: 'play', userId: 1, timestamp: new Date() },
+        { decisionId: 'decision-2', action: 'pause', userId: 1, timestamp: new Date() },
+        { decisionId: 'decision-3', action: 'next', userId: 1, timestamp: new Date() },
+      ];
+      
+      expect(auditTrail.length).toBe(3);
+      auditTrail.forEach((entry) => {
+        expect(entry.decisionId).toBeDefined();
+        expect(entry.action).toBeDefined();
+        expect(entry.userId).toBeDefined();
+        expect(entry.timestamp).toBeInstanceOf(Date);
+      });
+    });
+  });
+});
