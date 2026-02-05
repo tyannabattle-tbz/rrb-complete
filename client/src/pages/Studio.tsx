@@ -29,8 +29,11 @@ import {
   Calendar,
   Music,
   MapPin,
+  Heart,
+  Upload,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import TimelineEditor from "@/components/TimelineEditor";
 
 /**
  * Professional Studio Component
@@ -54,26 +57,23 @@ export default function Studio() {
   const [contrast, setContrast] = useState(100);
   const [saturation, setSaturation] = useState(100);
 
-  // Fetch live metrics from backend (fallback to mock data)
-  // const { data: liveMetrics } = trpc.studio.getLiveMetrics.useQuery(
-  //   {},
-  //   { refetchInterval: 1000 }
-  // );
+  // Fetch live metrics from backend
+  const { data: liveMetrics } = trpc.studio.getLiveMetrics.useQuery(
+    undefined,
+    { refetchInterval: 1000 }
+  );
 
-  // HybridCast network monitoring (fallback to mock data)
-  // const { data: networkStatus } = trpc.hybridCast.checkNetworkHealth.useQuery(
-  //   {},
-  //   { refetchInterval: 2000 }
-  // );
+  // HybridCast network monitoring
+  const { data: networkStatus } = trpc.studio.getNetworkHealth.useQuery(
+    undefined,
+    { refetchInterval: 2000 }
+  );
 
-  // Rockin' Boogie content (fallback to mock data)
-  // const { data: contentSchedule } = trpc.rockinBoogie.getSchedule.useQuery({
-  //   limit: 5,
-  // });
-
-  const liveMetrics = undefined;
-  const networkStatus = undefined;
-  const contentSchedule = undefined;
+  // Rockin Boogie content schedule
+  const { data: contentSchedule } = trpc.studio.getBroadcastSchedule.useQuery(
+    { limit: 5 },
+    { refetchInterval: 30000 }
+  );
 
   // Mock data fallback
   const metrics = liveMetrics || {
@@ -117,12 +117,33 @@ export default function Studio() {
     setStreamActive(false);
   };
 
-  const handleStartRecording = () => {
-    setRecordingActive(true);
+  const startRecordingMutation = trpc.studio.startRecording.useMutation();
+  const stopRecordingMutation = trpc.studio.stopRecording.useMutation();
+
+  const handleStartRecording = async () => {
+    try {
+      await startRecordingMutation.mutateAsync({
+        title: "Studio Recording",
+        description: "Professional studio recording",
+        format: "mp4",
+      });
+      setRecordingActive(true);
+    } catch (error) {
+      console.error("Recording start failed:", error);
+    }
   };
 
-  const handleStopRecording = () => {
-    setRecordingActive(false);
+  const handleStopRecording = async () => {
+    try {
+      if (recordingActive) {
+        await stopRecordingMutation.mutateAsync({
+          recordingId: `rec_${Date.now()}`,
+        });
+      }
+      setRecordingActive(false);
+    } catch (error) {
+      console.error("Recording stop failed:", error);
+    }
   };
 
   return (
@@ -177,7 +198,7 @@ export default function Studio() {
         {/* Main Content */}
         <div className="flex-1 overflow-hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-5 bg-slate-800 border-b border-slate-700 rounded-none">
+            <TabsList className="grid w-full grid-cols-6 bg-slate-800 border-b border-slate-700 rounded-none">
               <TabsTrigger value="monitors" className="rounded-none">
                 <Eye className="w-4 h-4 mr-2" />
                 Monitors
@@ -193,6 +214,10 @@ export default function Studio() {
               <TabsTrigger value="schedule" className="rounded-none">
                 <Calendar className="w-4 h-4 mr-2" />
                 Schedule
+              </TabsTrigger>
+              <TabsTrigger value="timeline" className="rounded-none">
+                <Zap className="w-4 h-4 mr-2" />
+                Timeline
               </TabsTrigger>
               <TabsTrigger value="editing" className="rounded-none">
                 <Edit3 className="w-4 h-4 mr-2" />
@@ -418,9 +443,9 @@ export default function Studio() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-bold text-white">Media Library</h2>
-                  <Button className="bg-blue-600 hover:bg-blue-700" disabled>
+                  <Button className="bg-blue-600 hover:bg-blue-700">
                     <Upload className="w-4 h-4 mr-2" />
-                    Upload (Coming Soon)
+                    Upload Media
                   </Button>
                 </div>
 
@@ -554,6 +579,15 @@ export default function Studio() {
                 </div>
               </div>
             </TabsContent>
+
+            {/* Timeline Editor Tab */}
+            <TabsContent value="timeline" className="flex-1 overflow-auto p-6">
+              <TimelineEditor
+                onSave={(clips) => {
+                  console.log("Timeline saved:", clips);
+                }}
+              />
+            </TabsContent>
           </Tabs>
         </div>
       </div>
@@ -561,5 +595,4 @@ export default function Studio() {
   );
 }
 
-// Missing import
-import { Heart, Upload } from "lucide-react";
+

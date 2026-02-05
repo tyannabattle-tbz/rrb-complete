@@ -18,6 +18,7 @@ import { operationsPlatformRouter } from "./routers/operationsPlatform";
 import { infrastructurePlatformRouter } from "./routers/infrastructurePlatform";
 import { finalOperationsRouter } from "./routers/finalOperations";
 import { analyticsRouter } from "./routers/analytics";
+import { studioStreamingRouter } from "./routers/studioStreaming";
 
 import { anomalyDetectionRouter } from "./routers/anomalyDetection";
 import { predictiveAlertsRouter } from "./routers/predictiveAlerts";
@@ -630,6 +631,7 @@ export const appRouter = router({
   
   // Advanced Features
   analytics: analyticsRouter,
+  studio: studioStreamingRouter,
   anomalyDetection: anomalyDetectionRouter,
   predictiveAlerts: predictiveAlertsRouter,
   suppressionRules: suppressionRulesRouter,
