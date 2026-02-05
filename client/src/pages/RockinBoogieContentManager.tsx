@@ -8,7 +8,7 @@ import { ContentGenerationForm } from '@/components/ContentGenerationForm';
 import { ScheduledGenerationDashboard } from '@/components/ScheduledGenerationDashboard';
 import { ContentPreviewModal } from '@/components/ContentPreviewModal';
 import { AudioPlayer } from '@/components/AudioPlayer';
-import { RockinBoogiePlayer } from '@/components/RockinBoogiePlayer';
+import { RockinBoogiePlayerFinal } from '@/components/RockinBoogiePlayerFinal';
 import { useState } from 'react';
 
 interface ContentItem {
@@ -66,7 +66,7 @@ export default function RockinBoogieContentManager() {
         >
           Back to Content
         </Button>
-        <RockinBoogiePlayer />
+        <RockinBoogiePlayerFinal />
       </div>
     );
   }
