@@ -65,6 +65,7 @@ import PlatformMonitoringDashboard from '@/pages/PlatformMonitoringDashboard';
 import Studio from '@/pages/Studio';
 import { PodcastPlayer } from '@/components/PodcastPlayer';
 import PodcastDiscovery from '@/pages/PodcastDiscovery';
+import { RockinBoogiePlayerEnhanced } from '@/components/RockinBoogiePlayerEnhanced';
 
 function Router() {
   return (
@@ -117,7 +118,8 @@ function Router() {
       <Route path="/dashboard-builder" component={CustomDashboardBuilder} />
       <Route path="/remediation-workflows" component={AutomatedRemediationWorkflows} />
       <Route path="/hybridcast-broadcast" component={HybridCastBroadcastManagement} />
-      <Route path="/rockin-boogie-content" component={RockinBoogieContentManager} />
+      <Route path="/rockin-boogie-content" component={RockinBoogiePlayerEnhanced} />
+      <Route path="/rockin-boogie-manager" component={RockinBoogieContentManager} />
       <Route path="/emergency-alerts" component={EmergencyAlertSystem} />
       <Route path="/analytics-reporting" component={AnalyticsReportingDashboard} />
       <Route path="/admin-decisions" component={AdminDecisionDashboard} />
