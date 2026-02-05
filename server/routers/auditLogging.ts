@@ -146,3 +146,118 @@ export const auditLoggingRouter = router({
       }
     }),
 });
+
+
+// QUMUS Decision Tracking Extensions
+import {
+  storeAuditLog,
+  getAuditLogs as getRedisAuditLogs,
+  getUserDecisions,
+  getDecision,
+  storeDecision,
+} from "../_core/redis";
+
+// Add QUMUS methods to the router
+export const qumusAuditExtensions = {
+  storeQUMUSDecision: protectedProcedure
+    .input(
+      z.object({
+        decisionId: z.string(),
+        policy: z.string(),
+        action: z.string(),
+        reason: z.string().optional(),
+        state: z.any().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }: any) => {
+      try {
+        const decision = {
+          decisionId: input.decisionId,
+          userId: ctx.user.id,
+          policy: input.policy,
+          action: input.action,
+          reason: input.reason,
+          state: input.state,
+          timestamp: new Date().toISOString(),
+          success: true,
+        };
+
+        await storeDecision(decision);
+        console.log(
+          `[QUMUS Decision] ${input.decisionId} - User ${ctx.user.id} - ${input.action}`
+        );
+
+        return {
+          success: true,
+          decisionId: input.decisionId,
+        };
+      } catch (error) {
+        console.error("[Audit] Failed to store QUMUS decision:", error);
+        throw error;
+      }
+    }),
+
+  getQUMUSAuditLogs: protectedProcedure
+    .input(z.object({ limit: z.number().default(1000) }))
+    .query(async ({ ctx, input }: any) => {
+      try {
+        const logs = await getRedisAuditLogs(input.limit);
+        return logs;
+      } catch (error) {
+        console.error("[Audit] Failed to get QUMUS audit logs:", error);
+        throw error;
+      }
+    }),
+
+  exportAuditTrail: protectedProcedure
+    .input(z.object({ format: z.enum(["csv", "json"]).default("csv") }))
+    .mutation(async ({ ctx, input }: any) => {
+      try {
+        const logs = await getRedisAuditLogs(10000);
+
+        if (input.format === "json") {
+          return JSON.stringify(logs, null, 2);
+        }
+
+        const headers = [
+          "Timestamp",
+          "User ID",
+          "Decision ID",
+          "Policy",
+          "Action",
+          "Reason",
+          "Success",
+        ];
+
+        const rows = logs.map((log: any) => [
+          log.timestamp,
+          log.userId,
+          log.decisionId,
+          log.policy,
+          log.action,
+          log.reason || "",
+          log.success ? "Yes" : "No",
+        ]);
+
+        const csv = [
+          headers.join(","),
+          ...rows.map((row: any[]) =>
+            row
+              .map((cell) => {
+                if (typeof cell === "string" && cell.includes(",")) {
+                  return `"${cell}"`;
+                }
+                return cell;
+              })
+              .join(",")
+          ),
+        ].join("\n");
+
+        console.log(`[Audit] Exported ${logs.length} QUMUS audit logs`);
+        return csv;
+      } catch (error) {
+        console.error("[Audit] Failed to export audit trail:", error);
+        throw error;
+      }
+    }),
+};

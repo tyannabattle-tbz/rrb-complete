@@ -79,6 +79,7 @@ import { workflowTemplatesRouter } from './routers/workflowTemplates';
 
 import { abTestingRouter } from "./routers/abTesting";
 import { auditTrailUIRouter } from "./routers/auditTrailUI";
+import { auditLoggingRouter } from "./routers/auditLogging";
 import { voiceRouter } from "./routers/voiceRouter";
 import { batchRouter } from "./routers/batchRouter";
 import { storyboardRouter } from "./routers/storyboardRouter";
@@ -737,6 +738,7 @@ export const appRouter = router({
   chatFlow: chatFlowRouter,
   toolExecution: toolExecutionRouter,
   analyticsTracking: analyticsTrackingRouter,
+  auditLogging: auditLoggingRouter,
 });
 export type AppRouter = typeof appRouter;
 
