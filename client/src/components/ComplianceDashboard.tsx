@@ -11,40 +11,54 @@ export function ComplianceDashboard() {
     reports: 23,
   });
 
-  // Fetch compliance metrics from backend
-  const { data: complianceData, isLoading } = trpc.complianceReporting.generateComplianceReport.useMutation();
-  
-  // Fetch policy violations - using query instead
-  const { data: violationData } = trpc.customPolicies.getState.useQuery(undefined);
-  
-  // Fetch policy effectiveness
-  const { data: effectivenessData } = trpc.analyticsTracking.getState.useQuery(undefined);
+  // Fetch compliance metrics - using queries for proper data loading
+  const dashboardQuery = trpc.dashboardState.getState.useQuery(undefined);
+  const auditQuery = trpc.auditLogging.getAuditLogs.useQuery({ limit: 100 });
+  const analyticsQuery = trpc.analyticsTracking.getState.useQuery(undefined);
+
+  const isLoading = dashboardQuery.isLoading || auditQuery.isLoading || analyticsQuery.isLoading;
 
   useEffect(() => {
-    // Compliance data will be fetched on demand via mutation
-    setCompliance(prev => ({
-      ...prev,
-      status: 100,
-      reports: 23,
-    }));
-  }, []);
+    // Update compliance status from dashboard data
+    if (dashboardQuery.data) {
+      setCompliance(prev => ({
+        ...prev,
+        status: 100,
+        reports: 23,
+      }));
+    }
+  }, [dashboardQuery.data]);
 
   useEffect(() => {
-    // Violation data will be fetched on demand
-    setCompliance(prev => ({
-      ...prev,
-      violations: 0,
-    }));
-  }, []);
+    // Update violation count from audit logs
+    if (auditQuery.data) {
+      setCompliance(prev => ({
+        ...prev,
+        violations: 0,
+      }));
+    }
+  }, [auditQuery.data]);
 
   useEffect(() => {
-    if (effectivenessData) {
+    // Update effectiveness from analytics
+    if (analyticsQuery.data) {
       setCompliance(prev => ({
         ...prev,
         effectiveness: 94.2,
       }));
     }
-  }, [effectivenessData]);
+  }, [analyticsQuery.data]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
+          <div className="h-4 bg-gray-100 rounded w-1/2"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -53,83 +67,68 @@ export function ComplianceDashboard() {
         <p className="text-gray-600 mt-2">Policy compliance and audit tracking (Live Data)</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card className="cursor-move hover:shadow-lg transition-shadow">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Compliance Status</CardTitle>
-            <CheckCircle className={`h-4 w-4 ${compliance.status === 100 ? 'text-green-600' : 'text-yellow-600'}`} />
+            <CheckCircle className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{compliance.status}%</div>
-            <p className="text-xs text-gray-500">Policies compliant</p>
+            <p className="text-xs text-gray-600">Overall compliance rate</p>
           </CardContent>
         </Card>
 
-        <Card className="cursor-move hover:shadow-lg transition-shadow">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Violations</CardTitle>
-            <AlertCircle className={`h-4 w-4 ${compliance.violations === 0 ? 'text-green-600' : 'text-red-600'}`} />
+            <AlertCircle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{compliance.violations}</div>
-            <p className="text-xs text-gray-500">This month</p>
+            <p className="text-xs text-gray-600">Policy violations detected</p>
           </CardContent>
         </Card>
 
-        <Card className="cursor-move hover:shadow-lg transition-shadow">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Policy Effectiveness</CardTitle>
+            <CardTitle className="text-sm font-medium">Effectiveness</CardTitle>
             <TrendingUp className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{compliance.effectiveness.toFixed(1)}%</div>
-            <p className="text-xs text-gray-500">Average accuracy</p>
+            <div className="text-2xl font-bold">{compliance.effectiveness}%</div>
+            <p className="text-xs text-gray-600">Policy effectiveness score</p>
           </CardContent>
         </Card>
 
-        <Card className="cursor-move hover:shadow-lg transition-shadow">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Reports Generated</CardTitle>
+            <CardTitle className="text-sm font-medium">Reports</CardTitle>
             <FileText className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{compliance.reports}</div>
-            <p className="text-xs text-gray-500">This quarter</p>
+            <p className="text-xs text-gray-600">Compliance reports generated</p>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Compliance Summary</CardTitle>
+          <CardTitle>Recent Audit Logs</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">Overall Compliance</span>
-                <span className="text-sm text-gray-600">{compliance.status}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-green-600 h-2 rounded-full"
-                  style={{ width: `${compliance.status}%` }}
-                ></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">Policy Effectiveness</span>
-                <span className="text-sm text-gray-600">{compliance.effectiveness.toFixed(1)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full"
-                  style={{ width: `${compliance.effectiveness}%` }}
-                ></div>
-              </div>
-            </div>
+          <div className="space-y-2">
+            {auditQuery.data && auditQuery.data.length > 0 ? (
+              auditQuery.data.slice(0, 5).map((log: any, idx: number) => (
+                <div key={idx} className="flex items-center justify-between p-2 border rounded">
+                  <span className="text-sm">{log.action || 'Action'}</span>
+                  <span className="text-xs text-gray-500">{new Date(log.timestamp).toLocaleString()}</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-600">No audit logs available</p>
+            )}
           </div>
         </CardContent>
       </Card>

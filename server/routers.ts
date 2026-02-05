@@ -48,6 +48,7 @@ import { advancedSearchRouter } from "./routers/advancedSearch";
 import { customDashboardsRouter } from "./routers/customDashboards";
 import { automatedReportsRouter } from "./routers/automatedReports";
 import { costTrackingRouter } from "./routers/costTracking";
+import { stripeCheckoutRouter } from "./routers/stripeCheckout";
 import { analyticsDashboardRouter } from "./routers/analyticsDashboard";
 import { templateMarketplaceRouter } from "./routers/templateMarketplace";
 import { websocketRouter } from "./routers/websocket";
@@ -745,6 +746,7 @@ export const appRouter = router({
   customPolicies: customPoliciesRouter,
   policyVersioning: policyVersioningRouter,
   complianceReporting: complianceReportingRouter,
+  stripeCheckout: stripeCheckoutRouter,
 });
 export type AppRouter = typeof appRouter;
 
