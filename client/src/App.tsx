@@ -67,6 +67,8 @@ import { PodcastPlayer } from '@/components/PodcastPlayer';
 import PodcastDiscovery from '@/pages/PodcastDiscovery';
 import { RockinBoogiePlayerEnhanced } from '@/components/RockinBoogiePlayerEnhanced';
 import AuditDashboard from '@/components/AuditDashboard';
+import PolicyDashboard from '@/components/PolicyDashboard';
+import ComplianceReportGenerator from '@/components/ComplianceReportGenerator';
 
 function Router() {
   return (
@@ -129,6 +131,8 @@ function Router() {
       <Route path="/podcast" component={PodcastPlayer} />
       <Route path="/podcast-discovery" component={PodcastDiscovery} />
       <Route path="/audit" component={AuditDashboard} />
+      <Route path="/policies" component={PolicyDashboard} />
+      <Route path="/compliance" component={ComplianceReportGenerator} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
