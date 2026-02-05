@@ -60,6 +60,7 @@ export default function Studio() {
   const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(100);
   const [saturation, setSaturation] = useState(100);
+  const [selectedClipIds, setSelectedClipIds] = useState<string[]>([]);
 
   // Fetch live metrics from backend
   const { data: liveMetrics } = trpc.studio.getLiveMetrics.useQuery(
@@ -470,12 +471,24 @@ export default function Studio() {
                     <Card
                       key={media.id}
                       className={`bg-slate-800 border-slate-700 cursor-pointer hover:border-slate-600 transition-colors ${
-                        selectedMedia === media.id ? "border-blue-500" : ""
+                        selectedClipIds.includes(media.id) ? "border-blue-500 ring-2 ring-blue-500" : ""
                       }`}
-                      onClick={() => setSelectedMedia(media.id)}
+                      onClick={() => {
+                        setSelectedMedia(media.id);
+                        setSelectedClipIds((prev) =>
+                          prev.includes(media.id)
+                            ? prev.filter((id) => id !== media.id)
+                            : [...prev, media.id]
+                        );
+                      }}
                     >
                       <div className="aspect-video bg-gradient-to-br from-slate-700 to-slate-900 rounded-t-lg flex items-center justify-center relative">
                         <Film className="w-8 h-8 text-slate-600" />
+                        {selectedClipIds.includes(media.id) && (
+                          <div className="absolute inset-0 bg-blue-500/20 rounded-t-lg flex items-center justify-center">
+                            <CheckCircle className="w-8 h-8 text-blue-400" />
+                          </div>
+                        )}
                         <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-xs text-white">
                           {media.duration}
                         </div>
@@ -489,6 +502,13 @@ export default function Studio() {
                     </Card>
                   ))}
                 </div>
+                
+                {selectedClipIds.length > 0 && (
+                  <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-4 text-sm text-blue-200">
+                    <p className="font-medium">{selectedClipIds.length} clip(s) selected</p>
+                    <p className="text-xs text-blue-300 mt-1">Go to the Presets tab to apply editing templates</p>
+                  </div>
+                )}
               </div>
             </TabsContent>
 
@@ -607,7 +627,7 @@ export default function Studio() {
 
             {/* Editing Presets Tab */}
             <TabsContent value="presets" className="flex-1 overflow-auto p-6">
-              <EditingPresets selectedClipIds={[]} />
+              <EditingPresets selectedClipIds={selectedClipIds} />
             </TabsContent>
 
             {/* Batch Processing Tab */}
