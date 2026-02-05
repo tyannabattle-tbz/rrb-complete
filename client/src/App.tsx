@@ -7,7 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { PresetProvider } from "./contexts/PresetContext";
 import Home from "./pages/Home";
 import AgentDashboard from "./pages/AgentDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboardPage from "./pages/AdminDashboard";
 import { AdminAnalyticsDashboard } from "./pages/AdminAnalyticsDashboard";
 import { SettingsPanel } from "./pages/SettingsPanel";
 import { APIDocumentation } from "./pages/APIDocumentation";
@@ -69,13 +69,17 @@ import { RockinBoogiePlayerEnhanced } from '@/components/RockinBoogiePlayerEnhan
 import AuditDashboard from '@/components/AuditDashboard';
 import PolicyDashboard from '@/components/PolicyDashboard';
 import ComplianceReportGenerator from '@/components/ComplianceReportGenerator';
+import { AdminDashboard as AdminDashboardComponent } from '@/components/AdminDashboard';
+import { ComplianceDashboard } from '@/components/ComplianceDashboard';
+import { Pricing } from '@/pages/Pricing';
+import { PolicyMetrics } from '@/pages/PolicyMetrics';
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
-      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin" component={AdminDashboardPage} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
@@ -133,6 +137,10 @@ function Router() {
       <Route path="/audit" component={AuditDashboard} />
       <Route path="/policies" component={PolicyDashboard} />
       <Route path="/compliance" component={ComplianceReportGenerator} />
+      <Route path="/dashboards/admin" component={AdminDashboardComponent} />
+      <Route path="/dashboards/compliance" component={ComplianceDashboard} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/metrics" component={PolicyMetrics} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
