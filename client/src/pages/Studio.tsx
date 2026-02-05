@@ -31,9 +31,12 @@ import {
   MapPin,
   Heart,
   Upload,
+  Sparkles,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import TimelineEditor from "@/components/TimelineEditor";
+import BatchProcessing from "@/components/BatchProcessing";
+import EditingPresets from "@/components/EditingPresets";
 
 /**
  * Professional Studio Component
@@ -198,7 +201,7 @@ export default function Studio() {
         {/* Main Content */}
         <div className="flex-1 overflow-hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-6 bg-slate-800 border-b border-slate-700 rounded-none">
+            <TabsList className="grid w-full grid-cols-8 bg-slate-800 border-b border-slate-700 rounded-none overflow-x-auto">
               <TabsTrigger value="monitors" className="rounded-none">
                 <Eye className="w-4 h-4 mr-2" />
                 Monitors
@@ -222,6 +225,14 @@ export default function Studio() {
               <TabsTrigger value="editing" className="rounded-none">
                 <Edit3 className="w-4 h-4 mr-2" />
                 Editing
+              </TabsTrigger>
+              <TabsTrigger value="presets" className="rounded-none">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Presets
+              </TabsTrigger>
+              <TabsTrigger value="batch" className="rounded-none">
+                <Download className="w-4 h-4 mr-2" />
+                Batch
               </TabsTrigger>
             </TabsList>
 
@@ -587,6 +598,16 @@ export default function Studio() {
                   console.log("Timeline saved:", clips);
                 }}
               />
+            </TabsContent>
+
+            {/* Editing Presets Tab */}
+            <TabsContent value="presets" className="flex-1 overflow-auto p-6">
+              <EditingPresets selectedClipIds={[]} />
+            </TabsContent>
+
+            {/* Batch Processing Tab */}
+            <TabsContent value="batch" className="flex-1 overflow-auto p-6">
+              <BatchProcessing />
             </TabsContent>
           </Tabs>
         </div>

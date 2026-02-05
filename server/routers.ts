@@ -19,6 +19,8 @@ import { infrastructurePlatformRouter } from "./routers/infrastructurePlatform";
 import { finalOperationsRouter } from "./routers/finalOperations";
 import { analyticsRouter } from "./routers/analytics";
 import { studioStreamingRouter } from "./routers/studioStreaming";
+import { batchProcessingRouter } from "./routers/batchProcessing";
+import { editingPresetsRouter } from "./routers/editingPresets";
 
 import { anomalyDetectionRouter } from "./routers/anomalyDetection";
 import { predictiveAlertsRouter } from "./routers/predictiveAlerts";
@@ -632,6 +634,8 @@ export const appRouter = router({
   // Advanced Features
   analytics: analyticsRouter,
   studio: studioStreamingRouter,
+  batchProcessing: batchProcessingRouter,
+  editingPresets: editingPresetsRouter,
   anomalyDetection: anomalyDetectionRouter,
   predictiveAlerts: predictiveAlertsRouter,
   suppressionRules: suppressionRulesRouter,
