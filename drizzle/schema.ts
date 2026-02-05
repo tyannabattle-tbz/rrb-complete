@@ -2069,3 +2069,23 @@ export const realtimeMetricsCache = mysqlTable("realtime_metrics_cache", {
 
 export type RealtimeMetricsCache = typeof realtimeMetricsCache.$inferSelect;
 export type InsertRealtimeMetricsCache = typeof realtimeMetricsCache.$inferInsert;
+
+
+// ============================================================================
+// WEBHOOK NOTIFICATIONS TABLES
+// ============================================================================
+
+export const webhookSubscriptions = mysqlTable("webhook_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  provider: mysqlEnum("provider", ["slack", "discord", "email", "webhook", "pagerduty"]).notNull(),
+  webhookUrl: varchar("webhookUrl", { length: 2048 }).notNull(),
+  eventTypes: text("eventTypes").notNull(), // JSON array
+  enabled: boolean("enabled").default(true),
+  retryPolicy: text("retryPolicy"), // JSON
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type WebhookSubscription = typeof webhookSubscriptions.$inferSelect;
+export type InsertWebhookSubscription = typeof webhookSubscriptions.$inferInsert;
