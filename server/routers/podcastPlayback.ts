@@ -142,6 +142,8 @@ export const podcastPlaybackRouter = router({
 
         // Log action
         console.log(`[Podcast] User ${ctx.user.id} playing: ${state.currentEpisode?.title}`);
+        console.log(`[Podcast] Episode streamUrl: ${state.currentEpisode?.streamUrl}`);
+        console.log(`[Podcast] Full state:`, JSON.stringify(state, null, 2));
 
         return {
           success: true,
