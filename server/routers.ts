@@ -22,6 +22,7 @@ import { studioStreamingRouter } from "./routers/studioStreaming";
 import { batchProcessingRouter } from "./routers/batchProcessing";
 import { editingPresetsRouter } from "./routers/editingPresets";
 import { recordingManagementRouter } from "./routers/recordingManagement";
+import { playbackControlRouter } from "./routers/playbackControl";
 
 import { anomalyDetectionRouter } from "./routers/anomalyDetection";
 import { predictiveAlertsRouter } from "./routers/predictiveAlerts";
@@ -707,6 +708,7 @@ export const appRouter = router({
   qumusChat: qumusChatRouter,
   qumusIdentity: qumusIdentityRouter,
   rockinBoogie: rockinBoogieRouter,
+  playbackControl: playbackControlRouter,
   emergencyAlerts: emergencyAlertsRouter,
   hybridCastNodes: hybridCastNodesRouter,
   analyticsReporting: analyticsReportingRouter,

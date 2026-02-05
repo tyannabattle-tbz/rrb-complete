@@ -7,6 +7,7 @@ import { ContentGenerationForm } from '@/components/ContentGenerationForm';
 import { ScheduledGenerationDashboard } from '@/components/ScheduledGenerationDashboard';
 import { ContentPreviewModal } from '@/components/ContentPreviewModal';
 import { AudioPlayer } from '@/components/AudioPlayer';
+import { RockinBoogiePlayer } from '@/components/RockinBoogiePlayer';
 
 interface ContentItem {
   id: number;
@@ -21,8 +22,24 @@ interface ContentItem {
 }
 
 export default function RockinBoogieContentManager() {
+  const [showPlayer, setShowPlayer] = useState(false);
   const [selectedContent, setSelectedContent] = useState<number | null>(null);
   const [showNewForm, setShowNewForm] = useState(false);
+
+  // Show player if requested
+  if (showPlayer) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4">
+        <Button 
+          onClick={() => setShowPlayer(false)}
+          className="mb-4 bg-slate-700 hover:bg-slate-600"
+        >
+          Back to Content
+        </Button>
+        <RockinBoogiePlayer />
+      </div>
+    );
+  }
   const [activeTab, setActiveTab] = useState<string>('content');
   const [previewContent, setPreviewContent] = useState<any | null>(null);
   const [newContent, setNewContent] = useState({
