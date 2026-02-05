@@ -4,6 +4,9 @@ import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
 import { eq, desc } from "drizzle-orm";
 import { auditLogs } from "../../drizzle/schema";
+import {
+  getAuditLogs as getRedisAuditLogs,
+} from "../_core/redis";
 
 export const auditLoggingRouter = router({
   // Get audit logs
@@ -145,73 +148,11 @@ export const auditLoggingRouter = router({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: String(error) });
       }
     }),
-});
 
-
-// QUMUS Decision Tracking Extensions
-import {
-  storeAuditLog,
-  getAuditLogs as getRedisAuditLogs,
-  getUserDecisions,
-  getDecision,
-  storeDecision,
-} from "../_core/redis";
-
-// Add QUMUS methods to the router
-export const qumusAuditExtensions = {
-  storeQUMUSDecision: protectedProcedure
-    .input(
-      z.object({
-        decisionId: z.string(),
-        policy: z.string(),
-        action: z.string(),
-        reason: z.string().optional(),
-        state: z.any().optional(),
-      })
-    )
-    .mutation(async ({ ctx, input }: any) => {
-      try {
-        const decision = {
-          decisionId: input.decisionId,
-          userId: ctx.user.id,
-          policy: input.policy,
-          action: input.action,
-          reason: input.reason,
-          state: input.state,
-          timestamp: new Date().toISOString(),
-          success: true,
-        };
-
-        await storeDecision(decision);
-        console.log(
-          `[QUMUS Decision] ${input.decisionId} - User ${ctx.user.id} - ${input.action}`
-        );
-
-        return {
-          success: true,
-          decisionId: input.decisionId,
-        };
-      } catch (error) {
-        console.error("[Audit] Failed to store QUMUS decision:", error);
-        throw error;
-      }
-    }),
-
-  getQUMUSAuditLogs: protectedProcedure
-    .input(z.object({ limit: z.number().default(1000) }))
-    .query(async ({ ctx, input }: any) => {
-      try {
-        const logs = await getRedisAuditLogs(input.limit);
-        return logs;
-      } catch (error) {
-        console.error("[Audit] Failed to get QUMUS audit logs:", error);
-        throw error;
-      }
-    }),
-
+  // Export audit trail (QUMUS)
   exportAuditTrail: protectedProcedure
     .input(z.object({ format: z.enum(["csv", "json"]).default("csv") }))
-    .mutation(async ({ ctx, input }: any) => {
+    .mutation(async ({ ctx, input }) => {
       try {
         const logs = await getRedisAuditLogs(10000);
 
@@ -260,4 +201,5 @@ export const qumusAuditExtensions = {
         throw error;
       }
     }),
-};
+});
+

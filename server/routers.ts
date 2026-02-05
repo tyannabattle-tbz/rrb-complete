@@ -139,6 +139,7 @@ import { dashboardStateRouter } from "./routers/dashboardState";
 import { chatFlowRouter } from "./routers/chatFlow";
 import { toolExecutionRouter } from "./routers/toolExecution";
 import { analyticsTrackingRouter } from "./routers/analyticsTracking";
+import { customPoliciesRouter } from "./routers/customPolicies";
 
 export const appRouter = router({
   system: systemRouter,
@@ -739,6 +740,7 @@ export const appRouter = router({
   toolExecution: toolExecutionRouter,
   analyticsTracking: analyticsTrackingRouter,
   auditLogging: auditLoggingRouter,
+  customPolicies: customPoliciesRouter,
 });
 export type AppRouter = typeof appRouter;
 

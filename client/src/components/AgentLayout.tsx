@@ -10,6 +10,7 @@ import ThemeToggle from "./ThemeToggle";
 import SessionComparison from "./SessionComparison";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useEffect } from "react";
+import { ShieldAlert } from "lucide-react";
 
 interface AgentLayoutProps {
   children: React.ReactNode;
@@ -196,7 +197,19 @@ export default function AgentLayout({
               </div>
             );
           })}
-        </div>
+        </div>        {/* Navigation Links */}
+        {sidebarOpen && (
+          <div className="px-4 py-2 space-y-1 border-t border-border">
+            <button
+              onClick={() => navigate("/audit")}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted/20 transition-colors text-sm text-foreground"
+              title="View QUMUS Audit Dashboard"
+            >
+              <ShieldAlert size={18} />
+              <span>Audit Dashboard</span>
+            </button>
+          </div>
+        )}
 
         {/* User Profile & Logout */}
         {sidebarOpen && (
@@ -227,3 +240,4 @@ export default function AgentLayout({
     </div>
   );
 }
+// Audit Dashboard link added to sidebar

@@ -66,6 +66,7 @@ import Studio from '@/pages/Studio';
 import { PodcastPlayer } from '@/components/PodcastPlayer';
 import PodcastDiscovery from '@/pages/PodcastDiscovery';
 import { RockinBoogiePlayerEnhanced } from '@/components/RockinBoogiePlayerEnhanced';
+import AuditDashboard from '@/components/AuditDashboard';
 
 function Router() {
   return (
@@ -127,6 +128,7 @@ function Router() {
       <Route path="/studio" component={Studio} />
       <Route path="/podcast" component={PodcastPlayer} />
       <Route path="/podcast-discovery" component={PodcastDiscovery} />
+      <Route path="/audit" component={AuditDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
