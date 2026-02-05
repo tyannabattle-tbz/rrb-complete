@@ -21,13 +21,13 @@ import { trpc } from "@/lib/trpc";
 interface BatchJob {
   jobId: string;
   jobName: string;
-  status: "queued" | "processing" | "completed" | "failed" | "cancelled";
+  status: string;
   totalItems: number;
   completedItems: number;
   failedItems: number;
   progressPercent: number;
-  createdAt: Date;
-  completedAt?: Date;
+  createdAt: Date | string;
+  completedAt?: Date | string;
 }
 
 /**
