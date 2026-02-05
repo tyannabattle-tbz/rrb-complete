@@ -10,6 +10,7 @@
 
 import { useState, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
+import { usePreset } from '@/contexts/PresetContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
@@ -28,8 +29,22 @@ interface PlaybackState {
 }
 
 export function RockinBoogiePlayer() {
-  const [playbackState, setPlaybackState] = useState<PlaybackState | null>(null);
+  // Initialize with default playback state
+  const defaultState: PlaybackState = {
+    userId: 0,
+    contentId: null,
+    isPlaying: false,
+    currentChannel: 7,
+    volume: 70,
+    currentTime: 0,
+    duration: 0,
+    queue: [],
+    queueIndex: 0,
+  };
+
+  const [playbackState, setPlaybackState] = useState<PlaybackState>(defaultState);
   const [isLoading, setIsLoading] = useState(false);
+  const { appliedPreset } = usePreset();
 
   // Get current playback state
   const { data: currentState, refetch: refetchState } = trpc.playbackControl.getState.useQuery();
@@ -90,6 +105,16 @@ export function RockinBoogiePlayer() {
       setPlaybackState(currentState);
     }
   }, [currentState]);
+
+  // Listen for preset changes from Studio
+  useEffect(() => {
+    if (appliedPreset) {
+      console.log('Studio preset applied to Rockin Boogie:', appliedPreset);
+    }
+  }, [appliedPreset]);
+
+  // Ensure playbackState is never null
+  const state = playbackState || defaultState;
 
   const handlePlay = async () => {
     setIsLoading(true);
@@ -184,9 +209,9 @@ export function RockinBoogiePlayer() {
       <Card className="p-6 bg-gradient-to-r from-orange-900 to-orange-800 border-orange-700">
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-bold text-white">Rockin' Rockin' Boogie</h2>
-          <p className="text-orange-100">Channel {playbackState.currentChannel}</p>
+          <p className="text-orange-100">Channel {state.currentChannel}</p>
           <p className="text-sm text-orange-200">
-            {playbackState.isPlaying ? '🔴 LIVE' : '⚫ OFFLINE'}
+            {state.isPlaying ? '🔴 LIVE' : '⚫ OFFLINE'}
           </p>
         </div>
       </Card>
@@ -201,7 +226,7 @@ export function RockinBoogiePlayer() {
               onClick={() => handleChannelSelect(channel)}
               disabled={isLoading}
               className={`py-3 font-bold text-lg ${
-                playbackState.currentChannel === channel
+                state.currentChannel === channel
                   ? 'bg-orange-500 hover:bg-orange-600 text-white'
                   : 'bg-slate-600 hover:bg-slate-700 text-white'
               }`}
@@ -217,7 +242,7 @@ export function RockinBoogiePlayer() {
         <div className="flex items-center gap-4">
           <span className="text-orange-600 font-semibold">🔊</span>
           <Slider
-            value={[playbackState.volume]}
+            value={[state.volume]}
             onValueChange={handleVolumeChange}
             min={0}
             max={100}
@@ -226,7 +251,7 @@ export function RockinBoogiePlayer() {
             disabled={isLoading}
           />
           <span className="text-orange-600 font-bold w-12 text-right">
-            {playbackState.volume}
+            {state.volume}
           </span>
         </div>
       </Card>
@@ -244,7 +269,7 @@ export function RockinBoogiePlayer() {
             <span className="hidden sm:inline ml-2">PREV</span>
           </Button>
 
-          {playbackState.isPlaying ? (
+          {state.isPlaying ? (
             <Button
               onClick={handlePause}
               disabled={isLoading}
@@ -284,7 +309,7 @@ export function RockinBoogiePlayer() {
           onClick={handlePower}
           disabled={isLoading}
           className={`w-full py-8 font-bold text-xl text-white ${
-            playbackState.isPlaying
+            state.isPlaying
               ? 'bg-red-600 hover:bg-red-700'
               : 'bg-orange-600 hover:bg-orange-700'
           }`}
@@ -299,13 +324,13 @@ export function RockinBoogiePlayer() {
       <Card className="p-4 bg-slate-100 dark:bg-slate-900 border-slate-300 dark:border-slate-700">
         <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
           <p>
-            <strong>Status:</strong> {playbackState.isPlaying ? 'Playing' : 'Stopped'}
+            <strong>Status:</strong> {state.isPlaying ? 'Playing' : 'Stopped'}
           </p>
           <p>
-            <strong>Volume:</strong> {playbackState.volume}%
+            <strong>Volume:</strong> {state.volume}%
           </p>
           <p>
-            <strong>Channel:</strong> {playbackState.currentChannel}
+            <strong>Channel:</strong> {state.currentChannel}
           </p>
           <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
             All controls are managed by QUMUS orchestration engine

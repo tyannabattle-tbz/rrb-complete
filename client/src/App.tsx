@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { PresetProvider } from "./contexts/PresetContext";
 import Home from "./pages/Home";
 import AgentDashboard from "./pages/AgentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -138,11 +139,13 @@ function App() {
         defaultTheme="light"
         switchable
       >
-        <TooltipProvider>
-          <Toaster />
-          <KeyboardShortcutsGuide />
-          <Router />
-        </TooltipProvider>
+        <PresetProvider>
+          <TooltipProvider>
+            <Toaster />
+            <KeyboardShortcutsGuide />
+            <Router />
+          </TooltipProvider>
+        </PresetProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

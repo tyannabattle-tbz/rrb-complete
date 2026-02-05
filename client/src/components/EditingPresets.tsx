@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, Check } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { usePreset } from "@/contexts/PresetContext";
 
 interface Preset {
   id: string;
@@ -30,6 +31,7 @@ export default function EditingPresets({
   selectedClipIds = [],
 }: EditingPresetsProps) {
   const [appliedPresetId, setAppliedPresetId] = useState<string | null>(null);
+  const { applyPreset: broadcastPreset } = usePreset();
 
   // Fetch presets
   const { data: presets } = trpc.editingPresets.getPresets.useQuery();
@@ -42,15 +44,25 @@ export default function EditingPresets({
         return;
       }
 
+      const preset = presets?.find((p: Preset) => p.id === presetId);
+      if (!preset) return;
+
       await applyPresetMutation.mutateAsync({
         presetId,
         clipIds: selectedClipIds,
       });
 
+      broadcastPreset({
+        presetId,
+        presetName: preset.name,
+        effects: preset.effects,
+        transitions: preset.transitions,
+        appliedAt: Date.now(),
+      });
+
       setAppliedPresetId(presetId);
       onApplyPreset?.(presetId);
 
-      // Reset after 2 seconds
       setTimeout(() => setAppliedPresetId(null), 2000);
     } catch (error) {
       console.error("Failed to apply preset:", error);
