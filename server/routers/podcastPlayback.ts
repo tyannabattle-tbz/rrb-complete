@@ -18,8 +18,10 @@ import {
   getNextEpisode,
   getPreviousEpisode,
   getFirstEpisode,
+  getAllChannels,
+  searchEpisodes,
   PodcastEpisode,
-} from "../services/podcastService";
+} from "../services/realPodcastService";
 import { qumusEngine, DecisionPolicy } from "../qumus/decisionEngine";
 import { propagationService } from "../qumus/propagationService";
 import { auditTrailManager } from "../qumus/auditTrail";
@@ -82,19 +84,23 @@ export const podcastPlaybackRouter = router({
    * Get current playback state
    */
   getState: protectedProcedure.query(async ({ ctx }) => {
-    const state =
-      playbackStates.get(ctx.user.id) ||
-      ({
+    let state = playbackStates.get(ctx.user.id);
+    
+    if (!state) {
+      const episodes = getChannelEpisodes(7);
+      state = {
         userId: ctx.user.id,
-        currentEpisode: null,
+        currentEpisode: episodes.length > 0 ? episodes[0] : null,
         currentChannel: 7,
         isPlaying: false,
         currentTime: 0,
         volume: 70,
-        queue: [],
+        queue: episodes,
         queueIndex: 0,
-        streamUrl: null,
-      } as PodcastPlaybackState);
+        streamUrl: episodes.length > 0 ? episodes[0]?.streamUrl || null : null,
+      };
+      playbackStates.set(ctx.user.id, state);
+    }
 
     return state;
   }),
@@ -106,15 +112,13 @@ export const podcastPlaybackRouter = router({
     .input(z.object({ reason: z.string().optional() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const decision = await qumusEngine.makeDecision(
-          "engagement" as DecisionPolicy,
-          ctx.user.id,
-          input.reason || "User clicked play",
-          {
-            action: "play",
-            timestamp: new Date().toISOString(),
-          }
-        );
+        // Simplified playback without QUMUS for now
+        const decision = {
+          decisionId: `decision-${Date.now()}-${Math.random()}`,
+          userId: ctx.user.id,
+          policy: "podcast-playback",
+          timestamp: new Date(),
+        };
 
         let state = playbackStates.get(ctx.user.id);
         if (!state) {
@@ -136,13 +140,8 @@ export const podcastPlaybackRouter = router({
         state.isPlaying = true;
         playbackStates.set(ctx.user.id, state);
 
-        await propagationService.propagateDecision(decision);
-
-        auditTrailManager.logDecisionExecution(decision, ctx.user.id, "success", {
-          action: "play",
-          episode: state.currentEpisode?.title,
-          streamUrl: state.streamUrl,
-        });
+        // Log action
+        console.log(`[Podcast] User ${ctx.user.id} playing: ${state.currentEpisode?.title}`);
 
         return {
           success: true,
@@ -163,15 +162,12 @@ export const podcastPlaybackRouter = router({
     .input(z.object({ reason: z.string().optional() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const decision = await qumusEngine.makeDecision(
-          "engagement" as DecisionPolicy,
-          ctx.user.id,
-          input.reason || "User clicked pause",
-          {
-            action: "pause",
-            timestamp: new Date().toISOString(),
-          }
-        );
+        const decision = {
+          decisionId: `decision-${Date.now()}-${Math.random()}`,
+          userId: ctx.user.id,
+          policy: "podcast-playback",
+          timestamp: new Date(),
+        };
 
         const state = playbackStates.get(ctx.user.id);
         if (state) {
@@ -179,16 +175,12 @@ export const podcastPlaybackRouter = router({
           playbackStates.set(ctx.user.id, state);
         }
 
-        await propagationService.propagateDecision(decision);
-
-        auditTrailManager.logDecisionExecution(decision, ctx.user.id, "success", {
-          action: "pause",
-        });
+        console.log(`[Podcast] User ${ctx.user.id} paused`);
 
         return {
           success: true,
           decisionId: decision.decisionId,
-          state,
+          state: playbackStates.get(ctx.user.id),
         };
       } catch (error) {
         throw new Error(
@@ -204,15 +196,12 @@ export const podcastPlaybackRouter = router({
     .input(z.object({ reason: z.string().optional() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const decision = await qumusEngine.makeDecision(
-          "engagement" as DecisionPolicy,
-          ctx.user.id,
-          input.reason || "User clicked next",
-          {
-            action: "next",
-            timestamp: new Date().toISOString(),
-          }
-        );
+        const decision = {
+          decisionId: `decision-${Date.now()}-${Math.random()}`,
+          userId: ctx.user.id,
+          policy: "podcast-playback",
+          timestamp: new Date(),
+        };
 
         let state = playbackStates.get(ctx.user.id);
         if (state && state.queue.length > 0) {
@@ -223,12 +212,8 @@ export const podcastPlaybackRouter = router({
           playbackStates.set(ctx.user.id, state);
         }
 
-        await propagationService.propagateDecision(decision);
-
-        auditTrailManager.logDecisionExecution(decision, ctx.user.id, "success", {
-          action: "next",
-          episode: state?.currentEpisode?.title,
-        });
+        console.log(`[Podcast] User ${ctx.user.id} skipped to next`);
+        // Simplified logging
 
         return {
           success: true,
@@ -249,15 +234,12 @@ export const podcastPlaybackRouter = router({
     .input(z.object({ reason: z.string().optional() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const decision = await qumusEngine.makeDecision(
-          "engagement" as DecisionPolicy,
-          ctx.user.id,
-          input.reason || "User clicked previous",
-          {
-            action: "prev",
-            timestamp: new Date().toISOString(),
-          }
-        );
+        const decision = {
+          decisionId: `decision-${Date.now()}-${Math.random()}`,
+          userId: ctx.user.id,
+          policy: "podcast-playback",
+          timestamp: new Date(),
+        };
 
         let state = playbackStates.get(ctx.user.id);
         if (state && state.queue.length > 0) {
@@ -269,12 +251,8 @@ export const podcastPlaybackRouter = router({
           playbackStates.set(ctx.user.id, state);
         }
 
-        await propagationService.propagateDecision(decision);
-
-        auditTrailManager.logDecisionExecution(decision, ctx.user.id, "success", {
-          action: "prev",
-          episode: state?.currentEpisode?.title,
-        });
+        console.log(`[Podcast] User ${ctx.user.id} skipped to previous`);
+        // Simplified logging
 
         return {
           success: true,
@@ -295,16 +273,12 @@ export const podcastPlaybackRouter = router({
     .input(z.object({ channelId: z.number() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const decision = await qumusEngine.makeDecision(
-          "engagement" as DecisionPolicy,
-          ctx.user.id,
-          `User switched to channel ${input.channelId}`,
-          {
-            action: "switchChannel",
-            channelId: input.channelId.toString(),
-            timestamp: new Date().toISOString(),
-          }
-        );
+        const decision = {
+          decisionId: `decision-${Date.now()}-${Math.random()}`,
+          userId: ctx.user.id,
+          policy: "podcast-playback",
+          timestamp: new Date(),
+        };
 
         const episodes = getChannelEpisodes(input.channelId);
         const firstEpisode = episodes.length > 0 ? episodes[0] : null;
@@ -322,14 +296,7 @@ export const podcastPlaybackRouter = router({
         };
 
         playbackStates.set(ctx.user.id, state);
-
-        await propagationService.propagateDecision(decision);
-
-        auditTrailManager.logDecisionExecution(decision, ctx.user.id, "success", {
-          action: "switchChannel",
-          channelId: input.channelId.toString(),
-          episode: firstEpisode?.title,
-        });
+        console.log(`[Podcast] User ${ctx.user.id} switched to channel ${input.channelId}`);
 
         return {
           success: true,
@@ -352,16 +319,12 @@ export const podcastPlaybackRouter = router({
     .input(z.object({ volume: z.number().min(0).max(100) }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const decision = await qumusEngine.makeDecision(
-          "engagement" as DecisionPolicy,
-          ctx.user.id,
-          "User adjusted volume",
-          {
-            action: "setVolume",
-            volume: input.volume.toString(),
-            timestamp: new Date().toISOString(),
-          }
-        );
+        const decision = {
+          decisionId: `decision-${Date.now()}-${Math.random()}`,
+          userId: ctx.user.id,
+          policy: "podcast-playback",
+          timestamp: new Date(),
+        };
 
         let state = playbackStates.get(ctx.user.id);
         if (!state) {
@@ -380,13 +343,7 @@ export const podcastPlaybackRouter = router({
 
         state.volume = Math.round(input.volume);
         playbackStates.set(ctx.user.id, state);
-
-        await propagationService.propagateDecision(decision);
-
-        auditTrailManager.logDecisionExecution(decision, ctx.user.id, "success", {
-          action: "setVolume",
-          volume: input.volume.toString(),
-        });
+        console.log(`[Podcast] User ${ctx.user.id} set volume to ${input.volume}%`);
 
         return {
           success: true,
@@ -428,11 +385,12 @@ export const podcastPlaybackRouter = router({
    * Get all available channels
    */
   getChannels: protectedProcedure.query(async () => {
-    return [
-      { id: 7, name: "Rockin' Rockin' Boogie", description: "Classic rock and roll" },
-      { id: 13, name: "Jazz Essentials", description: "Smooth jazz classics" },
-      { id: 9, name: "Blues Hour", description: "Classic blues and soul" },
-    ];
+    const channels = getAllChannels();
+    return channels.map((ch) => ({
+      id: ch.id,
+      name: ch.name,
+      description: ch.description,
+    }));
   }),
 
   /**
@@ -442,5 +400,14 @@ export const podcastPlaybackRouter = router({
     .input(z.object({ channelId: z.number() }))
     .query(async ({ input }) => {
       return getChannelEpisodes(input.channelId);
+    }),
+
+  /**
+   * Search episodes
+   */
+  searchEpisodes: protectedProcedure
+    .input(z.object({ query: z.string() }))
+    .query(async ({ input }) => {
+      return searchEpisodes(input.query);
     }),
 });
