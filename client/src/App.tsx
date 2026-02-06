@@ -81,6 +81,8 @@ import { LocationChatRooms } from '@/components/LocationChatRooms';
 import { BroadcastVOD } from '@/components/BroadcastVOD';
 import CollaborationPage from '@/pages/CollaborationPage';
 import EmergencyBroadcastAdminPanel from '@/pages/EmergencyBroadcastAdminPanel';
+import BroadcastScheduler from '@/pages/BroadcastScheduler';
+import AuditLogViewer from '@/pages/AuditLogViewer';
 
 function Router() {
   return (
@@ -153,6 +155,8 @@ function Router() {
       <Route path="/collaboration" component={CollaborationPage} />
       <Route path="/gps-radar" component={GPSRadarMapPage} />
       <Route path="/broadcast-admin" component={EmergencyBroadcastAdminPanel} />
+      <Route path="/broadcast-scheduler" component={BroadcastScheduler} />
+      <Route path="/audit-log" component={AuditLogViewer} />
       <Route component={NotFound} />
     </Switch>
   );
