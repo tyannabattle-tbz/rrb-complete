@@ -57,17 +57,17 @@ const trpcClient = trpc.createClient({
 });
 
 createRoot(document.getElementById("root")!).render(
-  <ErrorBoundary>
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
+  <trpc.Provider client={trpcClient} queryClient={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <ToastProvider>
+        <ErrorBoundary>
           <App />
           <AccessibilityPanel />
           <ToastNotificationContainer />
-        </ToastProvider>
-      </QueryClientProvider>
-    </trpc.Provider>
-  </ErrorBoundary>
+        </ErrorBoundary>
+      </ToastProvider>
+    </QueryClientProvider>
+  </trpc.Provider>
 );
 
 function ToastNotificationContainer() {
