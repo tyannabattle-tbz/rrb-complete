@@ -12,27 +12,27 @@ export default function CostOptimizationDashboard() {
   const [endDate, setEndDate] = useState<string>(new Date().toISOString().split("T")[0]);
 
   // Fetch cost data
-  const { data: costAnalysis } = trpc.analytics.analytics.costOptimization.getCostAnalysis.useQuery({
+  const { data: costAnalysis } = trpc.analytics.costOptimization.getCostAnalysis.useQuery({
     startDate: new Date(startDate),
     endDate: new Date(endDate),
   });
 
-  const { data: costByTemplate } = trpc.analytics.analytics.costOptimization.getCostByTemplate.useQuery({
+  const { data: costByTemplate } = trpc.analytics.costOptimization.getCostByTemplate.useQuery({
     startDate: new Date(startDate),
     endDate: new Date(endDate),
   });
 
-  const { data: recommendations } = trpc.analytics.analytics.costOptimization.getOptimizationRecommendations.useQuery({
+  const { data: recommendations } = trpc.analytics.costOptimization.getOptimizationRecommendations.useQuery({
     startDate: new Date(startDate),
     endDate: new Date(endDate),
   });
 
-  const { data: efficiency } = trpc.analytics.analytics.costOptimization.getResourceEfficiency.useQuery({
+  const { data: efficiency } = trpc.analytics.costOptimization.getResourceEfficiency.useQuery({
     startDate: new Date(startDate),
     endDate: new Date(endDate),
   });
 
-  const { data: forecast } = trpc.analytics.analytics.costOptimization.getCostForecast.useQuery({
+  const { data: forecast } = trpc.analytics.costOptimization.getCostForecast.useQuery({
     days: 7,
   });
 

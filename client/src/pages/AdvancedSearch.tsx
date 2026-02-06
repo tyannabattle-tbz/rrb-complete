@@ -13,12 +13,12 @@ export default function AdvancedSearch() {
   const [endDate, setEndDate] = useState<string>("");
   const [hasSearched, setHasSearched] = useState(false);
 
-  const searchMutation = trpc.analytics.analytics.advancedSearch.search.useQuery(
+  const searchMutation = trpc.analytics.advancedSearch.search.useQuery(
     { query, type: searchType, startDate: startDate ? new Date(startDate) : undefined, endDate: endDate ? new Date(endDate) : undefined, limit: 50 },
     { enabled: false }
   );
-  const searchTrigger = trpc.analytics.analytics.advancedSearch.search.useQuery;
-  const suggestionQuery = trpc.analytics.analytics.advancedSearch.getSuggestions.useQuery(
+  const searchTrigger = trpc.analytics.advancedSearch.search.useQuery;
+  const suggestionQuery = trpc.analytics.advancedSearch.getSuggestions.useQuery(
     { query, limit: 5 },
     { enabled: query.length > 0 }
   );

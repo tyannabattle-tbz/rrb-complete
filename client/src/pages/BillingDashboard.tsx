@@ -9,12 +9,12 @@ export function BillingDashboard() {
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
   // Fetch billing data
-  const { data: plans } = trpc.admin.admin.billing.getSubscriptionPlans.useQuery({});
-  const { data: subscription } = trpc.admin.admin.billing.getCurrentSubscription.useQuery({});
-  const { data: usageStats } = trpc.admin.admin.billing.getUsage.useQuery({});
-  const { data: billingHistory } = trpc.admin.admin.billing.getBillingHistory.useQuery({});
+  const { data: plans } = trpc.admin.billing.getSubscriptionPlans.useQuery({});
+  const { data: subscription } = trpc.admin.billing.getCurrentSubscription.useQuery({});
+  const { data: usageStats } = trpc.admin.billing.getUsage.useQuery({});
+  const { data: billingHistory } = trpc.admin.billing.getBillingHistory.useQuery({});
 
-  const upgradeMutation = trpc.admin.admin.billing.upgradeSubscription.useMutation();
+  const upgradeMutation = trpc.admin.billing.upgradeSubscription.useMutation();
 
   const handleUpgrade = async (planId: string) => {
     try {

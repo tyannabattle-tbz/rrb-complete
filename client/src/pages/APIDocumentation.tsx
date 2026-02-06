@@ -78,7 +78,7 @@ const endpoints: APIEndpoint[] = [
     method: "GET",
     path: "/trpc/usageQuotas.getQuotas",
     description: "Retrieve current usage quotas",
-    example: `const { data: quotas } = trpc.admin.admin.usageQuotas.getQuotas.useQuery();`,
+    example: `const { data: quotas } = trpc.admin.usageQuotas.getQuotas.useQuery();`,
   },
   {
     name: "Send Collaboration Invite",
