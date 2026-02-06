@@ -4,7 +4,7 @@ import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapP
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { HybridCastTabNavigation } from '@/components/HybridCastTabNavigation';
+import { HybridCastTabNavigationFixed } from '@/components/HybridCastTabNavigationFixed';
 
 export function AppHeaderEnhanced() {
   const [, navigate] = useLocation();
@@ -199,7 +199,7 @@ export function AppHeaderEnhanced() {
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <HybridCastTabNavigation />
+            <HybridCastTabNavigationFixed />
           </div>
         </div>
       )}
