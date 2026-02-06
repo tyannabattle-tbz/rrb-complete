@@ -86,6 +86,7 @@ import AuditLogViewer from '@/pages/AuditLogViewer';
 import HybridCastHub from '@/pages/HybridCastHub';
 import HybridCastAnalyticsDashboard from '@/pages/HybridCastAnalyticsDashboard';
 import HybridCastIntegration from '@/pages/HybridCastIntegration';
+import HybridCastNotificationCenter from '@/pages/HybridCastNotificationCenter';
 
 function Router() {
   return (
@@ -163,6 +164,7 @@ function Router() {
       <Route path="/hybridcast-hub" component={HybridCastHub} />
       <Route path="/hybridcast-analytics" component={HybridCastAnalyticsDashboard} />
       <Route path="/hybridcast" component={HybridCastIntegration} />
+      <Route path="/hybridcast-notifications" component={HybridCastNotificationCenter} />
       <Route component={NotFound} />
     </Switch>
   );

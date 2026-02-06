@@ -32,6 +32,7 @@ import { fileAnalysisRouter } from "./routers/fileAnalysisRouter";
 import { dashboardRouter } from "./routers/dashboardRouter";
 import { broadcastRouter } from "./routers/broadcastRouter";
 import { hybridcastRouter } from "./routers/hybridcastRouter";
+import { hybridcastSyncRouter } from "./routers/hybridcastSyncRouter";
 
 export const appRouter = router({
   // System router
@@ -76,6 +77,9 @@ export const appRouter = router({
 
   // HybridCast Streaming
   hybridcast: hybridcastRouter,
+
+  // HybridCast Data Sync
+  hybridcastSync: hybridcastSyncRouter,
 
   // Agent Session Management
   agent: router({

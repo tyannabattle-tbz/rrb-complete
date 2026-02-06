@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { HybridCastTabNavigationFixed } from '@/components/HybridCastTabNavigationFixed';
+import { HybridCastStatusWidget } from '@/components/HybridCastStatusWidget';
 
 export function AppHeaderEnhanced() {
   const [, navigate] = useLocation();
@@ -126,6 +127,9 @@ export function AppHeaderEnhanced() {
                 <Search className="h-4 w-4" />
               </Button>
             )}
+
+            {/* HybridCast Status Widget */}
+            <HybridCastStatusWidget />
 
             {/* Download */}
             <Button
