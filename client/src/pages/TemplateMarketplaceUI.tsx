@@ -13,21 +13,21 @@ export default function TemplateMarketplaceUI() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | undefined>();
 
-  const { data: templates, isLoading } = trpc.templateMarketplace.browseTemplates.useQuery({
+  const { data: templates, isLoading } = trpc.integrations.templateMarketplace.browseTemplates.useQuery({
     page,
     limit: 12,
     sortBy,
     tag: selectedTag,
   });
 
-  const { data: tags } = trpc.templateMarketplace.getPopularTags.useQuery();
-  const { data: trending } = trpc.templateMarketplace.getTrendingTemplates.useQuery({ limit: 5 });
+  const { data: tags } = trpc.integrations.templateMarketplace.getPopularTags.useQuery();
+  const { data: trending } = trpc.integrations.templateMarketplace.getTrendingTemplates.useQuery({ limit: 5 });
 
-  const searchMutation = trpc.templateMarketplace.searchTemplates.useQuery(
+  const searchMutation = trpc.integrations.templateMarketplace.searchTemplates.useQuery(
     { query: searchQuery, limit: 10 },
     { enabled: false }
   );
-  const rateMutation = trpc.templateMarketplace.rateTemplate.useMutation();
+  const rateMutation = trpc.integrations.templateMarketplace.rateTemplate.useMutation();
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();

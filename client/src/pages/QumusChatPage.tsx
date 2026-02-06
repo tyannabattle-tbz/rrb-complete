@@ -33,7 +33,7 @@ export default function QumusChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const chatMutation = trpc.qumusChat.chat.useMutation();
+  const chatMutation = trpc.ai.qumusChat.chat.useMutation();
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;

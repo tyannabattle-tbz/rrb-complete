@@ -67,7 +67,7 @@ const endpoints: APIEndpoint[] = [
       newName: "string",
       includeHistory: "boolean",
     },
-    example: `const cloned = await trpc.agentCloning.cloneAgent.mutate({
+    example: `const cloned = await trpc.integrations.agentCloning.cloneAgent.mutate({
   sourceAgentId: 1,
   newName: "Cloned Agent",
   includeHistory: true
@@ -78,7 +78,7 @@ const endpoints: APIEndpoint[] = [
     method: "GET",
     path: "/trpc/usageQuotas.getQuotas",
     description: "Retrieve current usage quotas",
-    example: `const { data: quotas } = trpc.usageQuotas.getQuotas.useQuery();`,
+    example: `const { data: quotas } = trpc.admin.admin.usageQuotas.getQuotas.useQuery();`,
   },
   {
     name: "Send Collaboration Invite",
@@ -90,7 +90,7 @@ const endpoints: APIEndpoint[] = [
       inviteeEmail: "string",
       permissionLevel: "view | edit | admin",
     },
-    example: `await trpc.collaborationInvites.sendInvite.mutate({
+    example: `await trpc.integrations.collaborationInvites.sendInvite.mutate({
   sessionId: 1,
   inviteeEmail: "user@example.com",
   permissionLevel: "edit"

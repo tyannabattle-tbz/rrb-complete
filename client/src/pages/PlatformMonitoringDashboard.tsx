@@ -38,13 +38,13 @@ export default function PlatformMonitoringDashboard() {
   };
 
   // tRPC mutations for quick actions
-  const sendThankYouMutation = trpc.monitoringActions.sweetMiracles.sendThankYouEmail.useMutation();
-  const viewAnalyticsMutation = trpc.monitoringActions.sweetMiracles.viewDonorAnalytics.useQuery({});
-  const createCampaignMutation = trpc.monitoringActions.sweetMiracles.createCampaign.useMutation();
-  const startBroadcastMutation = trpc.monitoringActions.rockinBoogie.startBroadcast.useMutation();
-  const generateContentMutation = trpc.monitoringActions.rockinBoogie.generateContent.useMutation();
-  const sendAlertMutation = trpc.monitoringActions.hybridCast.sendEmergencyAlert.useMutation();
-  const checkNetworkMutation = trpc.monitoringActions.hybridCast.checkNetworkHealth.useQuery();
+  const sendThankYouMutation = trpc.infrastructure.infrastructure.monitoringActions.sweetMiracles.sendThankYouEmail.useMutation();
+  const viewAnalyticsMutation = trpc.infrastructure.infrastructure.monitoringActions.sweetMiracles.viewDonorAnalytics.useQuery({});
+  const createCampaignMutation = trpc.infrastructure.infrastructure.monitoringActions.sweetMiracles.createCampaign.useMutation();
+  const startBroadcastMutation = trpc.infrastructure.infrastructure.monitoringActions.rockinBoogie.startBroadcast.useMutation();
+  const generateContentMutation = trpc.infrastructure.infrastructure.monitoringActions.rockinBoogie.generateContent.useMutation();
+  const sendAlertMutation = trpc.infrastructure.infrastructure.monitoringActions.hybridCast.sendEmergencyAlert.useMutation();
+  const checkNetworkMutation = trpc.infrastructure.infrastructure.monitoringActions.hybridCast.checkNetworkHealth.useQuery();
 
   const handleRefresh = async () => {
     setRefreshing(true);

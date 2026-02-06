@@ -10,17 +10,17 @@ export function AnomalyDetectionPanel() {
   const [showResolved, setShowResolved] = useState(false);
 
   // Fetch anomaly data
-  const { data: summary } = trpc.anomalyDetection.getAnomalySummary.useQuery();
-  const { data: anomalies } = trpc.anomalyDetection.getAnomalies.useQuery({
+  const { data: summary } = trpc.infrastructure.infrastructure.anomalyDetection.getAnomalySummary.useQuery();
+  const { data: anomalies } = trpc.infrastructure.infrastructure.anomalyDetection.getAnomalies.useQuery({
     limit: 20,
     resolved: showResolved ? true : false,
   });
-  const { data: insights } = trpc.anomalyDetection.getAnomalyInsights.useQuery(
+  const { data: insights } = trpc.infrastructure.infrastructure.anomalyDetection.getAnomalyInsights.useQuery(
     { anomalyId: selectedAnomaly || 0 },
     { enabled: !!selectedAnomaly }
   );
 
-  const resolveMutation = trpc.anomalyDetection.resolveAnomaly.useMutation();
+  const resolveMutation = trpc.infrastructure.infrastructure.anomalyDetection.resolveAnomaly.useMutation();
 
   const handleResolve = async (anomalyId: number) => {
     try {

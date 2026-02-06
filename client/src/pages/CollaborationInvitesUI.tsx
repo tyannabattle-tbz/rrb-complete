@@ -15,9 +15,9 @@ export function CollaborationInvitesUI() {
   const [isOpen, setIsOpen] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
-  const { data: pendingInvites } = trpc.collaborationInvites.getPendingInvites.useQuery();
+  const { data: pendingInvites } = trpc.integrations.collaborationInvites.getPendingInvites.useQuery();
 
-  const createInviteMutation = trpc.collaborationInvites.createInvite.useMutation({
+  const createInviteMutation = trpc.integrations.collaborationInvites.createInvite.useMutation({
     onSuccess: (data) => {
       console.log("Invite created:", data);
       setInvitedEmail("");
@@ -29,7 +29,7 @@ export function CollaborationInvitesUI() {
     },
   });
 
-  const acceptInviteMutation = trpc.collaborationInvites.acceptInvite.useMutation({
+  const acceptInviteMutation = trpc.integrations.collaborationInvites.acceptInvite.useMutation({
     onSuccess: (data) => {
       console.log("Invite accepted:", data);
     },

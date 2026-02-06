@@ -14,7 +14,7 @@ export function AgentCloningUI() {
   const [includeMessages, setIncludeMessages] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const cloneMutation = trpc.agentCloning.cloneAgent.useMutation({
+  const cloneMutation = trpc.integrations.agentCloning.cloneAgent.useMutation({
     onSuccess: (data: any) => {
       console.log("Session cloned successfully");
       setCloneName("");

@@ -15,8 +15,8 @@ export function SessionPinning({
   onPinChange,
 }: SessionPinningProps) {
   const [pinned, setPinned] = useState(isPinned);
-  const pinMutation = trpc.sessionPinning.pinSession.useMutation();
-  const unpinMutation = trpc.sessionPinning.unpinSession.useMutation();
+  const pinMutation = trpc.integrations.sessionPinning.pinSession.useMutation();
+  const unpinMutation = trpc.integrations.sessionPinning.unpinSession.useMutation();
 
   const handleTogglePin = async () => {
     try {

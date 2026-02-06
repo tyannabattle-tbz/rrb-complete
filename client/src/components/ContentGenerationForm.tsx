@@ -31,9 +31,9 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   // Use a generic mutation that handles all content types
-  const generateContentMutation = trpc.contentGeneration.generatePodcast.useMutation();
-  const approveMutation = trpc.contentGeneration.approve.useMutation();
-  const publishMutation = trpc.contentGeneration.publish.useMutation();
+  const generateContentMutation = trpc.ai.contentGeneration.generatePodcast.useMutation();
+  const approveMutation = trpc.ai.contentGeneration.approve.useMutation();
+  const publishMutation = trpc.ai.contentGeneration.publish.useMutation();
 
   const handleGenerate = async () => {
     if (!topic.trim()) {

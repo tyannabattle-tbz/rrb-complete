@@ -63,19 +63,19 @@ export default function Studio() {
   const [selectedClipIds, setSelectedClipIds] = useState<string[]>([]);
 
   // Fetch live metrics from backend
-  const { data: liveMetrics } = trpc.studio.getLiveMetrics.useQuery(
+  const { data: liveMetrics } = trpc.entertainment.studioStreaming.getLiveMetrics.useQuery(
     undefined,
     { refetchInterval: 1000 }
   );
 
   // HybridCast network monitoring
-  const { data: networkStatus } = trpc.studio.getNetworkHealth.useQuery(
+  const { data: networkStatus } = trpc.entertainment.studioStreaming.getNetworkHealth.useQuery(
     undefined,
     { refetchInterval: 2000 }
   );
 
   // Rockin Boogie content schedule
-  const { data: contentSchedule } = trpc.studio.getBroadcastSchedule.useQuery(
+  const { data: contentSchedule } = trpc.entertainment.studioStreaming.getBroadcastSchedule.useQuery(
     { limit: 5 },
     { refetchInterval: 30000 }
   );
@@ -122,8 +122,8 @@ export default function Studio() {
     setStreamActive(false);
   };
 
-  const startRecordingMutation = trpc.studio.startRecording.useMutation();
-  const stopRecordingMutation = trpc.studio.stopRecording.useMutation();
+  const startRecordingMutation = trpc.entertainment.studioStreaming.startRecording.useMutation();
+  const stopRecordingMutation = trpc.entertainment.studioStreaming.stopRecording.useMutation();
 
   const handleStartRecording = async () => {
     try {

@@ -12,28 +12,28 @@ export default function WebhookMarketplace() {
   const [activeTab, setActiveTab] = useState<"browse" | "installed">("browse");
 
   // Fetch marketplace stats
-  const { data: stats } = trpc.marketplace.getStats.useQuery();
+  const { data: stats } = trpc.integrations.marketplace.getStats.useQuery();
 
   // Fetch templates
-  const { data: templates, isLoading: templatesLoading } = trpc.marketplace.getTemplates.useQuery({
+  const { data: templates, isLoading: templatesLoading } = trpc.integrations.marketplace.getTemplates.useQuery({
     search: searchQuery || undefined,
     category: selectedCategory,
     limit: 20,
   });
 
   // Fetch installed templates
-  const { data: installations, refetch: refetchInstallations } = trpc.marketplace.getInstallations.useQuery();
+  const { data: installations, refetch: refetchInstallations } = trpc.integrations.marketplace.getInstallations.useQuery();
 
   // Mutations
-  const installMutation = trpc.marketplace.installTemplate.useMutation({
+  const installMutation = trpc.integrations.marketplace.installTemplate.useMutation({
     onSuccess: () => refetchInstallations(),
   });
 
-  const deleteMutation = trpc.marketplace.deleteInstallation.useMutation({
+  const deleteMutation = trpc.integrations.marketplace.deleteInstallation.useMutation({
     onSuccess: () => refetchInstallations(),
   });
 
-  const rateMutation = trpc.marketplace.rateTemplate.useMutation();
+  const rateMutation = trpc.integrations.marketplace.rateTemplate.useMutation();
 
   const handleInstall = async (templateId: number, templateName: string) => {
     await installMutation.mutateAsync({

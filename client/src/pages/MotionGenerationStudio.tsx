@@ -17,7 +17,7 @@ export default function MotionGenerationStudio() {
   });
 
   // Use tRPC mutation for video generation
-  const generateVideoMutation = trpc.motionGeneration.generateVideoClip.useMutation({
+  const generateVideoMutation = trpc.entertainment.motionGeneration.generateVideoClip.useMutation({
     onSuccess: (data) => {
       if (data.success) {
         toast.success('Video generated successfully!');

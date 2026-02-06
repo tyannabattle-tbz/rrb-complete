@@ -10,12 +10,12 @@ export function AnalyticsDashboard() {
   const [endDate, setEndDate] = useState(new Date());
 
   // Fetch analytics data
-  const { data: summary } = trpc.analytics.getAnalyticsSummary.useQuery();
-  const { data: trends } = trpc.analytics.getPerformanceTrends.useQuery({
+  const { data: summary } = trpc.analytics.analytics.analytics.getAnalyticsSummary.useQuery();
+  const { data: trends } = trpc.analytics.analytics.analytics.getPerformanceTrends.useQuery({
     startDate,
     endDate,
   });
-  const { data: toolStats } = trpc.analytics.getToolUsageStats.useQuery({ limit: 10 });
+  const { data: toolStats } = trpc.analytics.analytics.analytics.getToolUsageStats.useQuery({ limit: 10 });
 
   // Transform data for charts
   const trendData = useMemo(() => {

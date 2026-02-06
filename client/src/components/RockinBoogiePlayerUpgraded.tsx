@@ -77,11 +77,11 @@ export function RockinBoogiePlayerUpgraded() {
   const [offlineMode, setOfflineMode] = useState(false);
 
   // QUMUS integration
-  const playMutation = trpc.podcastPlayback.play.useMutation();
-  const pauseMutation = trpc.podcastPlayback.pause.useMutation();
-  const nextMutation = trpc.podcastPlayback.next.useMutation();
-  const prevMutation = trpc.podcastPlayback.prev.useMutation();
-  const setVolumeMutation = trpc.podcastPlayback.setVolume.useMutation();
+  const playMutation = trpc.entertainment.podcastPlayback.play.useMutation();
+  const pauseMutation = trpc.entertainment.podcastPlayback.pause.useMutation();
+  const nextMutation = trpc.entertainment.podcastPlayback.next.useMutation();
+  const prevMutation = trpc.entertainment.podcastPlayback.prev.useMutation();
+  const setVolumeMutation = trpc.entertainment.podcastPlayback.setVolume.useMutation();
 
   // WebSocket real-time updates - placeholder
   const isConnected = true;

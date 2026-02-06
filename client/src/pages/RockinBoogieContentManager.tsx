@@ -37,11 +37,11 @@ export default function RockinBoogieContentManager() {
   });
 
   // Fetch content from tRPC
-  const { data: contentItems = [], isLoading: contentLoading, refetch: refetchContent } = trpc.rockinBoogie.list.useQuery();
-  const { data: totalListeners = 0 } = trpc.rockinBoogie.getTotalListeners.useQuery();
+  const { data: contentItems = [], isLoading: contentLoading, refetch: refetchContent } = trpc.entertainment.rockinBoogie.list.useQuery();
+  const { data: totalListeners = 0 } = trpc.entertainment.rockinBoogie.getTotalListeners.useQuery();
   
   // Mutations
-  const createMutation = trpc.rockinBoogie.create.useMutation({
+  const createMutation = trpc.entertainment.rockinBoogie.create.useMutation({
     onSuccess: () => {
       refetchContent();
       setNewContent({ title: '', type: 'radio', description: '' });
@@ -49,7 +49,7 @@ export default function RockinBoogieContentManager() {
     },
   });
 
-  const deleteMutation = trpc.rockinBoogie.delete.useMutation({
+  const deleteMutation = trpc.entertainment.rockinBoogie.delete.useMutation({
     onSuccess: () => {
       refetchContent();
       setSelectedContent(null);

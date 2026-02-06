@@ -55,12 +55,12 @@ export function BatchVideoGenerator() {
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
   // tRPC queries and mutations
-  const listJobsQuery = trpc.batchVideo.listJobs.useQuery();
-  const createJobMutation = trpc.batchVideo.createJob.useMutation();
-  const startJobMutation = trpc.batchVideo.startJob.useMutation();
-  const cancelJobMutation = trpc.batchVideo.cancelJob.useMutation();
-  const getJobStatsQuery = trpc.batchVideo.getJobStats.useQuery();
-  const getQueueStatsQuery = trpc.batchVideo.getQueueStats.useQuery();
+  const listJobsQuery = trpc.entertainment.batchVideo.listJobs.useQuery();
+  const createJobMutation = trpc.entertainment.batchVideo.createJob.useMutation();
+  const startJobMutation = trpc.entertainment.batchVideo.startJob.useMutation();
+  const cancelJobMutation = trpc.entertainment.batchVideo.cancelJob.useMutation();
+  const getJobStatsQuery = trpc.entertainment.batchVideo.getJobStats.useQuery();
+  const getQueueStatsQuery = trpc.entertainment.batchVideo.getQueueStats.useQuery();
 
   // Load jobs
   useEffect(() => {

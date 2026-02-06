@@ -54,14 +54,14 @@ export function HybridCastConfig() {
   const [selectedPreset, setSelectedPreset] = useState<string>("");
 
   // tRPC queries and mutations
-  const getConfigQuery = trpc.hybridCast.getConfig.useQuery({ widgetId });
-  const saveConfigMutation = trpc.hybridCast.saveConfig.useMutation();
-  const generateEmbedCodeQuery = trpc.hybridCast.generateEmbedCode.useQuery({ widgetId });
-  const getPresetsQuery = trpc.hybridCast.getPresets.useQuery();
-  const applyPresetMutation = trpc.hybridCast.applyPreset.useMutation();
-  const resetConfigMutation = trpc.hybridCast.resetConfig.useMutation();
-  const exportConfigQuery = trpc.hybridCast.exportConfig.useQuery({ widgetId });
-  const importConfigMutation = trpc.hybridCast.importConfig.useMutation();
+  const getConfigQuery = trpc.entertainment.hybridCast.getConfig.useQuery({ widgetId });
+  const saveConfigMutation = trpc.entertainment.hybridCast.saveConfig.useMutation();
+  const generateEmbedCodeQuery = trpc.entertainment.hybridCast.generateEmbedCode.useQuery({ widgetId });
+  const getPresetsQuery = trpc.entertainment.hybridCast.getPresets.useQuery();
+  const applyPresetMutation = trpc.entertainment.hybridCast.applyPreset.useMutation();
+  const resetConfigMutation = trpc.entertainment.hybridCast.resetConfig.useMutation();
+  const exportConfigQuery = trpc.entertainment.hybridCast.exportConfig.useQuery({ widgetId });
+  const importConfigMutation = trpc.entertainment.hybridCast.importConfig.useMutation();
 
   // Load configuration on mount
   useEffect(() => {

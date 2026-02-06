@@ -20,28 +20,28 @@ export default function AdminDashboard() {
   }, [isAuthenticated, user, navigate]);
 
   // Fetch dashboard stats
-  const { data: stats, isLoading: statsLoading } = trpc.admin.getDashboardStats.useQuery(undefined, {
+  const { data: stats, isLoading: statsLoading } = trpc.admin.admin.admin.getDashboardStats.useQuery(undefined, {
     refetchInterval: refreshInterval,
   });
 
   // Fetch system health
-  const { data: health, isLoading: healthLoading } = trpc.admin.getSystemHealth.useQuery(undefined, {
+  const { data: health, isLoading: healthLoading } = trpc.admin.admin.admin.getSystemHealth.useQuery(undefined, {
     refetchInterval: refreshInterval,
   });
 
   // Fetch alerts
-  const { data: alerts, refetch: refetchAlerts } = trpc.admin.getAlerts.useQuery({ status: "active" });
+  const { data: alerts, refetch: refetchAlerts } = trpc.admin.admin.admin.getAlerts.useQuery({ status: "active" });
 
   // Mutations
-  const acknowledgeAlertMutation = trpc.admin.acknowledgeAlert.useMutation({
+  const acknowledgeAlertMutation = trpc.admin.admin.admin.acknowledgeAlert.useMutation({
     onSuccess: () => refetchAlerts(),
   });
 
-  const resolveAlertMutation = trpc.admin.resolveAlert.useMutation({
+  const resolveAlertMutation = trpc.admin.admin.admin.resolveAlert.useMutation({
     onSuccess: () => refetchAlerts(),
   });
 
-  const { mutateAsync: exportReport, isPending: isExporting } = trpc.admin.exportReport.useMutation();
+  const { mutateAsync: exportReport, isPending: isExporting } = trpc.admin.admin.admin.exportReport.useMutation();
 
   const handleExportReport = async (format: "pdf" | "csv") => {
     const result = await exportReport({ format });

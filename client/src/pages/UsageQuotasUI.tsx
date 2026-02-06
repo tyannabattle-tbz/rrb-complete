@@ -6,8 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { AlertCircle, TrendingUp, Zap } from "lucide-react";
 
 export function UsageQuotasUI() {
-  const { data: quota, isLoading } = trpc.usageQuotas.getQuota.useQuery();
-  const { data: history } = trpc.usageQuotas.getUsageHistory.useQuery();
+  const { data: quota, isLoading } = trpc.admin.admin.usageQuotas.getQuota.useQuery();
+  const { data: history } = trpc.admin.admin.usageQuotas.getUsageHistory.useQuery();
 
   if (isLoading) {
     return <div className="text-center py-8">Loading quota information...</div>;

@@ -69,15 +69,15 @@ export function VideoWatermarkEditor() {
   const [svgPreview, setSvgPreview] = useState("");
 
   // tRPC queries and mutations
-  const getPresetsQuery = trpc.watermark.getPresets.useQuery();
-  const validateTextQuery = trpc.watermark.validateWatermark.useQuery(textWatermark);
-  const generateSVGQuery = trpc.watermark.generateSVG.useQuery({
+  const getPresetsQuery = trpc.entertainment.watermark.getPresets.useQuery();
+  const validateTextQuery = trpc.entertainment.watermark.validateWatermark.useQuery(textWatermark);
+  const generateSVGQuery = trpc.entertainment.watermark.generateSVG.useQuery({
     watermark: textWatermark,
     videoWidth: previewWidth,
     videoHeight: previewHeight,
   });
-  const saveConfigMutation = trpc.watermark.saveConfiguration.useMutation();
-  const getConfigQuery = trpc.watermark.getConfiguration.useQuery({ configId });
+  const saveConfigMutation = trpc.entertainment.watermark.saveConfiguration.useMutation();
+  const getConfigQuery = trpc.entertainment.watermark.getConfiguration.useQuery({ configId });
 
   // Load configuration
   useEffect(() => {

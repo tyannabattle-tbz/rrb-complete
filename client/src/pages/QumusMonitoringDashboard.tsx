@@ -11,27 +11,27 @@ export default function QumusMonitoringDashboard() {
   const [refreshInterval, setRefreshInterval] = useState(5000);
 
   // Fetch QUMUS identity and status
-  const { data: identity } = trpc.qumusIdentity.whoAmI.useQuery(undefined, {
+  const { data: identity } = trpc.ai.qumusIdentity.whoAmI.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 
-  const { data: policies } = trpc.qumusIdentity.decisionPolicies.useQuery(undefined, {
+  const { data: policies } = trpc.ai.qumusIdentity.decisionPolicies.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 
-  const { data: services } = trpc.qumusIdentity.serviceIntegrations.useQuery(undefined, {
+  const { data: services } = trpc.ai.qumusIdentity.serviceIntegrations.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 
-  const { data: metrics } = trpc.qumusIdentity.operationalMetrics.useQuery(undefined, {
+  const { data: metrics } = trpc.ai.qumusIdentity.operationalMetrics.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 
-  const { data: hybridCast } = trpc.qumusIdentity.hybridCastIntegration.useQuery(undefined, {
+  const { data: hybridCast } = trpc.ai.qumusIdentity.hybridCastIntegration.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 
-  const { data: boogie } = trpc.qumusIdentity.rockinRockinBoogieStatus.useQuery(undefined, {
+  const { data: boogie } = trpc.ai.qumusIdentity.rockinRockinBoogieStatus.useQuery(undefined, {
     refetchInterval: autoRefresh ? refreshInterval : false,
   });
 

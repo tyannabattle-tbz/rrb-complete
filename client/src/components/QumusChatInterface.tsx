@@ -46,7 +46,7 @@ export function QumusChatInterface() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Use tRPC mutation for chat
-  const chatMutation = trpc.qumusChat.chat.useMutation({
+  const chatMutation = trpc.ai.qumusChat.chat.useMutation({
     onSuccess: (data) => {
       const messageContent = typeof data.message === 'string' 
         ? data.message 

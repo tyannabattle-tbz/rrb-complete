@@ -7,16 +7,16 @@ import { useState } from "react";
 export default function AnalyticsDashboardUI() {
   const [timeRange, setTimeRange] = useState<"day" | "week" | "month" | "year">("month");
 
-  const { data: overview, isLoading: overviewLoading } = trpc.analyticsDashboard.getDashboardOverview.useQuery({ timeRange: timeRange as "day" | "week" | "month" | "year" });
-  const { data: tokenChart } = trpc.analyticsDashboard.getTokenUsageChart.useQuery({ timeRange: (timeRange === "day" ? "week" : timeRange) as "week" | "month" });
-  const { data: costChart } = trpc.analyticsDashboard.getCostTrendChart.useQuery({ timeRange: (timeRange === "day" ? "week" : timeRange) as "week" | "month" });
-  const { data: modelUsage } = trpc.analyticsDashboard.getModelUsageBreakdown.useQuery();
-  const { data: sessionMetrics } = trpc.analyticsDashboard.getSessionMetrics.useQuery({ limit: 10 });
-  const { data: topFeatures } = trpc.analyticsDashboard.getTopFeaturesUsed.useQuery();
-  const { data: comparison } = trpc.analyticsDashboard.getUsageComparison.useQuery();
-  const { data: recommendations } = trpc.analyticsDashboard.getRecommendations.useQuery();
+  const { data: overview, isLoading: overviewLoading } = trpc.admin.admin.analyticsDashboard.getDashboardOverview.useQuery({ timeRange: timeRange as "day" | "week" | "month" | "year" });
+  const { data: tokenChart } = trpc.admin.admin.analyticsDashboard.getTokenUsageChart.useQuery({ timeRange: (timeRange === "day" ? "week" : timeRange) as "week" | "month" });
+  const { data: costChart } = trpc.admin.admin.analyticsDashboard.getCostTrendChart.useQuery({ timeRange: (timeRange === "day" ? "week" : timeRange) as "week" | "month" });
+  const { data: modelUsage } = trpc.admin.admin.analyticsDashboard.getModelUsageBreakdown.useQuery();
+  const { data: sessionMetrics } = trpc.admin.admin.analyticsDashboard.getSessionMetrics.useQuery({ limit: 10 });
+  const { data: topFeatures } = trpc.admin.admin.analyticsDashboard.getTopFeaturesUsed.useQuery();
+  const { data: comparison } = trpc.admin.admin.analyticsDashboard.getUsageComparison.useQuery();
+  const { data: recommendations } = trpc.admin.admin.analyticsDashboard.getRecommendations.useQuery();
 
-  const exportMutation = trpc.analyticsDashboard.exportAnalyticsReport.useMutation();
+  const exportMutation = trpc.admin.admin.analyticsDashboard.exportAnalyticsReport.useMutation();
 
   const handleExport = async (format: "csv" | "pdf" | "json") => {
     try {

@@ -11,7 +11,7 @@ export default function EnhancedChatPage() {
   const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const sendChat = trpc.qumusChat.chat.useMutation();
+  const sendChat = trpc.ai.qumusChat.chat.useMutation();
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
