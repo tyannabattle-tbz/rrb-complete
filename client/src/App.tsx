@@ -87,6 +87,7 @@ import HybridCastHub from '@/pages/HybridCastHub';
 import HybridCastAnalyticsDashboard from '@/pages/HybridCastAnalyticsDashboard';
 import HybridCastIntegration from '@/pages/HybridCastIntegration';
 import HybridCastNotificationCenter from '@/pages/HybridCastNotificationCenter';
+import BroadcastTemplatesLibrary from '@/pages/BroadcastTemplatesLibrary';
 
 function Router() {
   return (
@@ -165,6 +166,7 @@ function Router() {
       <Route path="/hybridcast-analytics" component={HybridCastAnalyticsDashboard} />
       <Route path="/hybridcast" component={HybridCastIntegration} />
       <Route path="/hybridcast-notifications" component={HybridCastNotificationCenter} />
+      <Route path="/broadcast-templates" component={BroadcastTemplatesLibrary} />
       <Route component={NotFound} />
     </Switch>
   );

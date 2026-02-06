@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { exportToCSV, exportToJSON } from '@/lib/analyticsExport';
 
 interface Notification {
   id: string;
@@ -108,6 +109,36 @@ export default function HybridCastNotificationCenter() {
   const handleClearAll = () => {
     setNotifications([]);
     toast.success('All notifications cleared');
+  };
+
+  const handleExportCSV = () => {
+    const data = filteredNotifications.map((n) => ({
+      timestamp: n.timestamp,
+      broadcastId: n.id,
+      title: n.title,
+      severity: n.severity,
+      channels: [],
+      viewerCount: 0,
+      engagementRate: 0,
+      deliveryStatus: n.read ? 'delivered' : 'pending',
+    }));
+    exportToCSV(data);
+    toast.success('Exported to CSV');
+  };
+
+  const handleExportJSON = () => {
+    const data = filteredNotifications.map((n) => ({
+      timestamp: n.timestamp,
+      broadcastId: n.id,
+      title: n.title,
+      severity: n.severity,
+      channels: [],
+      viewerCount: 0,
+      engagementRate: 0,
+      deliveryStatus: n.read ? 'delivered' : 'pending',
+    }));
+    exportToJSON(data);
+    toast.success('Exported to JSON');
   };
 
   const getSeverityColor = (severity: string) => {
@@ -246,14 +277,30 @@ export default function HybridCastNotificationCenter() {
               </Button>
             )}
             {notifications.length > 0 && (
-              <Button
-                onClick={handleClearAll}
-                variant="outline"
-                className="text-red-400 border-red-600 hover:bg-red-500/10"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Clear All
-              </Button>
+              <>
+                <Button
+                  onClick={handleExportCSV}
+                  variant="outline"
+                  className="text-blue-400 border-blue-600 hover:bg-blue-500/10"
+                >
+                  Export CSV
+                </Button>
+                <Button
+                  onClick={handleExportJSON}
+                  variant="outline"
+                  className="text-green-400 border-green-600 hover:bg-green-500/10"
+                >
+                  Export JSON
+                </Button>
+                <Button
+                  onClick={handleClearAll}
+                  variant="outline"
+                  className="text-red-400 border-red-600 hover:bg-red-500/10"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Clear All
+                </Button>
+              </>
             )}
           </div>
         </div>
