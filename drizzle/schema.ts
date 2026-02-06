@@ -1123,7 +1123,7 @@ export const hybridCastNodes = mysqlTable("hybrid_cast_nodes", {
   signalStrength: int("signalStrength"), // -100 to 0 dBm
   bandwidth: int("bandwidth"), // Mbps
   latency: int("latency"), // milliseconds
-  isActive: boolean("isActive").default(true),
+  isActive: int().default(true),
   lastHeartbeat: timestamp("lastHeartbeat"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -1141,7 +1141,7 @@ export const hybridCastConnections = mysqlTable("hybrid_cast_connections", {
   bandwidth: int("bandwidth"), // Mbps
   latency: int("latency"), // milliseconds
   packetLoss: int("packetLoss"), // percentage
-  isActive: boolean("isActive").default(true),
+  isActive: int().default(true),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -1183,7 +1183,7 @@ export const alertRules = mysqlTable("alert_rules", {
   operator: mysqlEnum("operator", ["gt", "lt", "eq", "gte", "lte", "ne"]).default("gt"),
   threshold: decimal("threshold", { precision: 10, scale: 2 }),
   duration: int("duration"), // seconds
-  enabled: boolean("enabled").default(true),
+  enabled: int().default(true),
   notificationChannels: text("notificationChannels"), // JSON array
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
