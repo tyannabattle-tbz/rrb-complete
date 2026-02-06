@@ -25,6 +25,11 @@ import { qumusRouter } from "./routers/qumus";
 // Import iTunes Podcasts router
 import { itunesPodcastsRouter } from "./routers/itunesPodcasts";
 
+// Import new routers
+import { chatStreamingRouter } from "./routers/chatStreamingRouter";
+import { locationSharingRouter } from "./routers/locationSharingRouter";
+import { fileAnalysisRouter } from "./routers/fileAnalysisRouter";
+
 export const appRouter = router({
   // System router
   system: systemRouter,
@@ -50,6 +55,15 @@ export const appRouter = router({
 
   // iTunes Podcasts
   itunesPodcasts: itunesPodcastsRouter,
+
+  // Chat Streaming
+  chatStreaming: chatStreamingRouter,
+
+  // Location Sharing
+  locationSharing: locationSharingRouter,
+
+  // File Analysis
+  fileAnalysis: fileAnalysisRouter,
 
   // Agent Session Management
   agent: router({
