@@ -69,6 +69,7 @@ import { RockinBoogiePlayerEnhanced } from '@/components/RockinBoogiePlayerEnhan
 import { DonationCheckout } from '@/pages/DonationCheckout';
 import { ProofVaultSearch } from '@/pages/ProofVaultSearch';
 import { ListenerDashboard } from '@/pages/ListenerDashboard';
+import MeditationHub from '@/pages/MeditationHub';
 
 function Router() {
   return (
@@ -133,6 +134,7 @@ function Router() {
       <Route path="/donate" component={DonationCheckout} />
       <Route path="/proof-vault" component={ProofVaultSearch} />
       <Route path="/dashboard" component={ListenerDashboard} />
+      <Route path="/meditation" component={MeditationHub} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
