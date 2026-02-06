@@ -6,6 +6,7 @@ import { Send, Loader, Upload, X, FileIcon, Music, Image as ImageIcon, AlertCirc
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { useState, useRef, useEffect } from 'react';
+import VoiceChat from './VoiceChat';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -43,6 +44,7 @@ export function QumusChatInterface() {
     error: null,
   });
   const [dragActive, setDragActive] = useState(false);
+  const [showVoiceChat, setShowVoiceChat] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -397,6 +399,32 @@ export function QumusChatInterface() {
             )}
           </Button>
         </div>
+      </div>
+
+      {/* Voice Chat Panel */}
+      {showVoiceChat && (
+        <div className="mt-4">
+          <VoiceChat
+            onSendMessage={(message) => {
+              setInput(message);
+              handleSendMessage(message);
+              setShowVoiceChat(false);
+            }}
+            onVoiceInput={(transcript) => {
+              setInput(transcript);
+            }}
+          />
+        </div>
+      )}
+
+      {/* Voice Chat Toggle Button */}
+      <div className="mt-4 flex justify-center">
+        <button
+          onClick={() => setShowVoiceChat(!showVoiceChat)}
+          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+        >
+          {showVoiceChat ? 'Hide Voice Chat' : 'Show Voice Chat'}
+        </button>
       </div>
     </div>
   );
