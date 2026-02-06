@@ -60,65 +60,65 @@ interface TabItem {
 
 const TABS: TabItem[] = [
   // Network
-  { id: 'net', label: 'NET', icon: <Network className="w-4 h-4" />, category: 'network', description: 'Network Status' },
-  { id: 'topo', label: 'TOPO', icon: <Grid3x3 className="w-4 h-4" />, category: 'network', description: 'Network Topology' },
+  { id: 'net', label: 'NET', icon: <Network className="w-4 h-4" />, category: 'network', description: 'Network Status', route: '/monitoring' },
+  { id: 'topo', label: 'TOPO', icon: <Grid3x3 className="w-4 h-4" />, category: 'network', description: 'Network Topology', route: '/hybridcast-hub' },
   { id: 'gps', label: 'GPS', icon: <MapPin className="w-4 h-4" />, category: 'network', description: 'GPS Tracking', route: '/gps-radar' },
-  { id: 'geo', label: 'GEO', icon: <Layers className="w-4 h-4" />, category: 'network', description: 'Geolocation' },
-  { id: 'wx', label: 'WX', icon: <Cloud className="w-4 h-4" />, category: 'network', description: 'Weather' },
-  { id: 'mesh', label: 'MESH', icon: <Wifi className="w-4 h-4" />, category: 'network', description: 'Mesh Network' },
+  { id: 'geo', label: 'GEO', icon: <Layers className="w-4 h-4" />, category: 'network', description: 'Geolocation', route: '/location-chat' },
+  { id: 'wx', label: 'WX', icon: <Cloud className="w-4 h-4" />, category: 'network', description: 'Weather', route: '/monitoring' },
+  { id: 'mesh', label: 'MESH', icon: <Wifi className="w-4 h-4" />, category: 'network', description: 'Mesh Network', route: '/hybridcast-hub' },
 
   // Communication
-  { id: 'ptt', label: 'PTT', icon: <RadioIcon className="w-4 h-4" />, category: 'communication', description: 'Push-to-Talk' },
+  { id: 'ptt', label: 'PTT', icon: <RadioIcon className="w-4 h-4" />, category: 'communication', description: 'Push-to-Talk', route: '/location-chat' },
   { id: 'live', label: 'LIVE', icon: <Radio className="w-4 h-4" />, category: 'communication', description: 'Live Broadcast', route: '/broadcast-admin' },
   { id: 'audio', label: 'AUDIO', icon: <Volume2 className="w-4 h-4" />, category: 'communication', description: 'Audio Control', route: '/podcast-discovery' },
   { id: 'chat', label: 'CHAT', icon: <MessageSquare className="w-4 h-4" />, category: 'communication', description: 'Chat', route: '/location-chat' },
-  { id: 'thrd', label: 'THRD', icon: <MessageSquare className="w-4 h-4" />, category: 'communication', description: 'Threads' },
-  { id: 'files', label: 'FILES', icon: <FileText className="w-4 h-4" />, category: 'communication', description: 'File Sharing' },
-  { id: 'share', label: 'SHARE', icon: <Share2 className="w-4 h-4" />, category: 'communication', description: 'Share' },
+  { id: 'thrd', label: 'THRD', icon: <MessageSquare className="w-4 h-4" />, category: 'communication', description: 'Threads', route: '/location-chat' },
+  { id: 'files', label: 'FILES', icon: <FileText className="w-4 h-4" />, category: 'communication', description: 'File Sharing', route: '/broadcast-admin' },
+  { id: 'share', label: 'SHARE', icon: <Share2 className="w-4 h-4" />, category: 'communication', description: 'Share', route: '/broadcast-admin' },
 
   // Emergency
   { id: 'alert', label: 'ALERT', icon: <AlertTriangle className="w-4 h-4" />, category: 'emergency', description: 'Alerts', route: '/broadcast-admin' },
-  { id: 'sync', label: 'SYNC', icon: <Zap className="w-4 h-4" />, category: 'emergency', description: 'Sync' },
-  { id: 'usb', label: 'USB', icon: <HardDrive className="w-4 h-4" />, category: 'emergency', description: 'USB' },
-  { id: 'roles', label: 'ROLES', icon: <Users2 className="w-4 h-4" />, category: 'emergency', description: 'Roles' },
+  { id: 'sync', label: 'SYNC', icon: <Zap className="w-4 h-4" />, category: 'emergency', description: 'Sync', route: '/broadcast-admin' },
+  { id: 'usb', label: 'USB', icon: <HardDrive className="w-4 h-4" />, category: 'emergency', description: 'USB', route: '/broadcast-admin' },
+  { id: 'roles', label: 'ROLES', icon: <Users2 className="w-4 h-4" />, category: 'emergency', description: 'Roles', route: '/collaboration' },
 
   // Health & Monitoring
-  { id: 'health', label: 'HEALTH', icon: <Heart className="w-4 h-4" />, category: 'health', description: 'System Health' },
-  { id: 'aimon', label: 'AI MON', icon: <Brain className="w-4 h-4" />, category: 'health', description: 'AI Monitor' },
-  { id: 'aichat', label: 'AI CHAT', icon: <Brain className="w-4 h-4" />, category: 'health', description: 'AI Chat' },
-  { id: 'aimsg', label: 'AI MSG', icon: <Brain className="w-4 h-4" />, category: 'health', description: 'AI Messages' },
-  { id: 'triage', label: 'TRIAGE', icon: <AlertCircle className="w-4 h-4" />, category: 'health', description: 'Triage' },
+  { id: 'health', label: 'HEALTH', icon: <Heart className="w-4 h-4" />, category: 'health', description: 'System Health', route: '/service-health' },
+  { id: 'aimon', label: 'AI MON', icon: <Brain className="w-4 h-4" />, category: 'health', description: 'AI Monitor', route: '/qumus-dashboard' },
+  { id: 'aichat', label: 'AI CHAT', icon: <Brain className="w-4 h-4" />, category: 'health', description: 'AI Chat', route: '/enhanced-chat' },
+  { id: 'aimsg', label: 'AI MSG', icon: <Brain className="w-4 h-4" />, category: 'health', description: 'AI Messages', route: '/qumus-chat' },
+  { id: 'triage', label: 'TRIAGE', icon: <AlertCircle className="w-4 h-4" />, category: 'health', description: 'Triage', route: '/broadcast-admin' },
 
   // Security
-  { id: 'crypto', label: 'CRYPTO', icon: <Lock className="w-4 h-4" />, category: 'security', description: 'Encryption' },
+  { id: 'crypto', label: 'CRYPTO', icon: <Lock className="w-4 h-4" />, category: 'security', description: 'Encryption', route: '/user-preferences' },
   { id: 'tmplt', label: 'TMPLT', icon: <FileText className="w-4 h-4" />, category: 'security', description: 'Templates', route: '/broadcast-scheduler' },
   { id: 'sched', label: 'SCHED', icon: <Clock className="w-4 h-4" />, category: 'security', description: 'Schedule', route: '/broadcast-scheduler' },
-  { id: 'setup', label: 'SETUP', icon: <Settings className="w-4 h-4" />, category: 'security', description: 'Setup' },
+  { id: 'setup', label: 'SETUP', icon: <Settings className="w-4 h-4" />, category: 'security', description: 'Setup', route: '/user-preferences' },
 
   // Operations
   { id: 'drill', label: 'DRILL', icon: <Lightbulb className="w-4 h-4" />, category: 'operations', description: 'Drills', route: '/broadcast-admin' },
-  { id: 'github', label: 'GITHUB', icon: <Github className="w-4 h-4" />, category: 'operations', description: 'GitHub' },
-  { id: 'about', label: 'ABOUT', icon: <Info className="w-4 h-4" />, category: 'operations', description: 'About' },
+  { id: 'github', label: 'GITHUB', icon: <Github className="w-4 h-4" />, category: 'operations', description: 'GitHub', route: '/broadcast-admin' },
+  { id: 'about', label: 'ABOUT', icon: <Info className="w-4 h-4" />, category: 'operations', description: 'About', route: '/' },
   { id: 'team', label: 'TEAM', icon: <Users className="w-4 h-4" />, category: 'operations', description: 'Team', route: '/collaboration' },
   { id: 'alerts', label: 'ALERTS', icon: <Bell className="w-4 h-4" />, category: 'operations', description: 'Alerts', route: '/broadcast-admin' },
   { id: 'train', label: 'TRAIN', icon: <BookOpen className="w-4 h-4" />, category: 'operations', description: 'Training', route: '/podcast-discovery' },
-  { id: 'sms', label: 'SMS', icon: <MessageSquare className="w-4 h-4" />, category: 'operations', description: 'SMS' },
-  { id: 'mobile', label: 'MOBILE', icon: <Mobile className="w-4 h-4" />, category: 'operations', description: 'Mobile' },
+  { id: 'sms', label: 'SMS', icon: <MessageSquare className="w-4 h-4" />, category: 'operations', description: 'SMS', route: '/location-chat' },
+  { id: 'mobile', label: 'MOBILE', icon: <Mobile className="w-4 h-4" />, category: 'operations', description: 'Mobile', route: '/broadcast-admin' },
   { id: 'stats', label: 'STATS', icon: <TrendingUp className="w-4 h-4" />, category: 'operations', description: 'Statistics', route: '/broadcast-admin' },
-  { id: 'signal', label: 'SIGNAL', icon: <Signal className="w-4 h-4" />, category: 'operations', description: 'Signal' },
+  { id: 'signal', label: 'SIGNAL', icon: <Signal className="w-4 h-4" />, category: 'operations', description: 'Signal', route: '/monitoring' },
   { id: 'history', label: 'HISTORY', icon: <History className="w-4 h-4" />, category: 'operations', description: 'History', route: '/vod-library' },
   { id: 'log', label: 'LOG', icon: <FileText className="w-4 h-4" />, category: 'operations', description: 'Logs', route: '/audit-log' },
-  { id: 'quiet', label: 'QUIET', icon: <Volume className="w-4 h-4" />, category: 'operations', description: 'Quiet Mode' },
-  { id: 'ack', label: 'ACK', icon: <CheckCircle className="w-4 h-4" />, category: 'operations', description: 'Acknowledge' },
-  { id: 'mac', label: 'MAC', icon: <Shield className="w-4 h-4" />, category: 'operations', description: 'MAC' },
-  { id: 'radar', label: 'RADAR', icon: <Radar className="w-4 h-4" />, category: 'operations', description: 'Radar', route: '/gps-radar' },
-  { id: 'qumus', label: 'QUMUS', icon: <Brain className="w-4 h-4" />, category: 'operations', description: 'QUMUS' },
+  { id: 'quiet', label: 'QUIET', icon: <Volume className="w-4 h-4" />, category: 'operations', description: 'Quiet Mode', route: '/user-preferences' },
+  { id: 'ack', label: 'ACK', icon: <CheckCircle className="w-4 h-4" />, category: 'operations', description: 'Acknowledge', route: '/broadcast-admin' },
+  { id: 'mac', label: 'MAC', icon: <Shield className="w-4 h-4" />, category: 'operations', description: 'MAC', route: '/user-preferences' },
+  { id: 'radar', label: 'RADAR', icon: <Radar className="w-4 h-4" />, category: 'operations', description: 'Radar', route: '/hybridcast-hub' },
+  { id: 'qumus', label: 'QUMUS', icon: <Brain className="w-4 h-4" />, category: 'operations', description: 'QUMUS', route: '/qumus-dashboard' },
 
   // Accessibility
-  { id: 'a11y', label: 'A11Y', icon: <Accessibility className="w-4 h-4" />, category: 'accessibility', description: 'Accessibility' },
-  { id: 'tts', label: 'TTS', icon: <Volume2 className="w-4 h-4" />, category: 'accessibility', description: 'Text-to-Speech' },
-  { id: 'asl', label: 'ASL', icon: <Headphones className="w-4 h-4" />, category: 'accessibility', description: 'Sign Language' },
-  { id: 'wcag', label: 'WCAG', icon: <CheckCircle className="w-4 h-4" />, category: 'accessibility', description: 'WCAG' },
+  { id: 'a11y', label: 'A11Y', icon: <Accessibility className="w-4 h-4" />, category: 'accessibility', description: 'Accessibility', route: '/user-preferences' },
+  { id: 'tts', label: 'TTS', icon: <Volume2 className="w-4 h-4" />, category: 'accessibility', description: 'Text-to-Speech', route: '/user-preferences' },
+  { id: 'asl', label: 'ASL', icon: <Headphones className="w-4 h-4" />, category: 'accessibility', description: 'Sign Language', route: '/user-preferences' },
+  { id: 'wcag', label: 'WCAG', icon: <CheckCircle className="w-4 h-4" />, category: 'accessibility', description: 'WCAG Compliance', route: '/user-preferences' },
 ];
 
 export function HybridCastTabNavigationFixed() {
