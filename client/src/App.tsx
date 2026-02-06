@@ -66,6 +66,9 @@ import Studio from '@/pages/Studio';
 import { PodcastPlayer } from '@/components/PodcastPlayer';
 import PodcastDiscovery from '@/pages/PodcastDiscovery';
 import { RockinBoogiePlayerEnhanced } from '@/components/RockinBoogiePlayerEnhanced';
+import { DonationCheckout } from '@/pages/DonationCheckout';
+import { ProofVaultSearch } from '@/pages/ProofVaultSearch';
+import { ListenerDashboard } from '@/pages/ListenerDashboard';
 
 function Router() {
   return (
@@ -127,6 +130,9 @@ function Router() {
       <Route path="/studio" component={Studio} />
       <Route path="/podcast" component={PodcastPlayer} />
       <Route path="/podcast-discovery" component={PodcastDiscovery} />
+      <Route path="/donate" component={DonationCheckout} />
+      <Route path="/proof-vault" component={ProofVaultSearch} />
+      <Route path="/dashboard" component={ListenerDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
