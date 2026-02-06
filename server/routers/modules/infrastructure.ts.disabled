@@ -16,7 +16,6 @@ import { alertRulesEngineRouter } from '../alertRulesEngine';
 import { anomalyDetectionRouter } from '../anomalyDetection';
 import { predictiveAlertsRouter } from '../predictiveAlerts';
 import { suppressionRulesRouter } from '../suppressionRules';
-import { multiTenancyRouter } from '../multiTenancy';
 import { securityRouter } from '../securityRouter';
 import { errorHandlingRouter } from '../errorHandlingRouter';
 import { optimizationRouter } from '../optimizationRouter';
@@ -42,8 +41,7 @@ export const infrastructureRouter = router({
   // Performance & Testing
   performanceTesting: performanceTestingRouter,
 
-  // Multi-Tenancy & Security
-  multiTenancy: multiTenancyRouter,
+  // Security
   security: securityRouter,
   errorHandling: errorHandlingRouter,
   optimization: optimizationRouter,

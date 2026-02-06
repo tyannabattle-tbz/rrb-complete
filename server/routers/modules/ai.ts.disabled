@@ -14,7 +14,6 @@ import { llmStoryboardingRouter } from '../llmStoryboardingRouter';
 import { promptLibraryRouter } from '../promptLibrary';
 import { contentGenerationRouter } from '../contentGeneration';
 import { contentGenerationPolicyRouter } from '../contentGenerationPolicy';
-import { storyboardRouter } from '../storyboardRouter';
 import { voiceInputRouter } from '../voiceInput';
 import { speechToTextRouter } from '../speechToText';
 import { textToSpeechRouter } from '../textToSpeech';
@@ -36,8 +35,6 @@ export const aiChatRouter_module = router({
   promptLibrary: promptLibraryRouter,
   contentGeneration: contentGenerationRouter,
   contentGenerationPolicy: contentGenerationPolicyRouter,
-  storyboard: storyboardRouter,
-
   // Voice & Speech
   voiceInput: voiceInputRouter,
   speechToText: speechToTextRouter,

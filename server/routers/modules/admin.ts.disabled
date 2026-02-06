@@ -5,13 +5,11 @@
 
 import { router } from '../../_core/trpc';
 import { adminRouter } from '../admin';
-import { adminDashboardRouter } from '../adminDashboard';
 import { customDashboardsRouter } from '../customDashboards';
 import { customDashboardBuilderRouter } from '../customDashboardBuilder';
 import { analyticsDashboardRouter } from '../analyticsDashboard';
 import { realtimeDashboardRouter } from '../realtimeDashboardRouter';
 import { userManagementRouter } from '../userManagementRouter';
-import { rateLimitingRouter } from '../rateLimiting';
 import { usageQuotasRouter } from '../usageQuotasRouter';
 import { billingRouter } from '../billingRouter';
 import { auditTrailUIRouter } from '../auditTrailUI';
@@ -24,7 +22,6 @@ import { tokenBudgetingRouter } from '../tokenBudgeting';
 export const adminComplianceRouter = router({
   // Admin Dashboards
   admin: adminRouter,
-  adminDashboard: adminDashboardRouter,
   customDashboards: customDashboardsRouter,
   customDashboardBuilder: customDashboardBuilderRouter,
   analyticsDashboard: analyticsDashboardRouter,
@@ -32,7 +29,6 @@ export const adminComplianceRouter = router({
 
   // User & Access Management
   userManagement: userManagementRouter,
-  rateLimiting: rateLimitingRouter,
   usageQuotas: usageQuotasRouter,
 
   // Billing & Budget

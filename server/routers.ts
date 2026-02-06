@@ -19,6 +19,9 @@ import { chunk3Router } from "./routerChunks/chunk3";
 import { chunk4Router } from "./routerChunks/chunk4";
 import { chunk5Router } from "./routerChunks/chunk5";
 
+// Import QUMUS router
+import { qumusRouter } from "./routers/qumus";
+
 export const appRouter = router({
   // System router
   system: systemRouter,
