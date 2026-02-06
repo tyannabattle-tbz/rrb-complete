@@ -33,6 +33,7 @@ import { dashboardRouter } from "./routers/dashboardRouter";
 import { broadcastRouter } from "./routers/broadcastRouter";
 import { hybridcastRouter } from "./routers/hybridcastRouter";
 import { hybridcastSyncRouter } from "./routers/hybridcastSyncRouter";
+import { rockinBoogieRouter } from "./routers/rockinBoogie";
 
 export const appRouter = router({
   // System router
@@ -80,6 +81,9 @@ export const appRouter = router({
 
   // HybridCast Data Sync
   hybridcastSync: hybridcastSyncRouter,
+
+  // Rockin Boogie Content Management
+  rockinBoogie: rockinBoogieRouter,
 
   // Agent Session Management
   agent: router({
