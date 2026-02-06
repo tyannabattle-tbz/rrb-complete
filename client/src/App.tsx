@@ -70,6 +70,7 @@ import { DonationCheckout } from '@/pages/DonationCheckout';
 import { ProofVaultSearch } from '@/pages/ProofVaultSearch';
 import { ListenerDashboard } from '@/pages/ListenerDashboard';
 import MeditationHub from '@/pages/MeditationHub';
+import { GPSRadarMapPage } from '@/pages/GPSRadarMapPage';
 
 function Router() {
   return (
@@ -135,6 +136,7 @@ function Router() {
       <Route path="/proof-vault" component={ProofVaultSearch} />
       <Route path="/dashboard" component={ListenerDashboard} />
       <Route path="/meditation" component={MeditationHub} />
+      <Route path="/gps-radar" component={GPSRadarMapPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

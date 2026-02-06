@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ChatHeader } from './ChatHeader';
-import { Send, Loader, Upload, X, FileIcon, Music, Image as ImageIcon } from 'lucide-react';
+import { Send, Loader, Upload, X, FileIcon, Music, Image as ImageIcon, AlertCircle } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
+import { useState, useRef, useEffect } from 'react';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -16,11 +16,12 @@ interface Message {
     fileType: string;
     fileSize: number;
     s3Url?: string;
-  };
+  }[];
+  error?: string;
 }
 
 interface FileUploadState {
-  file: File | null;
+  files: File[];
   progress: number;
   uploading: boolean;
   error: string | null;
@@ -36,7 +37,7 @@ export function QumusChatInterface() {
   ]);
   const [input, setInput] = useState('');
   const [fileUpload, setFileUpload] = useState<FileUploadState>({
-    file: null,
+    files: [],
     progress: 0,
     uploading: false,
     error: null,
@@ -45,9 +46,21 @@ export function QumusChatInterface() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Use tRPC mutation for chat
+  // Use tRPC mutation for chat with improved error handling
   const chatMutation = trpc.ai.qumusChat.chat.useMutation({
     onSuccess: (data) => {
+      if (!data.success) {
+        const errorMessage: Message = {
+          role: 'assistant',
+          content: data.message || 'I encountered an error processing your request.',
+          timestamp: Date.now(),
+          error: data.error || 'Unknown error',
+        };
+        setMessages(prev => [...prev, errorMessage]);
+        toast.error('Chat error: ' + (data.error || 'Unknown error'));
+        return;
+      }
+
       const messageContent = typeof data.message === 'string' 
         ? data.message 
         : Array.isArray(data.message) 
@@ -60,6 +73,7 @@ export function QumusChatInterface() {
         timestamp: Date.now(),
       };
       setMessages(prev => [...prev, assistantMessage]);
+      toast.success('Response received');
     },
     onError: (error) => {
       console.error('Chat error:', error);
@@ -67,8 +81,10 @@ export function QumusChatInterface() {
         role: 'assistant',
         content: 'Sorry, I encountered an error. Please try again.',
         timestamp: Date.now(),
+        error: error.message || 'Network error',
       };
       setMessages(prev => [...prev, errorMessage]);
+      toast.error('Chat failed: ' + (error.message || 'Unknown error'));
     },
   });
 
@@ -83,19 +99,10 @@ export function QumusChatInterface() {
   const uploadFileMutation = trpc.qumusFileUpload.uploadFile.useMutation({
     onSuccess: (data) => {
       toast.success(`File uploaded: ${data.metadata.originalName}`);
-      const fileMessage: Message = {
-        role: 'user',
-        content: `Uploaded file: ${data.metadata.originalName}`,
-        timestamp: Date.now(),
-        fileData: {
-          fileName: data.metadata.originalName,
-          fileType: data.metadata.fileType,
-          fileSize: data.metadata.size,
-          s3Url: data.s3Url,
-        },
-      };
-      setMessages(prev => [...prev, fileMessage]);
-      setFileUpload({ file: null, progress: 0, uploading: false, error: null });
+      setFileUpload(prev => ({
+        ...prev,
+        files: prev.files.filter(f => f.name !== data.metadata.originalName),
+      }));
     },
     onError: (error) => {
       const errorMsg = error.message || 'File upload failed';
@@ -104,28 +111,63 @@ export function QumusChatInterface() {
     },
   });
 
-  const handleFileSelect = async (file: File) => {
-    try {
-      // Validate file - queries are synchronous in tRPC
-      // We'll skip validation for now and let the server handle it
-      setFileUpload({ file, progress: 0, uploading: true, error: null });
+  const handleFileSelect = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
 
-      // Convert to base64
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const base64Data = (e.target?.result as string).split(',')[1];
-        await uploadFileMutation.mutateAsync({
-          fileName: file.name,
-          mimeType: file.type,
-          fileSize: file.size,
-          base64Data,
-          description: `File uploaded from QUMUS chat`,
-        });
-      };
-      reader.readAsDataURL(file);
+    try {
+      const newFiles = Array.from(files);
+      setFileUpload(prev => ({
+        ...prev,
+        files: [...prev.files, ...newFiles],
+        uploading: true,
+        error: null,
+      }));
+
+      // Upload all files in parallel
+      let uploadedCount = 0;
+      const uploadPromises = newFiles.map(async (file) => {
+        try {
+          const reader = new FileReader();
+          return new Promise<void>((resolve, reject) => {
+            reader.onload = async (e) => {
+              try {
+                const base64Data = (e.target?.result as string).split(',')[1];
+                await uploadFileMutation.mutateAsync({
+                  fileName: file.name,
+                  mimeType: file.type,
+                  fileSize: file.size,
+                  base64Data,
+                  description: `File uploaded from QUMUS chat`,
+                });
+                uploadedCount++;
+                setFileUpload(prev => ({
+                  ...prev,
+                  progress: Math.round((uploadedCount / newFiles.length) * 100),
+                }));
+                resolve();
+              } catch (error) {
+                reject(error);
+              }
+            };
+            reader.onerror = () => reject(new Error('File read failed'));
+            reader.readAsDataURL(file);
+          });
+        } catch (error) {
+          console.error(`Failed to upload ${file.name}:`, error);
+          throw error;
+        }
+      });
+
+      await Promise.all(uploadPromises);
+      setFileUpload(prev => ({
+        ...prev,
+        uploading: false,
+        progress: 100,
+      }));
+      toast.success(`All ${newFiles.length} file(s) uploaded successfully`);
     } catch (error) {
-      toast.error('Failed to process file');
-      setFileUpload(prev => ({ ...prev, uploading: false }));
+      toast.error('Failed to process files');
+      setFileUpload(prev => ({ ...prev, uploading: false, error: 'Upload failed' }));
     }
   };
 
@@ -146,7 +188,7 @@ export function QumusChatInterface() {
 
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
-      handleFileSelect(files[0]);
+      handleFileSelect(files);
     }
   };
 
@@ -162,20 +204,56 @@ export function QumusChatInterface() {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
 
-    // Call the QUMUS chat API using tRPC
-    await chatMutation.mutateAsync({
-      messages: messages.map(m => ({
-        role: m.role,
-        content: m.content,
-      })),
-      query: input,
-    });
+    try {
+      // Call the QUMUS chat API using tRPC with retry logic
+      let retries = 3;
+      let lastError: Error | null = null;
+
+      while (retries > 0) {
+        try {
+          await chatMutation.mutateAsync({
+            messages: messages.map(m => ({
+              role: m.role,
+              content: m.content,
+            })),
+            query: input,
+          });
+          break;
+        } catch (error) {
+          lastError = error as Error;
+          retries--;
+          if (retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+          }
+        }
+      }
+
+      if (retries === 0 && lastError) {
+        throw lastError;
+      }
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      const errorMessage: Message = {
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
+        timestamp: Date.now(),
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
   };
 
   const getFileIcon = (fileType: string) => {
-    if (fileType === 'audio') return <Music className="w-4 h-4" />;
-    if (fileType === 'image') return <ImageIcon className="w-4 h-4" />;
+    if (fileType.startsWith('audio')) return <Music className="w-4 h-4" />;
+    if (fileType.startsWith('image')) return <ImageIcon className="w-4 h-4" />;
     return <FileIcon className="w-4 h-4" />;
+  };
+
+  const removeFile = (index: number) => {
+    setFileUpload(prev => ({
+      ...prev,
+      files: prev.files.filter((_, i) => i !== index),
+    }));
   };
 
   return (
@@ -190,11 +268,22 @@ export function QumusChatInterface() {
               className={`max-w-2xl px-4 py-3 rounded-lg ${
                 msg.role === 'user'
                   ? 'bg-blue-500 text-white rounded-br-none'
-                  : 'bg-white text-slate-900 border border-slate-200 rounded-bl-none'
+                  : msg.error
+                    ? 'bg-red-50 text-red-900 border border-red-200 rounded-bl-none'
+                    : 'bg-white text-slate-900 border border-slate-200 rounded-bl-none'
               }`}
             >
+              {msg.error && (
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="w-4 h-4" />
+                  <span className="text-xs font-semibold">Error</span>
+                </div>
+              )}
               <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-              <p className={`text-xs mt-1 ${msg.role === 'user' ? 'text-blue-100' : 'text-slate-400'}`}>
+              {msg.error && (
+                <p className="text-xs mt-2 opacity-75">Details: {msg.error}</p>
+              )}
+              <p className={`text-xs mt-1 ${msg.role === 'user' ? 'text-blue-100' : msg.error ? 'text-red-700' : 'text-slate-400'}`}>
                 {new Date(msg.timestamp).toLocaleTimeString()}
               </p>
             </div>
@@ -211,33 +300,43 @@ export function QumusChatInterface() {
       </div>
 
       {/* File Upload Display */}
-      {fileUpload.file && (
-        <div className="border-t border-slate-200 bg-blue-50 p-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {getFileIcon(fileUpload.file.type)}
-            <div className="flex-1">
-              <p className="text-sm font-medium text-slate-900">{fileUpload.file.name}</p>
-              <div className="w-48 h-2 bg-slate-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-blue-500 transition-all"
-                  style={{ width: `${fileUpload.progress}%` }}
-                />
+      {fileUpload.files.length > 0 && (
+        <div className="border-t border-slate-200 bg-blue-50 p-3">
+          <div className="space-y-2">
+            {fileUpload.files.map((file, idx) => (
+              <div key={idx} className="flex items-center justify-between">
+                <div className="flex items-center gap-2 flex-1">
+                  {getFileIcon(file.type)}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-900 truncate">{file.name}</p>
+                    <p className="text-xs text-slate-500">{(file.size / 1024).toFixed(1)} KB</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => removeFile(idx)}
+                  disabled={fileUpload.uploading}
+                  className="p-1 hover:bg-blue-100 rounded"
+                >
+                  <X className="w-4 h-4 text-slate-500" />
+                </button>
               </div>
-            </div>
+            ))}
           </div>
-          <button
-            onClick={() => setFileUpload({ file: null, progress: 0, uploading: false, error: null })}
-            disabled={fileUpload.uploading}
-            className="p-1 hover:bg-blue-100 rounded"
-          >
-            <X className="w-4 h-4 text-slate-500" />
-          </button>
+          {fileUpload.uploading && (
+            <div className="mt-3 w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-blue-500 transition-all"
+                style={{ width: `${fileUpload.progress}%` }}
+              />
+            </div>
+          )}
         </div>
       )}
 
       {/* Error Display */}
       {fileUpload.error && (
-        <div className="border-t border-slate-200 bg-red-50 p-3 text-sm text-red-700">
+        <div className="border-t border-slate-200 bg-red-50 p-3 text-sm text-red-700 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" />
           {fileUpload.error}
         </div>
       )}
@@ -257,10 +356,9 @@ export function QumusChatInterface() {
             ref={fileInputRef}
             type="file"
             onChange={(e) => {
-              if (e.target.files?.[0]) {
-                handleFileSelect(e.target.files[0]);
-              }
+              handleFileSelect(e.target.files);
             }}
+            multiple
             className="hidden"
             accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp,.mp3,.wav,.ogg,.webm,.m4a"
           />
