@@ -9,7 +9,7 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ onChatSelect }: ChatHeaderProps) {
   return (
-    <div className="w-full bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div className="w-full bg-white border-b border-slate-200 sticky top-0 z-10">
       {/* Main Header Row */}
       <div className="flex items-center justify-between h-16 px-4 gap-4">
         {/* Left: Chat Menu */}

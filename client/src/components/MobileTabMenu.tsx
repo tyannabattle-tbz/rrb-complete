@@ -43,7 +43,7 @@ export default function MobileTabMenu({
       </div>
 
       {isOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-background border-b border-border shadow-lg z-50 max-h-96 overflow-y-auto">
+        <div className="absolute top-16 left-0 right-0 bg-background border-b border-border shadow-lg z-20 max-h-96 overflow-y-auto">
           <div className="flex flex-col gap-1 p-2">
             {tabs.map((tab) => (
               <button

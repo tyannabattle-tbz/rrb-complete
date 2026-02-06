@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { notifyOwner } from "./notification";
-import { adminProcedure, publicProcedure, router } from "./trpc";
+import { adminProcedure, publicProcedure, protectedProcedure, router } from "./trpc";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -25,5 +25,21 @@ export const systemRouter = router({
       return {
         success: delivered,
       } as const;
+    }),
+
+  createSession: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      return {
+        sessionId,
+        userId: ctx.user.id,
+        createdAt: new Date(),
+        name: input.name || `Session ${new Date().toLocaleDateString()}`,
+      };
     }),
 });
