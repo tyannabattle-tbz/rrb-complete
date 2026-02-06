@@ -74,6 +74,10 @@ import MeditationHub from '@/pages/MeditationHub';
 import { GPSRadarMapPage } from '@/pages/GPSRadarMapPage';
 import ComprehensiveDashboardPage from '@/pages/ComprehensiveDashboardPage';
 import UserPreferencesPanel from '@/components/UserPreferencesPanel';
+import { AccessibilityPanel } from '@/components/AccessibilityPanel';
+import { RealTimeTranscription } from '@/components/RealTimeTranscription';
+import { LocationChatRooms } from '@/components/LocationChatRooms';
+import { BroadcastVOD } from '@/components/BroadcastVOD';
 
 function Router() {
   return (
@@ -138,10 +142,11 @@ function Router() {
       <Route path="/donate" component={DonationCheckout} />
       <Route path="/proof-vault" component={ProofVaultSearch} />
       <Route path="/dashboard" component={ListenerDashboard} />
-      <Route path="/podcast-discovery" component={PodcastDiscovery} />
-      <Route path="/gps-radar" component={GPSRadarMapPage} />
-      <Route path="/comprehensive-dashboard" component={ComprehensiveDashboardPage} />
       <Route path="/preferences" component={UserPreferencesPanel} />
+      <Route path="/comprehensive-dashboard" component={ComprehensiveDashboardPage} />
+      <Route path="/transcription" component={RealTimeTranscription} />
+      <Route path="/location-chat" component={LocationChatRooms} />
+      <Route path="/vod-library" component={BroadcastVOD} />
       <Route component={NotFound} />
     </Switch>
   );

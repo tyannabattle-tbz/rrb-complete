@@ -8,6 +8,7 @@ import App from "./App";
 import { getLoginUrl } from "./const";
 import { ToastProvider, useGlobalToast } from "./contexts/ToastContext";
 import { NotificationContainer } from "./components/NotificationToast";
+import { AccessibilityPanel } from "./components/AccessibilityPanel";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -59,6 +60,7 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <App />
+        <AccessibilityPanel />
         <ToastNotificationContainer />
       </ToastProvider>
     </QueryClientProvider>
@@ -68,4 +70,16 @@ createRoot(document.getElementById("root")!).render(
 function ToastNotificationContainer() {
   const { toasts, removeToast } = useGlobalToast();
   return <NotificationContainer toasts={toasts} onDismiss={removeToast} />;
+}
+
+// Apply accessibility settings on page load
+if (typeof window !== 'undefined') {
+  const saved = localStorage.getItem('accessibilitySettings');
+  if (saved) {
+    const settings = JSON.parse(saved);
+    const root = document.documentElement;
+    root.style.fontSize = `${settings.fontSize}px`;
+    root.style.letterSpacing = `${settings.textSpacing * 0.05}em`;
+    root.style.lineHeight = `${1.5 * settings.textSpacing}`;
+  }
 }
