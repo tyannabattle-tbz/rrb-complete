@@ -22,6 +22,9 @@ import { chunk5Router } from "./routerChunks/chunk5";
 // Import QUMUS router
 import { qumusRouter } from "./routers/qumus";
 
+// Import iTunes Podcasts router
+import { itunesPodcastsRouter } from "./routers/itunesPodcasts";
+
 export const appRouter = router({
   // System router
   system: systemRouter,
@@ -44,6 +47,9 @@ export const appRouter = router({
   ...chunk3Router._def.procedures,
   ...chunk4Router._def.procedures,
   ...chunk5Router._def.procedures,
+
+  // iTunes Podcasts
+  itunesPodcasts: itunesPodcastsRouter,
 
   // Agent Session Management
   agent: router({
