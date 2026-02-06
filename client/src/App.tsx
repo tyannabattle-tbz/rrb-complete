@@ -45,6 +45,7 @@ import { HybridCastConfig } from "./pages/HybridCastConfig";
 import { VideoWatermarkEditor } from "./pages/VideoWatermarkEditor";
 import { BatchVideoGenerator } from './pages/BatchVideoGenerator';
 import { QumusChatInterface } from './components/QumusChatInterface';
+import { AppHeader } from './components/AppHeader';
 import QumusChatPage from '@/pages/QumusChatPage';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
 import QumusMonitoringDashboard from '@/pages/QumusMonitoringDashboard';
@@ -161,6 +162,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <KeyboardShortcutsGuide />
+            <AppHeader />
             <Router />
           </TooltipProvider>
         </PresetProvider>

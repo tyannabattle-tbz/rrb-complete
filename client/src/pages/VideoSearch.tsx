@@ -9,9 +9,9 @@ export default function VideoSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filters, setFilters] = useState({
-    style: "",
-    duration: "",
-    resolution: "",
+    style: "all",
+    duration: "any",
+    resolution: "any",
     sortBy: "relevance",
   });
 
@@ -88,7 +88,7 @@ export default function VideoSearch() {
                 <SelectValue placeholder="Style" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Styles</SelectItem>
+                <SelectItem value="all">All Styles</SelectItem>
                 <SelectItem value="cinematic">Cinematic</SelectItem>
                 <SelectItem value="animated">Animated</SelectItem>
                 <SelectItem value="motion-graphics">Motion Graphics</SelectItem>
@@ -101,7 +101,7 @@ export default function VideoSearch() {
                 <SelectValue placeholder="Duration" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Duration</SelectItem>
+                <SelectItem value="any">Any Duration</SelectItem>
                 <SelectItem value="0-10">Under 10s</SelectItem>
                 <SelectItem value="10-30">10-30s</SelectItem>
                 <SelectItem value="30+">Over 30s</SelectItem>
@@ -113,7 +113,7 @@ export default function VideoSearch() {
                 <SelectValue placeholder="Resolution" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Resolution</SelectItem>
+                <SelectItem value="any">Any Resolution</SelectItem>
                 <SelectItem value="720p">720p</SelectItem>
                 <SelectItem value="1080p">1080p</SelectItem>
                 <SelectItem value="4k">4K</SelectItem>
