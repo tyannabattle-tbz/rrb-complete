@@ -42,4 +42,33 @@ export const systemRouter = router({
         name: input.name || `Session ${new Date().toLocaleDateString()}`,
       };
     }),
+
+  getSessions: protectedProcedure
+    .query(async ({ ctx }) => {
+      return [
+        {
+          sessionId: `session_${Date.now()}`,
+          userId: ctx.user.id,
+          createdAt: new Date(),
+          name: 'Current Session',
+        },
+      ];
+    }),
+
+  getSession: protectedProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return {
+        sessionId: input.sessionId,
+        userId: ctx.user.id,
+        createdAt: new Date(),
+        name: 'Session',
+      };
+    }),
+
+  deleteSession: protectedProcedure
+    .input(z.object({ sessionId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return { success: true, sessionId: input.sessionId };
+    }),
 });
