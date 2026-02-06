@@ -31,6 +31,7 @@ import { locationSharingRouter } from "./routers/locationSharingRouter";
 import { fileAnalysisRouter } from "./routers/fileAnalysisRouter";
 import { dashboardRouter } from "./routers/dashboardRouter";
 import { broadcastRouter } from "./routers/broadcastRouter";
+import { hybridcastRouter } from "./routers/hybridcastRouter";
 
 export const appRouter = router({
   // System router
@@ -72,6 +73,9 @@ export const appRouter = router({
 
   // Broadcast Management
   broadcast: broadcastRouter,
+
+  // HybridCast Streaming
+  hybridcast: hybridcastRouter,
 
   // Agent Session Management
   agent: router({

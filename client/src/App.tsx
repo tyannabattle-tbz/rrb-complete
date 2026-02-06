@@ -149,6 +149,7 @@ function Router() {
       <Route path="/location-chat" component={LocationChatRooms} />
       <Route path="/vod-library" component={BroadcastVOD} />
       <Route path="/collaboration" component={CollaborationPage} />
+      <Route path="/gps-radar" component={GPSRadarMapPage} />
       <Route component={NotFound} />
     </Switch>
   );

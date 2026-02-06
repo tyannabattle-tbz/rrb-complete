@@ -5,7 +5,7 @@
 
 import { router } from '../../_core/trpc';
 import { rockinBoogieRouter } from '../rockinBoogie';
-import { hybridCastRouter } from '../hybridCastRouter';
+import { hybridcastRouter } from '../hybridcastRouter';
 import { hybridCastNodesRouter } from '../hybridCastNodes';
 import { radioStationsRouter } from '../radioStations';
 import { podcastPlaybackRouter } from '../podcastPlayback';
@@ -26,7 +26,7 @@ export const entertainmentRouter = router({
   audioMusic: audioMusicRouter,
 
   // Broadcasting
-  hybridCast: hybridCastRouter,
+  hybridCast: hybridcastRouter,
   hybridCastNodes: hybridCastNodesRouter,
   radioStations: radioStationsRouter,
 

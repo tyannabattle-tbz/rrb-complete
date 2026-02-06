@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import FlatWorldMap from '@/components/FlatWorldMap';
 import HybridCastBroadcaster from '@/components/HybridCastBroadcaster';
+import { HybridCastBroadcastEnhanced } from '@/components/HybridCastBroadcastEnhanced';
 import { languages, translate, type Language } from '@/lib/translator';
 import { Globe } from 'lucide-react';
 
@@ -58,9 +59,9 @@ export function GPSRadarMapPage() {
           />
         </div>
 
-        {/* HybridCast Broadcaster */}
+        {/* HybridCast Broadcaster - Enhanced */}
         <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-          <HybridCastBroadcaster />
+          <HybridCastBroadcastEnhanced />
         </div>
 
         {/* Info Grid */}
