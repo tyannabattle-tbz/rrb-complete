@@ -9,6 +9,7 @@ import { getLoginUrl } from "./const";
 import { ToastProvider, useGlobalToast } from "./contexts/ToastContext";
 import { NotificationContainer } from "./components/NotificationToast";
 import { AccessibilityPanel } from "./components/AccessibilityPanel";
+import ErrorBoundary from "./components/ErrorBoundary";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -56,15 +57,17 @@ const trpcClient = trpc.createClient({
 });
 
 createRoot(document.getElementById("root")!).render(
-  <trpc.Provider client={trpcClient} queryClient={queryClient}>
-    <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <App />
-        <AccessibilityPanel />
-        <ToastNotificationContainer />
-      </ToastProvider>
-    </QueryClientProvider>
-  </trpc.Provider>
+  <ErrorBoundary>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ToastProvider>
+          <App />
+          <AccessibilityPanel />
+          <ToastNotificationContainer />
+        </ToastProvider>
+      </QueryClientProvider>
+    </trpc.Provider>
+  </ErrorBoundary>
 );
 
 function ToastNotificationContainer() {
