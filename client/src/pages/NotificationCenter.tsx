@@ -15,7 +15,7 @@ export default function NotificationCenter() {
     unreadOnly: selectedFilter === "unread",
   });
 
-  //   const { data: stats } = trpc.system.getStats.useQuery();
+  //   const { data: {} } = trpc.system.getStats.useQuery();
 
   // Mark as read mutation
   //   const markAsReadMutation = trpc.system.markAsRead.useMutation({
@@ -89,7 +89,7 @@ export default function NotificationCenter() {
               <p className="text-lg text-slate-600">Manage your system alerts and notifications</p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-slate-900">{stats?.unread || 0}</div>
+              <div className="text-3xl font-bold text-slate-900">{{}?.unread || 0}</div>
               <p className="text-sm text-slate-600">Unread notifications</p>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function NotificationCenter() {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-slate-900">{stats?.total || 0}</div>
+                <div className="text-2xl font-bold text-slate-900">{{}?.total || 0}</div>
                 <p className="text-sm text-slate-600">Total</p>
               </div>
             </CardContent>
@@ -108,7 +108,7 @@ export default function NotificationCenter() {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-red-600">{stats?.byType?.error || 0}</div>
+                <div className="text-2xl font-bold text-red-600">{{}?.byType?.error || 0}</div>
                 <p className="text-sm text-slate-600">Errors</p>
               </div>
             </CardContent>
@@ -116,7 +116,7 @@ export default function NotificationCenter() {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-600">{stats?.byType?.warning || 0}</div>
+                <div className="text-2xl font-bold text-yellow-600">{{}?.byType?.warning || 0}</div>
                 <p className="text-sm text-slate-600">Warnings</p>
               </div>
             </CardContent>
@@ -124,7 +124,7 @@ export default function NotificationCenter() {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{stats?.byType?.success || 0}</div>
+                <div className="text-2xl font-bold text-green-600">{{}?.byType?.success || 0}</div>
                 <p className="text-sm text-slate-600">Success</p>
               </div>
             </CardContent>
@@ -150,7 +150,7 @@ export default function NotificationCenter() {
                   variant={selectedFilter === "unread" ? "default" : "outline"}
                   onClick={() => setSelectedFilter("unread")}
                 >
-                  Unread ({stats?.unread || 0})
+                  Unread ({{}?.unread || 0})
                 </Button>
               </div>
             </div>
