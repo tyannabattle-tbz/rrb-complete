@@ -84,6 +84,7 @@ import EmergencyBroadcastAdminPanel from '@/pages/EmergencyBroadcastAdminPanel';
 import BroadcastScheduler from '@/pages/BroadcastScheduler';
 import AuditLogViewer from '@/pages/AuditLogViewer';
 import HybridCastHub from '@/pages/HybridCastHub';
+import HybridCastAnalyticsDashboard from '@/pages/HybridCastAnalyticsDashboard';
 
 function Router() {
   return (
@@ -159,6 +160,7 @@ function Router() {
       <Route path="/broadcast-scheduler" component={BroadcastScheduler} />
       <Route path="/audit-log" component={AuditLogViewer} />
       <Route path="/hybridcast-hub" component={HybridCastHub} />
+      <Route path="/hybridcast-analytics" component={HybridCastAnalyticsDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
