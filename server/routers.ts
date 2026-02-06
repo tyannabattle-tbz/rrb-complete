@@ -29,6 +29,7 @@ import { itunesPodcastsRouter } from "./routers/itunesPodcasts";
 import { chatStreamingRouter } from "./routers/chatStreamingRouter";
 import { locationSharingRouter } from "./routers/locationSharingRouter";
 import { fileAnalysisRouter } from "./routers/fileAnalysisRouter";
+import { dashboardRouter } from "./routers/dashboardRouter";
 
 export const appRouter = router({
   // System router
@@ -64,6 +65,9 @@ export const appRouter = router({
 
   // File Analysis
   fileAnalysis: fileAnalysisRouter,
+
+  // Dashboard
+  dashboard: dashboardRouter,
 
   // Agent Session Management
   agent: router({
