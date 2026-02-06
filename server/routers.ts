@@ -30,6 +30,7 @@ import { chatStreamingRouter } from "./routers/chatStreamingRouter";
 import { locationSharingRouter } from "./routers/locationSharingRouter";
 import { fileAnalysisRouter } from "./routers/fileAnalysisRouter";
 import { dashboardRouter } from "./routers/dashboardRouter";
+import { broadcastRouter } from "./routers/broadcastRouter";
 
 export const appRouter = router({
   // System router
@@ -68,6 +69,9 @@ export const appRouter = router({
 
   // Dashboard
   dashboard: dashboardRouter,
+
+  // Broadcast Management
+  broadcast: broadcastRouter,
 
   // Agent Session Management
   agent: router({

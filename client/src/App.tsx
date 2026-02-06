@@ -78,6 +78,7 @@ import { AccessibilityPanel } from '@/components/AccessibilityPanel';
 import { RealTimeTranscription } from '@/components/RealTimeTranscription';
 import { LocationChatRooms } from '@/components/LocationChatRooms';
 import { BroadcastVOD } from '@/components/BroadcastVOD';
+import CollaborationPage from '@/pages/CollaborationPage';
 
 function Router() {
   return (
@@ -147,6 +148,7 @@ function Router() {
       <Route path="/transcription" component={RealTimeTranscription} />
       <Route path="/location-chat" component={LocationChatRooms} />
       <Route path="/vod-library" component={BroadcastVOD} />
+      <Route path="/collaboration" component={CollaborationPage} />
       <Route component={NotFound} />
     </Switch>
   );
