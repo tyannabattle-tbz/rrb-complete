@@ -46,6 +46,7 @@ import { VideoWatermarkEditor } from "./pages/VideoWatermarkEditor";
 import { BatchVideoGenerator } from './pages/BatchVideoGenerator';
 import { QumusChatInterface } from './components/QumusChatInterface';
 import { AppHeader } from './components/AppHeader';
+import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
 import QumusChatPage from '@/pages/QumusChatPage';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
 import QumusMonitoringDashboard from '@/pages/QumusMonitoringDashboard';
@@ -79,6 +80,7 @@ import { RealTimeTranscription } from '@/components/RealTimeTranscription';
 import { LocationChatRooms } from '@/components/LocationChatRooms';
 import { BroadcastVOD } from '@/components/BroadcastVOD';
 import CollaborationPage from '@/pages/CollaborationPage';
+import EmergencyBroadcastAdminPanel from '@/pages/EmergencyBroadcastAdminPanel';
 
 function Router() {
   return (
@@ -150,6 +152,7 @@ function Router() {
       <Route path="/vod-library" component={BroadcastVOD} />
       <Route path="/collaboration" component={CollaborationPage} />
       <Route path="/gps-radar" component={GPSRadarMapPage} />
+      <Route path="/broadcast-admin" component={EmergencyBroadcastAdminPanel} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -171,7 +174,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <KeyboardShortcutsGuide />
-            <AppHeader />
+            <AppHeaderEnhanced />
             <Router />
           </TooltipProvider>
         </PresetProvider>
