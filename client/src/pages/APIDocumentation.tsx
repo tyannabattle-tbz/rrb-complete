@@ -26,7 +26,7 @@ const endpoints: APIEndpoint[] = [
       model: "string",
       maxSteps: "number",
     },
-    example: `const result = await trpc.agent.createSession.mutate({
+    example: `const result = await trpc.system.createSession.mutate({
   sessionName: "My Session",
   systemPrompt: "You are a helpful assistant",
   temperature: 70,
@@ -39,7 +39,7 @@ const endpoints: APIEndpoint[] = [
     method: "GET",
     path: "/trpc/agent.getSessions",
     description: "Retrieve all user sessions",
-    example: `const { data: sessions } = trpc.agent.getSessions.useQuery();`,
+    example: `const { data: sessions } = trpc.system.getSessions.useQuery();`,
   },
   {
     name: "Add Message",
@@ -136,10 +136,10 @@ export function APIDocumentation() {
               <code>{`import { trpc } from '@/lib/trpc';
 
 // Query
-const { data } = trpc.agent.getSessions.useQuery();
+const { data } = trpc.system.getSessions.useQuery();
 
 // Mutation
-const mutation = trpc.agent.createSession.useMutation();
+const mutation = trpc.system.createSession.useMutation();
 mutation.mutate({ ... });`}</code>
             </pre>
           </div>
@@ -231,7 +231,7 @@ mutation.mutate({ ... });`}</code>
         </CardHeader>
         <CardContent>
           <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto text-sm">
-            <code>{`const mutation = trpc.agent.createSession.useMutation({
+            <code>{`const mutation = trpc.system.createSession.useMutation({
   onSuccess: (data) => {
     console.log("Session created:", data);
   },

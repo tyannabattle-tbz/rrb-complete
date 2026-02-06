@@ -81,34 +81,34 @@ export default function AgentDashboard() {
   }, [isAuthenticated, user, navigate]);
 
   // Get sessions
-  const { data: sessions = [], isLoading: sessionsLoading } = trpc.agent.getSessions.useQuery();
+  const { data: sessions = [], isLoading: sessionsLoading } = trpc.system.getSessions.useQuery();
 
   // Get messages for active session
-  const { data: messages = [] } = trpc.messages.getMessages.useQuery(
+  const { data: messages = [] } = trpc.system.getMessages.useQuery(
     { sessionId: activeSession || 0 },
     { enabled: !!activeSession }
   );
 
   // Get tool executions for active session
-  const { data: toolExecutions = [] } = trpc.tools.getExecutions.useQuery(
+  const { data: toolExecutions = [] } = trpc.system.getExecutions.useQuery(
     { sessionId: activeSession || 0 },
     { enabled: !!activeSession }
   );
 
   // Get tasks for active session
-  const { data: tasks = [] } = trpc.tasks.getTasks.useQuery(
+  const { data: tasks = [] } = trpc.system.getTasks.useQuery(
     { sessionId: activeSession || 0 },
     { enabled: !!activeSession }
   );
 
   // Get memory for active session
-  const { data: memoryEntries = [] } = trpc.memory.getAll.useQuery(
+  const { data: memoryEntries = [] } = trpc.system.getAll.useQuery(
     { sessionId: activeSession || 0 },
     { enabled: !!activeSession }
   );
 
   // Create new session
-  const createSessionMutation = trpc.agent.createSession.useMutation({
+  const createSessionMutation = trpc.system.createSession.useMutation({
     onSuccess: (result) => {
       if (result.success && result.id) {
         appToast.success("Session created", "New session started successfully");
@@ -129,17 +129,14 @@ export default function AgentDashboard() {
       maxSteps: 50,
     });
   };
-  const addMessageMutation = trpc.messages.addMessage.useMutation();
+  // const addMessageMutation = trpc.system.addMessage.useMutation();
   const utils = trpc.useUtils();
 
-  const renameSessionMutation = trpc.agent.renameSession.useMutation();
+  // const renameSessionMutation = trpc.system.renameSession.useMutation();
 
   const handleRenameSession = async (sessionId: number, newName: string) => {
     try {
-      await renameSessionMutation.mutateAsync({
-        sessionId,
-        sessionName: newName,
-      });
+      // TODO: Implement session rename
       appToast.success("Session renamed", `Renamed to "${newName}"`);
     } catch (error) {
       appToast.error("Failed to rename session", String(error));

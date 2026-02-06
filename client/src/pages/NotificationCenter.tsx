@@ -10,25 +10,25 @@ export default function NotificationCenter() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Fetch notifications
-  const { data: notifications, refetch } = trpc.notifications.getNotifications.useQuery({
+  const { data: notifications, refetch } = trpc.system.getNotifications.useQuery({
     limit: 50,
     unreadOnly: selectedFilter === "unread",
   });
 
-  const { data: stats } = trpc.notifications.getStats.useQuery();
+  //   const { data: stats } = trpc.system.getStats.useQuery();
 
   // Mark as read mutation
-  const markAsReadMutation = trpc.notifications.markAsRead.useMutation({
-    onSuccess: () => refetch(),
-  });
-
-  const markAllAsReadMutation = trpc.notifications.markAllAsRead.useMutation({
-    onSuccess: () => refetch(),
-  });
-
-  const deleteNotificationMutation = trpc.notifications.deleteNotification.useMutation({
-    onSuccess: () => refetch(),
-  });
+  //   const markAsReadMutation = trpc.system.markAsRead.useMutation({
+  //     onSuccess: () => refetch(),
+  //   });
+  // 
+  //   const markAllAsReadMutation = trpc.system.markAllAsRead.useMutation({
+  //     onSuccess: () => refetch(),
+  //   });
+  // 
+  //   const deleteNotificationMutation = trpc.system.deleteNotification.useMutation({
+  //     onSuccess: () => refetch(),
+  //   });
 
   const handleMarkAsRead = (notificationId: string) => {
     markAsReadMutation.mutate({ notificationId });
