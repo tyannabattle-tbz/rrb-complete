@@ -350,3 +350,184 @@ export const reportEmailTemplates = {
     </html>
   `,
 };
+
+
+/**
+ * Notification Email Templates for Rockin Rockin Boogie
+ */
+export const notificationEmailTemplates = {
+  reviewNotification: (data: {
+    userName: string;
+    reviewTitle: string;
+    reviewRating: number;
+  }) => {
+    const stars = "⭐".repeat(data.reviewRating);
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px; text-align: center; }
+            .content { margin: 20px 0; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; }
+            .rating { font-size: 32px; text-align: center; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Thank You for Your Review!</h1>
+            </div>
+            <div class="content">
+              <p>Hello <strong>${data.userName}</strong>,</p>
+              <p>Thank you for leaving a review on our platform!</p>
+              <div class="rating">${stars}</div>
+              <h3>${data.reviewTitle}</h3>
+              <p>Your feedback is valuable to us and helps other community members discover quality content.</p>
+            </div>
+            <div class="footer">
+              <p>© 2026 Rockin Rockin Boogie. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+  },
+
+  donationConfirmation: (data: {
+    userName: string;
+    amount: number;
+    purpose: string;
+    transactionId: string;
+  }) => `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px; text-align: center; }
+          .content { margin: 20px 0; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; }
+          .details { background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 15px 0; }
+          .footer { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Donation Confirmation</h1>
+          </div>
+          <div class="content">
+            <p>Hello <strong>${data.userName}</strong>,</p>
+            <p>Thank you for your generous donation of <strong>$${data.amount}</strong> to <strong>${data.purpose}</strong>!</p>
+            <div class="details">
+              <p><strong>Transaction ID:</strong> ${data.transactionId}</p>
+              <p><strong>Amount:</strong> $${data.amount}</p>
+              <p><strong>Purpose:</strong> ${data.purpose}</p>
+            </div>
+            <p>Your donation will make a real difference in our community. We are grateful for your support!</p>
+          </div>
+          <div class="footer">
+            <p>© 2026 Rockin Rockin Boogie. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `,
+
+  frequencyMilestone: (data: {
+    userName: string;
+    totalRolls: number;
+    favoriteFrequency: string;
+  }) => {
+    const frequencyDescriptions: { [key: string]: string } = {
+      UT: "Foundation and security",
+      RE: "Tissue repair",
+      MI: "Emotional healing",
+      FA: "Heart chakra harmony",
+      SOL: "DNA repair and miracles",
+      LA: "Relationships",
+      TI: "Spiritual awakening",
+      DO: "Spiritual order",
+    };
+    const description = frequencyDescriptions[data.favoriteFrequency] || "Healing frequencies";
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px; text-align: center; }
+            .content { margin: 20px 0; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; }
+            .milestone { background: #f5f5f5; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; }
+            .frequency { font-size: 48px; margin: 10px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🎉 Solbones Milestone Reached!</h1>
+            </div>
+            <div class="content">
+              <p>Hello <strong>${data.userName}</strong>,</p>
+              <p>Congratulations! You've reached <strong>${data.totalRolls} frequency rolls</strong> on Solbones!</p>
+              <div class="milestone">
+                <div class="frequency">⚡</div>
+                <p style="font-size: 24px; font-weight: bold;">${data.favoriteFrequency}</p>
+                <p>${description}</p>
+              </div>
+              <p>Keep exploring the healing power of Solfeggio frequencies!</p>
+            </div>
+            <div class="footer">
+              <p>© 2026 Rockin Rockin Boogie. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+  },
+
+  contentUpload: (data: {
+    userName: string;
+    contentTitle: string;
+    contentType: string;
+  }) => `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px; text-align: center; }
+          .content { margin: 20px 0; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; }
+          .details { background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 15px 0; }
+          .footer { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Content Upload Successful!</h1>
+          </div>
+          <div class="content">
+            <p>Hello <strong>${data.userName}</strong>,</p>
+            <p>Your <strong>${data.contentType}</strong> "<strong>${data.contentTitle}</strong>" has been successfully uploaded!</p>
+            <div class="details">
+              <p><strong>Content Title:</strong> ${data.contentTitle}</p>
+              <p><strong>Content Type:</strong> ${data.contentType}</p>
+            </div>
+            <p>You can manage and track your content from your Client Portal dashboard.</p>
+          </div>
+          <div class="footer">
+            <p>© 2026 Rockin Rockin Boogie. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `,
+};
