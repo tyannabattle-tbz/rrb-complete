@@ -91,6 +91,7 @@ import BroadcastTemplatesLibrary from '@/pages/BroadcastTemplatesLibrary';
 import UserPreferences from '@/pages/UserPreferences';
 import WebhookManagement from '@/pages/WebhookManagement';
 
+// Version: 2.0.0 - All routes fixed and meditation enabled
 function Router() {
   return (
     <Switch>
