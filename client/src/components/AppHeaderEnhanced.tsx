@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings } from 'lucide-react';
+import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -69,6 +69,7 @@ export function AppHeaderEnhanced() {
     { label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
     { label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
     { label: 'HybridCast', icon: Radio, path: '/gps-radar', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
+    { label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
   ];
 
   return (

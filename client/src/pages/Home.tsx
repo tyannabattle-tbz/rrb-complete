@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import QumusChatPage from "./QumusChatPage";
-import { RockinBoogieWidget } from "@/components/RockinBoogieWidget";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -40,15 +39,6 @@ export default function Home() {
     );
   }
 
-  // Authenticated user - show QUMUS Chat Interface with RRB widget
-  return (
-    <div className="flex flex-col h-screen">
-      <div className="flex-1 overflow-hidden">
-        <QumusChatPage />
-      </div>
-      <div className="w-full max-w-md mx-auto p-4 border-t border-slate-200">
-        <RockinBoogieWidget />
-      </div>
-    </div>
-  );
+  // Authenticated user - show QUMUS Chat Interface
+  return <QumusChatPage />;
 }
