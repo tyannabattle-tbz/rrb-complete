@@ -42,10 +42,14 @@ import { radioStationsRouter } from "./routers/radioStations";
 import { studioStreamingRouter } from "./routers/studioStreaming";
 import { commandExecutionRouter } from "./routers/commandExecutionRouter";
 import { qumusCommandRouter } from "./routers/qumusCommandRouter";
+import { audioRouter } from "./routers/audioRouter";
 
 export const appRouter = router({
   // System router
   system: systemRouter,
+
+  // Audio router
+  audio: audioRouter,
 
   // Auth procedures
   auth: router({
