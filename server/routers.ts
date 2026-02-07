@@ -36,6 +36,10 @@ import { hybridcastSyncRouter } from "./routers/hybridcastSyncRouter";
 import { solbonesRouter } from "./routers/solbonesRouter";
 import { clientPortalRouter } from "./routers/clientPortalRouter";
 import { reviewRouter } from "./routers/reviewRouter";
+import { meditationRouter } from "./routers/meditation";
+import { podcastPlaybackRouter } from "./routers/podcastPlayback";
+import { radioStationsRouter } from "./routers/radioStations";
+import { studioStreamingRouter } from "./routers/studioStreaming";
 
 export const appRouter = router({
   // System router
@@ -92,6 +96,18 @@ export const appRouter = router({
 
   // Reviews & Ratings
   reviews: reviewRouter,
+
+  // Meditation Hub
+  meditation: meditationRouter,
+
+  // Podcast Playback
+  podcastPlayback: podcastPlaybackRouter,
+
+  // Radio Stations
+  radioStations: radioStationsRouter,
+
+  // Studio Streaming
+  studioStreaming: studioStreamingRouter,
 
   // Agent Session Management
   agent: router({
