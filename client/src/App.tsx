@@ -49,6 +49,7 @@ import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
 import QumusChatPage from '@/pages/QumusChatPage';
 import RockinRockinBoogiePage from '@/pages/RockinRockinBoogiePage';
+import BroadcastOrchestrationHub from '@/pages/BroadcastOrchestrationHub';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
 import QumusMonitoringDashboard from '@/pages/QumusMonitoringDashboard';
 import PolicyDecisionLogging from '@/pages/PolicyDecisionLogging';
@@ -157,6 +158,7 @@ function Router() {
       <Route path="/rockin-boogie-content" component={RockinBoogiePlayerEnhanced} />
       <Route path="/rockin-boogie" component={RockinRockinBoogiePage} />
       <Route path="/rockin-boogie-manager" component={RockinBoogieManager} />
+      <Route path="/broadcast-hub" component={BroadcastOrchestrationHub} />
       <Route path="/policy-editor" component={DecisionPolicyEditor} />
       <Route path="/rockin-admin" component={RockinBoogieAdminDashboard} />
       <Route path="/document-upload" component={DocumentUpload} />
