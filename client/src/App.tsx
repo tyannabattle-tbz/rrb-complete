@@ -1,5 +1,4 @@
 import { Toaster } from "@/components/ui/sonner";
-// Force deployment v2 - Fresh build
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
@@ -88,7 +87,6 @@ import HybridCastHub from '@/pages/HybridCastHub';
 import HybridCastAnalyticsDashboard from '@/pages/HybridCastAnalyticsDashboard';
 import HybridCastIntegration from '@/pages/HybridCastIntegration';
 import HybridCastNotificationCenter from '@/pages/HybridCastNotificationCenter';
-import SweetMiraclesDashboard from '@/pages/SweetMiraclesDashboard';
 import BroadcastTemplatesLibrary from '@/pages/BroadcastTemplatesLibrary';
 import UserPreferences from '@/pages/UserPreferences';
 import WebhookManagement from '@/pages/WebhookManagement';
@@ -173,7 +171,6 @@ function Router() {
       <Route path="/broadcast-templates" component={BroadcastTemplatesLibrary} />
       <Route path="/user-preferences" component={UserPreferences} />
       <Route path="/webhooks" component={WebhookManagement} />
-      <Route path="/sweet-miracles" component={SweetMiraclesDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
