@@ -1349,3 +1349,52 @@ export const reviewResponses = mysqlTable("review_responses", {
 
 export type ReviewResponse = typeof reviewResponses.$inferSelect;
 export type InsertReviewResponse = typeof reviewResponses.$inferInsert;
+
+// ============================================================================
+// QUMUS Autonomous Decision Management Tables
+// ============================================================================
+export const decisions = mysqlTable("qumus_decisions", {
+	id: varchar({ length: 255 }).notNull().primaryKey(),
+	type: mysqlEnum(['broadcast', 'content', 'donation', 'meditation', 'emergency']).notNull(),
+	description: text().notNull(),
+	subsystem: varchar({ length: 255 }).notNull(), // HybridCast, Rockin Rockin Boogie, Sweet Miracles, Canryn
+	policy: varchar({ length: 255 }).notNull(), // Policy that triggered this decision
+	autonomyLevel: int().notNull(), // 0-100 percentage
+	impact: mysqlEnum(['low', 'medium', 'high']).notNull(),
+	status: mysqlEnum(['pending', 'approved', 'vetoed']).default('pending').notNull(),
+	approvedBy: varchar({ length: 255 }), // User ID who approved
+	approvedAt: timestamp({ mode: 'string' }),
+	vetoedBy: varchar({ length: 255 }), // User ID who vetoed
+	vetoedAt: timestamp({ mode: 'string' }),
+	metadata: json(), // Additional decision context
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+export type Decision = typeof decisions.$inferSelect;
+export type InsertDecision = typeof decisions.$inferInsert;
+
+export const decisionLogs = mysqlTable("qumus_decision_logs", {
+	id: int().autoincrement().notNull().primaryKey(),
+	decisionId: varchar({ length: 255 }).notNull().references(() => decisions.id, { onDelete: "cascade" }),
+	action: mysqlEnum(['created', 'approved', 'vetoed', 'executed', 'failed']).notNull(),
+	userId: varchar({ length: 255 }).notNull(), // User ID or 'system'
+	reason: text(),
+	timestamp: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+export type DecisionLog = typeof decisionLogs.$inferSelect;
+export type InsertDecisionLog = typeof decisionLogs.$inferInsert;
+
+export const decisionPolicies = mysqlTable("qumus_decision_policies", {
+	id: varchar({ length: 255 }).notNull().primaryKey(),
+	name: varchar({ length: 255 }).notNull(),
+	description: text(),
+	subsystem: varchar({ length: 255 }).notNull(),
+	rules: json().notNull(), // Policy rules in JSON format
+	autonomyThreshold: int().notNull(), // Min autonomy level to auto-approve
+	requiresApproval: int().default(1).notNull(), // 0 or 1
+	isActive: int().default(1).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+export type DecisionPolicy = typeof decisionPolicies.$inferSelect;
+export type InsertDecisionPolicy = typeof decisionPolicies.$inferInsert;

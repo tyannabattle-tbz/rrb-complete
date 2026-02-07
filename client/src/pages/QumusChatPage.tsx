@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Send, Menu, X } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import AdminOverridePanel from '@/components/AdminOverridePanel';
+import RealTimeDecisionVisualization from '@/components/RealTimeDecisionVisualization';
 
 interface ChatMessage {
   id: string;
@@ -23,6 +26,7 @@ export default function QumusChatPage() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('chat');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -114,74 +118,102 @@ export default function QumusChatPage() {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="bg-white border-b border-slate-200 p-4 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-slate-600"
-          >
-            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
-          <h1 className="text-xl font-bold text-slate-900">Qumus AI Assistant</h1>
-          <div className="w-10" />
-        </div>
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
+          <TabsList className="w-full justify-start border-b border-slate-200 bg-white rounded-none">
+            <TabsTrigger value="chat" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
+              💬 Chat
+            </TabsTrigger>
+            <TabsTrigger value="decisions" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
+              ⚡ Decisions
+            </TabsTrigger>
+            <TabsTrigger value="override" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
+              🔐 Override
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
-          {messages.map(msg => (
-            <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={`max-w-2xl px-5 py-3 rounded-lg ${
-                  msg.role === 'user'
-                    ? 'bg-blue-500 text-white rounded-br-none'
-                    : 'bg-white text-slate-900 border border-slate-200 rounded-bl-none shadow-sm'
-                }`}
+          {/* Chat Tab */}
+          <TabsContent value="chat" className="flex-1 overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="bg-white border-b border-slate-200 p-4 flex items-center justify-between">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="text-slate-600"
               >
-                <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                <p className={`text-xs mt-2 ${msg.role === 'user' ? 'text-blue-100' : 'text-slate-400'}`}>
-                  {new Date(msg.timestamp).toLocaleTimeString()}
-                </p>
-              </div>
+                {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
+              <h1 className="text-xl font-bold text-slate-900">Qumus AI Assistant</h1>
+              <div className="w-10" />
             </div>
-          ))}
-          {loading && (
-            <div className="flex justify-start">
-              <div className="bg-white text-slate-900 border border-slate-200 px-5 py-3 rounded-lg rounded-bl-none shadow-sm">
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-100" />
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-200" />
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
 
-        {/* Input Area */}
-        <div className="bg-white border-t border-slate-200 p-4">
-          <div className="max-w-4xl mx-auto flex gap-3">
-            <Input
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
-              placeholder="Ask about video generation, watermarking, analytics, marketing..."
-              className="flex-1 border-slate-300 focus:border-blue-500"
-              disabled={loading}
-            />
-            <Button
-              onClick={handleSend}
-              disabled={loading || !input.trim()}
-              className="bg-blue-500 hover:bg-blue-600 text-white gap-2 px-6"
-            >
-              <Send className="w-4 h-4" />
-              <span className="hidden sm:inline">Send</span>
-            </Button>
-          </div>
-          <p className="text-xs text-slate-500 mt-2">Shift+Enter for new line</p>
-        </div>
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+              {messages.map(msg => (
+                <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`max-w-2xl px-5 py-3 rounded-lg ${
+                      msg.role === 'user'
+                        ? 'bg-blue-500 text-white rounded-br-none'
+                        : 'bg-white text-slate-900 border border-slate-200 rounded-bl-none shadow-sm'
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                    <p className={`text-xs mt-2 ${msg.role === 'user' ? 'text-blue-100' : 'text-slate-400'}`}>
+                      {new Date(msg.timestamp).toLocaleTimeString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              {loading && (
+                <div className="flex justify-start">
+                  <div className="bg-white text-slate-900 border border-slate-200 px-5 py-3 rounded-lg rounded-bl-none shadow-sm">
+                    <div className="flex gap-2">
+                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
+                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-100" />
+                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-200" />
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <div className="bg-white border-t border-slate-200 p-4">
+              <div className="max-w-4xl mx-auto flex gap-3">
+                <Input
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyPress={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
+                  placeholder="Ask about video generation, watermarking, analytics, marketing..."
+                  className="flex-1 border-slate-300 focus:border-blue-500"
+                  disabled={loading}
+                />
+                <Button
+                  onClick={handleSend}
+                  disabled={loading || !input.trim()}
+                  className="bg-blue-500 hover:bg-blue-600 text-white gap-2 px-6"
+                >
+                  <Send className="w-4 h-4" />
+                  <span className="hidden sm:inline">Send</span>
+                </Button>
+              </div>
+              <p className="text-xs text-slate-500 mt-2">Shift+Enter for new line</p>
+            </div>
+          </TabsContent>
+
+          {/* Decisions Tab */}
+          <TabsContent value="decisions" className="flex-1 overflow-hidden">
+            <RealTimeDecisionVisualization />
+          </TabsContent>
+
+          {/* Override Tab */}
+          <TabsContent value="override" className="flex-1 overflow-hidden">
+            <AdminOverridePanel />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
