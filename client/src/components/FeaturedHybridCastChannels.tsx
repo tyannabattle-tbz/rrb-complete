@@ -12,7 +12,7 @@ const FEATURED_CHANNELS: HybridCastChannel[] = [
     category: "Wellness",
     listeners: 12500,
     isLive: true,
-    href: "/meditation-hub",
+    href: "/dashboard",
     color: "from-emerald-500 to-teal-600",
   },
   {
@@ -23,7 +23,7 @@ const FEATURED_CHANNELS: HybridCastChannel[] = [
     category: "Music",
     listeners: 8300,
     isLive: true,
-    href: "/rockin-boogie-content-manager",
+    href: "/rockin-boogie-manager",
     color: "from-amber-500 to-orange-600",
   },
   {
@@ -34,7 +34,7 @@ const FEATURED_CHANNELS: HybridCastChannel[] = [
     category: "Emergency",
     listeners: 5600,
     isLive: false,
-    href: "/emergency-alert-system",
+    href: "/emergency-alerts",
     color: "from-red-500 to-rose-600",
   },
   {
