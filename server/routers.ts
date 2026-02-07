@@ -41,6 +41,7 @@ import { podcastPlaybackRouter } from "./routers/podcastPlayback";
 import { radioStationsRouter } from "./routers/radioStations";
 import { studioStreamingRouter } from "./routers/studioStreaming";
 import { commandExecutionRouter } from "./routers/commandExecutionRouter";
+import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 
 export const appRouter = router({
   // System router
@@ -112,6 +113,9 @@ export const appRouter = router({
 
   // Command Execution
   commands: commandExecutionRouter,
+
+  // QUMUS Command Router
+  qumusCommand: qumusCommandRouter,
 
   // Agent Session Management
   agent: router({

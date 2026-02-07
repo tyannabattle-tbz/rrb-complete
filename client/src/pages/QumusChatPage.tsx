@@ -6,6 +6,7 @@ import { Send, Menu, X } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import AdminOverridePanel from '@/components/AdminOverridePanel';
 import RealTimeDecisionVisualization from '@/components/RealTimeDecisionVisualization';
+import { QumusChatCommandCenter } from '@/components/QumusChatCommandCenter';
 
 interface ChatMessage {
   id: string;
@@ -130,6 +131,9 @@ export default function QumusChatPage() {
             <TabsTrigger value="override" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
               🔐 Override
             </TabsTrigger>
+            <TabsTrigger value="commands" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
+              ⚙️ Command Center
+            </TabsTrigger>
           </TabsList>
 
           {/* Chat Tab */}
@@ -212,6 +216,11 @@ export default function QumusChatPage() {
           {/* Override Tab */}
           <TabsContent value="override" className="flex-1 overflow-hidden">
             <AdminOverridePanel />
+          </TabsContent>
+
+          {/* Command Center Tab */}
+          <TabsContent value="commands" className="flex-1 overflow-hidden">
+            <QumusChatCommandCenter />
           </TabsContent>
         </Tabs>
       </div>
