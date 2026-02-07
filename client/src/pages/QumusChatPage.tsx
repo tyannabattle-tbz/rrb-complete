@@ -7,6 +7,9 @@ import { trpc } from '@/lib/trpc';
 import AdminOverridePanel from '@/components/AdminOverridePanel';
 import RealTimeDecisionVisualization from '@/components/RealTimeDecisionVisualization';
 import { QumusChatCommandCenter } from '@/components/QumusChatCommandCenter';
+import { VoiceToText } from '@/components/VoiceToText';
+import { FunctionalFeatures } from '@/components/FunctionalFeatures';
+import { RockinBoogieWidget } from '@/components/RockinBoogieWidget';
 
 interface ChatMessage {
   id: string;
@@ -134,6 +137,12 @@ export default function QumusChatPage() {
             <TabsTrigger value="commands" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
               ⚙️ Command Center
             </TabsTrigger>
+            <TabsTrigger value="voice" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
+              🎤 Voice to Text
+            </TabsTrigger>
+            <TabsTrigger value="features" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
+              ✨ Features
+            </TabsTrigger>
           </TabsList>
 
           {/* Chat Tab */}
@@ -221,6 +230,16 @@ export default function QumusChatPage() {
           {/* Command Center Tab */}
           <TabsContent value="commands" className="flex-1 overflow-hidden">
             <QumusChatCommandCenter />
+          </TabsContent>
+
+          {/* Voice to Text Tab */}
+          <TabsContent value="voice" className="flex-1 overflow-hidden overflow-y-auto">
+            <VoiceToText />
+          </TabsContent>
+
+          {/* Features Tab */}
+          <TabsContent value="features" className="flex-1 overflow-hidden overflow-y-auto">
+            <FunctionalFeatures />
           </TabsContent>
         </Tabs>
       </div>

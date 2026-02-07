@@ -216,7 +216,6 @@ function App() {
             <Toaster />
             <KeyboardShortcutsGuide />
             <AppHeaderEnhanced />
-            <ApprovalNotificationCenter />
             <Router />
           </TooltipProvider>
         </PresetProvider>
