@@ -1,111 +1,89 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
 
-interface Review {
-  id: string;
-  author: string;
-  rating: number;
+interface ReviewFormData {
   title: string;
   content: string;
-  timestamp: Date;
-  helpful: number;
-  category: 'content' | 'experience' | 'platform' | 'support';
-  verified: boolean;
+  rating: number;
+  category: 'content_quality' | 'user_experience' | 'platform_features' | 'customer_support' | 'general';
 }
 
 export default function Review() {
-  const [reviews, setReviews] = useState<Review[]>([
-    {
-      id: '1',
-      author: 'Sarah M.',
-      rating: 5,
-      title: 'Amazing Platform for Music Preservation',
-      content: 'This platform has been instrumental in preserving and sharing the musical legacy. The interface is intuitive and the community is supportive. Highly recommended!',
-      timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      helpful: 24,
-      category: 'platform',
-      verified: true,
-    },
-    {
-      id: '2',
-      author: 'James L.',
-      rating: 4,
-      title: 'Great Content, Excellent Support',
-      content: 'The audio quality is exceptional and the support team is responsive. Would love to see more collaboration features in the future.',
-      timestamp: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-      helpful: 18,
-      category: 'support',
-      verified: true,
-    },
-    {
-      id: '3',
-      author: 'Maria G.',
-      rating: 5,
-      title: 'Healing Frequencies Changed My Life',
-      content: 'The Solbones frequency game is incredible. I use it daily for meditation and healing. The Solfeggio frequencies are authentic and powerful.',
-      timestamp: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000),
-      helpful: 42,
-      category: 'content',
-      verified: true,
-    },
-  ]);
-
-  const [newReview, setNewReview] = useState({
+  const { user } = useAuth();
+  const [newReview, setNewReview] = useState<ReviewFormData>({
     title: '',
     content: '',
     rating: 5,
-    category: 'platform' as const,
+    category: 'general',
   });
 
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'recent' | 'helpful' | 'rating'>('recent');
 
-  const handleSubmitReview = () => {
-    if (newReview.title && newReview.content) {
-      const review: Review = {
-        id: `review-${Date.now()}`,
-        author: 'You',
+  // tRPC queries and mutations
+  const reviewsQuery = trpc.reviews.getReviews.useQuery({ limit: 20 });
+  const statsQuery = trpc.reviews.getStats.useQuery();
+  const createReviewMutation = trpc.reviews.createReview.useMutation();
+  const markHelpfulMutation = trpc.reviews.markHelpful.useMutation();
+
+  const handleSubmitReview = async () => {
+    if (!user || !newReview.title || !newReview.content) return;
+
+    createReviewMutation.mutate(
+      {
         rating: newReview.rating,
         title: newReview.title,
         content: newReview.content,
-        timestamp: new Date(),
-        helpful: 0,
         category: newReview.category,
-        verified: true,
-      };
-      setReviews([review, ...reviews]);
-      setNewReview({ title: '', content: '', rating: 5, category: 'platform' });
-    }
+      },
+      {
+        onSuccess: () => {
+          setNewReview({ title: '', content: '', rating: 5, category: 'general' });
+          reviewsQuery.refetch();
+          statsQuery.refetch();
+        },
+      }
+    );
   };
 
+  const handleMarkHelpful = (reviewId: number, isHelpful: boolean) => {
+    markHelpfulMutation.mutate(
+      { reviewId, isHelpful },
+      {
+        onSuccess: () => {
+          reviewsQuery.refetch();
+        },
+      }
+    );
+  };
+
+  const reviews = reviewsQuery.data || [];
   const filteredReviews = reviews
     .filter((r) => !filterRating || r.rating === filterRating)
     .filter((r) => !filterCategory || r.category === filterCategory)
     .sort((a, b) => {
-      if (sortBy === 'recent') return b.timestamp.getTime() - a.timestamp.getTime();
-      if (sortBy === 'helpful') return b.helpful - a.helpful;
+      if (sortBy === 'recent') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sortBy === 'helpful') return b.helpfulCount - a.helpfulCount;
       if (sortBy === 'rating') return b.rating - a.rating;
       return 0;
     });
 
-  const averageRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
-
-  const getRatingColor = (rating: number) => {
-    if (rating >= 4) return 'text-green-400';
-    if (rating >= 3) return 'text-yellow-400';
-    return 'text-red-400';
-  };
+  const averageRating = statsQuery.data?.average ? parseFloat(statsQuery.data.average.toString()).toFixed(1) : '4.7';
+  const reviewCount = statsQuery.data?.count || reviews.length;
 
   const getCategoryColor = (category: string) => {
     const colors: { [key: string]: string } = {
-      content: 'from-purple-500 to-purple-600',
-      experience: 'from-blue-500 to-blue-600',
-      platform: 'from-green-500 to-green-600',
-      support: 'from-orange-500 to-orange-600',
+      content_quality: 'from-purple-500 to-purple-600',
+      user_experience: 'from-blue-500 to-blue-600',
+      platform_features: 'from-green-500 to-green-600',
+      customer_support: 'from-orange-500 to-orange-600',
+      general: 'from-indigo-500 to-indigo-600',
     };
-    return colors[category] || colors.platform;
+    return colors[category] || colors.general;
   };
 
   return (
@@ -133,13 +111,13 @@ export default function Review() {
                   </span>
                 ))}
               </div>
-              <div className="text-gray-400">Based on {reviews.length} reviews</div>
+              <div className="text-gray-400">Based on {reviewCount} reviews</div>
             </div>
 
             <div className="space-y-3">
               {[5, 4, 3, 2, 1].map((rating) => {
                 const count = reviews.filter((r) => r.rating === rating).length;
-                const percentage = (count / reviews.length) * 100;
+                const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0;
                 return (
                   <div key={rating} className="flex items-center gap-3">
                     <div className="w-12 text-right">
@@ -160,71 +138,74 @@ export default function Review() {
         </Card>
 
         {/* Write Review Section */}
-        <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-indigo-500/50 p-8 mb-8">
-          <h2 className="text-2xl font-bold text-indigo-300 mb-6">Write a Review</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="text-gray-400 block mb-2">Rating</label>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <button
-                    key={rating}
-                    onClick={() => setNewReview({ ...newReview, rating })}
-                    className={`text-3xl transition-transform hover:scale-110 ${
-                      rating <= newReview.rating ? 'text-yellow-400' : 'text-gray-500'
-                    }`}
-                  >
-                    ★
-                  </button>
-                ))}
+        {user && (
+          <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-indigo-500/50 p-8 mb-8">
+            <h2 className="text-2xl font-bold text-indigo-300 mb-6">Write a Review</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="text-gray-400 block mb-2">Rating</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <button
+                      key={rating}
+                      onClick={() => setNewReview({ ...newReview, rating })}
+                      className={`text-3xl transition-transform hover:scale-110 ${
+                        rating <= newReview.rating ? 'text-yellow-400' : 'text-gray-500'
+                      }`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="text-gray-400 block mb-2">Category</label>
-              <select
-                value={newReview.category}
-                onChange={(e) => setNewReview({ ...newReview, category: e.target.value as any })}
-                className="w-full bg-slate-700 text-white rounded-lg p-3"
+              <div>
+                <label className="text-gray-400 block mb-2">Category</label>
+                <select
+                  value={newReview.category}
+                  onChange={(e) => setNewReview({ ...newReview, category: e.target.value as any })}
+                  className="w-full bg-slate-700 text-white rounded-lg p-3"
+                >
+                  <option value="general">General</option>
+                  <option value="content_quality">Content Quality</option>
+                  <option value="user_experience">User Experience</option>
+                  <option value="platform_features">Platform Features</option>
+                  <option value="customer_support">Customer Support</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-gray-400 block mb-2">Title</label>
+                <input
+                  type="text"
+                  value={newReview.title}
+                  onChange={(e) => setNewReview({ ...newReview, title: e.target.value })}
+                  placeholder="Summarize your experience..."
+                  className="w-full bg-slate-700 text-white rounded-lg p-3 placeholder-gray-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-gray-400 block mb-2">Review</label>
+                <textarea
+                  value={newReview.content}
+                  onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
+                  placeholder="Share your detailed thoughts..."
+                  rows={5}
+                  className="w-full bg-slate-700 text-white rounded-lg p-3 placeholder-gray-500"
+                />
+              </div>
+
+              <Button
+                onClick={handleSubmitReview}
+                disabled={!newReview.title || !newReview.content || createReviewMutation.isPending}
+                className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold py-3"
               >
-                <option value="content">Content Quality</option>
-                <option value="experience">User Experience</option>
-                <option value="platform">Platform Features</option>
-                <option value="support">Customer Support</option>
-              </select>
+                {createReviewMutation.isPending ? 'Submitting...' : 'Submit Review'}
+              </Button>
             </div>
-
-            <div>
-              <label className="text-gray-400 block mb-2">Title</label>
-              <input
-                type="text"
-                value={newReview.title}
-                onChange={(e) => setNewReview({ ...newReview, title: e.target.value })}
-                placeholder="Summarize your experience..."
-                className="w-full bg-slate-700 text-white rounded-lg p-3 placeholder-gray-500"
-              />
-            </div>
-
-            <div>
-              <label className="text-gray-400 block mb-2">Review</label>
-              <textarea
-                value={newReview.content}
-                onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
-                placeholder="Share your detailed thoughts..."
-                rows={5}
-                className="w-full bg-slate-700 text-white rounded-lg p-3 placeholder-gray-500"
-              />
-            </div>
-
-            <Button
-              onClick={handleSubmitReview}
-              disabled={!newReview.title || !newReview.content}
-              className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold py-3"
-            >
-              Submit Review
-            </Button>
-          </div>
-        </Card>
+          </Card>
+        )}
 
         {/* Filters and Sorting */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
@@ -252,10 +233,11 @@ export default function Review() {
               className="w-full bg-slate-700 text-white rounded-lg p-2 text-sm"
             >
               <option value="">All Categories</option>
-              <option value="content">Content Quality</option>
-              <option value="experience">User Experience</option>
-              <option value="platform">Platform Features</option>
-              <option value="support">Customer Support</option>
+              <option value="content_quality">Content Quality</option>
+              <option value="user_experience">User Experience</option>
+              <option value="platform_features">Platform Features</option>
+              <option value="customer_support">Customer Support</option>
+              <option value="general">General</option>
             </select>
           </div>
 
@@ -281,13 +263,13 @@ export default function Review() {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold">
-                      {review.author[0]}
+                      {review.id}
                     </div>
                     <div>
-                      <div className="font-semibold text-white">{review.author}</div>
+                      <div className="font-semibold text-white">User #{review.userId}</div>
                       <div className="text-xs text-gray-400">
-                        {review.timestamp.toLocaleDateString()}
-                        {review.verified && ' • ✓ Verified'}
+                        {new Date(review.createdAt).toLocaleDateString()}
+                        {review.isVerified ? ' • ✓ Verified' : ''}
                       </div>
                     </div>
                   </div>
@@ -305,7 +287,7 @@ export default function Review() {
                     ))}
                   </div>
                   <span className={`bg-gradient-to-r ${getCategoryColor(review.category)} text-white px-3 py-1 rounded-full text-xs font-semibold capitalize`}>
-                    {review.category}
+                    {review.category.replace(/_/g, ' ')}
                   </span>
                 </div>
               </div>
@@ -314,11 +296,17 @@ export default function Review() {
               <p className="text-gray-300 mb-4">{review.content}</p>
 
               <div className="flex items-center gap-4">
-                <button className="text-gray-400 hover:text-indigo-400 transition-colors text-sm">
-                  👍 Helpful ({review.helpful})
+                <button
+                  onClick={() => handleMarkHelpful(review.id, true)}
+                  className="text-gray-400 hover:text-indigo-400 transition-colors text-sm"
+                >
+                  👍 Helpful ({review.helpfulCount})
                 </button>
-                <button className="text-gray-400 hover:text-red-400 transition-colors text-sm">
-                  👎 Not Helpful
+                <button
+                  onClick={() => handleMarkHelpful(review.id, false)}
+                  className="text-gray-400 hover:text-red-400 transition-colors text-sm"
+                >
+                  👎 Not Helpful ({review.notHelpfulCount})
                 </button>
               </div>
             </Card>

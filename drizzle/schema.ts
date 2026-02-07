@@ -1207,3 +1207,145 @@ export const alerts = mysqlTable("alerts", {
 
 export type Alert = typeof alerts.$inferSelect;
 export type InsertAlert = typeof alerts.$inferInsert;
+
+
+// ============================================================================
+// Solbones Frequency Dice Game Tables
+// ============================================================================
+
+export const solbonesFrequencyRolls = mysqlTable("solbones_frequency_rolls", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	frequencyName: varchar({ length: 50 }).notNull(), // UT, RE, MI, FA, SOL, LA, TI, DO
+	frequency: int().notNull(), // Hz value
+	timestamp: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	sessionId: varchar({ length: 255 }), // Optional session identifier
+	notes: text(), // User notes about the experience
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export type SolbonesFrequencyRoll = typeof solbonesFrequencyRolls.$inferSelect;
+export type InsertSolbonesFrequencyRoll = typeof solbonesFrequencyRolls.$inferInsert;
+
+export const solbonesLeaderboard = mysqlTable("solbones_leaderboard", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	totalRolls: int().default(0).notNull(),
+	favoriteFrequency: varchar({ length: 50 }),
+	streak: int().default(0).notNull(),
+	lastRollDate: timestamp({ mode: 'string' }),
+	achievements: json(), // JSON array of achievement badges
+	score: int().default(0).notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export type SolbonesLeaderboard = typeof solbonesLeaderboard.$inferSelect;
+export type InsertSolbonesLeaderboard = typeof solbonesLeaderboard.$inferInsert;
+
+// ============================================================================
+// Client Portal Tables
+// ============================================================================
+
+export const clientProfiles = mysqlTable("client_profiles", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+	fullName: varchar({ length: 255 }).notNull(),
+	email: varchar({ length: 320 }).notNull(),
+	phone: varchar({ length: 20 }),
+	subscriptionTier: mysqlEnum(['free', 'silver', 'gold', 'platinum']).default('free').notNull(),
+	totalDonated: decimal({ precision: 12, scale: 2 }).default('0').notNull(),
+	contentUploads: int().default(0).notNull(),
+	memberSince: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	lastActivityDate: timestamp({ mode: 'string' }),
+	profilePicture: varchar({ length: 512 }), // S3 URL
+	bio: text(),
+	preferences: json(), // User preferences and settings
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export type ClientProfile = typeof clientProfiles.$inferSelect;
+export type InsertClientProfile = typeof clientProfiles.$inferInsert;
+
+export const clientDonationHistory = mysqlTable("client_donation_history", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	amount: decimal({ precision: 12, scale: 2 }).notNull(),
+	currency: varchar({ length: 3 }).default('USD').notNull(),
+	purpose: varchar({ length: 255 }), // e.g., "Sweet Miracles", "HybridCast", etc.
+	status: mysqlEnum(['pending', 'completed', 'failed', 'refunded']).default('pending').notNull(),
+	transactionId: varchar({ length: 255 }).unique(),
+	paymentMethod: varchar({ length: 50 }), // stripe, paypal, etc.
+	notes: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export type ClientDonationHistory = typeof clientDonationHistory.$inferSelect;
+export type InsertClientDonationHistory = typeof clientDonationHistory.$inferInsert;
+
+export const clientContentUploads = mysqlTable("client_content_uploads", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	title: varchar({ length: 255 }).notNull(),
+	description: text(),
+	contentType: mysqlEnum(['audio', 'video', 'document', 'image']).notNull(),
+	contentUrl: varchar({ length: 512 }).notNull(), // S3 URL
+	fileSize: int(), // bytes
+	duration: int(), // seconds (for audio/video)
+	status: mysqlEnum(['draft', 'published', 'archived']).default('draft').notNull(),
+	viewCount: int().default(0).notNull(),
+	downloadCount: int().default(0).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export type ClientContentUpload = typeof clientContentUploads.$inferSelect;
+export type InsertClientContentUpload = typeof clientContentUploads.$inferInsert;
+
+// ============================================================================
+// Review & Rating Tables
+// ============================================================================
+
+export const reviews = mysqlTable("reviews", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	rating: int().notNull(), // 1-5 stars
+	category: mysqlEnum(['content_quality', 'user_experience', 'platform_features', 'customer_support', 'general']).default('general').notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	content: text().notNull(),
+	isVerified: int().default(0).notNull(), // 0 or 1
+	status: mysqlEnum(['pending', 'approved', 'rejected']).default('pending').notNull(),
+	helpfulCount: int().default(0).notNull(),
+	notHelpfulCount: int().default(0).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export type Review = typeof reviews.$inferSelect;
+export type InsertReview = typeof reviews.$inferInsert;
+
+export const reviewHelpfulness = mysqlTable("review_helpfulness", {
+	id: int().autoincrement().notNull().primaryKey(),
+	reviewId: int().notNull().references(() => reviews.id, { onDelete: "cascade" }),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	isHelpful: int().notNull(), // 1 for helpful, 0 for not helpful
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+}, (table) => [
+	// Ensure one vote per user per review
+	sql`UNIQUE KEY unique_review_user_vote (review_id, user_id)`
+]);
+
+export type ReviewHelpfulness = typeof reviewHelpfulness.$inferSelect;
+export type InsertReviewHelpfulness = typeof reviewHelpfulness.$inferInsert;
+
+export const reviewResponses = mysqlTable("review_responses", {
+	id: int().autoincrement().notNull().primaryKey(),
+	reviewId: int().notNull().references(() => reviews.id, { onDelete: "cascade" }),
+	responderId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	response: text().notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export type ReviewResponse = typeof reviewResponses.$inferSelect;
+export type InsertReviewResponse = typeof reviewResponses.$inferInsert;

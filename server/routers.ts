@@ -33,6 +33,9 @@ import { dashboardRouter } from "./routers/dashboardRouter";
 import { broadcastRouter } from "./routers/broadcastRouter";
 import { hybridcastRouter } from "./routers/hybridcastRouter";
 import { hybridcastSyncRouter } from "./routers/hybridcastSyncRouter";
+import { solbonesRouter } from "./routers/solbonesRouter";
+import { clientPortalRouter } from "./routers/clientPortalRouter";
+import { reviewRouter } from "./routers/reviewRouter";
 
 export const appRouter = router({
   // System router
@@ -80,6 +83,15 @@ export const appRouter = router({
 
   // HybridCast Data Sync
   hybridcastSync: hybridcastSyncRouter,
+
+  // Solbones Frequency Dice Game
+  solbones: solbonesRouter,
+
+  // Client Portal
+  clientPortal: clientPortalRouter,
+
+  // Reviews & Ratings
+  reviews: reviewRouter,
 
   // Agent Session Management
   agent: router({
