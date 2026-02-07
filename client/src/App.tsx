@@ -68,6 +68,7 @@ import Studio from '@/pages/Studio';
 import { PodcastPlayer } from '@/components/PodcastPlayer';
 import PodcastDiscovery from '@/pages/PodcastDiscovery';
 import { RockinBoogiePlayerEnhanced } from '@/components/RockinBoogiePlayerEnhanced';
+import RockinBoogieManager from '@/pages/RockinBoogieManager';
 import { DonationCheckout } from '@/pages/DonationCheckout';
 import { ProofVaultSearch } from '@/pages/ProofVaultSearch';
 import { ListenerDashboard } from '@/pages/ListenerDashboard';
@@ -148,7 +149,8 @@ function Router() {
       <Route path="/remediation-workflows" component={AutomatedRemediationWorkflows} />
       <Route path="/hybridcast-broadcast" component={HybridCastBroadcastManagement} />
       <Route path="/rockin-boogie-content" component={RockinBoogiePlayerEnhanced} />
-      <Route path="/rockin-boogie-manager" component={RockinBoogieContentManager} />
+      <Route path="/rockin-boogie" component={RockinBoogieManager} />
+      <Route path="/rockin-boogie-manager" component={RockinBoogieManager} />
       <Route path="/emergency-alerts" component={EmergencyAlertSystem} />
       <Route path="/analytics-reporting" component={AnalyticsReportingDashboard} />
       <Route path="/admin-decisions" component={AdminDecisionDashboard} />

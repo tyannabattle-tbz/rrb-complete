@@ -40,6 +40,7 @@ import { meditationRouter } from "./routers/meditation";
 import { podcastPlaybackRouter } from "./routers/podcastPlayback";
 import { radioStationsRouter } from "./routers/radioStations";
 import { studioStreamingRouter } from "./routers/studioStreaming";
+import { commandExecutionRouter } from "./routers/commandExecutionRouter";
 
 export const appRouter = router({
   // System router
@@ -108,6 +109,9 @@ export const appRouter = router({
 
   // Studio Streaming
   studioStreaming: studioStreamingRouter,
+
+  // Command Execution
+  commands: commandExecutionRouter,
 
   // Agent Session Management
   agent: router({
