@@ -90,6 +90,9 @@ import HybridCastNotificationCenter from '@/pages/HybridCastNotificationCenter';
 import BroadcastTemplatesLibrary from '@/pages/BroadcastTemplatesLibrary';
 import UserPreferences from '@/pages/UserPreferences';
 import WebhookManagement from '@/pages/WebhookManagement';
+import Solbones from '@/pages/Solbones';
+import ClientPortal from '@/pages/ClientPortal';
+import Review from '@/pages/Review';
 
 // Version: 2.0.0 - All routes fixed and meditation enabled
 function Router() {
@@ -175,6 +178,9 @@ function Router() {
       <Route path="/radio-station" component={PodcastPlayer} />
       <Route path="/meditation" component={MeditationHub} />
       <Route path="/sweet-miracles" component={DonationCheckout} />
+      <Route path="/solbones" component={Solbones} />
+      <Route path="/client-portal" component={ClientPortal} />
+      <Route path="/review" component={Review} />
       <Route component={NotFound} />
     </Switch>
   );
