@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,7 +9,7 @@ import RealTimeDecisionVisualization from '@/components/RealTimeDecisionVisualiz
 import { QumusChatCommandCenter } from '@/components/QumusChatCommandCenter';
 import { VoiceToText } from '@/components/VoiceToText';
 import { FunctionalFeatures } from '@/components/FunctionalFeatures';
-import { RockinBoogieWidget } from '@/components/RockinBoogieWidget';
+import { MonitoringDashboard } from '@/components/MonitoringDashboard';
 
 interface ChatMessage {
   id: string;
@@ -59,17 +59,14 @@ export default function QumusChatPage() {
 
     try {
       const response = await chatMutation.mutateAsync({
-        messages: messages.map(m => ({
-          role: m.role,
-          content: m.content,
-        })),
-        query: input,
+        message: input,
+        context: 'qumus_video_generation',
       });
 
       const assistantMsg: ChatMessage = {
-        id: `msg-${Date.now()}-ai`,
+        id: `msg-${Date.now()}-response`,
         role: 'assistant',
-        content: typeof response.message === 'string' ? response.message : 'I encountered an error. Please try again.',
+        content: response.reply || 'I understand. How can I help you further?',
         timestamp: Date.now(),
       };
 
@@ -78,7 +75,7 @@ export default function QumusChatPage() {
       const errorMsg: ChatMessage = {
         id: `msg-${Date.now()}-error`,
         role: 'assistant',
-        content: 'Sorry, I encountered an error processing your request. Please try again.',
+        content: 'Sorry, I encountered an error. Please try again.',
         timestamp: Date.now(),
       };
       setMessages(prev => [...prev, errorMsg]);
@@ -90,32 +87,59 @@ export default function QumusChatPage() {
   return (
     <div className="flex h-screen bg-white">
       {/* Sidebar */}
-      <div
-        className={`${
-          sidebarOpen ? 'w-64' : 'w-0'
-        } bg-slate-900 text-white transition-all duration-300 overflow-hidden flex flex-col`}
-      >
-        <div className="p-4 border-b border-slate-700">
-          <h2 className="font-bold text-lg">Qumus Chat</h2>
-        </div>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-slate-900 border-r border-slate-700 transition-all overflow-hidden flex flex-col`}>
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          <Button variant="ghost" className="w-full justify-start text-white hover:bg-slate-800">
+          <Button 
+            onClick={() => {
+              setMessages([{ id: '0', role: 'assistant', content: 'Starting a new chat...', timestamp: Date.now() }]);
+              setInput('');
+            }}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800"
+          >
             New Chat
           </Button>
-          <Button variant="ghost" className="w-full justify-start text-white hover:bg-slate-800">
+          <Button 
+            onClick={() => setActiveTab('features')}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800"
+          >
             Video Generation
           </Button>
-          <Button variant="ghost" className="w-full justify-start text-white hover:bg-slate-800">
+          <Button 
+            onClick={() => setActiveTab('features')}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800"
+          >
             Watermarking
           </Button>
-          <Button variant="ghost" className="w-full justify-start text-white hover:bg-slate-800">
+          <Button 
+            onClick={() => setActiveTab('features')}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800"
+          >
             Batch Processing
           </Button>
-          <Button variant="ghost" className="w-full justify-start text-white hover:bg-slate-800">
+          <Button 
+            onClick={() => setActiveTab('features')}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800"
+          >
             Analytics
           </Button>
-          <Button variant="ghost" className="w-full justify-start text-white hover:bg-slate-800">
+          <Button 
+            onClick={() => setActiveTab('features')}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800"
+          >
             Marketing
+          </Button>
+          <Button 
+            onClick={() => setActiveTab('monitoring')}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800"
+          >
+            Monitoring
           </Button>
         </div>
       </div>
@@ -142,6 +166,9 @@ export default function QumusChatPage() {
             </TabsTrigger>
             <TabsTrigger value="features" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
               ✨ Features
+            </TabsTrigger>
+            <TabsTrigger value="monitoring" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
+              📊 Monitoring
             </TabsTrigger>
           </TabsList>
 
@@ -240,6 +267,11 @@ export default function QumusChatPage() {
           {/* Features Tab */}
           <TabsContent value="features" className="flex-1 overflow-hidden overflow-y-auto">
             <FunctionalFeatures />
+          </TabsContent>
+
+          {/* Monitoring Tab */}
+          <TabsContent value="monitoring" className="flex-1 overflow-hidden overflow-y-auto">
+            <MonitoringDashboard />
           </TabsContent>
         </Tabs>
       </div>
