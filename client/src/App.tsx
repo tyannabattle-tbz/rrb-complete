@@ -171,6 +171,9 @@ function Router() {
       <Route path="/broadcast-templates" component={BroadcastTemplatesLibrary} />
       <Route path="/user-preferences" component={UserPreferences} />
       <Route path="/webhooks" component={WebhookManagement} />
+      <Route path="/radio-station" component={PodcastPlayer} />
+      <Route path="/meditation" component={MeditationHub} />
+      <Route path="/sweet-miracles" component={DonationCheckout} />
       <Route component={NotFound} />
     </Switch>
   );
