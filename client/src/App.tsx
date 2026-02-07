@@ -71,6 +71,9 @@ import { RockinBoogiePlayerEnhanced } from '@/components/RockinBoogiePlayerEnhan
 import RockinBoogieManager from '@/pages/RockinBoogieManager';
 import DecisionPolicyEditor from '@/pages/DecisionPolicyEditor';
 import RockinBoogieAdminDashboard from '@/pages/RockinBoogieAdminDashboard';
+import DocumentUpload from '@/pages/DocumentUpload';
+import AuditTrailViewer from '@/pages/AuditTrailViewer';
+import { ApprovalNotificationCenter } from '@/components/ApprovalNotificationCenter';
 import { DonationCheckout } from '@/pages/DonationCheckout';
 import { ProofVaultSearch } from '@/pages/ProofVaultSearch';
 import { ListenerDashboard } from '@/pages/ListenerDashboard';
@@ -155,6 +158,8 @@ function Router() {
       <Route path="/rockin-boogie-manager" component={RockinBoogieManager} />
       <Route path="/policy-editor" component={DecisionPolicyEditor} />
       <Route path="/rockin-admin" component={RockinBoogieAdminDashboard} />
+      <Route path="/document-upload" component={DocumentUpload} />
+      <Route path="/audit-trail" component={AuditTrailViewer} />
       <Route path="/emergency-alerts" component={EmergencyAlertSystem} />
       <Route path="/analytics-reporting" component={AnalyticsReportingDashboard} />
       <Route path="/admin-decisions" component={AdminDecisionDashboard} />
@@ -211,6 +216,7 @@ function App() {
             <Toaster />
             <KeyboardShortcutsGuide />
             <AppHeaderEnhanced />
+            <ApprovalNotificationCenter />
             <Router />
           </TooltipProvider>
         </PresetProvider>
