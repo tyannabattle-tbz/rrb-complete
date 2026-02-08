@@ -78,6 +78,8 @@ import DocumentUpload from '@/pages/DocumentUpload';
 import AuditTrailViewer from '@/pages/AuditTrailViewer';
 import { ApprovalNotificationCenter } from '@/components/ApprovalNotificationCenter';
 import { DonationCheckout } from '@/pages/DonationCheckout';
+import { AutonomousDashboard } from '@/pages/AutonomousDashboard';
+import { AutonomousDashboardPage } from '@/pages/AutonomousDashboardPage';
 import { ProofVaultSearch } from '@/pages/ProofVaultSearch';
 import { ListenerDashboard } from '@/pages/ListenerDashboard';
 import MeditationHub from '@/pages/MeditationHub';
@@ -168,6 +170,7 @@ function Router() {
       <Route path="/emergency-alerts" component={EmergencyAlertSystem} />
       <Route path="/analytics-reporting" component={AnalyticsReportingDashboard} />
       <Route path="/admin-decisions" component={AdminDecisionDashboard} />
+      <Route path="/autonomous-dashboard" component={AutonomousDashboardPage} />
       <Route path="/monitoring" component={PlatformMonitoringDashboard} />
       <Route path="/studio" component={Studio} />
       <Route path="/podcast" component={PodcastPlayer} />

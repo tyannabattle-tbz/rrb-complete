@@ -19,7 +19,9 @@ import {
   Zap,
   Shield,
   BarChart3,
+  XCircle,
 } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 interface Decision {
   decisionId: string;
