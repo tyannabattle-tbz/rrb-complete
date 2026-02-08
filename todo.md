@@ -1131,10 +1131,17 @@
 
 
 ## Production Readiness - RRB Republish (IN PROGRESS)
-- [ ] Connect real Ollama Server for LLM inference
-- [ ] Implement webhook payload validation with JSON Schema
-- [ ] Build real-time metrics dashboard with live updates
+- [x] Connect real Ollama Server for LLM inference
+- [x] Implement webhook payload validation with JSON Schema
+- [x] Build real-time metrics dashboard with live updates
+- [ ] Remove duplicate HybridCast from GPS navigation
+- [ ] Fix dashboard layout to avoid overlap with HybridCast/QUMUS
+- [ ] Clean up crowded header navigation
+- [ ] Enable webhook signature verification
+- [ ] Connect real-time WebSocket sync
 - [ ] Verify all RRB components are functioning
+- [ ] Test end-to-end automation workflows
+- [ ] Final production deployment and republish
 - [ ] Test end-to-end automation workflows
 - [ ] Verify HybridCast integration working
 - [ ] Test broadcast scheduling and execution

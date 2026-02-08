@@ -65,16 +65,19 @@ export function AppHeaderEnhanced() {
 
   const navItems = [
     { label: 'Home', icon: Home, path: '/' },
-    { label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
     { label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
-    { label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
-    { label: 'HybridCast', icon: Radio, path: '/gps-radar', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
     { label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
     { label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
     { label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
     { label: 'Integration', icon: BarChart3, path: '/integration-dashboard' },
     { label: 'Automation', icon: Zap, path: '/automation-rules' },
     { label: 'Metrics', icon: Activity, path: '/metrics-dashboard' },
+  ];
+
+  const secondaryNavItems = [
+    { label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
+    { label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
+    { label: 'HybridCast', icon: Radio, action: () => setShowHybridCastTabs(!showHybridCastTabs) },
   ];
 
   return (
@@ -91,16 +94,31 @@ export function AppHeaderEnhanced() {
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <Button
-                key={item.path}
+                key={item.path || item.label}
                 variant="ghost"
                 size="sm"
                 onClick={() => item.action ? item.action() : navigate(item.path)}
-                className={`gap-2 ${item.label === 'HybridCast' && showHybridCastTabs ? 'bg-cyan-500/20 border border-cyan-500' : ''}`}
+                className="gap-2"
               >
                 <item.icon className="h-4 w-4" />
-                <span className="hidden lg:inline">{item.label}</span>
+                <span className="hidden lg:inline text-sm">{item.label}</span>
               </Button>
             ))}
+            {/* Secondary Navigation */}
+            <div className="hidden xl:flex items-center gap-1 ml-2 pl-2 border-l border-border">
+              {secondaryNavItems.map((item) => (
+                <Button
+                  key={item.path || item.label}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => item.action ? item.action() : navigate(item.path)}
+                  className={`gap-2 ${item.label === 'HybridCast' && showHybridCastTabs ? 'bg-cyan-500/20 border border-cyan-500' : ''}`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span className="hidden xl:inline text-sm">{item.label}</span>
+                </Button>
+              ))}
+            </div>
           </nav>
 
           {/* Search and Actions */}
