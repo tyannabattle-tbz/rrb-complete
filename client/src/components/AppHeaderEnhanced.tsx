@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic } from 'lucide-react';
+import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -74,6 +74,7 @@ export function AppHeaderEnhanced() {
     { label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
     { label: 'Integration', icon: BarChart3, path: '/integration-dashboard' },
     { label: 'Automation', icon: Zap, path: '/automation-rules' },
+    { label: 'Metrics', icon: Activity, path: '/metrics-dashboard' },
   ];
 
   return (
