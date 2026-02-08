@@ -44,10 +44,13 @@ import { commandExecutionRouter } from "./routers/commandExecutionRouter";
 import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 import { audioRouter } from "./routers/audioRouter";
 import { governmentOpenSourceRouter } from "./routers/governmentOpenSourceRouter";
+import { integrationRouter } from "./routers/integrationRouter";
 
 export const appRouter = router({
   // System router
   system: systemRouter,
+  // Integration router
+  integration: integrationRouter,
 
   // Audio router
   audio: audioRouter,
