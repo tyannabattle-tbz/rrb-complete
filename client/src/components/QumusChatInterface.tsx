@@ -2,11 +2,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ChatHeader } from './ChatHeader';
-import { Send, Loader, Upload, X, FileIcon, Music, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import { Send, Loader, Upload, X, FileIcon, Music, Image as ImageIcon, AlertCircle, Trash2 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { useState, useRef, useEffect } from 'react';
 import VoiceChat from './VoiceChat';
+import TypingIndicator from './TypingIndicator';
+import { saveChatHistory, loadChatHistory, clearChatHistory } from '@/lib/chatHistoryStorage';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -29,13 +31,15 @@ interface FileUploadState {
 }
 
 export function QumusChatInterface() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const saved = loadChatHistory();
+    if (saved.length > 0) return saved;
+    return [{
       role: 'assistant',
       content: 'Welcome to Qumus! I\'m QUMUS, your autonomous orchestration engine. I operate at 90%+ autonomy managing 8 decision policies and 11+ service integrations. I can help you with video generation, watermarking, batch processing, HybridCast widgets, analytics, and more. What would you like to know?',
       timestamp: Date.now(),
-    },
-  ]);
+    }];
+  });
   const [input, setInput] = useState('');
   const [fileUpload, setFileUpload] = useState<FileUploadState>({
     files: [],
@@ -96,6 +100,11 @@ export function QumusChatInterface() {
 
   useEffect(() => {
     scrollToBottom();
+  }, [messages]);
+
+  // Save chat history whenever messages change
+  useEffect(() => {
+    saveChatHistory(messages);
   }, [messages]);
 
   const uploadFileMutation = trpc.qumusFileUpload.uploadFile.useMutation({
@@ -294,7 +303,7 @@ export function QumusChatInterface() {
         {chatMutation.isPending && (
           <div className="flex justify-start">
             <div className="bg-white text-slate-900 border border-slate-200 rounded-bl-none px-4 py-3 rounded-lg">
-              <Loader className="w-5 h-5 animate-spin" />
+              <TypingIndicator />
             </div>
           </div>
         )}
@@ -407,24 +416,8 @@ export function QumusChatInterface() {
           <VoiceChat
             onSendMessage={(message) => {
               setInput(message);
-              // Send the message directly
-              const userMessage: Message = {
-                role: 'user',
-                content: message,
-                timestamp: Date.now(),
-              };
-              setMessages(prev => [...prev, userMessage]);
+              handleSendMessage(message);
               setShowVoiceChat(false);
-              // Trigger the chat mutation
-              setTimeout(() => {
-                chatMutation.mutate({
-                  messages: [...messages, userMessage].map(m => ({
-                    role: m.role,
-                    content: m.content,
-                  })),
-                  query: message,
-                });
-              }, 0);
             }}
             onVoiceInput={(transcript) => {
               setInput(transcript);
@@ -434,12 +427,31 @@ export function QumusChatInterface() {
       )}
 
       {/* Voice Chat Toggle Button */}
-      <div className="mt-4 flex justify-center">
+      <div className="mt-4 flex justify-center gap-2">
         <button
           onClick={() => setShowVoiceChat(!showVoiceChat)}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
         >
           {showVoiceChat ? 'Hide Voice Chat' : 'Show Voice Chat'}
+        </button>
+        <button
+          onClick={() => {
+            if (confirm('Are you sure you want to clear the chat history?')) {
+              clearChatHistory();
+              setMessages([
+                {
+                  role: 'assistant',
+                  content: 'Chat history cleared. What would you like to know?',
+                  timestamp: Date.now(),
+                },
+              ]);
+              toast.success('Chat history cleared');
+            }
+          }}
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+        >
+          <Trash2 className="w-4 h-4" />
+          Clear History
         </button>
       </div>
     </div>

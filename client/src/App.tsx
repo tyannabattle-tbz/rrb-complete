@@ -52,7 +52,6 @@ import RockinRockinBoogiePage from '@/pages/RockinRockinBoogiePage';
 import BroadcastOrchestrationHub from '@/pages/BroadcastOrchestrationHub';
 import MobileStudio from '@/pages/MobileStudio';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
-import { IntegrationDashboard } from '@/pages/IntegrationDashboard';
 import QumusMonitoringDashboard from '@/pages/QumusMonitoringDashboard';
 import PolicyDecisionLogging from '@/pages/PolicyDecisionLogging';
 import AdminDecisionDashboard from '@/pages/AdminDecisionDashboard';
@@ -104,17 +103,6 @@ import Solbones from '@/pages/Solbones';
 import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
-import AutomationRuleEditor from '@/pages/AutomationRuleEditor';
-import RealTimeMetricsDashboard from '@/pages/RealTimeMetricsDashboard';
-import RadioStationPage from '@/pages/RadioStationPage';
-import PodcastAndVideoPage from '@/pages/PodcastAndVideoPage';
-import TheLegacyPage from '@/pages/TheLegacyPage';
-import TheMusicPage from '@/pages/TheMusicPage';
-import SweetMiraclesCompanyPage from '@/pages/SweetMiraclesCompanyPage';
-import QumusHumanReviewPage from '@/pages/QumusHumanReviewPage';
-import { TermsOfServicePage, PrivacyPolicyPage, DisclaimerPage, RefundPolicyPage, SupportPage } from '@/pages/PolicyPages';
-import QUMUSAutonomousBrainPage from '@/pages/QUMUSAutonomousBrainPage';
-import DecisionApprovalQueue from '@/pages/DecisionApprovalQueue';
 
 // Version: 2.0.0 - All routes fixed and meditation enabled
 function Router() {
@@ -159,8 +147,6 @@ function Router() {
       <Route path="/qumus-chat" component={QumusChatPage} />
       <Route path="/enhanced-chat" component={EnhancedChatPage} />
       <Route path="/qumus-dashboard" component={QumusMonitoringDashboard} />
-      <Route path="/qumus-autonomous-brain" component={QUMUSAutonomousBrainPage} />
-      <Route path="/approval-queue" component={DecisionApprovalQueue} />
       <Route path="/policy-decisions" component={PolicyDecisionLogging} />
       <Route path="/compliance-audit" component={ComplianceAuditViewer} />
       <Route path="/service-health" component={ServiceHealthAlerts} />
@@ -175,7 +161,6 @@ function Router() {
       <Route path="/rockin-boogie-manager" component={RockinBoogieManager} />
       <Route path="/broadcast-hub" component={BroadcastOrchestrationHub} />
       <Route path="/mobile-studio" component={MobileStudio} />
-      <Route path="/integration-dashboard" component={IntegrationDashboard} />
       <Route path="/policy-editor" component={DecisionPolicyEditor} />
       <Route path="/rockin-admin" component={RockinBoogieAdminDashboard} />
       <Route path="/document-upload" component={DocumentUpload} />
@@ -207,26 +192,13 @@ function Router() {
       <Route path="/broadcast-templates" component={BroadcastTemplatesLibrary} />
       <Route path="/user-preferences" component={UserPreferences} />
       <Route path="/webhooks" component={WebhookManagement} />
-      <Route path="/radio-station" component={RadioStationPage} />
-      <Route path="/podcast-and-video" component={PodcastAndVideoPage} />
+      <Route path="/radio-station" component={PodcastPlayer} />
       <Route path="/meditation" component={MeditationHub} />
       <Route path="/sweet-miracles" component={DonationCheckout} />
-      <Route path="/sweet-miracles-company" component={SweetMiraclesCompanyPage} />
       <Route path="/solbones" component={Solbones} />
       <Route path="/client-portal" component={ClientPortal} />
       <Route path="/review" component={Review} />
-      <Route path="/qumus-human-review" component={QumusHumanReviewPage} />
       <Route path="/admin-moderation" component={AdminModeration} />
-      <Route path="/automation-rules" component={AutomationRuleEditor} />
-      <Route path="/metrics-dashboard" component={RealTimeMetricsDashboard} />
-      <Route path="/the-legacy" component={TheLegacyPage} />
-      <Route path="/the-legacy/timeline" component={TheLegacyPage} />
-      <Route path="/the-music" component={TheMusicPage} />
-      <Route path="/terms-of-service" component={TermsOfServicePage} />
-      <Route path="/privacy-policy" component={PrivacyPolicyPage} />
-      <Route path="/disclaimer" component={DisclaimerPage} />
-      <Route path="/refund-policy" component={RefundPolicyPage} />
-      <Route path="/support" component={SupportPage} />
       <Route component={NotFound} />
     </Switch>
   );

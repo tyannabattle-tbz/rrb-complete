@@ -21,12 +21,6 @@ import { chunk5Router } from "./routerChunks/chunk5";
 
 // Import QUMUS router
 import { qumusRouter } from "./routers/qumus";
-import { qumusChatRouter } from "./routers/qumusChatRouter";
-import { qumusAutonomousBrainRouter } from "./routers/qumusAutonomousBrainRouter";
-import { auditTrailRouter } from "./routers/auditTrailRouter";
-import { decisionNotificationsRouter } from "./routers/decisionNotificationsRouter";
-import { decisionAnalyticsRouter } from "./routers/decisionAnalyticsRouter";
-import { decisionApprovalRouter } from "./routers/decisionApprovalRouter";
 
 // Import iTunes Podcasts router
 import { itunesPodcastsRouter } from "./routers/itunesPodcasts";
@@ -49,23 +43,13 @@ import { studioStreamingRouter } from "./routers/studioStreaming";
 import { commandExecutionRouter } from "./routers/commandExecutionRouter";
 import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 import { audioRouter } from "./routers/audioRouter";
-import { governmentOpenSourceRouter } from "./routers/governmentOpenSourceRouter";
-import { integrationRouter } from "./routers/integrationRouter";
-import { radioStationsDataRouter } from "./routers/radioStationsData";
-import { podcastsDataRouter } from "./routers/podcastsData";
-import { musicDataRouter } from "./routers/musicData";
 
 export const appRouter = router({
   // System router
   system: systemRouter,
-  // Integration router
-  integration: integrationRouter,
 
   // Audio router
   audio: audioRouter,
-
-  // Government-level open source router
-  government: governmentOpenSourceRouter,
 
   // Auth procedures
   auth: router({
@@ -85,9 +69,6 @@ export const appRouter = router({
   ...chunk3Router._def.procedures,
   ...chunk4Router._def.procedures,
   ...chunk5Router._def.procedures,
-
-  // QUMUS router
-  qumus: qumusRouter,
 
   // iTunes Podcasts
   itunesPodcasts: itunesPodcastsRouter,
@@ -128,11 +109,6 @@ export const appRouter = router({
   // Podcast Playback
   podcastPlayback: podcastPlaybackRouter,
 
-  // RRB Data Routers
-  radioStationsData: radioStationsDataRouter,
-  podcastsData: podcastsDataRouter,
-  musicData: musicDataRouter,
-
   // Radio Stations
   radioStations: radioStationsRouter,
 
@@ -144,26 +120,6 @@ export const appRouter = router({
 
   // QUMUS Command Router
   qumusCommand: qumusCommandRouter,
-
-  // QUMUS Chat Router
-  ai: router({
-    qumusChat: qumusChatRouter,
-  }),
-
-  // QUMUS Autonomous Brain Router
-  autonomousBrain: qumusAutonomousBrainRouter,
-
-  // QUMUS Audit Trail Router
-  auditTrail: auditTrailRouter,
-
-  // Decision Notifications Router
-  decisionNotifications: decisionNotificationsRouter,
-
-  // Decision Analytics Router
-  analytics: decisionAnalyticsRouter,
-
-  // Decision Approval Router
-  approvals: decisionApprovalRouter,
 
   // Agent Session Management
   agent: router({

@@ -1398,5 +1398,3 @@ export const decisionPolicies = mysqlTable("qumus_decision_policies", {
 });
 export type DecisionPolicy = typeof decisionPolicies.$inferSelect;
 export type InsertDecisionPolicy = typeof decisionPolicies.$inferInsert;
-
-
