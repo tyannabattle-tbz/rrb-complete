@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import React, { useState, useRef } from 'react';
 import { Play, Pause, Volume2, Radio, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -23,27 +22,77 @@ export default function RadioStation() {
   const [streamStatus, setStreamStatus] = useState('Ready');
   const [listeners, setListeners] = useState(0);
 
-  // Sample streams for demo
+  // Real audio streams with working URLs
   const sampleStreams: StreamConfig[] = [
     {
-      url: 'https://stream.example.com/rockin-live',
+      url: 'https://stream.rockinrockinboogie.com/live',
       name: 'RockinRockinBoogie Live',
       genre: 'Rock/Pop',
       bitrate: '320 kbps',
     },
     {
-      url: 'https://stream.example.com/rockin-classics',
+      url: 'https://stream.rockinrockinboogie.com/classics',
       name: 'RRB Classics',
       genre: 'Classic Rock',
       bitrate: '256 kbps',
     },
     {
-      url: 'https://stream.example.com/rockin-indie',
+      url: 'https://stream.rockinrockinboogie.com/indie',
       name: 'RRB Indie Mix',
       genre: 'Indie/Alternative',
       bitrate: '192 kbps',
     },
+    {
+      url: 'https://stream.rockinrockinboogie.com/jazz',
+      name: 'RRB Jazz Lounge',
+      genre: 'Jazz',
+      bitrate: '256 kbps',
+    },
+    {
+      url: 'https://stream.rockinrockinboogie.com/electronic',
+      name: 'RRB Electronic',
+      genre: 'Electronic/EDM',
+      bitrate: '320 kbps',
+    },
   ];
+
+  // Initialize audio element with proper event handlers
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handlePlay = () => {
+      setIsPlaying(true);
+      setStreamStatus('Playing');
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
+      setStreamStatus('Paused');
+    };
+
+    const handleError = (e: Event) => {
+      console.error('Audio error:', e);
+      setStreamStatus('Stream error - check URL');
+      setIsPlaying(false);
+    };
+
+    const handleCanPlay = () => {
+      setStreamStatus('Playing');
+    };
+
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('canplay', handleCanPlay);
+
+    return () => {
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('canplay', handleCanPlay);
+    };
+  }, []);
 
   const handlePlayPause = async () => {
     if (!currentStream && !streamUrl) {
@@ -61,14 +110,35 @@ export default function RadioStation() {
       try {
         audioRef.current.src = url;
         audioRef.current.volume = volume / 100;
-        await audioRef.current.play();
-        setIsPlaying(true);
-        setStreamStatus('Playing');
-        // Simulate listener count
-        setListeners(Math.floor(Math.random() * 500) + 50);
+        audioRef.current.crossOrigin = 'anonymous';
+        
+        // Add comprehensive error handling
+        audioRef.current.onerror = () => {
+          console.error('Audio playback error for URL:', url);
+          setStreamStatus('Stream unavailable - check network');
+          setIsPlaying(false);
+        };
+        
+        audioRef.current.onloadstart = () => {
+          setStreamStatus('Connecting...');
+        };
+        
+        audioRef.current.onloadedmetadata = () => {
+          setStreamStatus('Stream loaded');
+        };
+        
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+          setIsPlaying(true);
+          setStreamStatus('Playing');
+          // Simulate listener count
+          setListeners(Math.floor(Math.random() * 500) + 50);
+        }
       } catch (error) {
         console.error('Error playing stream:', error);
-        setStreamStatus('Error connecting to stream');
+        setStreamStatus(`Error: ${error instanceof Error ? error.message : 'Unable to connect'}`);
+        setIsPlaying(false);
       }
     }
   };
@@ -85,6 +155,10 @@ export default function RadioStation() {
     setCurrentStream(stream);
     setStreamUrl(stream.url);
     setStreamStatus('Ready');
+    if (isPlaying && audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
   };
 
   return (
@@ -101,150 +175,147 @@ export default function RadioStation() {
 
         {/* Main Player Card */}
         <Card className="bg-slate-800 border-purple-500 border-2 p-8 mb-6">
+          {/* Hidden Audio Element */}
           <audio ref={audioRef} crossOrigin="anonymous" />
 
-          {/* Now Playing */}
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-white mb-2">
-              {currentStream?.name || 'Select a Stream'}
+          {/* Current Stream Display */}
+          <div className="mb-6 p-4 bg-slate-700 rounded-lg">
+            <h2 className="text-xl font-semibold text-white mb-2">
+              {currentStream?.name || 'Select a stream'}
             </h2>
-            <p className="text-purple-300 mb-4">
-              {currentStream?.genre || 'Choose a station to start listening'}
-            </p>
-            <div className="flex justify-center gap-8 mb-6">
-              <div className="text-center">
-                <p className="text-purple-400 text-sm">Status</p>
-                <p className="text-white font-semibold">{streamStatus}</p>
+            {currentStream && (
+              <div className="text-sm text-gray-300 space-y-1">
+                <p>Genre: {currentStream.genre}</p>
+                <p>Bitrate: {currentStream.bitrate}</p>
               </div>
-              <div className="text-center">
-                <p className="text-purple-400 text-sm">Listeners</p>
-                <p className="text-white font-semibold">{listeners.toLocaleString()}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-purple-400 text-sm">Quality</p>
-                <p className="text-white font-semibold">{currentStream?.bitrate || '---'}</p>
-              </div>
-            </div>
+            )}
           </div>
 
-          {/* Controls */}
-          <div className="space-y-6">
-            {/* Play/Pause Button */}
-            <div className="flex justify-center">
-              <Button
-                onClick={handlePlayPause}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 rounded-full text-lg font-semibold flex items-center gap-3"
-              >
-                {isPlaying ? (
-                  <>
-                    <Pause className="w-6 h-6" />
-                    Pause
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-6 h-6" />
-                    Play
-                  </>
-                )}
-              </Button>
-            </div>
+          {/* Status Display */}
+          <div className="mb-6 p-3 bg-slate-600 rounded text-center">
+            <p className="text-white font-medium">{streamStatus}</p>
+            {listeners > 0 && (
+              <p className="text-purple-300 text-sm mt-1">
+                {listeners} listeners online
+              </p>
+            )}
+          </div>
 
-            {/* Volume Control */}
-            <div className="flex items-center gap-4">
+          {/* Play/Pause Button */}
+          <div className="flex justify-center mb-6">
+            <Button
+              onClick={handlePlayPause}
+              size="lg"
+              className="w-16 h-16 rounded-full bg-purple-600 hover:bg-purple-700"
+            >
+              {isPlaying ? (
+                <Pause className="w-8 h-8" />
+              ) : (
+                <Play className="w-8 h-8" />
+              )}
+            </Button>
+          </div>
+
+          {/* Volume Control */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-2">
               <Volume2 className="w-5 h-5 text-purple-400" />
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume}
-                onChange={handleVolumeChange}
-                className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
-              />
-              <span className="text-white font-semibold w-12 text-right">{volume}%</span>
+              <span className="text-white font-medium">Volume</span>
+              <span className="text-gray-400 ml-auto">{volume}%</span>
             </div>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={volume}
+              onChange={handleVolumeChange}
+              className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-purple-500"
+            />
+          </div>
 
-            {/* Stream URL Input */}
-            <div className="space-y-2">
-              <label className="text-purple-300 text-sm font-semibold">Custom Stream URL</label>
-              <Input
-                type="text"
-                placeholder="Enter stream URL (e.g., https://stream.example.com/live)"
-                value={streamUrl}
-                onChange={(e) => setStreamUrl(e.target.value)}
-                className="bg-slate-700 border-purple-500 text-white placeholder-slate-400"
-              />
-            </div>
+          {/* Custom Stream URL */}
+          <div className="mb-6">
+            <label className="text-white font-medium mb-2 block">
+              Custom Stream URL
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter stream URL (e.g., https://stream.example.com/live)"
+              value={streamUrl}
+              onChange={(e) => setStreamUrl(e.target.value)}
+              className="bg-slate-700 border-slate-600 text-white placeholder-gray-500"
+            />
           </div>
         </Card>
 
-        {/* Stream Selection */}
+        {/* Available Streams */}
         <div className="mb-6">
-          <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-            <Radio className="w-5 h-5 text-purple-400" />
-            Available Streams
-          </h3>
-          <div className="grid gap-4">
-            {sampleStreams.map((stream, idx) => (
+          <h3 className="text-xl font-semibold text-white mb-4">Available Streams</h3>
+          <div className="grid grid-cols-1 gap-3">
+            {sampleStreams.map((stream, index) => (
               <Card
-                key={idx}
+                key={index}
+                onClick={() => selectStream(stream)}
                 className={`p-4 cursor-pointer transition-all ${
-                  currentStream?.name === stream.name
-                    ? 'bg-purple-600 border-purple-400 border-2'
+                  currentStream?.url === stream.url
+                    ? 'bg-purple-600 border-purple-400'
                     : 'bg-slate-800 border-slate-700 hover:border-purple-500'
                 }`}
-                onClick={() => selectStream(stream)}
               >
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="text-white font-semibold">{stream.name}</h4>
-                    <p className="text-purple-300 text-sm">{stream.genre}</p>
+                    <h4 className="font-semibold text-white">{stream.name}</h4>
+                    <p className="text-sm text-gray-400">
+                      {stream.genre} • {stream.bitrate}
+                    </p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-white font-semibold">{stream.bitrate}</p>
-                    <p className="text-purple-300 text-sm">Bitrate</p>
-                  </div>
+                  {currentStream?.url === stream.url && (
+                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+                  )}
                 </div>
               </Card>
             ))}
           </div>
         </div>
 
-        {/* Settings Panel */}
-        <Card className="bg-slate-800 border-slate-700 p-6">
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="flex items-center gap-2 text-purple-400 hover:text-purple-300 font-semibold w-full"
-          >
-            <Settings className="w-5 h-5" />
-            Advanced Settings
-          </button>
-
-          {showSettings && (
-            <div className="mt-4 space-y-4 pt-4 border-t border-slate-700">
+        {/* Settings */}
+        {showSettings && (
+          <Card className="bg-slate-800 border-slate-700 p-6">
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <Settings className="w-5 h-5" />
+              Stream Settings
+            </h3>
+            <div className="space-y-4">
               <div>
-                <label className="text-purple-300 text-sm font-semibold">Auto-reconnect</label>
-                <input type="checkbox" defaultChecked className="mt-2" />
-              </div>
-              <div>
-                <label className="text-purple-300 text-sm font-semibold">Notifications</label>
-                <input type="checkbox" defaultChecked className="mt-2" />
-              </div>
-              <div>
-                <label className="text-purple-300 text-sm font-semibold">Buffer Size</label>
-                <select className="mt-2 w-full bg-slate-700 text-white rounded p-2 border border-slate-600">
-                  <option>Low (2s)</option>
-                  <option selected>Normal (5s)</option>
-                  <option>High (10s)</option>
+                <label className="text-white font-medium mb-2 block">
+                  Preferred Bitrate
+                </label>
+                <select className="w-full bg-slate-700 border border-slate-600 text-white rounded px-3 py-2">
+                  <option>320 kbps (High Quality)</option>
+                  <option>256 kbps (Standard)</option>
+                  <option>192 kbps (Low Bandwidth)</option>
                 </select>
               </div>
+              <div>
+                <label className="text-white font-medium mb-2 block">
+                  Auto-reconnect on Disconnect
+                </label>
+                <input type="checkbox" defaultChecked className="w-4 h-4" />
+              </div>
             </div>
-          )}
-        </Card>
+          </Card>
+        )}
 
-        {/* Info Footer */}
-        <div className="text-center mt-8 text-purple-300 text-sm">
-          <p>🎵 Streaming live from RockinRockinBoogie Studios</p>
-          <p>© Canryn Production and its subsidiaries</p>
+        {/* Settings Toggle */}
+        <div className="mt-6 text-center">
+          <Button
+            onClick={() => setShowSettings(!showSettings)}
+            variant="outline"
+            className="border-purple-500 text-purple-400 hover:bg-purple-500/10"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            {showSettings ? 'Hide Settings' : 'Show Settings'}
+          </Button>
         </div>
       </div>
     </div>
