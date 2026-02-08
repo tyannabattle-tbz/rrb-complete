@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -101,17 +101,17 @@ export function AppHeaderEnhanced() {
           </nav>
 
           {/* Search and Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
             {/* Search */}
             {showSearch ? (
               <form onSubmit={handleSearch} className="flex items-center gap-2">
-                <Input
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-48"
-                  autoFocus
-                />
+              <Input
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-32 md:w-48 text-sm"
+                autoFocus
+              />
                 <Button
                   type="button"
                   variant="ghost"
@@ -168,23 +168,25 @@ export function AppHeaderEnhanced() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border p-4 space-y-2">
-            {navItems.map((item) => (
-              <Button
-                key={item.id}
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  if (item.action) item.action();
-                  else navigate(item.path);
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full justify-start gap-2"
-              >
-                <item.icon className="h-4 w-4" />
-                <span>{item.label}</span>
-              </Button>
-            ))}
+          <div className="md:hidden border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="p-4 space-y-2">
+              {navItems.map((item) => (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    if (item.action) item.action();
+                    else navigate(item.path);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full justify-start gap-2 text-sm"
+                >
+                  <item.icon className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                </Button>
+              ))}
+            </div>
           </div>
         )}
       </header>
