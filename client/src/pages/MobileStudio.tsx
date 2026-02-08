@@ -201,8 +201,7 @@ export default function MobileStudio() {
                 <div className="flex gap-2 items-end">
                   <Button
                     onClick={() => setIsRecording(!isRecording)}
-                    className={isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'}
-                    className="flex-1 gap-2"
+                    className={`${isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} flex-1 gap-2`}
                   >
                     <Mic className="w-4 h-4" />
                     {isRecording ? 'Stop Recording' : 'Start Recording'}

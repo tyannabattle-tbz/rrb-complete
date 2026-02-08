@@ -320,6 +320,15 @@
 
 /* Mobile Touch Optimization - WCAG 2.1 AA Compliance */
 @media (max-width: 768px) {
+  /* Fix horizontal scrolling */
+  * {
+    max-width: 100%;
+  }
+
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
   /* Ensure minimum 44x44px touch targets */
   button,
   a,
@@ -443,5 +452,79 @@
   /* Ensure adequate padding for mobile content */
   main {
     padding-bottom: 80px;
+  }
+
+  /* Mobile Bottom Navigation Improvements */
+  nav button {
+    min-height: 80px;
+    padding: 8px 4px;
+    flex-direction: column;
+  }
+
+  nav button svg {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 2px;
+  }
+
+  nav button span {
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  /* Mobile Header Improvements */
+  header[class*="MobileHeader"] {
+    padding: 0;
+  }
+
+  header[class*="MobileHeader"] > div {
+    gap: 8px;
+  }
+
+  /* Prevent text wrapping in header */
+  header input {
+    max-width: 100%;
+  }
+}
+
+/* Additional Mobile Optimizations */
+@media (max-width: 768px) {
+  /* Ensure proper spacing around bottom nav */
+  body {
+    padding-bottom: 0;
+  }
+
+  /* Optimize dialog/modal for mobile */
+  [role="dialog"] {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 16px 16px 0 0;
+  }
+
+  /* Improve mobile table scrolling */
+  table {
+    font-size: 14px;
+  }
+
+  /* Optimize mobile list items */
+  li {
+    padding: 12px 0;
+  }
+
+  /* Ensure proper spacing in forms */
+  form > * + * {
+    margin-top: 16px;
+  }
+
+  /* Optimize dropdown menus */
+  [role="listbox"],
+  [role="menu"] {
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
   }
 }

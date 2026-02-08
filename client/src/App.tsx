@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
@@ -48,6 +47,8 @@ import { QumusChatInterface } from './components/QumusChatInterface';
 import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
 import { MobileResponsiveLayout } from './components/MobileResponsiveLayout';
+import { MobileHeaderClean } from './components/MobileHeaderClean';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
 import QumusChatPage from '@/pages/QumusChatPage';
@@ -80,21 +81,14 @@ import DecisionPolicyEditor from '@/pages/DecisionPolicyEditor';
 import RockinBoogieAdminDashboard from '@/pages/RockinBoogieAdminDashboard';
 import DocumentUpload from '@/pages/DocumentUpload';
 import AuditTrailViewer from '@/pages/AuditTrailViewer';
-import { ApprovalNotificationCenter } from '@/components/ApprovalNotificationCenter';
-import { DonationCheckout } from '@/pages/DonationCheckout';
-import { AutonomousDashboard } from '@/pages/AutonomousDashboard';
 import { AutonomousDashboardPage } from '@/pages/AutonomousDashboardPage';
+import { DonationCheckout } from '@/pages/DonationCheckout';
 import { ProofVaultSearch } from '@/pages/ProofVaultSearch';
 import { ListenerDashboard } from '@/pages/ListenerDashboard';
-import MeditationHub from '@/pages/MeditationHub';
-import { GPSRadarMapPage } from '@/pages/GPSRadarMapPage';
 import ComprehensiveDashboardPage from '@/pages/ComprehensiveDashboardPage';
-import UserPreferencesPanel from '@/components/UserPreferencesPanel';
-import { AccessibilityPanel } from '@/components/AccessibilityPanel';
-import { RealTimeTranscription } from '@/components/RealTimeTranscription';
-import { LocationChatRooms } from '@/components/LocationChatRooms';
-import { BroadcastVOD } from '@/components/BroadcastVOD';
+
 import CollaborationPage from '@/pages/CollaborationPage';
+import { GPSRadarMapPage } from '@/pages/GPSRadarMapPage';
 import EmergencyBroadcastAdminPanel from '@/pages/EmergencyBroadcastAdminPanel';
 import BroadcastScheduler from '@/pages/BroadcastScheduler';
 import AuditLogViewer from '@/pages/AuditLogViewer';
@@ -109,8 +103,10 @@ import Solbones from '@/pages/Solbones';
 import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
+import MeditationHub from '@/pages/MeditationHub';
+import { Toaster } from 'sonner';
 
-// Version: 2.0.0 - All routes fixed and meditation enabled
+// Version: 3.0.0 - Mobile-first header redesign
 function Router() {
   return (
     <Switch>
@@ -124,17 +120,17 @@ function Router() {
       <Route path="/marketplace" component={WebhookMarketplace} />
       <Route path="/finetuning" component={ModelFineTuning} />
       <Route path="/production" component={ProductionDashboard} />
-        <Route path="/chat-management" component={ChatManagement} />
-        <Route path="/notifications" component={NotificationCenter} />
-        <Route path="/batch-templates" component={BatchTemplateManager} />
-        <Route path="/cost-optimization" component={CostOptimizationDashboard} />
+      <Route path="/chat-management" component={ChatManagement} />
+      <Route path="/notifications" component={NotificationCenter} />
+      <Route path="/batch-templates" component={BatchTemplateManager} />
+      <Route path="/cost-optimization" component={CostOptimizationDashboard} />
       <Route path="/admin/monitoring" component={AdminMonitoringDashboard} />
       <Route path="/voice-feedback" component={VoiceFeedbackSettings} />
       <Route path="/scheduled-exports" component={ScheduledExportManager} />
-        <Route path="/feature-analytics" component={FeatureAnalyticsDashboard} />
-        <Route path="/video-processing" component={VideoProcessingStudio} />
-        <Route path="/audio-editor" component={AudioEditor} />
-        <Route path="/video-timeline" component={VideoTimelineEditor} />
+      <Route path="/feature-analytics" component={FeatureAnalyticsDashboard} />
+      <Route path="/video-processing" component={VideoProcessingStudio} />
+      <Route path="/audio-editor" component={AudioEditor} />
+      <Route path="/video-timeline" component={VideoTimelineEditor} />
       <Route path="/video-queue" component={VideoQueueManager} />
       <Route path="/motion-studio" component={MotionGenerationStudio} />
       <Route path="/share/video/:videoId" component={SharedVideoPage} />
@@ -183,11 +179,8 @@ function Router() {
       <Route path="/donate" component={DonationCheckout} />
       <Route path="/proof-vault" component={ProofVaultSearch} />
       <Route path="/dashboard" component={ListenerDashboard} />
-      <Route path="/preferences" component={UserPreferencesPanel} />
       <Route path="/comprehensive-dashboard" component={ComprehensiveDashboardPage} />
-      <Route path="/transcription" component={RealTimeTranscription} />
-      <Route path="/location-chat" component={LocationChatRooms} />
-      <Route path="/vod-library" component={BroadcastVOD} />
+
       <Route path="/collaboration" component={CollaborationPage} />
       <Route path="/gps-radar" component={GPSRadarMapPage} />
       <Route path="/broadcast-admin" component={EmergencyBroadcastAdminPanel} />
@@ -200,7 +193,6 @@ function Router() {
       <Route path="/broadcast-templates" component={BroadcastTemplatesLibrary} />
       <Route path="/user-preferences" component={UserPreferences} />
       <Route path="/webhooks" component={WebhookManagement} />
-      <Route path="/radio-station" component={PodcastPlayer} />
       <Route path="/meditation" component={MeditationHub} />
       <Route path="/sweet-miracles" component={DonationCheckout} />
       <Route path="/solbones" component={Solbones} />
@@ -211,11 +203,6 @@ function Router() {
     </Switch>
   );
 }
-
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
   return (
@@ -228,10 +215,22 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <KeyboardShortcutsGuide />
-            <AppHeaderEnhanced />
+            
+            {/* Mobile Header - shown only on mobile */}
+            <MobileHeaderClean />
+            
+            {/* Desktop Header - shown only on desktop */}
+            <div className="hidden md:block">
+              <AppHeaderEnhanced />
+            </div>
+            
+            {/* Main Content */}
             <MobileResponsiveLayout>
               <Router />
             </MobileResponsiveLayout>
+            
+            {/* Mobile Bottom Navigation */}
+            <MobileBottomNav />
           </TooltipProvider>
         </PresetProvider>
       </ThemeProvider>

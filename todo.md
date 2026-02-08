@@ -1,16 +1,16 @@
 # Manus Agent Web - Project TODO
 
-## Mobile UX Improvements (CRITICAL - COMPLETED)
-- [x] Implement mobile-first responsive layout with full-width design
-- [x] Add bottom navigation bar for primary actions (Chat, Dashboard, Search, Settings)
-- [x] Increase touch target sizes to minimum 44x44px for accessibility
-- [x] Simplify mobile menu structure and remove horizontal scrolling
-- [x] Optimize content cards for mobile viewport
-- [x] Fix tab navigation to be vertical on mobile
-- [x] Implement hamburger menu for secondary navigation
-- [x] Add proper spacing and padding for mobile devices
-- [x] Test on multiple mobile device sizes (iPhone SE, iPhone 14, iPad)
-- [x] Ensure all interactive elements are easily tappable on mobile
+## Mobile UX Improvements - CRITICAL ISSUES FIXED
+- [x] Fix header tab overlapping and text truncation
+- [x] Remove horizontal scrolling from top navigation tabs
+- [x] Redesign header to be less cluttered on mobile
+- [x] Fix bottom navigation text truncation (show labels properly)
+- [x] Separate header navigation from HybridCast tabs
+- [x] Hide non-essential header buttons on mobile (Download, Share)
+- [x] Improve spacing and padding in header
+- [x] Make bottom nav icons larger and more tappable
+- [x] Add proper gap between bottom nav items
+- [x] Test header and nav on actual mobile devices
 
 ## Phase 1-10: Core Features (COMPLETED)
 - [x] Chat interface for interacting with the autonomous agent

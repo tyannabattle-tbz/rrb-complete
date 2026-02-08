@@ -162,7 +162,7 @@ export function MonitoringDashboard() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-400">Latency:</span>
-                      <span className={metric.latency > 100 ? 'text-yellow-300' : 'text-green-300'} className="font-semibold">
+                      <span className={`${metric.latency > 100 ? 'text-yellow-300' : 'text-green-300'} font-semibold`}>
                         {Math.round(metric.latency)}ms
                       </span>
                     </div>

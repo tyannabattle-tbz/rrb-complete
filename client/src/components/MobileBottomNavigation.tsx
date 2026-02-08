@@ -10,7 +10,7 @@ interface NavItem {
   path: string;
 }
 
-export function MobileBottomNav() {
+export function MobileBottomNavigation() {
   const [location, navigate] = useLocation();
 
   const navItems: NavItem[] = [
@@ -27,11 +27,11 @@ export function MobileBottomNav() {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-border">
-      <div className="flex items-stretch justify-around h-20">
+      <div className="flex items-stretch justify-around h-20 px-0">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
-          
+
           return (
             <Button
               key={item.id}
@@ -42,9 +42,10 @@ export function MobileBottomNav() {
                   ? 'bg-primary/10 text-primary border-t-2 border-primary'
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
               }`}
+              title={item.label}
             >
               <Icon className="h-6 w-6" />
-              <span className="text-xs font-medium">{item.label}</span>
+              <span className="text-xs font-medium leading-tight">{item.label}</span>
             </Button>
           );
         })}
