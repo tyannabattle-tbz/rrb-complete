@@ -131,13 +131,33 @@ export default function QumusChatPage() {
 
   return (
     <div className="flex h-screen bg-white">
-      {/* Sidebar - hidden on mobile */}
-      <div className={`hidden md:flex ${sidebarOpen ? 'w-64' : 'w-0'} bg-slate-900 border-r border-slate-700 transition-all overflow-hidden flex-col`}>
+      {/* Mobile Overlay Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - mobile overlay, desktop fixed */}
+      <div className={`${sidebarOpen ? 'fixed md:relative' : 'hidden md:flex'} inset-0 md:inset-auto z-40 md:z-auto ${sidebarOpen ? 'w-64' : 'md:w-64'} bg-slate-900 border-r border-slate-700 transition-all overflow-hidden flex-col`}>
+        {/* Mobile Close Button */}
+        <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-700">
+          <h2 className="text-white font-bold">Menu</h2>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="text-white hover:bg-slate-800 p-1 rounded"
+            aria-label="Close menu"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           <Button 
             onClick={() => {
               setMessages([{ id: '0', role: 'assistant', content: 'Starting a new chat...', timestamp: Date.now() }]);
               setInput('');
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
@@ -145,46 +165,117 @@ export default function QumusChatPage() {
             New Chat
           </Button>
           <Button 
-            onClick={() => setActiveTab('features')}
+            onClick={() => {
+              setActiveTab('features');
+              if (isMobile) setSidebarOpen(false);
+            }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
           >
             Video Generation
           </Button>
           <Button 
-            onClick={() => setActiveTab('features')}
+            onClick={() => {
+              setActiveTab('features');
+              if (isMobile) setSidebarOpen(false);
+            }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
           >
             Watermarking
           </Button>
           <Button 
-            onClick={() => setActiveTab('features')}
+            onClick={() => {
+              setActiveTab('features');
+              if (isMobile) setSidebarOpen(false);
+            }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
           >
             Batch Processing
           </Button>
           <Button 
-            onClick={() => setActiveTab('features')}
+            onClick={() => {
+              setActiveTab('features');
+              if (isMobile) setSidebarOpen(false);
+            }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
           >
             Analytics
           </Button>
           <Button 
-            onClick={() => setActiveTab('features')}
+            onClick={() => {
+              setActiveTab('features');
+              if (isMobile) setSidebarOpen(false);
+            }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
           >
             Marketing
           </Button>
           <Button 
-            onClick={() => setActiveTab('monitoring')}
+            onClick={() => {
+              setActiveTab('monitoring');
+              if (isMobile) setSidebarOpen(false);
+            }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
           >
             Monitoring
+          </Button>
+          <div className="border-t border-slate-700 my-2 pt-2">
+            <h3 className="text-xs font-bold text-slate-400 px-2 py-2">TABS</h3>
+          </div>
+          <Button 
+            onClick={() => {
+              setActiveTab('chat');
+              if (isMobile) setSidebarOpen(false);
+            }}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800 text-sm"
+          >
+            💬 Chat
+          </Button>
+          <Button 
+            onClick={() => {
+              setActiveTab('decisions');
+              if (isMobile) setSidebarOpen(false);
+            }}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800 text-sm"
+          >
+            ⚡ Decisions
+          </Button>
+          <Button 
+            onClick={() => {
+              setActiveTab('override');
+              if (isMobile) setSidebarOpen(false);
+            }}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800 text-sm"
+          >
+            🔐 Override
+          </Button>
+          <Button 
+            onClick={() => {
+              setActiveTab('commands');
+              if (isMobile) setSidebarOpen(false);
+            }}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800 text-sm"
+          >
+            ⚙️ Command Center
+          </Button>
+          <Button 
+            onClick={() => {
+              setActiveTab('voice');
+              if (isMobile) setSidebarOpen(false);
+            }}
+            variant="ghost" 
+            className="w-full justify-start text-white hover:bg-slate-800 text-sm"
+          >
+            🎤 Voice to Text
           </Button>
         </div>
       </div>
