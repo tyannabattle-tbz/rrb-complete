@@ -23,6 +23,9 @@ import { chunk5Router } from "./routerChunks/chunk5";
 import { qumusRouter } from "./routers/qumus";
 import { qumusChatRouter } from "./routers/qumusChatRouter";
 import { qumusAutonomousBrainRouter } from "./routers/qumusAutonomousBrainRouter";
+import { auditTrailRouter } from "./routers/auditTrailRouter";
+import { decisionNotificationsRouter } from "./routers/decisionNotificationsRouter";
+import { decisionAnalyticsRouter } from "./routers/decisionAnalyticsRouter";
 
 // Import iTunes Podcasts router
 import { itunesPodcastsRouter } from "./routers/itunesPodcasts";
@@ -148,6 +151,15 @@ export const appRouter = router({
 
   // QUMUS Autonomous Brain Router
   autonomousBrain: qumusAutonomousBrainRouter,
+
+  // QUMUS Audit Trail Router
+  auditTrail: auditTrailRouter,
+
+  // Decision Notifications Router
+  decisionNotifications: decisionNotificationsRouter,
+
+  // Decision Analytics Router
+  analytics: decisionAnalyticsRouter,
 
   // Agent Session Management
   agent: router({
