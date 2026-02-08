@@ -113,6 +113,7 @@ import TheMusicPage from '@/pages/TheMusicPage';
 import SweetMiraclesCompanyPage from '@/pages/SweetMiraclesCompanyPage';
 import QumusHumanReviewPage from '@/pages/QumusHumanReviewPage';
 import { TermsOfServicePage, PrivacyPolicyPage, DisclaimerPage, RefundPolicyPage, SupportPage } from '@/pages/PolicyPages';
+import QUMUSAutonomousBrainPage from '@/pages/QUMUSAutonomousBrainPage';
 
 // Version: 2.0.0 - All routes fixed and meditation enabled
 function Router() {
@@ -157,6 +158,7 @@ function Router() {
       <Route path="/qumus-chat" component={QumusChatPage} />
       <Route path="/enhanced-chat" component={EnhancedChatPage} />
       <Route path="/qumus-dashboard" component={QumusMonitoringDashboard} />
+      <Route path="/qumus-autonomous-brain" component={QUMUSAutonomousBrainPage} />
       <Route path="/policy-decisions" component={PolicyDecisionLogging} />
       <Route path="/compliance-audit" component={ComplianceAuditViewer} />
       <Route path="/service-health" component={ServiceHealthAlerts} />

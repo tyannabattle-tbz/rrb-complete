@@ -21,6 +21,8 @@ import { chunk5Router } from "./routerChunks/chunk5";
 
 // Import QUMUS router
 import { qumusRouter } from "./routers/qumus";
+import { qumusChatRouter } from "./routers/qumusChatRouter";
+import { qumusAutonomousBrainRouter } from "./routers/qumusAutonomousBrainRouter";
 
 // Import iTunes Podcasts router
 import { itunesPodcastsRouter } from "./routers/itunesPodcasts";
@@ -80,6 +82,9 @@ export const appRouter = router({
   ...chunk4Router._def.procedures,
   ...chunk5Router._def.procedures,
 
+  // QUMUS router
+  qumus: qumusRouter,
+
   // iTunes Podcasts
   itunesPodcasts: itunesPodcastsRouter,
 
@@ -135,6 +140,14 @@ export const appRouter = router({
 
   // QUMUS Command Router
   qumusCommand: qumusCommandRouter,
+
+  // QUMUS Chat Router
+  ai: router({
+    qumusChat: qumusChatRouter,
+  }),
+
+  // QUMUS Autonomous Brain Router
+  autonomousBrain: qumusAutonomousBrainRouter,
 
   // Agent Session Management
   agent: router({
