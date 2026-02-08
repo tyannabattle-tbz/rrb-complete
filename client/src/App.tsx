@@ -52,6 +52,7 @@ import RockinRockinBoogiePage from '@/pages/RockinRockinBoogiePage';
 import BroadcastOrchestrationHub from '@/pages/BroadcastOrchestrationHub';
 import MobileStudio from '@/pages/MobileStudio';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
+import { IntegrationDashboard } from '@/pages/IntegrationDashboard';
 import QumusMonitoringDashboard from '@/pages/QumusMonitoringDashboard';
 import PolicyDecisionLogging from '@/pages/PolicyDecisionLogging';
 import AdminDecisionDashboard from '@/pages/AdminDecisionDashboard';
@@ -161,6 +162,7 @@ function Router() {
       <Route path="/rockin-boogie-manager" component={RockinBoogieManager} />
       <Route path="/broadcast-hub" component={BroadcastOrchestrationHub} />
       <Route path="/mobile-studio" component={MobileStudio} />
+      <Route path="/integration-dashboard" component={IntegrationDashboard} />
       <Route path="/policy-editor" component={DecisionPolicyEditor} />
       <Route path="/rockin-admin" component={RockinBoogieAdminDashboard} />
       <Route path="/document-upload" component={DocumentUpload} />
