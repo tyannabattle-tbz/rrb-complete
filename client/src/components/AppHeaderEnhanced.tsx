@@ -64,14 +64,14 @@ export function AppHeaderEnhanced() {
   };
 
   const navItems = [
-    { label: 'Home', icon: Home, path: '/' },
-    { label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
-    { label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
-    { label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
-    { label: 'HybridCast', icon: Radio, path: '/gps-radar', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
-    { label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
-    { label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
-    { label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
+    { id: 'nav-0', label: 'Home', icon: Home, path: '/' },
+    { id: 'nav-1', label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
+    { id: 'nav-2', label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
+    { id: 'nav-3', label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
+    { id: 'nav-4', label: 'HybridCast', icon: Radio, path: '/gps-radar', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
+    { id: 'nav-5', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
+    { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
+    { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
   ];
 
   return (
@@ -88,7 +88,7 @@ export function AppHeaderEnhanced() {
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <Button
-                key={item.path}
+                key={item.id}
                 variant="ghost"
                 size="sm"
                 onClick={() => item.action ? item.action() : navigate(item.path)}
@@ -171,7 +171,7 @@ export function AppHeaderEnhanced() {
           <div className="md:hidden border-t border-border p-4 space-y-2">
             {navItems.map((item) => (
               <Button
-                key={item.path}
+                key={item.id}
                 variant="ghost"
                 size="sm"
                 onClick={() => {

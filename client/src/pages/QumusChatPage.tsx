@@ -59,14 +59,17 @@ export default function QumusChatPage() {
 
     try {
       const response = await chatMutation.mutateAsync({
-        message: input,
-        context: 'qumus_video_generation',
+        messages: messages.filter(m => m.role !== 'system').map(m => ({
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
+        })),
+        query: input,
       });
 
       const assistantMsg: ChatMessage = {
         id: `msg-${Date.now()}-response`,
         role: 'assistant',
-        content: response.reply || 'I understand. How can I help you further?',
+        content: response.message || 'I understand. How can I help you further?',
         timestamp: Date.now(),
       };
 

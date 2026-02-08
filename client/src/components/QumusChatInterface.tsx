@@ -222,11 +222,16 @@ export function QumusChatInterface() {
 
       while (retries > 0) {
         try {
-          await chatMutation.mutateAsync({
-            messages: messages.map(m => ({
-              role: m.role,
+          // Build messages array with proper format - filter out system messages for user context
+          const messagesForAPI = messages
+            .filter(m => m.role !== 'system')
+            .map(m => ({
+              role: m.role as 'user' | 'assistant',
               content: m.content,
-            })),
+            }));
+          
+          await chatMutation.mutateAsync({
+            messages: messagesForAPI,
             query: input,
           });
           break;
