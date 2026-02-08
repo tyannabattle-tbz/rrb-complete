@@ -3,133 +3,75 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { FileText, Filter, Download, Eye } from 'lucide-react';
+import { FileText, Filter, Download, Eye, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface AuditEntry {
-  id: string;
-  timestamp: number;
-  userId: string;
-  action: string;
-  subsystem: string;
-  status: 'success' | 'failed' | 'pending';
-  details: string;
-  autonomyLevel: number;
-  approvedBy?: string;
-}
+import { trpc } from '@/lib/trpc';
+import { format } from 'date-fns';
 
 export default function AuditTrailViewer() {
-  const [entries, setEntries] = useState<AuditEntry[]>([
-    {
-      id: '1',
-      timestamp: Date.now() - 3600000,
-      userId: 'admin@rockinboogie.com',
-      action: 'publish-track',
-      subsystem: 'Rockin Rockin Boogie',
-      status: 'success',
-      details: 'Published track "Electric Dreams" with autonomy level 85%',
-      autonomyLevel: 85,
-    },
-    {
-      id: '2',
-      timestamp: Date.now() - 7200000,
-      userId: 'system',
-      action: 'broadcast',
-      subsystem: 'HybridCast',
-      status: 'success',
-      details: 'Emergency broadcast sent with autonomy level 95%',
-      autonomyLevel: 95,
-      approvedBy: 'admin@rockinboogie.com',
-    },
-    {
-      id: '3',
-      timestamp: Date.now() - 10800000,
-      userId: 'admin@rockinboogie.com',
-      action: 'donation-process',
-      subsystem: 'Sweet Miracles',
-      status: 'pending',
-      details: 'Large donation ($1,500) pending approval',
-      autonomyLevel: 45,
-    },
-    {
-      id: '4',
-      timestamp: Date.now() - 14400000,
-      userId: 'system',
-      action: 'meditation-session',
-      subsystem: 'Canryn',
-      status: 'success',
-      details: 'Meditation session started with autonomy level 90%',
-      autonomyLevel: 90,
-    },
-  ]);
+  const [limit, setLimit] = useState(50);
+  const [selectedAction, setSelectedAction] = useState<string>('');
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterSubsystem, setFilterSubsystem] = useState('all');
-
-  const filteredEntries = entries.filter(entry => {
-    const matchesSearch = entry.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      entry.userId.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSubsystem = filterSubsystem === 'all' || entry.subsystem === filterSubsystem;
-    return matchesSearch && matchesSubsystem;
+  const { data: auditData, isLoading, refetch } = trpc.auditTrail.getAllAuditTrail.useQuery({
+    limit,
+    offset: 0,
+    action: selectedAction || undefined,
   });
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-  };
+  const { data: statsData } = trpc.auditTrail.getAuditStatistics.useQuery();
+  const { data: violationsData } = trpc.auditTrail.getComplianceViolations.useQuery({ limit: 20 });
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'success':
+  const entries = auditData?.entries || [];
+
+  const getActionBadgeColor = (action: string) => {
+    switch (action) {
+      case 'created':
+        return 'bg-blue-500/20 text-blue-400';
+      case 'approved':
         return 'bg-green-500/20 text-green-400';
-      case 'failed':
+      case 'rejected':
         return 'bg-red-500/20 text-red-400';
-      case 'pending':
+      case 'executed':
+        return 'bg-purple-500/20 text-purple-400';
+      case 'escalated':
+        return 'bg-orange-500/20 text-orange-400';
+      case 'modified':
         return 'bg-yellow-500/20 text-yellow-400';
       default:
         return 'bg-slate-500/20 text-slate-400';
     }
   };
 
-  const exportAuditLog = () => {
-    const csv = [
-      ['Timestamp', 'User ID', 'Action', 'Subsystem', 'Status', 'Autonomy Level', 'Details'],
-      ...filteredEntries.map(e => [
-        formatDate(e.timestamp),
-        e.userId,
-        e.action,
-        e.subsystem,
-        e.status,
-        `${e.autonomyLevel}%`,
-        e.details,
-      ]),
-    ]
-      .map(row => row.map(cell => `"${cell}"`).join(','))
-      .join('\n');
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `audit-trail-${Date.now()}.csv`;
-    a.click();
+  const handleExport = async () => {
+    const result = await trpc.auditTrail.exportAuditTrail.useQuery({ format: 'csv' });
+    if (result.data?.data) {
+      const element = document.createElement('a');
+      element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(result.data.data));
+      element.setAttribute('download', `audit-trail-${new Date().toISOString()}.csv`);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <FileText className="w-8 h-8 text-purple-400" />
-            <h1 className="text-4xl font-bold text-white">Audit Trail & Compliance</h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <FileText className="w-8 h-8 text-purple-400" />
+                <h1 className="text-4xl font-bold text-white">Audit Trail & Compliance</h1>
+              </div>
+              <p className="text-slate-400">Track all decisions, approvals, and system actions</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
           </div>
-          <p className="text-slate-400">Track all decisions, approvals, and system actions</p>
         </div>
 
         <Tabs defaultValue="log" className="space-y-4">

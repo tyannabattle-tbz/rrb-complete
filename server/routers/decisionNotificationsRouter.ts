@@ -58,7 +58,7 @@ export const decisionNotificationsRouter = router({
   /**
    * Get user's notifications
    */
-  getUserNotifications: protectedProcedure
+  getUserDecisionNotifications: protectedProcedure
     .input(
       z.object({
         userId: z.string(),
@@ -89,7 +89,7 @@ export const decisionNotificationsRouter = router({
   /**
    * Mark notification as read
    */
-  markAsRead: protectedProcedure
+  markDecisionAsRead: protectedProcedure
     .input(z.object({ notificationId: z.string() }))
     .mutation(({ input }) => {
       const notification = notificationsStore.find((n) => n.id === input.notificationId);
@@ -107,7 +107,7 @@ export const decisionNotificationsRouter = router({
   /**
    * Mark all notifications as read for a user
    */
-  markAllAsRead: protectedProcedure
+  markAllDecisionsAsRead: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(({ input }) => {
       const userNotifications = notificationsStore.filter((n) => n.userId === input.userId && n.isRead === 0);
@@ -126,7 +126,7 @@ export const decisionNotificationsRouter = router({
   /**
    * Delete a notification
    */
-  deleteNotification: protectedProcedure
+  deleteDecisionNotification: protectedProcedure
     .input(z.object({ notificationId: z.string() }))
     .mutation(({ input }) => {
       const index = notificationsStore.findIndex((n) => n.id === input.notificationId);
@@ -198,9 +198,7 @@ export const decisionNotificationsRouter = router({
 
   /**
    * Get notification statistics
-   */
-  getStatistics: publicProcedure
-    .input(z.object({ userId: z.string().optional() }))
+   */  getDecisionNotificationStatistics: protectedProcedure   .input(z.object({ userId: z.string().optional() }))
     .query(({ input }) => {
       let filtered = input.userId ? notificationsStore.filter((n) => n.userId === input.userId) : notificationsStore;
 
@@ -248,7 +246,7 @@ export const decisionNotificationsRouter = router({
   /**
    * Get critical notifications
    */
-  getCriticalNotifications: publicProcedure
+  getCriticalDecisionNotifications: publicProcedure
     .input(z.object({ limit: z.number().default(20).optional() }))
     .query(({ input }) => {
       const critical = notificationsStore.filter((n) => n.priority === 'critical');
