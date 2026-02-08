@@ -7,7 +7,7 @@ import { FilterBar } from '@/components/FilterBar';
 import { Radio } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
-// Force deployment of latest version with real data integration
+// Force deployment - Updated 2026-02-08 04:35 UTC with real tRPC data integration
 export default function RadioStationPage() {
   const [currentStation, setCurrentStation] = useState<string | null>(null);
   const [currentTrack, setCurrentTrack] = useState<any | null>(null);
