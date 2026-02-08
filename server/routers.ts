@@ -45,6 +45,7 @@ import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 import { audioRouter } from "./routers/audioRouter";
 import { qumusAutonomousEntityRouter } from "./routers/qumusAutonomousEntityRouter";
 import { qumusAutonomousScalingRouter } from "./routers/qumusAutonomousScalingRouter";
+import { qumusChatRouter } from "./routers/qumusChatRouter";
 
 export const appRouter = router({
   // System router
@@ -128,6 +129,11 @@ export const appRouter = router({
 
   // QUMUS Autonomous Scaling & Self-Optimization
   qumusAutonomousScaling: qumusAutonomousScalingRouter,
+
+  // QUMUS Chat Interface
+  ai: router({
+    qumusChat: qumusChatRouter,
+  }),
 
   // Agent Session Management
   agent: router({
