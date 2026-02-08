@@ -407,8 +407,24 @@ export function QumusChatInterface() {
           <VoiceChat
             onSendMessage={(message) => {
               setInput(message);
-              handleSendMessage(message);
+              // Send the message directly
+              const userMessage: Message = {
+                role: 'user',
+                content: message,
+                timestamp: Date.now(),
+              };
+              setMessages(prev => [...prev, userMessage]);
               setShowVoiceChat(false);
+              // Trigger the chat mutation
+              setTimeout(() => {
+                chatMutation.mutate({
+                  messages: [...messages, userMessage].map(m => ({
+                    role: m.role,
+                    content: m.content,
+                  })),
+                  query: message,
+                });
+              }, 0);
             }}
             onVoiceInput={(transcript) => {
               setInput(transcript);
