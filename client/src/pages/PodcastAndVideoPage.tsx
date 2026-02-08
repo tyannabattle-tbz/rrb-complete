@@ -3,68 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Play, Eye } from 'lucide-react';
-
-const SAMPLE_PODCASTS = [
-  {
-    id: '1',
-    title: 'The Legacy Podcast',
-    description: 'Deep dive into the Rockin Rockin Boogie story',
-    artist: 'Seabrun Candy Hunter',
-    episodeCount: 12,
-    duration: 45,
-    views: 2500,
-  },
-  {
-    id: '2',
-    title: 'Soul Sessions',
-    description: 'Exploring soul music and its impact',
-    artist: 'Seabrun Candy Hunter',
-    episodeCount: 8,
-    duration: 60,
-    views: 1800,
-  },
-  {
-    id: '3',
-    title: 'Boogie Conversations',
-    description: 'Interviews with musicians and producers',
-    artist: 'Seabrun Candy Hunter',
-    episodeCount: 15,
-    duration: 50,
-    views: 3200,
-  },
-];
-
-const SAMPLE_VIDEOS = [
-  {
-    id: 'vid_1',
-    title: 'Rockin Rockin Boogie - Official Video',
-    description: 'The iconic performance',
-    artist: 'Seabrun Candy Hunter & Little Richard',
-    duration: 4,
-    views: 15000,
-  },
-  {
-    id: 'vid_2',
-    title: 'Behind the Scenes - Studio Sessions',
-    description: 'Recording the album',
-    artist: 'Seabrun Candy Hunter',
-    duration: 8,
-    views: 8500,
-  },
-  {
-    id: 'vid_3',
-    title: 'Live Performance - Jazz Festival 1975',
-    description: 'Historic live performance',
-    artist: 'Seabrun Candy Hunter Quartet',
-    duration: 20,
-    views: 12000,
-  },
-];
+import { trpc } from '@/lib/trpc';
 
 export default function PodcastAndVideoPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredPodcasts = SAMPLE_PODCASTS.filter((podcast) => {
+  // Fetch real data from tRPC
+  const { data: podcasts = [] } = trpc.podcastsData.getPodcasts.useQuery();
+  const { data: videos = [] } = trpc.podcastsData.getVideos.useQuery();
+
+  const filteredPodcasts = podcasts.filter((podcast: any) => {
     const matchesSearch =
       !searchQuery ||
       podcast.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -72,7 +20,7 @@ export default function PodcastAndVideoPage() {
     return matchesSearch;
   });
 
-  const filteredVideos = SAMPLE_VIDEOS.filter((video) => {
+  const filteredVideos = videos.filter((video: any) => {
     const matchesSearch =
       !searchQuery ||
       video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -121,7 +69,7 @@ export default function PodcastAndVideoPage() {
           <TabsContent value="podcasts" className="space-y-6">
             {filteredPodcasts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredPodcasts.map((podcast) => (
+                {filteredPodcasts.map((podcast: any) => (
                   <Card
                     key={podcast.id}
                     className="bg-slate-800 border-slate-700 hover:border-purple-500 cursor-pointer transition-all overflow-hidden group"
@@ -163,7 +111,7 @@ export default function PodcastAndVideoPage() {
           <TabsContent value="videos" className="space-y-6">
             {filteredVideos.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredVideos.map((video) => (
+                {filteredVideos.map((video: any) => (
                   <Card
                     key={video.id}
                     className="bg-slate-800 border-slate-700 hover:border-blue-500 cursor-pointer transition-all overflow-hidden group"

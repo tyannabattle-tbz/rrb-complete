@@ -45,6 +45,9 @@ import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 import { audioRouter } from "./routers/audioRouter";
 import { governmentOpenSourceRouter } from "./routers/governmentOpenSourceRouter";
 import { integrationRouter } from "./routers/integrationRouter";
+import { radioStationsDataRouter } from "./routers/radioStationsData";
+import { podcastsDataRouter } from "./routers/podcastsData";
+import { musicDataRouter } from "./routers/musicData";
 
 export const appRouter = router({
   // System router
@@ -115,6 +118,11 @@ export const appRouter = router({
 
   // Podcast Playback
   podcastPlayback: podcastPlaybackRouter,
+
+  // RRB Data Routers
+  radioStationsData: radioStationsDataRouter,
+  podcastsData: podcastsDataRouter,
+  musicData: musicDataRouter,
 
   // Radio Stations
   radioStations: radioStationsRouter,
