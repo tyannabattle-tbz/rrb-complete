@@ -89,8 +89,8 @@ export default function QumusChatPage() {
 
   return (
     <div className="flex h-screen bg-white">
-      {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-slate-900 border-r border-slate-700 transition-all overflow-hidden flex flex-col`}>
+      {/* Sidebar - hidden on mobile */}
+      <div className={`hidden md:flex ${sidebarOpen ? 'w-64' : 'w-0'} bg-slate-900 border-r border-slate-700 transition-all overflow-hidden flex-col`}>
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           <Button 
             onClick={() => {
@@ -149,9 +149,9 @@ export default function QumusChatPage() {
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* Tabs */}
+        {/* Tabs - hidden on mobile */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
-          <TabsList className="w-full justify-start border-b border-slate-200 bg-white rounded-none">
+          <TabsList className="hidden md:flex w-full justify-start border-b border-slate-200 bg-white rounded-none">
             <TabsTrigger value="chat" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
               💬 Chat
             </TabsTrigger>
@@ -177,13 +177,13 @@ export default function QumusChatPage() {
 
           {/* Chat Tab */}
           <TabsContent value="chat" className="flex-1 overflow-hidden flex flex-col">
-            {/* Header */}
+            {/* Header - simplified for mobile */}
             <div className="bg-white border-b border-slate-200 p-4 flex items-center justify-between">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="text-slate-600"
+                className="hidden md:flex text-slate-600"
               >
                 {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
