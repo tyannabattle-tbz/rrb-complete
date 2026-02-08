@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { HybridCastTabNavigationFixed } from '@/components/HybridCastTabNavigationFixed';
 import { HybridCastStatusWidget } from '@/components/HybridCastStatusWidget';
+import { SimplifiedMobileNav } from '@/components/SimplifiedMobileNav';
 
 export function AppHeaderEnhanced() {
   const [, navigate] = useLocation();
@@ -76,6 +77,7 @@ export function AppHeaderEnhanced() {
 
   return (
     <>
+      <SimplifiedMobileNav />
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo/Brand */}
@@ -154,41 +156,11 @@ export function AppHeaderEnhanced() {
               <Share2 className="h-4 w-4" />
             </Button>
 
-            {/* Mobile Menu */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden"
-            >
-              {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </Button>
+            {/* Mobile Menu handled by SimplifiedMobileNav */}
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 max-h-[calc(100vh-4rem)] overflow-y-auto">
-            <div className="p-4 space-y-2">
-              {navItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    if (item.action) item.action();
-                    else navigate(item.path);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full justify-start gap-2 text-sm"
-                >
-                  <item.icon className="h-4 w-4 flex-shrink-0" />
-                  <span className="truncate">{item.label}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Mobile Navigation handled by SimplifiedMobileNav */}
       </header>
 
       {/* HybridCast Tab Navigation Panel */}

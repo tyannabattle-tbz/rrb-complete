@@ -47,6 +47,7 @@ import { BatchVideoGenerator } from './pages/BatchVideoGenerator';
 import { QumusChatInterface } from './components/QumusChatInterface';
 import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
+import { MobileResponsiveLayout } from './components/MobileResponsiveLayout';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
 import QumusChatPage from '@/pages/QumusChatPage';
@@ -228,7 +229,9 @@ function App() {
             <Toaster />
             <KeyboardShortcutsGuide />
             <AppHeaderEnhanced />
-            <Router />
+            <MobileResponsiveLayout>
+              <Router />
+            </MobileResponsiveLayout>
           </TooltipProvider>
         </PresetProvider>
       </ThemeProvider>
