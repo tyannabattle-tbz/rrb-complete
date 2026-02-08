@@ -104,6 +104,7 @@ import Solbones from '@/pages/Solbones';
 import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
+import AutomationRuleEditor from '@/pages/AutomationRuleEditor';
 
 // Version: 2.0.0 - All routes fixed and meditation enabled
 function Router() {
@@ -201,6 +202,7 @@ function Router() {
       <Route path="/client-portal" component={ClientPortal} />
       <Route path="/review" component={Review} />
       <Route path="/admin-moderation" component={AdminModeration} />
+      <Route path="/automation-rules" component={AutomationRuleEditor} />
       <Route component={NotFound} />
     </Switch>
   );

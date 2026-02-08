@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { initializeWebSocket } from "../websocket";
+import { initializeAutomationEngine } from "../broadcastAutomation";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -35,6 +36,14 @@ async function startServer() {
   // Initialize WebSocket manager
   initializeWebSocket(server);
   console.log("[WebSocket] Manager initialized");
+  
+  // Initialize broadcast automation engine
+  try {
+    await initializeAutomationEngine();
+    console.log("[Automation] Engine initialized and ready");
+  } catch (error) {
+    console.error("[Automation] Failed to initialize automation engine:", error);
+  }
   
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));

@@ -73,6 +73,7 @@ export function AppHeaderEnhanced() {
     { label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
     { label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
     { label: 'Integration', icon: BarChart3, path: '/integration-dashboard' },
+    { label: 'Automation', icon: Zap, path: '/automation-rules' },
   ];
 
   return (
