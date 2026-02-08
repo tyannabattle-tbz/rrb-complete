@@ -26,6 +26,7 @@ import { qumusAutonomousBrainRouter } from "./routers/qumusAutonomousBrainRouter
 import { auditTrailRouter } from "./routers/auditTrailRouter";
 import { decisionNotificationsRouter } from "./routers/decisionNotificationsRouter";
 import { decisionAnalyticsRouter } from "./routers/decisionAnalyticsRouter";
+import { decisionApprovalRouter } from "./routers/decisionApprovalRouter";
 
 // Import iTunes Podcasts router
 import { itunesPodcastsRouter } from "./routers/itunesPodcasts";
@@ -160,6 +161,9 @@ export const appRouter = router({
 
   // Decision Analytics Router
   analytics: decisionAnalyticsRouter,
+
+  // Decision Approval Router
+  approvals: decisionApprovalRouter,
 
   // Agent Session Management
   agent: router({

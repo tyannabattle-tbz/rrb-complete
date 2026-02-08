@@ -1321,3 +1321,14 @@
 - [ ] Add notification bell icon to header
 - [ ] Integrate WebSocket for real-time updates
 - [x] Write tests for all UI components
+
+## QUMUS Advanced UI Features (COMPLETE)
+- [x] Create NotificationBell component with badge
+- [x] Add notification bell to header/navigation
+- [x] Implement WebSocket notification service
+- [x] Create decision approval workflow router
+- [x] Build DecisionApprovalQueue component
+- [x] Add approval/rejection mutations
+- [x] Write tests for notification bell
+- [x] Write tests for WebSocket integration
+- [x] Write tests for approval workflow
