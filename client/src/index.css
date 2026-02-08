@@ -320,6 +320,16 @@
 
 /* Mobile Touch Optimization - WCAG 2.1 AA Compliance */
 @media (max-width: 768px) {
+  /* Hide desktop header completely on mobile */
+  .hidden.md\:block {
+    display: none !important;
+  }
+
+  /* Ensure mobile header is visible */
+  .md\:hidden {
+    display: block !important;
+  }
+
   /* Fix horizontal scrolling */
   * {
     max-width: 100%;

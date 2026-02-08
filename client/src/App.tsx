@@ -217,7 +217,9 @@ function App() {
             <KeyboardShortcutsGuide />
             
             {/* Mobile Header - shown only on mobile */}
-            <MobileHeaderClean />
+            <div className="md:hidden">
+              <MobileHeaderClean />
+            </div>
             
             {/* Desktop Header - shown only on desktop */}
             <div className="hidden md:block">
