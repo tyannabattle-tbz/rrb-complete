@@ -31,9 +31,30 @@ export default function QumusChatPage() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Track window resize for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const [activeTab, setActiveTab] = useState('chat');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Listen for mobile menu toggle events
+  useEffect(() => {
+    const handleMenuToggle = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      setSidebarOpen(customEvent.detail.open);
+    };
+    
+    window.addEventListener('mobileMenuToggle', handleMenuToggle);
+    return () => window.removeEventListener('mobileMenuToggle', handleMenuToggle);
+  }, []);
 
   // Swipe gestures for mobile
   useSwipeGesture(
