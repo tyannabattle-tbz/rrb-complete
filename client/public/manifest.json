@@ -43,6 +43,7 @@
     }
   ],
   "categories": ["entertainment", "music", "podcasts"],
+  "prefer_related_applications": false,
   "shortcuts": [
     {
       "name": "Radio Station",
