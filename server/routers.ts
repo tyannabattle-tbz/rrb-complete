@@ -43,6 +43,7 @@ import { studioStreamingRouter } from "./routers/studioStreaming";
 import { commandExecutionRouter } from "./routers/commandExecutionRouter";
 import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 import { audioRouter } from "./routers/audioRouter";
+import { governmentOpenSourceRouter } from "./routers/governmentOpenSourceRouter";
 
 export const appRouter = router({
   // System router
@@ -50,6 +51,9 @@ export const appRouter = router({
 
   // Audio router
   audio: audioRouter,
+
+  // Government-level open source router
+  government: governmentOpenSourceRouter,
 
   // Auth procedures
   auth: router({
