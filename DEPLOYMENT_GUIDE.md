@@ -1,7 +1,7 @@
-# Production Deployment Guide - Manus Agent Platform
+# Production Deployment Guide - QUMUS Autonomous Platform
 
 ## Overview
-This guide outlines the three immediate steps to deploy the Manus Agent platform to a live production environment. The platform is currently running on Manus hosting and is ready for production deployment.
+This guide outlines the deployment process for QUMUS, a production-ready autonomous entity platform with real-time monitoring, WebSocket streaming, and PWA offline support. The platform includes autonomous decision-making, governance policies, and comprehensive audit trails for compliance.
 
 ---
 
@@ -27,6 +27,8 @@ SENDGRID_API_KEY              # Email service (if using SendGrid)
 MAILGUN_API_KEY               # Email service (if using Mailgun)
 STRIPE_SECRET_KEY             # Payment processing (if enabled)
 WEBHOOK_SIGNING_SECRET        # For webhook HMAC signatures
+REDIS_URL                     # Redis for caching (recommended)
+SENTRY_DSN                    # Error tracking and monitoring
 ```
 
 ### 1.2 Database Configuration
@@ -58,6 +60,23 @@ WEBHOOK_SIGNING_SECRET        # For webhook HMAC signatures
 - [ ] Enable structured logging (JSON format)
 - [ ] Configure uptime monitoring and alerting
 - [ ] Set up database query performance monitoring
+- [ ] Monitor WebSocket connections and metrics streaming
+- [ ] Track autonomous decision execution and approval rates
+- [ ] Monitor PWA offline cache hit rates
+
+### 1.5 WebSocket & Real-Time Configuration
+- [ ] Verify WebSocket port (3000) is open and accessible
+- [ ] Configure WebSocket connection timeout (default: 30s)
+- [ ] Enable WebSocket message compression
+- [ ] Set up WebSocket connection pooling
+- [ ] Configure metrics streaming batch size (default: 100 updates/second)
+
+### 1.6 PWA & Offline Support
+- [ ] Verify service worker is generated during build
+- [ ] Configure offline cache strategy (network-first for APIs)
+- [ ] Set cache expiration policies
+- [ ] Test offline functionality with DevTools
+- [ ] Configure sync queue for offline operations
 
 **Estimated Time**: 2-4 hours
 
@@ -193,7 +212,17 @@ If critical issues occur:
    - Provide status updates
    - Post-incident review
 
-### 3.6 Ongoing Monitoring
+### 3.6 QUMUS Autonomous System Verification
+- [ ] Verify autonomous entity is initialized
+- [ ] Check autonomy level is set correctly (0-100%)
+- [ ] Verify governance policies are active
+- [ ] Test autonomous decision execution
+- [ ] Verify audit trail is recording all decisions
+- [ ] Check approval queue for pending decisions
+- [ ] Monitor decision confidence scores
+- [ ] Verify escalation rules are working
+
+### 3.7 Ongoing Monitoring
 Set up continuous monitoring:
 
 ```
@@ -202,13 +231,18 @@ Critical Alerts (Immediate notification):
 - Response time p95 > 2000ms
 - Database connection failures
 - Authentication failures > 10%
-- Webhook delivery failures > 20%
+- WebSocket connection failures > 20%
+- Autonomous decision failure rate > 2%
+- Approval queue size > 100 pending decisions
 
 Warning Alerts (Daily digest):
 - Response time p95 > 1000ms
 - Error rate > 1%
 - Memory usage > 75%
 - Database query time > 1000ms
+- WebSocket active connections > 1000
+- Autonomy level changes
+- Governance policy violations
 ```
 
 **Estimated Time**: 1-3 hours
