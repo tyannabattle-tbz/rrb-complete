@@ -1,54 +1,84 @@
 import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MediaPlayer } from '@/components/MediaPlayer';
-import { SearchBar } from '@/components/SearchBar';
-import { FilterBar } from '@/components/FilterBar';
-import { Play, Calendar, User, Eye } from 'lucide-react';
+import { Play, Eye } from 'lucide-react';
+
+const SAMPLE_PODCASTS = [
+  {
+    id: '1',
+    title: 'The Legacy Podcast',
+    description: 'Deep dive into the Rockin Rockin Boogie story',
+    artist: 'Seabrun Candy Hunter',
+    episodeCount: 12,
+    duration: 45,
+    views: 2500,
+  },
+  {
+    id: '2',
+    title: 'Soul Sessions',
+    description: 'Exploring soul music and its impact',
+    artist: 'Seabrun Candy Hunter',
+    episodeCount: 8,
+    duration: 60,
+    views: 1800,
+  },
+  {
+    id: '3',
+    title: 'Boogie Conversations',
+    description: 'Interviews with musicians and producers',
+    artist: 'Seabrun Candy Hunter',
+    episodeCount: 15,
+    duration: 50,
+    views: 3200,
+  },
+];
+
+const SAMPLE_VIDEOS = [
+  {
+    id: 'vid_1',
+    title: 'Rockin Rockin Boogie - Official Video',
+    description: 'The iconic performance',
+    artist: 'Seabrun Candy Hunter & Little Richard',
+    duration: 4,
+    views: 15000,
+  },
+  {
+    id: 'vid_2',
+    title: 'Behind the Scenes - Studio Sessions',
+    description: 'Recording the album',
+    artist: 'Seabrun Candy Hunter',
+    duration: 8,
+    views: 8500,
+  },
+  {
+    id: 'vid_3',
+    title: 'Live Performance - Jazz Festival 1975',
+    description: 'Historic live performance',
+    artist: 'Seabrun Candy Hunter Quartet',
+    duration: 20,
+    views: 12000,
+  },
+];
 
 export default function PodcastAndVideoPage() {
-  const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const { data: podcasts } = trpc.podcastPlayback.getPodcasts.useQuery();
-  const { data: videos } = trpc.podcastPlayback.getVideos.useQuery();
-  const { data: episodeDetails } = trpc.podcastPlayback.getEpisodeDetails.useQuery(
-    { episodeId: selectedEpisode || '' },
-    { enabled: !!selectedEpisode }
-  );
-
-  const playMutation = trpc.podcastPlayback.playEpisode.useMutation();
-
-  const handlePlay = async (episodeId: string) => {
-    setSelectedEpisode(episodeId);
-    await playMutation.mutateAsync({ episodeId });
-  };
-
-  // Filter podcasts based on search
-  const filteredPodcasts = podcasts?.filter((podcast) => {
+  const filteredPodcasts = SAMPLE_PODCASTS.filter((podcast) => {
     const matchesSearch =
       !searchQuery ||
       podcast.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      podcast.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      podcast.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
-  }) || [];
+  });
 
-  // Filter videos based on search
-  const filteredVideos = videos?.filter((video) => {
+  const filteredVideos = SAMPLE_VIDEOS.filter((video) => {
     const matchesSearch =
       !searchQuery ||
       video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      video.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      video.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSearch;
-  }) || [];
-
-  // Get unique categories
-  const categories = Array.from(
-    new Set(podcasts?.map((p) => p.category).filter(Boolean))
-  ) || [];
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 p-6">
@@ -61,9 +91,12 @@ export default function PodcastAndVideoPage() {
 
         {/* Search */}
         <div className="mb-8">
-          <SearchBar
-            onSearch={setSearchQuery}
+          <input
+            type="text"
             placeholder="Search podcasts and videos..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-amber-500"
           />
         </div>
 
@@ -86,25 +119,12 @@ export default function PodcastAndVideoPage() {
 
           {/* Podcasts Tab */}
           <TabsContent value="podcasts" className="space-y-6">
-            {selectedEpisode && episodeDetails && (
-              <Card className="bg-slate-800 border-slate-700 p-6 mb-6">
-                <h2 className="text-2xl font-bold text-white mb-4">Now Playing</h2>
-                <MediaPlayer
-                  src={episodeDetails.audioUrl || ''}
-                  title={episodeDetails.title}
-                  artist={episodeDetails.host}
-                  type="audio"
-                />
-              </Card>
-            )}
-
             {filteredPodcasts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredPodcasts.map((podcast) => (
                   <Card
                     key={podcast.id}
                     className="bg-slate-800 border-slate-700 hover:border-purple-500 cursor-pointer transition-all overflow-hidden group"
-                    onClick={() => handlePlay(podcast.id)}
                   >
                     <div className="relative h-48 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center overflow-hidden">
                       <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all flex items-center justify-center">
@@ -118,11 +138,14 @@ export default function PodcastAndVideoPage() {
                       <p className="text-sm text-slate-400 mb-3 line-clamp-2">
                         {podcast.description}
                       </p>
+                      <p className="text-xs text-slate-500 mb-3">
+                        by {podcast.artist}
+                      </p>
                       <div className="flex items-center justify-between text-xs text-slate-500">
-                        <span>{podcast.duration} min</span>
+                        <span>{podcast.episodeCount} episodes</span>
                         <div className="flex items-center gap-1">
                           <Eye className="w-3 h-3" />
-                          <span>{podcast.views || 0}</span>
+                          <span>{podcast.views.toLocaleString()}</span>
                         </div>
                       </div>
                     </div>
@@ -157,11 +180,14 @@ export default function PodcastAndVideoPage() {
                       <p className="text-sm text-slate-400 mb-3 line-clamp-2">
                         {video.description}
                       </p>
+                      <p className="text-xs text-slate-500 mb-3">
+                        by {video.artist}
+                      </p>
                       <div className="flex items-center justify-between text-xs text-slate-500">
                         <span>{video.duration} min</span>
                         <div className="flex items-center gap-1">
                           <Eye className="w-3 h-3" />
-                          <span>{video.views || 0}</span>
+                          <span>{video.views.toLocaleString()}</span>
                         </div>
                       </div>
                     </div>

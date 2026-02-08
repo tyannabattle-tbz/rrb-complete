@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { trpc } from '@/lib/trpc';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { MediaPlayer } from '@/components/MediaPlayer';
@@ -7,27 +6,120 @@ import { SearchBar } from '@/components/SearchBar';
 import { FilterBar } from '@/components/FilterBar';
 import { Radio } from 'lucide-react';
 
+// Sample radio station data
+const SAMPLE_STATIONS = [
+  {
+    id: '1',
+    name: 'Rockin Classics',
+    description: 'The best of 70s and 80s rock',
+    genre: 'Rock',
+    year: 1975,
+    streamUrl: 'https://example.com/stream/rockin-classics',
+    listeners: 1250,
+    isLive: true,
+  },
+  {
+    id: '2',
+    name: 'Soul & Funk Station',
+    description: 'Smooth soul and funk grooves',
+    genre: 'Soul',
+    year: 1970,
+    streamUrl: 'https://example.com/stream/soul-funk',
+    listeners: 890,
+    isLive: true,
+  },
+  {
+    id: '3',
+    name: 'Jazz Heritage',
+    description: 'Classic jazz and improvisation',
+    genre: 'Jazz',
+    year: 1960,
+    streamUrl: 'https://example.com/stream/jazz-heritage',
+    listeners: 650,
+    isLive: false,
+  },
+  {
+    id: '4',
+    name: 'Blues Legends',
+    description: 'Traditional and modern blues',
+    genre: 'Blues',
+    year: 1950,
+    streamUrl: 'https://example.com/stream/blues-legends',
+    listeners: 520,
+    isLive: true,
+  },
+  {
+    id: '5',
+    name: 'Boogie Nights',
+    description: 'High-energy boogie and rhythm',
+    genre: 'Boogie',
+    year: 1972,
+    streamUrl: 'https://example.com/stream/boogie-nights',
+    listeners: 1100,
+    isLive: true,
+  },
+];
+
+const SAMPLE_TRACKS: Record<string, any> = {
+  '1': {
+    id: 'track_1',
+    title: 'Rockin Rockin Boogie',
+    artist: 'Seabrun Candy Hunter & Little Richard',
+    album: 'Legacy Restored',
+    duration: 180,
+    streamUrl: 'https://example.com/tracks/rockin-rockin-boogie.mp3',
+  },
+  '2': {
+    id: 'track_2',
+    title: 'Soul Serenade',
+    artist: 'Seabrun Candy Hunter',
+    album: 'Soul Collection',
+    duration: 240,
+    streamUrl: 'https://example.com/tracks/soul-serenade.mp3',
+  },
+  '3': {
+    id: 'track_3',
+    title: 'Jazz Improvisation #3',
+    artist: 'Seabrun Candy Hunter Quartet',
+    album: 'Live at the Blue Note',
+    duration: 420,
+    streamUrl: 'https://example.com/tracks/jazz-improv-3.mp3',
+  },
+  '4': {
+    id: 'track_4',
+    title: 'Delta Blues',
+    artist: 'Seabrun Candy Hunter',
+    album: 'Blues Roots',
+    duration: 300,
+    streamUrl: 'https://example.com/tracks/delta-blues.mp3',
+  },
+  '5': {
+    id: 'track_5',
+    title: 'Boogie Woogie Piano',
+    artist: 'Seabrun Candy Hunter',
+    album: 'Piano Sessions',
+    duration: 200,
+    streamUrl: 'https://example.com/tracks/boogie-woogie.mp3',
+  },
+};
+
 export default function RadioStationPage() {
+  const [stations] = useState(SAMPLE_STATIONS);
   const [currentStation, setCurrentStation] = useState<string | null>(null);
+  const [currentTrack, setCurrentTrack] = useState<any | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
 
-  const { data: stations } = trpc.radioStations.getStations.useQuery();
-  const { data: currentTrack } = trpc.radioStations.getCurrentTrack.useQuery(
-    { stationId: currentStation || '' },
-    { enabled: !!currentStation }
-  );
-
-  const playMutation = trpc.radioStations.play.useMutation();
-
-  const handlePlay = async (stationId: string) => {
-    setCurrentStation(stationId);
-    await playMutation.mutateAsync({ stationId });
-  };
+  // Update current track when station changes
+  useEffect(() => {
+    if (currentStation) {
+      setCurrentTrack(SAMPLE_TRACKS[currentStation] || null);
+    }
+  }, [currentStation]);
 
   // Filter stations based on search and filters
-  const filteredStations = stations?.filter((station) => {
+  const filteredStations = stations.filter((station) => {
     const matchesSearch =
       !searchQuery ||
       station.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -36,18 +128,21 @@ export default function RadioStationPage() {
     const matchesYear =
       !selectedYear || station.year?.toString() === selectedYear;
     return matchesSearch && matchesGenre && matchesYear;
-  }) || [];
+  });
 
   // Get unique genres and years from stations
-  const genres =
-    Array.from(
-      new Set(stations?.map((s) => s.genre).filter(Boolean))
-    ) || [];
+  const genres = Array.from(
+    new Set(stations.map((s) => s.genre).filter(Boolean))
+  );
   const years = Array.from(
-    new Set(stations?.map((s) => s.year).filter(Boolean))
+    new Set(stations.map((s) => s.year).filter(Boolean))
   )
     .sort((a, b) => (b as number) - (a as number))
-    .map((y) => y?.toString()) || [];
+    .map((y) => y?.toString());
+
+  const handlePlay = (stationId: string) => {
+    setCurrentStation(stationId);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 p-6">
@@ -130,9 +225,18 @@ export default function RadioStationPage() {
                       Genre: {station.genre}
                     </p>
                   )}
-                  <div className="flex items-center gap-2">
-                    <Radio className="w-4 h-4" />
-                    <span className="text-sm">Tune In</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Radio className="w-4 h-4" />
+                      <span className="text-sm">
+                        {currentStation === station.id ? 'Now Playing' : 'Tune In'}
+                      </span>
+                    </div>
+                    {station.isLive && (
+                      <span className="text-xs bg-red-500 px-2 py-1 rounded">
+                        LIVE
+                      </span>
+                    )}
                   </div>
                 </Card>
               ))}
