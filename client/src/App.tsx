@@ -106,6 +106,13 @@ import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
 import AutomationRuleEditor from '@/pages/AutomationRuleEditor';
 import RealTimeMetricsDashboard from '@/pages/RealTimeMetricsDashboard';
+import RadioStationPage from '@/pages/RadioStationPage';
+import PodcastAndVideoPage from '@/pages/PodcastAndVideoPage';
+import TheLegacyPage from '@/pages/TheLegacyPage';
+import TheMusicPage from '@/pages/TheMusicPage';
+import SweetMiraclesCompanyPage from '@/pages/SweetMiraclesCompanyPage';
+import QumusHumanReviewPage from '@/pages/QumusHumanReviewPage';
+import { TermsOfServicePage, PrivacyPolicyPage, DisclaimerPage, RefundPolicyPage, SupportPage } from '@/pages/PolicyPages';
 
 // Version: 2.0.0 - All routes fixed and meditation enabled
 function Router() {
@@ -196,15 +203,26 @@ function Router() {
       <Route path="/broadcast-templates" component={BroadcastTemplatesLibrary} />
       <Route path="/user-preferences" component={UserPreferences} />
       <Route path="/webhooks" component={WebhookManagement} />
-      <Route path="/radio-station" component={PodcastPlayer} />
+      <Route path="/radio-station" component={RadioStationPage} />
+      <Route path="/podcast-and-video" component={PodcastAndVideoPage} />
       <Route path="/meditation" component={MeditationHub} />
       <Route path="/sweet-miracles" component={DonationCheckout} />
+      <Route path="/sweet-miracles-company" component={SweetMiraclesCompanyPage} />
       <Route path="/solbones" component={Solbones} />
       <Route path="/client-portal" component={ClientPortal} />
       <Route path="/review" component={Review} />
+      <Route path="/qumus-human-review" component={QumusHumanReviewPage} />
       <Route path="/admin-moderation" component={AdminModeration} />
       <Route path="/automation-rules" component={AutomationRuleEditor} />
       <Route path="/metrics-dashboard" component={RealTimeMetricsDashboard} />
+      <Route path="/the-legacy" component={TheLegacyPage} />
+      <Route path="/the-legacy/timeline" component={TheLegacyPage} />
+      <Route path="/the-music" component={TheMusicPage} />
+      <Route path="/terms-of-service" component={TermsOfServicePage} />
+      <Route path="/privacy-policy" component={PrivacyPolicyPage} />
+      <Route path="/disclaimer" component={DisclaimerPage} />
+      <Route path="/refund-policy" component={RefundPolicyPage} />
+      <Route path="/support" component={SupportPage} />
       <Route component={NotFound} />
     </Switch>
   );
