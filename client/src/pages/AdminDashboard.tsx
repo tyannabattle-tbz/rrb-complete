@@ -289,6 +289,35 @@ export default function AdminDashboard() {
         </Card>
       )}
 
+      {/* Autonomous Agent Decisions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Autonomous Agent Decisions</CardTitle>
+          <CardDescription>Monitor and approve autonomous decisions from agents</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <div className="p-3 border rounded-lg bg-blue-50">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-semibold">Schedule broadcast at 8:00 PM</h4>
+                  <p className="text-sm text-gray-600 mt-1">Broadcast Manager Agent</p>
+                  <p className="text-sm text-gray-700 mt-2">Reasoning: Optimal time for audience engagement</p>
+                </div>
+                <Badge variant="outline">Autonomy: 75%</Badge>
+              </div>
+              <div className="flex justify-between items-center mt-3">
+                <span className="text-sm text-gray-500">Confidence: 95%</span>
+                <div className="space-x-2">
+                  <Button size="sm" variant="default">Approve</Button>
+                  <Button size="sm" variant="destructive">Reject</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Refresh Settings */}
       <Card>
         <CardHeader>
