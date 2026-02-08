@@ -46,6 +46,9 @@ import { audioRouter } from "./routers/audioRouter";
 import { qumusAutonomousEntityRouter } from "./routers/qumusAutonomousEntityRouter";
 import { qumusAutonomousScalingRouter } from "./routers/qumusAutonomousScalingRouter";
 import { qumusChatRouter } from "./routers/qumusChatRouter";
+import { socialSharingRouter } from "./routers/socialSharingRouter";
+import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
+import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
 
 export const appRouter = router({
   // System router
@@ -134,6 +137,15 @@ export const appRouter = router({
   ai: router({
     qumusChat: qumusChatRouter,
   }),
+
+  // Social Sharing Features
+  socialSharing: socialSharingRouter,
+
+  // User Preference Sync
+  preferenceSync: userPreferenceSyncRouter,
+
+  // Offline Playlist Management
+  offlinePlaylist: offlinePlaylistRouter,
 
   // Agent Session Management
   agent: router({
