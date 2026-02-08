@@ -1398,3 +1398,36 @@ export const decisionPolicies = mysqlTable("qumus_decision_policies", {
 });
 export type DecisionPolicy = typeof decisionPolicies.$inferSelect;
 export type InsertDecisionPolicy = typeof decisionPolicies.$inferInsert;
+
+
+// Agent Network Tables - Inter-agent communication and discovery
+export const agents = mysqlTable("agents", {
+	id: int().autoincrement().notNull().primaryKey(),
+	agentId: varchar({ length: 255 }).notNull().unique(),
+	name: varchar({ length: 255 }).notNull(),
+	description: text(),
+	endpoint: varchar({ length: 512 }).notNull(),
+	capabilities: json().notNull(),
+	autonomyLevel: int().default(50),
+	publicKey: text().notNull(),
+	trustScore: int().default(50),
+	uptime: int().default(100),
+	messageCount: int().default(0),
+	lastSeen: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+	owner: varchar({ length: 255 }),
+	metadata: json(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const agentConnections = mysqlTable("agent_connections", {
+	id: int().autoincrement().notNull().primaryKey(),
+	connectionId: varchar({ length: 512 }).notNull().unique(),
+	sourceAgentId: varchar({ length: 255 }).notNull(),
+	targetAgentId: varchar({ length: 255 }).notNull(),
+	status: mysqlEnum(['connected', 'disconnected', 'pending', 'failed']).default('pending'),
+	trustLevel: int().default(50),
+	messageCount: int().default(0),
+	encryptionEnabled: int().default(1),
+	lastCommunication: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});

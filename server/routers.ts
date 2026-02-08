@@ -49,6 +49,7 @@ import { qumusChatRouter } from "./routers/qumusChatRouter";
 import { socialSharingRouter } from "./routers/socialSharingRouter";
 import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
 import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
+import { agentNetworkRouter } from "./routers/agentNetworkRouter";
 
 export const appRouter = router({
   // System router
@@ -146,6 +147,9 @@ export const appRouter = router({
 
   // Offline Playlist Management
   offlinePlaylist: offlinePlaylistRouter,
+
+  // Agent Network - Inter-agent communication
+  agentNetwork: agentNetworkRouter,
 
   // Agent Session Management
   agent: router({
