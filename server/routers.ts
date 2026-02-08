@@ -43,6 +43,8 @@ import { studioStreamingRouter } from "./routers/studioStreaming";
 import { commandExecutionRouter } from "./routers/commandExecutionRouter";
 import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 import { audioRouter } from "./routers/audioRouter";
+import { qumusAutonomousEntityRouter } from "./routers/qumusAutonomousEntityRouter";
+import { qumusAutonomousScalingRouter } from "./routers/qumusAutonomousScalingRouter";
 
 export const appRouter = router({
   // System router
@@ -120,6 +122,12 @@ export const appRouter = router({
 
   // QUMUS Command Router
   qumusCommand: qumusCommandRouter,
+
+  // QUMUS Autonomous Entity Management
+  qumusAutonomousEntity: qumusAutonomousEntityRouter,
+
+  // QUMUS Autonomous Scaling & Self-Optimization
+  qumusAutonomousScaling: qumusAutonomousScalingRouter,
 
   // Agent Session Management
   agent: router({
