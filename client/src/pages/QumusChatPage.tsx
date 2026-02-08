@@ -199,21 +199,12 @@ export default function QumusChatPage() {
           {/* Chat Tab */}
           <TabsContent value="chat" className="flex-1 overflow-hidden flex flex-col">
             {/* Header - simplified for mobile */}
-            <div className="bg-white border-b border-slate-200 p-4 flex items-center justify-between">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="md:hidden text-slate-600"
-              >
-                {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </Button>
-              <h1 className="text-xl font-bold text-slate-900">Qumus AI Assistant</h1>
-              <div className="w-10" />
+            <div className="bg-white border-b border-slate-200 p-4 flex items-center justify-center">
+              <h1 className="text-lg md:text-xl font-bold text-slate-900">Qumus AI Assistant</h1>
             </div>
 
             {/* Messages */}
-            <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+            <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-slate-50 min-h-0">
               {messages.map(msg => (
                 <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div
@@ -247,12 +238,12 @@ export default function QumusChatPage() {
             {/* Input Area - Mobile Optimized */}
             <div className="bg-white border-t border-slate-200 p-3 md:p-4 space-y-3">
               {/* Quick Actions - Mobile Only */}
-              <div className="md:hidden grid grid-cols-2 gap-2">
+              <div className="md:hidden flex flex-wrap gap-2 w-full">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setInput('Generate a video about ')}
-                  className="text-xs h-9"
+                  className="text-xs h-8 px-2 flex-1 min-w-max"
                 >
                   🎬 Video
                 </Button>
@@ -260,7 +251,7 @@ export default function QumusChatPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setInput('Show analytics for ')}
-                  className="text-xs h-9"
+                  className="text-xs h-8 px-2 flex-1 min-w-max"
                 >
                   📊 Analytics
                 </Button>
@@ -268,7 +259,7 @@ export default function QumusChatPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setInput('Help with watermarking ')}
-                  className="text-xs h-9"
+                  className="text-xs h-8 px-2 flex-1 min-w-max"
                 >
                   🎨 Watermark
                 </Button>
@@ -276,28 +267,28 @@ export default function QumusChatPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setInput('Marketing campaign for ')}
-                  className="text-xs h-9"
+                  className="text-xs h-8 px-2 flex-1 min-w-max"
                 >
                   📢 Marketing
                 </Button>
               </div>
 
               {/* Input Field */}
-              <div className="max-w-4xl mx-auto flex gap-2 md:gap-3">
+              <div className="w-full flex gap-2 md:gap-3">
                 <Input
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyPress={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
                   placeholder="Ask about video generation, watermarking, analytics, marketing..."
-                  className="flex-1 border-slate-300 focus:border-blue-500 h-11 md:h-10 text-base md:text-sm"
+                  className="flex-1 border-slate-300 focus:border-blue-500 h-10 md:h-10 text-sm md:text-sm"
                   disabled={loading}
                 />
                 <Button
                   onClick={handleSend}
                   disabled={loading || !input.trim()}
-                  className="bg-blue-500 hover:bg-blue-600 text-white gap-2 px-4 md:px-6 h-11 md:h-10"
+                  className="bg-blue-500 hover:bg-blue-600 text-white gap-1 px-3 md:px-6 h-10 md:h-10 flex-shrink-0"
                 >
-                  <Send className="w-5 md:w-4 h-5 md:h-4" />
+                  <Send className="w-4 md:w-4 h-4 md:h-4" />
                   <span className="hidden sm:inline">Send</span>
                 </Button>
               </div>
