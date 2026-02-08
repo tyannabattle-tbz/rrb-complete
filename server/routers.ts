@@ -50,6 +50,7 @@ import { socialSharingRouter } from "./routers/socialSharingRouter";
 import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
 import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
 import { agentNetworkRouter } from "./routers/agentNetworkRouter";
+import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnectionRouter";
 
 export const appRouter = router({
   // System router
@@ -150,6 +151,9 @@ export const appRouter = router({
 
   // Agent Network - Inter-agent communication
   agentNetwork: agentNetworkRouter,
+
+  // Seamless Agent Connection & Cross-Platform Communication
+  seamlessAgentConnection: seamlessAgentConnectionRouter,
 
   // Agent Session Management
   agent: router({
