@@ -118,14 +118,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   }, []);
 
   return (
-    <Card className="p-6 space-y-4">
+    <Card className="p-3 sm:p-6 space-y-3 sm:space-y-4">
       {/* Hidden Audio Element */}
       <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" />
 
       {/* Title and Type */}
       <div>
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <p className="text-sm text-gray-600 capitalize">{contentType}</p>
+        <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
+        <p className="text-xs sm:text-sm text-gray-600 capitalize">{contentType}</p>
       </div>
 
       {/* Progress Bar */}
@@ -146,28 +146,29 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       </div>
 
       {/* Main Controls */}
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-1 sm:gap-2">
         <Button
           onClick={() => handleSkip(-15)}
           variant="ghost"
           size="sm"
           title="Skip 15s back"
+          className="h-8 w-8 sm:h-10 sm:w-10 p-0"
         >
-          <SkipBack className="w-4 h-4" />
+          <SkipBack className="w-3 h-3 sm:w-4 sm:h-4" />
         </Button>
 
         <Button
           onClick={togglePlayPause}
           disabled={isLoading}
-          className="w-12 h-12 rounded-full"
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full"
           size="lg"
         >
           {isLoading ? (
             <div className="animate-spin">⏳</div>
           ) : isPlaying ? (
-            <Pause className="w-6 h-6" />
+            <Pause className="w-5 h-5 sm:w-6 sm:h-6" />
           ) : (
-            <Play className="w-6 h-6" />
+            <Play className="w-5 h-5 sm:w-6 sm:h-6" />
           )}
         </Button>
 
@@ -176,17 +177,18 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           variant="ghost"
           size="sm"
           title="Skip 15s forward"
+          className="h-8 w-8 sm:h-10 sm:w-10 p-0"
         >
-          <SkipForward className="w-4 h-4" />
+          <SkipForward className="w-3 h-3 sm:w-4 sm:h-4" />
         </Button>
       </div>
 
       {/* Secondary Controls */}
-      <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-3 sm:pt-4 border-t">
         {/* Volume Control */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Volume2 className="w-4 h-4 text-gray-600" />
+        <div className="space-y-1 sm:space-y-2">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Volume2 className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
             <span className="text-xs text-gray-600">Volume</span>
           </div>
           <input
