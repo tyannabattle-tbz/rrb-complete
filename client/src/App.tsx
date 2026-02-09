@@ -52,6 +52,7 @@ import { Breadcrumbs } from './components/Breadcrumbs';
 import { CanrynDashboard } from './pages/CanrynDashboard';
 import { VideoProductionPage } from './pages/VideoProductionPage';
 import { MobileBottomNav } from './components/MobileBottomNav';
+import { UnifiedMobileSidebar } from './components/UnifiedMobileSidebar';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
 import QumusChatPage from '@/pages/QumusChatPage';
@@ -335,6 +336,9 @@ function App() {
               <div className="hidden md:block flex-shrink-0">
                 <AppHeaderEnhanced />
               </div>
+              
+              {/* Unified Mobile Sidebar - overlays when hamburger is clicked */}
+              <UnifiedMobileSidebar />
               
               {/* Main Content - fills remaining space */}
               <div className="flex-1 overflow-hidden">

@@ -1201,3 +1201,17 @@
 - [x] Fix duplicate close buttons in mobile sidebar
 - [x] Fix content clipping behind bottom nav on mobile chat page
 - [x] Clean up mobile sidebar overlay styling
+
+
+## Post-Integration Improvements
+- [ ] Fix agent-registry.qumus.io DNS error with graceful fallback
+- [ ] Wire RRB Navigation into mobile hamburger menu with all sections
+- [ ] Verify RRB pages render correctly on mobile with header/nav layout
+
+
+## Post-Integration Improvements v6.2 (COMPLETED)
+- [x] Fix agent-registry.qumus.io DNS error - now starts in offline mode
+- [x] Wire RRB Navigation into unified mobile sidebar with all sections
+- [x] Unified sidebar: Qumus AI, RRB Entertainment, Legacy Foundation, Legacy Restored, Legacy Continued, Sweet Miracles, Broadcast Control, Administration
+- [x] Quick actions in sidebar: SOS, I'm OK, Search
+- [x] Build verified - all components compile successfully
