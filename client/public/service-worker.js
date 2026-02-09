@@ -1,12 +1,12 @@
-const CACHE_NAME = 'qumus-v1.1.0';
+const CACHE_NAME = 'qumus-v2.0.0';
+
+// Only cache truly static assets - NOT index.html or API routes
 const URLS_TO_CACHE = [
-  '/',
-  '/index.html',
   '/manifest.json',
   '/favicon.ico',
 ];
 
-// Install event - cache essential assets
+// Install event - cache only truly static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -16,13 +16,14 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up ALL old caches aggressively
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
+            console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -32,47 +33,54 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - NETWORK FIRST for HTML and API, cache-first only for hashed assets
 self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
-  if (event.request.method !== 'GET') {
-    return;
-  }
+  if (event.request.method !== 'GET') return;
 
   // Skip chrome extensions
-  if (event.request.url.startsWith('chrome-extension://')) {
+  if (event.request.url.startsWith('chrome-extension://')) return;
+
+  const url = new URL(event.request.url);
+
+  // NEVER intercept API routes - let them go directly to the server
+  if (url.pathname.startsWith('/api/')) return;
+
+  // NETWORK FIRST for HTML navigation requests (index.html, /)
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          return response;
+        })
+        .catch(() => {
+          // Only serve cached HTML as offline fallback
+          return caches.match('/') || new Response('Offline', { status: 503 });
+        })
+    );
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Return cached response if available
-      if (response) {
-        return response;
-      }
-
-      return fetch(event.request).then((response) => {
-        // Don't cache non-successful responses
-        if (!response || response.status !== 200 || response.type === 'error') {
+  // For hashed assets (/assets/index-XXXX.js), use cache-first since hash guarantees freshness
+  if (url.pathname.startsWith('/assets/') && url.pathname.match(/\-[a-zA-Z0-9]{8}\./)) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
           return response;
-        }
+        });
+      })
+    );
+    return;
+  }
 
-        // Clone the response
-        const responseToCache = response.clone();
-
-        // Cache successful responses for certain types
-        if (event.request.url.includes('/api/') || event.request.url.includes('/static/')) {
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-
-        return response;
-      }).catch(() => {
-        // Return offline page if available
-        return caches.match('/');
-      });
-    })
+  // Everything else - network first
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });
 
@@ -80,7 +88,6 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-offline-actions') {
     event.waitUntil(
-      // Sync pending actions when connection is restored
       (async () => {
         try {
           const db = await openDB();

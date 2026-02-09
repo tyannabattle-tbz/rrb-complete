@@ -1329,3 +1329,7 @@
   - [x] Cleaned old dist/client/dist/.vite artifacts
   - [x] New build hash: index-DCQbXv0t.js (replaces stale BD-byvI2)
   - [x] Server restarted and verified running
+  - [x] Service worker upgraded to v2.0.0 with network-first for HTML/API
+  - [x] Service worker no longer caches index.html or intercepts /api/ routes
+  - [x] Old caches aggressively purged on activate
+- [ ] User needs to disconnect/reconnect custom domain OR purge CDN cache
