@@ -115,7 +115,7 @@ import DroneVideoCapture from '@/components/DroneVideoCapture';
 import MapArsenal from '@/components/MapArsenal';
 import { Toaster } from 'sonner';
 
-// Version: 5.0.0 - FINAL MOBILE FIX - 2026-02-09T05:35:00Z
+// Version: 6.0.0 - Fixed mobile layout: header/content/nav flex structure
 function Router() {
   return (
     <>
@@ -237,23 +237,30 @@ function App() {
             <Toaster />
             <KeyboardShortcutsGuide />
             
-            {/* Mobile Header - shown only on mobile */}
-            <div className="md:hidden">
-              <MobileHeaderClean />
+            {/* Full-height flex layout for mobile */}
+            <div className="flex flex-col h-screen md:h-auto md:min-h-screen">
+              {/* Mobile Header - shown only on mobile */}
+              <div className="md:hidden flex-shrink-0">
+                <MobileHeaderClean />
+              </div>
+              
+              {/* Desktop Header - shown only on desktop */}
+              <div className="hidden md:block flex-shrink-0">
+                <AppHeaderEnhanced />
+              </div>
+              
+              {/* Main Content - fills remaining space */}
+              <div className="flex-1 overflow-hidden">
+                <MobileResponsiveLayout>
+                  <Router />
+                </MobileResponsiveLayout>
+              </div>
+              
+              {/* Mobile Bottom Navigation - fixed at bottom */}
+              <div className="flex-shrink-0">
+                <MobileBottomNav />
+              </div>
             </div>
-            
-            {/* Desktop Header - shown only on desktop */}
-            <div className="hidden md:block">
-              <AppHeaderEnhanced />
-            </div>
-            
-            {/* Main Content */}
-            <MobileResponsiveLayout>
-              <Router />
-            </MobileResponsiveLayout>
-            
-            {/* Mobile Bottom Navigation */}
-            <MobileBottomNav />
           </TooltipProvider>
         </PresetProvider>
       </ThemeProvider>

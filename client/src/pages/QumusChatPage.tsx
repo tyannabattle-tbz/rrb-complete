@@ -130,17 +130,17 @@ export default function QumusChatPage() {
   };
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex h-full md:h-screen bg-white">
       {/* Mobile Overlay Backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          className="fixed top-16 bottom-20 left-0 right-0 bg-black/50 z-30 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar - mobile overlay, desktop fixed */}
-      <div className={`${sidebarOpen ? 'fixed md:relative' : 'hidden md:flex'} inset-0 md:inset-auto z-40 md:z-auto ${sidebarOpen ? 'w-64' : 'md:w-64'} bg-slate-900 border-r border-slate-700 transition-all overflow-hidden flex-col`}>
+      <div className={`${sidebarOpen ? 'fixed md:relative' : 'hidden md:flex'} ${sidebarOpen ? 'top-16 bottom-20 left-0' : 'inset-0'} md:inset-auto z-40 md:z-auto ${sidebarOpen ? 'w-64' : 'md:w-64'} bg-slate-900 border-r border-slate-700 transition-all overflow-hidden flex-col`}>
         {/* Mobile Close Button */}
         <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-700">
           <h2 className="text-white font-bold">Menu</h2>

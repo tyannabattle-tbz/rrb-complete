@@ -24,7 +24,7 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-6 max-w-md">
           <div>
-            <h1 className="text-4xl font-bold text-primary mb-2">QUMUS - Mobile Ready ✓</h1>
+            <h1 className="text-4xl font-bold text-primary mb-2">QUMUS</h1>
             <p className="text-muted-foreground">Autonomous Orchestration Engine</p>
           </div>
           <p className="text-foreground">
