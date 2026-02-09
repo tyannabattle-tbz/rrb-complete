@@ -1469,3 +1469,7 @@
 - [x] Autoplay Rockin Rockin Boogie at low volume (plays on first user interaction per browser policy)
 - [x] Create "Around the QumUnity" channel with 5 streams
 - [x] Verify and checkpoint
+## v8.4 Redesign Navigation for Public-Facing Site
+- [x] Redesign AppHeaderEnhanced with public RRB nav (The Legacy, Music & Radio, Listen Live, Community, Canryn dropdowns)
+- [x] Update mobile navigation for public visitors (Legacy Restored, Listen & Watch, Community, Canryn sections)
+- [x] Verify and checkpoint
