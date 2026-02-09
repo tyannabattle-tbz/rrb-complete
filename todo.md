@@ -1430,3 +1430,27 @@
 - [x] Connect all 13 new pages to routes in App.tsx (replacing ComingSoon)
 - [x] Fix missing Link import in ProofVault.tsx
 - [x] Verify all pages render correctly in browser
+## v8.1 Build All Remaining Coming Soon Pages (Go-Live)
+- [x] Build FAQ page
+- [x] Build News page
+- [x] Build Healing Music Frequencies page
+- [x] Build Frequency Guides page
+- [x] Build Meditation Guides page
+- [x] Build Custom Meditation Builder page
+- [x] Build HybridCast page
+- [x] Build Audiobooks page
+- [x] Build Concerts/Tours/Performances page
+- [x] Build Tour Schedule page
+- [x] Build Setlist Archive page
+- [x] Build Media Hub page
+- [x] Build Divisions page
+- [x] Build Business Partnerships page
+- [x] Build Employee Directory page
+- [x] Build Contact Directory page
+- [x] Build Merchandise Shop page
+- [x] Build Sponsorships page
+- [x] Build Affiliate Program page
+- [x] Build Video Testimonials page
+- [x] Connect all 20 new pages to routes in App.tsx
+- [x] Verify all pages render correctly
+- [x] Final go-live checkpoint

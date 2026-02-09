@@ -151,6 +151,26 @@ import RRBTestimonialsAndStories from '@/pages/rrb/TestimonialsAndStories';
 import RRBProducerMentor from '@/pages/rrb/ProducerMentor';
 import RRBMedicalJourney from '@/pages/rrb/MedicalJourney';
 import RRBFamilyAchievements from '@/pages/rrb/FamilyAchievements';
+import RRBFAQ from '@/pages/rrb/FAQ';
+import RRBNews from '@/pages/rrb/News';
+import RRBHealingMusicFrequencies from '@/pages/rrb/HealingMusicFrequencies';
+import RRBFrequencyGuides from '@/pages/rrb/FrequencyGuides';
+import RRBMeditationGuides from '@/pages/rrb/MeditationGuides';
+import RRBCustomMeditationBuilder from '@/pages/rrb/CustomMeditationBuilder';
+import RRBHybridCastPage from '@/pages/rrb/HybridCastPage';
+import RRBAudiobooks from '@/pages/rrb/Audiobooks';
+import RRBConcertsToursPerformances from '@/pages/rrb/ConcertsToursPerformances';
+import RRBTourSchedule from '@/pages/rrb/TourSchedule';
+import RRBSetlistArchive from '@/pages/rrb/SetlistArchive';
+import RRBMediaHub from '@/pages/rrb/MediaHub';
+import RRBDivisions from '@/pages/rrb/Divisions';
+import RRBBusinessPartnerships from '@/pages/rrb/BusinessPartnerships';
+import RRBEmployeeDirectory from '@/pages/rrb/EmployeeDirectory';
+import RRBContactDirectory from '@/pages/rrb/ContactDirectory';
+import RRBMerchandiseShop from '@/pages/rrb/MerchandiseShop';
+import RRBSponsorships from '@/pages/rrb/Sponsorships';
+import RRBAffiliateProgram from '@/pages/rrb/AffiliateProgram';
+import RRBVideoTestimonials from '@/pages/rrb/VideoTestimonials';
 import RRBNavigation from '@/components/rrb/Navigation';
 import { LegalFooter as RRBLegalFooter } from '@/components/rrb/LegalFooter';
 
@@ -292,8 +312,8 @@ function Router() {
       {/* RRB Legacy Restored Pages */}
       <Route path="/rrb/radio-station" component={RRBRadioStation} />
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
-      <Route path="/rrb/hybridcast" component={RRBComingSoon} />
-      <Route path="/rrb/audiobooks" component={RRBComingSoon} />
+      <Route path="/rrb/hybridcast" component={RRBHybridCastPage} />
+      <Route path="/rrb/audiobooks" component={RRBAudiobooks} />
       <Route path="/rrb/proof-vault" component={RRBProofVault} />
       <Route path="/rrb/obituary" component={RRBObituary} />
       <Route path="/rrb/books-and-miracles" component={RRBBooksAndMiracles} />
@@ -306,26 +326,26 @@ function Router() {
       
       {/* RRB Legacy Continued Pages */}
       <Route path="/rrb/canryn-production" component={RRBSweetMiraclesCompanyPage} />
-      <Route path="/rrb/divisions" component={RRBComingSoon} />
-      <Route path="/rrb/business-partnerships" component={RRBComingSoon} />
-      <Route path="/rrb/employee-directory" component={RRBComingSoon} />
-      <Route path="/rrb/contact-directory" component={RRBComingSoon} />
-      <Route path="/rrb/merchandise-shop" component={RRBComingSoon} />
-      <Route path="/rrb/sponsorships" component={RRBComingSoon} />
-      <Route path="/rrb/affiliate-program" component={RRBComingSoon} />
-      <Route path="/rrb/video-testimonials" component={RRBComingSoon} />
-      <Route path="/rrb/news" component={RRBComingSoon} />
+      <Route path="/rrb/divisions" component={RRBDivisions} />
+      <Route path="/rrb/business-partnerships" component={RRBBusinessPartnerships} />
+      <Route path="/rrb/employee-directory" component={RRBEmployeeDirectory} />
+      <Route path="/rrb/contact-directory" component={RRBContactDirectory} />
+      <Route path="/rrb/merchandise-shop" component={RRBMerchandiseShop} />
+      <Route path="/rrb/sponsorships" component={RRBSponsorships} />
+      <Route path="/rrb/affiliate-program" component={RRBAffiliateProgram} />
+      <Route path="/rrb/video-testimonials" component={RRBVideoTestimonials} />
+      <Route path="/rrb/news" component={RRBNews} />
       
       {/* RRB Additional Pages */}
-      <Route path="/rrb/healing-music-frequencies" component={RRBComingSoon} />
-      <Route path="/rrb/frequency-guides" component={RRBComingSoon} />
-      <Route path="/rrb/meditation-guides" component={RRBComingSoon} />
-      <Route path="/rrb/custom-meditation-builder" component={RRBComingSoon} />
-      <Route path="/rrb/concerts-tours-performances" component={RRBComingSoon} />
-      <Route path="/rrb/tour-schedule" component={RRBComingSoon} />
-      <Route path="/rrb/setlist-archive" component={RRBComingSoon} />
-      <Route path="/rrb/media-hub" component={RRBComingSoon} />
-      <Route path="/rrb/faq" component={RRBComingSoon} />
+      <Route path="/rrb/healing-music-frequencies" component={RRBHealingMusicFrequencies} />
+      <Route path="/rrb/frequency-guides" component={RRBFrequencyGuides} />
+      <Route path="/rrb/meditation-guides" component={RRBMeditationGuides} />
+      <Route path="/rrb/custom-meditation-builder" component={RRBCustomMeditationBuilder} />
+      <Route path="/rrb/concerts-tours-performances" component={RRBConcertsToursPerformances} />
+      <Route path="/rrb/tour-schedule" component={RRBTourSchedule} />
+      <Route path="/rrb/setlist-archive" component={RRBSetlistArchive} />
+      <Route path="/rrb/media-hub" component={RRBMediaHub} />
+      <Route path="/rrb/faq" component={RRBFAQ} />
 
       <Route component={NotFound} />
     </Switch>
