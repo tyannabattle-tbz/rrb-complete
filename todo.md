@@ -1289,3 +1289,31 @@
   - [x] Added to sidebar navigation under Broadcast Control
   - [x] 13 listener analytics tests + 4 drag-drop tests passing
   - [x] 32 total tests passing across all new features
+
+## Platform Enhancement v7.2 (COMPLETED)
+- [x] Add geographic heatmap visualization to Listener Analytics
+  - [x] 20 US metro regions with lat/lng, listeners, engagement, revenue data
+  - [x] Interactive bubble map with size/opacity based on listener count and engagement
+  - [x] Hover tooltips showing city name, listener count, engagement %
+  - [x] State aggregation view sorted by total listeners (TX, CA, NY top 3)
+  - [x] All Metro Areas detail list with peak, engagement, session, revenue
+  - [x] getRegionData and getRegionsByState API endpoints
+  - [x] 5 geographic heatmap tests passing
+- [x] Build content recommendation engine using engagement data
+  - [x] QUMUS AI schedule recommendations based on 24h listener patterns
+  - [x] Peak hour analysis for each channel with predicted lift %
+  - [x] Below-average engagement detection with evening peak suggestions
+  - [x] Confidence scoring (0-100%) with visual bars
+  - [x] Sorted by confidence descending for actionable prioritization
+  - [x] getScheduleRecommendations API endpoint
+  - [x] 3 recommendation engine tests passing
+- [x] Build revenue analytics panel connecting Stripe with listener metrics
+  - [x] Total revenue, MRR, one-time donations, revenue per listener
+  - [x] Monthly revenue trend bar chart (6 months)
+  - [x] Revenue by tier (Platinum/Gold/Silver/Bronze) with member counts
+  - [x] Revenue by channel with RPL (revenue per listener) metric
+  - [x] Top revenue channel identification
+  - [x] getRevenueMetrics API endpoint
+  - [x] 6 revenue analytics tests passing
+- [x] Listener Analytics expanded from 3 tabs to 6 tabs: Overview, Channels, Heatmap, AI Recs, Revenue, Live Feed
+- [x] 14 new v7.2 tests all passing

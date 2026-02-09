@@ -1,6 +1,6 @@
 /**
  * Listener Analytics Router
- * Real-time channel metrics and engagement tracking endpoints
+ * Real-time channel metrics, geographic heatmap, recommendations, and revenue analytics
  */
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
@@ -35,7 +35,7 @@ export const listenerAnalyticsRouter = router({
       return analytics.getEngagementByChannel(input);
     }),
 
-  // Record an engagement event (tune in, tune out, like, share, etc.)
+  // Record an engagement event
   recordEvent: publicProcedure
     .input(z.object({
       type: z.enum(['tune_in', 'tune_out', 'skip', 'like', 'share', 'save']),
@@ -47,4 +47,28 @@ export const listenerAnalyticsRouter = router({
       const analytics = getListenerAnalytics();
       return analytics.recordEvent(input);
     }),
+
+  // Geographic heatmap - all regions
+  getRegionData: publicProcedure.query(() => {
+    const analytics = getListenerAnalytics();
+    return analytics.getRegionData();
+  }),
+
+  // Geographic heatmap - aggregated by state
+  getRegionsByState: publicProcedure.query(() => {
+    const analytics = getListenerAnalytics();
+    return analytics.getRegionsByState();
+  }),
+
+  // Content scheduling recommendations
+  getScheduleRecommendations: publicProcedure.query(() => {
+    const analytics = getListenerAnalytics();
+    return analytics.getScheduleRecommendations();
+  }),
+
+  // Revenue analytics
+  getRevenueMetrics: publicProcedure.query(() => {
+    const analytics = getListenerAnalytics();
+    return analytics.getRevenueMetrics();
+  }),
 });
