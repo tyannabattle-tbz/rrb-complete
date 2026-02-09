@@ -1388,3 +1388,7 @@
 - [x] Generate branded favicon for RRB/QUMUS platform (R with radio waves, amber/navy)
 - [x] Add Seabrun Candy Hunter sample tracks to radio station (10 tracks in stream library)
 - [x] Remind user to publish to production
+
+## v7.6 Follow-ups
+- [ ] Export latest code to GitHub rrb-qumus-platform
+- [ ] Test full audio flow on production site
