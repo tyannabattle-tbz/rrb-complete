@@ -48,6 +48,7 @@ import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
 import { MobileResponsiveLayout } from './components/MobileResponsiveLayout';
 import { MobileHeaderClean } from './components/MobileHeaderClean';
+import { VideoProductionPage } from './pages/VideoProductionPage';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
@@ -145,6 +146,7 @@ function Router() {
       <Route path="/hybridcast-config" component={HybridCastConfig} />
       <Route path="/watermark-editor" component={VideoWatermarkEditor} />
       <Route path="/batch" component={BatchVideoGenerator} />
+      <Route path="/video-production" component={VideoProductionPage} />
       <Route path="/chat" component={QumusChatInterface} />
       <Route path="/qumus-chat" component={QumusChatPage} />
       <Route path="/radio-station" component={RadioStation} />

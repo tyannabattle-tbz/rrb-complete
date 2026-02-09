@@ -51,6 +51,7 @@ import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
 import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
 import { agentNetworkRouter } from "./routers/agentNetworkRouter";
 import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnectionRouter";
+import { videoProductionWorkflowRouter } from "./routers/videoProductionWorkflowRouter";
 
 export const appRouter = router({
   // System router
@@ -154,6 +155,9 @@ export const appRouter = router({
 
   // Seamless Agent Connection & Cross-Platform Communication
   seamlessAgentConnection: seamlessAgentConnectionRouter,
+
+  // Video Production Workflow - Generation to RRB Radio Broadcast
+  videoProductionWorkflow: videoProductionWorkflowRouter,
 
   // Agent Session Management
   agent: router({

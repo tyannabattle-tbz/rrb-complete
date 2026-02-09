@@ -358,6 +358,13 @@
 - [ ] Create podcast recommendations based on listening history
 - [ ] Add share functionality for currently playing podcast
 
+## Qumus Core Integrations (CRITICAL - IN PROGRESS)
+- [ ] Add RRB Radio broadcast integration to Qumus
+- [ ] Add Sweet Miracles NPO integration to Qumus
+- [ ] Add analytics and reporting system to Qumus
+- [ ] Integrate RRB Radio, Sweet Miracles, and Analytics into Qumus orchestration
+- [ ] Test complete Qumus ecosystem integration
+
 ## Phase 11: Real-time Collaboration Features (IN PROGRESS)
 - [ ] Add presence indicators for active users
 - [ ] Implement typing notifications
@@ -987,3 +994,14 @@
 - [x] Monitor for errors and performance issues
 - [x] Confirm all features accessible
 - [x] Create QUMUS Autonomous System skill
+
+
+## Video Generation Workflow - CRITICAL ISSUES (IN PROGRESS)
+- [ ] Fix video generation endpoint to properly store output
+- [ ] Implement production workflow pipeline (generation → processing → scheduling)
+- [ ] Add RRB Radio integration for broadcast scheduling
+- [ ] Create automated workflow orchestration with status tracking
+- [ ] Implement video status tracking and visibility
+- [ ] Add broadcast scheduling to RRB Radio
+- [ ] Create end-to-end workflow automation
+- [ ] Test complete video generation to broadcast flow
