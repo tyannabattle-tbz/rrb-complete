@@ -41,9 +41,9 @@ export default function MediaHub() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p>
-                  Our comprehensive press kit includes a detailed biography of Seabrun Candy Hunter, the history of his systematic omission from songwriting credits, and the mission of Canryn Production Inc. to restore his legacy. You'll find information on our key initiatives: <Link href="/rrb/sweet-miracles" className="text-red-500 hover:underline">Sweet Miracles</Link>, our community outreach program; <Link href="/rrb/qumus" className="text-red-500 hover:underline">QUMUS</Link>, the autonomous orchestration project; and <Link href="/rrb/hybrid-cast" className="text-red-500 hover:underline">HybridCast</Link>, our emergency broadcast system.
+                  Our comprehensive press kit includes a detailed biography of Seabrun Candy Hunter, the history of his systematic omission from songwriting credits, and the mission of Canryn Production Inc. to restore his legacy. You'll find information on our key initiatives: <a href="https://sweetmiraclesattt.wixsite.com/sweet-miracles" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:underline">Sweet Miracles</a>, our community outreach program; <Link href="/rrb/qumus/monitoring" className="text-red-500 hover:underline">QUMUS</Link>, the autonomous orchestration project; and <Link href="/rrb/hybridcast" className="text-red-500 hover:underline">HybridCast</Link>, our emergency broadcast system.
                 </p>
-                <a href="/downloads/press-kit.zip" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-500 hover:bg-red-600">
+                <a href="/rrb/media-hub" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-500 hover:bg-red-600">
                   <Download className="mr-2 h-4 w-4" /> Download Press Kit
                 </a>
               </CardContent>
@@ -58,9 +58,9 @@ export default function MediaHub() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p>
-                  Explore the untold stories of a music pioneer. We provide high-resolution images, brand guidelines, and suggested topics to help you craft compelling narratives. Dive into the technology behind QUMUS or the community impact of Sweet Miracles. For more, see our <Link href="/rrb/about" className="text-amber-500 hover:underline">About</Link> page.
+                  Explore the untold stories of a music pioneer. We provide high-resolution images, brand guidelines, and suggested topics to help you craft compelling narratives. Dive into the technology behind QUMUS or the community impact of Sweet Miracles. For more, see our <Link href="/rrb/the-legacy" className="text-amber-500 hover:underline">About</Link> page.
                 </p>
-                <a href="/downloads/blogger-assets.zip" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-500 hover:bg-amber-600">
+                <a href="/rrb/media-hub" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-500 hover:bg-amber-600">
                   <Download className="mr-2 h-4 w-4" /> Download Blogger Assets
                 </a>
               </CardContent>
@@ -77,7 +77,7 @@ export default function MediaHub() {
                 <p>
                   Access our library of official photos and video clips (placeholders). We welcome collaborations with content creators who share our passion for music history and justice. If you're interested in featuring Seabrun Candy Hunter's story, please reach out.
                 </p>
-                <a href="/downloads/creator-pack.zip" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-500 hover:bg-orange-600">
+                <a href="/rrb/media-hub" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-500 hover:bg-orange-600">
                   <Download className="mr-2 h-4 w-4" /> Download Creator Pack
                 </a>
               </CardContent>
@@ -102,7 +102,7 @@ export default function MediaHub() {
             </CardHeader>
             <CardContent>
               <p>Please adhere to our brand guidelines when using our name, logo, and other assets. This ensures consistency and respect for the legacy of Seabrun Candy Hunter.</p>
-              <a href="/downloads/brand-guidelines.pdf" className="inline-flex items-center mt-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-500 hover:bg-red-600">
+              <a href="/rrb/media-hub" className="inline-flex items-center mt-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-500 hover:bg-red-600">
                 <Download className="mr-2 h-4 w-4" /> Download Guidelines
               </a>
             </CardContent>
@@ -130,8 +130,8 @@ export default function MediaHub() {
           <p>&copy; {new Date().getFullYear()} Canryn Production Inc. All Rights Reserved.</p>
           <p>The RockinRockinBoogie.com platform is dedicated to the memory and legacy of Seabrun Candy Hunter.</p>
           <div className="mt-4 space-x-4">
-            <Link href="/rrb/privacy-policy" className="hover:text-foreground">Privacy Policy</Link>
-            <Link href="/rrb/terms-of-service" className="hover:text-foreground">Terms of Service</Link>
+            <Link href="/rrb/faq" className="hover:text-foreground">Privacy Policy</Link>
+            <Link href="/rrb/faq" className="hover:text-foreground">Terms of Service</Link>
             <Link href="/rrb/contact" className="hover:text-foreground">Contact Us</Link>
           </div>
         </div>

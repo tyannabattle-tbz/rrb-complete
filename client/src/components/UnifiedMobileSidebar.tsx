@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 interface MenuSection {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
-  items: { label: string; href: string; icon?: React.ComponentType<{ className?: string }> }[];
+  items: { label: string; href: string; icon?: React.ComponentType<{ className?: string }>; external?: boolean }[];
   defaultOpen?: boolean;
 }
 
@@ -42,8 +42,12 @@ export function UnifiedMobileSidebar() {
     setExpandedSections(prev => ({ ...prev, [title]: !prev[title] }));
   };
 
-  const handleNavClick = (href: string) => {
-    navigate(href);
+  const handleNavClick = (href: string, external?: boolean) => {
+    if (external || href.startsWith('http')) {
+      window.open(href, '_blank', 'noopener,noreferrer');
+    } else {
+      navigate(href);
+    }
     setIsOpen(false);
     window.dispatchEvent(new Event('closeMobileMenu'));
   };
@@ -117,7 +121,7 @@ export function UnifiedMobileSidebar() {
       title: 'Sweet Miracles',
       icon: Heart,
       items: [
-        { label: 'Sweet Miracles', href: '/sweet-miracles', icon: Heart },
+        { label: 'Sweet Miracles', href: 'https://sweetmiraclesattt.wixsite.com/sweet-miracles', icon: Heart, external: true },
         { label: 'Impact Dashboard', href: '/impact-dashboard', icon: BarChart3 },
         { label: 'Donate', href: '/donate', icon: Heart },
       ],
@@ -245,7 +249,7 @@ export function UnifiedMobileSidebar() {
                       return (
                         <button
                           key={item.href}
-                          onClick={() => handleNavClick(item.href)}
+                          onClick={() => handleNavClick(item.href, item.external)}
                           className={`w-full flex items-center gap-2 px-6 py-2 text-sm transition-colors ${
                             isActive(item.href)
                               ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-400'

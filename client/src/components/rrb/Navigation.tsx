@@ -193,7 +193,7 @@ export default function Navigation() {
           </Link>
 
           {/* Podcast & Video */}
-          <Link href="/podcast-and-video">
+          <Link href="/rrb/podcast-and-video">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
               isActive('/podcast-and-video')
                 ? 'bg-accent text-accent-foreground'
@@ -236,19 +236,13 @@ export default function Navigation() {
             </a>
           </Link>
 
-          {/* Sweet Miracles */}
-          <Link href="/sweet-miracles">
-            <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              isActive('/sweet-miracles')
-                ? 'bg-accent text-accent-foreground'
-                : 'text-foreground hover:bg-accent/10'
-            }`}>
+          {/* Sweet Miracles - External */}
+          <a href="https://sweetmiraclesattt.wixsite.com/sweet-miracles" target="_blank" rel="noopener noreferrer" className="px-3 py-2 rounded text-sm font-medium transition-colors text-foreground hover:bg-accent/10">
               ✨ Sweet Miracles
-            </a>
-          </Link>
+          </a>
 
           {/* Sweet Miracles Company */}
-          <Link href="/sweet-miracles-company">
+          <Link href="/rrb/canryn-production">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
               isActive('/sweet-miracles-company')
                 ? 'bg-accent text-accent-foreground'
@@ -292,7 +286,7 @@ export default function Navigation() {
           </Link>
 
           {/* Human Review */}
-          <Link href="/qumus-human-review">
+          <Link href="/rrb/qumus/human-review">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
               isActive('/qumus-human-review')
                 ? 'bg-accent text-accent-foreground'

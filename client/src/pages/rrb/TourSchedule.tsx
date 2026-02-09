@@ -104,8 +104,8 @@ export default function TourSchedule() {
         <section className="mt-16 text-center">
             <h2 className="text-2xl font-semibold">Explore More</h2>
             <div className="flex justify-center gap-4 mt-4">
-                <Link href="/rrb/music-legacy" className="text-red-500 hover:underline">Music Legacy</Link>
-                <Link href="/rrb/about" className="text-red-500 hover:underline">About Seabrun</Link>
+                <Link href="/rrb/the-music" className="text-red-500 hover:underline">Music Legacy</Link>
+                <Link href="/rrb/the-legacy" className="text-red-500 hover:underline">About Seabrun</Link>
                 <Link href="/rrb/contact" className="text-red-500 hover:underline">Contact Us</Link>
             </div>
         </section>

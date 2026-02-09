@@ -42,7 +42,7 @@ export default function FAQ() {
     },
     {
       question: "What is Sweet Miracles?",
-      answer: "Sweet Miracles is the community outreach arm of Canryn Production Inc. It focuses on supporting emerging artists from underrepresented backgrounds, providing mentorship, resources, and opportunities to help them navigate the music industry. Learn more at our <Link href=\"/rrb/sweet-miracles\" className=\"text-red-500 hover:underline\">Sweet Miracles page</Link>.",
+      answer: "Sweet Miracles is the community outreach arm of Canryn Production Inc. It focuses on supporting emerging artists from underrepresented backgrounds, providing mentorship, resources, and opportunities to help them navigate the music industry. Learn more at our <a href=\"https://sweetmiraclesattt.wixsite.com/sweet-miracles\" target=\"_blank\" rel=\"noopener noreferrer\" className=\"text-red-500 hover:underline\">Sweet Miracles page</a>.",
     },
     {
       question: "What is QUMUS?",
@@ -106,8 +106,8 @@ export default function FAQ() {
           <p>&copy; {new Date().getFullYear()} Canryn Production Inc. All Rights Reserved.</p>
           <p className="mt-2">Dedicated to the enduring legacy of Seabrun Candy Hunter.</p>
           <div className="flex justify-center gap-4 mt-4">
-            <Link href="/rrb/privacy-policy" className="hover:text-red-500">Privacy Policy</Link>
-            <Link href="/rrb/terms-of-service" className="hover:text-red-500">Terms of Service</Link>
+            <Link href="/rrb/faq" className="hover:text-red-500">Privacy Policy</Link>
+            <Link href="/rrb/faq" className="hover:text-red-500">Terms of Service</Link>
           </div>
         </div>
       </footer>

@@ -38,7 +38,7 @@ export function AppHeaderEnhanced() {
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `qumus-export-${Date.now()}.json`;
+    link.download = `rrb-export-${Date.now()}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -48,8 +48,8 @@ export function AppHeaderEnhanced() {
 
   const handleShare = () => {
     const shareData = {
-      title: 'Qumus - AI Orchestration Platform',
-      text: 'Check out this amazing AI orchestration platform!',
+      title: 'Rockin Rockin Boogie — Legacy Restored',
+      text: 'Check out Rockin Rockin Boogie — the legacy of Seabrun Candy Hunter!',
       url: window.location.href,
     };
 
@@ -85,8 +85,8 @@ export function AppHeaderEnhanced() {
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo/Brand */}
           <div className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-primary">Qumus</div>
-            <span className="text-xs font-semibold text-cyan-500 bg-cyan-500/20 px-2 py-1 rounded">HybridCast</span>
+            <div className="text-2xl font-bold text-primary">RRB</div>
+            <span className="text-xs font-semibold text-amber-500 bg-amber-500/20 px-2 py-1 rounded">LIVE</span>
           </div>
 
           {/* Desktop Navigation */}

@@ -126,11 +126,11 @@ export default function AffiliateProgram() {
                 <CardContent className="space-y-4">
                   <p>We encourage creative and authentic promotions. Here are a few ideas to get you started:</p>
                   <ul className="list-disc list-inside space-y-2">
-                    <li>Write a blog post about Seabrun Candy Hunter's story and link to our <Link href="/rrb/about" className="text-red-500 hover:underline">About page</Link>.</li>
+                    <li>Write a blog post about Seabrun Candy Hunter's story and link to our <Link href="/rrb/the-legacy" className="text-red-500 hover:underline">About page</Link>.</li>
                     <li>Create a video review of our exclusive merchandise.</li>
                     <li>Share our documentary clips on your social media channels.</li>
                     <li>Include our banners on your website or in your newsletter.</li>
-                    <li>Host a listening party featuring Seabrun's music and our <Link href="/rrb/qumus" className="text-red-500 hover:underline">QUMUS orchestrations</Link>.</li>
+                    <li>Host a listening party featuring Seabrun's music and our <Link href="/rrb/qumus/monitoring" className="text-red-500 hover:underline">QUMUS orchestrations</Link>.</li>
                   </ul>
                 </CardContent>
               </Card>
@@ -148,7 +148,7 @@ export default function AffiliateProgram() {
                     <li><strong>Approval & Onboarding:</strong> Once approved, you'll receive a welcome email with your login details for the affiliate dashboard and a guide to get you started.</li>
                   </ol>
                   <div className="text-center pt-4">
-                    <Link href="/rrb/affiliate-application" className="inline-block bg-red-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-red-600 transition-colors">
+                    <Link href="/rrb/affiliate-program" className="inline-block bg-red-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-red-600 transition-colors">
                       Apply Now
                     </Link>
                   </div>
@@ -182,9 +182,9 @@ export default function AffiliateProgram() {
         <section className="text-center mb-16">
             <h3 className="text-2xl font-bold mb-4">Explore More</h3>
             <div className="flex justify-center space-x-4 md:space-x-8">
-                <Link href="/rrb/sweet-miracles" className="text-red-500 hover:underline">Sweet Miracles</Link>
-                <Link href="/rrb/qumus" className="text-red-500 hover:underline">QUMUS</Link>
-                <Link href="/rrb/hybrid-cast" className="text-red-500 hover:underline">HybridCast</Link>
+                <a href="https://sweetmiraclesattt.wixsite.com/sweet-miracles" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:underline">Sweet Miracles</a>
+                <Link href="/rrb/qumus/monitoring" className="text-red-500 hover:underline">QUMUS</Link>
+                <Link href="/rrb/hybridcast" className="text-red-500 hover:underline">HybridCast</Link>
             </div>
         </section>
 

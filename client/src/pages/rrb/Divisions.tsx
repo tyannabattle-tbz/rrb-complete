@@ -51,7 +51,7 @@ export default function Divisions() {
                       <li>Advocacy for transparent and equitable crediting in the music industry.</li>
                     </ul>
                   </div>
-                  <Link href="/rrb/music" className="text-amber-500 hover:underline">Explore our Music & Legacy →</Link>
+                  <Link href="/rrb/the-music" className="text-amber-500 hover:underline">Explore our Music & Legacy →</Link>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -76,7 +76,7 @@ export default function Divisions() {
                       <li>Integration with HybridCast for emergency broadcast capabilities during local crises.</li>
                     </ul>
                   </div>
-                  <Link href="/rrb/radio" className="text-amber-500 hover:underline">Tune into RRB Radio →</Link>
+                  <Link href="/rrb/radio-station" className="text-amber-500 hover:underline">Tune into RRB Radio →</Link>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -101,7 +101,7 @@ export default function Divisions() {
                       <li>Research into AI-driven music rights management and royalty tracking.</li>
                     </ul>
                   </div>
-                   <Link href="/rrb/technology" className="text-amber-500 hover:underline">Discover our Tech →</Link>
+                   <Link href="/rrb/divisions" className="text-amber-500 hover:underline">Discover our Tech →</Link>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -126,7 +126,7 @@ export default function Divisions() {
                       <li>Annual "Seabrun's Spirit" benefit concert.</li>
                     </ul>
                   </div>
-                  <Link href="/rrb/community" className="text-amber-500 hover:underline">Learn about Sweet Miracles →</Link>
+                  <Link href="/rrb/canryn-production" className="text-amber-500 hover:underline">Learn about Sweet Miracles →</Link>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -175,7 +175,7 @@ export default function Divisions() {
                       <li>Collaborations with artists for unique merchandise designs.</li>
                     </ul>
                   </div>
-                  <Link href="/rrb/store" className="text-amber-500 hover:underline">Shop the Collection →</Link>
+                  <Link href="/rrb/merchandise-shop" className="text-amber-500 hover:underline">Shop the Collection →</Link>
                 </CardContent>
               </Card>
             </TabsContent>

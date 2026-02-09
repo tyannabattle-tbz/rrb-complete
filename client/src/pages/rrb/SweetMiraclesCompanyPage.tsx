@@ -285,13 +285,13 @@ export default function SweetMiraclesCompanyPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/the-music"
+              href="/rrb/the-music"
               className="px-6 py-3 bg-accent hover:bg-accent/90 text-accent-foreground rounded-lg font-medium transition-colors"
             >
               Explore the Music
             </a>
             <a
-              href="/the-legacy"
+              href="/rrb/the-legacy"
               className="px-6 py-3 border border-accent text-accent hover:bg-accent/10 rounded-lg font-medium transition-colors"
             >
               The Legacy

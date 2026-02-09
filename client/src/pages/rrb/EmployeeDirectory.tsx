@@ -129,9 +129,9 @@ const EmployeeDirectory = () => {
         <section className="mt-16 text-center">
           <h2 className="text-2xl font-bold">Explore Our Work</h2>
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-            <Link href="/rrb/qumus" className="text-amber-500 hover:underline">QUMUS Platform</Link>
-            <Link href="/rrb/sweet-miracles" className="text-amber-500 hover:underline">Sweet Miracles Outreach</Link>
-            <Link href="/rrb/hybrid-cast" className="text-amber-500 hover:underline">HybridCast Network</Link>
+            <Link href="/rrb/qumus/monitoring" className="text-amber-500 hover:underline">QUMUS Platform</Link>
+            <a href="https://sweetmiraclesattt.wixsite.com/sweet-miracles" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:underline">Sweet Miracles Outreach</a>
+            <Link href="/rrb/hybridcast" className="text-amber-500 hover:underline">HybridCast Network</Link>
           </div>
         </section>
       </main>

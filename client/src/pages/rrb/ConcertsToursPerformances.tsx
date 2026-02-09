@@ -113,7 +113,7 @@ const ConcertsToursPerformances = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-foreground/80 mb-4">Explore the full collection of Seabrun's groundbreaking work.</p>
-                <Link href="/rrb/music-discography" className="text-red-500 hover:underline">Listen Now &rarr;</Link>
+                <Link href="/rrb/the-music" className="text-red-500 hover:underline">Listen Now &rarr;</Link>
               </CardContent>
             </Card>
             <Card className="hover:shadow-lg transition-shadow">
@@ -122,7 +122,7 @@ const ConcertsToursPerformances = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-foreground/80 mb-4">Learn about the life and legacy of a music industry pioneer.</p>
-                <Link href="/rrb/biography" className="text-red-500 hover:underline">Read the Story &rarr;</Link>
+                <Link href="/rrb/the-legacy" className="text-red-500 hover:underline">Read the Story &rarr;</Link>
               </CardContent>
             </Card>
             <Card className="hover:shadow-lg transition-shadow">

@@ -131,11 +131,11 @@ export default function Audiobooks() {
           <h2 className="text-2xl font-bold">Explore More</h2>
           <p className="mt-2 text-foreground/70">Discover other facets of the RockinRockinBoogie platform.</p>
           <div className="mt-6 flex justify-center gap-4 flex-wrap">
-            <Link href="/rrb/sweet-miracles" className="text-amber-500 hover:text-red-500 transition-colors">Sweet Miracles</Link>
+            <a href="https://sweetmiraclesattt.wixsite.com/sweet-miracles" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:text-red-500 transition-colors">Sweet Miracles</a>
             <span className="text-foreground/30">|</span>
-            <Link href="/rrb/qumus" className="text-amber-500 hover:text-red-500 transition-colors">QUMUS Autonomous Orchestration</Link>
+            <Link href="/rrb/qumus/monitoring" className="text-amber-500 hover:text-red-500 transition-colors">QUMUS Autonomous Orchestration</Link>
             <span className="text-foreground/30">|</span>
-            <Link href="/rrb/hybrid-cast" className="text-amber-500 hover:text-red-500 transition-colors">HybridCast Emergency Broadcast</Link>
+            <Link href="/rrb/hybridcast" className="text-amber-500 hover:text-red-500 transition-colors">HybridCast Emergency Broadcast</Link>
           </div>
         </div>
       </section>

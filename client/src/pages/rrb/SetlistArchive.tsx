@@ -148,11 +148,11 @@ export default function SetlistArchive() {
                 Dive deeper into the world of Seabrun Candy Hunter. Discover his full discography or learn about the organizations continuing his legacy.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-                <Link href="/rrb/music-catalog" className="text-amber-500 hover:underline">Browse the Music Catalog</Link>
+                <Link href="/rrb/the-music" className="text-amber-500 hover:underline">Browse the Music Catalog</Link>
                 <span className="text-foreground/30">|</span>
-                <Link href="/rrb/biography" className="text-amber-500 hover:underline">Read the Full Biography</Link>
+                <Link href="/rrb/the-legacy" className="text-amber-500 hover:underline">Read the Full Biography</Link>
                 <span className="text-foreground/30">|</span>
-                <Link href="/rrb/qumus" className="text-amber-500 hover:underline">Discover QUMUS</Link>
+                <Link href="/rrb/qumus/monitoring" className="text-amber-500 hover:underline">Discover QUMUS</Link>
             </div>
         </div>
 

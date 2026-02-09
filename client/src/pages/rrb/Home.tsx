@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Radio, Podcast, Music, Zap, Heart, Signal, Sparkles, Users, BookOpen, Brain, Building2, Headphones, Play, Pause } from 'lucide-react';
 import { useAudio } from '@/contexts/AudioContext';
-import { CHANNEL_PRESETS, LIVE_STREAMS } from '@/lib/streamLibrary';
+import { CHANNEL_PRESETS, LIVE_STREAMS, RRB_LEGACY_TRACKS } from '@/lib/streamLibrary';
 import RotatingVinylRecord from "@/components/rrb/RotatingVinylRecord";
 
 // Platform showcase items
@@ -203,6 +203,57 @@ function QuickListenSection() {
 export default function Home() {
   const { user, loading, error, isAuthenticated, logout } = useAuth();
   const [selectedPlatform, setSelectedPlatform] = useState(0);
+  const audio = useAudio();
+  const autoplayAttempted = useRef(false);
+
+  // Autoplay "Rockin' Rockin' Boogie" at low volume on first visit
+  useEffect(() => {
+    if (autoplayAttempted.current) return;
+    if (audio.currentTrack) return; // Don't interrupt if something is already playing
+    autoplayAttempted.current = true;
+
+    const rrb = RRB_LEGACY_TRACKS[0]; // "Rockin' Rockin' Boogie — Original"
+    if (!rrb) return;
+
+    // Set low volume first, then play
+    audio.setVolume(0.15);
+    
+    // Use a click listener to start playback (browsers require user gesture)
+    const startAutoplay = () => {
+      if (!audio.currentTrack) {
+        audio.play(rrb);
+      }
+      document.removeEventListener('click', startAutoplay);
+      document.removeEventListener('touchstart', startAutoplay);
+      document.removeEventListener('scroll', startAutoplay);
+      document.removeEventListener('keydown', startAutoplay);
+    };
+
+    // Try immediate play first (may work if user has interacted before)
+    const tryAutoplay = async () => {
+      try {
+        audio.setVolume(0.15);
+        audio.play(rrb);
+      } catch {
+        // If autoplay blocked, wait for first user interaction
+        document.addEventListener('click', startAutoplay, { once: true });
+        document.addEventListener('touchstart', startAutoplay, { once: true });
+        document.addEventListener('scroll', startAutoplay, { once: true });
+        document.addEventListener('keydown', startAutoplay, { once: true });
+      }
+    };
+
+    // Small delay to let the page render first
+    const timer = setTimeout(tryAutoplay, 500);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('click', startAutoplay);
+      document.removeEventListener('touchstart', startAutoplay);
+      document.removeEventListener('scroll', startAutoplay);
+      document.removeEventListener('keydown', startAutoplay);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -247,7 +298,7 @@ export default function Home() {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link href="/ecosystem/dashboard">
+              <Link href="/rrb/ecosystem/dashboard">
                 <Button size="lg" variant="outline">
                   View Ecosystem Dashboard
                   <Zap className="ml-2 w-5 h-5" />
@@ -408,7 +459,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Listen to the Music */}
-              <Link href="/the-music">
+              <Link href="/rrb/the-music">
                 <div className="p-8 rounded-lg border border-border hover:border-accent transition cursor-pointer group bg-gradient-to-br from-orange-500/10 to-orange-600/10">
                   <div className="text-4xl mb-4">🎵</div>
                   <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition">
@@ -455,7 +506,7 @@ export default function Home() {
               Navigate through 12 integrated platforms powered by autonomous QUMUS orchestration. Everything from archival documentation to live broadcasting, all working together seamlessly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/ecosystem/dashboard">
+              <Link href="/rrb/ecosystem/dashboard">
                 <Button size="lg" variant="secondary">
                   View Dashboard
                   <Zap className="ml-2 w-5 h-5" />

@@ -7,7 +7,7 @@ export function LegalFooter() {
       <div className="container max-w-6xl">
         {/* Legal Links */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-          <Link href="/terms-of-service">
+          <Link href="/rrb/faq">
             <div className="flex items-center gap-3 cursor-pointer hover:text-accent transition-colors">
               <Scale className="w-5 h-5 text-accent" />
               <div>
@@ -17,7 +17,7 @@ export function LegalFooter() {
             </div>
           </Link>
 
-          <Link href="/privacy-policy">
+          <Link href="/rrb/faq">
             <div className="flex items-center gap-3 cursor-pointer hover:text-accent transition-colors">
               <Lock className="w-5 h-5 text-accent" />
               <div>
@@ -27,7 +27,7 @@ export function LegalFooter() {
             </div>
           </Link>
 
-          <Link href="/disclaimer">
+          <Link href="/rrb/faq">
             <div className="flex items-center gap-3 cursor-pointer hover:text-accent transition-colors">
               <AlertCircle className="w-5 h-5 text-accent" />
               <div>
@@ -37,7 +37,7 @@ export function LegalFooter() {
             </div>
           </Link>
 
-          <Link href="/refund-policy">
+          <Link href="/rrb/faq">
             <div className="flex items-center gap-3 cursor-pointer hover:text-accent transition-colors">
               <DollarSign className="w-5 h-5 text-accent" />
               <div>
@@ -58,7 +58,7 @@ export function LegalFooter() {
             </div>
 
             <div className="text-sm text-foreground/60 text-center md:text-right">
-              <p>Questions? <Link href="/support"><span className="text-accent hover:underline cursor-pointer">Contact Support</span></Link></p>
+              <p>Questions? <Link href="/rrb/contact"><span className="text-accent hover:underline cursor-pointer">Contact Support</span></Link></p>
               <p>Last updated: January 25, 2026</p>
             </div>
           </div>

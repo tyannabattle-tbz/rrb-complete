@@ -83,8 +83,10 @@ export const audioRouter = router({
       source: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const { db } = await import('../db');
+      const { getDb } = await import('../db');
       const { sql } = await import('drizzle-orm');
+      const db = await getDb();
+      if (!db) return { success: false };
       // Upsert play count in a simple key-value style
       await db.execute(sql`
         INSERT INTO audio_play_counts (track_id, title, artist, play_count, last_played_at)
@@ -97,8 +99,10 @@ export const audioRouter = router({
   // Get play counts for all tracks (sorted by most played)
   getPlayCounts: publicProcedure
     .query(async () => {
-      const { db } = await import('../db');
+      const { getDb } = await import('../db');
       const { sql } = await import('drizzle-orm');
+      const db = await getDb();
+      if (!db) return { tracks: [] };
       const result = await db.execute(sql`
         SELECT track_id, title, artist, play_count, last_played_at
         FROM audio_play_counts
@@ -112,7 +116,9 @@ export const audioRouter = router({
   getTrackPlayCount: publicProcedure
     .input(z.object({ trackId: z.string() }))
     .query(async ({ input }) => {
-      const { db } = await import('../db');
+      const { getDb } = await import('../db');
+      const db = await getDb();
+      if (!db) return { success: false };
       const { sql } = await import('drizzle-orm');
       const result = await db.execute(sql`
         SELECT play_count FROM audio_play_counts WHERE track_id = ${input.trackId}
@@ -212,7 +218,9 @@ export const audioRouter = router({
       maxResults: z.number().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const { db } = await import('../db');
+      const { getDb } = await import('../db');
+      const db = await getDb();
+      if (!db) return { success: false };
       const { sql } = await import('drizzle-orm');
       const { analyzeTrending, DEFAULT_PROMOTION_POLICY } = await import('../qumusTrendingEngine');
 
@@ -240,7 +248,9 @@ export const audioRouter = router({
       dryRun: z.boolean().default(false),
     }).optional())
     .mutation(async ({ input }) => {
-      const { db } = await import('../db');
+      const { getDb } = await import('../db');
+      const db = await getDb();
+      if (!db) return { success: false };
       const { sql } = await import('drizzle-orm');
       const {
         analyzeTrending,
@@ -301,7 +311,9 @@ export const audioRouter = router({
       limit: z.number().default(20),
     }).optional())
     .query(async ({ input }) => {
-      const { db } = await import('../db');
+      const { getDb } = await import('../db');
+      const db = await getDb();
+      if (!db) return { success: false };
       const { sql } = await import('drizzle-orm');
       try {
         const result = await db.execute(sql`

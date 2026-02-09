@@ -481,7 +481,7 @@ export default function TheMusic() {
             Explore the complete discography with verified credits, release dates, and public records.
           </p>
 
-          <Link href="/the-music/discography">
+          <Link href="/rrb/the-music">
             <Button
               size="lg"
               className="bg-accent hover:bg-accent/90 text-accent-foreground"
@@ -554,7 +554,7 @@ export default function TheMusic() {
               </div>
             </Link>
 
-            <Link href="/the-legacy">
+            <Link href="/rrb/the-legacy">
               <div className="proof-vault-tile cursor-pointer group">
                 <div className="mb-4 text-4xl">📖</div>
                 <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition-colors">

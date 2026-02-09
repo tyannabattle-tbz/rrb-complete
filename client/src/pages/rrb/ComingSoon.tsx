@@ -56,7 +56,7 @@ export default function ComingSoon({ title, description }: ComingSoonProps) {
             </Button>
           </Link>
           
-          <Link href="/contact">
+          <Link href="/rrb/contact">
             <Button variant="outline" className="w-full border-accent text-accent hover:bg-accent/10">
               Get Notified
             </Button>

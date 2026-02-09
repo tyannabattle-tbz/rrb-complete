@@ -133,6 +133,31 @@ export const LIVE_STREAMS = {
     channel: 'Sweet Miracles',
     isLiveStream: true,
   },
+  // Around the QumUnity — Community voices, talk, and culture
+  defcon: {
+    id: 'live-defcon',
+    title: 'DEF CON Radio — Hacker Culture',
+    artist: 'SomaFM',
+    url: 'https://ice1.somafm.com/defcon-128-mp3',
+    channel: 'QumUnity',
+    isLiveStream: true,
+  },
+  folkForward: {
+    id: 'live-folk-forward',
+    title: 'Folk Forward — Roots & Storytelling',
+    artist: 'SomaFM',
+    url: 'https://ice1.somafm.com/folkfwd-128-mp3',
+    channel: 'QumUnity',
+    isLiveStream: true,
+  },
+  missionControl: {
+    id: 'live-mission-control',
+    title: 'Mission Control — Celebrating NASA',
+    artist: 'SomaFM',
+    url: 'https://ice1.somafm.com/missioncontrol-128-mp3',
+    channel: 'QumUnity',
+    isLiveStream: true,
+  },
 } as const satisfies Record<string, AudioTrack>;
 
 // ============================================================
@@ -346,6 +371,20 @@ export const CHANNEL_PRESETS: ChannelPreset[] = [
     streams: [
       LIVE_STREAMS.fluid,
       LIVE_STREAMS.bagel,
+    ],
+  },
+  {
+    id: 'ch-qmunity',
+    name: 'Around the QumUnity',
+    description: 'Community voices, culture, storytelling, and the spirit of togetherness — powered by QUMUS',
+    subsidiary: 'Canryn Production',
+    color: '#f97316',
+    streams: [
+      LIVE_STREAMS.folkForward,
+      LIVE_STREAMS.defcon,
+      LIVE_STREAMS.missionControl,
+      LIVE_STREAMS.grooveSalad,
+      LIVE_STREAMS.radioParadise,
     ],
   },
 ];

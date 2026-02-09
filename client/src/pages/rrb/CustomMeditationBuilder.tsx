@@ -126,11 +126,11 @@ export default function CustomMeditationBuilder() {
                     <CardTitle className="flex items-center"><Info className="w-5 h-5 mr-2 text-amber-500"/>Related Platforms</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                    <Link href="/rrb/sweet-miracles" className="block text-red-500 hover:underline">Sweet Miracles Community</Link>
+                    <a href="https://sweetmiraclesattt.wixsite.com/sweet-miracles" target="_blank" rel="noopener noreferrer" className="block text-red-500 hover:underline">Sweet Miracles Community</a>
                     <p className="text-sm text-foreground/70">Explore our outreach programs and community initiatives.</p>
-                    <Link href="/rrb/qumus" className="block text-red-500 hover:underline">QUMUS Orchestration</Link>
+                    <Link href="/rrb/qumus/monitoring" className="block text-red-500 hover:underline">QUMUS Orchestration</Link>
                     <p className="text-sm text-foreground/70">Discover the future of autonomous music creation.</p>
-                    <Link href="/rrb/hybrid-cast" className="block text-red-500 hover:underline">HybridCast Broadcasts</Link>
+                    <Link href="/rrb/hybridcast" className="block text-red-500 hover:underline">HybridCast Broadcasts</Link>
                     <p className="text-sm text-foreground/70">Tune into our emergency broadcast and public information system.</p>
                 </CardContent>
             </Card>

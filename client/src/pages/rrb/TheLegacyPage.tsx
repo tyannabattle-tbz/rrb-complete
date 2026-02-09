@@ -291,7 +291,7 @@ export default function TheLegacyPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="/the-music"
+              href="/rrb/the-music"
               className="px-6 py-3 bg-accent hover:bg-accent/90 text-accent-foreground rounded-lg font-medium transition-colors"
             >
               Explore the Music

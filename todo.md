@@ -1460,3 +1460,12 @@
 - [x] Keep /rrb as alias so old links still work
 - [x] Verified no broken internal links
 - [x] Verify and checkpoint
+## v8.3 Rename Site, Fix 404s, Update Nav, Fix Audio
+- [x] Rename site title from QUMUS to Rockin Rockin Boogie
+- [x] Fix 404 on /ecosystem/dashboard and other broken nav links (all 40+ broken links fixed)
+- [x] Update header branding to RRB with LIVE badge
+- [x] Fix audio recordPlay mutation (db import broken - getDb() fix)
+- [x] Update Sweet Miracles links to point to external Wix site
+- [x] Autoplay Rockin Rockin Boogie at low volume (plays on first user interaction per browser policy)
+- [x] Create "Around the QumUnity" channel with 5 streams
+- [x] Verify and checkpoint

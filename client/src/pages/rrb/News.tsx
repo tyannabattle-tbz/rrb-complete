@@ -191,9 +191,9 @@ export default function News() {
         <section className="mt-16 text-center">
             <h3 className="text-2xl font-bold mb-4">Explore More</h3>
             <div className="flex justify-center gap-4 md:gap-8 flex-wrap">
-                <Link href="/rrb/about" className="text-red-500 hover:underline">About the Project</Link>
-                <Link href="/rrb/music" className="text-red-500 hover:underline">Music & Legacy</Link>
-                <Link href="/rrb/community" className="text-red-500 hover:underline">Community Initiatives</Link>
+                <Link href="/rrb/the-legacy" className="text-red-500 hover:underline">About the Project</Link>
+                <Link href="/rrb/the-music" className="text-red-500 hover:underline">Music & Legacy</Link>
+                <Link href="/rrb/canryn-production" className="text-red-500 hover:underline">Community Initiatives</Link>
             </div>
         </section>
       </main>
@@ -204,7 +204,7 @@ export default function News() {
           <p>&copy; {new Date().getFullYear()} Canryn Production Inc. All Rights Reserved.</p>
           <p className="text-sm mt-2">
             RockinRockinBoogie.com is a platform dedicated to the artistic legacy of Seabrun Candy Hunter. 
-            <Link href="/rrb/legal" className="underline hover:text-foreground">Legal & Privacy</Link>
+            <Link href="/rrb/faq" className="underline hover:text-foreground">Legal & Privacy</Link>
           </p>
         </div>
       </footer>

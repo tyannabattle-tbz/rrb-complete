@@ -82,7 +82,7 @@ const HybridCastPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-muted-foreground">True to the mission of Seabrun Candy Hunter and Canryn Production Inc., HybridCast is designed to empower marginalized communities. By providing a free, open, and decentralized communication platform, it gives a voice to those who are often silenced or ignored by mainstream media and infrastructure.</p>
-                  <p className="text-muted-foreground">It is a modern-day implementation of the core principle behind <Link href="/rrb/sweet-miracles" className="text-orange-500 hover:underline">Sweet Miracles</Link>: providing essential tools for communication and self-expression.</p>
+                  <p className="text-muted-foreground">It is a modern-day implementation of the core principle behind <a href="https://sweetmiraclesattt.wixsite.com/sweet-miracles" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">Sweet Miracles</a>: providing essential tools for communication and self-expression.</p>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -94,7 +94,7 @@ const HybridCastPage = () => {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                HybridCast is seamlessly integrated into the RockinRockinBoogie ecosystem. It is controlled and orchestrated by the <Link href="/rrb/qumus" className="text-orange-500 hover:underline">QUMUS</Link> autonomous system, ensuring reliability and interoperability with other platform services. Users can access a high-level overview of the network status directly from the main RRB dashboard.
+                HybridCast is seamlessly integrated into the RockinRockinBoogie ecosystem. It is controlled and orchestrated by the <Link href="/rrb/qumus/monitoring" className="text-orange-500 hover:underline">QUMUS</Link> autonomous system, ensuring reliability and interoperability with other platform services. Users can access a high-level overview of the network status directly from the main RRB dashboard.
               </p>
               <Link href="#" className="font-semibold text-red-500 hover:underline">
                 Go to HybridCast Dashboard &rarr;
@@ -108,8 +108,8 @@ const HybridCastPage = () => {
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Canryn Production Inc. All Rights Reserved.</p>
           <p className="text-xs text-muted-foreground mt-1">A tribute to the legacy of Seabrun Candy Hunter. A Voice for the Voiceless.</p>
           <div className="mt-2 space-x-4 text-sm">
-            <Link href="/rrb/sweet-miracles" className="text-muted-foreground hover:text-foreground">Sweet Miracles</Link>
-            <Link href="/rrb/qumus" className="text-muted-foreground hover:text-foreground">QUMUS</Link>
+            <a href="https://sweetmiraclesattt.wixsite.com/sweet-miracles" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">Sweet Miracles</a>
+            <Link href="/rrb/qumus/monitoring" className="text-muted-foreground hover:text-foreground">QUMUS</Link>
           </div>
         </footer>
       </main>

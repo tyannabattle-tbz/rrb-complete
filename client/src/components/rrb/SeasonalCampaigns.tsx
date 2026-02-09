@@ -288,7 +288,7 @@ export default function SeasonalCampaigns({ onSelectCampaign }: SeasonalCampaign
           <p className="text-foreground/80 mb-6 max-w-2xl mx-auto">
             Each campaign is designed to introduce you to different aspects of Seabrun Candy Hunter's literary legacy. Follow our seasonal campaigns to discover new books and themes throughout the year.
           </p>
-          <a href="/books">
+          <a href="/rrb/books-and-miracles">
             <Button className="bg-accent hover:bg-accent/90 text-accent-foreground">
               Browse All Books
             </Button>
