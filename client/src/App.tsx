@@ -180,7 +180,8 @@ function Router() {
     <>
       <Breadcrumbs />
       <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={RRBHome} />
+      <Route path="/qumus" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
@@ -282,7 +283,7 @@ function Router() {
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
 
       {/* ===== RRB (Rockin Rockin Boogie) Routes ===== */}
-      <Route path="/rrb" component={RRBHome} />
+      <Route path="/rrb" component={RRBHome} /> {/* Keep /rrb as alias */}
       <Route path="/rrb/contact" component={RRBContact} />
       
       {/* RRB QUMUS Autonomous Orchestration */}

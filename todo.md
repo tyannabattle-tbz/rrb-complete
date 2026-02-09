@@ -1454,3 +1454,9 @@
 - [x] Connect all 20 new pages to routes in App.tsx
 - [x] Verify all pages render correctly
 - [x] Final go-live checkpoint
+## v8.2 Make RRB the Home Page
+- [x] Move RRB Home to / (root) as the main landing page
+- [x] Move QUMUS dashboard to /qumus path
+- [x] Keep /rrb as alias so old links still work
+- [x] Verified no broken internal links
+- [x] Verify and checkpoint
