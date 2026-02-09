@@ -4,6 +4,8 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { PresetProvider } from "./contexts/PresetContext";
+import { AudioProvider } from "./contexts/AudioContext";
+import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer";
 import Home from "./pages/Home";
 import AgentDashboard from "./pages/AgentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -340,39 +342,44 @@ function App() {
         switchable
       >
         <PresetProvider>
-          <TooltipProvider>
-            <Toaster />
-            <KeyboardShortcutsGuide />
-            <SwipeHandler />
-            
-            {/* Full-height flex layout for mobile */}
-            <div className="flex flex-col h-screen md:h-auto md:min-h-screen">
-              {/* Mobile Header - shown only on mobile */}
-              <div className="md:hidden flex-shrink-0">
-                <MobileHeaderClean />
-              </div>
+          <AudioProvider>
+            <TooltipProvider>
+              <Toaster />
+              <KeyboardShortcutsGuide />
+              <SwipeHandler />
               
-              {/* Desktop Header - shown only on desktop */}
-              <div className="hidden md:block flex-shrink-0">
-                <AppHeaderEnhanced />
+              {/* Full-height flex layout for mobile */}
+              <div className="flex flex-col h-screen md:h-auto md:min-h-screen">
+                {/* Mobile Header - shown only on mobile */}
+                <div className="md:hidden flex-shrink-0">
+                  <MobileHeaderClean />
+                </div>
+                
+                {/* Desktop Header - shown only on desktop */}
+                <div className="hidden md:block flex-shrink-0">
+                  <AppHeaderEnhanced />
+                </div>
+                
+                {/* Unified Mobile Sidebar - overlays when hamburger is clicked */}
+                <UnifiedMobileSidebar />
+                
+                {/* Main Content - fills remaining space */}
+                <div className="flex-1 overflow-hidden">
+                  <MobileResponsiveLayout>
+                    <Router />
+                  </MobileResponsiveLayout>
+                </div>
+                
+                {/* Mobile Bottom Navigation - fixed at bottom */}
+                <div className="flex-shrink-0">
+                  <MobileBottomNav />
+                </div>
               </div>
-              
-              {/* Unified Mobile Sidebar - overlays when hamburger is clicked */}
-              <UnifiedMobileSidebar />
-              
-              {/* Main Content - fills remaining space */}
-              <div className="flex-1 overflow-hidden">
-                <MobileResponsiveLayout>
-                  <Router />
-                </MobileResponsiveLayout>
-              </div>
-              
-              {/* Mobile Bottom Navigation - fixed at bottom */}
-              <div className="flex-shrink-0">
-                <MobileBottomNav />
-              </div>
-            </div>
-          </TooltipProvider>
+
+              {/* Global Audio Player — persists across all pages */}
+              <GlobalAudioPlayer />
+            </TooltipProvider>
+          </AudioProvider>
         </PresetProvider>
       </ThemeProvider>
     </ErrorBoundary>

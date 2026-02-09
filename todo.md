@@ -1343,3 +1343,30 @@
 - [x] Fix Broadcast icon crash in rrb/Home.tsx (replaced with Signal)
 - [x] Static SEO fallback content in index.html for non-JS crawlers
 - [x] Keyword-rich paragraph in index.html root div for content crawlers
+
+## Real Audio Playback Integration
+- [ ] Audit all audio components across the platform
+- [ ] Source royalty-free streaming audio URLs for all channels
+- [ ] Build persistent global audio player with HTML5 Audio API
+- [ ] Connect radio stations to real streaming URLs
+- [ ] Connect meditation tracks to real audio
+- [ ] Connect podcast channels to real audio feeds
+- [ ] Add play/pause/volume/seek controls that actually work
+- [ ] Ensure audio persists across page navigation
+- [ ] Add now-playing indicator visible from any page
+
+## GitHub Repository Management
+- [x] Archive old rockin-rockin-boogie-site repository
+- [x] Rename manus-agent-web to rrb-qumus-platform
+
+## Global Audio Playback System (v7.3)
+- [x] Create AudioContext provider with persistent HTML5 audio element
+- [x] Create GlobalAudioPlayer bar component (fixed bottom, above mobile nav)
+- [x] Create stream library with real working audio URLs (SomaFM, Radio Paradise, SoundHelix)
+- [x] Wire RadioPlayer component to use global AudioContext
+- [x] Wire MeditationHub to use global AudioContext with live ambient streams
+- [x] Wire RRB Home page radio section to real streams
+- [x] Update main RadioStation page with real stream URLs
+- [x] Update RRB RadioStation fallback tracks with real audio URLs
+- [x] Verify build compiles with all audio changes
+- [x] Write unit tests for audio system (25 tests passing)

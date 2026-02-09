@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Radio, Podcast, Music, Zap, Heart, Signal, Sparkles, Users, BookOpen, Brain, Building2, Headphones } from 'lucide-react';
+import { ArrowRight, Radio, Podcast, Music, Zap, Heart, Signal, Sparkles, Users, BookOpen, Brain, Building2, Headphones, Play, Pause } from 'lucide-react';
+import { useAudio } from '@/contexts/AudioContext';
+import { CHANNEL_PRESETS, LIVE_STREAMS } from '@/lib/streamLibrary';
 import RotatingVinylRecord from "@/components/rrb/RotatingVinylRecord";
 
 // Platform showcase items
@@ -116,6 +118,87 @@ const PLATFORMS = [
     badge: '⚙️ CONTROL'
   },
 ];
+
+function QuickListenSection() {
+  const audio = useAudio();
+
+  const quickStreams = [
+    { ...LIVE_STREAMS.funkyRadio, label: 'Soul & Funk', emoji: '🎷' },
+    { ...LIVE_STREAMS.droneZone, label: 'Ambient Meditation', emoji: '🧘' },
+    { ...LIVE_STREAMS.sonicUniverse, label: 'Jazz Fusion', emoji: '🎺' },
+    { ...LIVE_STREAMS.lush, label: 'Chillout', emoji: '🌊' },
+    { ...LIVE_STREAMS.radioParadise, label: 'Eclectic Mix', emoji: '🎵' },
+    { ...LIVE_STREAMS.secretAgent, label: 'Lounge', emoji: '🍸' },
+  ];
+
+  return (
+    <section className="py-16 md:py-24 bg-gradient-to-br from-zinc-900 to-zinc-800 text-white">
+      <div className="container">
+        <div className="text-center mb-10">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">🎧 Listen Now</h2>
+          <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+            Tap any channel to start streaming instantly. Audio plays across all pages.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {quickStreams.map((stream) => {
+            const isActive = audio.currentTrack?.id === stream.id;
+            const isPlaying = isActive && audio.isPlaying;
+            return (
+              <button
+                key={stream.id}
+                onClick={() => {
+                  if (isActive) {
+                    audio.togglePlayPause();
+                  } else {
+                    audio.play(stream);
+                  }
+                }}
+                className={`p-5 rounded-xl text-center transition-all group ${
+                  isActive
+                    ? 'bg-amber-500/20 ring-2 ring-amber-500 scale-105'
+                    : 'bg-white/5 hover:bg-white/10 hover:scale-105'
+                }`}
+              >
+                <div className="text-3xl mb-2">{stream.emoji}</div>
+                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-amber-500/30 transition-colors">
+                  {isPlaying ? (
+                    <Pause className="w-5 h-5 text-amber-400" />
+                  ) : (
+                    <Play className="w-5 h-5 text-white ml-0.5" />
+                  )}
+                </div>
+                <p className="text-sm font-medium truncate">{stream.label}</p>
+                <p className="text-xs text-zinc-500 truncate">{stream.artist}</p>
+                {isPlaying && (
+                  <div className="flex items-center justify-center gap-1 mt-2">
+                    <div className="w-1 h-1 bg-red-400 rounded-full animate-pulse" />
+                    <span className="text-[10px] text-red-400 font-bold">LIVE</span>
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Channel Presets */}
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          {CHANNEL_PRESETS.map(channel => (
+            <button
+              key={channel.id}
+              onClick={() => audio.playQueue(channel.streams, 0)}
+              className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-sm font-medium transition-colors flex items-center gap-2"
+            >
+              <Radio className="w-3.5 h-3.5" style={{ color: channel.color }} />
+              {channel.name}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
   const { user, loading, error, isAuthenticated, logout } = useAuth();
@@ -358,6 +441,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Quick Listen Section */}
+        <QuickListenSection />
 
         {/* Call to Action */}
         <section className="py-16 md:py-24 bg-primary text-primary-foreground">
