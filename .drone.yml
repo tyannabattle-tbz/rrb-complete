@@ -1,0 +1,264 @@
+kind: pipeline
+type: docker
+name: manus-agent-web-military-grade-cicd
+
+# Trigger conditions
+trigger:
+  branch:
+    - main
+    - develop
+    - staging
+  event:
+    - push
+    - pull_request
+
+# Environment variables
+environment:
+  NODE_VERSION: "22.13.0"
+  PNPM_VERSION: "latest"
+  REGISTRY: "docker.io"
+  IMAGE_NAME: "manus-agent-web"
+
+# Build steps
+steps:
+  # Step 1: Security Scanning - SAST Analysis
+  - name: security-scan-sast
+    image: node:22.13.0
+    commands:
+      - npm install -g snyk
+      - snyk auth $SNYK_TOKEN
+      - snyk test --severity-threshold=high || true
+      - snyk code test --severity-threshold=high || true
+    environment:
+      SNYK_TOKEN:
+        from_secret: snyk_token
+    when:
+      event: [push, pull_request]
+
+  # Step 2: Dependency Check
+  - name: dependency-check
+    image: node:22.13.0
+    commands:
+      - npm install -g npm-check-updates
+      - npm audit --audit-level=moderate || true
+      - npm install -g retire
+      - retire --jspath node_modules --severity high || true
+    when:
+      event: [push, pull_request]
+
+  # Step 3: Code Quality Analysis
+  - name: code-quality
+    image: node:22.13.0
+    commands:
+      - npm install -g @sonarqube/sonarqube-scanner
+      - pnpm install
+      - pnpm lint
+      - pnpm type-check
+    environment:
+      SONAR_HOST_URL:
+        from_secret: sonar_host_url
+      SONAR_LOGIN:
+        from_secret: sonar_login
+    when:
+      event: [push, pull_request]
+
+  # Step 4: Unit Tests
+  - name: unit-tests
+    image: node:22.13.0
+    commands:
+      - pnpm install
+      - pnpm test -- --coverage --reporters=default --reporters=junit
+    when:
+      event: [push, pull_request]
+
+  # Step 5: Integration Tests
+  - name: integration-tests
+    image: node:22.13.0
+    services:
+      - mysql
+    commands:
+      - pnpm install
+      - pnpm db:push
+      - pnpm test:integration
+    environment:
+      DATABASE_URL: "mysql://root:password@mysql:3306/test_db"
+    when:
+      event: [push, pull_request]
+
+  # Step 6: Build Docker Image
+  - name: build-docker-image
+    image: plugins/docker
+    settings:
+      registry: $REGISTRY
+      repo: $REGISTRY/$IMAGE_NAME
+      tags:
+        - latest
+        - ${DRONE_COMMIT_SHA:0:7}
+        - ${DRONE_BUILD_NUMBER}
+      dockerfile: Dockerfile
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+    when:
+      branch: main
+      event: push
+
+  # Step 7: Container Security Scanning
+  - name: container-security-scan
+    image: aquasec/trivy:latest
+    commands:
+      - trivy image --severity HIGH,CRITICAL $REGISTRY/$IMAGE_NAME:${DRONE_COMMIT_SHA:0:7}
+    when:
+      branch: main
+      event: push
+
+  # Step 8: DAST - Dynamic Application Security Testing
+  - name: dast-security-scan
+    image: owasp/zap2docker-stable
+    commands:
+      - zap-baseline.py -t http://localhost:3000 -r dast-report.html || true
+    when:
+      branch: main
+      event: push
+
+  # Step 9: Compliance Check
+  - name: compliance-check
+    image: node:22.13.0
+    commands:
+      - pnpm install
+      - npm install -g license-checker
+      - license-checker --json > licenses.json
+      - node scripts/check-compliance.js
+    when:
+      event: [push, pull_request]
+
+  # Step 10: Artifact Management
+  - name: artifact-management
+    image: plugins/s3
+    settings:
+      bucket: manus-build-artifacts
+      access_key:
+        from_secret: aws_access_key
+      secret_key:
+        from_secret: aws_secret_key
+      source: dist/**/*
+      target: /${DRONE_REPO_NAME}/${DRONE_BUILD_NUMBER}
+    when:
+      branch: main
+      event: push
+
+  # Step 11: Deploy to Staging
+  - name: deploy-staging
+    image: alpine/helm:latest
+    commands:
+      - helm repo add manus https://charts.manus.io
+      - helm repo update
+      - helm upgrade --install manus-agent-web manus/manus-agent-web --values helm/staging-values.yaml --namespace staging
+    environment:
+      KUBECONFIG:
+        from_secret: kubeconfig_staging
+    when:
+      branch: develop
+      event: push
+
+  # Step 12: Deploy to Production (with approval)
+  - name: deploy-production
+    image: alpine/helm:latest
+    commands:
+      - helm repo add manus https://charts.manus.io
+      - helm repo update
+      - helm upgrade --install manus-agent-web manus/manus-agent-web --values helm/production-values.yaml --namespace production
+    environment:
+      KUBECONFIG:
+        from_secret: kubeconfig_production
+    when:
+      branch: main
+      event: push
+
+  # Step 13: Canary Deployment Validation
+  - name: canary-validation
+    image: node:22.13.0
+    commands:
+      - npm install -g artillery
+      - artillery quick --count 100 --num 10 http://localhost:3000
+    when:
+      branch: main
+      event: push
+
+  # Step 14: Rollback Automation
+  - name: rollback-on-failure
+    image: alpine/helm:latest
+    commands:
+      - helm rollback manus-agent-web -n production
+    when:
+      status: failure
+      branch: main
+      event: push
+
+  # Step 15: Notification & Alerting
+  - name: notify-slack
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook
+      channel: "#deployments"
+      template: |
+        Build {{build.number}} {{build.status}}
+        Commit: {{commit.sha}}
+        Author: {{commit.author}}
+        Message: {{commit.message}}
+    when:
+      status: [success, failure]
+
+  # Step 16: Performance Monitoring
+  - name: performance-monitoring
+    image: node:22.13.0
+    commands:
+      - npm install -g lighthouse
+      - lighthouse http://localhost:3000 --output-path=./lighthouse-report.html
+    when:
+      branch: main
+      event: push
+
+  # Step 17: Generate CI/CD Report
+  - name: generate-report
+    image: node:22.13.0
+    commands:
+      - node scripts/generate-cicd-report.js
+    when:
+      event: [push, pull_request]
+
+# Services
+services:
+  - name: mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: test_db
+    when:
+      event: [push, pull_request]
+
+# Failure handling
+failure: always
+
+# Notifications
+notify:
+  - type: email
+    host: smtp.manus.io
+    from: ci@manus.io
+    to: team@manus.io
+    when:
+      status: failure
+
+# Secrets (configure in Drone UI)
+# snyk_token
+# sonar_host_url
+# sonar_login
+# docker_username
+# docker_password
+# aws_access_key
+# aws_secret_key
+# kubeconfig_staging
+# kubeconfig_production
+# slack_webhook

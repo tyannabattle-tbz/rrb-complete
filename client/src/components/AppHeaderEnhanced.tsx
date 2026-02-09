@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic } from 'lucide-react';
+import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -73,6 +73,11 @@ export function AppHeaderEnhanced() {
     { id: 'nav-5', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
     { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
     { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
+    { id: 'nav-8', label: 'RRB Broadcast', icon: Eye, path: '/broadcast-monitoring' },
+    { id: 'nav-9', label: 'Recommendations', icon: TrendingUp, path: '/recommendations' },
+    { id: 'nav-10', label: 'Impact', icon: Heart, path: '/impact-dashboard' },
+    { id: 'nav-11', label: 'Drone Logistics', icon: Truck, path: '/drone-logistics' },
+    { id: 'nav-12', label: 'Drone Video', icon: VideoIcon, path: '/drone-video' },
   ];
 
   return (

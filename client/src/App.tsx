@@ -106,6 +106,11 @@ import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
 import MeditationHub from '@/pages/MeditationHub';
+import RRBBroadcastMonitoring from '@/components/RRBBroadcastMonitoring';
+import ContentRecommendationEngine from '@/components/ContentRecommendationEngine';
+import SweetMiraclesDashboard from '@/pages/SweetMiraclesDashboard';
+import DroneLogisticsTracker from '@/components/DroneLogisticsTracker';
+import DroneVideoCapture from '@/components/DroneVideoCapture';
 import { Toaster } from 'sonner';
 
 // Version: 3.0.0 - Mobile-first header redesign
@@ -203,6 +208,11 @@ function Router() {
       <Route path="/client-portal" component={ClientPortal} />
       <Route path="/review" component={Review} />
       <Route path="/admin-moderation" component={AdminModeration} />
+      <Route path="/broadcast-monitoring" component={RRBBroadcastMonitoring} />
+      <Route path="/recommendations" component={ContentRecommendationEngine} />
+      <Route path="/impact-dashboard" component={SweetMiraclesDashboard} />
+      <Route path="/drone-logistics" component={DroneLogisticsTracker} />
+      <Route path="/drone-video" component={DroneVideoCapture} />
       <Route component={NotFound} />
     </Switch>
   );
