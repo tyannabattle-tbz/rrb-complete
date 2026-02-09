@@ -48,6 +48,7 @@ import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
 import { MobileResponsiveLayout } from './components/MobileResponsiveLayout';
 import { MobileHeaderClean } from './components/MobileHeaderClean';
+import { CanrynDashboard } from './pages/CanrynDashboard';
 import { VideoProductionPage } from './pages/VideoProductionPage';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import NewsletterSignup from '@/components/NewsletterSignup';
@@ -115,6 +116,7 @@ function Router() {
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
+      <Route path="/canryn" component={CanrynDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
       <Route path="/team" component={TeamManagement} />

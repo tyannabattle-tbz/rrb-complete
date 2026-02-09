@@ -52,6 +52,7 @@ import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
 import { agentNetworkRouter } from "./routers/agentNetworkRouter";
 import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnectionRouter";
 import { videoProductionWorkflowRouter } from "./routers/videoProductionWorkflowRouter";
+import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 
 export const appRouter = router({
   // System router
@@ -59,6 +60,9 @@ export const appRouter = router({
 
   // Audio router
   audio: audioRouter,
+
+  // Qumus Orchestration (Central Brain)
+  qumusOrchestration: qumusOrchestrationRouter,
 
   // Auth procedures
   auth: router({
