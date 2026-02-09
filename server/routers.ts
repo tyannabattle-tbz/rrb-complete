@@ -53,6 +53,7 @@ import { agentNetworkRouter } from "./routers/agentNetworkRouter";
 import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnectionRouter";
 import { videoProductionWorkflowRouter } from "./routers/videoProductionWorkflowRouter";
 import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
+import { mapArsenalRouter } from "./mapArsenal";
 
 export const appRouter = router({
   // System router
@@ -162,6 +163,9 @@ export const appRouter = router({
 
   // Video Production Workflow - Generation to RRB Radio Broadcast
   videoProductionWorkflow: videoProductionWorkflowRouter,
+
+  // Map Arsenal - Military-grade tactical mapping
+  mapArsenal: mapArsenalRouter,
 
   // Agent Session Management
   agent: router({

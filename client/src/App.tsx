@@ -111,6 +111,7 @@ import ContentRecommendationEngine from '@/components/ContentRecommendationEngin
 import SweetMiraclesDashboard from '@/pages/SweetMiraclesDashboard';
 import DroneLogisticsTracker from '@/components/DroneLogisticsTracker';
 import DroneVideoCapture from '@/components/DroneVideoCapture';
+import MapArsenal from '@/components/MapArsenal';
 import { Toaster } from 'sonner';
 
 // Version: 3.0.0 - Mobile-first header redesign
@@ -213,6 +214,7 @@ function Router() {
       <Route path="/impact-dashboard" component={SweetMiraclesDashboard} />
       <Route path="/drone-logistics" component={DroneLogisticsTracker} />
       <Route path="/drone-video" component={DroneVideoCapture} />
+      <Route path="/map-arsenal" component={MapArsenal} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon } from 'lucide-react';
+import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon, Map as MapIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -78,6 +78,7 @@ export function AppHeaderEnhanced() {
     { id: 'nav-10', label: 'Impact', icon: Heart, path: '/impact-dashboard' },
     { id: 'nav-11', label: 'Drone Logistics', icon: Truck, path: '/drone-logistics' },
     { id: 'nav-12', label: 'Drone Video', icon: VideoIcon, path: '/drone-video' },
+    { id: 'nav-13', label: 'Map Arsenal', icon: MapIcon, path: '/map-arsenal' },
   ];
 
   return (
