@@ -118,14 +118,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   }, []);
 
   return (
-    <Card className="p-3 sm:p-6 space-y-3 sm:space-y-4">
+    <Card className="p-3 md:p-6 space-y-3 sm:space-y-4">
       {/* Hidden Audio Element */}
       <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" />
 
       {/* Title and Type */}
       <div>
         <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
-        <p className="text-xs sm:text-sm text-gray-600 capitalize">{contentType}</p>
+        <p className="text-xs md:text-sm text-gray-600 capitalize">{contentType}</p>
       </div>
 
       {/* Progress Bar */}
@@ -184,7 +184,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       </div>
 
       {/* Secondary Controls */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-3 sm:pt-4 border-t">
+      <div className="grid grid-cols-3 gap-2 md:gap-4 pt-3 sm:pt-4 border-t">
         {/* Volume Control */}
         <div className="space-y-1 sm:space-y-2">
           <div className="flex items-center gap-1 sm:gap-2">

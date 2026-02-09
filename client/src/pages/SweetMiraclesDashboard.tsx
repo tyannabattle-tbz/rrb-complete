@@ -106,52 +106,52 @@ export default function SweetMiraclesDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50 p-3 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50 p-3 md:p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8 sm:mb-12 text-center">
-          <h1 className="text-2xl sm:text-4xl font-bold text-green-900 mb-1 sm:mb-2">Sweet Miracles</h1>
+          <h1 className="text-lg md:text-4xl font-bold text-green-900 mb-1 sm:mb-2">Sweet Miracles</h1>
           <p className="text-base sm:text-xl text-gray-600">A Voice for the Voiceless</p>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">Supporting seniors and vulnerable populations</p>
+          <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-2">Supporting seniors and vulnerable populations</p>
         </div>
 
         {/* Metrics */}
-        <div className="grid grid-cols-1 gap-2 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6 sm:mb-8">
-          <Card className="p-3 sm:p-6 border-l-4 border-l-green-600">
+        <div className="grid grid-cols-1 gap-2 md:gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6 sm:mb-8">
+          <Card className="p-3 md:p-6 border-l-4 border-l-green-600">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-xs sm:text-sm">Total Raised</p>
-                <p className="text-xl sm:text-3xl font-bold text-green-700">$127,450</p>
+                <p className="text-gray-600 text-xs md:text-sm">Total Raised</p>
+                <p className="text-lg md:text-3xl font-bold text-green-700">$127,450</p>
               </div>
               <DollarSign className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 opacity-20" />
             </div>
           </Card>
 
-          <Card className="p-3 sm:p-6 border-l-4 border-l-blue-600">
+          <Card className="p-3 md:p-6 border-l-4 border-l-blue-600">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-xs sm:text-sm">Active Donors</p>
-                <p className="text-xl sm:text-3xl font-bold text-blue-700">1,284</p>
+                <p className="text-gray-600 text-xs md:text-sm">Active Donors</p>
+                <p className="text-lg md:text-3xl font-bold text-blue-700">1,284</p>
               </div>
               <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 opacity-20" />
             </div>
           </Card>
 
-          <Card className="p-3 sm:p-6 border-l-4 border-l-purple-600">
+          <Card className="p-3 md:p-6 border-l-4 border-l-purple-600">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-xs sm:text-sm">Available Grants</p>
-                <p className="text-xl sm:text-3xl font-bold text-purple-700">23</p>
+                <p className="text-gray-600 text-xs md:text-sm">Available Grants</p>
+                <p className="text-lg md:text-3xl font-bold text-purple-700">23</p>
               </div>
               <Gift className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600 opacity-20" />
             </div>
           </Card>
 
-          <Card className="p-3 sm:p-6 border-l-4 border-l-orange-600">
+          <Card className="p-3 md:p-6 border-l-4 border-l-orange-600">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-xs sm:text-sm">Lives Impacted</p>
-                <p className="text-xl sm:text-3xl font-bold text-orange-700">3,847</p>
+                <p className="text-gray-600 text-xs md:text-sm">Lives Impacted</p>
+                <p className="text-lg md:text-3xl font-bold text-orange-700">3,847</p>
               </div>
               <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600 opacity-20" />
             </div>
@@ -161,9 +161,9 @@ export default function SweetMiraclesDashboard() {
         {/* Main Content */}
         <Tabs defaultValue="donate" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6 sm:mb-8">
-            <TabsTrigger value="donate" className="text-xs sm:text-base">Make a Donation</TabsTrigger>
-            <TabsTrigger value="impact" className="text-xs sm:text-base">Our Impact</TabsTrigger>
-            <TabsTrigger value="about" className="text-xs sm:text-base">About Us</TabsTrigger>
+            <TabsTrigger value="donate" className="text-xs md:text-base">Make a Donation</TabsTrigger>
+            <TabsTrigger value="impact" className="text-xs md:text-base">Our Impact</TabsTrigger>
+            <TabsTrigger value="about" className="text-xs md:text-base">About Us</TabsTrigger>
           </TabsList>
 
           <TabsContent value="donate" className="space-y-6 sm:space-y-8">
@@ -174,7 +174,7 @@ export default function SweetMiraclesDashboard() {
                 {DONATION_TIERS.map((tier) => (
                   <Card
                     key={tier.name}
-                    className={`p-3 sm:p-6 cursor-pointer transition-all ${
+                    className={`p-3 md:p-6 cursor-pointer transition-all ${
                       selectedTier === tier.name.toLowerCase()
                         ? "ring-2 ring-green-500 shadow-lg"
                         : "hover:shadow-md"
@@ -183,7 +183,7 @@ export default function SweetMiraclesDashboard() {
                   >
                     <div className={`bg-gradient-to-br ${tier.color} text-white p-3 sm:p-4 rounded-lg mb-3 sm:mb-4`}>
                       <h3 className="text-base sm:text-xl font-bold">{tier.name}</h3>
-                      <p className="text-xs sm:text-sm opacity-90">${tier.amount}/month</p>
+                      <p className="text-xs md:text-sm opacity-90">${tier.amount}/month</p>
                     </div>
                     <ul className="space-y-2 mb-6">
                       {tier.benefits.map((benefit) => (
@@ -210,7 +210,7 @@ export default function SweetMiraclesDashboard() {
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Custom Donation</h3>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <div className="flex-1">
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2">
                     Enter Amount ($)
                   </label>
                   <Input

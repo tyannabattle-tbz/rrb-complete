@@ -77,12 +77,12 @@ export const RRBBroadcastMonitoring: React.FC = () => {
   const healthStatus = metrics?.uptime || 0 > 99 ? 'Healthy' : 'Warning';
 
   return (
-    <div className="w-full space-y-4 bg-gradient-to-br from-red-50 to-orange-50 p-3 sm:p-6">
+    <div className="w-full space-y-4 bg-gradient-to-br from-red-50 to-orange-50 p-3 md:p-6">
       {/* Header Banner */}
       <div className="rounded-lg bg-gradient-to-r from-red-600 to-orange-600 p-4 sm:p-6 text-white shadow-lg">
-        <h1 className="text-xl sm:text-3xl font-bold">RRB Radio Live Broadcast</h1>
-        <p className="mt-1 sm:mt-2 text-sm sm:text-lg font-semibold">Rockin' Rockin' Boogie - Real-time Monitoring Dashboard</p>
-        <p className="mt-1 sm:mt-2 text-xs sm:text-sm opacity-90">
+        <h1 className="text-lg md:text-3xl font-bold">RRB Radio Live Broadcast</h1>
+        <p className="mt-1 sm:mt-2 text-xs md:text-lg font-semibold">Rockin' Rockin' Boogie - Real-time Monitoring Dashboard</p>
+        <p className="mt-1 sm:mt-2 text-xs md:text-sm opacity-90">
           {metrics?.streamQuality === 'Excellent' ? '🔴 LIVE' : '⚫ OFFLINE'} • {metrics?.liveViewers.toLocaleString()} viewers
         </p>
       </div>
@@ -95,33 +95,33 @@ export const RRBBroadcastMonitoring: React.FC = () => {
       />
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 gap-2 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-white p-3 sm:p-6 shadow-md">
-          <p className="text-xs sm:text-sm font-medium text-gray-600">Live Viewers</p>
+      <div className="grid grid-cols-1 gap-2 md:gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-white p-3 md:p-6 shadow-md">
+          <p className="text-xs md:text-sm font-medium text-gray-600">Live Viewers</p>
           <p className="mt-2 text-2xl sm:text-3xl font-bold text-red-600">
             {(metrics?.liveViewers || 0).toLocaleString()}
           </p>
           <p className="mt-1 text-xs text-gray-500">Currently watching</p>
         </Card>
 
-        <Card className="bg-white p-3 sm:p-6 shadow-md">
-          <p className="text-xs sm:text-sm font-medium text-gray-600">Peak Viewers</p>
+        <Card className="bg-white p-3 md:p-6 shadow-md">
+          <p className="text-xs md:text-sm font-medium text-gray-600">Peak Viewers</p>
           <p className="mt-2 text-2xl sm:text-3xl font-bold text-orange-600">
             {(metrics?.peakViewers || 0).toLocaleString()}
           </p>
           <p className="mt-1 text-xs text-gray-500">Today's peak</p>
         </Card>
 
-        <Card className="bg-white p-3 sm:p-6 shadow-md">
-          <p className="text-xs sm:text-sm font-medium text-gray-600">Engagement Score</p>
+        <Card className="bg-white p-3 md:p-6 shadow-md">
+          <p className="text-xs md:text-sm font-medium text-gray-600">Engagement Score</p>
           <p className="mt-2 text-2xl sm:text-3xl font-bold text-blue-600">
             {engagement?.engagementScore || 0}%
           </p>
           <p className="mt-1 text-xs text-gray-500">Audience interaction</p>
         </Card>
 
-        <Card className="bg-white p-3 sm:p-6 shadow-md">
-          <p className="text-xs sm:text-sm font-medium text-gray-600">Uptime</p>
+        <Card className="bg-white p-3 md:p-6 shadow-md">
+          <p className="text-xs md:text-sm font-medium text-gray-600">Uptime</p>
           <p className="mt-2 text-2xl sm:text-3xl font-bold text-green-600">
             {(metrics?.uptime || 0).toFixed(1)}%
           </p>
@@ -132,7 +132,7 @@ export const RRBBroadcastMonitoring: React.FC = () => {
       {/* Stream Quality & Engagement */}
       <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Stream Quality Metrics */}
-        <Card className="p-3 sm:p-6 shadow-md">
+        <Card className="p-3 md:p-6 shadow-md">
           <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-gray-800">Stream Quality</h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -169,7 +169,7 @@ export const RRBBroadcastMonitoring: React.FC = () => {
         </Card>
 
         {/* Engagement Metrics */}
-        <Card className="p-3 sm:p-6 shadow-md">
+        <Card className="p-3 md:p-6 shadow-md">
           <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-gray-800">Audience Engagement</h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -198,7 +198,7 @@ export const RRBBroadcastMonitoring: React.FC = () => {
       </div>
 
       {/* Viewer Timeline */}
-      <Card className="p-3 sm:p-6 shadow-md">
+      <Card className="p-3 md:p-6 shadow-md">
         <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-gray-800">Viewer Timeline (Last 24 Hours)</h2>
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={timeline}>
@@ -222,7 +222,7 @@ export const RRBBroadcastMonitoring: React.FC = () => {
       {/* Geographic & Device Distribution */}
       <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
         {/* Geographic Distribution */}
-        <Card className="p-3 sm:p-6 shadow-md">
+        <Card className="p-3 md:p-6 shadow-md">
           <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-gray-800">Geographic Distribution</h2>
           <div className="space-y-3">
             {geoData.map((geo) => (
@@ -246,7 +246,7 @@ export const RRBBroadcastMonitoring: React.FC = () => {
         </Card>
 
         {/* Device Distribution */}
-        <Card className="p-3 sm:p-6 shadow-md">
+        <Card className="p-3 md:p-6 shadow-md">
           <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-gray-800">Device Distribution</h2>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
@@ -271,7 +271,7 @@ export const RRBBroadcastMonitoring: React.FC = () => {
       </div>
 
       {/* Health Status */}
-      <Card className="p-3 sm:p-6 shadow-md">
+      <Card className="p-3 md:p-6 shadow-md">
         <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-gray-800">Broadcast Health Status</h2>
         <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-3">
           <div className={`rounded-lg p-4 ${

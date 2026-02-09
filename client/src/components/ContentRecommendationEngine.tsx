@@ -82,42 +82,42 @@ export const ContentRecommendationEngine: React.FC = () => {
   }));
 
   return (
-    <div className="w-full space-y-4 bg-gradient-to-br from-purple-50 to-blue-50 p-3 sm:p-6">
+    <div className="w-full space-y-4 bg-gradient-to-br from-purple-50 to-blue-50 p-3 md:p-6">
       {/* Header Banner */}
       <div className="rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 p-4 sm:p-6 text-white shadow-lg">
-        <h1 className="text-xl sm:text-3xl font-bold">Content Recommendation Engine</h1>
-        <p className="mt-1 sm:mt-2 text-sm sm:text-lg font-semibold">Powered by Qumus AI</p>
-        <p className="mt-1 sm:mt-2 text-xs sm:text-sm opacity-90">Personalized video suggestions based on your viewing history and preferences</p>
+        <h1 className="text-lg md:text-3xl font-bold">Content Recommendation Engine</h1>
+        <p className="mt-1 sm:mt-2 text-xs md:text-lg font-semibold">Powered by Qumus AI</p>
+        <p className="mt-1 sm:mt-2 text-xs md:text-sm opacity-90">Personalized video suggestions based on your viewing history and preferences</p>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 gap-2 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-white p-3 sm:p-6 shadow-md">
-          <p className="text-xs sm:text-sm font-medium text-gray-600">Recommendations</p>
+      <div className="grid grid-cols-1 gap-2 md:gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-white p-3 md:p-6 shadow-md">
+          <p className="text-xs md:text-sm font-medium text-gray-600">Recommendations</p>
           <p className="mt-2 text-2xl sm:text-3xl font-bold text-purple-600">
             {metrics?.totalRecommendations || 0}
           </p>
           <p className="mt-1 text-xs text-gray-500">Generated for you</p>
         </Card>
 
-        <Card className="bg-white p-3 sm:p-6 shadow-md">
-          <p className="text-xs sm:text-sm font-medium text-gray-600">Avg Relevance</p>
+        <Card className="bg-white p-3 md:p-6 shadow-md">
+          <p className="text-xs md:text-sm font-medium text-gray-600">Avg Relevance</p>
           <p className="mt-2 text-2xl sm:text-3xl font-bold text-blue-600">
             {(metrics?.avgRelevanceScore || 0).toFixed(2)}
           </p>
           <p className="mt-1 text-xs text-gray-500">Out of 1.0</p>
         </Card>
 
-        <Card className="bg-white p-3 sm:p-6 shadow-md">
-          <p className="text-xs sm:text-sm font-medium text-gray-600">Click-Through Rate</p>
+        <Card className="bg-white p-3 md:p-6 shadow-md">
+          <p className="text-xs md:text-sm font-medium text-gray-600">Click-Through Rate</p>
           <p className="mt-2 text-2xl sm:text-3xl font-bold text-green-600">
             {(metrics?.clickThroughRate || 0).toFixed(1)}%
           </p>
           <p className="mt-1 text-xs text-gray-500">User engagement</p>
         </Card>
 
-        <Card className="bg-white p-3 sm:p-6 shadow-md">
-          <p className="text-xs sm:text-sm font-medium text-gray-600">User Satisfaction</p>
+        <Card className="bg-white p-3 md:p-6 shadow-md">
+          <p className="text-xs md:text-sm font-medium text-gray-600">User Satisfaction</p>
           <p className="mt-2 text-2xl sm:text-3xl font-bold text-orange-600">
             {(metrics?.userSatisfaction || 0).toFixed(1)}/5
           </p>
@@ -126,7 +126,7 @@ export const ContentRecommendationEngine: React.FC = () => {
       </div>
 
       {/* Personalized Recommendations */}
-      <Card className="p-3 sm:p-6 shadow-md">
+      <Card className="p-3 md:p-6 shadow-md">
         <div className="mb-3 sm:mb-4 flex items-center justify-between">
           <h2 className="text-lg sm:text-xl font-bold text-gray-800">Personalized for You</h2>
           <div className="flex gap-2">
