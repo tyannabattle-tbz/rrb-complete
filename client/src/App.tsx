@@ -115,7 +115,7 @@ import DroneVideoCapture from '@/components/DroneVideoCapture';
 import MapArsenal from '@/components/MapArsenal';
 import { Toaster } from 'sonner';
 
-// Version: 3.0.0 - Mobile-first header redesign
+// Version: 5.0.0 - FINAL MOBILE FIX - 2026-02-09T05:35:00Z
 function Router() {
   return (
     <>
