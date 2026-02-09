@@ -25,6 +25,7 @@ export default function Home() {
             <h1 className="text-4xl font-bold text-primary mb-2">QUMUS</h1>
             <p className="text-muted-foreground">Autonomous Orchestration Engine</p>
           </div>
+          <h2 className="text-2xl font-semibold text-foreground">Intelligent Control Center for Autonomous Broadcasting</h2>
           <p className="text-foreground">
             The intelligent control center managing HybridCast, Rockin Rockin Boogie, Sweet Miracles, and all subsidiary platforms with 90%+ autonomy.
           </p>
