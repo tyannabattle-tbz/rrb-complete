@@ -56,6 +56,9 @@ import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
 
+// Radio Content API (serves tracks/playlists from database)
+import { radioContentRouter } from "./routers/radioContentRouter";
+
 // RRB (Rockin Rockin Boogie) integrated routers
 import { stripePaymentsRouter as rrbStripePaymentsRouter } from "./routers/rrb/stripePayments";
 import { emergencyBroadcastRouter as rrbEmergencyBroadcastRouter } from "./routers/rrb/emergencyBroadcast";
@@ -179,6 +182,9 @@ export const appRouter = router({
 
   // Qumus Autonomous Finalization
   qumusFinalization: qumusAutonomousFinalizationRouter,
+
+  // Radio Content API (public tracks, playlists, schedules)
+  radioContent: radioContentRouter,
 
   // ===== RRB (Rockin Rockin Boogie) Integrated Routers =====
   // RRB Stripe Payments (donations, subscriptions)

@@ -1,0 +1,27 @@
+{
+  "query": "SHOW CREATE TABLE streaming_status;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SHOW CREATE TABLE streaming_status;",
+  "rows": [
+    {
+      "Table": "streaming_status",
+      "Create Table": "CREATE TABLE `streaming_status` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `channel_id` int(11) DEFAULT NULL,",
+    "  `status` enum('offline','starting','live','paused','ending') COLLATE utf8mb4_unicode_ci DEFAULT 'offline',",
+    "  `viewer_count` int(11) DEFAULT '0',",
+    "  `peak_viewers` int(11) DEFAULT '0',",
+    "  `stream_url` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `started_at` timestamp NULL DEFAULT NULL,",
+    "  `ended_at` timestamp NULL DEFAULT NULL,",
+    "  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,",
+    "  `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+  ],
+  "stdout": "Table\tCreate Table\nstreaming_status\tCREATE TABLE `streaming_status` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `channel_id` int(11) DEFAULT NULL,\n  `status` enum('offline','starting','live','paused','ending') COLLATE utf8mb4_unicode_ci DEFAULT 'offline',\n  `viewer_count` int(11) DEFAULT '0',\n  `peak_viewers` int(11) DEFAULT '0',\n  `stream_url` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `started_at` timestamp NULL DEFAULT NULL,\n  `ended_at` timestamp NULL DEFAULT NULL,\n  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci\n",
+  "stderr": "",
+  "execution_time_ms": 74
+}

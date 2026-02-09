@@ -1,12 +1,19 @@
+import { useMemo } from 'react';
 import { PageMeta } from '@/components/rrb/PageMeta';
 import { RadioPlayer, Track } from '@/components/rrb/RadioPlayer';
 import { HybridCastWidgetContainer } from '@/components/rrb/HybridCastWidgetContainer';
 import RadioCommercials from '@/components/rrb/RadioCommercials';
 import SeasonalCampaigns from '@/components/rrb/SeasonalCampaigns';
+import { trpc } from '@/lib/trpc';
 
 export default function RadioStation() {
-  // Curated playlist of Seabrun and Helen's music
-  const tracks: Track[] = [
+  // Fetch tracks from database
+  const { data: dbTracks } = trpc.radioContent.getTracks.useQuery();
+  const { data: streamingChannels } = trpc.radioContent.getStreamingStatus.useQuery();
+  const { data: playlists } = trpc.radioContent.getPlaylists.useQuery();
+
+  // Curated playlist of Seabrun and Helen's music (fallback)
+  const fallbackTracks: Track[] = [
     {
       id: '1',
       title: 'Rockin\' Rockin\' Boogie',
@@ -89,6 +96,21 @@ export default function RadioStation() {
     },
   ];
 
+  // Merge database tracks with fallback - prefer DB tracks when available
+  const tracks: Track[] = useMemo(() => {
+    if (dbTracks && dbTracks.length > 0) {
+      return dbTracks.map(t => ({
+        id: t.id,
+        title: t.title,
+        artist: t.artist,
+        url: t.url,
+        duration: t.duration,
+        description: t.description || '',
+      }));
+    }
+    return fallbackTracks;
+  }, [dbTracks]);
+
   return (
     <>
       <PageMeta
@@ -129,6 +151,29 @@ export default function RadioStation() {
           </div>
         </div>
       </section>
+
+      {/* Live Streaming Channels */}
+      {streamingChannels && streamingChannels.length > 0 && (
+        <section className="py-8 md:py-12 bg-background">
+          <div className="container max-w-4xl">
+            <h2 className="text-2xl font-bold text-foreground mb-4">📡 Live Channels</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {streamingChannels.map(ch => (
+                <div key={ch.id} className="bg-card p-4 rounded-lg border border-border hover:border-accent transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`w-2.5 h-2.5 rounded-full ${ch.isLive ? 'bg-red-500 animate-pulse' : 'bg-gray-400'}`} />
+                    <span className="text-sm font-semibold text-foreground">{ch.channelName}</span>
+                  </div>
+                  <div className="text-xs text-foreground/60 space-y-1">
+                    <p>{ch.isLive ? '🔴 LIVE' : '⚫ Offline'} · {ch.currentListeners?.toLocaleString() || 0} listeners</p>
+                    <p>{ch.quality} · {ch.bitrate}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* HybridCast Widget Section */}
       <section className="py-12 md:py-16 bg-gradient-to-b from-accent/10 to-background">

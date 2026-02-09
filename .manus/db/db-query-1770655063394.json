@@ -1,0 +1,352 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "activity_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_collaboration"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_execution_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_installations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_memory"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_performance_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_registry"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_sessions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_snapshots"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_tools"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agents"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "ai_recommendations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "alert_broadcast_log"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "alert_delivery_log"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "analytics_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_baselines"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_insights"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_patterns"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_reports"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_rules"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "api_keys"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "api_usage"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "audio_content"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "audio_playback_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "audit_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "auto_save_settings"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "broadcast_audit_log"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "broadcast_chat_commands"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "broadcast_schedules"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "commercial_breaks"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "commercials"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "content_listener_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "detected_anomalies"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "donors"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "email_configs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "emergency_alerts"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "entertainment_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "entertainment_playlist_items"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "entertainment_playlists"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "entertainment_user_preferences"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "escalation_policies"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "feature_flags"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "filter_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "filter_presets"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "finetuning_datasets"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "finetuning_evaluations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "finetuning_jobs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "finetuning_models"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "generated_content"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "grants"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "hybridcast_nodes"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "integration_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "media_distribution"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "media_projects"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "memory_store"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "messages"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "model_comparisons"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "monetization_events"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "music_playlists"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "music_tracks"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "nonprofit_operations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "notification_events"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "notification_preferences"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "notifications"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "performance_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "performance_trends"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "playlist_tracks"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "playlists"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "plugins"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "policy_decisions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "predictive_alerts"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "qumus_autonomous_actions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "qumus_core_policies"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "qumus_decision_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "qumus_human_review"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "qumus_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "qumus_policy_recommendations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "quota_alerts"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "quotas"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "radio_channels"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "radio_stations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "rate_limit_events"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "reasoning_chains"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "report_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "rockin_boogie_content"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "scheduled_reports"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "session_annotations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "session_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "session_shares"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "session_versions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "streaming_status"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "subscription_tiers"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "suppression_rules"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "sweet_miracles_alerts"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "system_alerts"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "system_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "task_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "team_members"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "teams"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "tool_executions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "tool_usage_stats"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "training_data"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "usage_quotas"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "user_subscriptions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "users"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "viewer_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_endpoints"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_installations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_marketplace_reviews"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_templates"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "wellness_checkins"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c\n__drizzle_migrations\nactivity_logs\nagent_collaboration\nagent_execution_logs\nagent_installations\nagent_memory\nagent_performance_metrics\nagent_registry\nagent_sessions\nagent_snapshots\nagent_tools\nagents\nai_recommendations\nalert_broadcast_log\nalert_delivery_log\nanalytics_metrics\nanomaly_baselines\nanomaly_history\nanomaly_insights\nanomaly_patterns\nanomaly_reports\nanomaly_rules\napi_keys\napi_usage\naudio_content\naudio_playback_history\naudit_logs\nauto_save_settings\nbroadcast_audit_log\nbroadcast_chat_commands\nbroadcast_schedules\ncommercial_breaks\ncommercials\ncontent_listener_history\ndetected_anomalies\ndonors\nemail_configs\nemergency_alerts\nentertainment_metrics\nentertainment_playlist_items\nentertainment_playlists\nentertainment_user_preferences\nescalation_policies\nfeature_flags\nfilter_history\nfilter_presets\nfinetuning_datasets\nfinetuning_evaluations\nfinetuning_jobs\nfinetuning_models\ngenerated_content\ngrants\nhybridcast_nodes\nintegration_logs\nmedia_distribution\nmedia_projects\nmemory_store\nmessages\nmodel_comparisons\nmonetization_events\nmusic_playlists\nmusic_tracks\nnonprofit_operations\nnotification_events\nnotification_preferences\nnotifications\nperformance_metrics\nperformance_trends\nplaylist_tracks\nplaylists\nplugins\npolicy_decisions\npredictive_alerts\nqumus_autonomous_actions\nqumus_core_policies\nqumus_decision_logs\nqumus_human_review\nqumus_metrics\nqumus_policy_recommendations\nquota_alerts\nquotas\nradio_channels\nradio_stations\nrate_limit_events\nreasoning_chains\nreport_history\nrockin_boogie_content\nscheduled_reports\nsession_annotations\nsession_metrics\nsession_shares\nsession_versions\nstreaming_status\nsubscription_tiers\nsuppression_rules\nsweet_miracles_alerts\nsystem_alerts\nsystem_metrics\ntask_history\nteam_members\nteams\ntool_executions\ntool_usage_stats\ntraining_data\nusage_quotas\nuser_subscriptions\nusers\nviewer_metrics\nwebhook_endpoints\nwebhook_installations\nwebhook_logs\nwebhook_marketplace_reviews\nwebhook_templates\nwellness_checkins\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

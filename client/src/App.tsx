@@ -53,6 +53,7 @@ import { CanrynDashboard } from './pages/CanrynDashboard';
 import { VideoProductionPage } from './pages/VideoProductionPage';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { UnifiedMobileSidebar } from './components/UnifiedMobileSidebar';
+import { useSwipeGesture } from './hooks/useSwipeGesture';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
 import QumusChatPage from '@/pages/QumusChatPage';
@@ -136,7 +137,7 @@ import RRBComingSoon from '@/pages/rrb/ComingSoon';
 import RRBNavigation from '@/components/rrb/Navigation';
 import { LegalFooter as RRBLegalFooter } from '@/components/rrb/LegalFooter';
 
-// Version: 6.0.0 - Fixed mobile layout: header/content/nav flex structure
+// Version: 6.3.0 - RRB fully integrated, radio streaming, swipe gestures
 function Router() {
   return (
     <>
@@ -313,6 +314,20 @@ function Router() {
   );
 }
 
+function SwipeHandler() {
+  // Swipe right from left edge opens sidebar, swipe left closes it
+  useSwipeGesture({
+    onSwipeRight: () => {
+      window.dispatchEvent(new CustomEvent('mobileMenuToggle', { detail: { open: true } }));
+    },
+    onSwipeLeft: () => {
+      window.dispatchEvent(new CustomEvent('mobileMenuToggle', { detail: { open: false } }));
+      window.dispatchEvent(new Event('closeMobileMenu'));
+    },
+  });
+  return null;
+}
+
 function App() {
   return (
     <ErrorBoundary>
@@ -324,6 +339,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <KeyboardShortcutsGuide />
+            <SwipeHandler />
             
             {/* Full-height flex layout for mobile */}
             <div className="flex flex-col h-screen md:h-auto md:min-h-screen">

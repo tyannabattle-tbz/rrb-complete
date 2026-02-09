@@ -1,0 +1,32 @@
+{
+  "query": "SHOW CREATE TABLE music_tracks;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SHOW CREATE TABLE music_tracks;",
+  "rows": [
+    {
+      "Table": "music_tracks",
+      "Create Table": "CREATE TABLE `music_tracks` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `artist` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `album` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `genre` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `duration` int(11) DEFAULT '0',",
+    "  `file_url` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `cover_art_url` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `bpm` int(11) DEFAULT NULL,",
+    "  `key_signature` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `energy_level` decimal(3,2) DEFAULT NULL,",
+    "  `is_public` tinyint(1) NOT NULL DEFAULT '0',",
+    "  `play_count` int(11) DEFAULT '0',",
+    "  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,",
+    "  `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+  ],
+  "stdout": "Table\tCreate Table\nmusic_tracks\tCREATE TABLE `music_tracks` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `artist` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `album` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `genre` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `duration` int(11) DEFAULT '0',\n  `file_url` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `cover_art_url` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `bpm` int(11) DEFAULT NULL,\n  `key_signature` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `energy_level` decimal(3,2) DEFAULT NULL,\n  `is_public` tinyint(1) NOT NULL DEFAULT '0',\n  `play_count` int(11) DEFAULT '0',\n  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci\n",
+  "stderr": "",
+  "execution_time_ms": 73
+}
