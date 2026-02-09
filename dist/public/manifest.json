@@ -1,0 +1,88 @@
+{
+  "name": "RockinRockinBoogie - Autonomous Entertainment Platform",
+  "short_name": "RRB",
+  "description": "Autonomous entertainment platform powered by QUMUS AI orchestration. Stream music, podcasts, and live broadcasts with 90% autonomous decision-making.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#d4af37",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/qumus-icon-192.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "/qumus-icon-512.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "/qumus-icon-192.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/qumus-icon-512.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/qumus-splash-screen.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "categories": ["entertainment", "music", "podcasts"],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Radio Station",
+      "short_name": "Radio",
+      "description": "Access live radio streaming",
+      "url": "/radio",
+      "icons": [
+        {
+          "src": "/qumus-icon-192.webp",
+          "sizes": "192x192",
+          "type": "image/webp"
+        }
+      ]
+    },
+    {
+      "name": "Podcasts",
+      "short_name": "Podcasts",
+      "description": "Browse and listen to podcasts",
+      "url": "/podcasts",
+      "icons": [
+        {
+          "src": "/qumus-icon-192.webp",
+          "sizes": "192x192",
+          "type": "image/webp"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View autonomous system dashboard",
+      "url": "/autonomous-dashboard",
+      "icons": [
+        {
+          "src": "/qumus-icon-192.webp",
+          "sizes": "192x192",
+          "type": "image/webp"
+        }
+      ]
+    }
+  ]
+}
