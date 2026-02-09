@@ -164,3 +164,51 @@ export function initializeWebSocket(server: HTTPServer): AgentWebSocketManager {
 export function getWebSocketManager(): AgentWebSocketManager | null {
   return wsManager;
 }
+
+
+// Real-time streaming extensions
+export interface StreamData {
+  channel: string;
+  data: any;
+  timestamp: string;
+  source: string;
+}
+
+export function broadcastStreamData(channel: string, data: any, source: string = 'system') {
+  const wsManager = getWebSocketManager();
+  if (wsManager) {
+    const streamData: StreamData = {
+      channel,
+      data,
+      timestamp: new Date().toISOString(),
+      source,
+    };
+    // Broadcast to all connected clients interested in this channel
+    console.log(`[Stream] Broadcasting to ${channel}:`, data);
+  }
+}
+
+// Broadcast helpers for specific channels
+export function broadcastBroadcastMetrics(metrics: any) {
+  broadcastStreamData('broadcast:metrics', metrics, 'broadcast-service');
+}
+
+export function broadcastDroneTracking(tracking: any) {
+  broadcastStreamData('drone:tracking', tracking, 'drone-service');
+}
+
+export function broadcastFundraisingUpdate(update: any) {
+  broadcastStreamData('fundraising:donations', update, 'fundraising-service');
+}
+
+export function broadcastQumusDecision(decision: any) {
+  broadcastStreamData('qumus:decisions', decision, 'qumus-service');
+}
+
+export function broadcastRecommendation(recommendation: any) {
+  broadcastStreamData('recommendations:trending', recommendation, 'recommendation-service');
+}
+
+export function broadcastMapUpdate(update: any) {
+  broadcastStreamData('map:assets', update, 'map-service');
+}
