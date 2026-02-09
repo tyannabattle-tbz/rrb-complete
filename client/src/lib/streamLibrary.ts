@@ -327,7 +327,7 @@ export const CHANNEL_PRESETS: ChannelPreset[] = [
   },
   {
     id: 'ch-canryn-radio',
-    name: 'Canryn Production Radio',
+    name: 'C.J. Battle',
     description: 'Eclectic mix — Americana, chillout, and everything in between',
     subsidiary: 'Canryn Production',
     color: '#10b981',

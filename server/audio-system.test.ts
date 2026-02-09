@@ -113,7 +113,7 @@ describe('Channel Preset Structure', () => {
     'RRB Legacy Radio',
     'Sweet Miracles Lounge',
     'Drop Radio',
-    'Canryn Production Radio',
+    'C.J. Battle',
     'HybridCast Broadcast',
   ];
 
