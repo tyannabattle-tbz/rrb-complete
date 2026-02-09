@@ -76,9 +76,6 @@ export function AppHeaderEnhanced() {
     { id: 'nav-8', label: 'RRB Broadcast', icon: Eye, path: '/broadcast-monitoring' },
     { id: 'nav-9', label: 'Recommendations', icon: TrendingUp, path: '/recommendations' },
     { id: 'nav-10', label: 'Impact', icon: Heart, path: '/impact-dashboard' },
-    { id: 'nav-11', label: 'Drone Logistics', icon: Truck, path: '/drone-logistics' },
-    { id: 'nav-12', label: 'Drone Video', icon: VideoIcon, path: '/drone-video' },
-    { id: 'nav-13', label: 'Map Arsenal', icon: MapIcon, path: '/map-arsenal' },
   ];
 
   return (
