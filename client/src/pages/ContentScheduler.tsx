@@ -13,7 +13,10 @@ import { toast } from 'sonner';
 
 import { QumusStreamScheduler } from '@/components/QumusStreamScheduler';
 
-type TabId = 'channels' | 'schedule' | 'emergency' | 'audio-streams';
+import { TrendingPromotionPanel } from '@/components/TrendingPromotionPanel';
+import { TrendingUp } from 'lucide-react';
+
+type TabId = 'channels' | 'schedule' | 'emergency' | 'audio-streams' | 'trending';
 
 interface DragState {
   draggedId: string | null;
@@ -99,6 +102,7 @@ export default function ContentScheduler() {
     { id: 'schedule', label: 'Schedule', icon: <Calendar className="w-4 h-4" /> },
     { id: 'emergency', label: 'Emergency', icon: <AlertTriangle className="w-4 h-4" /> },
     { id: 'audio-streams', label: 'Audio Streams', icon: <Volume2 className="w-4 h-4" /> },
+    { id: 'trending', label: 'Trending Promotions', icon: <TrendingUp className="w-4 h-4" /> },
   ];
 
   const formatUptime = (ms: number) => {
@@ -570,6 +574,10 @@ export default function ContentScheduler() {
             </div>
             <QumusStreamScheduler />
           </div>
+        )}
+
+        {activeTab === 'trending' && (
+          <TrendingPromotionPanel />
         )}
       </div>
     </div>

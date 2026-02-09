@@ -6,7 +6,7 @@
  * and audience engagement patterns. 90% autonomous, 10% human override.
  * 
  * Schedule Philosophy:
- * - Morning (6am-12pm): Upbeat, energizing (RRB Radio, Canryn Radio)
+ * - Top of the Sol (6am-12pm): Upbeat, energizing (RRB Radio, Canryn Radio)
  * - Afternoon (12pm-5pm): Mixed/eclectic (HybridCast, Sweet Miracles)
  * - Evening (5pm-10pm): Smooth, relaxing (Sweet Miracles, Meditation)
  * - Night (10pm-6am): Ambient, healing (Meditation, Deep Space)
@@ -31,8 +31,8 @@ export interface ScheduleBlock {
 
 export const DEFAULT_SCHEDULE: ScheduleBlock[] = [
   {
-    id: 'morning-drive',
-    label: 'Morning Drive',
+    id: 'top-of-the-sol',
+    label: 'Top of the Sol',
     startHour: 6,
     endHour: 10,
     channelIds: ['ch-rrb-radio', 'ch-canryn-radio'],
@@ -40,12 +40,12 @@ export const DEFAULT_SCHEDULE: ScheduleBlock[] = [
     priority: 'high',
   },
   {
-    id: 'late-morning',
-    label: 'Late Morning Mix',
+    id: 'late-sol',
+    label: 'Late Sol Mix',
     startHour: 10,
     endHour: 12,
     channelIds: ['ch-canryn-radio', 'ch-hybridcast'],
-    description: 'Eclectic mix transitioning from morning energy to midday vibes',
+    description: 'Eclectic mix transitioning from Top of the Sol energy to midday vibes',
     priority: 'normal',
   },
   {
@@ -81,7 +81,7 @@ export const DEFAULT_SCHEDULE: ScheduleBlock[] = [
     startHour: 21,
     endHour: 0,
     channelIds: ['ch-meditation', 'ch-sweet-miracles'],
-    description: 'Ambient meditation and healing frequencies for the night',
+    description: 'Ambient meditation and Drop Radio 432Hz streams for the night',
     priority: 'normal',
   },
   {
@@ -163,7 +163,7 @@ export function getMinutesRemaining(schedule: ScheduleBlock[] = DEFAULT_SCHEDULE
   let endHour = block.endHour;
   if (endHour === 0) endHour = 24;
   if (block.startHour > block.endHour && hour < block.endHour) {
-    // We're in the early morning part of an overnight block
+    // We're in the early hours part of an overnight block
     endHour = block.endHour;
   }
   

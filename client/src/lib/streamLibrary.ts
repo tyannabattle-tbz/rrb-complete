@@ -315,8 +315,8 @@ export const CHANNEL_PRESETS: ChannelPreset[] = [
   },
   {
     id: 'ch-meditation',
-    name: 'Healing Frequencies',
-    description: 'Ambient drones, deep space, and meditative soundscapes',
+    name: 'Drop Radio',
+    description: '432Hz Drop Radio — ambient drones, deep space, and meditative soundscapes',
     subsidiary: 'Sweet Miracles',
     color: '#06b6d4',
     streams: [

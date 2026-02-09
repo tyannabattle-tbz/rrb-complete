@@ -112,7 +112,7 @@ describe('Channel Preset Structure', () => {
   const CHANNEL_NAMES = [
     'RRB Legacy Radio',
     'Sweet Miracles Lounge',
-    'Healing Frequencies',
+    'Drop Radio',
     'Canryn Production Radio',
     'HybridCast Broadcast',
   ];

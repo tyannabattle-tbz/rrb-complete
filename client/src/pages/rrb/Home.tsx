@@ -39,7 +39,7 @@ const PLATFORMS = [
   {
     id: 'meditation',
     title: 'Meditation & Healing',
-    description: 'Guided meditations with healing frequencies and wellness content',
+    description: 'Guided meditations with Drop Radio 432Hz streams and wellness content',
     icon: Sparkles,
     href: '/healing-music-frequencies',
     color: 'from-green-500/20 to-green-600/20',

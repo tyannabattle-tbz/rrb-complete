@@ -167,7 +167,7 @@ export const qumusCommandRouter = router({
         ],
         'Canryn': [
           'start meditation session',
-          'play healing frequency',
+          'play drop radio',
           'create wellness plan',
           'send wellness reminder',
           'generate health report',
@@ -258,9 +258,9 @@ async function executeSubsystemCommand(
         message: 'Meditation session started',
         data: { sessionId: uuid(), duration: 20 },
       },
-      'play healing frequency': {
+      'play drop radio': {
         success: true,
-        message: 'Healing frequency playing',
+        message: 'Drop Radio 432Hz playing',
         data: { frequency: '432Hz', duration: 60 },
       },
     },

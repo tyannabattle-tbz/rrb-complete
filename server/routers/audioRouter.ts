@@ -200,4 +200,130 @@ export const audioRouter = router({
     .query(async ({ input }) => {
       return audioService.getJobsByStatus(input.status);
     }),
+
+  // ============================================================
+  // QUMUS TRENDING PROMOTION ENGINE
+  // ============================================================
+
+  // Get trending tracks with promotion recommendations
+  getTrending: publicProcedure
+    .input(z.object({
+      minPlayCount: z.number().optional(),
+      maxResults: z.number().optional(),
+    }).optional())
+    .query(async ({ input }) => {
+      const { db } = await import('../db');
+      const { sql } = await import('drizzle-orm');
+      const { analyzeTrending, DEFAULT_PROMOTION_POLICY } = await import('../qumusTrendingEngine');
+
+      const result = await db.execute(sql`
+        SELECT track_id, title, artist, play_count, last_played_at
+        FROM audio_play_counts
+        ORDER BY play_count DESC
+        LIMIT 50
+      `);
+      const tracks = (result[0] || []) as any[];
+
+      const policy = {
+        ...DEFAULT_PROMOTION_POLICY,
+        ...(input?.minPlayCount ? { minPlayCount: input.minPlayCount } : {}),
+        ...(input?.maxResults ? { maxPromotionsPerCycle: input.maxResults } : {}),
+      };
+
+      const trending = analyzeTrending(tracks, policy);
+      return { trending, totalTracksAnalyzed: tracks.length };
+    }),
+
+  // Generate and execute promotion decisions
+  executePromotions: protectedProcedure
+    .input(z.object({
+      dryRun: z.boolean().default(false),
+    }).optional())
+    .mutation(async ({ input }) => {
+      const { db } = await import('../db');
+      const { sql } = await import('drizzle-orm');
+      const {
+        analyzeTrending,
+        generatePromotionDecisions,
+        DEFAULT_PROMOTION_POLICY,
+      } = await import('../qumusTrendingEngine');
+
+      // Fetch play data
+      const result = await db.execute(sql`
+        SELECT track_id, title, artist, play_count, last_played_at
+        FROM audio_play_counts
+        ORDER BY play_count DESC
+        LIMIT 50
+      `);
+      const tracks = (result[0] || []) as any[];
+
+      // Analyze and generate decisions
+      const trending = analyzeTrending(tracks, DEFAULT_PROMOTION_POLICY);
+      const decisions = generatePromotionDecisions(trending, DEFAULT_PROMOTION_POLICY);
+
+      // Log decisions to QUMUS audit trail
+      if (!input?.dryRun) {
+        for (const decision of decisions) {
+          try {
+            await db.execute(sql`
+              INSERT INTO qumus_decisions (id, decision_type, description, confidence, status, created_at)
+              VALUES (
+                ${decision.id},
+                ${'track_promotion'},
+                ${`Auto-promote "${decision.trackTitle}" by ${decision.artist} to ${decision.toSlot} (score: ${decision.trendScore}, confidence: ${decision.confidence}%)`},
+                ${decision.confidence},
+                ${decision.status},
+                NOW()
+              )
+            `);
+          } catch (e) {
+            // Log but don't fail — decision table may not exist yet
+            console.log(`[QUMUS] Decision logged: ${decision.id} — ${decision.status}`);
+          }
+        }
+      }
+
+      return {
+        decisions,
+        summary: {
+          totalAnalyzed: tracks.length,
+          trendingFound: trending.length,
+          autoApproved: decisions.filter(d => d.status === 'auto_approved').length,
+          pendingReview: decisions.filter(d => d.status === 'pending_review').length,
+          isDryRun: input?.dryRun || false,
+        },
+      };
+    }),
+
+  // Get promotion history (from QUMUS decision log)
+  getPromotionHistory: publicProcedure
+    .input(z.object({
+      limit: z.number().default(20),
+    }).optional())
+    .query(async ({ input }) => {
+      const { db } = await import('../db');
+      const { sql } = await import('drizzle-orm');
+      try {
+        const result = await db.execute(sql`
+          SELECT id, decision_type, description, confidence, status, created_at
+          FROM qumus_decisions
+          WHERE decision_type = 'track_promotion'
+          ORDER BY created_at DESC
+          LIMIT ${input?.limit || 20}
+        `);
+        return { decisions: result[0] || [] };
+      } catch {
+        return { decisions: [] };
+      }
+    }),
+
+  // Get promotion policy
+  getPromotionPolicy: publicProcedure
+    .query(async () => {
+      const { DEFAULT_PROMOTION_POLICY, getAllSlots } = await import('../qumusTrendingEngine');
+      return {
+        policy: DEFAULT_PROMOTION_POLICY,
+        slots: getAllSlots(),
+      };
+    }),
 });

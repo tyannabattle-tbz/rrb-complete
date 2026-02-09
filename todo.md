@@ -1396,4 +1396,15 @@
 ## v7.7 Follow-ups
 - [x] Fix streaming_status DB schema (added broadcast_id, track_id, playlist_id columns)
 - [x] Build live play count tracker (replace static placeholder numbers with DB-backed counts)
-- [ ] Push latest to GitHub rrb-qumus-platform
+- [x] Push latest to GitHub rrb-qumus-platform (synced via checkpoint)
+
+## v7.8 QUMUS Autonomous Trending Promotion
+- [x] Build QUMUS trending promotion engine (server-side decision logic)
+- [x] Create tRPC procedures for trending analysis and auto-promotion (getTrending, executePromotions, getPromotionHistory, getPromotionPolicy)
+- [x] Build promotion rules: prime-time slot assignment based on play velocity
+- [x] Add trending promotion UI panel in Content Scheduler
+- [x] Add QUMUS decision log entries for autonomous promotion actions (logged to qumus_decisions table)
+- [x] Wire promotion engine to existing stream scheduler for auto-rotation
+- [x] Write tests for trending promotion logic (29 tests passing)
+- [x] Replace all "morning" references with "Top of the Sol" across platform
+- [x] Rename 432Hz healing frequency stream to "Drop Radio" across platform

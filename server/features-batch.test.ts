@@ -14,7 +14,7 @@ describe('QUMUS Stream Scheduler', () => {
     const content = fs.readFileSync(schedulerPath, 'utf-8');
     
     // Should have schedule blocks for different times of day
-    expect(content).toContain('morning');
+    expect(content).toContain('Top of the Sol');
     expect(content).toContain('afternoon');
     expect(content).toContain('evening');
     expect(content).toContain('night');

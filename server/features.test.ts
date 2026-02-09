@@ -553,7 +553,7 @@ describe('Meditation Feature', () => {
     });
   });
 
-  describe('Healing Frequencies', () => {
+  describe('Drop Radio (432Hz)', () => {
     it('should support healing frequencies', () => {
       const frequencies = ['binaural', '432Hz', '528Hz'];
 

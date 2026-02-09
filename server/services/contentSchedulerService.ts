@@ -58,7 +58,7 @@ export class ContentSchedulerService {
       { id: 'ch-004', name: 'Emergency Broadcast', type: 'emergency', status: 'active', currentContent: null, listeners: 0 },
       { id: 'ch-005', name: 'Music Discovery', type: 'streaming', status: 'active', currentContent: 'Indie Spotlight', listeners: 5600 },
       { id: 'ch-006', name: 'Community Voice', type: 'radio', status: 'active', currentContent: 'Local Stories', listeners: 2100 },
-      { id: 'ch-007', name: 'Healing Frequencies', type: 'streaming', status: 'active', currentContent: '432Hz Meditation', listeners: 1800 },
+      { id: 'ch-007', name: 'Drop Radio', type: 'streaming', status: 'active', currentContent: '432Hz Meditation', listeners: 1800 },
     ];
     defaultChannels.forEach(ch => this.channels.set(ch.id, ch));
   }
@@ -80,7 +80,7 @@ export class ContentSchedulerService {
       { id: 'slot-010', channelId: 'ch-003', startTime: '18:00', endTime: '23:59', contentType: 'audiobook', title: 'Classic Literature Hour', priority: 6, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
       // Overnight Block (12 AM - 6 AM)
       { id: 'slot-011', channelId: 'ch-001', startTime: '00:00', endTime: '06:00', contentType: 'radio', title: 'Overnight Chill Mix', priority: 3, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
-      { id: 'slot-012', channelId: 'ch-007', startTime: '00:00', endTime: '06:00', contentType: 'radio', title: 'Healing Frequencies Overnight', priority: 4, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'slot-012', channelId: 'ch-007', startTime: '00:00', endTime: '06:00', contentType: 'radio', title: 'Drop Radio Overnight', priority: 4, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
       // Weekend Specials
       { id: 'slot-013', channelId: 'ch-001', startTime: '08:00', endTime: '12:00', contentType: 'radio', title: 'Weekend Brunch Mix', priority: 8, daysOfWeek: [0,6], isActive: true, createdAt: Date.now() },
       { id: 'slot-014', channelId: 'ch-005', startTime: '10:00', endTime: '16:00', contentType: 'radio', title: 'Indie Discovery Saturday', priority: 7, daysOfWeek: [6], isActive: true, createdAt: Date.now() },

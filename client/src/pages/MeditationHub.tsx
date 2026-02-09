@@ -236,7 +236,7 @@ export default function MeditationHub() {
         <Card className="mb-6 p-4 md:p-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
-              <Waves className="w-5 h-5" /> Healing Frequencies — Live Streams
+              <Waves className="w-5 h-5" /> Drop Radio — 432Hz Live Streams
             </h2>
             <button
               onClick={() => setShowLiveStreams(!showLiveStreams)}

@@ -64,7 +64,7 @@ function generateSuggestions(message: string): string[] {
     suggestions.push('Process donation to Sweet Miracles', 'Create fundraising campaign');
   }
   if (/meditate|healing/i.test(message)) {
-    suggestions.push('Start meditation session', 'Play healing frequency');
+    suggestions.push('Start meditation session', 'Play Drop Radio');
   }
   return suggestions;
 }

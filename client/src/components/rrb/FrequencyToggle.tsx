@@ -57,7 +57,7 @@ export function FrequencyToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64 max-h-96 overflow-y-auto">
         <DropdownMenuLabel className="text-sm font-semibold">
-          Healing Frequencies
+          Drop Radio
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
