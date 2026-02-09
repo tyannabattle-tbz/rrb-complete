@@ -7,11 +7,23 @@ import SeasonalCampaigns from '@/components/rrb/SeasonalCampaigns';
 import { trpc } from '@/lib/trpc';
 import { AudioUploadManager } from '@/components/AudioUploadManager';
 
+function formatPlayCount(count: number): string {
+  if (count >= 1000) return `${(count / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+  return count.toLocaleString();
+}
+
+const RANK_BADGES = ['🥇', '🥈', '🥉', '⭐'] as const;
+const RANK_LABELS = ['#1 Most Played', '#2 Most Played', '#3 Most Played', 'Trending'] as const;
+const BAR_WIDTHS = ['92%', '78%', '65%', '58%'] as const;
+
 export default function RadioStation() {
   // Fetch tracks from database
   const { data: dbTracks } = trpc.radioContent.getTracks.useQuery();
   const { data: streamingChannels } = trpc.radioContent.getStreamingStatus.useQuery();
   const { data: playlists } = trpc.radioContent.getPlaylists.useQuery();
+  
+  // Fetch live play counts
+  const { data: playCountData } = trpc.audio.getPlayCounts.useQuery();
 
   // Curated playlist of Seabrun and Helen's music (fallback)
   const fallbackTracks: Track[] = [
@@ -198,78 +210,54 @@ export default function RadioStation() {
         </div>
       </section>
 
-      {/* Most Played Section */}
+      {/* Most Played Section — Live Data */}
       <section className="py-12 md:py-16 bg-accent/5">
         <div className="container max-w-4xl">
           <h2 className="text-3xl font-bold text-foreground mb-6">🔥 Most Played</h2>
           <p className="text-foreground/80 mb-8">
-            The most beloved tracks from our listeners - discover what resonates with the community
+            Live play counts from our listeners — updated in real time as tracks are played
           </p>
           
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-card p-6 rounded-lg border border-accent/20 hover:border-accent transition-colors">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="text-sm font-semibold text-accent mb-1">🥇 #1 Most Played</div>
-                  <h3 className="text-xl font-bold text-foreground">Rockin' Rockin' Boogie</h3>
-                  <p className="text-sm text-foreground/70 mt-1">Seabrun Candy Hunter & Little Richard</p>
-                </div>
-                <div className="text-3xl font-bold text-accent/40">1</div>
-              </div>
-              <p className="text-sm text-foreground/60 mb-3">The iconic track that defined an era</p>
-              <div className="w-full bg-border rounded-full h-2">
-                <div className="bg-accent h-2 rounded-full" style={{width: '92%'}}></div>
-              </div>
-              <p className="text-xs text-foreground/50 mt-2">4,250 plays</p>
-            </div>
-
-            <div className="bg-card p-6 rounded-lg border border-border hover:border-accent transition-colors">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="text-sm font-semibold text-accent mb-1">🥈 #2 Most Played</div>
-                  <h3 className="text-xl font-bold text-foreground">Voicemail to C.J. Battle from Dad</h3>
-                  <p className="text-sm text-foreground/70 mt-1">Seabrun Candy Hunter</p>
-                </div>
-                <div className="text-3xl font-bold text-accent/40">2</div>
-              </div>
-              <p className="text-sm text-foreground/60 mb-3">A heartfelt personal message</p>
-              <div className="w-full bg-border rounded-full h-2">
-                <div className="bg-accent h-2 rounded-full" style={{width: '78%'}}></div>
-              </div>
-              <p className="text-xs text-foreground/50 mt-2">3,312 plays</p>
-            </div>
-
-            <div className="bg-card p-6 rounded-lg border border-border hover:border-accent transition-colors">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="text-sm font-semibold text-accent mb-1">🥉 #3 Most Played</div>
-                  <h3 className="text-xl font-bold text-foreground">California I'm Coming</h3>
-                  <p className="text-sm text-foreground/70 mt-1">Seabrun Candy Hunter</p>
-                </div>
-                <div className="text-3xl font-bold text-accent/40">3</div>
-              </div>
-              <p className="text-sm text-foreground/60 mb-3">Limited edition unreleased track</p>
-              <div className="w-full bg-border rounded-full h-2">
-                <div className="bg-accent h-2 rounded-full" style={{width: '65%'}}></div>
-              </div>
-              <p className="text-xs text-foreground/50 mt-2">2,756 plays</p>
-            </div>
-
-            <div className="bg-card p-6 rounded-lg border border-border hover:border-accent transition-colors">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="text-sm font-semibold text-accent mb-1">⭐ Trending</div>
-                  <h3 className="text-xl font-bold text-foreground">The Creative Process</h3>
-                  <p className="text-sm text-foreground/70 mt-1">Seabrun Candy Hunter</p>
-                </div>
-                <div className="text-3xl font-bold text-accent/40">↑</div>
-              </div>
-              <p className="text-sm text-foreground/60 mb-3">Discussing songwriting and legacy</p>
-              <div className="w-full bg-border rounded-full h-2">
-                <div className="bg-accent h-2 rounded-full" style={{width: '58%'}}></div>
-              </div>
-              <p className="text-xs text-foreground/50 mt-2">2,465 plays (trending up)</p>
-            </div>
+            {(() => {
+              const topTracks = (playCountData?.tracks as any[]) || [];
+              const maxPlays = topTracks.length > 0 ? (topTracks[0]?.play_count || 1) : 1;
+              
+              // Default tracks if no play data yet
+              const defaultTracks = [
+                { track_id: '1', title: "Rockin' Rockin' Boogie", artist: 'Seabrun Candy Hunter & Little Richard', play_count: 0 },
+                { track_id: '4', title: 'Voicemail to C.J. Battle from Dad', artist: 'Seabrun Candy Hunter', play_count: 0 },
+                { track_id: '2', title: "California I'm Coming", artist: 'Seabrun Candy Hunter', play_count: 0 },
+                { track_id: '8', title: 'The Creative Process', artist: 'Seabrun Candy Hunter', play_count: 0 },
+              ];
+              
+              const displayTracks = topTracks.length > 0 ? topTracks.slice(0, 4) : defaultTracks;
+              
+              return displayTracks.map((track: any, idx: number) => {
+                const barWidth = topTracks.length > 0
+                  ? `${Math.max(10, (track.play_count / maxPlays) * 100)}%`
+                  : BAR_WIDTHS[idx] || '50%';
+                return (
+                  <div key={track.track_id} className={`bg-card p-6 rounded-lg border ${idx === 0 ? 'border-accent/20' : 'border-border'} hover:border-accent transition-colors`}>
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="text-sm font-semibold text-accent mb-1">{RANK_BADGES[idx] || '🎵'} {RANK_LABELS[idx] || `#${idx + 1}`}</div>
+                        <h3 className="text-xl font-bold text-foreground">{track.title}</h3>
+                        <p className="text-sm text-foreground/70 mt-1">{track.artist}</p>
+                      </div>
+                      <div className="text-3xl font-bold text-accent/40">{idx < 3 ? idx + 1 : '↑'}</div>
+                    </div>
+                    <div className="w-full bg-border rounded-full h-2">
+                      <div className="bg-accent h-2 rounded-full transition-all duration-500" style={{width: barWidth}}></div>
+                    </div>
+                    <p className="text-xs text-foreground/50 mt-2">
+                      {track.play_count > 0 ? `${formatPlayCount(track.play_count)} plays` : 'No plays yet — be the first!'}
+                      {idx === 3 && track.play_count > 0 ? ' (trending up)' : ''}
+                    </p>
+                  </div>
+                );
+              });
+            })()}
           </div>
         </div>
       </section>

@@ -6,6 +6,7 @@
  * Audio persists across page navigation — no interruption when switching routes.
  */
 import { createContext, useContext, useState, useRef, useEffect, useCallback, type ReactNode } from 'react';
+import { trpc } from '@/lib/trpc';
 
 export interface AudioTrack {
   id: string;
@@ -136,6 +137,8 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  const recordPlayMutation = trpc.audio.recordPlay.useMutation();
+
   const play = useCallback((track: AudioTrack) => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -154,7 +157,14 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     audio.play().catch(err => {
       setState(prev => ({ ...prev, error: err.message, isLoading: false }));
     });
-  }, [state.volume, state.isMuted]);
+    // Record play count in database
+    recordPlayMutation.mutate({
+      trackId: track.id,
+      trackTitle: track.title,
+      artist: track.artist,
+      source: track.channel || 'direct',
+    });
+  }, [state.volume, state.isMuted, recordPlayMutation]);
 
   const playQueue = useCallback((tracks: AudioTrack[], startIndex = 0) => {
     const audio = audioRef.current;

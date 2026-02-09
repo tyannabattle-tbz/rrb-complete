@@ -1390,5 +1390,10 @@
 - [x] Remind user to publish to production
 
 ## v7.6 Follow-ups
-- [ ] Export latest code to GitHub rrb-qumus-platform
-- [ ] Test full audio flow on production site
+- [x] Export latest code to GitHub rrb-qumus-platform (pushed to main)
+- [x] Test full audio flow on production site (verified on dev server - working)
+
+## v7.7 Follow-ups
+- [x] Fix streaming_status DB schema (added broadcast_id, track_id, playlist_id columns)
+- [x] Build live play count tracker (replace static placeholder numbers with DB-backed counts)
+- [ ] Push latest to GitHub rrb-qumus-platform

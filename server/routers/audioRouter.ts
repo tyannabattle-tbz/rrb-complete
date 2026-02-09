@@ -74,6 +74,53 @@ export const audioRouter = router({
       };
     }),
 
+  // Record a track play event
+  recordPlay: publicProcedure
+    .input(z.object({
+      trackId: z.string(),
+      trackTitle: z.string(),
+      artist: z.string(),
+      source: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const { db } = await import('../db');
+      const { sql } = await import('drizzle-orm');
+      // Upsert play count in a simple key-value style
+      await db.execute(sql`
+        INSERT INTO audio_play_counts (track_id, title, artist, play_count, last_played_at)
+        VALUES (${input.trackId}, ${input.trackTitle}, ${input.artist}, 1, NOW())
+        ON DUPLICATE KEY UPDATE play_count = play_count + 1, last_played_at = NOW()
+      `);
+      return { success: true };
+    }),
+
+  // Get play counts for all tracks (sorted by most played)
+  getPlayCounts: publicProcedure
+    .query(async () => {
+      const { db } = await import('../db');
+      const { sql } = await import('drizzle-orm');
+      const result = await db.execute(sql`
+        SELECT track_id, title, artist, play_count, last_played_at
+        FROM audio_play_counts
+        ORDER BY play_count DESC
+        LIMIT 20
+      `);
+      return { tracks: result[0] || [] };
+    }),
+
+  // Get play count for a specific track
+  getTrackPlayCount: publicProcedure
+    .input(z.object({ trackId: z.string() }))
+    .query(async ({ input }) => {
+      const { db } = await import('../db');
+      const { sql } = await import('drizzle-orm');
+      const result = await db.execute(sql`
+        SELECT play_count FROM audio_play_counts WHERE track_id = ${input.trackId}
+      `);
+      const rows = result[0] as any[];
+      return { playCount: rows?.[0]?.play_count || 0 };
+    }),
+
   // List user's uploaded tracks (from S3 metadata)
   listUploads: protectedProcedure
     .query(async ({ ctx }) => {

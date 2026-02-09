@@ -1,0 +1,40 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'streaming_status' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'streaming_status' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "channel_id"
+    },
+    {
+      "COLUMN_NAME": "status"
+    },
+    {
+      "COLUMN_NAME": "viewer_count"
+    },
+    {
+      "COLUMN_NAME": "peak_viewers"
+    },
+    {
+      "COLUMN_NAME": "stream_url"
+    },
+    {
+      "COLUMN_NAME": "started_at"
+    },
+    {
+      "COLUMN_NAME": "ended_at"
+    },
+    {
+      "COLUMN_NAME": "created_at"
+    },
+    {
+      "COLUMN_NAME": "updated_at"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nchannel_id\nstatus\nviewer_count\npeak_viewers\nstream_url\nstarted_at\nended_at\ncreated_at\nupdated_at\n",
+  "stderr": "",
+  "execution_time_ms": 347
+}

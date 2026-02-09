@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS audio_play_counts (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  track_id VARCHAR(255) NOT NULL UNIQUE,\n  title VARCHAR(255) NOT NULL,\n  artist VARCHAR(255) NOT NULL,\n  play_count INT NOT NULL DEFAULT 0,\n  last_played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX idx_play_count (play_count DESC)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute CREATE TABLE IF NOT EXISTS audio_play_counts (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  track_id VARCHAR(255) NOT NULL UNIQUE,\n  title VARCHAR(255) NOT NULL,\n  artist VARCHAR(255) NOT NULL,\n  play_count INT NOT NULL DEFAULT 0,\n  last_played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX idx_play_count (play_count DESC)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 515
+}
