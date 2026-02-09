@@ -100,6 +100,29 @@ export const contentSchedulerRouter = router({
       return scheduler.triggerEmergencyOverride(input.channelId, input.message);
     }),
 
+  // Move a slot to a new time/channel (drag-and-drop)
+  moveSlot: protectedProcedure
+    .input(z.object({
+      slotId: z.string(),
+      newStartTime: z.string(),
+      newEndTime: z.string(),
+      newChannelId: z.string().optional(),
+    }))
+    .mutation(({ input }) => {
+      const scheduler = getContentScheduler();
+      const result = scheduler.moveSlot(input.slotId, input.newStartTime, input.newEndTime, input.newChannelId);
+      if (!result) throw new Error('Slot not found');
+      return result;
+    }),
+
+  // Reorder slots by priority (drag-and-drop reorder)
+  reorderSlots: protectedProcedure
+    .input(z.array(z.string()))
+    .mutation(({ input }) => {
+      const scheduler = getContentScheduler();
+      return scheduler.reorderSlots(input);
+    }),
+
   // Set autonomy level
   setAutonomyLevel: protectedProcedure
     .input(z.number().min(0).max(100))

@@ -132,6 +132,7 @@ export function UnifiedMobileSidebar() {
         { label: 'Broadcast Monitoring', href: '/broadcast-monitoring', icon: Monitor },
         { label: 'Broadcast Scheduler', href: '/broadcast-scheduler', icon: Settings },
         { label: 'Content Scheduler', href: '/content-scheduler', icon: Clock },
+        { label: 'Listener Analytics', href: '/listener-analytics', icon: BarChart3 },
         { label: 'Emergency Alerts', href: '/emergency-alerts', icon: AlertTriangle },
       ],
     },

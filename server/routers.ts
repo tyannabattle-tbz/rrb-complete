@@ -62,6 +62,8 @@ import { radioContentRouter } from "./routers/radioContentRouter";
 import { contentSchedulerRouter } from "./routers/contentSchedulerRouter";
 // Push Notifications (emergency broadcast system)
 import { pushNotificationRouter } from "./routers/pushNotificationRouter";
+// Listener Analytics (real-time channel metrics)
+import { listenerAnalyticsRouter } from "./routers/listenerAnalyticsRouter";
 
 // RRB (Rockin Rockin Boogie) integrated routers
 import { stripePaymentsRouter as rrbStripePaymentsRouter } from "./routers/rrb/stripePayments";
@@ -217,6 +219,9 @@ export const appRouter = router({
 
   // Push Notifications (emergency broadcast system)
   pushNotifications: pushNotificationRouter,
+
+  // Listener Analytics (real-time channel metrics)
+  listenerAnalytics: listenerAnalyticsRouter,
 
   // Agent Session Management
   agent: router({

@@ -1259,3 +1259,33 @@
 - [x] 15 unit tests passing for content scheduler service
 - [x] All 5 Canryn subsidiaries active, QUMUS Orchestration at 90% autonomy
 - [x] Content Scheduler added to sidebar navigation under Broadcast Control
+
+## Platform Enhancement v7.1 (COMPLETED)
+- [x] Add drag-and-drop schedule editing to Content Scheduler
+  - [x] Drag handles with GripVertical icons on each schedule slot
+  - [x] Touch-friendly drag-and-drop with mousedown/touchstart handlers
+  - [x] Visual feedback: dragged slots dim, drop targets highlight cyan
+  - [x] Inline time editing with time inputs and save/cancel buttons
+  - [x] Delete slot with confirmation dialog
+  - [x] moveSlot and reorderSlots API endpoints
+  - [x] Priority auto-reassignment on reorder
+- [x] Integrate VAPID keys for real web push notifications
+  - [x] Generated VAPID keypair and set as environment variables
+  - [x] web-push package installed and configured with VAPID details
+  - [x] Real push notification delivery via sendPushToAll()
+  - [x] Subscription management with expired endpoint cleanup
+  - [x] Frontend usePushNotifications hook with real VAPID subscription
+  - [x] urlBase64ToUint8Array conversion for applicationServerKey
+  - [x] getVapidPublicKey and isConfigured endpoints
+  - [x] 4 VAPID validation tests passing
+- [x] Build listener analytics dashboard with real-time channel metrics
+  - [x] ListenerAnalyticsService with simulated 24h data patterns
+  - [x] Platform overview: active listeners, 24h peak, engagement, avg session
+  - [x] Per-channel analytics with hourly bar charts (div-based)
+  - [x] Channel detail view with trend indicators (up/down/stable)
+  - [x] Live engagement feed with tune_in/tune_out/like/share/save events
+  - [x] recordEvent API for real-time engagement tracking
+  - [x] 3 tab views: Overview, Channels, Live Feed
+  - [x] Added to sidebar navigation under Broadcast Control
+  - [x] 13 listener analytics tests + 4 drag-drop tests passing
+  - [x] 32 total tests passing across all new features

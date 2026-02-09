@@ -117,6 +117,7 @@ import DroneVideoCapture from '@/components/DroneVideoCapture';
 import MapArsenal from '@/components/MapArsenal';
 import { Toaster } from 'sonner';
 import ContentScheduler from '@/pages/ContentScheduler';
+import ListenerAnalytics from '@/pages/ListenerAnalytics';
 
 // ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
 import RRBHome from '@/pages/rrb/Home';
@@ -222,6 +223,7 @@ function Router() {
       <Route path="/broadcast-admin" component={EmergencyBroadcastAdminPanel} />
       <Route path="/broadcast-scheduler" component={BroadcastScheduler} />
       <Route path="/content-scheduler" component={ContentScheduler} />
+      <Route path="/listener-analytics" component={ListenerAnalytics} />
       <Route path="/audit-log" component={AuditLogViewer} />
       <Route path="/hybridcast-hub" component={HybridCastHub} />
       <Route path="/hybridcast-analytics" component={HybridCastAnalyticsDashboard} />

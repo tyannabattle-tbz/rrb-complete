@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,14 +6,31 @@ import { trpc } from '@/lib/trpc';
 import {
   Radio, Clock, Zap, AlertTriangle, Play,
   Calendar, Users, Activity, Volume2, ChevronRight,
-  RefreshCw, Shield, Wifi,
+  RefreshCw, Shield, Wifi, GripVertical, ArrowUpDown,
+  Check, X, Edit2, Trash2, Plus,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 type TabId = 'channels' | 'schedule' | 'emergency';
 
+interface DragState {
+  draggedId: string | null;
+  dragOverId: string | null;
+  dragStartY: number;
+}
+
 export default function ContentScheduler() {
   const [activeTab, setActiveTab] = useState<TabId>('channels');
+  const [editingSlot, setEditingSlot] = useState<string | null>(null);
+  const [editStartTime, setEditStartTime] = useState('');
+  const [editEndTime, setEditEndTime] = useState('');
+  const [dragState, setDragState] = useState<DragState>({
+    draggedId: null,
+    dragOverId: null,
+    dragStartY: 0,
+  });
+  const dragRef = useRef<HTMLDivElement | null>(null);
+
   const statusQuery = trpc.contentScheduler.getStatus.useQuery(undefined, {
     refetchInterval: 10000,
   });
@@ -38,6 +55,35 @@ export default function ContentScheduler() {
         description: 'Emergency broadcast has been triggered on the selected channel.',
       });
       channelsQuery.refetch();
+    },
+  });
+
+  const moveSlotMutation = trpc.contentScheduler.moveSlot.useMutation({
+    onSuccess: (data) => {
+      toast.success('Schedule Updated', {
+        description: `"${data.title}" moved to ${data.startTime} - ${data.endTime}`,
+      });
+      slotsQuery.refetch();
+      setEditingSlot(null);
+    },
+    onError: (err) => {
+      toast.error('Failed to move slot', { description: err.message });
+    },
+  });
+
+  const reorderMutation = trpc.contentScheduler.reorderSlots.useMutation({
+    onSuccess: () => {
+      toast.success('Priority Reordered', {
+        description: 'Schedule priorities updated via drag-and-drop',
+      });
+      slotsQuery.refetch();
+    },
+  });
+
+  const deleteSlotMutation = trpc.contentScheduler.deleteSlot.useMutation({
+    onSuccess: () => {
+      toast.success('Slot Deleted');
+      slotsQuery.refetch();
     },
   });
 
@@ -76,6 +122,70 @@ export default function ContentScheduler() {
   };
 
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  // Drag-and-drop handlers
+  const handleDragStart = useCallback((slotId: string, e: React.TouchEvent | React.MouseEvent) => {
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    setDragState({ draggedId: slotId, dragOverId: null, dragStartY: clientY });
+  }, []);
+
+  const handleDragOver = useCallback((slotId: string) => {
+    setDragState(prev => {
+      if (prev.draggedId && prev.draggedId !== slotId) {
+        return { ...prev, dragOverId: slotId };
+      }
+      return prev;
+    });
+  }, []);
+
+  const handleDragEnd = useCallback((blockSlots: typeof slots) => {
+    if (dragState.draggedId && dragState.dragOverId) {
+      const slotIds = blockSlots.map(s => s.id);
+      const fromIndex = slotIds.indexOf(dragState.draggedId);
+      const toIndex = slotIds.indexOf(dragState.dragOverId);
+      if (fromIndex !== -1 && toIndex !== -1) {
+        const reordered = [...slotIds];
+        const [moved] = reordered.splice(fromIndex, 1);
+        reordered.splice(toIndex, 0, moved);
+        reorderMutation.mutate(reordered);
+      }
+    }
+    setDragState({ draggedId: null, dragOverId: null, dragStartY: 0 });
+  }, [dragState, reorderMutation]);
+
+  const startEditing = (slot: { id: string; startTime: string; endTime: string }) => {
+    setEditingSlot(slot.id);
+    setEditStartTime(slot.startTime);
+    setEditEndTime(slot.endTime);
+  };
+
+  const saveEdit = (slotId: string) => {
+    moveSlotMutation.mutate({
+      slotId,
+      newStartTime: editStartTime,
+      newEndTime: editEndTime,
+    });
+  };
+
+  const getTimeBlockSlots = (block: string) => {
+    return slots.filter(s => {
+      const hour = parseInt(s.startTime.split(':')[0]);
+      if (block === 'topOfTheSol') return hour >= 6 && hour < 12 && s.daysOfWeek.some(d => d >= 1 && d <= 5);
+      if (block === 'afternoon') return hour >= 12 && hour < 18;
+      if (block === 'evening') return hour >= 18;
+      if (block === 'overnight') return hour >= 0 && hour < 6;
+      if (block === 'weekend') return s.daysOfWeek.includes(0) || s.daysOfWeek.includes(6);
+      return false;
+    }).sort((a, b) => a.startTime.localeCompare(b.startTime));
+  };
+
+  const timeBlocks = [
+    { key: 'topOfTheSol', label: 'Top of the Sol (6-12)', icon: '🌅' },
+    { key: 'afternoon', label: 'Afternoon (12-18)', icon: '☀️' },
+    { key: 'evening', label: 'Evening (18-24)', icon: '🌙' },
+    { key: 'overnight', label: 'Overnight (0-6)', icon: '🌃' },
+    { key: 'weekend', label: 'Weekend Specials', icon: '🎉' },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white">
@@ -228,60 +338,154 @@ export default function ContentScheduler() {
           </div>
         )}
 
-        {/* Schedule Tab */}
+        {/* Schedule Tab with Drag-and-Drop */}
         {activeTab === 'schedule' && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold text-gray-300">Schedule Slots</h2>
-              <Badge variant="outline" className="text-[10px] border-white/20 text-gray-400">
-                {slots.filter(s => s.isActive).length} active
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-[10px] border-white/20 text-gray-400">
+                  <ArrowUpDown className="w-3 h-3 mr-1" />
+                  Drag to reorder
+                </Badge>
+                <Badge variant="outline" className="text-[10px] border-white/20 text-gray-400">
+                  {slots.filter(s => s.isActive).length} active
+                </Badge>
+              </div>
             </div>
 
-            {['Top of the Sol (6-12)', 'Afternoon (12-18)', 'Evening (18-24)', 'Overnight (0-6)', 'Weekend Specials'].map(block => {
-              const blockSlots = slots.filter(s => {
-                const hour = parseInt(s.startTime.split(':')[0]);
-                if (block.includes('Top of the Sol')) return hour >= 6 && hour < 12 && s.daysOfWeek.some(d => d >= 1 && d <= 5);
-                if (block.includes('Afternoon')) return hour >= 12 && hour < 18;
-                if (block.includes('Evening')) return hour >= 18;
-                if (block.includes('Overnight')) return hour >= 0 && hour < 6;
-                if (block.includes('Weekend')) return s.daysOfWeek.includes(0) || s.daysOfWeek.includes(6);
-                return false;
-              });
-
+            {timeBlocks.map(block => {
+              const blockSlots = getTimeBlockSlots(block.key);
               if (blockSlots.length === 0) return null;
 
               return (
-                <div key={block}>
+                <div key={block.key}>
                   <h3 className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {block}
+                    <span>{block.icon}</span>
+                    <Clock className="w-3 h-3" /> {block.label}
                   </h3>
-                  <div className="space-y-2">
-                    {blockSlots.map(slot => (
-                      <Card key={slot.id} className="bg-gray-900/50 border-white/10">
-                        <CardContent className="p-3">
-                          <div className="flex items-center justify-between">
+
+                  <div className="space-y-2" ref={dragRef}>
+                    {blockSlots.map(slot => {
+                      const isDragged = dragState.draggedId === slot.id;
+                      const isDragOver = dragState.dragOverId === slot.id;
+                      const isEditing = editingSlot === slot.id;
+
+                      return (
+                        <Card
+                          key={slot.id}
+                          className={`bg-gray-900/50 border-white/10 transition-all duration-200 ${
+                            isDragged ? 'opacity-50 scale-95 border-cyan-500/50' : ''
+                          } ${isDragOver ? 'border-cyan-400/60 bg-cyan-500/5 scale-[1.02]' : ''}`}
+                          onMouseEnter={() => handleDragOver(slot.id)}
+                          onTouchMove={(e) => {
+                            const touch = e.touches[0];
+                            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+                            const card = el?.closest('[data-slot-id]');
+                            if (card) {
+                              const id = card.getAttribute('data-slot-id');
+                              if (id) handleDragOver(id);
+                            }
+                          }}
+                          data-slot-id={slot.id}
+                        >
+                          <CardContent className="p-3">
                             <div className="flex items-center gap-2">
-                              <div className={`w-1.5 h-8 rounded-full ${
+                              {/* Drag Handle */}
+                              <div
+                                className="cursor-grab active:cursor-grabbing touch-none p-1 -ml-1 rounded hover:bg-white/10 transition-colors"
+                                onMouseDown={(e) => handleDragStart(slot.id, e)}
+                                onMouseUp={() => handleDragEnd(blockSlots)}
+                                onTouchStart={(e) => handleDragStart(slot.id, e)}
+                                onTouchEnd={() => handleDragEnd(blockSlots)}
+                                role="button"
+                                aria-label={`Drag to reorder ${slot.title}`}
+                                tabIndex={0}
+                              >
+                                <GripVertical className="w-4 h-4 text-gray-600" />
+                              </div>
+
+                              {/* Active indicator */}
+                              <div className={`w-1.5 h-8 rounded-full flex-shrink-0 ${
                                 slot.isActive ? 'bg-emerald-500' : 'bg-gray-600'
                               }`} />
-                              <div>
-                                <p className="text-xs font-medium">{slot.title}</p>
-                                <p className="text-[10px] text-gray-500">
-                                  {slot.startTime} - {slot.endTime} | {slot.daysOfWeek.map(d => dayNames[d]).join(', ')}
-                                </p>
+
+                              {/* Content */}
+                              <div className="flex-1 min-w-0">
+                                {isEditing ? (
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="time"
+                                      value={editStartTime}
+                                      onChange={(e) => setEditStartTime(e.target.value)}
+                                      className="bg-gray-800 border border-white/20 rounded px-2 py-1 text-xs w-24 text-white"
+                                    />
+                                    <span className="text-gray-500 text-xs">-</span>
+                                    <input
+                                      type="time"
+                                      value={editEndTime}
+                                      onChange={(e) => setEditEndTime(e.target.value)}
+                                      className="bg-gray-800 border border-white/20 rounded px-2 py-1 text-xs w-24 text-white"
+                                    />
+                                    <Button
+                                      size="sm"
+                                      className="h-6 w-6 p-0 bg-emerald-600 hover:bg-emerald-700"
+                                      onClick={() => saveEdit(slot.id)}
+                                      disabled={moveSlotMutation.isPending}
+                                    >
+                                      <Check className="w-3 h-3" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="h-6 w-6 p-0 text-gray-400"
+                                      onClick={() => setEditingSlot(null)}
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <p className="text-xs font-medium truncate">{slot.title}</p>
+                                    <p className="text-[10px] text-gray-500">
+                                      {slot.startTime} - {slot.endTime} | {slot.daysOfWeek.map(d => dayNames[d]).join(', ')}
+                                    </p>
+                                  </>
+                                )}
                               </div>
+
+                              {/* Actions */}
+                              {!isEditing && (
+                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                  <Badge className={`text-[10px] ${getContentTypeColor(slot.contentType)}`}>
+                                    {slot.contentType}
+                                  </Badge>
+                                  <span className="text-[10px] text-gray-500 font-mono">P{slot.priority}</span>
+                                  <button
+                                    onClick={() => startEditing(slot)}
+                                    className="p-1 rounded hover:bg-white/10 transition-colors text-gray-500 hover:text-cyan-400"
+                                    aria-label={`Edit ${slot.title}`}
+                                  >
+                                    <Edit2 className="w-3 h-3" />
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      if (confirm(`Delete "${slot.title}"?`)) {
+                                        deleteSlotMutation.mutate(slot.id);
+                                      }
+                                    }}
+                                    className="p-1 rounded hover:bg-red-500/20 transition-colors text-gray-500 hover:text-red-400"
+                                    aria-label={`Delete ${slot.title}`}
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              )}
                             </div>
-                            <div className="flex items-center gap-2">
-                              <Badge className={`text-[10px] ${getContentTypeColor(slot.contentType)}`}>
-                                {slot.contentType}
-                              </Badge>
-                              <span className="text-[10px] text-gray-500">P{slot.priority}</span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                   </div>
                 </div>
               );

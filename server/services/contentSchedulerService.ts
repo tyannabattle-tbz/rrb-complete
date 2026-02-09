@@ -205,6 +205,34 @@ export class ContentSchedulerService {
   setAutonomyLevel(level: number): void {
     this.autonomyLevel = Math.max(0, Math.min(100, level));
   }
+
+  moveSlot(slotId: string, newStartTime: string, newEndTime: string, newChannelId?: string): ScheduleSlot | null {
+    const slot = this.scheduleSlots.get(slotId);
+    if (!slot) return null;
+    const updated: ScheduleSlot = {
+      ...slot,
+      startTime: newStartTime,
+      endTime: newEndTime,
+      channelId: newChannelId || slot.channelId,
+    };
+    this.scheduleSlots.set(slotId, updated);
+    return updated;
+  }
+
+  reorderSlots(slotIds: string[]): ScheduleSlot[] {
+    // Reassign priorities based on new order (highest first)
+    const maxPriority = slotIds.length;
+    const updated: ScheduleSlot[] = [];
+    slotIds.forEach((id, index) => {
+      const slot = this.scheduleSlots.get(id);
+      if (slot) {
+        slot.priority = Math.max(1, Math.min(10, maxPriority - index));
+        this.scheduleSlots.set(id, slot);
+        updated.push(slot);
+      }
+    });
+    return updated;
+  }
 }
 
 // Singleton instance
