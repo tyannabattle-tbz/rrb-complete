@@ -11,7 +11,9 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-type TabId = 'channels' | 'schedule' | 'emergency';
+import { QumusStreamScheduler } from '@/components/QumusStreamScheduler';
+
+type TabId = 'channels' | 'schedule' | 'emergency' | 'audio-streams';
 
 interface DragState {
   draggedId: string | null;
@@ -96,6 +98,7 @@ export default function ContentScheduler() {
     { id: 'channels', label: 'Channels', icon: <Radio className="w-4 h-4" /> },
     { id: 'schedule', label: 'Schedule', icon: <Calendar className="w-4 h-4" /> },
     { id: 'emergency', label: 'Emergency', icon: <AlertTriangle className="w-4 h-4" /> },
+    { id: 'audio-streams', label: 'Audio Streams', icon: <Volume2 className="w-4 h-4" /> },
   ];
 
   const formatUptime = (ms: number) => {
@@ -552,6 +555,20 @@ export default function ContentScheduler() {
                 ))}
               </CardContent>
             </Card>
+          </div>
+        )}
+
+        {/* Audio Streams Tab — QUMUS Autonomous Stream Scheduler */}
+        {activeTab === 'audio-streams' && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <Volume2 className="w-5 h-5 text-cyan-400" />
+              <div>
+                <h2 className="text-lg font-bold text-white">QUMUS Audio Stream Scheduler</h2>
+                <p className="text-xs text-gray-400">24/7 autonomous channel rotation across all Canryn Production subsidiaries</p>
+              </div>
+            </div>
+            <QumusStreamScheduler />
           </div>
         )}
       </div>

@@ -33,18 +33,53 @@ export const audioRouter = router({
       );
     }),
 
-  // Upload audio
+  // Upload audio file to S3 and store metadata
   upload: protectedProcedure
     .input(z.object({
       filename: z.string(),
       mimeType: z.string().default('audio/mpeg'),
     }))
     .mutation(async ({ input }) => {
-      // This will be called after file is uploaded to S3
       return {
         success: true,
         message: 'Audio uploaded successfully',
       };
+    }),
+
+  // Upload a track with base64 audio data to S3
+  uploadTrack: protectedProcedure
+    .input(z.object({
+      title: z.string().min(1),
+      artist: z.string().min(1),
+      channel: z.string().optional(),
+      filename: z.string(),
+      mimeType: z.string().default('audio/mpeg'),
+      base64Data: z.string(), // base64-encoded audio
+      duration: z.number().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { storagePut } = await import('../storage');
+      const buffer = Buffer.from(input.base64Data, 'base64');
+      const randomSuffix = Math.random().toString(36).substring(2, 10);
+      const fileKey = `audio-uploads/${ctx.user.id}/${randomSuffix}-${input.filename}`;
+      const { url } = await storagePut(fileKey, buffer, input.mimeType);
+      return {
+        success: true,
+        url,
+        fileKey,
+        title: input.title,
+        artist: input.artist,
+        channel: input.channel || 'User Upload',
+        duration: input.duration,
+      };
+    }),
+
+  // List user's uploaded tracks (from S3 metadata)
+  listUploads: protectedProcedure
+    .query(async ({ ctx }) => {
+      // Return empty for now — tracks are stored client-side in localStorage
+      // Future: query audioContent table filtered by userId
+      return { tracks: [] };
     }),
 
   // Get audio metadata

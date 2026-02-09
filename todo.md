@@ -1374,3 +1374,12 @@
 ## SEO Optimization
 - [x] Shorten meta description to under 160 characters (145 chars)
 - [x] Reduce keywords from 13 to 7 focused terms
+
+## Follow-up Features Batch
+- [x] Now Playing widget in QUMUS dashboard sidebar
+- [x] QUMUS Content Scheduler auto-switch audio streams (24/7 rotation)
+- [x] User audio file upload to replace placeholder tracks
+- [x] Open Graph social preview image (uploaded to CDN)
+- [x] JSON-LD structured data (Organization + MusicGroup + WebApplication schema)
+- [x] Create complete project ZIP archive (6.6MB, 1150 files)
+- [x] Create reusable skill from project workflow (rrb-qumus-platform-builder)

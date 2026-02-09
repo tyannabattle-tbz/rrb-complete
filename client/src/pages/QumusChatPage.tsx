@@ -6,6 +6,7 @@ import { Send, Menu, X } from 'lucide-react';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { trpc } from '@/lib/trpc';
 import AdminOverridePanel from '@/components/AdminOverridePanel';
+import { NowPlayingWidget } from '@/components/NowPlayingWidget';
 import RealTimeDecisionVisualization from '@/components/RealTimeDecisionVisualization';
 import { QumusChatCommandCenter } from '@/components/QumusChatCommandCenter';
 import { VoiceToText } from '@/components/VoiceToText';
@@ -273,6 +274,13 @@ export default function QumusChatPage() {
           >
             🎤 Voice to Text
           </Button>
+          
+          {/* Now Playing Widget */}
+          <div className="border-t border-slate-700 my-2 pt-2 px-1">
+            <div className="[&_*]:!text-slate-200 [&_button]:!text-slate-200 [&_.text-muted-foreground]:!text-slate-400 [&_.text-primary]:!text-blue-400 [&_.bg-card\/50]:!bg-slate-800/50 [&_.border-border\/50]:!border-slate-700/50 [&_.hover\:bg-accent\/50]:hover:!bg-slate-700/50">
+              <NowPlayingWidget />
+            </div>
+          </div>
         </div>
       </div>
 

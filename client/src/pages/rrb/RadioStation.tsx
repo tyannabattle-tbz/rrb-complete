@@ -5,6 +5,7 @@ import { HybridCastWidgetContainer } from '@/components/rrb/HybridCastWidgetCont
 import RadioCommercials from '@/components/rrb/RadioCommercials';
 import SeasonalCampaigns from '@/components/rrb/SeasonalCampaigns';
 import { trpc } from '@/lib/trpc';
+import { AudioUploadManager } from '@/components/AudioUploadManager';
 
 export default function RadioStation() {
   // Fetch tracks from database
@@ -395,6 +396,17 @@ export default function RadioStation() {
               </p>
             </a>
           </div>
+        </div>
+      </section>
+
+      {/* User Audio Upload Section */}
+      <section className="py-12 bg-card/30">
+        <div className="container max-w-2xl">
+          <h2 className="text-2xl font-bold text-center mb-2">Upload Your Music</h2>
+          <p className="text-sm text-muted-foreground text-center mb-6">
+            Replace placeholder tracks with your own recordings. Uploaded tracks appear in the global player.
+          </p>
+          <AudioUploadManager />
         </div>
       </section>
       </div>
