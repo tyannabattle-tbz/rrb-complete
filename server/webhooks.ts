@@ -28,7 +28,13 @@ export type WebhookEvent =
   | 'broadcast.viewed'
   | 'user.created'
   | 'template.created'
-  | 'template.updated';
+  | 'template.updated'
+  | 'qumus.decision.made'
+  | 'qumus.decision.overridden'
+  | 'qumus.policy.triggered'
+  | 'qumus.system.health_alert'
+  | 'qumus.security.threat'
+  | 'qumus.emergency.activated';
 
 export interface WebhookPayload {
   event: WebhookEvent;
@@ -322,6 +328,12 @@ export const WebhookEventSchema = z.enum([
   'user.created',
   'template.created',
   'template.updated',
+  'qumus.decision.made',
+  'qumus.decision.overridden',
+  'qumus.policy.triggered',
+  'qumus.system.health_alert',
+  'qumus.security.threat',
+  'qumus.emergency.activated',
 ]);
 
 export const CreateWebhookSchema = z.object({

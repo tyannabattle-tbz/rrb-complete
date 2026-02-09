@@ -215,6 +215,7 @@ function Router() {
       <Route path="/drone-logistics" component={DroneLogisticsTracker} />
       <Route path="/drone-video" component={DroneVideoCapture} />
       <Route path="/map-arsenal" component={MapArsenal} />
+      <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
