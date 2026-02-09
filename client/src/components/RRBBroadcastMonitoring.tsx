@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Card } from '@/components/ui/card';
+import { AudioPlayer } from '@/components/AudioPlayer';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface BroadcastMetrics {
@@ -85,6 +86,13 @@ export const RRBBroadcastMonitoring: React.FC = () => {
           {metrics?.streamQuality === 'Excellent' ? '🔴 LIVE' : '⚫ OFFLINE'} • {metrics?.liveViewers.toLocaleString()} viewers
         </p>
       </div>
+
+      {/* Audio Player */}
+      <AudioPlayer
+        streamUrl="https://stream.example.com/rrb-radio/live"
+        title="RRB Radio - Rockin' Rockin' Boogie"
+        isLive={true}
+      />
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
