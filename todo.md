@@ -1175,3 +1175,8 @@
 - [x] Deploy to production
 - [x] Monitor performance
 - [x] Gather user feedback
+
+## Mobile Layout Fix v6.1 (IN PROGRESS)
+- [x] Fix duplicate close buttons in mobile sidebar (MobileHeaderClean X + QumusChatPage sidebar X)
+- [x] Fix content clipping behind bottom nav on mobile chat page
+- [x] Clean up mobile sidebar overlay styling

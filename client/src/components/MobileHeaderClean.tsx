@@ -12,10 +12,20 @@ export function MobileHeaderClean() {
     setMobileMenuOpen(false);
   }, [location]);
 
+  // Listen for sidebar close events from child components
+  useEffect(() => {
+    const handleSidebarClose = () => {
+      setMobileMenuOpen(false);
+    };
+    window.addEventListener('closeMobileMenu', handleSidebarClose);
+    return () => window.removeEventListener('closeMobileMenu', handleSidebarClose);
+  }, []);
+
   const toggleMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
+    const newState = !mobileMenuOpen;
+    setMobileMenuOpen(newState);
     // Dispatch custom event to notify other components
-    window.dispatchEvent(new CustomEvent('mobileMenuToggle', { detail: { open: !mobileMenuOpen } }));
+    window.dispatchEvent(new CustomEvent('mobileMenuToggle', { detail: { open: newState } }));
   };
 
   return (
