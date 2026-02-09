@@ -6,7 +6,7 @@ import {
   Music, BookOpen, Heart, Shield, BarChart3, Settings, 
   MessageSquare, Video, Palette, Layers, Monitor, Users,
   AlertTriangle, CheckCircle, Search, Sparkles, Bot,
-  Globe, Building2, Award, FileText, Map
+  Globe, Building2, Award, FileText, Map, Clock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -131,6 +131,7 @@ export function UnifiedMobileSidebar() {
         { label: 'Broadcast Admin', href: '/rrb/broadcast/admin', icon: Shield },
         { label: 'Broadcast Monitoring', href: '/broadcast-monitoring', icon: Monitor },
         { label: 'Broadcast Scheduler', href: '/broadcast-scheduler', icon: Settings },
+        { label: 'Content Scheduler', href: '/content-scheduler', icon: Clock },
         { label: 'Emergency Alerts', href: '/emergency-alerts', icon: AlertTriangle },
       ],
     },

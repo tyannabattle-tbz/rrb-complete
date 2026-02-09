@@ -228,7 +228,7 @@ export function ScheduleManager() {
         <h3 className="text-xl font-bold text-gray-800">Available Content</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
-            { title: 'Morning Show', type: 'radio', duration: 120 },
+            { title: 'Top of the Sol Show', type: 'radio', duration: 120 },
             { title: 'News Update', type: 'video', duration: 10 },
             { title: 'Tech Podcast', type: 'podcast', duration: 45 },
             { title: 'Product Ad', type: 'commercial', duration: 30 },

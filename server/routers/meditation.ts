@@ -44,7 +44,7 @@ export interface UserMeditationProgress {
 const MEDITATION_SESSIONS: MeditationSession[] = [
   {
     id: "med_001",
-    title: "Morning Awakening",
+    title: "Top of the Sol Awakening",
     description: "Start your day with energy and clarity",
     duration: 10,
     instructor: "Sarah Chen",

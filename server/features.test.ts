@@ -374,13 +374,13 @@ describe('Meditation Feature', () => {
   describe('Meditation Sessions', () => {
     it('should initialize meditation sessions', () => {
       const sessions = [
-        { id: 'med-001', title: 'Morning Awakening', duration: 600, category: 'breathing' },
+        { id: 'med-001', title: 'Top of the Sol Awakening', duration: 600, category: 'breathing' },
         { id: 'med-002', title: 'Deep Relaxation', duration: 1200, category: 'body-scan' },
         { id: 'med-003', title: 'Loving Kindness', duration: 900, category: 'loving-kindness' },
       ];
 
       expect(sessions).toHaveLength(3);
-      expect(sessions[0].title).toBe('Morning Awakening');
+      expect(sessions[0].title).toBe('Top of the Sol Awakening');
       expect(sessions[0].duration).toBe(600);
     });
 
@@ -398,7 +398,7 @@ describe('Meditation Feature', () => {
     it('should track session duration', () => {
       const session = {
         id: 'med-001',
-        title: 'Morning Awakening',
+        title: 'Top of the Sol Awakening',
         duration: 600,
       };
 
@@ -565,7 +565,7 @@ describe('Meditation Feature', () => {
     it('should assign frequency to session', () => {
       const session = {
         id: 'med-001',
-        title: 'Morning Awakening',
+        title: 'Top of the Sol Awakening',
         frequency: '432Hz',
       };
 

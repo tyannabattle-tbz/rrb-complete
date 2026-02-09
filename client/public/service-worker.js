@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qumus-v1.0.0';
+const CACHE_NAME = 'qumus-v1.1.0';
 const URLS_TO_CACHE = [
   '/',
   '/index.html',
@@ -106,34 +106,58 @@ self.addEventListener('sync', (event) => {
   }
 });
 
-// Push notification handling
+// Push notification handling - Emergency Broadcast System
 self.addEventListener('push', (event) => {
+  let data = { title: 'QUMUS Alert', body: 'New notification', level: 'low' };
+
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data.body = event.data.text();
+    }
+  }
+
+  const levelConfig = {
+    low: { vibrate: [100] },
+    medium: { vibrate: [200, 100, 200] },
+    high: { vibrate: [300, 100, 300, 100, 300] },
+    critical: { vibrate: [500, 200, 500, 200, 500, 200, 500] },
+  };
+
+  const config = levelConfig[data.level] || levelConfig.low;
+
   const options = {
-    body: event.data?.text() || 'New notification from Qumus',
+    body: data.body,
     icon: '/favicon.ico',
     badge: '/favicon.ico',
-    tag: 'qumus-notification',
-    requireInteraction: false,
+    vibrate: config.vibrate,
+    tag: `qumus-${data.level}-${Date.now()}`,
+    requireInteraction: data.level === 'critical' || data.level === 'high',
+    actions: [
+      { action: 'view', title: 'View Details' },
+      { action: 'dismiss', title: 'Dismiss' },
+    ],
+    data: { url: '/', level: data.level },
   };
 
   event.waitUntil(
-    self.registration.showNotification('Qumus', options)
+    self.registration.showNotification(data.title, options)
   );
 });
 
 // Notification click handling
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+
+  if (event.action === 'dismiss') return;
+
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then((clientList) => {
-      for (let client of clientList) {
-        if (client.url === '/' && 'focus' in client) {
-          return client.focus();
-        }
+    self.clients.matchAll({ type: 'window' }).then((clientList) => {
+      if (clientList.length > 0) {
+        return clientList[0].focus();
       }
-      if (clients.openWindow) {
-        return clients.openWindow('/');
-      }
+      return self.clients.openWindow(event.notification.data?.url || '/');
     })
   );
 });

@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface AgentProfile {
   agentId: string;
@@ -26,7 +26,7 @@ interface ConnectionRequest {
 }
 
 export const SeamlessAgentConnectionHub: React.FC = () => {
-  const { toast } = useToast();
+
   const [selectedCapabilities, setSelectedCapabilities] = useState<string[]>([]);
   const [discoveredAgents, setDiscoveredAgents] = useState<AgentProfile[]>([]);
   const [activeChannels, setActiveChannels] = useState<any[]>([]);
@@ -55,18 +55,15 @@ export const SeamlessAgentConnectionHub: React.FC = () => {
   // Initiate connection
   const initiateConnectionMutation = trpc.seamlessAgentConnection.initiateConnectionRequest.useMutation({
     onSuccess: (data) => {
-      toast({
-        title: 'Connection Requested',
+      toast.success('Connection Requested', {
         description: `Connection request sent to ${selectedAgent?.name}`,
       });
       setConnectionPurpose('');
       setSelectedAgent(null);
     },
     onError: (error) => {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: error.message,
-        variant: 'destructive',
       });
     },
   });
@@ -74,8 +71,7 @@ export const SeamlessAgentConnectionHub: React.FC = () => {
   // Accept connection
   const acceptConnectionMutation = trpc.seamlessAgentConnection.acceptConnectionRequest.useMutation({
     onSuccess: () => {
-      toast({
-        title: 'Connection Accepted',
+      toast.success('Connection Accepted', {
         description: 'Secure channel established',
       });
     },
@@ -84,8 +80,7 @@ export const SeamlessAgentConnectionHub: React.FC = () => {
   // Broadcast message
   const broadcastMessageMutation = trpc.seamlessAgentConnection.broadcastMessage.useMutation({
     onSuccess: () => {
-      toast({
-        title: 'Message Broadcast',
+      toast.success('Message Broadcast', {
         description: 'Message sent to all selected agents',
       });
     },
@@ -109,10 +104,8 @@ export const SeamlessAgentConnectionHub: React.FC = () => {
 
   const handleInitiateConnection = async () => {
     if (!selectedAgent || !connectionPurpose) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Please select an agent and provide a purpose',
-        variant: 'destructive',
       });
       return;
     }

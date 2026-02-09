@@ -387,20 +387,20 @@ export class ContentRecommendationEngine {
 
     // Time-based recommendations
     if (context.timeOfDay !== undefined) {
-      // Morning: productivity templates
+      // Top of the Sol: productivity templates
       if (context.timeOfDay < 12) {
         const productivity = Array.from(this.contentLibrary.values()).filter((c) =>
           c.tags.includes('workflow')
         );
         productivity.forEach((c) => {
           recommendations.push({
-            id: `rec-${c.id}-morning`,
+            id: `rec-${c.id}-top-of-the-sol`,
             type: (c.type as RecommendationType) || 'preset',
             contentId: c.id,
             title: c.title,
             description: c.description,
             confidence: 0.7,
-            reason: 'Good for morning workflow',
+            reason: 'Good for Top of the Sol workflow',
             category: c.category,
           });
         });

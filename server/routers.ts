@@ -58,6 +58,10 @@ import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization
 
 // Radio Content API (serves tracks/playlists from database)
 import { radioContentRouter } from "./routers/radioContentRouter";
+// Content Scheduler (24/7 automated content rotation)
+import { contentSchedulerRouter } from "./routers/contentSchedulerRouter";
+// Push Notifications (emergency broadcast system)
+import { pushNotificationRouter } from "./routers/pushNotificationRouter";
 
 // RRB (Rockin Rockin Boogie) integrated routers
 import { stripePaymentsRouter as rrbStripePaymentsRouter } from "./routers/rrb/stripePayments";
@@ -207,6 +211,12 @@ export const appRouter = router({
 
   // RRB Unified Ecosystem Admin Dashboard
   rrbEcosystem: rrbEcosystemRouter,
+
+  // Content Scheduler (24/7 QUMUS automated rotation)
+  contentScheduler: contentSchedulerRouter,
+
+  // Push Notifications (emergency broadcast system)
+  pushNotifications: pushNotificationRouter,
 
   // Agent Session Management
   agent: router({

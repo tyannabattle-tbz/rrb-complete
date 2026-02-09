@@ -11,7 +11,7 @@ describe('QUMUS Platform Integration', () => {
     it('should manage radio station content', () => {
       const radioContent = {
         id: '1',
-        title: 'Morning Drive Show',
+        title: 'Top of the Sol Drive Show',
         type: 'radio',
         description: 'Your daily dose of music, news, and entertainment',
         status: 'active',
@@ -65,7 +65,7 @@ describe('QUMUS Platform Integration', () => {
         totalListeners: 85920,
         activeStreams: 1243,
         avgListeningTime: 42,
-        topContent: 'Morning Drive Show',
+        topContent: 'Top of the Sol Drive Show',
         engagement: 87,
       };
 

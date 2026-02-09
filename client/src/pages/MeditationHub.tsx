@@ -60,14 +60,14 @@ interface MeditationStats {
 const MEDITATION_SESSIONS: MeditationSession[] = [
   {
     id: 'med-001',
-    title: 'Morning Awakening',
+    title: 'Top of the Sol Awakening',
     description: 'Start your day with energy and clarity',
     duration: 600, // 10 minutes
     audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     category: 'breathing',
     frequency: '432Hz',
     difficulty: 'beginner',
-    imageUrl: 'https://via.placeholder.com/300x300?text=Morning+Awakening',
+    imageUrl: 'https://via.placeholder.com/300x300?text=Top+of+the+Sol+Awakening',
     instructor: 'Sarah Chen',
   },
   {

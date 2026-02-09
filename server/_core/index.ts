@@ -63,6 +63,15 @@ async function startServer() {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
+  // Initialize QUMUS Content Scheduler
+  try {
+    const { getContentScheduler } = await import("../services/contentSchedulerService");
+    const scheduler = getContentScheduler();
+    scheduler.start();
+  } catch (e) {
+    console.log('[ContentScheduler] Init skipped:', (e as Error).message);
+  }
+
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });

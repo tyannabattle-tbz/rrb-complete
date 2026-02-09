@@ -65,7 +65,7 @@ const LISTENING_TIME: EpisodeHistory[] = [
 ];
 
 const LISTENING_DISTRIBUTION = [
-  { name: 'Morning', value: 35 },
+  { name: 'Top of the Sol', value: 35 },
   { name: 'Afternoon', value: 25 },
   { name: 'Evening', value: 30 },
   { name: 'Night', value: 10 },

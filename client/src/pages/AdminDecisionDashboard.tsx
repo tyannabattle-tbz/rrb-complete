@@ -80,7 +80,7 @@ export default function AdminDecisionDashboard() {
         decisionId: "dec-002",
         policyId: "content_scheduling",
         userId: 1,
-        description: "Schedule morning drive show",
+        description: "Schedule Top of the Sol drive show",
         status: "completed",
         severity: "medium",
         autonomyLevel: 85,
