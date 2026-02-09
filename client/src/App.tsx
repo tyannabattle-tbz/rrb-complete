@@ -48,6 +48,7 @@ import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
 import { MobileResponsiveLayout } from './components/MobileResponsiveLayout';
 import { MobileHeaderClean } from './components/MobileHeaderClean';
+import { Breadcrumbs } from './components/Breadcrumbs';
 import { CanrynDashboard } from './pages/CanrynDashboard';
 import { VideoProductionPage } from './pages/VideoProductionPage';
 import { MobileBottomNav } from './components/MobileBottomNav';
@@ -117,7 +118,9 @@ import { Toaster } from 'sonner';
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
   return (
-    <Switch>
+    <>
+      <Breadcrumbs />
+      <Switch>
       <Route path="/" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
@@ -218,6 +221,7 @@ function Router() {
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
       <Route component={NotFound} />
     </Switch>
+    </>
   );
 }
 
