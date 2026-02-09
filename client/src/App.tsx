@@ -138,6 +138,19 @@ import RRBQumusPolicyAnalyticsDashboard from '@/pages/rrb/QumusPolicyAnalyticsDa
 import RRBQumusBroadcastAdminDashboard from '@/pages/rrb/QumusBroadcastAdminDashboard';
 import RRBContact from '@/pages/rrb/Contact';
 import RRBComingSoon from '@/pages/rrb/ComingSoon';
+import RRBGrandmaHelen from '@/pages/rrb/GrandmaHelen';
+import RRBProofVault from '@/pages/rrb/ProofVault';
+import RRBSystematicOmission from '@/pages/rrb/SystematicOmission';
+import RRBFamilyTree from '@/pages/rrb/FamilyTree';
+import RRBCandyThroughTheYears from '@/pages/rrb/CandyThroughTheYears';
+import RRBObituary from '@/pages/rrb/Obituary';
+import RRBLittleRichardConnection from '@/pages/rrb/LittleRichardConnection';
+import RRBVerifiedSources from '@/pages/rrb/VerifiedSources';
+import RRBBooksAndMiracles from '@/pages/rrb/BooksAndMiracles';
+import RRBTestimonialsAndStories from '@/pages/rrb/TestimonialsAndStories';
+import RRBProducerMentor from '@/pages/rrb/ProducerMentor';
+import RRBMedicalJourney from '@/pages/rrb/MedicalJourney';
+import RRBFamilyAchievements from '@/pages/rrb/FamilyAchievements';
 import RRBNavigation from '@/components/rrb/Navigation';
 import { LegalFooter as RRBLegalFooter } from '@/components/rrb/LegalFooter';
 
@@ -271,25 +284,25 @@ function Router() {
       {/* RRB Legacy Foundation Pages */}
       <Route path="/rrb/the-legacy" component={RRBTheLegacyPage} />
       <Route path="/rrb/the-music" component={RRBTheMusic} />
-      <Route path="/rrb/little-richard-connection" component={RRBComingSoon} />
-      <Route path="/rrb/family-achievements" component={RRBComingSoon} />
-      <Route path="/rrb/grandma-helen" component={RRBComingSoon} />
-      <Route path="/rrb/verified-sources" component={RRBComingSoon} />
+      <Route path="/rrb/little-richard-connection" component={RRBLittleRichardConnection} />
+      <Route path="/rrb/family-achievements" component={RRBFamilyAchievements} />
+      <Route path="/rrb/grandma-helen" component={RRBGrandmaHelen} />
+      <Route path="/rrb/verified-sources" component={RRBVerifiedSources} />
       
       {/* RRB Legacy Restored Pages */}
       <Route path="/rrb/radio-station" component={RRBRadioStation} />
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
       <Route path="/rrb/hybridcast" component={RRBComingSoon} />
       <Route path="/rrb/audiobooks" component={RRBComingSoon} />
-      <Route path="/rrb/proof-vault" component={RRBComingSoon} />
-      <Route path="/rrb/obituary" component={RRBComingSoon} />
-      <Route path="/rrb/books-and-miracles" component={RRBComingSoon} />
-      <Route path="/rrb/systematic-omission" component={RRBComingSoon} />
-      <Route path="/rrb/candy-through-the-years" component={RRBComingSoon} />
-      <Route path="/rrb/family-tree" component={RRBComingSoon} />
-      <Route path="/rrb/testimonials-and-stories" component={RRBComingSoon} />
-      <Route path="/rrb/producer-mentor" component={RRBComingSoon} />
-      <Route path="/rrb/medical-journey" component={RRBComingSoon} />
+      <Route path="/rrb/proof-vault" component={RRBProofVault} />
+      <Route path="/rrb/obituary" component={RRBObituary} />
+      <Route path="/rrb/books-and-miracles" component={RRBBooksAndMiracles} />
+      <Route path="/rrb/systematic-omission" component={RRBSystematicOmission} />
+      <Route path="/rrb/candy-through-the-years" component={RRBCandyThroughTheYears} />
+      <Route path="/rrb/family-tree" component={RRBFamilyTree} />
+      <Route path="/rrb/testimonials-and-stories" component={RRBTestimonialsAndStories} />
+      <Route path="/rrb/producer-mentor" component={RRBProducerMentor} />
+      <Route path="/rrb/medical-journey" component={RRBMedicalJourney} />
       
       {/* RRB Legacy Continued Pages */}
       <Route path="/rrb/canryn-production" component={RRBSweetMiraclesCompanyPage} />

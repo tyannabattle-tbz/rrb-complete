@@ -1412,3 +1412,21 @@
 ## v7.9 Final Production Release
 - [x] Rename one radio station to "C.J. Battle" (was Canryn Production Radio)
 - [x] Final production checkpoint (99 tests passing, all features complete)
+
+## v8.0 Build Out All Coming Soon Pages
+- [x] Build Grandma Helen page
+- [x] Build Proof Vault page
+- [x] Build Systematic Omission page
+- [x] Build Family Tree page
+- [x] Build Candy Through the Years page
+- [x] Build Obituary page
+- [x] Build Little Richard Connection page
+- [x] Build Verified Sources page
+- [x] Build Books & Miracles page
+- [x] Build Testimonials & Stories page
+- [x] Build Producer & Mentor page
+- [x] Build Medical Journey page
+- [x] Build Family Achievements page
+- [x] Connect all 13 new pages to routes in App.tsx (replacing ComingSoon)
+- [x] Fix missing Link import in ProofVault.tsx
+- [x] Verify all pages render correctly in browser
