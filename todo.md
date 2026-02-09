@@ -1333,3 +1333,13 @@
   - [x] Service worker no longer caches index.html or intercepts /api/ routes
   - [x] Old caches aggressively purged on activate
 - [ ] User needs to disconnect/reconnect custom domain OR purge CDN cache
+
+## SEO Fixes for Homepage (/) (COMPLETED)
+- [x] Add meta keywords tag to index.html (13 keywords covering all platforms)
+- [x] Add H1 heading — static in index.html + dynamic in Home.tsx for both crawlers and users
+- [x] Add H2 heading — static in index.html + dynamic in Home.tsx
+- [x] Adjust page title to 48 characters: "QUMUS — Canryn Production Orchestration Platform"
+- [x] Add meta description (190 chars) covering all platform features
+- [x] Fix Broadcast icon crash in rrb/Home.tsx (replaced with Signal)
+- [x] Static SEO fallback content in index.html for non-JS crawlers
+- [x] Keyword-rich paragraph in index.html root div for content crawlers
