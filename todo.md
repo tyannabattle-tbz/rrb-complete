@@ -1383,3 +1383,8 @@
 - [x] JSON-LD structured data (Organization + MusicGroup + WebApplication schema)
 - [x] Create complete project ZIP archive (6.6MB, 1150 files)
 - [x] Create reusable skill from project workflow (rrb-qumus-platform-builder)
+
+## v7.5 Follow-ups
+- [x] Generate branded favicon for RRB/QUMUS platform (R with radio waves, amber/navy)
+- [x] Add Seabrun Candy Hunter sample tracks to radio station (10 tracks in stream library)
+- [x] Remind user to publish to production
