@@ -115,6 +115,26 @@ import DroneVideoCapture from '@/components/DroneVideoCapture';
 import MapArsenal from '@/components/MapArsenal';
 import { Toaster } from 'sonner';
 
+// ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
+import RRBHome from '@/pages/rrb/Home';
+import RRBRadioStation from '@/pages/rrb/RadioStation';
+import RRBPodcasts from '@/pages/rrb/Podcasts';
+import RRBTheMusic from '@/pages/rrb/TheMusic';
+import RRBTheLegacyPage from '@/pages/rrb/TheLegacyPage';
+import RRBSweetMiraclesCompanyPage from '@/pages/rrb/SweetMiraclesCompanyPage';
+import RRBBroadcastControlPanel from '@/pages/rrb/BroadcastControlPanel';
+import RRBEcosystemDashboard from '@/pages/rrb/EcosystemDashboard';
+import RRBEntertainmentMonitoringDashboard from '@/pages/rrb/EntertainmentMonitoringDashboard';
+import RRBQumusMonitoringDashboard from '@/pages/rrb/QumusMonitoringDashboard';
+import RRBQumusHumanReviewDashboard from '@/pages/rrb/QumusHumanReviewDashboard';
+import RRBQumusAdminDashboard from '@/pages/rrb/QumusAdminDashboard';
+import RRBQumusPolicyAnalyticsDashboard from '@/pages/rrb/QumusPolicyAnalyticsDashboard';
+import RRBQumusBroadcastAdminDashboard from '@/pages/rrb/QumusBroadcastAdminDashboard';
+import RRBContact from '@/pages/rrb/Contact';
+import RRBComingSoon from '@/pages/rrb/ComingSoon';
+import RRBNavigation from '@/components/rrb/Navigation';
+import { LegalFooter as RRBLegalFooter } from '@/components/rrb/LegalFooter';
+
 // Version: 6.0.0 - Fixed mobile layout: header/content/nav flex structure
 function Router() {
   return (
@@ -219,6 +239,73 @@ function Router() {
       <Route path="/drone-video" component={DroneVideoCapture} />
       <Route path="/map-arsenal" component={MapArsenal} />
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
+
+      {/* ===== RRB (Rockin Rockin Boogie) Routes ===== */}
+      <Route path="/rrb" component={RRBHome} />
+      <Route path="/rrb/contact" component={RRBContact} />
+      
+      {/* RRB QUMUS Autonomous Orchestration */}
+      <Route path="/rrb/qumus/monitoring" component={RRBQumusMonitoringDashboard} />
+      <Route path="/rrb/qumus/human-review" component={RRBQumusHumanReviewDashboard} />
+      <Route path="/rrb/qumus/admin" component={RRBQumusAdminDashboard} />
+      <Route path="/rrb/qumus/analytics" component={RRBQumusPolicyAnalyticsDashboard} />
+      
+      {/* RRB QUMUS Broadcast Orchestration */}
+      <Route path="/rrb/broadcast/admin" component={RRBQumusBroadcastAdminDashboard} />
+      <Route path="/rrb/broadcast/control" component={RRBBroadcastControlPanel} />
+      
+      {/* RRB Entertainment Platform */}
+      <Route path="/rrb/entertainment/dashboard" component={RRBEntertainmentMonitoringDashboard} />
+      
+      {/* RRB Unified Ecosystem Dashboard */}
+      <Route path="/rrb/ecosystem/dashboard" component={RRBEcosystemDashboard} />
+      
+      {/* RRB Legacy Foundation Pages */}
+      <Route path="/rrb/the-legacy" component={RRBTheLegacyPage} />
+      <Route path="/rrb/the-music" component={RRBTheMusic} />
+      <Route path="/rrb/little-richard-connection" component={RRBComingSoon} />
+      <Route path="/rrb/family-achievements" component={RRBComingSoon} />
+      <Route path="/rrb/grandma-helen" component={RRBComingSoon} />
+      <Route path="/rrb/verified-sources" component={RRBComingSoon} />
+      
+      {/* RRB Legacy Restored Pages */}
+      <Route path="/rrb/radio-station" component={RRBRadioStation} />
+      <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
+      <Route path="/rrb/hybridcast" component={RRBComingSoon} />
+      <Route path="/rrb/audiobooks" component={RRBComingSoon} />
+      <Route path="/rrb/proof-vault" component={RRBComingSoon} />
+      <Route path="/rrb/obituary" component={RRBComingSoon} />
+      <Route path="/rrb/books-and-miracles" component={RRBComingSoon} />
+      <Route path="/rrb/systematic-omission" component={RRBComingSoon} />
+      <Route path="/rrb/candy-through-the-years" component={RRBComingSoon} />
+      <Route path="/rrb/family-tree" component={RRBComingSoon} />
+      <Route path="/rrb/testimonials-and-stories" component={RRBComingSoon} />
+      <Route path="/rrb/producer-mentor" component={RRBComingSoon} />
+      <Route path="/rrb/medical-journey" component={RRBComingSoon} />
+      
+      {/* RRB Legacy Continued Pages */}
+      <Route path="/rrb/canryn-production" component={RRBSweetMiraclesCompanyPage} />
+      <Route path="/rrb/divisions" component={RRBComingSoon} />
+      <Route path="/rrb/business-partnerships" component={RRBComingSoon} />
+      <Route path="/rrb/employee-directory" component={RRBComingSoon} />
+      <Route path="/rrb/contact-directory" component={RRBComingSoon} />
+      <Route path="/rrb/merchandise-shop" component={RRBComingSoon} />
+      <Route path="/rrb/sponsorships" component={RRBComingSoon} />
+      <Route path="/rrb/affiliate-program" component={RRBComingSoon} />
+      <Route path="/rrb/video-testimonials" component={RRBComingSoon} />
+      <Route path="/rrb/news" component={RRBComingSoon} />
+      
+      {/* RRB Additional Pages */}
+      <Route path="/rrb/healing-music-frequencies" component={RRBComingSoon} />
+      <Route path="/rrb/frequency-guides" component={RRBComingSoon} />
+      <Route path="/rrb/meditation-guides" component={RRBComingSoon} />
+      <Route path="/rrb/custom-meditation-builder" component={RRBComingSoon} />
+      <Route path="/rrb/concerts-tours-performances" component={RRBComingSoon} />
+      <Route path="/rrb/tour-schedule" component={RRBComingSoon} />
+      <Route path="/rrb/setlist-archive" component={RRBComingSoon} />
+      <Route path="/rrb/media-hub" component={RRBComingSoon} />
+      <Route path="/rrb/faq" component={RRBComingSoon} />
+
       <Route component={NotFound} />
     </Switch>
     </>

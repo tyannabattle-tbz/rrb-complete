@@ -56,6 +56,15 @@ import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
 
+// RRB (Rockin Rockin Boogie) integrated routers
+import { stripePaymentsRouter as rrbStripePaymentsRouter } from "./routers/rrb/stripePayments";
+import { emergencyBroadcastRouter as rrbEmergencyBroadcastRouter } from "./routers/rrb/emergencyBroadcast";
+import { qumusOrchestrationRouter as rrbQumusOrchestrationRouter } from "./routers/rrb/qumusOrchestration";
+import { qumusCompleteRouter as rrbQumusCompleteRouter } from "./routers/rrb/qumusComplete";
+import { broadcastRouter as rrbBroadcastRouter } from "./routers/rrb/broadcast";
+import { entertainmentRouter as rrbEntertainmentRouter } from "./routers/rrb/entertainment";
+import { adminDashboardRouter as rrbEcosystemRouter } from "./ecosystem/admin-dashboard";
+
 export const appRouter = router({
   // System router
   system: systemRouter,
@@ -170,6 +179,28 @@ export const appRouter = router({
 
   // Qumus Autonomous Finalization
   qumusFinalization: qumusAutonomousFinalizationRouter,
+
+  // ===== RRB (Rockin Rockin Boogie) Integrated Routers =====
+  // RRB Stripe Payments (donations, subscriptions)
+  rrbPayments: rrbStripePaymentsRouter,
+
+  // RRB Emergency Broadcast (crisis communication)
+  rrbEmergency: rrbEmergencyBroadcastRouter,
+
+  // RRB QUMUS Orchestration (autonomous decision-making)
+  rrbQumusOrchestration: rrbQumusOrchestrationRouter,
+
+  // RRB QUMUS Complete (8 policies, human review)
+  rrbQumusComplete: rrbQumusCompleteRouter,
+
+  // RRB Broadcast (scheduling, streaming, content generation)
+  rrbBroadcast: rrbBroadcastRouter,
+
+  // RRB Entertainment (media studio, audio streaming, recommendations)
+  rrbEntertainment: rrbEntertainmentRouter,
+
+  // RRB Unified Ecosystem Admin Dashboard
+  rrbEcosystem: rrbEcosystemRouter,
 
   // Agent Session Management
   agent: router({

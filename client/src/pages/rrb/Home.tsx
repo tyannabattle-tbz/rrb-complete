@@ -1,0 +1,390 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { Link } from 'wouter';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Radio, Podcast, Music, Zap, Heart, Signal, Sparkles, Users, BookOpen, Brain, Building2, Headphones } from 'lucide-react';
+import RotatingVinylRecord from "@/components/rrb/RotatingVinylRecord";
+
+// Platform showcase items
+const PLATFORMS = [
+  {
+    id: 'radio',
+    title: 'Radio Station',
+    description: '24/7 streaming radio with live DJ control and listener engagement',
+    icon: Radio,
+    href: '/radio-station',
+    color: 'from-blue-500/20 to-blue-600/20',
+    badge: '🎙️ LIVE'
+  },
+  {
+    id: 'podcast',
+    title: 'Podcast Network',
+    description: 'Multi-channel podcast platform with episodes, transcripts, and community',
+    icon: Podcast,
+    href: '/podcast-and-video',
+    color: 'from-purple-500/20 to-purple-600/20',
+    badge: '🎧 STREAMING'
+  },
+  {
+    id: 'studio',
+    title: 'Media Studio',
+    description: 'Professional audio/video production tools and content creation suite',
+    icon: Music,
+    href: '/entertainment/dashboard',
+    color: 'from-pink-500/20 to-pink-600/20',
+    badge: '🎬 STUDIO'
+  },
+  {
+    id: 'meditation',
+    title: 'Meditation & Healing',
+    description: 'Guided meditations with healing frequencies and wellness content',
+    icon: Sparkles,
+    href: '/healing-music-frequencies',
+    color: 'from-green-500/20 to-green-600/20',
+    badge: '✨ WELLNESS'
+  },
+  {
+    id: 'solbones',
+    title: 'Solbones Music',
+    description: 'Exclusive music collection and audio archive from the legacy',
+    icon: Headphones,
+    href: '/the-music',
+    color: 'from-orange-500/20 to-orange-600/20',
+    badge: '🎵 MUSIC'
+  },
+  {
+    id: 'legacy',
+    title: 'The Legacy',
+    description: 'Complete biography, timeline, and historical documentation',
+    icon: BookOpen,
+    href: '/the-legacy',
+    color: 'from-amber-500/20 to-amber-600/20',
+    badge: '📖 HISTORY'
+  },
+  {
+    id: 'proof',
+    title: 'Proof Vault',
+    description: 'Verified documentation, evidence, and archival records',
+    icon: Zap,
+    href: '/proof-vault',
+    color: 'from-red-500/20 to-red-600/20',
+    badge: '✓ VERIFIED'
+  },
+  {
+    id: 'grandma',
+    title: 'Grandma Helen',
+    description: 'Family history and genealogical records',
+    icon: Users,
+    href: '/grandma-helen',
+    color: 'from-rose-500/20 to-rose-600/20',
+    badge: '👵 FAMILY'
+  },
+  {
+    id: 'hybridcast',
+    title: 'HybridCast',
+    description: 'Emergency broadcast system with offline mesh networking',
+    icon: Broadcast,
+    href: '/hybridcast',
+    color: 'from-cyan-500/20 to-cyan-600/20',
+    badge: '📡 BROADCAST'
+  },
+  {
+    id: 'qumus',
+    title: 'QUMUS Brain',
+    description: 'Autonomous orchestration engine controlling all platforms',
+    icon: Brain,
+    href: '/qumus/admin',
+    color: 'from-indigo-500/20 to-indigo-600/20',
+    badge: '🤖 AI'
+  },
+  {
+    id: 'sweet-miracles',
+    title: 'Sweet Miracles',
+    description: 'Community support, grants, and social impact initiatives',
+    icon: Heart,
+    href: '/canryn-production',
+    color: 'from-fuchsia-500/20 to-fuchsia-600/20',
+    badge: '💝 COMMUNITY'
+  },
+  {
+    id: 'ecosystem',
+    title: 'Unified Dashboard',
+    description: 'Central control center for all ecosystem services and monitoring',
+    icon: Zap,
+    href: '/ecosystem/dashboard',
+    color: 'from-violet-500/20 to-violet-600/20',
+    badge: '⚙️ CONTROL'
+  },
+];
+
+export default function Home() {
+  const { user, loading, error, isAuthenticated, logout } = useAuth();
+  const [selectedPlatform, setSelectedPlatform] = useState(0);
+
+  return (
+    <>
+      <main className="min-h-screen">
+        {/* Disclaimer */}
+        <section className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800">
+          <div className="container py-4 px-4">
+            <div className="flex gap-3 items-start">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <p className="font-bold text-yellow-900 dark:text-yellow-100">
+                  This is an archival documentation site
+                </p>
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  All content is for historical preservation and educational purposes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Hero Section */}
+        <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary/20 to-background">
+          <div className="absolute inset-0 opacity-10">
+            <RotatingVinylRecord />
+          </div>
+          
+          <div className="relative container flex flex-col items-center justify-center text-center gap-6 py-20">
+            <h1 className="text-5xl md:text-7xl font-bold text-foreground drop-shadow-lg">
+              Rockin' Rockin' Boogie
+            </h1>
+            <p className="text-lg md:text-xl text-foreground/80 drop-shadow-md">
+              <span className="font-semibold">Seabrun Candy Hunter</span>
+            </p>
+            <p className="text-xl md:text-2xl text-foreground/90 drop-shadow-md max-w-2xl">
+              A legacy restored — unified ecosystem of platforms, services, and autonomous intelligence
+            </p>
+            <div className="flex gap-4 flex-wrap justify-center">
+              <Link href="/proof-vault">
+                <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                  Explore the Proof Vault
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/ecosystem/dashboard">
+                <Button size="lg" variant="outline">
+                  View Ecosystem Dashboard
+                  <Zap className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Mission Section */}
+        <section className="py-16 md:py-24 bg-card">
+          <div className="container max-w-3xl">
+            <div className="mb-8 pb-8 border-b border-border">
+              <h3 className="text-2xl font-bold text-accent mb-2">The Artist</h3>
+              <p className="text-lg text-foreground/70">
+                <strong>Seabrun Candy Hunter</strong> — Songwriter, vocalist, lyricist, and creative visionary who shaped the sound of an era and built a lasting musical legacy.
+              </p>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
+              Our Mission
+            </h2>
+            <p className="text-lg text-foreground/80 leading-relaxed mb-8">
+              RockinRockinBoogie.com is a unified ecosystem designed to preserve, document, and protect a 1970s-era musical legacy through verified credits, touring records, testimony, and archival proof — all organized in one intelligent, autonomous platform.
+            </p>
+            <p className="text-lg text-foreground/80 leading-relaxed mb-8">
+              Every claim, credit, and historical point is supported by public records, archival documents, witness testimony, or licensing evidence. This is not speculation—this is documentation.
+            </p>
+            <p className="text-lg text-foreground/80 leading-relaxed">
+              Powered by QUMUS autonomous orchestration, this ecosystem provides 90% autonomous decision-making with 10% human oversight, ensuring continuous operation and community access to essential tools and media.
+            </p>
+          </div>
+        </section>
+
+        {/* Unified Ecosystem Showcase */}
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+                Unified Ecosystem
+              </h2>
+              <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+                12 integrated platforms working together through autonomous orchestration
+              </p>
+            </div>
+
+            {/* Platform Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {PLATFORMS.map((platform, idx) => {
+                const Icon = platform.icon;
+                return (
+                  <Link key={platform.id} href={platform.href}>
+                    <div className={`p-6 rounded-lg border border-border hover:border-accent transition cursor-pointer group bg-gradient-to-br ${platform.color}`}>
+                      <div className="flex items-start justify-between mb-4">
+                        <Icon className="w-8 h-8 text-accent group-hover:scale-110 transition" />
+                        <span className="text-xs font-bold px-2 py-1 rounded bg-accent/20 text-accent">
+                          {platform.badge}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-accent transition">
+                        {platform.title}
+                      </h3>
+                      <p className="text-sm text-foreground/70 mb-4">
+                        {platform.description}
+                      </p>
+                      <div className="flex items-center text-accent font-semibold text-sm">
+                        Access <ArrowRight className="ml-2 w-4 h-4" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Ecosystem Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-card p-8 rounded-lg border border-border">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-accent">12</p>
+                <p className="text-sm text-foreground/60 mt-2">Integrated Platforms</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-accent">90%</p>
+                <p className="text-sm text-foreground/60 mt-2">Autonomous Control</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-accent">24/7</p>
+                <p className="text-sm text-foreground/60 mt-2">Live Broadcasting</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-accent">∞</p>
+                <p className="text-sm text-foreground/60 mt-2">Community Access</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Platform Categories */}
+        <section className="py-16 md:py-24 bg-card">
+          <div className="container">
+            <h2 className="text-4xl md:text-5xl font-bold mb-12 text-foreground text-center">
+              Platform Categories
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Legacy Restored */}
+              <div className="p-8 rounded-lg border border-border bg-gradient-to-br from-blue-500/10 to-blue-600/10">
+                <h3 className="text-2xl font-bold mb-4 text-foreground">📖 Legacy Restored</h3>
+                <p className="text-foreground/70 mb-6">
+                  Historical content and archival materials documenting the original legacy
+                </p>
+                <ul className="space-y-2 text-sm text-foreground/70">
+                  <li>✓ The Legacy (Biography & Timeline)</li>
+                  <li>✓ The Music (Recordings & Credits)</li>
+                  <li>✓ Proof Vault (Verified Evidence)</li>
+                  <li>✓ Grandma Helen (Family History)</li>
+                  <li>✓ Solbones Music Archive</li>
+                </ul>
+              </div>
+
+              {/* Live Services */}
+              <div className="p-8 rounded-lg border border-border bg-gradient-to-br from-purple-500/10 to-purple-600/10">
+                <h3 className="text-2xl font-bold mb-4 text-foreground">🎙️ Live Services</h3>
+                <p className="text-foreground/70 mb-6">
+                  Real-time broadcasting and streaming platforms
+                </p>
+                <ul className="space-y-2 text-sm text-foreground/70">
+                  <li>✓ Radio Station (24/7 Streaming)</li>
+                  <li>✓ Podcast Network (Multi-channel)</li>
+                  <li>✓ Media Studio (Production Suite)</li>
+                  <li>✓ HybridCast (Emergency Broadcast)</li>
+                  <li>✓ Meditation & Healing</li>
+                </ul>
+              </div>
+
+              {/* Autonomous Control */}
+              <div className="p-8 rounded-lg border border-border bg-gradient-to-br from-indigo-500/10 to-indigo-600/10">
+                <h3 className="text-2xl font-bold mb-4 text-foreground">🤖 Autonomous Control</h3>
+                <p className="text-foreground/70 mb-6">
+                  Intelligent orchestration and community support systems
+                </p>
+                <ul className="space-y-2 text-sm text-foreground/70">
+                  <li>✓ QUMUS Brain (AI Orchestration)</li>
+                  <li>✓ Unified Dashboard (Central Control)</li>
+                  <li>✓ Sweet Miracles (Community Support)</li>
+                  <li>✓ Autonomous Decision Making</li>
+                  <li>✓ Human Review & Oversight</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Content */}
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container">
+            <h2 className="text-4xl md:text-5xl font-bold mb-12 text-foreground text-center">
+              Featured Content
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Listen to the Music */}
+              <Link href="/the-music">
+                <div className="p-8 rounded-lg border border-border hover:border-accent transition cursor-pointer group bg-gradient-to-br from-orange-500/10 to-orange-600/10">
+                  <div className="text-4xl mb-4">🎵</div>
+                  <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition">
+                    Listen to the Music
+                  </h3>
+                  <p className="text-foreground/70 mb-4">
+                    Explore the complete discography, recordings, and musical legacy with verified credits and production details.
+                  </p>
+                  <div className="flex items-center text-accent font-semibold">
+                    Explore Music <ArrowRight className="ml-2 w-4 h-4" />
+                  </div>
+                </div>
+              </Link>
+
+              {/* Explore the Proof Vault */}
+              <Link href="/proof-vault">
+                <div className="p-8 rounded-lg border border-border hover:border-accent transition cursor-pointer group bg-gradient-to-br from-red-500/10 to-red-600/10">
+                  <div className="text-4xl mb-4">✓</div>
+                  <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition">
+                    Explore the Proof Vault
+                  </h3>
+                  <p className="text-foreground/70 mb-4">
+                    Dive into our comprehensive archive of verified documentation, organized by category. Every claim is backed by evidence.
+                  </p>
+                  <div className="flex items-center text-accent font-semibold">
+                    Enter Vault <ArrowRight className="ml-2 w-4 h-4" />
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Call to Action */}
+        <section className="py-16 md:py-24 bg-primary text-primary-foreground">
+          <div className="container text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Explore the Complete Ecosystem
+            </h2>
+            <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
+              Navigate through 12 integrated platforms powered by autonomous QUMUS orchestration. Everything from archival documentation to live broadcasting, all working together seamlessly.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/ecosystem/dashboard">
+                <Button size="lg" variant="secondary">
+                  View Dashboard
+                  <Zap className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/proof-vault">
+                <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                  Proof Vault
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+}

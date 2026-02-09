@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, foreignKey, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, foreignKey, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index, boolean } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const activityLogs = mysqlTable("activity_logs", {
@@ -1430,4 +1430,448 @@ export const agentConnections = mysqlTable("agent_connections", {
 	encryptionEnabled: int().default(1),
 	lastCommunication: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+// ===== RRB (Rockin Rockin Boogie) Tables =====
+export const broadcastSchedules = mysqlTable('broadcast_schedules', {
+  id: int('id').autoincrement().primaryKey(),
+  broadcastId: varchar('broadcast_id', { length: 255 }).notNull().unique(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  scheduledStartTime: timestamp('scheduled_start_time').notNull(),
+  scheduledEndTime: timestamp('scheduled_end_time').notNull(),
+  actualStartTime: timestamp('actual_start_time'),
+  actualEndTime: timestamp('actual_end_time'),
+  status: mysqlEnum('status', ['scheduled', 'live', 'completed', 'cancelled', 'paused']).default('scheduled').notNull(),
+  broadcastType: mysqlEnum('broadcast_type', ['live', 'prerecorded', 'streaming', 'podcast', 'radio', 'video']).notNull(),
+  channels: json('channels').notNull(), // ['youtube', 'twitch', 'facebook', 'instagram', 'website']
+  createdBy: int('created_by').references(() => users.id, { onDelete: 'set null' }),
+  autonomousScheduling: boolean('autonomous_scheduling').default(true).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const musicTracks = mysqlTable('music_tracks', {
+  id: int('id').autoincrement().primaryKey(),
+  trackId: varchar('track_id', { length: 255 }).notNull().unique(),
+  title: varchar('title', { length: 255 }).notNull(),
+  artist: varchar('artist', { length: 255 }).notNull(),
+  album: varchar('album', { length: 255 }),
+  duration: int('duration').notNull(), // seconds
+  genre: varchar('genre', { length: 100 }),
+  releaseDate: date('release_date'),
+  fileUrl: varchar('file_url', { length: 500 }).notNull(),
+  coverArtUrl: varchar('cover_art_url', { length: 500 }),
+  isrc: varchar('isrc', { length: 50 }), // International Standard Recording Code
+  rights: varchar('rights', { length: 255 }), // Rights holder info
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const musicPlaylists = mysqlTable('music_playlists', {
+  id: int('id').autoincrement().primaryKey(),
+  playlistId: varchar('playlist_id', { length: 255 }).notNull().unique(),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  createdBy: int('created_by').references(() => users.id, { onDelete: 'set null' }),
+  isPublic: boolean('is_public').default(false).notNull(),
+  trackCount: int('track_count').default(0).notNull(),
+  totalDuration: int('total_duration').default(0).notNull(), // seconds
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const playlistTracks = mysqlTable("playlist_tracks", {
+  id: int("id").autoincrement().primaryKey(),
+  playlistId: int("playlist_id").notNull().references(() => playlists.id, { onDelete: "cascade" }),
+  trackId: int("track_id").notNull(),
+  position: int("position").default(0).notNull(),
+  addedAt: timestamp("added_at").defaultNow().notNull(),
+});
+
+export const commercialBreaks = mysqlTable('commercial_breaks', {
+  id: int('id').autoincrement().primaryKey(),
+  breakId: varchar('break_id', { length: 255 }).notNull().unique(),
+  broadcastId: varchar('broadcast_id', { length: 255 }).notNull(),
+  scheduledTime: timestamp('scheduled_time').notNull(),
+  duration: int('duration').notNull(), // seconds
+  commercialCount: int('commercial_count').default(0).notNull(),
+  totalValue: decimal('total_value', { precision: 10, scale: 2 }).default('0').notNull(),
+  status: mysqlEnum('status', ['scheduled', 'running', 'completed', 'skipped']).default('scheduled').notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const commercials = mysqlTable('commercials', {
+  id: int('id').autoincrement().primaryKey(),
+  commercialId: varchar('commercial_id', { length: 255 }).notNull().unique(),
+  advertiser: varchar('advertiser', { length: 255 }).notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  duration: int('duration').notNull(), // seconds
+  videoUrl: varchar('video_url', { length: 500 }).notNull(),
+  thumbnailUrl: varchar('thumbnail_url', { length: 500 }),
+  rate: decimal('rate', { precision: 10, scale: 2 }).notNull(), // Cost per broadcast
+  category: varchar('category', { length: 100 }),
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const broadcastAuditLog = mysqlTable('broadcast_audit_log', {
+  id: int('id').autoincrement().primaryKey(),
+  auditId: varchar('audit_id', { length: 255 }).notNull().unique(),
+  broadcastId: varchar('broadcast_id', { length: 255 }).notNull(),
+  action: varchar('action', { length: 100 }).notNull(), // 'started', 'paused', 'resumed', 'ended', 'commercial_inserted', 'content_changed'
+  performedBy: int('performed_by').references(() => users.id, { onDelete: 'set null' }),
+  details: json('details'), // Additional context
+  complianceStatus: mysqlEnum('compliance_status', ['compliant', 'warning', 'violation']).default('compliant').notNull(),
+  complianceNotes: text('compliance_notes'),
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+});
+
+export const streamingStatus = mysqlTable('streaming_status', {
+  id: int('id').autoincrement().primaryKey(),
+  broadcastId: varchar('broadcast_id', { length: 255 }).notNull(),
+  platform: mysqlEnum('platform', ['youtube', 'twitch', 'facebook', 'instagram', 'website', 'radio', 'podcast']).notNull(),
+  status: mysqlEnum('status', ['offline', 'live', 'error', 'paused']).default('offline').notNull(),
+  streamUrl: varchar('stream_url', { length: 500 }),
+  bitrate: int('bitrate'), // kbps
+  resolution: varchar('resolution', { length: 50 }), // 1080p, 720p, etc.
+  frameRate: int('frame_rate'), // fps
+  latency: int('latency'), // milliseconds
+  errorMessage: text('error_message'),
+  lastUpdated: timestamp('last_updated').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
+export const viewerMetrics = mysqlTable('viewer_metrics', {
+  id: int('id').autoincrement().primaryKey(),
+  broadcastId: varchar('broadcast_id', { length: 255 }).notNull(),
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+  viewerCount: int('viewer_count').default(0).notNull(),
+  peakViewers: int('peak_viewers').default(0).notNull(),
+  averageViewDuration: int('average_view_duration').default(0).notNull(), // seconds
+  engagementRate: decimal('engagement_rate', { precision: 5, scale: 2 }).default('0').notNull(), // 0-100%
+  likeCount: int('like_count').default(0).notNull(),
+  commentCount: int('comment_count').default(0).notNull(),
+  shareCount: int('share_count').default(0).notNull(),
+  bounceRate: decimal('bounce_rate', { precision: 5, scale: 2 }).default('0').notNull(), // 0-100%
+  geolocation: json('geolocation'), // {country, region, city, coordinates}
+  deviceTypes: json('device_types'), // {mobile, desktop, tablet, tv}
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
+export const generatedContent = mysqlTable('generated_content', {
+  id: int('id').autoincrement().primaryKey(),
+  contentId: varchar('content_id', { length: 255 }).notNull().unique(),
+  broadcastId: varchar('broadcast_id', { length: 255 }).notNull(),
+  contentType: mysqlEnum('content_type', ['script', 'description', 'thumbnail', 'title', 'hashtags', 'summary']).notNull(),
+  generatedBy: varchar('generated_by', { length: 100 }).notNull(), // 'gpt-4', 'claude', 'llama', etc.
+  prompt: text('prompt').notNull(),
+  content: text('content').notNull(),
+  confidence: decimal('confidence', { precision: 5, scale: 2 }).notNull(), // 0-100
+  approved: boolean('approved').default(false).notNull(),
+  approvedBy: int('approved_by').references(() => users.id, { onDelete: 'set null' }),
+  approvedAt: timestamp('approved_at'),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
+export const broadcastChatCommands = mysqlTable('broadcast_chat_commands', {
+  id: int('id').autoincrement().primaryKey(),
+  commandId: varchar('command_id', { length: 255 }).notNull().unique(),
+  userId: int('user_id').references(() => users.id, { onDelete: 'set null' }),
+  broadcastId: varchar('broadcast_id', { length: 255 }).notNull(),
+  command: text('command').notNull(), // Natural language command
+  commandType: varchar('command_type', { length: 100 }).notNull(), // 'schedule', 'play', 'pause', 'skip', 'insert_commercial'
+  parameters: json('parameters'), // Parsed command parameters
+  executedBy: varchar('executed_by', { length: 100 }).notNull(), // 'ai_assistant', 'human_operator'
+  status: mysqlEnum('status', ['pending', 'executing', 'completed', 'failed']).default('pending').notNull(),
+  result: json('result'), // Command execution result
+  errorMessage: text('error_message'),
+  executionTime: int('execution_time'), // milliseconds
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  completedAt: timestamp('completed_at'),
+});
+
+export const aiRecommendations = mysqlTable('ai_recommendations', {
+  id: int('id').autoincrement().primaryKey(),
+  recommendationId: varchar('recommendation_id', { length: 255 }).notNull().unique(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  contentId: varchar('content_id', { length: 255 }).notNull(),
+  contentType: varchar('content_type', { length: 100 }).notNull(),
+  recommendationType: mysqlEnum('recommendation_type', ['personalized', 'trending', 'similar', 'new_release', 'based_on_history']).notNull(),
+  relevanceScore: decimal('relevance_score', { precision: 5, scale: 2 }).notNull(), // 0-100
+  confidenceScore: decimal('confidence_score', { precision: 5, scale: 2 }).notNull(), // 0-100
+  reason: text('reason'), // Why this was recommended
+  clicked: boolean('clicked').default(false).notNull(),
+  engaged: boolean('engaged').default(false).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
+export const audioPlaybackHistory = mysqlTable('audio_playback_history', {
+  id: int('id').autoincrement().primaryKey(),
+  historyId: varchar('history_id', { length: 255 }).notNull().unique(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  contentId: varchar('content_id', { length: 255 }).notNull().references(() => audioContent.contentId),
+  playCount: int('play_count').default(1).notNull(),
+  totalListeningTime: int('total_listening_time').default(0).notNull(), // in seconds
+  lastPlayedAt: timestamp('last_played_at'),
+  isFavorited: boolean('is_favorited').default(false).notNull(),
+  rating: decimal('rating', { precision: 3, scale: 2 }),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const audioContent = mysqlTable('audio_content', {
+  id: int('id').autoincrement().primaryKey(),
+  contentId: varchar('content_id', { length: 255 }).notNull().unique(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  contentType: mysqlEnum('content_type', ['meditation', 'podcast', 'radio', 'music', 'audiobook', 'other']).notNull(),
+  category: varchar('category', { length: 100 }),
+  duration: int('duration').notNull(), // in seconds
+  audioUrl: varchar('audio_url', { length: 512 }).notNull(),
+  coverArtUrl: varchar('cover_art_url', { length: 512 }),
+  artist: varchar('artist', { length: 255 }),
+  album: varchar('album', { length: 255 }),
+  plays: int('plays').default(0).notNull(),
+  favorites: int('favorites').default(0).notNull(),
+  rating: decimal('rating', { precision: 3, scale: 2 }).default(0),
+  isPublished: boolean('is_published').default(true).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const entertainmentUserPreferences = mysqlTable('entertainment_user_preferences', {
+  id: int('id').autoincrement().primaryKey(),
+  preferencesId: varchar('preferences_id', { length: 255 }).notNull().unique(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  preferredContentTypes: json('preferred_content_types'), // Array of content types
+  preferredGenres: json('preferred_genres'), // Array of genres
+  recommendationFrequency: mysqlEnum('recommendation_frequency', ['daily', 'weekly', 'monthly', 'never']).default('weekly').notNull(),
+  notificationsEnabled: boolean('notifications_enabled').default(true).notNull(),
+  autoPlayEnabled: boolean('auto_play_enabled').default(true).notNull(),
+  qualityPreference: mysqlEnum('quality_preference', ['low', 'medium', 'high', 'auto']).default('auto').notNull(),
+  languagePreference: varchar('language_preference', { length: 10 }).default('en').notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const entertainmentPlaylists = mysqlTable('entertainment_playlists', {
+  id: int('id').autoincrement().primaryKey(),
+  playlistId: varchar('playlist_id', { length: 255 }).notNull().unique(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  isPublic: boolean('is_public').default(false).notNull(),
+  coverArtUrl: varchar('cover_art_url', { length: 512 }),
+  itemCount: int('item_count').default(0).notNull(),
+  plays: int('plays').default(0).notNull(),
+  followers: int('followers').default(0).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const entertainmentPlaylistItems = mysqlTable('entertainment_playlist_items', {
+  id: int('id').autoincrement().primaryKey(),
+  itemId: varchar('item_id', { length: 255 }).notNull().unique(),
+  playlistId: varchar('playlist_id', { length: 255 }).notNull().references(() => entertainmentPlaylists.playlistId, { onDelete: 'cascade' }),
+  contentId: varchar('content_id', { length: 255 }).notNull(),
+  contentType: varchar('content_type', { length: 100 }).notNull(),
+  position: int('position').notNull(),
+  addedAt: timestamp('added_at').defaultNow().notNull(),
+});
+
+export const mediaProjects = mysqlTable('media_projects', {
+  id: int('id').autoincrement().primaryKey(),
+  projectId: varchar('project_id', { length: 255 }).notNull().unique(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  projectType: mysqlEnum('project_type', ['video', 'podcast', 'live_stream', 'shorts', 'music', 'other']).notNull(),
+  status: mysqlEnum('status', ['draft', 'recording', 'editing', 'published', 'archived']).default('draft').notNull(),
+  duration: int('duration'), // in seconds
+  thumbnailUrl: varchar('thumbnail_url', { length: 512 }),
+  videoUrl: varchar('video_url', { length: 512 }),
+  audioUrl: varchar('audio_url', { length: 512 }),
+  views: int('views').default(0).notNull(),
+  likes: int('likes').default(0).notNull(),
+  shares: int('shares').default(0).notNull(),
+  comments: int('comments').default(0).notNull(),
+  engagementRate: decimal('engagement_rate', { precision: 5, scale: 2 }).default(0),
+  revenue: decimal('revenue', { precision: 10, scale: 2 }).default(0),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  publishedAt: timestamp('published_at'),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const mediaDistribution = mysqlTable('media_distribution', {
+  id: int('id').autoincrement().primaryKey(),
+  distributionId: varchar('distribution_id', { length: 255 }).notNull().unique(),
+  projectId: varchar('project_id', { length: 255 }).notNull().references(() => mediaProjects.projectId),
+  platform: mysqlEnum('platform', ['youtube', 'spotify', 'tiktok', 'instagram', 'facebook', 'twitter', 'linkedin', 'podcast_host', 'direct']).notNull(),
+  platformUrl: varchar('platform_url', { length: 512 }),
+  status: mysqlEnum('status', ['pending', 'published', 'failed', 'scheduled']).default('pending').notNull(),
+  platformViews: int('platform_views').default(0),
+  platformEngagement: int('platform_engagement').default(0),
+  platformRevenue: decimal('platform_revenue', { precision: 10, scale: 2 }).default(0),
+  publishedAt: timestamp('published_at'),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
+export const monetizationEvents = mysqlTable('monetization_events', {
+  id: int('id').autoincrement().primaryKey(),
+  eventId: varchar('event_id', { length: 255 }).notNull().unique(),
+  userId: int('user_id').references(() => users.id, { onDelete: 'set null' }),
+  contentId: varchar('content_id', { length: 255 }),
+  projectId: varchar('project_id', { length: 255 }),
+  eventType: mysqlEnum('event_type', ['ad_impression', 'ad_click', 'subscription', 'donation', 'merchandise', 'sponsorship', 'affiliate']).notNull(),
+  platform: varchar('platform', { length: 100 }),
+  revenue: decimal('revenue', { precision: 10, scale: 2 }).notNull(),
+  currency: varchar('currency', { length: 3 }).default('USD').notNull(),
+  metadata: json('metadata'), // Additional event details
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
+export const entertainmentMetrics = mysqlTable('entertainment_metrics', {
+  id: int('id').autoincrement().primaryKey(),
+  metricsId: varchar('metrics_id', { length: 255 }).notNull().unique(),
+  userId: int('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  period: mysqlEnum('period', ['daily', 'weekly', 'monthly', 'yearly']).notNull(),
+  totalViews: int('total_views').default(0).notNull(),
+  totalEngagement: int('total_engagement').default(0).notNull(),
+  totalRevenue: decimal('total_revenue', { precision: 15, scale: 2 }).default(0).notNull(),
+  averageDuration: decimal('average_duration', { precision: 10, scale: 2 }).default(0).notNull(),
+  growthRate: decimal('growth_rate', { precision: 5, scale: 2 }).default(0).notNull(),
+  activeProjects: int('active_projects').default(0).notNull(),
+  topContent: json('top_content'), // Array of top performing content
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
+export const qumusCorePolicies = mysqlTable('qumus_core_policies', {
+  id: int('id').autoincrement().primaryKey(),
+  policyId: varchar('policy_id', { length: 100 }).notNull().unique(),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  policyType: mysqlEnum('policy_type', [
+    'recommendation_engine',
+    'payment_processing',
+    'content_moderation',
+    'user_registration',
+    'subscription_management',
+    'performance_alert',
+    'analytics_aggregation',
+    'compliance_reporting'
+  ]).notNull(),
+  autonomyLevel: int('autonomy_level').notNull(), // 75-98%
+  confidenceThreshold: int('confidence_threshold').default(80).notNull(), // 0-100
+  enabled: boolean('enabled').default(true).notNull(),
+  priority: int('priority').default(0).notNull(),
+  conditions: json('conditions'), // Policy conditions
+  actions: json('actions'), // Policy actions
+  escalationRules: json('escalation_rules'), // When to escalate
+  metadata: json('metadata'), // Custom config
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const qumusAutonomousActions = mysqlTable('qumus_autonomous_actions', {
+  id: int('id').autoincrement().primaryKey(),
+  decisionId: varchar('decision_id', { length: 255 }).notNull().unique(),
+  policyId: varchar('policy_id', { length: 100 }).notNull(),
+  userId: int('user_id').references(() => users.id, { onDelete: 'set null' }),
+  actionType: varchar('action_type', { length: 100 }).notNull(),
+  input: json('input').notNull(),
+  output: json('output'),
+  confidence: decimal('confidence', { precision: 5, scale: 2 }).notNull(), // 0-100
+  autonomousFlag: boolean('autonomous_flag').default(true).notNull(), // true = autonomous, false = escalated
+  status: mysqlEnum('status', ['pending', 'executing', 'completed', 'failed', 'escalated']).default('pending').notNull(),
+  result: varchar('result', { length: 50 }), // 'success', 'failure', 'escalated'
+  errorMessage: text('error_message'),
+  executionTime: int('execution_time'), // milliseconds
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+  completedAt: timestamp('completed_at'),
+});
+
+export const qumusHumanReview = mysqlTable('qumus_human_review', {
+  id: int('id').autoincrement().primaryKey(),
+  decisionId: varchar('decision_id', { length: 255 }).notNull().unique(),
+  policyId: varchar('policy_id', { length: 100 }).notNull(),
+  userId: int('user_id').references(() => users.id, { onDelete: 'set null' }),
+  escalationReason: varchar('escalation_reason', { length: 255 }).notNull(), // 'low_confidence', 'anomaly', 'sensitive_data', 'high_risk', 'policy_threshold'
+  priority: mysqlEnum('priority', ['low', 'medium', 'high', 'critical']).default('medium').notNull(),
+  input: json('input').notNull(),
+  recommendedAction: json('recommended_action'),
+  confidence: decimal('confidence', { precision: 5, scale: 2 }),
+  reviewedBy: int('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
+  decision: mysqlEnum('decision', ['approved', 'rejected', 'modified']),
+  reviewNotes: text('review_notes'),
+  reviewedAt: timestamp('reviewed_at'),
+  status: mysqlEnum('status', ['pending', 'in_review', 'completed']).default('pending').notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+});
+
+export const qumusDecisionLogs = mysqlTable('qumus_decision_logs', {
+  id: int('id').autoincrement().primaryKey(),
+  decisionId: varchar('decision_id', { length: 255 }).notNull().unique(),
+  policyId: varchar('policy_id', { length: 100 }).notNull(),
+  policyType: varchar('policy_type', { length: 100 }).notNull(),
+  userId: int('user_id').references(() => users.id, { onDelete: 'set null' }),
+  decisionType: varchar('decision_type', { length: 100 }).notNull(),
+  input: json('input').notNull(),
+  output: json('output'),
+  confidence: decimal('confidence', { precision: 5, scale: 2 }).notNull(),
+  autonomousFlag: boolean('autonomous_flag').notNull(),
+  result: varchar('result', { length: 50 }).notNull(), // 'approved', 'rejected', 'escalated'
+  executionTime: int('execution_time'), // milliseconds
+  metadata: json('metadata'), // Additional context
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+});
+
+export const qumusMetrics = mysqlTable('qumus_metrics', {
+  id: int('id').autoincrement().primaryKey(),
+  policyId: varchar('policy_id', { length: 100 }).notNull(),
+  policyType: varchar('policy_type', { length: 100 }).notNull(),
+  totalDecisions: int('total_decisions').default(0).notNull(),
+  autonomousCount: int('autonomous_count').default(0).notNull(),
+  escalatedCount: int('escalated_count').default(0).notNull(),
+  approvedCount: int('approved_count').default(0).notNull(),
+  rejectedCount: int('rejected_count').default(0).notNull(),
+  autonomyPercentage: decimal('autonomy_percentage', { precision: 5, scale: 2 }).default('0').notNull(), // 0-100%
+  averageConfidence: decimal('average_confidence', { precision: 5, scale: 2 }).default('0').notNull(),
+  successRate: decimal('success_rate', { precision: 5, scale: 2 }).default('0').notNull(), // 0-100%
+  failureRate: decimal('failure_rate', { precision: 5, scale: 2 }).default('0').notNull(),
+  avgExecutionTime: int('avg_execution_time').default(0).notNull(), // milliseconds
+  escalationRate: decimal('escalation_rate', { precision: 5, scale: 2 }).default('0').notNull(), // 0-100%
+  period: varchar('period', { length: 50 }).notNull(), // 'hourly', 'daily', 'weekly', 'monthly'
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+});
+
+export const qumusPolicyRecommendations = mysqlTable('qumus_policy_recommendations', {
+  id: int('id').autoincrement().primaryKey(),
+  policyId: varchar('policy_id', { length: 100 }).notNull(),
+  policyType: varchar('policy_type', { length: 100 }).notNull(),
+  recommendationType: varchar('recommendation_type', { length: 100 }).notNull(), // 'threshold_adjustment', 'escalation_rule', 'policy_optimization'
+  currentValue: varchar('current_value', { length: 255 }),
+  recommendedValue: varchar('recommended_value', { length: 255 }).notNull(),
+  reason: text('reason').notNull(),
+  confidence: decimal('confidence', { precision: 5, scale: 2 }).notNull(),
+  impact: varchar('impact', { length: 50 }).notNull(), // 'high', 'medium', 'low'
+  implemented: boolean('implemented').default(false).notNull(),
+  implementedAt: timestamp('implemented_at'),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+});
+
+export const playlists = mysqlTable("playlists", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  isPublic: boolean("is_public").default(false).notNull(),
+  coverImageUrl: varchar("cover_image_url", { length: 500 }),
+  episodeCount: int("episode_count").default(0).notNull(),
+  followers: int("followers").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
