@@ -1,4 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+// Mobile-responsive design optimized for iPhone (375px viewport)
+// Using mobile-first approach with md: breakpoint for larger screens
 import { useLocation } from "wouter";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
