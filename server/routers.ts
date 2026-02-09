@@ -54,6 +54,7 @@ import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnection
 import { videoProductionWorkflowRouter } from "./routers/videoProductionWorkflowRouter";
 import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
+import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
 
 export const appRouter = router({
   // System router
@@ -166,6 +167,9 @@ export const appRouter = router({
 
   // Map Arsenal - Military-grade tactical mapping
   mapArsenal: mapArsenalRouter,
+
+  // Qumus Autonomous Finalization
+  qumusFinalization: qumusAutonomousFinalizationRouter,
 
   // Agent Session Management
   agent: router({
