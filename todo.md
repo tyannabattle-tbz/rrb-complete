@@ -1711,3 +1711,6 @@
 - [x] Applied fix to SolbonesClassic.tsx getAudioContext + handleFirstTouch
 - [x] Applied fix to SolbonesOnline.tsx getSharedAudioContext
 - [x] 0 TypeScript errors
+
+## v9.5.5 Bug Fix — SolbonesClassic crash
+- [x] Fix "An unexpected error occurred" crash on /solbones-classic page (missing useEffect import)
