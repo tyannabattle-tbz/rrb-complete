@@ -55,7 +55,7 @@ export default function Podcasts() {
           id: '1',
           title: "Episode 1: The Beginning - Seabrun's Journey",
           description: "In this inaugural episode, we explore the early life of Seabrun Candy Hunter and how he became involved with Little Richard. From the streets of Georgia to the stages of the world, this is where the legacy began.",
-          audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/LhZvyaWhSQodjVFs.mp3',
+          audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3',
           duration: 330,
           publishedAt: new Date('2024-01-15'),
           author: "Rockin' Rockin' Boogie",

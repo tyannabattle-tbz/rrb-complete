@@ -1872,6 +1872,6 @@ export const playlists = mysqlTable("playlists", {
   coverImageUrl: varchar("cover_image_url", { length: 500 }),
   episodeCount: int("episode_count").default(0).notNull(),
   followers: int("followers").default(0).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });

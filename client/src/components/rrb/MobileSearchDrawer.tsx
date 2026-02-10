@@ -24,7 +24,7 @@ const DEFAULT_SEARCH_ITEMS: SearchItem[] = [
   { label: 'Testimonials & Stories', href: '/testimonials-and-stories', category: 'Content' },
   { label: 'Historical Timeline', href: '/historical-timeline', category: 'Content' },
   { label: 'Audio Archive', href: '/audio-archive', category: 'Content' },
-  { label: 'Books & Resources', href: '/books-and-resources', category: 'Content' },
+  { label: 'Books & Resources', href: '/rrb/books', category: 'Content' },
   { label: 'Concert Venues & Performances', href: '/concert-venues', category: 'Content' },
   { label: 'Analytics Dashboard', href: '/analytics-consolidated', category: 'Content' },
   { label: 'Contact', href: '/contact', category: 'Navigation' },

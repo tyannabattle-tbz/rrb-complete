@@ -317,7 +317,7 @@ export default function TheMusic() {
               Listen to Seabrun Candy Hunter discuss his musical journey and creative process.
             </p>
             <AudioPlayer
-              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/LhZvyaWhSQodjVFs.mp3"
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3"
               title="The Creative Process"
               speaker="Seabrun Candy Hunter"
               date="April 2015"

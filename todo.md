@@ -1577,3 +1577,10 @@
 - [x] Update server ecosystem registration — Legacy Restored (6 originals) + Legacy Continued (5 products) = 11 total
 - [x] Fix CSS @import order warning
 - [x] Checkpoint and deliver
+
+## Session 4d: Real Audio Integration
+- [ ] Add Rockin Rockin Boogie audio player to Canryn Ecosystem dashboard
+- [ ] Add the real track to radio rotation (play frequently)
+- [x] Fix /books route returning 404 error
+- [x] Create /books page showcasing Seabrun's 14 books on Barnes & Noble
+- [x] Fix RadioCommercials bookLink references to point to /rrb/books

@@ -31,9 +31,9 @@ export default function RadioStation() {
       id: '1',
       title: 'Rockin\' Rockin\' Boogie',
       artist: 'Seabrun Candy Hunter & Little Richard',
-      url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/LhZvyaWhSQodjVFs.mp3',
-      description: 'The iconic track that defined an era - 1970s soul and funk',
-      duration: 330,
+      url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3',
+      description: 'The iconic track that defined an era - 1970s soul and funk (Official Audio)',
+      duration: 112,
     },
     {
       id: '2',

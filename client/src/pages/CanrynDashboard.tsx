@@ -1,12 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, Activity, Radio, Zap, Heart, Music, BookOpen, Truck, Users, DollarSign, Mic, Globe } from 'lucide-react';
+import { AlertCircle, Activity, Radio, Zap, Heart, Music, BookOpen, Truck, Users, DollarSign, Mic, Globe, Play, Pause, Volume2 } from 'lucide-react';
 
 export function CanrynDashboard() {
   const [selectedSubsidiary, setSelectedSubsidiary] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const RRB_AUDIO_URL = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3';
+
+  const togglePlay = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(RRB_AUDIO_URL);
+      audioRef.current.onended = () => setIsPlaying(false);
+    }
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
 
   // Fetch ecosystem data
   const ecosystemConfig = trpc.qumusOrchestration.getEcosystemConfig.useQuery();
@@ -73,10 +90,27 @@ export function CanrynDashboard() {
     <div className="p-8 space-y-8 bg-gradient-to-br from-slate-900 to-slate-800 min-h-screen text-white">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold">Canryn Ecosystem</h1>
+        <h1 className="text-4xl font-bold">Canryn Production Inc.</h1>
         <p className="text-slate-300">{ecosystemConfig.data?.mission}</p>
-        <p className="text-lg font-semibold text-amber-400">Motto: {ecosystemConfig.data?.motto}</p>
+        <p className="text-lg font-semibold text-amber-400">{ecosystemConfig.data?.motto}</p>
       </div>
+
+      {/* Rockin' Rockin' Boogie Audio Player */}
+      <Card className="bg-gradient-to-r from-amber-900/60 to-orange-900/60 border-amber-700">
+        <CardContent className="flex items-center gap-4 py-4">
+          <button
+            onClick={togglePlay}
+            className="w-14 h-14 rounded-full bg-amber-500 hover:bg-amber-400 flex items-center justify-center transition-colors shrink-0"
+          >
+            {isPlaying ? <Pause className="w-6 h-6 text-black" /> : <Play className="w-6 h-6 text-black ml-0.5" />}
+          </button>
+          <div className="flex-1 min-w-0">
+            <p className="text-lg font-bold text-amber-200">Rockin' Rockin' Boogie</p>
+            <p className="text-sm text-amber-400/80">Written by Seabrun "Candy" Hunter Jr. & Little Richard — 1972 Boogie Revival</p>
+          </div>
+          <Volume2 className="w-5 h-5 text-amber-400/60 shrink-0" />
+        </CardContent>
+      </Card>
 
       {/* Company Info */}
       <Card className="bg-slate-700 border-slate-600">

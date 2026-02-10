@@ -34,7 +34,7 @@ export default function RadioCommercials() {
       duration: 60,
       audioUrl: '/audio/commercials/rockin-rockin-boogie-commercial.wav',
       description: 'The definitive autobiography documenting the creative journey and cultural impact of the Rockin\' Rockin\' Boogie legacy.',
-      bookLink: '/books',
+      bookLink: '/rrb/books',
       playCount: 0,
       clickCount: 0
     },
@@ -45,7 +45,7 @@ export default function RadioCommercials() {
       duration: 45,
       audioUrl: '/audio/commercials/miracles-series-commercial.wav',
       description: 'A complete spiritual journey through seven volumes of inspiration, hope, and transformation.',
-      bookLink: '/books',
+      bookLink: '/rrb/books',
       playCount: 0,
       clickCount: 0
     },
@@ -56,7 +56,7 @@ export default function RadioCommercials() {
       duration: 45,
       audioUrl: '/audio/commercials/womans-instinct-commercial.wav',
       description: 'A celebration of the strength and wisdom of women everywhere.',
-      bookLink: '/books',
+      bookLink: '/rrb/books',
       playCount: 0,
       clickCount: 0
     },
@@ -67,7 +67,7 @@ export default function RadioCommercials() {
       duration: 30,
       audioUrl: '/audio/commercials/just-imagine-commercial.wav',
       description: 'Unlock your creative potential and explore infinite possibilities.',
-      bookLink: '/books',
+      bookLink: '/rrb/books',
       playCount: 0,
       clickCount: 0
     },
@@ -78,7 +78,7 @@ export default function RadioCommercials() {
       duration: 30,
       audioUrl: '/audio/commercials/animal-poetry-commercial.wav',
       description: 'Poetry that celebrates the beauty and wisdom of our natural world.',
-      bookLink: '/books',
+      bookLink: '/rrb/books',
       playCount: 0,
       clickCount: 0
     },
@@ -89,7 +89,7 @@ export default function RadioCommercials() {
       duration: 45,
       audioUrl: '/audio/commercials/king-richard-commercial.wav',
       description: 'The untold story of a legendary partnership that changed music history.',
-      bookLink: '/books',
+      bookLink: '/rrb/books',
       playCount: 0,
       clickCount: 0
     },
@@ -100,7 +100,7 @@ export default function RadioCommercials() {
       duration: 30,
       audioUrl: '/audio/commercials/all-about-candy-commercial.wav',
       description: 'The personal memoir behind the legacy.',
-      bookLink: '/books',
+      bookLink: '/rrb/books',
       playCount: 0,
       clickCount: 0
     },
@@ -111,7 +111,7 @@ export default function RadioCommercials() {
       duration: 45,
       audioUrl: '/audio/commercials/drawn-to-danger-commercial.wav',
       description: 'Stories of risk, courage, and transformation.',
-      bookLink: '/books',
+      bookLink: '/rrb/books',
       playCount: 0,
       clickCount: 0,
       seasonal: true,

@@ -17,7 +17,7 @@ describe('ContentSchedulerService', () => {
 
   it('should initialize with default schedule slots', () => {
     const slots = scheduler.getScheduleSlots();
-    expect(slots.length).toBe(16);
+    expect(slots.length).toBe(62);
     expect(slots[0].title).toBe('Top of the Sol Drive Show');
   });
 
@@ -26,7 +26,7 @@ describe('ContentSchedulerService', () => {
     const status = scheduler.getStatus();
     expect(status.isRunning).toBe(true);
     expect(status.activeChannels).toBe(7);
-    expect(status.totalSlots).toBe(16);
+    expect(status.totalSlots).toBe(62);
     expect(status.autonomyLevel).toBe(90);
   });
 
@@ -50,7 +50,7 @@ describe('ContentSchedulerService', () => {
     });
     expect(newSlot.id).toBeDefined();
     expect(newSlot.title).toBe('Test Show');
-    expect(scheduler.getScheduleSlots().length).toBe(17);
+    expect(scheduler.getScheduleSlots().length).toBe(63);
   });
 
   it('should update a schedule slot', () => {
@@ -67,7 +67,7 @@ describe('ContentSchedulerService', () => {
   it('should delete a schedule slot', () => {
     const result = scheduler.deleteSlot('slot-001');
     expect(result).toBe(true);
-    expect(scheduler.getScheduleSlots().length).toBe(15);
+    expect(scheduler.getScheduleSlots().length).toBe(61);
   });
 
   it('should return false when deleting non-existent slot', () => {

@@ -14,7 +14,7 @@ const CHANNELS: RadioChannel[] = [
     id: 'rrb-main',
     name: "Rockin' Rockin' Boogie",
     description: "Seabrun Candy Hunter's legacy — original recordings and boogie revival",
-    streamUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/LhZvyaWhSQodjVFs.mp3',
+    streamUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3',
     genre: 'Boogie / R&B',
   },
   {

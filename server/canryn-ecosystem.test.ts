@@ -11,12 +11,12 @@ describe('Canryn Ecosystem', () => {
   describe('Ecosystem Configuration', () => {
     it('should have correct company name', () => {
       const config = canrynEcosystem.getConfig();
-      expect(config.companyName).toBe('Canryn Production');
+      expect(config.companyName).toBe('Canryn Production Inc.');
     });
 
     it('should have correct founder', () => {
       const config = canrynEcosystem.getConfig();
-      expect(config.founder).toBe('Dad');
+      expect(config.founder).toBe('Seabrun "Candy" Hunter Jr.');
     });
 
     it('should have correct operators', () => {
@@ -26,7 +26,7 @@ describe('Canryn Ecosystem', () => {
 
     it('should have correct motto', () => {
       const config = canrynEcosystem.getConfig();
-      expect(config.motto).toBe('A Voice for the Voiceless');
+      expect(config.motto).toBe('A Corporation with the Right Stuff!');
     });
 
     it('should have 90% autonomy target', () => {
@@ -41,9 +41,23 @@ describe('Canryn Ecosystem', () => {
   });
 
   describe('Subsidiaries', () => {
-    it('should have 5 subsidiaries initialized', () => {
+    it('should have 11 entities initialized (6 Legacy Restored + 5 Legacy Continued)', () => {
       const subsidiaries = canrynEcosystem.getAllSubsidiaries();
-      expect(subsidiaries).toHaveLength(5);
+      expect(subsidiaries).toHaveLength(11);
+    });
+
+    it('should have 6 Legacy Restored subsidiaries', () => {
+      const subsidiaries = canrynEcosystem.getAllSubsidiaries();
+      const legacyRestored = ['Canryn Publishing Co.', 'Seasha Distribution Co.', 'Annas Promotion Co.', 'Jaelon Enterprises', 'Little C Recording Co.', "Sean's Music World"];
+      const found = subsidiaries.filter(s => legacyRestored.includes(s.name));
+      expect(found).toHaveLength(6);
+    });
+
+    it('should have 5 Legacy Continued products', () => {
+      const subsidiaries = canrynEcosystem.getAllSubsidiaries();
+      const legacyContinued = ['Qumus', 'RRB Radio', 'HybridCast', 'Sweet Miracles', 'Rockin Rockin Boogie'];
+      const found = subsidiaries.filter(s => legacyContinued.includes(s.name));
+      expect(found).toHaveLength(5);
     });
 
     it('should have Qumus as central brain', () => {
@@ -96,19 +110,19 @@ describe('Canryn Ecosystem', () => {
 
     it('should list all subsidiaries in health report', () => {
       const health = canrynEcosystem.getHealthReport();
-      expect(health.subsidiaryStatus).toHaveLength(5);
+      expect(health.subsidiaryStatus).toHaveLength(11);
     });
   });
 
   describe('Metrics', () => {
-    it('should report 5 total subsidiaries', () => {
+    it('should report 11 total entities', () => {
       const metrics = canrynEcosystem.getMetrics();
-      expect(metrics.totalSubsidiaries).toBe(5);
+      expect(metrics.totalSubsidiaries).toBe(11);
     });
 
-    it('should report 5 active subsidiaries', () => {
+    it('should report 11 active entities', () => {
       const metrics = canrynEcosystem.getMetrics();
-      expect(metrics.activeSubsidiaries).toBe(5);
+      expect(metrics.activeSubsidiaries).toBe(11);
     });
 
     it('should have system health metric', () => {
