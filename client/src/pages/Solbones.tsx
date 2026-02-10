@@ -262,12 +262,45 @@ export default function Solbones() {
   const currentPlayer = players[currentTurnIndex] || { name: 'Player', score: 0, tallies: 0, isAI: false };
   const maxRollsPerRound = currentPlayer.tallies > 0 ? 4 : 3;
 
-  useEffect(() => {
-    try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      setAudioContext(ctx);
-    } catch { /* audio not available */ }
+  // iOS Safari audio unlock: create AudioContext lazily on first user gesture
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioUnlockedRef = useRef(false);
+
+  const getAudioContext = useCallback(() => {
+    if (!audioContextRef.current) {
+      try {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        setAudioContext(audioContextRef.current);
+      } catch { /* audio not available */ }
+    }
+    return audioContextRef.current;
   }, []);
+
+  const unlockAudio = useCallback(() => {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    if (audioUnlockedRef.current && ctx.state === 'running') return;
+
+    // Resume suspended context (iOS requires this on user gesture)
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
+    // Play a silent buffer to fully unlock iOS audio
+    try {
+      const buffer = ctx.createBuffer(1, 1, 22050);
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.start(0);
+      audioUnlockedRef.current = true;
+    } catch { /* ignore */ }
+  }, [getAudioContext]);
+
+  // Also try to init on mount (works on desktop, won't unlock on iOS until gesture)
+  useEffect(() => {
+    getAudioContext();
+  }, [getAudioContext]);
 
   // Sync player count with setup players array
   useEffect(() => {
@@ -281,24 +314,37 @@ export default function Solbones() {
     });
   }, [playerCount]);
 
-  const playFrequency = useCallback((frequency: number) => {
-    if (!audioContext) return;
+  const playFrequency = useCallback((frequency: number, duration = 1.5, volume = 0.15) => {
+    const ctx = getAudioContext();
+    if (!ctx) return;
     try {
-      if (audioContext.state === 'suspended') audioContext.resume();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+      // Always try to resume on each play (iOS needs this)
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
       oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      gainNode.connect(ctx.destination);
       oscillator.frequency.value = frequency;
       oscillator.type = 'sine';
-      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5);
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 1.5);
+      gainNode.gain.setValueAtTime(volume, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + duration);
     } catch { /* ignore audio errors */ }
-  }, [audioContext]);
+  }, [getAudioContext]);
+
+  // Quick chirp for rolling animation
+  const playRollingChirp = useCallback((dieValue: number) => {
+    const freq = FREQUENCY_MAP[dieValue];
+    if (freq) playFrequency(freq.frequency, 0.12, 0.06);
+  }, [playFrequency]);
 
   const startGame = useCallback(() => {
+    // Unlock audio on this user gesture (critical for iOS Safari)
+    unlockAudio();
+
     const gamePlayers: PlayerState[] = setupPlayers.map((sp, i) => ({
       name: sp.isAI ? (sp.name || AI_NAMES[i] || `QUMUS AI ${i + 1}`) : (sp.name || user?.name || `Player ${i + 1}`),
       score: 0,
@@ -324,7 +370,7 @@ export default function Solbones() {
         runAITurnForIndex(0, gamePlayers);
       }, 1200);
     }
-  }, [setupPlayers, user?.name]);
+  }, [setupPlayers, user?.name, unlockAudio]);
 
   const performRoll = useCallback((onComplete: (finalDice: number[]) => void) => {
     setIsRolling(true);
@@ -333,11 +379,16 @@ export default function Solbones() {
     if (rollAnimRef.current) clearInterval(rollAnimRef.current);
 
     rollAnimRef.current = setInterval(() => {
-      setDice([
-        Math.floor(Math.random() * 6) + 1,
-        Math.floor(Math.random() * 6) + 1,
-        Math.floor(Math.random() * 6) + 1,
-      ]);
+      const d1 = Math.floor(Math.random() * 6) + 1;
+      const d2 = Math.floor(Math.random() * 6) + 1;
+      const d3 = Math.floor(Math.random() * 6) + 1;
+      setDice([d1, d2, d3]);
+
+      // Play rolling chirps every 3rd frame for a musical rolling effect
+      if (count % 3 === 0) {
+        playRollingChirp(d1);
+      }
+
       count++;
       if (count >= 12) {
         if (rollAnimRef.current) clearInterval(rollAnimRef.current);
@@ -351,7 +402,7 @@ export default function Solbones() {
         onComplete(finalDice);
       }
     }, 80);
-  }, []);
+  }, [playRollingChirp]);
 
   const processRollResult = useCallback((finalDice: number[]) => {
     const result = scoreRound(finalDice);
@@ -384,9 +435,12 @@ export default function Solbones() {
     if (gameState === 'finished') return;
     if (players[currentTurnIndex]?.isAI) return;
 
+    // Unlock audio on this user gesture (critical for iOS Safari)
+    unlockAudio();
+
     setGameState('rolling');
     performRoll(processRollResult);
-  }, [rollsThisRound, maxRollsPerRound, gameState, currentTurnIndex, players, performRoll, processRollResult]);
+  }, [rollsThisRound, maxRollsPerRound, gameState, currentTurnIndex, players, performRoll, processRollResult, unlockAudio]);
 
   const advanceToNextPlayer = useCallback((currentPlayers: PlayerState[], fromIndex: number) => {
     const nextIndex = (fromIndex + 1) % currentPlayers.length;
@@ -1235,7 +1289,7 @@ export default function Solbones() {
                     {ALL_FREQUENCIES.map((data) => (
                       <button
                         key={data.frequency}
-                        onClick={() => playFrequency(data.frequency)}
+                        onClick={() => { unlockAudio(); playFrequency(data.frequency); }}
                         className={`bg-gradient-to-br ${data.bgColor} p-4 rounded-lg text-left hover:scale-105 transition-transform cursor-pointer border border-white/10`}
                       >
                         <div className="flex items-center justify-between mb-1">

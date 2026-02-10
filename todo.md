@@ -1679,4 +1679,17 @@
 - [x] Add Solbones to the Featured Content section alongside Music and Proof Vault
 - [x] Verify mobile hamburger menu has correct Solbones link (already done in v9.3)
 - [x] Test on mobile viewport
-- [ ] Publish fix
+- [x] Publish fix (checkpoint a4445384)
+
+## v9.5.1 Bug Fix — Solbones Tones Not Playing
+- [x] Investigate why Solfeggio frequency tones are not playing in Solbones 4+3+2
+- [x] Root cause: iOS Safari creates AudioContext in 'suspended' state, requires user gesture to resume
+- [x] Fix: Added lazy AudioContext creation, unlockAudio() on user gestures (Start Game, Roll Dice, frequency taps)
+- [x] Fix: Added silent buffer playback to fully unlock iOS audio pipeline
+- [x] Fix: playFrequency now calls getAudioContext() directly instead of relying on stale state
+- [x] Added rolling chirps during dice animation (every 3rd frame, short 120ms tones)
+- [x] Investigate why notes are not displaying in Solbones 4+3+2 — notes were always there, confirmed visible
+- [x] Fix tones in Solbones Classic — added full Solfeggio frequency tones with iOS-compatible audio
+- [x] Added frequency note labels under each die in Classic (e.g. 'RE 285Hz')
+- [x] Added Sound On/Off toggle to Classic
+- [x] Test both games to confirm tones and notes work — verified on dev server, 0 TypeScript errors, 0 console errors

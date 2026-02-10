@@ -1,14 +1,24 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Link } from 'wouter';
-import { RotateCcw, Trophy, Sparkles, Dice1 } from 'lucide-react';
+import { RotateCcw, Trophy, Sparkles, Dice1, Volume2, VolumeX } from 'lucide-react';
 
 // ============================================================
 // SOLBONES CLASSIC — The Original Dice Game
-// Pure gameplay, no frequency overlays
+// Now with Solfeggio frequency tones on dice rolls!
 // A Canryn Production
 // ============================================================
+
+// Solfeggio frequency mapping for dice faces
+const CLASSIC_FREQ_MAP: Record<number, { frequency: number; note: string }> = {
+  1: { frequency: 174, note: 'UT' },
+  2: { frequency: 285, note: 'RE' },
+  3: { frequency: 396, note: 'MI' },
+  4: { frequency: 432, note: 'FA' },
+  5: { frequency: 528, note: 'SOL' },
+  6: { frequency: 639, note: 'LA' },
+};
 
 // Classic die face SVG
 function ClassicDie({ value, isRolling, size = 90 }: { value: number; isRolling: boolean; size?: number }) {
@@ -28,6 +38,11 @@ function ClassicDie({ value, isRolling, size = 90 }: { value: number; isRolling:
           <circle key={i} cx={cx} cy={cy} r="8" fill="#1c1917" />
         ))}
       </svg>
+      {!isRolling && (
+        <span className="text-xs text-amber-600 mt-1 font-medium">
+          {CLASSIC_FREQ_MAP[value]?.note} {CLASSIC_FREQ_MAP[value]?.frequency}Hz
+        </span>
+      )}
     </div>
   );
 }
@@ -67,19 +82,85 @@ export default function SolbonesClassic() {
   const [roundResult, setRoundResult] = useState<{ points: number; label: string; bonus?: string } | null>(null);
   const [gameOver, setGameOver] = useState(false);
   const [roundHistory, setRoundHistory] = useState<{ dice: number[]; points: number; label: string }[]>([]);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // iOS-compatible AudioContext
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioUnlockedRef = useRef(false);
+
+  const getAudioContext = useCallback(() => {
+    if (!audioContextRef.current) {
+      try {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      } catch { /* audio not available */ }
+    }
+    return audioContextRef.current;
+  }, []);
+
+  const unlockAudio = useCallback(() => {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    if (audioUnlockedRef.current && ctx.state === 'running') return;
+
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
+    // Play silent buffer to unlock iOS audio
+    try {
+      const buffer = ctx.createBuffer(1, 1, 22050);
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.start(0);
+      audioUnlockedRef.current = true;
+    } catch { /* ignore */ }
+  }, [getAudioContext]);
+
+  const playFrequency = useCallback((frequency: number, duration = 1.5, volume = 0.15) => {
+    if (!soundEnabled) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    try {
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.frequency.value = frequency;
+      oscillator.type = 'sine';
+      gainNode.gain.setValueAtTime(volume, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + duration);
+    } catch { /* ignore */ }
+  }, [getAudioContext, soundEnabled]);
 
   const rollDice = useCallback(() => {
     if (isRolling || gameOver) return;
+
+    // Unlock audio on user gesture (critical for iOS Safari)
+    unlockAudio();
+
     setIsRolling(true);
     setRoundResult(null);
 
-    // Animate
+    let count = 0;
+    // Animate with rolling chirps
     const interval = setInterval(() => {
-      setDice([
-        Math.floor(Math.random() * 6) + 1,
-        Math.floor(Math.random() * 6) + 1,
-        Math.floor(Math.random() * 6) + 1,
-      ]);
+      const d1 = Math.floor(Math.random() * 6) + 1;
+      const d2 = Math.floor(Math.random() * 6) + 1;
+      const d3 = Math.floor(Math.random() * 6) + 1;
+      setDice([d1, d2, d3]);
+
+      // Play chirp every 3rd frame
+      if (count % 3 === 0 && soundEnabled) {
+        const freq = CLASSIC_FREQ_MAP[d1];
+        if (freq) playFrequency(freq.frequency, 0.12, 0.06);
+      }
+      count++;
     }, 80);
 
     setTimeout(() => {
@@ -95,8 +176,13 @@ export default function SolbonesClassic() {
       const result = scoreClassic(finalDice);
       setRoundResult(result);
       setRollsThisTurn(prev => prev + 1);
-    }, 600);
-  }, [isRolling, gameOver]);
+
+      // Play the final tone based on highest die
+      const highDie = Math.max(...finalDice);
+      const freq = CLASSIC_FREQ_MAP[highDie];
+      if (freq) playFrequency(freq.frequency);
+    }, 960);
+  }, [isRolling, gameOver, unlockAudio, playFrequency, soundEnabled]);
 
   const keepScore = useCallback(() => {
     if (!roundResult) return;
@@ -130,10 +216,18 @@ export default function SolbonesClassic() {
           </h1>
           <p className="text-lg text-amber-800 italic mb-1">The Classic Dice Game</p>
           <p className="text-amber-600 text-sm">Roll three dice. Score points. First to 63 wins.</p>
-          <div className="mt-3">
+          <div className="mt-3 flex items-center justify-center gap-4">
             <Link href="/solbones" className="text-amber-700 hover:text-amber-900 text-xs underline">
               Play Solbones 4+3+2 (Frequency Edition) &rarr;
             </Link>
+            <button
+              onClick={() => { unlockAudio(); setSoundEnabled(!soundEnabled); }}
+              className="inline-flex items-center gap-1 text-xs text-amber-600 hover:text-amber-800 transition-colors"
+              title={soundEnabled ? 'Mute tones' : 'Enable tones'}
+            >
+              {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+              {soundEnabled ? 'Sound On' : 'Sound Off'}
+            </button>
           </div>
         </div>
       </div>
