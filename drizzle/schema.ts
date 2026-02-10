@@ -1786,8 +1786,8 @@ export const qumusAutonomousActions = mysqlTable('qumus_autonomous_actions', {
   output: json('output'),
   confidence: decimal('confidence', { precision: 5, scale: 2 }).notNull(), // 0-100
   autonomousFlag: boolean('autonomous_flag').default(true).notNull(), // true = autonomous, false = escalated
-  status: mysqlEnum('status', ['pending', 'executing', 'completed', 'failed', 'escalated']).default('pending').notNull(),
-  result: varchar('result', { length: 50 }), // 'success', 'failure', 'escalated'
+  status: mysqlEnum('status', ['pending', 'processing', 'completed', 'failed', 'escalated']).default('pending').notNull(),
+  result: mysqlEnum('result', ['success', 'failure', 'escalated', 'timeout']),
   errorMessage: text('error_message'),
   executionTime: int('execution_time'), // milliseconds
   timestamp: timestamp('timestamp').defaultNow().notNull(),

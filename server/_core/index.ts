@@ -80,6 +80,17 @@ async function startServer() {
     console.log('[ContentScheduler] Init skipped:', (e as Error).message);
   }
 
+  // Initialize QUMUS Autonomous Event Loop (generates real decisions)
+  try {
+    const { getAutonomousLoop } = await import("../services/qumus-autonomous-loop");
+    const loop = getAutonomousLoop();
+    // Start with 2-minute intervals between batches
+    loop.start(120_000);
+    console.log('[QUMUS Loop] Autonomous event loop started');
+  } catch (e) {
+    console.log('[QUMUS Loop] Init skipped:', (e as Error).message);
+  }
+
   // Initialize Agent Network heartbeat
   try {
     const { AgentNetworkService } = await import("../services/agentNetworkService");

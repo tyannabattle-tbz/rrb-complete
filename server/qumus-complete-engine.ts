@@ -194,7 +194,12 @@ export class QumusCompleteEngine {
     const decisionId = this.generateDecisionId();
 
     try {
-      const policy = CORE_POLICIES[input.policyId as keyof typeof CORE_POLICIES];
+      // Look up by key name first, then by policy ID
+      let policy = CORE_POLICIES[input.policyId as keyof typeof CORE_POLICIES];
+      if (!policy) {
+        // Search by policy ID (e.g. 'policy_recommendation_engine')
+        policy = Object.values(CORE_POLICIES).find(p => p.id === input.policyId) as typeof CORE_POLICIES[keyof typeof CORE_POLICIES] | undefined;
+      }
       if (!policy) {
         throw new Error(`Policy not found: ${input.policyId}`);
       }
@@ -214,16 +219,19 @@ export class QumusCompleteEngine {
 
       const executionTime = Date.now() - startTime;
 
+      // Use policy.id for all downstream calls (canonical ID)
+      const policyId = policy.id;
+
       // Persist decision to database
-      await this.logDecision(decisionId, input.policyId, policy.type, input.userId, input.input, confidence, isAutonomous, result, executionTime);
+      await this.logDecision(decisionId, policyId, policy.type, input.userId, input.input, confidence, isAutonomous, result, executionTime);
 
       // Create human review if escalated
       if (result === 'escalated' && escalationReason) {
-        await this.createHumanReview(decisionId, input.policyId, input.userId, escalationReason, input.input, confidence);
+        await this.createHumanReview(decisionId, policyId, input.userId, escalationReason, input.input, confidence);
       }
 
       // Update in-memory metrics (flushed to DB periodically)
-      this.updateMetricsCache(input.policyId, isAutonomous, result, confidence, executionTime);
+      this.updateMetricsCache(policyId, isAutonomous, result, confidence, executionTime);
 
       return {
         decisionId,
@@ -276,6 +284,21 @@ export class QumusCompleteEngine {
         executionTime,
         completedAt: result !== 'escalated' ? new Date() : null,
       });
+
+      // Also log to decision_logs for audit trail
+      await dbConn.insert(qumusDecisionLogs).values({
+        decisionId,
+        policyId,
+        policyType,
+        userId: userId || null,
+        decisionType: autonomousFlag ? 'autonomous' : 'escalated',
+        input: JSON.stringify(input),
+        output: JSON.stringify({ result }),
+        confidence: confidence.toFixed(2),
+        autonomousFlag,
+        result,
+        executionTime,
+      });
       console.log(`[QUMUS] Decision persisted: ${decisionId} [${policyType}] → ${result} (${confidence}%)`);
     } catch (error) {
       console.error('[QUMUS] Failed to persist decision:', error);
@@ -301,7 +324,7 @@ export class QumusCompleteEngine {
         userId: userId || null,
         escalationReason,
         priority,
-        input: JSON.stringify(input),
+        originalInput: JSON.stringify(input),
         confidence: confidence.toFixed(2),
         status: 'pending',
       });
@@ -506,7 +529,7 @@ export class QumusCompleteEngine {
         .set({
           decision,
           reviewNotes: reviewerNotes,
-          reviewedBy: reviewerId || null,
+          reviewedBy: reviewerId ? String(reviewerId) : null,
           reviewedAt: new Date(),
           status: 'completed',
         })
