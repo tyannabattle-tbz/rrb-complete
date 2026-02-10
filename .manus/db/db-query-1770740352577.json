@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `qumus_human_review` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `decision_id` varchar(255) NOT NULL,\n  `policy_id` varchar(100) NOT NULL,\n  `user_id` int,\n  `escalation_reason` varchar(100) NOT NULL,\n  `priority` enum('low','medium','high','critical') NOT NULL DEFAULT 'medium',\n  `original_input` json NOT NULL,\n  `original_output` json,\n  `confidence` decimal(5,2) NOT NULL,\n  `decision` varchar(50),\n  `review_notes` text,\n  `reviewed_by` varchar(255),\n  `reviewed_at` timestamp,\n  `status` enum('pending','in_review','completed','expired') NOT NULL DEFAULT 'pending',\n  `metadata` json,\n  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `qumus_human_review_id` PRIMARY KEY(`id`),\n  CONSTRAINT `qumus_human_review_decision_id_unique` UNIQUE(`decision_id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute CREATE TABLE `qumus_human_review` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `decision_id` varchar(255) NOT NULL,\n  `policy_id` varchar(100) NOT NULL,\n  `user_id` int,\n  `escalation_reason` varchar(100) NOT NULL,\n  `priority` enum('low','medium','high','critical') NOT NULL DEFAULT 'medium',\n  `original_input` json NOT NULL,\n  `original_output` json,\n  `confidence` decimal(5,2) NOT NULL,\n  `decision` varchar(50),\n  `review_notes` text,\n  `reviewed_by` varchar(255),\n  `reviewed_at` timestamp,\n  `status` enum('pending','in_review','completed','expired') NOT NULL DEFAULT 'pending',\n  `metadata` json,\n  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `qumus_human_review_id` PRIMARY KEY(`id`),\n  CONSTRAINT `qumus_human_review_decision_id_unique` UNIQUE(`decision_id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 217
+}

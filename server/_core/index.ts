@@ -63,13 +63,37 @@ async function startServer() {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
-  // Initialize QUMUS Content Scheduler
+  // Initialize QUMUS Complete Engine (database persistence + heartbeat)
+  try {
+    const { QumusCompleteEngine } = await import("../qumus-complete-engine");
+    await QumusCompleteEngine.initialize();
+  } catch (e) {
+    console.log('[QUMUS Engine] Init skipped:', (e as Error).message);
+  }
+
+  // Initialize QUMUS Content Scheduler (24/7 auto-rotation)
   try {
     const { getContentScheduler } = await import("../services/contentSchedulerService");
     const scheduler = getContentScheduler();
     scheduler.start();
   } catch (e) {
     console.log('[ContentScheduler] Init skipped:', (e as Error).message);
+  }
+
+  // Initialize Agent Network heartbeat
+  try {
+    const { AgentNetworkService } = await import("../services/agentNetworkService");
+    const agentNet = new AgentNetworkService(
+      process.env.QUMUS_AGENT_ID || 'rrb-qumus-primary',
+      process.env.QUMUS_AGENT_NAME || 'RRB QUMUS Primary Agent',
+      process.env.QUMUS_AGENT_ENDPOINT || `http://localhost:${port}`,
+      ['ai-chat', 'autonomous-decision', 'monitoring', 'content-scheduling', 'broadcast'],
+      90
+    );
+    agentNet.startHeartbeat();
+    console.log('[AgentNetwork] Heartbeat started');
+  } catch (e) {
+    console.log('[AgentNetwork] Init skipped:', (e as Error).message);
   }
 
   server.listen(port, () => {

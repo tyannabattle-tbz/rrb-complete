@@ -1,44 +1,51 @@
 /**
  * QUMUS Policy Analytics Dashboard
  * Real-time analytics and performance metrics for all QUMUS policies
+ * Uses live data from the QUMUS engine via tRPC
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Activity, AlertTriangle } from 'lucide-react';
 
-interface PolicyMetrics {
+/**
+ * Maps engine metric fields to display-friendly names.
+ * Engine returns: policyId, policyType, name, autonomyLevel, totalDecisions,
+ *   autonomousCount, escalatedCount, approvedCount, rejectedCount,
+ *   autonomyPercentage, averageConfidence, successRate, failureRate,
+ *   avgExecutionTime, escalationRate
+ */
+interface EngineMetric {
   policyId: string;
-  policyName: string;
+  policyType: string;
+  name: string;
+  autonomyLevel: number;
   totalDecisions: number;
   autonomousCount: number;
   escalatedCount: number;
-  autonomyRate: number;
-  escalationRate: number;
+  approvedCount: number;
+  rejectedCount: number;
+  autonomyPercentage: number;
+  averageConfidence: number;
   successRate: number;
-  avgConfidence: number;
-  avgResponseTime: number;
-  trend: 'up' | 'down' | 'stable';
+  failureRate: number;
+  avgExecutionTime: number;
+  escalationRate: number;
 }
 
 export default function QumusPolicyAnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d'>('7d');
   const [selectedPolicy, setSelectedPolicy] = useState<string | null>(null);
 
-  // Fetch policy metrics
   const { data: metrics, isLoading, refetch } = trpc.qumusComplete.getPolicyMetrics.useQuery({
     timeRange,
   });
-
-  // Fetch system health
   const { data: systemHealth } = trpc.qumusComplete.getSystemHealth.useQuery();
-
-  // Fetch policy recommendations
   const { data: recommendations } = trpc.qumusComplete.getPolicyRecommendations.useQuery();
 
-  const selectedMetrics = metrics?.find((m: PolicyMetrics) => m.policyId === selectedPolicy);
+  const selectedMetrics = metrics?.find((m: EngineMetric) => m.policyId === selectedPolicy);
 
   const getAutonomyColor = (rate: number) => {
     if (rate >= 90) return 'text-green-500';
@@ -47,11 +54,21 @@ export default function QumusPolicyAnalyticsDashboard() {
     return 'text-red-500';
   };
 
+  const getTrend = (metric: EngineMetric): 'up' | 'down' | 'stable' => {
+    if (metric.successRate >= 90) return 'up';
+    if (metric.successRate < 50 && metric.totalDecisions > 0) return 'down';
+    return 'stable';
+  };
+
   const getTrendIcon = (trend: string) => {
     if (trend === 'up') return <TrendingUp className="w-4 h-4 text-green-500" />;
     if (trend === 'down') return <TrendingDown className="w-4 h-4 text-red-500" />;
     return <Activity className="w-4 h-4 text-blue-500" />;
   };
+
+  const avgAutonomy = metrics && metrics.length > 0
+    ? metrics.reduce((sum: number, m: EngineMetric) => sum + (m.autonomyLevel || 0), 0) / metrics.length
+    : 0;
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -84,27 +101,25 @@ export default function QumusPolicyAnalyticsDashboard() {
           <Card className="p-6 bg-card border-border">
             <p className="text-sm text-foreground/60 mb-2">System Uptime</p>
             <p className="text-3xl font-bold text-green-500">
-              {systemHealth?.uptime || '99.9'}%
+              {systemHealth?.uptime || 'N/A'}
             </p>
           </Card>
           <Card className="p-6 bg-card border-border">
-            <p className="text-sm text-foreground/60 mb-2">Avg Response Time</p>
+            <p className="text-sm text-foreground/60 mb-2">Active Policies</p>
             <p className="text-3xl font-bold text-foreground">
-              {systemHealth?.avgResponseTime || 0}ms
+              {systemHealth?.activePolicies || 0}/{systemHealth?.policyCount || 0}
             </p>
           </Card>
           <Card className="p-6 bg-card border-border">
             <p className="text-sm text-foreground/60 mb-2">Total Decisions</p>
             <p className="text-3xl font-bold text-foreground">
-              {metrics?.reduce((sum: number, m: PolicyMetrics) => sum + m.totalDecisions, 0) || 0}
+              {metrics?.reduce((sum: number, m: EngineMetric) => sum + m.totalDecisions, 0) || 0}
             </p>
           </Card>
           <Card className="p-6 bg-card border-border">
             <p className="text-sm text-foreground/60 mb-2">Avg Autonomy</p>
-            <p className={`text-3xl font-bold ${getAutonomyColor(
-              metrics?.reduce((sum: number, m: PolicyMetrics) => sum + m.autonomyRate, 0) / (metrics?.length || 1) || 0
-            )}`}>
-              {(metrics?.reduce((sum: number, m: PolicyMetrics) => sum + m.autonomyRate, 0) / (metrics?.length || 1) || 0).toFixed(1)}%
+            <p className={`text-3xl font-bold ${getAutonomyColor(avgAutonomy)}`}>
+              {avgAutonomy.toFixed(1)}%
             </p>
           </Card>
         </div>
@@ -122,7 +137,7 @@ export default function QumusPolicyAnalyticsDashboard() {
                   <div className="p-6 text-center text-foreground/60">Loading...</div>
                 ) : metrics && metrics.length > 0 ? (
                   <div className="divide-y divide-border">
-                    {metrics.map((metric: PolicyMetrics) => (
+                    {metrics.map((metric: EngineMetric) => (
                       <button
                         key={metric.policyId}
                         onClick={() => setSelectedPolicy(metric.policyId)}
@@ -133,12 +148,12 @@ export default function QumusPolicyAnalyticsDashboard() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-foreground truncate">
-                              {metric.policyName}
+                              {metric.name}
                             </p>
                             <div className="flex items-center gap-2 mt-2">
-                              {getTrendIcon(metric.trend)}
-                              <p className={`text-xs font-bold ${getAutonomyColor(metric.autonomyRate)}`}>
-                                {metric.autonomyRate.toFixed(1)}% autonomous
+                              {getTrendIcon(getTrend(metric))}
+                              <p className={`text-xs font-bold ${getAutonomyColor(metric.autonomyLevel)}`}>
+                                {(metric.autonomyLevel || 0).toFixed(1)}% autonomous
                               </p>
                             </div>
                             <p className="text-xs text-foreground/40 mt-1">
@@ -161,7 +176,7 @@ export default function QumusPolicyAnalyticsDashboard() {
             {selectedMetrics ? (
               <Card className="bg-card border-border">
                 <div className="p-6 border-b border-border">
-                  <h2 className="text-lg font-bold text-foreground">{selectedMetrics.policyName}</h2>
+                  <h2 className="text-lg font-bold text-foreground">{selectedMetrics.name}</h2>
                 </div>
 
                 <div className="p-6 space-y-6">
@@ -174,21 +189,21 @@ export default function QumusPolicyAnalyticsDashboard() {
                       </p>
                     </div>
                     <div className="bg-background p-4 rounded border border-border">
-                      <p className="text-xs text-foreground/60 mb-2">Autonomy Rate</p>
-                      <p className={`text-2xl font-bold ${getAutonomyColor(selectedMetrics.autonomyRate)}`}>
-                        {selectedMetrics.autonomyRate.toFixed(1)}%
+                      <p className="text-xs text-foreground/60 mb-2">Autonomy Level</p>
+                      <p className={`text-2xl font-bold ${getAutonomyColor(selectedMetrics.autonomyLevel)}`}>
+                        {(selectedMetrics.autonomyLevel || 0).toFixed(1)}%
                       </p>
                     </div>
                     <div className="bg-background p-4 rounded border border-border">
                       <p className="text-xs text-foreground/60 mb-2">Success Rate</p>
                       <p className="text-2xl font-bold text-green-500">
-                        {selectedMetrics.successRate.toFixed(1)}%
+                        {(selectedMetrics.successRate || 0).toFixed(1)}%
                       </p>
                     </div>
                     <div className="bg-background p-4 rounded border border-border">
-                      <p className="text-xs text-foreground/60 mb-2">Avg Response Time</p>
+                      <p className="text-xs text-foreground/60 mb-2">Avg Execution Time</p>
                       <p className="text-2xl font-bold text-foreground">
-                        {selectedMetrics.avgResponseTime.toFixed(0)}ms
+                        {(selectedMetrics.avgExecutionTime || 0).toFixed(0)}ms
                       </p>
                     </div>
                   </div>
@@ -204,7 +219,7 @@ export default function QumusPolicyAnalyticsDashboard() {
                             <div
                               className="h-full bg-green-500"
                               style={{
-                                width: `${(selectedMetrics.autonomousCount / selectedMetrics.totalDecisions) * 100}%`,
+                                width: `${selectedMetrics.totalDecisions > 0 ? (selectedMetrics.autonomousCount / selectedMetrics.totalDecisions) * 100 : 0}%`,
                               }}
                             />
                           </div>
@@ -220,7 +235,7 @@ export default function QumusPolicyAnalyticsDashboard() {
                             <div
                               className="h-full bg-orange-500"
                               style={{
-                                width: `${(selectedMetrics.escalatedCount / selectedMetrics.totalDecisions) * 100}%`,
+                                width: `${selectedMetrics.totalDecisions > 0 ? (selectedMetrics.escalatedCount / selectedMetrics.totalDecisions) * 100 : 0}%`,
                               }}
                             />
                           </div>
@@ -238,7 +253,7 @@ export default function QumusPolicyAnalyticsDashboard() {
                     <div className="bg-background p-4 rounded border border-border">
                       <p className="text-sm text-foreground/60 mb-2">Average Confidence Score</p>
                       <p className="text-3xl font-bold text-foreground">
-                        {selectedMetrics.avgConfidence.toFixed(1)}%
+                        {(selectedMetrics.averageConfidence || 0).toFixed(1)}%
                       </p>
                     </div>
                   </div>
@@ -266,13 +281,15 @@ export default function QumusPolicyAnalyticsDashboard() {
               <div className="p-6 space-y-4">
                 {recommendations.map((rec: any, idx: number) => (
                   <div key={idx} className="p-4 bg-background rounded border border-border">
-                    <p className="font-semibold text-foreground mb-2">{rec.title}</p>
-                    <p className="text-sm text-foreground/70">{rec.description}</p>
-                    {rec.action && (
-                      <Button size="sm" className="mt-3" variant="outline">
-                        {rec.action}
-                      </Button>
-                    )}
+                    <p className="font-semibold text-foreground mb-2">{rec.policyId}</p>
+                    <p className="text-sm text-foreground/70">{rec.recommendation}</p>
+                    <div className="flex gap-4 mt-2 text-xs text-foreground/50">
+                      <span>Current: {rec.currentValue}</span>
+                      <span>Recommended: {rec.recommendedValue}</span>
+                      <span className={`font-semibold ${rec.impact === 'high' ? 'text-red-500' : rec.impact === 'medium' ? 'text-yellow-500' : 'text-blue-500'}`}>
+                        {rec.impact} impact
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>

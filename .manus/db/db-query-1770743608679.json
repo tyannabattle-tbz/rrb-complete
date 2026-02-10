@@ -1,0 +1,74 @@
+{
+  "query": "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'qumus_human_review' AND TABLE_SCHEMA = DATABASE() ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'qumus_human_review' AND TABLE_SCHEMA = DATABASE() ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "decision_id",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "policy_id",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "user_id",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "escalation_reason",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "priority",
+      "DATA_TYPE": "enum"
+    },
+    {
+      "COLUMN_NAME": "original_input",
+      "DATA_TYPE": "json"
+    },
+    {
+      "COLUMN_NAME": "original_output",
+      "DATA_TYPE": "json"
+    },
+    {
+      "COLUMN_NAME": "confidence",
+      "DATA_TYPE": "decimal"
+    },
+    {
+      "COLUMN_NAME": "decision",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "review_notes",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "reviewed_by",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "reviewed_at",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum"
+    },
+    {
+      "COLUMN_NAME": "metadata",
+      "DATA_TYPE": "json"
+    },
+    {
+      "COLUMN_NAME": "created_at",
+      "DATA_TYPE": "timestamp"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\tDATA_TYPE\nid\tint\ndecision_id\tvarchar\npolicy_id\tvarchar\nuser_id\tint\nescalation_reason\tvarchar\npriority\tenum\noriginal_input\tjson\noriginal_output\tjson\nconfidence\tdecimal\ndecision\tvarchar\nreview_notes\ttext\nreviewed_by\tvarchar\nreviewed_at\ttimestamp\nstatus\tenum\nmetadata\tjson\ncreated_at\ttimestamp\n",
+  "stderr": "",
+  "execution_time_ms": 63
+}

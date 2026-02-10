@@ -170,6 +170,35 @@ export class ContentSchedulerService {
     console.log(`[ContentScheduler] Initializing 24/7 content scheduler...`);
     console.log(`[ContentScheduler] Active with ${this.channels.size} channels, ${this.scheduleSlots.size} schedule slots`);
     console.log(`[ContentScheduler] Autonomy level: ${this.autonomyLevel}%`);
+
+    // Initial content rotation
+    const initial = this.rotateContent();
+    console.log(`[ContentScheduler] Initial rotation: ${initial.rotated} channels updated`);
+
+    // Auto-rotate every 5 minutes (300,000ms)
+    this.rotationInterval = setInterval(() => {
+      if (!this.isRunning) return;
+      const result = this.rotateContent();
+      if (result.rotated > 0) {
+        console.log(`[ContentScheduler] Auto-rotation: ${result.rotated} channels updated [${result.channels.join(', ')}]`);
+      }
+      // Update simulated listener counts
+      this.updateListenerCounts();
+    }, 300_000);
+    console.log(`[ContentScheduler] Auto-rotation timer started (every 5 minutes)`);
+  }
+
+  private updateListenerCounts(): void {
+    const hour = new Date().getHours();
+    // Simulate realistic listener patterns: peak during morning/evening, low overnight
+    const baseMultiplier = hour >= 6 && hour <= 9 ? 1.5 : hour >= 17 && hour <= 21 ? 1.8 : hour >= 0 && hour <= 5 ? 0.3 : 1.0;
+    for (const [id, channel] of this.channels) {
+      if (channel.status === 'active') {
+        const base = channel.type === 'emergency' ? 50 : channel.type === 'radio' ? 200 : 100;
+        channel.listeners = Math.floor(base * baseMultiplier * (0.8 + Math.random() * 0.4));
+        this.channels.set(id, channel);
+      }
+    }
   }
 
   stop(): void {

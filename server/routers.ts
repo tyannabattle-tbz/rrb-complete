@@ -205,6 +205,8 @@ export const appRouter = router({
 
   // RRB QUMUS Complete (8 policies, human review)
   rrbQumusComplete: rrbQumusCompleteRouter,
+  // Alias for dashboard compatibility
+  qumusComplete: rrbQumusCompleteRouter,
 
   // RRB Broadcast (scheduling, streaming, content generation)
   rrbBroadcast: rrbBroadcastRouter,

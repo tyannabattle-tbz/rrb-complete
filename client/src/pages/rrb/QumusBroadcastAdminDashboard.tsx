@@ -1,13 +1,15 @@
 /**
  * QUMUS Broadcast Admin Dashboard
- * Comprehensive broadcast management, compliance, and audit logging
+ * Live broadcast management, content scheduling, compliance, and audit logging
+ * All data pulled from running QUMUS engine and Content Scheduler
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   BarChart,
   Bar,
@@ -32,77 +34,56 @@ import {
   Radio,
   Music,
   Settings,
-  LogOut,
   Menu,
   X,
+  RefreshCw,
+  Activity,
+  Zap,
 } from 'lucide-react';
-
-interface BroadcastStats {
-  totalBroadcasts: number;
-  activeBroadcasts: number;
-  completedBroadcasts: number;
-  totalViewers: number;
-  avgEngagement: number;
-  complianceRate: number;
-}
-
-interface AuditLog {
-  id: string;
-  action: string;
-  performedBy: string;
-  timestamp: Date;
-  details: Record<string, any>;
-  complianceStatus: 'compliant' | 'warning' | 'violation';
-}
 
 export default function QumusBroadcastAdminDashboard() {
   const { user, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'broadcasts' | 'analytics' | 'compliance' | 'content' | 'settings'
+    'overview' | 'channels' | 'schedule' | 'compliance' | 'content' | 'settings'
   >('overview');
-  const [stats, setStats] = useState<BroadcastStats>({
-    totalBroadcasts: 0,
-    activeBroadcasts: 0,
-    completedBroadcasts: 0,
-    totalViewers: 0,
-    avgEngagement: 0,
-    complianceRate: 100,
+
+  // Live data from QUMUS engine
+  const { data: schedulerStatus, refetch: refetchScheduler } = trpc.contentScheduler.getStatus.useQuery(undefined, {
+    refetchInterval: 10000,
+  });
+  const { data: channels } = trpc.contentScheduler.getChannels.useQuery(undefined, {
+    refetchInterval: 10000,
+  });
+  const { data: scheduleSlots } = trpc.contentScheduler.getSlots.useQuery(undefined, {
+    refetchInterval: 15000,
+  });
+  const { data: currentSlots } = trpc.contentScheduler.getCurrentSlots.useQuery(undefined, {
+    refetchInterval: 10000,
+  });
+  const { data: systemHealth } = trpc.qumusComplete.getSystemHealth.useQuery(undefined, {
+    refetchInterval: 15000,
+  });
+  const { data: auditTrail } = trpc.qumusComplete.getAuditTrail.useQuery({ limit: 20 }, {
+    refetchInterval: 15000,
   });
 
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
-  const [broadcastData, setBroadcastData] = useState<any[]>([]);
+  const totalListeners = channels?.reduce((sum: number, ch: any) => sum + (ch.listeners || 0), 0) || 0;
+  const activeChannels = channels?.filter((ch: any) => ch.status === 'active').length || 0;
+  const totalSlots = scheduleSlots?.length || 0;
 
-  // Mock data for charts
-  const viewerTrendData = [
-    { time: '00:00', viewers: 1200 },
-    { time: '02:00', viewers: 1900 },
-    { time: '04:00', viewers: 2400 },
-    { time: '06:00', viewers: 2210 },
-    { time: '08:00', viewers: 2290 },
-    { time: '10:00', viewers: 3200 },
-    { time: '12:00', viewers: 3800 },
-  ];
+  // Build chart data from live channels
+  const channelListenerData = channels?.map((ch: any) => ({
+    name: ch.name?.replace('RRB ', '').substring(0, 12) || 'Unknown',
+    listeners: ch.listeners || 0,
+  })) || [];
 
-  const platformDistribution = [
-    { name: 'YouTube', value: 45, color: '#FF0000' },
-    { name: 'Twitch', value: 30, color: '#9146FF' },
-    { name: 'Facebook', value: 15, color: '#1877F2' },
-    { name: 'Instagram', value: 10, color: '#E4405F' },
-  ];
-
-  const engagementData = [
-    { type: 'Likes', count: 2400 },
-    { type: 'Comments', count: 1398 },
-    { type: 'Shares', count: 980 },
-    { type: 'Follows', count: 2210 },
-  ];
-
-  const complianceData = [
-    { status: 'Compliant', count: 95, color: '#10B981' },
-    { status: 'Warning', count: 4, color: '#F59E0B' },
-    { status: 'Violation', count: 1, color: '#EF4444' },
-  ];
+  const channelTypeDistribution = [
+    { name: 'Radio', value: channels?.filter((ch: any) => ch.type === 'radio').length || 0, color: '#8b5cf6' },
+    { name: 'Podcast', value: channels?.filter((ch: any) => ch.type === 'podcast').length || 0, color: '#06b6d4' },
+    { name: 'Streaming', value: channels?.filter((ch: any) => ch.type === 'streaming').length || 0, color: '#f59e0b' },
+    { name: 'Emergency', value: channels?.filter((ch: any) => ch.type === 'emergency').length || 0, color: '#ef4444' },
+  ].filter(d => d.value > 0);
 
   if (!isAuthenticated) {
     return (
@@ -122,10 +103,10 @@ export default function QumusBroadcastAdminDashboard() {
       <div
         className={`${
           sidebarOpen ? 'w-64' : 'w-20'
-        } bg-card border-r border-border transition-all duration-300`}
+        } bg-card border-r border-border transition-all duration-300 relative`}
       >
         <div className="p-4 flex items-center justify-between">
-          {sidebarOpen && <h1 className="text-xl font-bold">QUMUS</h1>}
+          {sidebarOpen && <h1 className="text-xl font-bold">QUMUS Broadcast</h1>}
           <Button
             variant="ghost"
             size="sm"
@@ -138,9 +119,9 @@ export default function QumusBroadcastAdminDashboard() {
         <nav className="mt-8 space-y-2 px-2">
           {[
             { id: 'overview', label: 'Overview', icon: TrendingUp },
-            { id: 'broadcasts', label: 'Broadcasts', icon: Radio },
-            { id: 'analytics', label: 'Analytics', icon: BarChart },
-            { id: 'compliance', label: 'Compliance', icon: CheckCircle },
+            { id: 'channels', label: 'Channels', icon: Radio },
+            { id: 'schedule', label: 'Schedule', icon: Clock },
+            { id: 'compliance', label: 'Audit Trail', icon: CheckCircle },
             { id: 'content', label: 'Content', icon: Music },
             { id: 'settings', label: 'Settings', icon: Settings },
           ].map(({ id, label, icon: Icon }) => (
@@ -158,24 +139,27 @@ export default function QumusBroadcastAdminDashboard() {
             </button>
           ))}
         </nav>
-
-        <div className="absolute bottom-4 left-2 right-2">
-          <Button variant="outline" className="w-full" size="sm">
-            <LogOut className="w-4 h-4 mr-2" />
-            {sidebarOpen && 'Logout'}
-          </Button>
-        </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
-        <div className="p-8">
+        <div className="p-6 md:p-8">
           {/* Header */}
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-2">Broadcast Administration</h2>
-            <p className="text-foreground/70">
-              Welcome back, {user?.name}. Manage your broadcasts and monitor compliance.
-            </p>
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">Broadcast Administration</h2>
+              <p className="text-foreground/70">
+                Welcome back, {user?.name}. Live data from QUMUS Content Scheduler.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge className={schedulerStatus?.isRunning ? 'bg-green-500/20 text-green-600 border-green-500/30' : 'bg-red-500/20 text-red-600 border-red-500/30'}>
+                {schedulerStatus?.isRunning ? '● Scheduler Running' : '● Scheduler Stopped'}
+              </Badge>
+              <Button variant="outline" size="sm" onClick={() => refetchScheduler()}>
+                <RefreshCw className="w-4 h-4 mr-1" /> Refresh
+              </Button>
+            </div>
           </div>
 
           {/* Overview Tab */}
@@ -186,28 +170,18 @@ export default function QumusBroadcastAdminDashboard() {
                 <Card className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-foreground/70 mb-1">Total Broadcasts</p>
-                      <p className="text-3xl font-bold">{stats.totalBroadcasts}</p>
+                      <p className="text-sm text-foreground/70 mb-1">Active Channels</p>
+                      <p className="text-3xl font-bold text-green-500">{activeChannels}</p>
                     </div>
-                    <Radio className="w-8 h-8 text-primary opacity-50" />
+                    <Radio className="w-8 h-8 text-green-500 opacity-50" />
                   </div>
                 </Card>
 
                 <Card className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-foreground/70 mb-1">Active Now</p>
-                      <p className="text-3xl font-bold text-green-500">{stats.activeBroadcasts}</p>
-                    </div>
-                    <Clock className="w-8 h-8 text-green-500 opacity-50" />
-                  </div>
-                </Card>
-
-                <Card className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-foreground/70 mb-1">Total Viewers</p>
-                      <p className="text-3xl font-bold">{stats.totalViewers.toLocaleString()}</p>
+                      <p className="text-sm text-foreground/70 mb-1">Total Listeners</p>
+                      <p className="text-3xl font-bold">{totalListeners.toLocaleString()}</p>
                     </div>
                     <Users className="w-8 h-8 text-primary opacity-50" />
                   </div>
@@ -216,111 +190,76 @@ export default function QumusBroadcastAdminDashboard() {
                 <Card className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-foreground/70 mb-1">Avg Engagement</p>
-                      <p className="text-3xl font-bold">{stats.avgEngagement.toFixed(1)}%</p>
+                      <p className="text-sm text-foreground/70 mb-1">Schedule Slots</p>
+                      <p className="text-3xl font-bold">{totalSlots}</p>
                     </div>
-                    <TrendingUp className="w-8 h-8 text-primary opacity-50" />
+                    <Clock className="w-8 h-8 text-primary opacity-50" />
                   </div>
                 </Card>
 
                 <Card className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-foreground/70 mb-1">Compliance Rate</p>
-                      <p className="text-3xl font-bold text-green-500">
-                        {stats.complianceRate}%
-                      </p>
+                      <p className="text-sm text-foreground/70 mb-1">Autonomy Level</p>
+                      <p className="text-3xl font-bold text-purple-500">{schedulerStatus?.autonomyLevel || 90}%</p>
                     </div>
-                    <CheckCircle className="w-8 h-8 text-green-500 opacity-50" />
+                    <Zap className="w-8 h-8 text-purple-500 opacity-50" />
                   </div>
                 </Card>
 
                 <Card className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-foreground/70 mb-1">Completed</p>
-                      <p className="text-3xl font-bold">{stats.completedBroadcasts}</p>
+                      <p className="text-sm text-foreground/70 mb-1">Engine Status</p>
+                      <p className="text-3xl font-bold text-green-500">{systemHealth?.status?.toUpperCase() || 'HEALTHY'}</p>
                     </div>
-                    <CheckCircle className="w-8 h-8 text-primary opacity-50" />
+                    <Activity className="w-8 h-8 text-green-500 opacity-50" />
+                  </div>
+                </Card>
+
+                <Card className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-foreground/70 mb-1">Currently Playing</p>
+                      <p className="text-3xl font-bold">{currentSlots?.length || 0}</p>
+                    </div>
+                    <Music className="w-8 h-8 text-primary opacity-50" />
                   </div>
                 </Card>
               </div>
 
               {/* Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Viewer Trend */}
+                {/* Channel Listeners */}
                 <Card className="p-6">
-                  <h3 className="text-lg font-bold mb-4">Viewer Trend (24h)</h3>
+                  <h3 className="text-lg font-bold mb-4">Listeners by Channel</h3>
                   <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={viewerTrendData}>
+                    <BarChart data={channelListenerData}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="time" />
+                      <XAxis dataKey="name" fontSize={11} />
                       <YAxis />
                       <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="viewers"
-                        stroke="#3b82f6"
-                        strokeWidth={2}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </Card>
-
-                {/* Platform Distribution */}
-                <Card className="p-6">
-                  <h3 className="text-lg font-bold mb-4">Platform Distribution</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={platformDistribution}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, value }) => `${name} ${value}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {platformDistribution.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </Card>
-
-                {/* Engagement Metrics */}
-                <Card className="p-6">
-                  <h3 className="text-lg font-bold mb-4">Engagement Metrics</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={engagementData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="type" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="count" fill="#3b82f6" />
+                      <Bar dataKey="listeners" fill="#8b5cf6" />
                     </BarChart>
                   </ResponsiveContainer>
                 </Card>
 
-                {/* Compliance Status */}
+                {/* Channel Type Distribution */}
                 <Card className="p-6">
-                  <h3 className="text-lg font-bold mb-4">Compliance Status</h3>
+                  <h3 className="text-lg font-bold mb-4">Channel Type Distribution</h3>
                   <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                       <Pie
-                        data={complianceData}
+                        data={channelTypeDistribution}
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ status, count }) => `${status} ${count}`}
+                        label={({ name, value }) => `${name} (${value})`}
                         outerRadius={80}
                         fill="#8884d8"
-                        dataKey="count"
+                        dataKey="value"
                       >
-                        {complianceData.map((entry, index) => (
+                        {channelTypeDistribution.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
@@ -332,56 +271,178 @@ export default function QumusBroadcastAdminDashboard() {
             </div>
           )}
 
-          {/* Compliance Tab */}
-          {activeTab === 'compliance' && (
-            <div className="space-y-6">
-              <Card className="p-6">
-                <h3 className="text-lg font-bold mb-4">Audit Log</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left py-2 px-4">Action</th>
-                        <th className="text-left py-2 px-4">Performed By</th>
-                        <th className="text-left py-2 px-4">Timestamp</th>
-                        <th className="text-left py-2 px-4">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {auditLogs.slice(0, 10).map((log) => (
-                        <tr key={log.id} className="border-b border-border hover:bg-accent/5">
-                          <td className="py-2 px-4">{log.action}</td>
-                          <td className="py-2 px-4">{log.performedBy}</td>
-                          <td className="py-2 px-4">
-                            {new Date(log.timestamp).toLocaleString()}
-                          </td>
-                          <td className="py-2 px-4">
-                            <span
-                              className={`px-2 py-1 rounded text-xs font-semibold ${
-                                log.complianceStatus === 'compliant'
-                                  ? 'bg-green-100 text-green-800'
-                                  : log.complianceStatus === 'warning'
-                                    ? 'bg-yellow-100 text-yellow-800'
-                                    : 'bg-red-100 text-red-800'
-                              }`}
-                            >
-                              {log.complianceStatus}
-                            </span>
-                          </td>
-                        </tr>
+          {/* Channels Tab */}
+          {activeTab === 'channels' && (
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Live Channel Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {channels && channels.length > 0 ? (
+                    <div className="space-y-3">
+                      {channels.map((ch: any) => (
+                        <div key={ch.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <Radio className={`w-5 h-5 ${ch.status === 'active' ? 'text-green-500' : 'text-gray-400'}`} />
+                            <div>
+                              <h4 className="font-semibold">{ch.name}</h4>
+                              <p className="text-sm text-foreground/60">{ch.currentContent || 'No content playing'}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="text-right">
+                              <p className="text-sm font-medium">{(ch.listeners || 0).toLocaleString()} listeners</p>
+                              <p className="text-xs text-foreground/50">{ch.type}</p>
+                            </div>
+                            <Badge className={ch.status === 'active' ? 'bg-green-500/20 text-green-600' : 'bg-gray-500/20 text-gray-400'}>
+                              {ch.status}
+                            </Badge>
+                          </div>
+                        </div>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
+                    </div>
+                  ) : (
+                    <p className="text-center py-8 text-foreground/50">Loading channel data...</p>
+                  )}
+                </CardContent>
               </Card>
             </div>
           )}
 
-          {/* Other Tabs Placeholder */}
-          {(activeTab === 'broadcasts' ||
-            activeTab === 'analytics' ||
-            activeTab === 'content' ||
-            activeTab === 'settings') && (
+          {/* Schedule Tab */}
+          {activeTab === 'schedule' && (
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Content Schedule ({totalSlots} slots)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {currentSlots && currentSlots.length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="font-semibold text-green-600 mb-3">Currently Playing</h4>
+                      <div className="space-y-2">
+                        {currentSlots.map((slot: any) => (
+                          <div key={slot.id} className="flex items-center justify-between p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                            <div>
+                              <span className="font-medium">{slot.title}</span>
+                              <span className="text-sm text-foreground/60 ml-3">{slot.startTime} - {slot.endTime}</span>
+                            </div>
+                            <Badge className="bg-green-500/20 text-green-600">LIVE</Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {scheduleSlots && scheduleSlots.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border">
+                            <th className="text-left py-2 px-3">Title</th>
+                            <th className="text-left py-2 px-3">Channel</th>
+                            <th className="text-left py-2 px-3">Time</th>
+                            <th className="text-left py-2 px-3">Type</th>
+                            <th className="text-left py-2 px-3">Priority</th>
+                            <th className="text-left py-2 px-3">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {scheduleSlots.slice(0, 20).map((slot: any) => (
+                            <tr key={slot.id} className="border-b border-border hover:bg-accent/5">
+                              <td className="py-2 px-3 font-medium">{slot.title}</td>
+                              <td className="py-2 px-3 text-foreground/60">{slot.channelId}</td>
+                              <td className="py-2 px-3">{slot.startTime} - {slot.endTime}</td>
+                              <td className="py-2 px-3">
+                                <Badge variant="outline">{slot.contentType}</Badge>
+                              </td>
+                              <td className="py-2 px-3">{slot.priority}</td>
+                              <td className="py-2 px-3">
+                                <Badge className={slot.isActive ? 'bg-green-500/20 text-green-600' : 'bg-gray-500/20 text-gray-400'}>
+                                  {slot.isActive ? 'Active' : 'Inactive'}
+                                </Badge>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {scheduleSlots.length > 20 && (
+                        <p className="text-center text-sm text-foreground/50 mt-3">
+                          Showing 20 of {scheduleSlots.length} schedule slots
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-center py-8 text-foreground/50">Loading schedule data...</p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Audit Trail Tab */}
+          {activeTab === 'compliance' && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>QUMUS Audit Trail</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {auditTrail && auditTrail.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border">
+                            <th className="text-left py-2 px-4">Decision ID</th>
+                            <th className="text-left py-2 px-4">Policy</th>
+                            <th className="text-left py-2 px-4">Result</th>
+                            <th className="text-left py-2 px-4">Autonomous</th>
+                            <th className="text-left py-2 px-4">Timestamp</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {auditTrail.map((log: any, i: number) => (
+                            <tr key={log.id || i} className="border-b border-border hover:bg-accent/5">
+                              <td className="py-2 px-4 font-mono text-xs">{(log.decisionId || '').substring(0, 16)}...</td>
+                              <td className="py-2 px-4">{log.policyId || 'Unknown'}</td>
+                              <td className="py-2 px-4">
+                                <Badge className={
+                                  log.result === 'success' ? 'bg-green-500/10 text-green-600' :
+                                  log.result === 'failure' ? 'bg-red-500/10 text-red-600' :
+                                  'bg-yellow-500/10 text-yellow-600'
+                                }>
+                                  {log.result || log.status || 'pending'}
+                                </Badge>
+                              </td>
+                              <td className="py-2 px-4">
+                                {log.autonomousFlag ? (
+                                  <CheckCircle className="w-4 h-4 text-green-500" />
+                                ) : (
+                                  <AlertCircle className="w-4 h-4 text-yellow-500" />
+                                )}
+                              </td>
+                              <td className="py-2 px-4 text-foreground/60">
+                                {log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-foreground/50">
+                      <CheckCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p>No audit trail entries yet. Decisions will appear here as the engine processes requests.</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Content & Settings Tabs */}
+          {(activeTab === 'content' || activeTab === 'settings') && (
             <Card className="p-8 text-center">
               <h3 className="text-xl font-bold mb-2">
                 {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}

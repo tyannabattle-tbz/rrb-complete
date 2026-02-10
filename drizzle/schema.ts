@@ -1799,18 +1799,18 @@ export const qumusHumanReview = mysqlTable('qumus_human_review', {
   decisionId: varchar('decision_id', { length: 255 }).notNull().unique(),
   policyId: varchar('policy_id', { length: 100 }).notNull(),
   userId: int('user_id').references(() => users.id, { onDelete: 'set null' }),
-  escalationReason: varchar('escalation_reason', { length: 255 }).notNull(), // 'low_confidence', 'anomaly', 'sensitive_data', 'high_risk', 'policy_threshold'
+  escalationReason: varchar('escalation_reason', { length: 100 }).notNull(),
   priority: mysqlEnum('priority', ['low', 'medium', 'high', 'critical']).default('medium').notNull(),
-  input: json('input').notNull(),
-  recommendedAction: json('recommended_action'),
+  originalInput: json('original_input'),
+  originalOutput: json('original_output'),
   confidence: decimal('confidence', { precision: 5, scale: 2 }),
-  reviewedBy: int('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
-  decision: mysqlEnum('decision', ['approved', 'rejected', 'modified']),
+  decision: varchar('decision', { length: 50 }),
   reviewNotes: text('review_notes'),
+  reviewedBy: varchar('reviewed_by', { length: 255 }),
   reviewedAt: timestamp('reviewed_at'),
-  status: mysqlEnum('status', ['pending', 'in_review', 'completed']).default('pending').notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  status: mysqlEnum('status', ['pending', 'in_review', 'completed', 'expired']).default('pending').notNull(),
+  metadata: json('metadata'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const qumusDecisionLogs = mysqlTable('qumus_decision_logs', {
