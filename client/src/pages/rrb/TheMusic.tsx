@@ -387,7 +387,7 @@ export default function TheMusic() {
                   )}
                 </div>
 
-                <Link href="/proof-vault">
+                <Link href="/rrb/proof-vault">
                   <Button variant="outline" size="sm">
                     View Proof <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
@@ -539,7 +539,7 @@ export default function TheMusic() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Link href="/proof-vault">
+            <Link href="/rrb/proof-vault">
               <div className="proof-vault-tile cursor-pointer group">
                 <div className="mb-4 text-4xl">📜</div>
                 <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition-colors">

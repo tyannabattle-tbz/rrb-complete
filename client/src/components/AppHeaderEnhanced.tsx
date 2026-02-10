@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, Link } from 'wouter';
-import { Search, Share2, Menu, X, Home, Radio, Music, Heart, BookOpen, Shield, Headphones, ChevronDown, ExternalLink, Podcast, Building2, Zap, Settings, Dice5 } from 'lucide-react';
+import { Search, Share2, Menu, X, Home, Radio, Music, Heart, BookOpen, Shield, Headphones, ChevronDown, ExternalLink, Podcast, Building2, Zap, Settings, Dice5, Film, Video, Smartphone, Clapperboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -168,6 +168,20 @@ export function AppHeaderEnhanced() {
         { label: 'Family Achievements', path: '/rrb/family-achievements' },
         { label: 'News & Updates', path: '/rrb/news' },
         { label: 'FAQ', path: '/rrb/faq' },
+      ],
+    },
+    {
+      id: 'studio',
+      label: 'Studio',
+      icon: Film,
+      items: [
+        { label: 'Production Studio', path: '/studio' },
+        { label: 'Video Processing', path: '/video-processing' },
+        { label: 'Motion Studio', path: '/motion-studio' },
+        { label: 'Mobile Studio', path: '/mobile-studio' },
+        { label: 'Video Production', path: '/video-production' },
+        { label: 'Audio Editor', path: '/audio-editor' },
+        { label: 'Media Hub', path: '/rrb/media-hub' },
       ],
     },
     {

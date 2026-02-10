@@ -14,7 +14,7 @@ const PLATFORMS = [
     title: 'Radio Station',
     description: '24/7 streaming radio with live DJ control and listener engagement',
     icon: Radio,
-    href: '/radio-station',
+    href: '/rrb/radio-station',
     color: 'from-blue-500/20 to-blue-600/20',
     badge: '🎙️ LIVE'
   },
@@ -23,7 +23,7 @@ const PLATFORMS = [
     title: 'Podcast Network',
     description: 'Multi-channel podcast platform with episodes, transcripts, and community',
     icon: Podcast,
-    href: '/podcast-and-video',
+    href: '/rrb/podcast-and-video',
     color: 'from-purple-500/20 to-purple-600/20',
     badge: '🎧 STREAMING'
   },
@@ -32,7 +32,7 @@ const PLATFORMS = [
     title: 'Media Studio',
     description: 'Professional audio/video production tools and content creation suite',
     icon: Music,
-    href: '/entertainment/dashboard',
+    href: '/rrb/divisions',
     color: 'from-pink-500/20 to-pink-600/20',
     badge: '🎬 STUDIO'
   },
@@ -41,7 +41,7 @@ const PLATFORMS = [
     title: 'Meditation & Healing',
     description: 'Guided meditations with Drop Radio 432Hz streams and wellness content',
     icon: Sparkles,
-    href: '/healing-music-frequencies',
+    href: '/rrb/healing-music-frequencies',
     color: 'from-green-500/20 to-green-600/20',
     badge: '✨ WELLNESS'
   },
@@ -50,7 +50,7 @@ const PLATFORMS = [
     title: 'Solbones Music',
     description: 'Exclusive music collection and audio archive from the legacy',
     icon: Headphones,
-    href: '/the-music',
+    href: '/rrb/the-music',
     color: 'from-orange-500/20 to-orange-600/20',
     badge: '🎵 MUSIC'
   },
@@ -59,7 +59,7 @@ const PLATFORMS = [
     title: 'The Legacy',
     description: 'Complete biography, timeline, and historical documentation',
     icon: BookOpen,
-    href: '/the-legacy',
+    href: '/rrb/the-legacy',
     color: 'from-amber-500/20 to-amber-600/20',
     badge: '📖 HISTORY'
   },
@@ -68,7 +68,7 @@ const PLATFORMS = [
     title: 'Proof Vault',
     description: 'Verified documentation, evidence, and archival records',
     icon: Zap,
-    href: '/proof-vault',
+    href: '/rrb/proof-vault',
     color: 'from-red-500/20 to-red-600/20',
     badge: '✓ VERIFIED'
   },
@@ -77,7 +77,7 @@ const PLATFORMS = [
     title: 'Grandma Helen',
     description: 'Family history and genealogical records',
     icon: Users,
-    href: '/grandma-helen',
+    href: '/rrb/grandma-helen',
     color: 'from-rose-500/20 to-rose-600/20',
     badge: '👵 FAMILY'
   },
@@ -86,7 +86,7 @@ const PLATFORMS = [
     title: 'HybridCast',
     description: 'Emergency broadcast system with offline mesh networking',
     icon: Signal,
-    href: '/hybridcast',
+    href: '/rrb/hybridcast',
     color: 'from-cyan-500/20 to-cyan-600/20',
     badge: '📡 BROADCAST'
   },
@@ -95,7 +95,7 @@ const PLATFORMS = [
     title: 'QUMUS Brain',
     description: 'Autonomous orchestration engine controlling all platforms',
     icon: Brain,
-    href: '/qumus/admin',
+    href: '/rrb/qumus/admin',
     color: 'from-indigo-500/20 to-indigo-600/20',
     badge: '🤖 AI'
   },
@@ -104,7 +104,7 @@ const PLATFORMS = [
     title: 'Sweet Miracles',
     description: 'Community support, grants, and social impact initiatives',
     icon: Heart,
-    href: '/canryn-production',
+    href: '/rrb/canryn-production',
     color: 'from-fuchsia-500/20 to-fuchsia-600/20',
     badge: '💝 COMMUNITY'
   },
@@ -113,7 +113,7 @@ const PLATFORMS = [
     title: 'Unified Dashboard',
     description: 'Central control center for all ecosystem services and monitoring',
     icon: Zap,
-    href: '/ecosystem/dashboard',
+    href: '/rrb/divisions',
     color: 'from-violet-500/20 to-violet-600/20',
     badge: '⚙️ CONTROL'
   },
@@ -292,7 +292,7 @@ export default function Home() {
               A legacy restored — unified ecosystem of platforms, services, and autonomous intelligence
             </p>
             <div className="flex gap-4 flex-wrap justify-center">
-              <Link href="/proof-vault">
+              <Link href="/rrb/proof-vault">
                 <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                   Explore the Proof Vault
                   <ArrowRight className="ml-2 w-5 h-5" />
@@ -475,7 +475,7 @@ export default function Home() {
               </Link>
 
               {/* Explore the Proof Vault */}
-              <Link href="/proof-vault">
+              <Link href="/rrb/proof-vault">
                 <div className="p-8 rounded-lg border border-border hover:border-accent transition cursor-pointer group bg-gradient-to-br from-red-500/10 to-red-600/10">
                   <div className="text-4xl mb-4">✓</div>
                   <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition">
@@ -512,7 +512,7 @@ export default function Home() {
                   <Zap className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link href="/proof-vault">
+              <Link href="/rrb/proof-vault">
                 <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                   Proof Vault
                   <ArrowRight className="ml-2 w-5 h-5" />

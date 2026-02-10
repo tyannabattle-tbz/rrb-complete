@@ -29,6 +29,12 @@ export async function handleStripeWebhook(req: Request, res: Response) {
 
   console.log(`[Stripe Webhook] Received event: ${event.type}`);
 
+  // Handle test events for webhook verification
+  if (event.id.startsWith('evt_test_')) {
+    console.log("[Webhook] Test event detected, returning verification response");
+    return res.json({ verified: true });
+  }
+
   try {
     switch (event.type) {
       case "payment_intent.succeeded":
@@ -49,6 +55,10 @@ export async function handleStripeWebhook(req: Request, res: Response) {
 
       case "charge.refunded":
         await handleChargeRefunded(event.data.object as Stripe.Charge);
+        break;
+
+      case "checkout.session.completed":
+        await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
         break;
 
       default:
@@ -332,5 +342,52 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
     }
   } catch (error) {
     console.error("[Stripe Webhook] Error handling charge refunded:", error);
+  }
+}
+
+/**
+ * Handle checkout session completed (merchandise purchases)
+ */
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  const customerId = session.customer as string;
+  const amount = (session.amount_total || 0) / 100;
+  const metadata = session.metadata || {};
+
+  console.log(`[Stripe Webhook] Checkout completed: $${amount}, type: ${metadata.type || 'unknown'}`);
+
+  try {
+    if (metadata.type === 'merchandise') {
+      console.log(`[Stripe Webhook] ✓ Merchandise purchase: $${amount}`);
+      console.log(`[Stripe Webhook]   Items: ${metadata.items || 'N/A'}`);
+      console.log(`[Stripe Webhook]   Customer: ${metadata.customer_name || 'Unknown'} (${metadata.customer_email || 'N/A'})`);
+
+      // Notify owner of merchandise purchase
+      await notifyOwner({
+        title: "🛍️ Merchandise Purchase",
+        content: `New merchandise order! Amount: $${amount.toFixed(2)}. Customer: ${metadata.customer_name || 'Unknown'}. Items: ${metadata.items || 'N/A'}`,
+      });
+    } else if (metadata.type === 'donation') {
+      // Handle donation checkout completion
+      const db = await getDb();
+      if (db && metadata.user_id) {
+        await db.insert(donations).values({
+          userId: parseInt(metadata.user_id),
+          amount: amount.toString(),
+          stripeCustomerId: customerId,
+          status: "completed",
+          createdAt: new Date(),
+        });
+        console.log(`[Stripe Webhook] ✓ Recorded donation: $${amount}`);
+      }
+
+      await notifyOwner({
+        title: "💝 New Donation",
+        content: `New donation received! Amount: $${amount.toFixed(2)}. Donor: ${metadata.customer_name || 'Anonymous'}`,
+      });
+    } else {
+      console.log(`[Stripe Webhook] Checkout completed for unknown type: ${metadata.type}`);
+    }
+  } catch (error) {
+    console.error("[Stripe Webhook] Error handling checkout completed:", error);
   }
 }

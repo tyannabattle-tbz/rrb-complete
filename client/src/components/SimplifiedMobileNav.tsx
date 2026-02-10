@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BookOpen, Music, Radio, Heart, Building2, ExternalLink, Headphones, Shield, Podcast } from 'lucide-react';
+import { Menu, X, Home, BookOpen, Music, Radio, Heart, Building2, ExternalLink, Headphones, Shield, Podcast, Film, Video, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavItem {
@@ -61,6 +61,16 @@ export function SimplifiedMobileNav() {
         { id: 'nav-testimonials', label: 'Testimonials', icon: Heart, path: '/rrb/testimonials-and-stories' },
         { id: 'nav-news', label: 'News & Updates', icon: BookOpen, path: '/rrb/news' },
         { id: 'nav-faq', label: 'FAQ', icon: BookOpen, path: '/rrb/faq' },
+      ],
+    },
+    {
+      title: 'Studio',
+      items: [
+        { id: 'nav-studio', label: 'Production Studio', icon: Film, path: '/studio' },
+        { id: 'nav-video-proc', label: 'Video Processing', icon: Video, path: '/video-processing' },
+        { id: 'nav-motion', label: 'Motion Studio', icon: Film, path: '/motion-studio' },
+        { id: 'nav-mobile-studio', label: 'Mobile Studio', icon: Smartphone, path: '/mobile-studio' },
+        { id: 'nav-media-hub', label: 'Media Hub', icon: Film, path: '/rrb/media-hub' },
       ],
     },
     {

@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Link } from 'wouter';
-import { Download, Volume2, RotateCcw, Trophy, BookOpen, Users, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { Download, Volume2, RotateCcw, Trophy, BookOpen, Users, Sparkles, ChevronDown, ChevronUp, Bot, UserPlus, Swords, Zap } from 'lucide-react';
 
 // ============================================================
 // SOLBONES DICE GAME
@@ -13,21 +13,34 @@ import { Download, Volume2, RotateCcw, Trophy, BookOpen, Users, Sparkles, Chevro
 // A Canryn Production
 // ============================================================
 
-// Solfeggio frequency mapping for each die face
-const FREQUENCY_MAP: Record<number, { frequency: number; note: string; color: string; bgColor: string; description: string }> = {
-  1: { frequency: 174, note: 'UT', color: 'text-red-400', bgColor: 'from-red-600 to-red-800', description: 'Foundation and security, grounding energy' },
-  2: { frequency: 285, note: 'RE', color: 'text-orange-400', bgColor: 'from-orange-600 to-orange-800', description: 'Tissue repair and cellular healing' },
-  3: { frequency: 369, note: 'MI', color: 'text-yellow-400', bgColor: 'from-yellow-600 to-yellow-800', description: 'Emotional healing and transformation' },
-  4: { frequency: 432, note: 'FA', color: 'text-green-400', bgColor: 'from-green-600 to-green-800', description: 'Heart chakra, universal harmony and healing' },
-  5: { frequency: 528, note: 'SOL', color: 'text-blue-400', bgColor: 'from-blue-600 to-blue-800', description: 'DNA repair, love and miracles' },
-  6: { frequency: 639, note: 'LA', color: 'text-indigo-400', bgColor: 'from-indigo-600 to-indigo-800', description: 'Relationships and communication' },
+// Full Solfeggio frequency set (9 frequencies) + extended healing tones
+const ALL_FREQUENCIES = [
+  { frequency: 174, note: 'UT', name: 'Foundation', color: 'text-red-400', bgColor: 'from-red-600 to-red-800', description: 'Foundation and security, natural pain relief' },
+  { frequency: 285, note: 'RE', name: 'Restoration', color: 'text-orange-400', bgColor: 'from-orange-600 to-orange-800', description: 'Tissue repair and cellular healing' },
+  { frequency: 396, note: 'MI', name: 'Liberation', color: 'text-yellow-400', bgColor: 'from-yellow-600 to-yellow-800', description: 'Liberates guilt and fear, turns grief into joy' },
+  { frequency: 432, note: 'FA', name: 'Drop Radio', color: 'text-amber-400', bgColor: 'from-amber-600 to-amber-800', description: 'Universal harmony, Schumann Resonance of Earth' },
+  { frequency: 528, note: 'SOL', name: 'Love / Miracles', color: 'text-green-400', bgColor: 'from-green-600 to-green-800', description: 'DNA repair, love frequency, miracle tone' },
+  { frequency: 639, note: 'LA', name: 'Connection', color: 'text-teal-400', bgColor: 'from-teal-600 to-teal-800', description: 'Harmonious relationships and communication' },
+  { frequency: 741, note: 'TI', name: 'Expression', color: 'text-blue-400', bgColor: 'from-blue-600 to-blue-800', description: 'Awakening intuition, cleansing toxins' },
+  { frequency: 852, note: 'DO', name: 'Intuition', color: 'text-indigo-400', bgColor: 'from-indigo-600 to-indigo-800', description: 'Spiritual order, seeing through illusions' },
+  { frequency: 963, note: 'OM', name: 'Divine', color: 'text-purple-400', bgColor: 'from-purple-600 to-purple-800', description: 'Frequency of the Gods, return to oneness' },
+];
+
+// Die face to frequency mapping (6 faces = first 6 Solfeggio)
+const FREQUENCY_MAP: Record<number, typeof ALL_FREQUENCIES[0]> = {
+  1: ALL_FREQUENCIES[0], // 174 Hz
+  2: ALL_FREQUENCIES[1], // 285 Hz
+  3: ALL_FREQUENCIES[2], // 396 Hz
+  4: ALL_FREQUENCIES[3], // 432 Hz
+  5: ALL_FREQUENCIES[4], // 528 Hz
+  6: ALL_FREQUENCIES[5], // 639 Hz
 };
 
 // Frequency dice colors per rulebook: red (2), purple (3), blue (4)
 const FREQ_DICE: Record<number, string> = { 2: 'red', 3: 'purple', 4: 'blue' };
 
 // Die face SVG component
-function DieFace({ value, isRolling, size = 80, freqHighlight = false }: { value: number; isRolling: boolean; size?: number; freqHighlight?: boolean }) {
+function DieFace({ value, isRolling, size = 80, freqHighlight = false, label }: { value: number; isRolling: boolean; size?: number; freqHighlight?: boolean; label?: string }) {
   const dotPositions: Record<number, [number, number][]> = {
     1: [[50, 50]],
     2: [[30, 30], [70, 70]],
@@ -42,36 +55,43 @@ function DieFace({ value, isRolling, size = 80, freqHighlight = false }: { value
   const borderColor = isFreqDie && freqHighlight ? freqColor : '#a78bfa';
 
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100" className={isRolling ? 'animate-bounce' : 'transition-all duration-300'}>
-      <rect x="5" y="5" width="90" height="90" rx="15" ry="15"
-        fill={isFreqDie && freqHighlight ? `${freqColor}22` : '#1a1a2e'}
-        stroke={borderColor} strokeWidth="3" />
-      {(dotPositions[value] || []).map(([cx, cy], i) => (
-        <circle key={i} cx={cx} cy={cy} r="8"
-          fill={isFreqDie && freqHighlight ? freqColor : '#fbbf24'} />
-      ))}
-    </svg>
+    <div className="flex flex-col items-center">
+      <svg width={size} height={size} viewBox="0 0 100 100" className={isRolling ? 'animate-bounce' : 'transition-all duration-300'}>
+        <rect x="5" y="5" width="90" height="90" rx="15" ry="15"
+          fill={isFreqDie && freqHighlight ? `${freqColor}22` : '#1a1a2e'}
+          stroke={borderColor} strokeWidth="3" />
+        {(dotPositions[value] || []).map(([cx, cy], i) => (
+          <circle key={i} cx={cx} cy={cy} r="8"
+            fill={isFreqDie && freqHighlight ? freqColor : '#fbbf24'} />
+        ))}
+      </svg>
+      {label && <span className="text-xs text-purple-400 mt-1">{label}</span>}
+      {!isRolling && FREQ_DICE[value] && freqHighlight && (
+        <span className="text-xs text-purple-300 mt-0.5">{FREQUENCY_MAP[value]?.note} {FREQUENCY_MAP[value]?.frequency}Hz</span>
+      )}
+    </div>
   );
 }
 
 // Score a round based on Solbones rules
-function scoreRound(dice: number[]): { points: number; tallies: number; label: string } {
+function scoreRound(dice: number[]): { points: number; tallies: number; label: string; bonus?: string } {
   const sorted = [...dice].sort();
   const sum = dice.reduce((a, b) => a + b, 0);
 
-  // Zan Zone: 4+3+2 in frequency colors
+  // Zan Zone: 4+3+2 in frequency colors (always first check)
   if (sorted[0] === 2 && sorted[1] === 3 && sorted[2] === 4) {
-    return { points: 18, tallies: 2, label: 'Zan Zone! (4+3+2 in freq colors)' };
-  }
-
-  // In the Ether: 4+3+2
-  if (sorted[0] === 2 && sorted[1] === 3 && sorted[2] === 4) {
-    return { points: 9, tallies: 1, label: 'In the Ether! (4+3+2)' };
+    return { points: 18, tallies: 2, label: 'Zan Zone!', bonus: '4+3+2 in frequency colors — 18 pts + 2 tallies' };
   }
 
   // Tribing Up: 3 of a kind
   if (dice[0] === dice[1] && dice[1] === dice[2]) {
-    return { points: dice[0], tallies: 1, label: `Tribing Up! (Three ${dice[0]}s)` };
+    const isFreq = FREQ_DICE[dice[0]] !== undefined;
+    return {
+      points: isFreq ? dice[0] * 2 : dice[0],
+      tallies: 1,
+      label: `Tribing Up!`,
+      bonus: `Three ${dice[0]}s${isFreq ? ' (freq dice = double!)' : ''} — +1 tally`,
+    };
   }
 
   // Check for pairs
@@ -82,7 +102,8 @@ function scoreRound(dice: number[]): { points: number; tallies: number; label: s
     return {
       points: pts,
       tallies: 0,
-      label: isFreqPair ? `Vibing Up! (Freq pair of ${pairVal}s = double)` : `Pair of ${pairVal}s`,
+      label: isFreqPair ? 'Vibing Up!' : `Pair of ${pairVal}s`,
+      bonus: isFreqPair ? `Frequency pair of ${pairVal}s = double score` : undefined,
     };
   }
 
@@ -91,12 +112,12 @@ function scoreRound(dice: number[]): { points: number; tallies: number; label: s
       (sorted[0] === 2 && sorted[1] === 3 && sorted[2] === 4) ||
       (sorted[0] === 3 && sorted[1] === 4 && sorted[2] === 5) ||
       (sorted[0] === 4 && sorted[1] === 5 && sorted[2] === 6)) {
-    return { points: sum, tallies: 0, label: `Sequence! (${sorted.join('-')})` };
+    return { points: sum, tallies: 0, label: `Sequence ${sorted.join('-')}!`, bonus: `Run of ${sorted.join('-')} = ${sum} pts` };
   }
 
   // Default: highest die
   const highest = Math.max(...dice);
-  return { points: highest, tallies: 0, label: `Highest die: ${highest}` };
+  return { points: highest, tallies: 0, label: `Highest: ${highest}` };
 }
 
 // Advanced "In the 9" check
@@ -104,14 +125,35 @@ function checkInTheNine(dice: number[]): boolean {
   return dice.reduce((a, b) => a + b, 0) === 9;
 }
 
+// AI opponent logic
+function aiDecision(aiScore: number, currentResult: { points: number } | null, rollsUsed: number, maxRolls: number): 'roll' | 'keep' {
+  if (!currentResult) return 'roll';
+  if (rollsUsed >= maxRolls) return 'keep';
+  // AI strategy: keep if good score, re-roll if low
+  if (currentResult.points >= 8) return 'keep';
+  if (currentResult.points >= 5 && rollsUsed >= 2) return 'keep';
+  if (aiScore >= 55 && currentResult.points >= 3) return 'keep'; // conservative near win
+  return 'roll';
+}
+
 type GameMode = 'standard' | 'advanced' | 'spiral';
-type GameState = 'idle' | 'rolling' | 'scored' | 'finished';
+type PlayMode = 'solo' | 'ai' | 'local_multi';
+type GameState = 'idle' | 'rolling' | 'scored' | 'finished' | 'ai_turn' | 'waiting_opponent';
+type PlayerTurn = 'player1' | 'player2';
+
+interface PlayerState {
+  name: string;
+  score: number;
+  tallies: number;
+  isAI: boolean;
+}
 
 interface RoundResult {
   dice: number[];
-  score: { points: number; tallies: number; label: string };
+  score: { points: number; tallies: number; label: string; bonus?: string };
   inTheNine: boolean;
   rollNumber: number;
+  player: string;
 }
 
 // PDF download links
@@ -123,19 +165,27 @@ const PDFS = {
 
 export default function Solbones() {
   const { user } = useAuth();
+  const [playMode, setPlayMode] = useState<PlayMode>('solo');
   const [gameMode, setGameMode] = useState<GameMode>('standard');
   const [gameState, setGameState] = useState<GameState>('idle');
   const [dice, setDice] = useState<number[]>([1, 1, 1]);
   const [rollsThisRound, setRollsThisRound] = useState(0);
-  const [totalScore, setTotalScore] = useState(0);
-  const [tallies, setTallies] = useState(0);
+  const [currentTurn, setCurrentTurn] = useState<PlayerTurn>('player1');
+  const [players, setPlayers] = useState<Record<PlayerTurn, PlayerState>>({
+    player1: { name: user?.name || 'Player 1', score: 0, tallies: 0, isAI: false },
+    player2: { name: 'Player 2', score: 0, tallies: 0, isAI: false },
+  });
   const [roundHistory, setRoundHistory] = useState<RoundResult[]>([]);
-  const [currentRoundScore, setCurrentRoundScore] = useState<{ points: number; tallies: number; label: string } | null>(null);
+  const [currentRoundScore, setCurrentRoundScore] = useState<{ points: number; tallies: number; label: string; bonus?: string } | null>(null);
   const [isRolling, setIsRolling] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showYouthChallenges, setShowYouthChallenges] = useState(false);
+  const [showFrequencies, setShowFrequencies] = useState(false);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const [winner, setWinner] = useState<string | null>(null);
+  const [aiThinking, setAiThinking] = useState(false);
   const rollAnimRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const aiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // tRPC mutations
   const rollDiceMutation = trpc.solbones.rollDice.useMutation();
@@ -143,7 +193,8 @@ export default function Solbones() {
 
   // Win conditions
   const winScore = gameMode === 'standard' ? 63 : gameMode === 'spiral' ? 36 : 63;
-  const maxRollsPerRound = tallies > 0 ? 4 : 3;
+  const currentPlayer = players[currentTurn];
+  const maxRollsPerRound = currentPlayer.tallies > 0 ? 4 : 3;
 
   useEffect(() => {
     try {
@@ -151,6 +202,33 @@ export default function Solbones() {
       setAudioContext(ctx);
     } catch { /* audio not available */ }
   }, []);
+
+  // Update player names when play mode changes
+  useEffect(() => {
+    if (playMode === 'solo') {
+      setPlayers({
+        player1: { name: user?.name || 'You', score: 0, tallies: 0, isAI: false },
+        player2: { name: '', score: 0, tallies: 0, isAI: false },
+      });
+    } else if (playMode === 'ai') {
+      setPlayers({
+        player1: { name: user?.name || 'You', score: 0, tallies: 0, isAI: false },
+        player2: { name: 'QUMUS AI', score: 0, tallies: 0, isAI: true },
+      });
+    } else {
+      setPlayers({
+        player1: { name: 'Player 1', score: 0, tallies: 0, isAI: false },
+        player2: { name: 'Player 2', score: 0, tallies: 0, isAI: false },
+      });
+    }
+    setGameState('idle');
+    setDice([1, 1, 1]);
+    setRollsThisRound(0);
+    setCurrentTurn('player1');
+    setRoundHistory([]);
+    setCurrentRoundScore(null);
+    setWinner(null);
+  }, [playMode, user?.name]);
 
   const playFrequency = useCallback((frequency: number) => {
     if (!audioContext) return;
@@ -162,21 +240,16 @@ export default function Solbones() {
       gainNode.connect(audioContext.destination);
       oscillator.frequency.value = frequency;
       oscillator.type = 'sine';
-      gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5);
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 1.5);
     } catch { /* ignore audio errors */ }
   }, [audioContext]);
 
-  const rollDice = useCallback(() => {
-    if (rollsThisRound >= maxRollsPerRound) return;
-    if (gameState === 'finished') return;
-
+  const performRoll = useCallback((onComplete: (finalDice: number[]) => void) => {
     setIsRolling(true);
-    setGameState('rolling');
     setCurrentRoundScore(null);
-
     let count = 0;
     if (rollAnimRef.current) clearInterval(rollAnimRef.current);
 
@@ -189,7 +262,6 @@ export default function Solbones() {
       count++;
       if (count >= 12) {
         if (rollAnimRef.current) clearInterval(rollAnimRef.current);
-
         const finalDice = [
           Math.floor(Math.random() * 6) + 1,
           Math.floor(Math.random() * 6) + 1,
@@ -197,70 +269,190 @@ export default function Solbones() {
         ];
         setDice(finalDice);
         setIsRolling(false);
-
-        const result = scoreRound(finalDice);
-        const inNine = gameMode === 'advanced' && checkInTheNine(finalDice);
-
-        if (inNine) {
-          result.points += 9;
-          result.label += ' + In the 9! (+9 bonus)';
-        }
-
-        setCurrentRoundScore(result);
-        setRollsThisRound(prev => prev + 1);
-        setGameState('scored');
-
-        // Play the frequency of the highest die
-        const highDie = Math.max(...finalDice);
-        const freq = FREQUENCY_MAP[highDie];
-        if (freq) playFrequency(freq.frequency);
-
-        // Record to backend
-        if (user) {
-          rollDiceMutation.mutate({ notes: result.label });
-        }
+        onComplete(finalDice);
       }
     }, 80);
-  }, [rollsThisRound, maxRollsPerRound, gameState, gameMode, playFrequency, user, rollDiceMutation]);
+  }, []);
 
-  const keepScore = () => {
+  const processRollResult = useCallback((finalDice: number[]) => {
+    const result = scoreRound(finalDice);
+    const inNine = gameMode === 'advanced' && checkInTheNine(finalDice);
+
+    if (inNine) {
+      result.points += 9;
+      result.label += ' + In the 9!';
+      result.bonus = (result.bonus || '') + ' | Dice total 9 → +9 bonus';
+    }
+
+    setCurrentRoundScore(result);
+    setRollsThisRound(prev => prev + 1);
+    setGameState('scored');
+
+    // Play the frequency of the highest die
+    const highDie = Math.max(...finalDice);
+    const freq = FREQUENCY_MAP[highDie];
+    if (freq) playFrequency(freq.frequency);
+
+    // Record to backend if human player
+    if (user && !players[currentTurn].isAI) {
+      rollDiceMutation.mutate({ notes: result.label });
+    }
+
+    return result;
+  }, [gameMode, playFrequency, user, currentTurn, players, rollDiceMutation]);
+
+  const rollDice = useCallback(() => {
+    if (rollsThisRound >= maxRollsPerRound) return;
+    if (gameState === 'finished') return;
+    if (players[currentTurn].isAI) return; // AI rolls automatically
+
+    setGameState('rolling');
+    performRoll(processRollResult);
+  }, [rollsThisRound, maxRollsPerRound, gameState, currentTurn, players, performRoll, processRollResult]);
+
+  const keepScore = useCallback(() => {
     if (!currentRoundScore) return;
 
-    const newTotal = totalScore + currentRoundScore.points;
-    const newTallies = tallies + currentRoundScore.tallies;
+    const turn = currentTurn;
+    const newScore = players[turn].score + currentRoundScore.points;
+    const newTallies = players[turn].tallies + currentRoundScore.tallies;
 
-    setTotalScore(newTotal);
-    setTallies(newTallies);
+    setPlayers(prev => ({
+      ...prev,
+      [turn]: { ...prev[turn], score: newScore, tallies: newTallies },
+    }));
+
     setRoundHistory(prev => [...prev, {
       dice: [...dice],
       score: currentRoundScore,
       inTheNine: gameMode === 'advanced' && checkInTheNine(dice),
-      rollNumber: roundHistory.length + 1,
+      rollNumber: prev.length + 1,
+      player: players[turn].name,
     }]);
+
     setRollsThisRound(0);
     setCurrentRoundScore(null);
-    setGameState('idle');
 
-    if (newTotal >= winScore) {
+    if (newScore >= winScore) {
       setGameState('finished');
+      setWinner(players[turn].name);
+      return;
     }
-  };
+
+    // Switch turns in multiplayer/AI modes
+    if (playMode !== 'solo') {
+      const nextTurn = turn === 'player1' ? 'player2' : 'player1';
+      setCurrentTurn(nextTurn);
+      setGameState('idle');
+
+      // If next player is AI, trigger AI turn
+      if (players[nextTurn].isAI) {
+        setAiThinking(true);
+        aiTimerRef.current = setTimeout(() => {
+          setAiThinking(false);
+          runAITurn(nextTurn, newScore);
+        }, 1200);
+      }
+    } else {
+      setGameState('idle');
+    }
+  }, [currentRoundScore, currentTurn, dice, gameMode, winScore, playMode, players]);
+
+  // AI turn logic
+  const runAITurn = useCallback((turn: PlayerTurn, _opponentScore: number) => {
+    const aiPlayer = players[turn];
+    let aiRolls = 0;
+    const aiMaxRolls = aiPlayer.tallies > 0 ? 4 : 3;
+
+    const doAIRoll = () => {
+      setCurrentTurn(turn);
+      setGameState('rolling');
+
+      performRoll((finalDice) => {
+        const result = scoreRound(finalDice);
+        const inNine = gameMode === 'advanced' && checkInTheNine(finalDice);
+        if (inNine) {
+          result.points += 9;
+          result.label += ' + In the 9!';
+        }
+
+        setCurrentRoundScore(result);
+        aiRolls++;
+        setRollsThisRound(aiRolls);
+        setGameState('scored');
+
+        const highDie = Math.max(...finalDice);
+        const freq = FREQUENCY_MAP[highDie];
+        if (freq) playFrequency(freq.frequency);
+
+        // AI decides: keep or re-roll
+        const decision = aiDecision(aiPlayer.score, result, aiRolls, aiMaxRolls);
+
+        setTimeout(() => {
+          if (decision === 'keep' || aiRolls >= aiMaxRolls) {
+            // AI keeps score
+            const newScore = aiPlayer.score + result.points;
+            const newTallies = aiPlayer.tallies + result.tallies;
+
+            setPlayers(prev => ({
+              ...prev,
+              [turn]: { ...prev[turn], score: newScore, tallies: newTallies },
+            }));
+
+            setRoundHistory(prev => [...prev, {
+              dice: [...finalDice],
+              score: result,
+              inTheNine: inNine,
+              rollNumber: prev.length + 1,
+              player: aiPlayer.name,
+            }]);
+
+            setRollsThisRound(0);
+            setCurrentRoundScore(null);
+
+            if (newScore >= winScore) {
+              setGameState('finished');
+              setWinner(aiPlayer.name);
+            } else {
+              setCurrentTurn('player1');
+              setGameState('idle');
+            }
+          } else {
+            // AI re-rolls
+            doAIRoll();
+          }
+        }, 1000);
+      });
+    };
+
+    doAIRoll();
+  }, [players, gameMode, winScore, performRoll, playFrequency]);
 
   const useTally = () => {
-    if (tallies <= 0) return;
-    setTallies(prev => prev - 1);
-    // Extra roll allowed
+    if (currentPlayer.tallies <= 0) return;
+    setPlayers(prev => ({
+      ...prev,
+      [currentTurn]: { ...prev[currentTurn], tallies: prev[currentTurn].tallies - 1 },
+    }));
   };
 
   const resetGame = () => {
     setDice([1, 1, 1]);
-    setTotalScore(0);
-    setTallies(0);
     setRollsThisRound(0);
-    setRoundHistory([]);
     setCurrentRoundScore(null);
+    setRoundHistory([]);
     setGameState('idle');
+    setWinner(null);
+    setCurrentTurn('player1');
+    setAiThinking(false);
+    if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
+    setPlayers(prev => ({
+      player1: { ...prev.player1, score: 0, tallies: 0 },
+      player2: { ...prev.player2, score: 0, tallies: 0 },
+    }));
   };
+
+  const isMyTurn = !players[currentTurn].isAI;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0d0221] via-[#150530] to-[#0a0118]">
@@ -282,6 +474,24 @@ export default function Solbones() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-12">
+        {/* Play Mode Selector */}
+        <div className="flex flex-wrap justify-center gap-3 mb-4">
+          {([
+            { mode: 'solo' as PlayMode, label: 'Solo', icon: <Sparkles className="h-4 w-4" /> },
+            { mode: 'ai' as PlayMode, label: 'vs QUMUS AI', icon: <Bot className="h-4 w-4" /> },
+            { mode: 'local_multi' as PlayMode, label: 'Local 2-Player', icon: <UserPlus className="h-4 w-4" /> },
+          ]).map(({ mode, label, icon }) => (
+            <Button
+              key={mode}
+              variant={playMode === mode ? 'default' : 'outline'}
+              onClick={() => setPlayMode(mode)}
+              className={`gap-2 ${playMode === mode ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'border-indigo-500/50 text-indigo-300 hover:bg-indigo-900/50'}`}
+            >
+              {icon} {label}
+            </Button>
+          ))}
+        </div>
+
         {/* Game Mode Selector */}
         <div className="flex flex-wrap justify-center gap-3 mb-8">
           {([
@@ -300,6 +510,51 @@ export default function Solbones() {
           ))}
         </div>
 
+        {/* Player Scoreboard (multiplayer/AI) */}
+        {playMode !== 'solo' && (
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            {(['player1', 'player2'] as PlayerTurn[]).map((p) => (
+              <Card key={p} className={`p-4 border-2 transition-all ${
+                currentTurn === p
+                  ? 'bg-purple-900/40 border-purple-400 shadow-lg shadow-purple-500/20'
+                  : 'bg-[#1a0a30]/60 border-purple-500/20'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {players[p].isAI ? <Bot className="h-5 w-5 text-cyan-400" /> : <Users className="h-5 w-5 text-purple-400" />}
+                    <span className="text-white font-bold">{players[p].name}</span>
+                    {currentTurn === p && <span className="text-xs bg-purple-500 text-white px-2 py-0.5 rounded-full animate-pulse">Turn</span>}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-yellow-400">{players[p].score}</div>
+                    <div className="text-xs text-purple-400">/ {winScore}</div>
+                  </div>
+                </div>
+                {players[p].tallies > 0 && (
+                  <div className="text-xs text-green-400 mt-1">Tallies: {players[p].tallies}</div>
+                )}
+                {/* Progress bar */}
+                <div className="mt-2 h-2 bg-purple-900/50 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${players[p].isAI ? 'bg-cyan-500' : 'bg-purple-500'}`}
+                    style={{ width: `${Math.min(100, (players[p].score / winScore) * 100)}%` }}
+                  />
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* AI Thinking Indicator */}
+        {aiThinking && (
+          <div className="text-center mb-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
+            <div className="flex items-center justify-center gap-2 text-cyan-400">
+              <Bot className="h-5 w-5 animate-spin" />
+              <span className="font-medium">QUMUS AI is thinking...</span>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Game Area */}
           <div className="lg:col-span-2 space-y-6">
@@ -307,27 +562,21 @@ export default function Solbones() {
             <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6 md:p-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-yellow-400" />
-                  Roll the Bones
+                  {players[currentTurn].isAI ? <Bot className="h-5 w-5 text-cyan-400" /> : <Sparkles className="h-5 w-5 text-yellow-400" />}
+                  {playMode === 'solo' ? 'Roll the Bones' : `${players[currentTurn].name}'s Turn`}
                 </h2>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-purple-300">Roll {rollsThisRound}/{maxRollsPerRound}</span>
-                  <span className="text-yellow-400 font-bold">Score: {totalScore}/{winScore}</span>
-                  {tallies > 0 && <span className="text-green-400">Tallies: {tallies}</span>}
+                  {playMode === 'solo' && (
+                    <span className="text-yellow-400 font-bold">Score: {players.player1.score}/{winScore}</span>
+                  )}
                 </div>
               </div>
 
               {/* Dice Display */}
               <div className="flex justify-center items-center gap-4 md:gap-8 mb-8 py-4">
                 {dice.map((d, i) => (
-                  <div key={i} className="relative">
-                    <DieFace value={d} isRolling={isRolling} size={90} freqHighlight={!isRolling} />
-                    {!isRolling && FREQ_DICE[d] && (
-                      <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs text-purple-300 whitespace-nowrap">
-                        {FREQUENCY_MAP[d]?.note} {FREQUENCY_MAP[d]?.frequency}Hz
-                      </div>
-                    )}
-                  </div>
+                  <DieFace key={i} value={d} isRolling={isRolling} size={90} freqHighlight={!isRolling} />
                 ))}
               </div>
 
@@ -339,7 +588,8 @@ export default function Solbones() {
                     : 'bg-purple-500/10 border-purple-500/30'
                 }`}>
                   <div className="text-2xl font-bold text-white mb-1">+{currentRoundScore.points} points</div>
-                  <div className="text-purple-300">{currentRoundScore.label}</div>
+                  <div className="text-lg text-purple-200 font-semibold">{currentRoundScore.label}</div>
+                  {currentRoundScore.bonus && <div className="text-purple-400 text-sm mt-1">{currentRoundScore.bonus}</div>}
                   {currentRoundScore.tallies > 0 && (
                     <div className="text-yellow-400 text-sm mt-1">+{currentRoundScore.tallies} tally earned!</div>
                   )}
@@ -347,12 +597,14 @@ export default function Solbones() {
               )}
 
               {/* Game Over */}
-              {gameState === 'finished' && (
+              {gameState === 'finished' && winner && (
                 <div className="text-center mb-6 p-6 rounded-lg bg-gradient-to-r from-yellow-500/20 via-purple-500/20 to-blue-500/20 border border-yellow-500/30">
                   <div className="text-4xl mb-2">🏆</div>
-                  <div className="text-3xl font-bold text-yellow-400 mb-2">Victory!</div>
+                  <div className="text-3xl font-bold text-yellow-400 mb-2">
+                    {winner === 'QUMUS AI' ? 'QUMUS AI Wins!' : `${winner} Wins!`}
+                  </div>
                   <div className="text-purple-200">
-                    {gameMode === 'spiral' ? 'You have ascended!' : `You reached ${totalScore} points in ${roundHistory.length} rounds!`}
+                    {gameMode === 'spiral' ? 'Ascension achieved!' : `Final score: ${players.player1.score} - ${playMode !== 'solo' ? players.player2.score : ''}`}
                   </div>
                 </div>
               )}
@@ -361,14 +613,14 @@ export default function Solbones() {
               <div className="flex flex-wrap justify-center gap-3">
                 <Button
                   onClick={rollDice}
-                  disabled={isRolling || gameState === 'finished' || (rollsThisRound >= maxRollsPerRound && !currentRoundScore)}
+                  disabled={isRolling || gameState === 'finished' || !isMyTurn || aiThinking || (rollsThisRound >= maxRollsPerRound && !currentRoundScore)}
                   className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-8 text-lg gap-2"
                   size="lg"
                 >
-                  {isRolling ? '🎲 Rolling...' : gameState === 'idle' ? '🎲 Roll Dice' : '🎲 Re-Roll'}
+                  {isRolling ? '🎲 Rolling...' : aiThinking ? '🤖 AI Turn...' : gameState === 'idle' ? '🎲 Roll Dice' : '🎲 Re-Roll'}
                 </Button>
 
-                {currentRoundScore && !isRolling && gameState !== 'finished' && (
+                {currentRoundScore && !isRolling && gameState !== 'finished' && isMyTurn && (
                   <Button
                     onClick={keepScore}
                     className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6"
@@ -378,7 +630,7 @@ export default function Solbones() {
                   </Button>
                 )}
 
-                {tallies > 0 && rollsThisRound >= 3 && gameState !== 'finished' && (
+                {currentPlayer.tallies > 0 && rollsThisRound >= 3 && gameState !== 'finished' && isMyTurn && (
                   <Button
                     onClick={useTally}
                     variant="outline"
@@ -400,32 +652,63 @@ export default function Solbones() {
               </div>
             </Card>
 
-            {/* Solfeggio Frequency Reference */}
+            {/* Full Solfeggio Frequency Reference (Collapsible) */}
             <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6">
-              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Volume2 className="h-5 w-5 text-blue-400" />
-                Solfeggio Frequencies
-              </h2>
-              <p className="text-purple-300/80 text-sm mb-4">
-                Each die face corresponds to a sacred Solfeggio frequency. Tap to hear the tone.
-              </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {Object.entries(FREQUENCY_MAP).map(([key, data]) => (
-                  <button
-                    key={key}
-                    onClick={() => playFrequency(data.frequency)}
-                    className={`bg-gradient-to-br ${data.bgColor} p-4 rounded-lg text-left hover:scale-105 transition-transform cursor-pointer border border-white/10`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-white font-bold">Die {key}</span>
-                      <Volume2 className="h-4 w-4 text-white/60" />
+              <button
+                onClick={() => setShowFrequencies(!showFrequencies)}
+                className="w-full flex items-center justify-between text-left"
+              >
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <Volume2 className="h-5 w-5 text-blue-400" />
+                  All 9 Solfeggio Frequencies + Healing Tones
+                </h2>
+                {showFrequencies ? <ChevronUp className="h-5 w-5 text-blue-400" /> : <ChevronDown className="h-5 w-5 text-blue-400" />}
+              </button>
+
+              {showFrequencies && (
+                <div className="mt-6">
+                  <p className="text-purple-300/80 text-sm mb-4">
+                    The 9 sacred Solfeggio frequencies form the foundation of healing sound. Each carries unique vibrational energy. Tap any frequency to hear its tone.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {ALL_FREQUENCIES.map((data) => (
+                      <button
+                        key={data.frequency}
+                        onClick={() => playFrequency(data.frequency)}
+                        className={`bg-gradient-to-br ${data.bgColor} p-4 rounded-lg text-left hover:scale-105 transition-transform cursor-pointer border border-white/10`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-white font-bold text-lg">{data.note}</span>
+                          <Volume2 className="h-4 w-4 text-white/60" />
+                        </div>
+                        <div className="text-white/90 text-xl font-bold">{data.frequency} Hz</div>
+                        <div className="text-white/80 text-sm font-medium">{data.name}</div>
+                        <div className="text-white/50 text-xs mt-1">{data.description}</div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Die-to-Frequency mapping */}
+                  <div className="mt-6 bg-purple-900/30 rounded-lg p-4 border border-purple-500/20">
+                    <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-yellow-400" />
+                      Dice Face → Frequency Mapping
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {Object.entries(FREQUENCY_MAP).map(([key, data]) => (
+                        <div key={key} className="flex items-center gap-2 bg-purple-900/40 rounded px-3 py-2">
+                          <span className="text-yellow-400 font-bold">Die {key}</span>
+                          <span className="text-white/50">=</span>
+                          <span className={`${data.color} font-medium`}>{data.note} ({data.frequency} Hz)</span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="text-white/90 text-lg font-bold">{data.note}</div>
-                    <div className="text-white/70 text-sm">{data.frequency} Hz</div>
-                    <div className="text-white/50 text-xs mt-1">{data.description}</div>
-                  </button>
-                ))}
-              </div>
+                    <p className="text-purple-400/60 text-xs mt-3">
+                      Frequency dice (red=2, purple=3, blue=4) earn double points when paired. The remaining 3 frequencies (741, 852, 963 Hz) are bonus tones unlocked through special rolls.
+                    </p>
+                  </div>
+                </div>
+              )}
             </Card>
           </div>
 
@@ -437,6 +720,12 @@ export default function Solbones() {
                 <Trophy className="h-5 w-5 text-yellow-400" />
                 Score Sheet
               </h2>
+              {playMode === 'solo' && (
+                <div className="mb-3 flex justify-between items-center">
+                  <span className="text-purple-300">Progress</span>
+                  <span className="text-yellow-400 font-bold">{players.player1.score}/{winScore}</span>
+                </div>
+              )}
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {roundHistory.length === 0 ? (
                   <p className="text-purple-400/60 text-sm text-center py-4">Roll the dice to begin...</p>
@@ -444,26 +733,32 @@ export default function Solbones() {
                   roundHistory.map((r, i) => (
                     <div key={i} className="flex items-center justify-between bg-purple-900/30 rounded px-3 py-2 text-sm">
                       <div className="flex items-center gap-2">
-                        <span className="text-purple-400 font-mono">R{r.rollNumber}</span>
+                        <span className="text-purple-400 font-mono text-xs">R{r.rollNumber}</span>
+                        {playMode !== 'solo' && <span className="text-purple-500 text-xs">{r.player}</span>}
                         <span className="text-white">[{r.dice.join(', ')}]</span>
                       </div>
-                      <span className={`font-bold ${r.inTheNine ? 'text-yellow-400' : 'text-green-400'}`}>
-                        +{r.score.points}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-purple-400/60 text-xs">{r.score.label}</span>
+                        <span className={`font-bold ${r.inTheNine ? 'text-yellow-400' : 'text-green-400'}`}>
+                          +{r.score.points}
+                        </span>
+                      </div>
                     </div>
                   ))
                 )}
               </div>
-              <div className="mt-4 pt-4 border-t border-purple-500/20 flex justify-between">
-                <span className="text-purple-300 font-bold">Total</span>
-                <span className="text-yellow-400 font-bold text-xl">{totalScore}</span>
-              </div>
+              {playMode === 'solo' && (
+                <div className="mt-4 pt-4 border-t border-purple-500/20 flex justify-between">
+                  <span className="text-purple-300 font-bold">Total</span>
+                  <span className="text-yellow-400 font-bold text-xl">{players.player1.score}</span>
+                </div>
+              )}
             </Card>
 
             {/* Leaderboard */}
             <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6">
               <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <Users className="h-5 w-5 text-purple-400" />
+                <Swords className="h-5 w-5 text-purple-400" />
                 Leaderboard
               </h2>
               {leaderboardQuery.data && leaderboardQuery.data.length > 0 ? (
@@ -567,6 +862,15 @@ export default function Solbones() {
                 <ul className="space-y-2 text-sm">
                   <li className="flex gap-2"><span className="text-green-400">&#9679;</span> Game ends when a player reaches 36 (ascends) or 0 (resets).</li>
                   <li className="flex gap-2"><span className="text-green-400">&#9679;</span> Designed for high sacred time or divination-like game nights.</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">Play Modes</h3>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex gap-2"><span className="text-purple-400">&#9679;</span> <strong className="text-white">Solo:</strong> Practice mode — play against yourself, track your score.</li>
+                  <li className="flex gap-2"><span className="text-cyan-400">&#9679;</span> <strong className="text-white">vs QUMUS AI:</strong> Challenge the QUMUS autonomous intelligence. It uses strategy to decide when to keep or re-roll.</li>
+                  <li className="flex gap-2"><span className="text-green-400">&#9679;</span> <strong className="text-white">Local 2-Player:</strong> Pass the device — take turns rolling against a friend or family member.</li>
                 </ul>
               </div>
 

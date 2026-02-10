@@ -361,7 +361,7 @@ export default function RadioStation() {
             </a>
 
             <a
-              href="/proof-vault"
+              href="/rrb/proof-vault"
               className="group p-6 bg-background rounded-lg border border-border hover:border-accent transition-colors"
             >
               <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors mb-2">

@@ -275,6 +275,71 @@ export const stripePaymentsRouter = router({
   }),
 
   /**
+   * Create a checkout session for merchandise purchase
+   */
+  createMerchCheckoutSession: protectedProcedure
+    .input(
+      z.object({
+        items: z.array(z.object({
+          id: z.string(),
+          name: z.string(),
+          price: z.number().min(50), // cents
+          quantity: z.number().min(1).max(10),
+        })),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        let customerId = ctx.user.stripeCustomerId;
+        if (!customerId) {
+          const customer = await stripe.customers.create({
+            email: ctx.user.email || undefined,
+            name: ctx.user.name || undefined,
+            metadata: { userId: ctx.user.id.toString() },
+          });
+          customerId = customer.id;
+        }
+
+        const lineItems = input.items.map(item => ({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.name,
+              description: `Rockin Rockin Boogie Merchandise - ${item.name}`,
+            },
+            unit_amount: item.price,
+          },
+          quantity: item.quantity,
+        }));
+
+        const origin = ctx.req?.headers?.origin || process.env.VITE_APP_URL || 'http://localhost:3000';
+        const session = await stripe.checkout.sessions.create({
+          customer: customerId,
+          payment_method_types: ['card'],
+          line_items: lineItems,
+          mode: 'payment',
+          allow_promotion_codes: true,
+          success_url: `${origin}/rrb/merchandise-shop?success=true&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${origin}/rrb/merchandise-shop?canceled=true`,
+          client_reference_id: ctx.user.id.toString(),
+          metadata: {
+            user_id: ctx.user.id.toString(),
+            customer_email: ctx.user.email || '',
+            customer_name: ctx.user.name || '',
+            type: 'merchandise',
+            items: JSON.stringify(input.items.map(i => i.id)),
+          },
+        });
+
+        return { sessionId: session.id, url: session.url };
+      } catch (error) {
+        throw new Error(
+          `Failed to create merch checkout: ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
+    }),
+
+  /**
    * Get checkout session details
    */
   getCheckoutSession: publicProcedure

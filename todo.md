@@ -1483,3 +1483,37 @@
 - [x] Upload Solbones PDFs to S3 for download links on the page
 - [x] Fix db-helpers.ts broken imports (getDb() pattern)
 - [x] Verify and checkpoint
+## v8.6 Multiplayer Solbones, Stripe Merch, Skill, ZIP, Deploy
+- [ ] Add multiplayer mode to Solbones (play against other users)
+- [ ] Add AI opponent mode to Solbones (play against computer)
+- [ ] Connect Merchandise Shop to Stripe for purchases
+- [ ] Create Manus skill from the project
+- [ ] Package full ZIP with offline install capability (include node_modules)
+- [ ] Setup scripts for offline deployment
+- [ ] Save checkpoint and deploy
+## v8.6 Multiplayer Solbones, Full Frequencies, Stripe Merch, Skill, ZIP, Deploy
+- [ ] Add full healing frequency tones to Solbones (beyond basic Solfeggio - include all from rulebook)
+- [ ] Add multiplayer mode to Solbones (play against other users)
+- [ ] Add AI opponent mode to Solbones (play against computer)
+- [ ] Connect Merchandise Shop to Stripe for purchases
+- [ ] Create Manus skill from the project
+- [ ] Package full ZIP with offline install capability
+- [ ] Setup scripts for offline deployment
+- [ ] Save checkpoint and deploy
+## v8.7 Studio Integration - Bridge Between Legacy Restored & Legacy Continued
+- [ ] Add Studio as its own prominent nav section between Legacy Restored and Legacy Continued
+- [ ] Connect all 5 studio pages (Studio, VideoProcessing, MotionGeneration, MobileStudio, FilmProduction)
+- [ ] Update mobile nav with Studio section
+- [ ] Verify all studio routes work
+- [ ] Verify and checkpoint
+
+## Session 2: Critical Fixes (Feb 2026)
+- [x] Fix Navigation.tsx isActive() checks to use /rrb/ prefix paths
+- [x] Fix RRB Home /qumus/admin broken link → /rrb/qumus/admin
+- [x] Add Studio section to AppHeaderEnhanced navigation dropdown
+- [x] Add Studio section to SimplifiedMobileNav
+- [x] Add Studio section to UnifiedMobileSidebar
+- [x] Fix MerchandiseShop import error (@/_core/auth → @/const, use-toast → sonner)
+- [x] Solbones already has Solo, vs QUMUS AI, and Local 2-Player modes built in
+- [x] Connect Merchandise Shop Stripe checkout (createMerchCheckoutSession + webhook handler)
+- [x] Write tests for navigation and new features (12 tests passing)

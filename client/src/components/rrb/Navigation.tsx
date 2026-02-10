@@ -67,58 +67,58 @@ export default function Navigation() {
 
   // Legacy Restored - Dad's work before passing (Foundation)
   const legacyFoundationItems = [
-    { label: 'The Legacy', href: '/the-legacy' },
-    { label: 'The Music', href: '/the-music' },
-    { label: 'Little Richard Connection', href: '/little-richard-connection' },
-    { label: 'Family Achievement', href: '/family-achievements' },
-    { label: 'Grandma Helen', href: '/grandma-helen' },
-    { label: 'Verified Sources', href: '/verified-sources' },
+    { label: 'The Legacy', href: '/rrb/the-legacy' },
+    { label: 'The Music', href: '/rrb/the-music' },
+    { label: 'Little Richard Connection', href: '/rrb/little-richard-connection' },
+    { label: 'Family Achievement', href: '/rrb/family-achievements' },
+    { label: 'Grandma Helen', href: '/rrb/grandma-helen' },
+    { label: 'Verified Sources', href: '/rrb/verified-sources' },
   ];
 
   // Legacy Restored - Dad's work before passing
   const legacyRestoredItems = [
     { label: 'Home', href: '/' },
-    { label: 'Radio Station', href: '/radio-station' },
-    { label: 'Podcast & Video', href: '/podcast-and-video' },
-    { label: 'HybridCast', href: '/hybridcast' },
-    { label: 'Audiobooks', href: '/audiobooks' },
-    { label: 'Proof Vault', href: '/proof-vault' },
-    { label: 'Obituary', href: '/obituary' },
-    { label: 'Books & Miracles', href: '/books-and-miracles' },
-    { label: 'Systematic Omission', href: '/systematic-omission' },
-    { label: 'Candy Through the Years', href: '/candy-through-the-years' },
-    { label: 'Family Tree', href: '/family-tree' },
-    { label: 'Testimonials & Stories', href: '/testimonials-and-stories' },
-    { label: 'Producer & Mentor', href: '/producer-mentor' },
-    { label: 'Medical Journey', href: '/medical-journey' },
+    { label: 'Radio Station', href: '/rrb/radio-station' },
+    { label: 'Podcast & Video', href: '/rrb/podcast-and-video' },
+    { label: 'HybridCast', href: '/rrb/hybridcast' },
+    { label: 'Audiobooks', href: '/rrb/audiobooks' },
+    { label: 'Proof Vault', href: '/rrb/proof-vault' },
+    { label: 'Obituary', href: '/rrb/obituary' },
+    { label: 'Books & Miracles', href: '/rrb/books-and-miracles' },
+    { label: 'Systematic Omission', href: '/rrb/systematic-omission' },
+    { label: 'Candy Through the Years', href: '/rrb/candy-through-the-years' },
+    { label: 'Family Tree', href: '/rrb/family-tree' },
+    { label: 'Testimonials & Stories', href: '/rrb/testimonials-and-stories' },
+    { label: 'Producer & Mentor', href: '/rrb/producer-mentor' },
+    { label: 'Medical Journey', href: '/rrb/medical-journey' },
   ];
 
   // Legacy Continued - Family's ongoing work
   const legacyContinuedItems = [
-    { label: 'Canryn Production Inc', href: '/canryn-production' },
-    { label: 'Family Achievements', href: '/family-achievements' },
-    { label: 'Division Pages', href: '/divisions' },
-    { label: 'Business Partnerships', href: '/business-partnerships' },
-    { label: 'Employee Directory', href: '/employee-directory' },
-    { label: 'Contact Directory', href: '/contact-directory' },
-    { label: 'Merchandise Shop', href: '/merchandise-shop' },
-    { label: 'Sponsorships', href: '/sponsorships' },
-    { label: 'Affiliate Program', href: '/affiliate-program' },
-    { label: 'Video Testimonials', href: '/video-testimonials' },
-    { label: 'News & Updates', href: '/news' },
+    { label: 'Canryn Production Inc', href: '/rrb/canryn-production' },
+    { label: 'Family Achievements', href: '/rrb/family-achievements' },
+    { label: 'Division Pages', href: '/rrb/divisions' },
+    { label: 'Business Partnerships', href: '/rrb/business-partnerships' },
+    { label: 'Employee Directory', href: '/rrb/employee-directory' },
+    { label: 'Contact Directory', href: '/rrb/contact-directory' },
+    { label: 'Merchandise Shop', href: '/rrb/merchandise-shop' },
+    { label: 'Sponsorships', href: '/rrb/sponsorships' },
+    { label: 'Affiliate Program', href: '/rrb/affiliate-program' },
+    { label: 'Video Testimonials', href: '/rrb/video-testimonials' },
+    { label: 'News & Updates', href: '/rrb/news' },
   ];
 
   const additionalItems = [
-    { label: 'Healing Music', href: '/healing-music-frequencies' },
-    { label: 'Frequency Guides', href: '/frequency-guides' },
-    { label: 'Meditation Guides', href: '/meditation-guides' },
-    { label: 'Custom Builder', href: '/custom-meditation-builder' },
-    { label: 'Concerts & Tours', href: '/concerts-tours-performances' },
-    { label: 'Tour Schedule', href: '/tour-schedule' },
-    { label: 'Setlist Archive', href: '/setlist-archive' },
-    { label: 'Media Hub', href: '/media-hub' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'Contact', href: '/contact' },
+    { label: 'Healing Music', href: '/rrb/healing-music-frequencies' },
+    { label: 'Frequency Guides', href: '/rrb/frequency-guides' },
+    { label: 'Meditation Guides', href: '/rrb/meditation-guides' },
+    { label: 'Custom Builder', href: '/rrb/custom-meditation-builder' },
+    { label: 'Concerts & Tours', href: '/rrb/concerts-tours-performances' },
+    { label: 'Tour Schedule', href: '/rrb/tour-schedule' },
+    { label: 'Setlist Archive', href: '/rrb/setlist-archive' },
+    { label: 'Media Hub', href: '/rrb/media-hub' },
+    { label: 'FAQ', href: '/rrb/faq' },
+    { label: 'Contact', href: '/rrb/contact-directory' },
   ];
 
   const isActive = (href) => location === href;
@@ -182,9 +182,9 @@ export default function Navigation() {
           </div>
 
           {/* Radio Station */}
-          <Link href="/radio-station">
+          <Link href="/rrb/radio-station">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              isActive('/radio-station')
+              isActive('/rrb/radio-station')
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
@@ -195,7 +195,7 @@ export default function Navigation() {
           {/* Podcast & Video */}
           <Link href="/rrb/podcast-and-video">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              isActive('/podcast-and-video')
+              isActive('/rrb/podcast-and-video')
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
@@ -204,9 +204,9 @@ export default function Navigation() {
           </Link>
 
           {/* HybridCast */}
-          <Link href="/hybridcast">
+          <Link href="/rrb/hybridcast">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              isActive('/hybridcast')
+              isActive('/rrb/hybridcast')
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
@@ -215,9 +215,9 @@ export default function Navigation() {
           </Link>
 
           {/* Meditation - Prominent Separate Item */}
-          <Link href="/meditation">
+          <Link href="/rrb/meditation-guides">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              isActive('/meditation')
+              isActive('/rrb/meditation-guides')
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
@@ -232,7 +232,7 @@ export default function Navigation() {
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
-              🎙️ Studio
+              🎬 Studio
             </a>
           </Link>
 
@@ -244,7 +244,7 @@ export default function Navigation() {
           {/* Sweet Miracles Company */}
           <Link href="/rrb/canryn-production">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              isActive('/sweet-miracles-company')
+              isActive('/rrb/canryn-production')
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
@@ -264,9 +264,9 @@ export default function Navigation() {
           </Link>
 
           {/* Client Portal */}
-          <Link href="/client-portal">
+          <Link href="/rrb/contact-directory">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              isActive('/client-portal')
+              isActive('/rrb/contact-directory')
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
@@ -419,10 +419,10 @@ export default function Navigation() {
 
             {/* Meditation - Mobile */}
             <div className="mb-6">
-              <Link href="/meditation">
+              <Link href="/rrb/meditation-guides">
                 <a
                   className={`block px-3 py-2 rounded text-sm font-medium transition-colors ${
-                    isActive('/meditation')
+                    isActive('/rrb/meditation-guides')
                       ? 'bg-accent text-accent-foreground'
                       : 'text-foreground hover:bg-accent/10'
                   }`}

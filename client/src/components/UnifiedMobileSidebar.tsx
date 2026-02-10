@@ -6,7 +6,7 @@ import {
   Music, BookOpen, Heart, Shield, BarChart3, Settings, 
   MessageSquare, Video, Palette, Layers, Monitor, Users,
   AlertTriangle, CheckCircle, Search, Sparkles, Bot,
-  Globe, Building2, Award, FileText, Map, Clock
+  Globe, Building2, Award, FileText, Map, Clock, Film, Smartphone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -77,8 +77,7 @@ export function UnifiedMobileSidebar() {
         { label: 'Radio Station', href: '/rrb/radio-station', icon: Radio },
         { label: 'Podcast & Video', href: '/rrb/podcast-and-video', icon: Headphones },
         { label: 'The Music', href: '/rrb/the-music', icon: Music },
-        { label: 'Studio', href: '/studio', icon: Headphones },
-        { label: 'Meditation', href: '/meditation', icon: Sparkles },
+        { label: 'Meditation', href: '/rrb/meditation-guides', icon: Sparkles },
       ],
     },
     {
@@ -96,13 +95,26 @@ export function UnifiedMobileSidebar() {
       title: 'Legacy Restored',
       icon: BookOpen,
       items: [
-        { label: 'HybridCast', href: '/hybridcast', icon: Tv },
+        { label: 'HybridCast', href: '/rrb/hybridcast', icon: Tv },
         { label: 'Audiobooks', href: '/rrb/audiobooks', icon: Headphones },
-        { label: 'Proof Vault', href: '/proof-vault', icon: Shield },
+        { label: 'Proof Vault', href: '/rrb/proof-vault', icon: Shield },
         { label: 'Books & Miracles', href: '/rrb/books-and-miracles', icon: BookOpen },
         { label: 'Family Tree', href: '/rrb/family-tree', icon: Users },
         { label: 'Testimonials', href: '/rrb/testimonials-and-stories', icon: MessageSquare },
         { label: 'Producer & Mentor', href: '/rrb/producer-mentor', icon: Award },
+      ],
+    },
+    {
+      title: 'Studio — The Bridge',
+      icon: Film,
+      items: [
+        { label: 'Production Studio', href: '/studio', icon: Film },
+        { label: 'Video Processing', href: '/video-processing', icon: Video },
+        { label: 'Motion Studio', href: '/motion-studio', icon: Film },
+        { label: 'Mobile Studio', href: '/mobile-studio', icon: Smartphone },
+        { label: 'Video Production', href: '/video-production', icon: Video },
+        { label: 'Audio Editor', href: '/audio-editor', icon: Headphones },
+        { label: 'Media Hub', href: '/rrb/media-hub', icon: Film },
       ],
     },
     {

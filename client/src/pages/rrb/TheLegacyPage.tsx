@@ -297,7 +297,7 @@ export default function TheLegacyPage() {
               Explore the Music
             </a>
             <a
-              href="/proof-vault"
+              href="/rrb/proof-vault"
               className="px-6 py-3 border border-accent text-accent hover:bg-accent/10 rounded-lg font-medium transition-colors"
             >
               Proof Vault
