@@ -3,7 +3,7 @@ import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, Activity, Radio, Zap, Heart, Music } from 'lucide-react';
+import { AlertCircle, Activity, Radio, Zap, Heart, Music, BookOpen, Truck, Users, DollarSign, Mic, Globe } from 'lucide-react';
 
 export function CanrynDashboard() {
   const [selectedSubsidiary, setSelectedSubsidiary] = useState<string | null>(null);
@@ -17,6 +17,20 @@ export function CanrynDashboard() {
 
   const getSubsidiaryIcon = (name: string) => {
     switch (name) {
+      // Legacy Restored
+      case 'Canryn Publishing Co.':
+        return <BookOpen className="w-5 h-5" />;
+      case 'Seasha Distribution Co.':
+        return <Truck className="w-5 h-5" />;
+      case 'Annas Promotion Co.':
+        return <Users className="w-5 h-5" />;
+      case 'Jaelon Enterprises':
+        return <DollarSign className="w-5 h-5" />;
+      case 'Little C Recording Co.':
+        return <Mic className="w-5 h-5" />;
+      case "Sean's Music World":
+        return <Globe className="w-5 h-5" />;
+      // Legacy Continued
       case 'Qumus':
         return <Zap className="w-5 h-5" />;
       case 'RRB Radio':
@@ -135,7 +149,8 @@ export function CanrynDashboard() {
 
       {/* Subsidiaries Grid */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Subsidiaries</h2>
+        <h2 className="text-2xl font-bold">Legacy Restored & Legacy Continued</h2>
+        <p className="text-slate-400">The original 6 subsidiaries form the foundation. The digital platform products carry the legacy forward.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {subsidiaries.data?.map((subsidiary) => (
             <Card

@@ -29,10 +29,10 @@ export interface BrandAsset {
 export class CanrynBrandingService {
   private static company: CompanyInfo = {
     name: 'Canryn Production',
-    tagline: 'Empowering Creators, Building Wealth',
-    description: 'Canryn Production and its subsidiaries create innovative video generation and distribution platforms for creators worldwide.',
-    founded: 2024,
-    headquarters: 'Global',
+    tagline: 'A Corporation with the Right Stuff!',
+    description: 'Canryn Production Inc. — A Corporation with the Right Stuff! Creating generational wealth through music, publishing, distribution, and media production.',
+    founded: 1972,
+    headquarters: 'United States',
     website: 'https://canrynproduction.com',
     logo: 'https://cdn.canrynproduction.com/logo.svg',
     colors: {
@@ -44,32 +44,46 @@ export class CanrynBrandingService {
 
   private static subsidiaries: Subsidiary[] = [
     {
-      id: 'qumus',
-      name: 'Qumus',
-      description: 'Advanced video generation and distribution platform',
-      focus: 'Video Creation & Distribution',
-      website: 'https://qumus.canrynproduction.com',
+      id: 'canryn-publishing',
+      name: 'Canryn Publishing Co.',
+      description: 'Literary & Arts Publishing — preserving and publishing the creative works of Seabrun Candy Hunter and the Canryn legacy',
+      focus: 'Literary & Arts Publishing',
+      website: 'https://www.canrynproductioninc.com',
     },
     {
-      id: 'nexus',
-      name: 'Nexus',
-      description: 'Creator collaboration and monetization hub',
-      focus: 'Creator Economy',
-      website: 'https://nexus.canrynproduction.com',
+      id: 'seasha-distribution',
+      name: 'Seasha Distribution Co.',
+      description: 'Shipping & Receiving Department — handling all physical and digital distribution for Canryn Production',
+      focus: 'Shipping & Receiving',
+      website: 'https://www.canrynproductioninc.com',
     },
     {
-      id: 'forge',
-      name: 'Forge',
-      description: 'AI-powered content generation engine',
-      focus: 'AI & Automation',
-      website: 'https://forge.canrynproduction.com',
+      id: 'annas-promotion',
+      name: 'Annas Promotion Co.',
+      description: 'Artist & Model Management — managing talent, promotions, and brand partnerships',
+      focus: 'Artist & Model Management',
+      website: 'https://www.canrynproductioninc.com',
     },
     {
-      id: 'atlas',
-      name: 'Atlas',
-      description: 'Global distribution and analytics network',
-      focus: 'Distribution & Analytics',
-      website: 'https://atlas.canrynproduction.com',
+      id: 'jaelon-enterprises',
+      name: 'Jaelon Enterprises',
+      description: 'Investment & Book Keeping Co. — managing finances, investments, and corporate operations. Run by Jaelon.',
+      focus: 'Investment & Book Keeping',
+      website: 'https://www.canrynproductioninc.com',
+    },
+    {
+      id: 'little-c-recording',
+      name: 'Little C Recording Co.',
+      description: 'Video & Sound Recording Co. — the studio arm of Canryn Production for all audio and video recording',
+      focus: 'Video & Sound Recording',
+      website: 'https://www.canrynproductioninc.com',
+    },
+    {
+      id: 'seans-music-world',
+      name: "Sean's Music World",
+      description: 'Video & Sound Publishing Co. — publishing and distributing music and video content worldwide. Run by Sean.',
+      focus: 'Video & Sound Publishing',
+      website: 'https://www.canrynproductioninc.com',
     },
   ];
 
@@ -118,7 +132,7 @@ export class CanrynBrandingService {
   }
 
   static getBrandingDisclaimer(): string {
-    return `This platform is powered by Canryn Production, a leader in video generation and creator economy solutions. Canryn Production operates multiple subsidiaries including Qumus, Nexus, Forge, and Atlas.`;
+    return `This platform is powered by Canryn Production Inc. — A Corporation with the Right Stuff! Founded by Seabrun "Candy" Hunter Jr., Canryn Production operates six subsidiaries: Canryn Publishing Co., Seasha Distribution Co., Annas Promotion Co., Jaelon Enterprises, Little C Recording Co., and Sean's Music World.`;
   }
 
   static getComplianceInfo() {

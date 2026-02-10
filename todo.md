@@ -1571,3 +1571,9 @@
 - [x] Fix download/share buttons across all pages
 - [x] Update Sweet Miracles — Ty Battle (Seabrun's daughter)
 - [x] Fix database migration errors (music_tracks, streaming_status, music_playlists columns added)
+
+## Session 4c: Fix Canryn Corporate Structure
+- [x] Update Canryn subsidiaries to real 6 companies (Canryn Publishing, Seasha Distribution, Annas Promotion, Jaelon Enterprises, Little C Recording, Sean's Music World)
+- [x] Update server ecosystem registration — Legacy Restored (6 originals) + Legacy Continued (5 products) = 11 total
+- [x] Fix CSS @import order warning
+- [x] Checkpoint and deliver
