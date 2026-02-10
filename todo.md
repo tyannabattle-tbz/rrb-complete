@@ -1594,9 +1594,9 @@
 - [x] Upload 15 legacy photos to CDN
 - [x] Create Legacy Photo Gallery page with fair use protections and copyright disclaimers
 - [x] Add gallery to navigation and routes
-- [ ] Upload Helen Hunter Life Care Leader magazine photos to CDN
+- [x] Upload Helen Hunter Life Care Leader magazine photos to CDN
 - [ ] Update Grandma Helen page with Life Care Leader magazine feature and article content
 - [ ] Add backstage photo and magazine images to Photo Gallery
-- [ ] Upload Helen Hunter Life Care Leader magazine photos to CDN
+- [x] Upload Helen Hunter Life Care Leader magazine photos to CDN
 - [ ] Update Grandma Helen page with Life Care Leader magazine feature
 - [ ] Add backstage photo and magazine images to Photo Gallery

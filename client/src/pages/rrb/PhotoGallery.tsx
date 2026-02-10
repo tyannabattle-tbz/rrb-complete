@@ -11,7 +11,7 @@ interface ArchivePhoto {
   caption: string;
   location: string;
   year: string;
-  category: 'performance' | 'travel' | 'personal' | 'media' | 'documentary';
+  category: 'performance' | 'travel' | 'personal' | 'media' | 'documentary' | 'family';
   attribution: string;
   context: string;
 }
@@ -182,9 +182,42 @@ const photos: ArchivePhoto[] = [
     attribution: 'Documentary promotional material; used for commentary and review',
     context: 'Documentary promotional material used for purposes of commentary, criticism, and review in connection with the Hunter family\'s documented history.',
   },
+  {
+    id: 16,
+    src: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/KPjoxyctvwHlxKjk.PNG',
+    title: 'Backstage with Little Richard',
+    caption: 'A rare backstage photograph showing Little Richard with friends and family members after a performance.',
+    location: 'Backstage, Concert Venue',
+    year: 'c. 1970s',
+    category: 'personal',
+    attribution: 'Hunter Family Archive',
+    context: 'Private family photograph documenting backstage moments during the touring years.',
+  },
+  {
+    id: 17,
+    src: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/nFVxQsUswNIAulPd.JPG',
+    title: 'Helen Hunter — Life Care Leader Cover',
+    caption: 'Helen Hunter on the cover of Life Care Leader magazine, 2014 Edition — "Beauty More Than Skin Deep."',
+    location: 'Life Care Centers of America',
+    year: '2014',
+    category: 'family',
+    attribution: 'Life Care Leader magazine, 2014; reproduced with family authorization',
+    context: 'Magazine cover featuring Helen Hunter, grandmother of the Hunter family, recognized for her remarkable life story as a polio survivor, model, nurse, and Mary Kay pioneer.',
+  },
+  {
+    id: 18,
+    src: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/FUNFfoBCLSCFUdqP.JPG',
+    title: 'Helen Hunter — Magazine Article Spread',
+    caption: 'The full two-page spread of Helen Hunter\'s feature article "Beauty More Than Skin Deep" in Life Care Leader.',
+    location: 'Life Care Centers of America',
+    year: '2014',
+    category: 'family',
+    attribution: 'Life Care Leader magazine, 2014; reproduced with family authorization',
+    context: 'Feature article documenting Helen Hunter\'s journey from Campbell, Ohio through polio recovery, modeling, nursing, and becoming the first Black senior director at Mary Kay Cosmetics.',
+  },
 ];
 
-type FilterCategory = 'all' | 'performance' | 'travel' | 'personal' | 'media' | 'documentary';
+type FilterCategory = 'all' | 'performance' | 'travel' | 'personal' | 'media' | 'documentary' | 'family';
 
 const categoryColors: Record<string, string> = {
   performance: 'bg-amber-600',
@@ -192,6 +225,7 @@ const categoryColors: Record<string, string> = {
   personal: 'bg-rose-600',
   media: 'bg-purple-600',
   documentary: 'bg-emerald-600',
+  family: 'bg-pink-600',
 };
 
 const categoryLabels: Record<string, string> = {
@@ -200,6 +234,7 @@ const categoryLabels: Record<string, string> = {
   personal: 'Personal & Family',
   media: 'Media Coverage',
   documentary: 'Documentary',
+  family: 'Helen Hunter',
 };
 
 export default function PhotoGallery() {
@@ -289,6 +324,7 @@ export default function PhotoGallery() {
             { key: 'personal' as FilterCategory, label: `Personal (${photos.filter(p => p.category === 'personal').length})` },
             { key: 'media' as FilterCategory, label: `Media (${photos.filter(p => p.category === 'media').length})` },
             { key: 'documentary' as FilterCategory, label: `Documentary (${photos.filter(p => p.category === 'documentary').length})` },
+            { key: 'family' as FilterCategory, label: `Helen Hunter (${photos.filter(p => p.category === 'family').length})` },
           ].map(tab => (
             <Button
               key={tab.key}
