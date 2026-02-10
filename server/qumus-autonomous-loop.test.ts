@@ -20,9 +20,9 @@ describe("QUMUS Autonomous Event Loop & Policies", () => {
       expect(policyTypes).toContain("compliance_reporting");
     });
 
-    it("should have autonomy levels between 75% and 98%", () => {
+    it("should have autonomy levels between 85% and 98% (tuned for 90% target)", () => {
       for (const [_key, policy] of Object.entries(CORE_POLICIES)) {
-        expect(policy.autonomyLevel).toBeGreaterThanOrEqual(75);
+        expect(policy.autonomyLevel).toBeGreaterThanOrEqual(85);
         expect(policy.autonomyLevel).toBeLessThanOrEqual(98);
       }
     });
@@ -45,12 +45,12 @@ describe("QUMUS Autonomous Event Loop & Policies", () => {
   });
 
   describe("QumusCompleteEngine.calculateConfidence", () => {
-    it("should return base score of 50 for empty input", () => {
+    it("should return base score of 70 for empty input (mature engine)", () => {
       const score = QumusCompleteEngine.calculateConfidence({
         policyId: "RECOMMENDATION_ENGINE",
         input: {},
       });
-      expect(score).toBe(50);
+      expect(score).toBe(70);
     });
 
     it("should increase confidence with more input keys", () => {
@@ -113,15 +113,15 @@ describe("QUMUS Autonomous Event Loop & Policies", () => {
       expect(result.message).toContain("escalated");
     });
 
-    it("should escalate decisions for low-autonomy policies even with high confidence", async () => {
-      // Content Moderation has autonomyLevel 75 (< 80 threshold)
+    it("should approve high-confidence decisions for content moderation (now 85% autonomy)", async () => {
+      // Content Moderation has autonomyLevel 85 (>= 80 threshold) after tuning
       const result = await QumusCompleteEngine.makeDecision({
         policyId: "policy_content_moderation",
         input: { content: "test", userId: 1, a: 1, b: 2, c: 3, d: 4 },
         confidence: 90,
       });
-      expect(result.result).toBe("escalated");
-      expect(result.autonomousFlag).toBe(false);
+      expect(result.result).toBe("approved");
+      expect(result.autonomousFlag).toBe(true);
     });
 
     it("should throw error for unknown policy", async () => {

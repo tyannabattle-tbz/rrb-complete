@@ -34,6 +34,9 @@ export interface Channel {
   currentContent: string | null;
   listeners: number;
   genre?: string;
+  streamUrl?: string;
+  fallbackUrl?: string;
+  frequency?: string;
 }
 
 export interface SchedulerStatus {
@@ -62,13 +65,55 @@ export class ContentSchedulerService {
 
   private initializeDefaultChannels(): void {
     const defaultChannels: Channel[] = [
-      { id: 'ch-001', name: 'RRB Main Radio', type: 'radio', status: 'active', currentContent: 'Top of the Sol Drive Show', listeners: 12450, genre: 'mixed' },
-      { id: 'ch-002', name: 'Blues Channel', type: 'radio', status: 'active', currentContent: 'Delta Blues Hour', listeners: 4820, genre: 'blues' },
-      { id: 'ch-003', name: 'Jazz Channel', type: 'radio', status: 'active', currentContent: 'Smooth Jazz Morning', listeners: 5200, genre: 'jazz' },
-      { id: 'ch-004', name: 'Soul Channel', type: 'radio', status: 'active', currentContent: 'Classic Soul Revue', listeners: 6100, genre: 'soul' },
-      { id: 'ch-005', name: 'Gospel Channel', type: 'radio', status: 'active', currentContent: 'Morning Praise Hour', listeners: 3800, genre: 'gospel' },
-      { id: 'ch-006', name: 'Funk Channel', type: 'radio', status: 'active', currentContent: 'Funky Grooves Mix', listeners: 4200, genre: 'funk' },
-      { id: 'ch-007', name: "King Richard's 70s Rock", type: 'radio', status: 'active', currentContent: 'Classic Rock Block', listeners: 3500, genre: 'rock' },
+      {
+        id: 'ch-001', name: 'RRB Main Radio', type: 'radio', status: 'active',
+        currentContent: 'Top of the Sol Drive Show', listeners: 12450, genre: 'mixed',
+        streamUrl: 'https://funkyradio.streamingmedia.it/play.mp3',
+        fallbackUrl: 'http://jazzradio.ice.infomaniak.ch/jazzradio-high.mp3',
+        frequency: '432Hz',
+      },
+      {
+        id: 'ch-002', name: 'Blues Channel', type: 'radio', status: 'active',
+        currentContent: 'Delta Blues Hour', listeners: 4820, genre: 'blues',
+        streamUrl: 'http://jazzblues.ice.infomaniak.ch/jazzblues-high.mp3',
+        fallbackUrl: 'http://strm112.1.fm/blues_mobile_mp3',
+        frequency: '396Hz',
+      },
+      {
+        id: 'ch-003', name: 'Jazz Channel', type: 'radio', status: 'active',
+        currentContent: 'Smooth Jazz Morning', listeners: 5200, genre: 'jazz',
+        streamUrl: 'https://icecast.walmradio.com:8443/jazz',
+        fallbackUrl: 'http://jking.cdnstream1.com/b22139_128mp3',
+        frequency: '528Hz',
+      },
+      {
+        id: 'ch-004', name: 'Soul Channel', type: 'radio', status: 'active',
+        currentContent: 'Classic Soul Revue', listeners: 6100, genre: 'soul',
+        streamUrl: 'http://jazzradio.ice.infomaniak.ch/jazzradio-high.mp3',
+        fallbackUrl: 'http://46.28.49.164:7504/stream',
+        frequency: '639Hz',
+      },
+      {
+        id: 'ch-005', name: 'Gospel Channel', type: 'radio', status: 'active',
+        currentContent: 'Morning Praise Hour', listeners: 3800, genre: 'gospel',
+        streamUrl: 'https://s3.radio.co/s97f38db97/listen',
+        fallbackUrl: 'http://stream.zeno.fm/3fmqr74a7f8uv',
+        frequency: '741Hz',
+      },
+      {
+        id: 'ch-006', name: 'Funk Channel', type: 'radio', status: 'active',
+        currentContent: 'Funky Grooves Mix', listeners: 4200, genre: 'funk',
+        streamUrl: 'http://jazz-wr06.ice.infomaniak.ch/jazz-wr06-128.mp3',
+        fallbackUrl: 'https://funkyradio.streamingmedia.it/play.mp3',
+        frequency: '852Hz',
+      },
+      {
+        id: 'ch-007', name: "King Richard's 70s Rock", type: 'radio', status: 'active',
+        currentContent: 'Classic Rock Block', listeners: 3500, genre: 'rock',
+        streamUrl: 'http://icy.unitedradio.it/VirginRockClassics.mp3',
+        fallbackUrl: 'http://nashe1.hostingradio.ru/rock-128.mp3',
+        frequency: '963Hz',
+      },
     ];
     defaultChannels.forEach(ch => this.channels.set(ch.id, ch));
   }

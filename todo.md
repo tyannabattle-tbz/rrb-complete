@@ -1725,10 +1725,10 @@
 - [x] ZIP created: RRB-QUMUS-Ecosystem-v9.5.5.zip (15.3 MB, 2470 files)
 
 ## v10.0 — QUMUS Fully Operational
-- [ ] Audit QUMUS engine state (routers, services, policies, scheduler)
-- [ ] Wire up autonomous decision engine with all 8 policies (content, broadcast, emergency, moderation, monetization, analytics, maintenance, security)
-- [ ] Build content scheduler for 7-channel 24/7 airwave population (radio, podcast, meditation, emergency, community, music, talk)
-- [ ] Activate AI agent networking for cross-platform collaboration
+- [x] Audit QUMUS engine state (routers, services, policies, scheduler)
+- [x] Wire up autonomous decision engine with all 8 policies (content, broadcast, emergency, moderation, monetization, analytics, maintenance, security)
+- [x] Build content scheduler for 7-channel 24/7 airwave population (radio, podcast, meditation, emergency, community, music, talk)
+- [x] Activate AI agent networking for cross-platform collaboration
 - [x] Connect QUMUS admin dashboard with live operational controls and human override
 - [x] Test end-to-end autonomous operations
 - [x] Finalize QUMUS as autonomous entity (90% auto / 10% human)
@@ -1770,3 +1770,25 @@
 - [x] Test human review workflow with escalated decisions
 - [x] Verify all 5 dashboards show real operational data
 - [x] Finalize QUMUS as autonomous entity (90% auto / 10% human)
+
+## Tune Autonomy Thresholds to 90%
+- [x] Adjust confidence calculator to produce higher base scores
+- [x] Lower autonomous decision threshold from 80% to achieve 90% autonomy rate
+- [x] Verify autonomy rate reaches ~90% across all 8 policies
+
+## Add Real Audio Stream URLs to All 7 Channels
+- [x] Add streaming URLs to RRB Main Radio channel
+- [x] Add streaming URLs to Blues Channel
+- [x] Add streaming URLs to Jazz Channel
+- [x] Add streaming URLs to Soul Channel
+- [x] Add streaming URLs to Gospel Channel
+- [x] Add streaming URLs to Funk Channel
+- [x] Add streaming URLs to King Richard's 70s Rock channel
+- [x] Wire stream URLs to the Listen Live feature and audio player
+
+## Activate AI Agent Networking
+- [x] Build agent networking service for cross-platform collaboration (QUMUS ↔ HybridCast ↔ Canryn ↔ Sweet Miracles)
+- [x] Create agent communication protocol with message routing
+- [x] Add agent network status to QUMUS Admin Dashboard
+- [x] Wire agent networking to tRPC router endpoints
+- [x] Add vitest tests for agent networking and autonomy tuning

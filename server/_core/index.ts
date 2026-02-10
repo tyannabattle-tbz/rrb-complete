@@ -91,20 +91,14 @@ async function startServer() {
     console.log('[QUMUS Loop] Init skipped:', (e as Error).message);
   }
 
-  // Initialize Agent Network heartbeat
+  // Initialize AI Agent Networking — cross-platform collaboration
   try {
-    const { AgentNetworkService } = await import("../services/agentNetworkService");
-    const agentNet = new AgentNetworkService(
-      process.env.QUMUS_AGENT_ID || 'rrb-qumus-primary',
-      process.env.QUMUS_AGENT_NAME || 'RRB QUMUS Primary Agent',
-      process.env.QUMUS_AGENT_ENDPOINT || `http://localhost:${port}`,
-      ['ai-chat', 'autonomous-decision', 'monitoring', 'content-scheduling', 'broadcast'],
-      90
-    );
-    agentNet.startHeartbeat();
-    console.log('[AgentNetwork] Heartbeat started');
+    const { getAgentNetwork } = await import("../services/agent-networking");
+    const network = getAgentNetwork();
+    network.start();
+    console.log('[Agent Network] Cross-platform AI agent networking started');
   } catch (e) {
-    console.log('[AgentNetwork] Init skipped:', (e as Error).message);
+    console.log('[Agent Network] Init skipped:', (e as Error).message);
   }
 
   server.listen(port, () => {

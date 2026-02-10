@@ -133,6 +133,112 @@ export const LIVE_STREAMS = {
     channel: 'Sweet Miracles',
     isLiveStream: true,
   },
+  // ═══════════════════════════════════════════════════════════
+  // GENRE CHANNELS — 7-Channel 24/7 Content Scheduler Streams
+  // ═══════════════════════════════════════════════════════════
+  // Blues Channel
+  bluesRadio: {
+    id: 'live-blues-radio',
+    title: 'Jazz Radio Blues — Delta & Chicago Blues',
+    artist: 'Jazz Radio',
+    url: 'http://jazzblues.ice.infomaniak.ch/jazzblues-high.mp3',
+    channel: 'Blues Channel',
+    isLiveStream: true,
+  },
+  bluesFM: {
+    id: 'live-blues-fm',
+    title: '1.FM Blues Radio — 24/7 Blues',
+    artist: '1.FM',
+    url: 'http://strm112.1.fm/blues_mobile_mp3',
+    channel: 'Blues Channel',
+    isLiveStream: true,
+  },
+  // Jazz Channel
+  jazzUnderground: {
+    id: 'live-jazz-underground',
+    title: 'Adroit Jazz Underground — Pure Jazz',
+    artist: 'WALM Radio',
+    url: 'https://icecast.walmradio.com:8443/jazz',
+    channel: 'Jazz Channel',
+    isLiveStream: true,
+  },
+  smoothJazz101: {
+    id: 'live-smooth-jazz-101',
+    title: '101 Smooth Jazz — Smooth & Contemporary',
+    artist: '101.com',
+    url: 'http://jking.cdnstream1.com/b22139_128mp3',
+    channel: 'Jazz Channel',
+    isLiveStream: true,
+  },
+  // Soul Channel
+  retroSoul: {
+    id: 'live-retro-soul',
+    title: 'Retro Soul Radio — Classic Soul & Motown',
+    artist: 'Retro Soul',
+    url: 'http://46.28.49.164:7504/stream',
+    channel: 'Soul Channel',
+    isLiveStream: true,
+  },
+  soulRadio: {
+    id: 'live-soul-radio',
+    title: 'Jazz Radio Soul — Soul & R&B Classics',
+    artist: 'Jazz Radio',
+    url: 'http://jazzradio.ice.infomaniak.ch/jazzradio-high.mp3',
+    channel: 'Soul Channel',
+    isLiveStream: true,
+  },
+  // Gospel Channel
+  gospelRadio: {
+    id: 'live-gospel-radio',
+    title: 'Gospel Praise Radio — 24/7 Gospel',
+    artist: 'Gospel Radio',
+    url: 'https://s3.radio.co/s97f38db97/listen',
+    channel: 'Gospel Channel',
+    isLiveStream: true,
+  },
+  gospelMusic: {
+    id: 'live-gospel-music',
+    title: 'Gospel Music Radio — Praise & Worship',
+    artist: 'Zeno FM',
+    url: 'http://stream.zeno.fm/3fmqr74a7f8uv',
+    channel: 'Gospel Channel',
+    isLiveStream: true,
+  },
+  // Funk Channel
+  funkRadio: {
+    id: 'live-funk-radio',
+    title: 'Jazz Radio Funk — Funk & Boogie',
+    artist: 'Jazz Radio',
+    url: 'http://jazz-wr06.ice.infomaniak.ch/jazz-wr06-128.mp3',
+    channel: 'Funk Channel',
+    isLiveStream: true,
+  },
+  funkyClassics: {
+    id: 'live-funky-classics',
+    title: "Funky Radio — 60's & 70's Funk",
+    artist: 'Funky Radio',
+    url: 'https://funkyradio.streamingmedia.it/play.mp3',
+    channel: 'Funk Channel',
+    isLiveStream: true,
+  },
+  // King Richard's 70s Rock
+  classicRock: {
+    id: 'live-classic-rock',
+    title: 'Virgin Radio Classic Rock — 70s Rock',
+    artist: 'Virgin Radio',
+    url: 'http://icy.unitedradio.it/VirginRockClassics.mp3',
+    channel: "King Richard's 70s Rock",
+    isLiveStream: true,
+  },
+  rockFM: {
+    id: 'live-rock-fm',
+    title: 'Rock FM — Classic Rock Anthems',
+    artist: 'Rock FM',
+    url: 'http://nashe1.hostingradio.ru/rock-128.mp3',
+    channel: "King Richard's 70s Rock",
+    isLiveStream: true,
+  },
+
   // Around the QumUnity — Community voices, talk, and culture
   defcon: {
     id: 'live-defcon',
@@ -313,6 +419,94 @@ export interface ChannelPreset {
 }
 
 export const CHANNEL_PRESETS: ChannelPreset[] = [
+  // ═══════════════════════════════════════════════════════════
+  // 7-Channel Content Scheduler Channels (QUMUS-managed)
+  // ═══════════════════════════════════════════════════════════
+  {
+    id: 'ch-001',
+    name: 'RRB Main Radio',
+    description: "Flagship station — Soul, Funk, R&B, and the Rockin' Rockin' Boogie legacy",
+    subsidiary: "Rockin' Rockin' Boogie",
+    color: '#f59e0b',
+    streams: [
+      LIVE_STREAMS.funkyRadio,
+      LIVE_STREAMS.sonicUniverse,
+      LIVE_STREAMS.seventies,
+      ...RRB_LEGACY_TRACKS,
+    ],
+  },
+  {
+    id: 'ch-002',
+    name: 'Blues Channel',
+    description: 'Delta blues, Chicago blues, and new blues artists — 24/7',
+    subsidiary: "Rockin' Rockin' Boogie",
+    color: '#3b82f6',
+    streams: [
+      LIVE_STREAMS.bluesRadio,
+      LIVE_STREAMS.bluesFM,
+    ],
+  },
+  {
+    id: 'ch-003',
+    name: 'Jazz Channel',
+    description: 'Jazz standards, smooth jazz, and contemporary — 528Hz frequency',
+    subsidiary: "Rockin' Rockin' Boogie",
+    color: '#8b5cf6',
+    streams: [
+      LIVE_STREAMS.jazzUnderground,
+      LIVE_STREAMS.smoothJazz101,
+      LIVE_STREAMS.sonicUniverse,
+    ],
+  },
+  {
+    id: 'ch-004',
+    name: 'Soul Channel',
+    description: 'Classic soul, R&B, and Motown — 639Hz frequency',
+    subsidiary: "Rockin' Rockin' Boogie",
+    color: '#ec4899',
+    streams: [
+      LIVE_STREAMS.retroSoul,
+      LIVE_STREAMS.soulRadio,
+      LIVE_STREAMS.funkyRadio,
+    ],
+  },
+  {
+    id: 'ch-005',
+    name: 'Gospel Channel',
+    description: 'Gospel, praise, and worship music — 741Hz frequency',
+    subsidiary: 'Sweet Miracles',
+    color: '#f97316',
+    streams: [
+      LIVE_STREAMS.gospelRadio,
+      LIVE_STREAMS.gospelMusic,
+    ],
+  },
+  {
+    id: 'ch-006',
+    name: 'Funk Channel',
+    description: "Funk, boogie, and dance — 60's & 70's groove — 852Hz frequency",
+    subsidiary: "Rockin' Rockin' Boogie",
+    color: '#10b981',
+    streams: [
+      LIVE_STREAMS.funkRadio,
+      LIVE_STREAMS.funkyClassics,
+    ],
+  },
+  {
+    id: 'ch-007',
+    name: "King Richard's 70s Rock",
+    description: 'Classic 70s rock — Little Richard era — 963Hz frequency',
+    subsidiary: 'Canryn Production',
+    color: '#ef4444',
+    streams: [
+      LIVE_STREAMS.classicRock,
+      LIVE_STREAMS.rockFM,
+      LIVE_STREAMS.seventies,
+    ],
+  },
+  // ═══════════════════════════════════════════════════════════
+  // Legacy Platform Channels
+  // ═══════════════════════════════════════════════════════════
   {
     id: 'ch-rrb-radio',
     name: "RRB Legacy Radio",

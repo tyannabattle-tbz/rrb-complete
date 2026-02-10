@@ -7,6 +7,8 @@
 import { router, protectedProcedure, publicProcedure, adminProcedure } from '../../_core/trpc';
 import { z } from 'zod';
 import QumusCompleteEngine, { CORE_POLICIES } from '../../qumus-complete-engine';
+import { getAgentNetwork } from '../../services/agent-networking';
+import type { AgentId } from '../../services/agent-networking';
 import { getDb } from '../../db';
 import { eq, desc, and, sql, count } from 'drizzle-orm';
 import {
@@ -425,6 +427,106 @@ export const qumusCompleteRouter = router({
       } catch {
         return [];
       }
+    }),
+
+  // ═══════════════════════════════════════════════════════════
+  // AI Agent Networking — Cross-Platform Collaboration
+  // ═══════════════════════════════════════════════════════════
+
+  /**
+   * Get the full network topology — agents, connections, health
+   */
+  getNetworkTopology: publicProcedure.query(async () => {
+    const network = getAgentNetwork();
+    return network.getNetworkTopology();
+  }),
+
+  /**
+   * Get status of a specific agent
+   */
+  getAgentStatus: publicProcedure
+    .input(z.object({ agentId: z.string() }))
+    .query(async ({ input }) => {
+      const network = getAgentNetwork();
+      return network.getAgentStatus(input.agentId as AgentId) || null;
+    }),
+
+  /**
+   * Get recent inter-agent messages
+   */
+  getAgentMessages: publicProcedure
+    .input(z.object({ limit: z.number().default(50) }))
+    .query(async ({ input }) => {
+      const network = getAgentNetwork();
+      return network.getRecentMessages(input.limit);
+    }),
+
+  /**
+   * Get cross-platform events
+   */
+  getCrossPlatformEvents: publicProcedure
+    .input(z.object({ limit: z.number().default(50) }))
+    .query(async ({ input }) => {
+      const network = getAgentNetwork();
+      return network.getCrossPlatformEvents(input.limit);
+    }),
+
+  /**
+   * Get connection health summary
+   */
+  getConnectionHealth: publicProcedure.query(async () => {
+    const network = getAgentNetwork();
+    return network.getConnectionHealth();
+  }),
+
+  /**
+   * Get agent network status
+   */
+  getNetworkStatus: publicProcedure.query(async () => {
+    const network = getAgentNetwork();
+    return network.getStatus();
+  }),
+
+  /**
+   * Send a cross-platform command from QUMUS
+   */
+  sendAgentCommand: protectedProcedure
+    .input(z.object({
+      targetAgent: z.string(),
+      commandType: z.enum(['sync', 'command', 'alert']),
+      priority: z.enum(['low', 'normal', 'high', 'emergency']).default('normal'),
+      payload: z.record(z.any()),
+    }))
+    .mutation(async ({ input }) => {
+      const network = getAgentNetwork();
+      const message = await network.sendMessage({
+        from: 'qumus',
+        to: input.targetAgent as AgentId,
+        type: input.commandType,
+        priority: input.priority,
+        payload: input.payload,
+      });
+      return { success: true, messageId: message.id };
+    }),
+
+  /**
+   * Create a cross-platform event
+   */
+  createCrossPlatformEvent: protectedProcedure
+    .input(z.object({
+      type: z.enum(['content_sync', 'emergency_broadcast', 'schedule_update', 'listener_migration', 'revenue_share', 'compliance_alert', 'health_check']),
+      targets: z.array(z.string()),
+      data: z.record(z.any()),
+    }))
+    .mutation(async ({ input }) => {
+      const network = getAgentNetwork();
+      const event = network.createCrossPlatformEvent({
+        type: input.type,
+        source: 'qumus',
+        targets: input.targets as AgentId[],
+        data: input.data,
+      });
+      return { success: true, eventId: event.id };
     }),
 });
 
