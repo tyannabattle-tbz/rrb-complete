@@ -13,7 +13,7 @@ export default function Home() {
 
   // Set SEO-optimized document title (30-60 characters)
   useEffect(() => {
-    document.title = "QUMUS — Canryn Production Orchestration Platform";
+    document.title = "Rockin' Rockin' Boogie — Canryn Production";
   }, []);
 
   if (loading) {

@@ -1656,5 +1656,8 @@
 - [x] Connect real-time online multiplayer — sync actual dice rolls between devices via WebSocket
 - [x] Add game state broadcasting (roll results, scores, turn changes) over WebSocket rooms
 - [x] Test and verify changes (0 TS errors, all compiles clean)
-- [ ] Save checkpoint and deliver
+- [x] Save checkpoint and deliver (75a00a9e)
 - [x] Create Mac Mini install/execute command script (INSTALL-MAC-MINI.md)
+
+## v9.2 Fix Homescreen Label
+- [x] Fix homescreen label from QUMUS to Rockin Rockin Boogie (document.title fixed in Home.tsx, manifest already correct, VITE_APP_TITLE needs Settings > General update)
