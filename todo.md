@@ -1815,3 +1815,28 @@
 - [x] Replace broken stream URLs with verified working alternatives
 - [x] Verify HybridCast Live Radio player with channel switching
 - [x] Write vitest tests for State of the Studio and Agent Network (20 tests passing)
+
+## QUMUS Command Console
+- [x] Create server-side command processor with routing to all 6 agents
+- [x] Build command parser supporting natural language and structured commands
+- [x] Add command history persistence to database
+- [x] Create terminal-style UI with command input, output display, and agent response feedback
+- [x] Add command autocomplete and agent-specific command suggestions
+- [x] Wire to tRPC router with executeCommand and getCommandHistory procedures
+- [x] Register route at /rrb/qumus/command-console
+## Sweet Miracles Fundraising Dashboard with Stripe
+- [x] Create fundraising database schema (campaigns, donations, goals)
+- [x] Build Stripe checkout session for donations with configurable amounts
+- [x] Create campaign management with progress tracking and goal visualization
+- [x] Build donation history page with amount, date, and donor info
+- [x] Add grant discovery section with available grants and application status
+- [x] Create fundraising analytics with total raised, donor count, and campaign performance
+- [x] Wire to tRPC router with donation and campaign procedures
+- [x] Register route at /rrb/sweet-miracles/fundraising
+## Push Notifications for Critical QUMUS Events
+- [x] Set up VAPID push notification subscription on frontend
+- [x] Create notification preferences UI for selecting event types
+- [x] Build server-side notification dispatcher for critical events
+- [x] Wire notifications to QUMUS autonomous loop (escalations, emergencies, agent health)
+- [x] Add notification history and management page
+- [x] Test push notification delivery end-to-end

@@ -43,9 +43,9 @@ interface NotificationLog {
 
 // In-memory store (production would use database)
 const subscriptions: Map<string, PushSubscriptionRecord> = new Map();
-const notificationHistory: NotificationLog[] = [];
+export const notificationHistory: NotificationLog[] = [];
 
-async function sendPushToAll(payload: { title: string; body: string; level: string; url?: string }): Promise<{ success: number; failed: number; removed: number }> {
+export async function sendPushToAll(payload: { title: string; body: string; level: string; url?: string }): Promise<{ success: number; failed: number; removed: number }> {
   let success = 0;
   let failed = 0;
   let removed = 0;

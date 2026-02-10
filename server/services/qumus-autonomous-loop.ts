@@ -8,6 +8,7 @@
 
 import QumusCompleteEngine, { CORE_POLICIES } from '../qumus-complete-engine';
 import { getContentScheduler } from './contentSchedulerService';
+import { notifyHumanReviewEscalation, notifySecurityAlert, notifyEmergencyBroadcast } from './qumus-notifications';
 
 // Event templates for each policy type
 const EVENT_TEMPLATES: Record<string, Array<{ input: Record<string, any>; confidence?: number; description: string }>> = {
@@ -129,6 +130,19 @@ export class QumusAutonomousLoop {
           autonomous++;
         } else {
           escalated++;
+          // Send push notification for escalated decisions
+          notifyHumanReviewEscalation(
+            policyId.replace('policy_', '').replace(/_/g, ' '),
+            `${template.description} — Confidence: ${result.confidence}%`
+          );
+        }
+
+        // Special notifications for critical event types
+        if (policyId === 'policy_compliance_reporting' && !result.autonomousFlag) {
+          notifySecurityAlert('Compliance Review Required', template.description);
+        }
+        if (policyId === 'policy_performance_alert' && template.input.metric === 'error_rate' && template.input.value > template.input.threshold) {
+          notifyEmergencyBroadcast('High Error Rate Detected', `${template.input.server}: ${template.input.value}% error rate (threshold: ${template.input.threshold}%)`);
         }
 
         console.log(`[QUMUS Loop] ${template.description} → ${result.result} (${result.confidence}% confidence)`);

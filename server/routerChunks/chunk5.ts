@@ -11,6 +11,7 @@ import { emailNotificationRouter } from '../routers/emailNotificationRouter';
 import { sweetMiraclesAlertsRouter } from '../routers/sweetMiraclesAlerts';
 import { sweetMiraclesDonorsRouter } from '../routers/sweetMiraclesDonors';
 import { sweetMiraclesGrantsRouter } from '../routers/sweetMiraclesGrants';
+import { sweetMiraclesCampaignsRouter } from '../routers/sweetMiraclesCampaigns';
 
 export const chunk5Router = router({
   seedData: seedDataRouter,
@@ -22,5 +23,6 @@ export const chunk5Router = router({
     alerts: sweetMiraclesAlertsRouter || router({}),
     donors: sweetMiraclesDonorsRouter || router({}),
     grants: sweetMiraclesGrantsRouter || router({}),
+    campaigns: sweetMiraclesCampaignsRouter || router({}),
   }),
 });

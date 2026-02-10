@@ -141,6 +141,8 @@ import RRBQumusPolicyAnalyticsDashboard from '@/pages/rrb/QumusPolicyAnalyticsDa
 import RRBQumusBroadcastAdminDashboard from '@/pages/rrb/QumusBroadcastAdminDashboard';
 import RRBAgentNetworkDashboard from '@/pages/rrb/AgentNetworkDashboard';
 import RRBStateOfTheStudio from '@/pages/rrb/StateOfTheStudio';
+import RRBQumusCommandConsole from '@/pages/rrb/QumusCommandConsole';
+import RRBSweetMiraclesFundraising from '@/pages/rrb/SweetMiraclesFundraising';
 import RRBContact from '@/pages/rrb/Contact';
 import RRBComingSoon from '@/pages/rrb/ComingSoon';
 import RRBGrandmaHelen from '@/pages/rrb/GrandmaHelen';
@@ -304,6 +306,8 @@ function Router() {
       <Route path="/rrb/qumus/agent-network" component={RRBAgentNetworkDashboard} />
       <Route path="/rrb/qumus/state-of-the-studio" component={RRBStateOfTheStudio} />
       <Route path="/rrb/state-of-the-studio" component={RRBStateOfTheStudio} />
+      <Route path="/rrb/qumus/command-console" component={RRBQumusCommandConsole} />
+      <Route path="/rrb/sweet-miracles/fundraising" component={RRBSweetMiraclesFundraising} />
       
       {/* RRB QUMUS Broadcast Orchestration */}
       <Route path="/rrb/broadcast/admin" component={RRBQumusBroadcastAdminDashboard} />

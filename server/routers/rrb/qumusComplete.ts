@@ -8,6 +8,7 @@ import { router, protectedProcedure, publicProcedure, adminProcedure } from '../
 import { z } from 'zod';
 import QumusCompleteEngine, { CORE_POLICIES } from '../../qumus-complete-engine';
 import { getAgentNetwork } from '../../services/agent-networking';
+import { getNotificationStats, updateNotificationRule, queueNotification } from '../../services/qumus-notifications';
 import type { AgentId } from '../../services/agent-networking';
 import { getDb } from '../../db';
 import { eq, desc, and, sql, count } from 'drizzle-orm';
@@ -527,6 +528,54 @@ export const qumusCompleteRouter = router({
         data: input.data,
       });
       return { success: true, eventId: event.id };
+    }),
+
+  // ═══════════════════════════════════════════════════════════
+  // QUMUS Push Notifications — Critical Event Alerts
+  // ═══════════════════════════════════════════════════════════
+
+  /**
+   * Get notification service stats and recent notifications
+   */
+  getNotificationStats: publicProcedure.query(() => {
+    return getNotificationStats();
+  }),
+
+  /**
+   * Update notification rule (enable/disable, change severity threshold)
+   */
+  updateNotificationRule: protectedProcedure
+    .input(z.object({
+      type: z.string(),
+      minSeverity: z.string().optional(),
+      enabled: z.boolean().optional(),
+    }))
+    .mutation(({ input }) => {
+      const success = updateNotificationRule(input.type, {
+        minSeverity: input.minSeverity,
+        enabled: input.enabled,
+      });
+      return { success };
+    }),
+
+  /**
+   * Send a test notification to verify push delivery
+   */
+  sendTestNotification: protectedProcedure
+    .input(z.object({
+      title: z.string(),
+      body: z.string(),
+      type: z.enum(['human_review', 'emergency', 'agent_health', 'security', 'campaign', 'system']),
+      severity: z.enum(['low', 'medium', 'high', 'critical']),
+    }))
+    .mutation(({ input }) => {
+      queueNotification({
+        type: input.type,
+        severity: input.severity,
+        title: input.title,
+        body: input.body,
+      });
+      return { success: true, message: 'Notification queued for delivery' };
     }),
 });
 
