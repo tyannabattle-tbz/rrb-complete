@@ -1517,3 +1517,27 @@
 - [x] Solbones already has Solo, vs QUMUS AI, and Local 2-Player modes built in
 - [x] Connect Merchandise Shop Stripe checkout (createMerchCheckoutSession + webhook handler)
 - [x] Write tests for navigation and new features (12 tests passing)
+
+## Session 3: Final Production Pass (Feb 2026)
+- [x] Expand content scheduler from 16 to 62 slots — full 24/7 coverage across all 7 channels
+- [x] CH-001 RRB Main Radio: 10 slots (overnight through weekend specials)
+- [x] CH-002 Podcast Network: 9 slots (replay through night owl)
+- [x] CH-003 Audiobook Stream: 5 slots (sleep stories through evening chapters)
+- [x] CH-004 Emergency Broadcast: 4 slots (24/7 HybridCast standby)
+- [x] CH-005 Music Discovery: 7 slots (discovery after dark through Saturday marathon)
+- [x] CH-006 Community Voice: 8 slots (community replay through Sunday spotlight)
+- [x] CH-007 Drop Radio 432Hz: 8 slots (all 9 Solfeggio frequencies mapped to time blocks)
+- [x] 11 commercial breaks across channels (weekday + weekend)
+- [x] Add Solbones dice skins — 7 styles (Classic, Gold Rush, Neon Glow, Heritage, Crystal, Fire, Custom)
+- [x] Add custom dice image upload — users upload their own images for each die face (1-6)
+- [x] Custom images stored locally via FileReader/DataURL (no server upload needed)
+- [x] Wire contentRecommendation router stub (getPersonalizedRecommendations, getPlaylistRecommendations, getTrendingContent, getRecommendationMetrics)
+- [x] Wire rrbRadio router stub (getBroadcastMetrics, getEngagementMetrics, getViewerTimeline, getGeographicDistribution)
+- [x] Add ecosystem alias router so trpc.ecosystem.* calls resolve
+- [x] Fix VideoProductionPage dark theme (was using gray-50 light theme)
+- [x] Fix CSS @import order — Google Fonts before @custom-variant
+- [x] Set site icon to 1972 Boogie Revival poster (favicon.ico, icon-192.png, icon-512.png)
+- [x] Upload all public assets to S3 CDN and update references
+- [x] Update manifest.json icons to CDN URLs
+- [x] All 11 Session 3 tests passing
+- [x] All 12 Session 2 tests still passing

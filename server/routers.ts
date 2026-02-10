@@ -73,6 +73,7 @@ import { qumusCompleteRouter as rrbQumusCompleteRouter } from "./routers/rrb/qum
 import { broadcastRouter as rrbBroadcastRouter } from "./routers/rrb/broadcast";
 import { entertainmentRouter as rrbEntertainmentRouter } from "./routers/rrb/entertainment";
 import { adminDashboardRouter as rrbEcosystemRouter } from "./ecosystem/admin-dashboard";
+import { contentRecommendationRouter, rrbRadioRouter } from "./routers/missingRouterStubs";
 
 export const appRouter = router({
   // System router
@@ -213,6 +214,13 @@ export const appRouter = router({
 
   // RRB Unified Ecosystem Admin Dashboard
   rrbEcosystem: rrbEcosystemRouter,
+  ecosystem: rrbEcosystemRouter,
+
+  // Content Recommendation (AI-powered)
+  contentRecommendation: contentRecommendationRouter,
+
+  // RRB Radio (broadcast monitoring)
+  rrbRadio: rrbRadioRouter,
 
   // Content Scheduler (24/7 QUMUS automated rotation)
   contentScheduler: contentSchedulerRouter,

@@ -4,7 +4,19 @@ import { Card } from '@/components/ui/card';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Link } from 'wouter';
-import { Download, Volume2, RotateCcw, Trophy, BookOpen, Users, Sparkles, ChevronDown, ChevronUp, Bot, UserPlus, Swords, Zap } from 'lucide-react';
+import { Download, Volume2, RotateCcw, Trophy, BookOpen, Users, Sparkles, ChevronDown, ChevronUp, Bot, UserPlus, Swords, Zap, Palette, Upload, Image as ImageIcon } from 'lucide-react';
+
+// Dice skin definitions
+type DiceSkin = 'classic' | 'gold' | 'neon' | 'wood' | 'crystal' | 'fire' | 'custom';
+const DICE_SKINS: { id: DiceSkin; name: string; bg: string; dot: string; border: string; desc: string }[] = [
+  { id: 'classic', name: 'Classic', bg: '#1a1a2e', dot: '#fbbf24', border: '#a78bfa', desc: 'Original purple & gold' },
+  { id: 'gold', name: 'Gold Rush', bg: '#2d1f0e', dot: '#ffd700', border: '#daa520', desc: 'Solid gold luxury' },
+  { id: 'neon', name: 'Neon Glow', bg: '#0a0a1a', dot: '#00ff88', border: '#00ff88', desc: 'Electric green glow' },
+  { id: 'wood', name: 'Heritage', bg: '#3e2723', dot: '#ffcc80', border: '#8d6e63', desc: 'Warm wood grain' },
+  { id: 'crystal', name: 'Crystal', bg: '#0d1b2a', dot: '#e0f7fa', border: '#4dd0e1', desc: 'Ice blue crystal' },
+  { id: 'fire', name: 'Fire', bg: '#1a0000', dot: '#ff6b35', border: '#ff4500', desc: 'Blazing hot dice' },
+  { id: 'custom', name: 'Custom', bg: '#1a1a2e', dot: '#fbbf24', border: '#a78bfa', desc: 'Upload your own images' },
+];
 
 // ============================================================
 // SOLBONES DICE GAME
@@ -40,7 +52,7 @@ const FREQUENCY_MAP: Record<number, typeof ALL_FREQUENCIES[0]> = {
 const FREQ_DICE: Record<number, string> = { 2: 'red', 3: 'purple', 4: 'blue' };
 
 // Die face SVG component
-function DieFace({ value, isRolling, size = 80, freqHighlight = false, label }: { value: number; isRolling: boolean; size?: number; freqHighlight?: boolean; label?: string }) {
+function DieFace({ value, isRolling, size = 80, freqHighlight = false, label, skin = 'classic', customImages }: { value: number; isRolling: boolean; size?: number; freqHighlight?: boolean; label?: string; skin?: DiceSkin; customImages?: Record<number, string> }) {
   const dotPositions: Record<number, [number, number][]> = {
     1: [[50, 50]],
     2: [[30, 30], [70, 70]],
@@ -52,17 +64,39 @@ function DieFace({ value, isRolling, size = 80, freqHighlight = false, label }: 
 
   const isFreqDie = FREQ_DICE[value] !== undefined;
   const freqColor = isFreqDie ? (value === 2 ? '#ef4444' : value === 3 ? '#a855f7' : '#3b82f6') : undefined;
-  const borderColor = isFreqDie && freqHighlight ? freqColor : '#a78bfa';
+  const skinDef = DICE_SKINS.find(s => s.id === skin) || DICE_SKINS[0];
+  const borderColor = isFreqDie && freqHighlight ? freqColor : skinDef.border;
+  const bgColor = isFreqDie && freqHighlight ? `${freqColor}22` : skinDef.bg;
+  const dotColor = isFreqDie && freqHighlight ? freqColor : skinDef.dot;
+
+  // Custom image mode
+  if (skin === 'custom' && customImages && customImages[value]) {
+    return (
+      <div className="flex flex-col items-center">
+        <div className={`relative ${isRolling ? 'animate-bounce' : 'transition-all duration-300'}`}
+          style={{ width: size, height: size }}>
+          <img src={customImages[value]} alt={`Die face ${value}`}
+            className="w-full h-full object-cover rounded-2xl border-2"
+            style={{ borderColor: skinDef.border }} />
+          <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs font-bold rounded px-1">{value}</div>
+        </div>
+        {label && <span className="text-xs text-purple-400 mt-1">{label}</span>}
+        {!isRolling && FREQ_DICE[value] && freqHighlight && (
+          <span className="text-xs text-purple-300 mt-0.5">{FREQUENCY_MAP[value]?.note} {FREQUENCY_MAP[value]?.frequency}Hz</span>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center">
       <svg width={size} height={size} viewBox="0 0 100 100" className={isRolling ? 'animate-bounce' : 'transition-all duration-300'}>
         <rect x="5" y="5" width="90" height="90" rx="15" ry="15"
-          fill={isFreqDie && freqHighlight ? `${freqColor}22` : '#1a1a2e'}
+          fill={bgColor}
           stroke={borderColor} strokeWidth="3" />
         {(dotPositions[value] || []).map(([cx, cy], i) => (
           <circle key={i} cx={cx} cy={cy} r="8"
-            fill={isFreqDie && freqHighlight ? freqColor : '#fbbf24'} />
+            fill={dotColor} />
         ))}
       </svg>
       {label && <span className="text-xs text-purple-400 mt-1">{label}</span>}
@@ -184,6 +218,11 @@ export default function Solbones() {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [winner, setWinner] = useState<string | null>(null);
   const [aiThinking, setAiThinking] = useState(false);
+  const [diceSkin, setDiceSkin] = useState<DiceSkin>('classic');
+  const [customDiceImages, setCustomDiceImages] = useState<Record<number, string>>({});
+  const [showSkins, setShowSkins] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingFace, setUploadingFace] = useState<number | null>(null);
   const rollAnimRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const aiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -576,7 +615,7 @@ export default function Solbones() {
               {/* Dice Display */}
               <div className="flex justify-center items-center gap-4 md:gap-8 mb-8 py-4">
                 {dice.map((d, i) => (
-                  <DieFace key={i} value={d} isRolling={isRolling} size={90} freqHighlight={!isRolling} />
+                  <DieFace key={i} value={d} isRolling={isRolling} size={90} freqHighlight={!isRolling} skin={diceSkin} customImages={customDiceImages} />
                 ))}
               </div>
 
@@ -650,6 +689,115 @@ export default function Solbones() {
                   <RotateCcw className="h-4 w-4" /> New Game
                 </Button>
               </div>
+            </Card>
+
+            {/* Dice Skins Panel */}
+            <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6">
+              <button
+                onClick={() => setShowSkins(!showSkins)}
+                className="w-full flex items-center justify-between text-left"
+              >
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <Palette className="h-5 w-5 text-yellow-400" />
+                  Dice Skins
+                </h2>
+                {showSkins ? <ChevronUp className="h-5 w-5 text-yellow-400" /> : <ChevronDown className="h-5 w-5 text-yellow-400" />}
+              </button>
+
+              {showSkins && (
+                <div className="mt-4">
+                  <p className="text-purple-300/80 text-sm mb-4">Choose a dice style or upload your own images for each face.</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
+                    {DICE_SKINS.map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => setDiceSkin(s.id)}
+                        className={`p-3 rounded-lg border-2 transition-all text-left ${
+                          diceSkin === s.id
+                            ? 'border-yellow-400 bg-yellow-400/10 scale-105'
+                            : 'border-purple-500/30 hover:border-purple-400/50 bg-black/20'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <svg width="32" height="32" viewBox="0 0 100 100">
+                            <rect x="5" y="5" width="90" height="90" rx="15" ry="15" fill={s.bg} stroke={s.border} strokeWidth="4" />
+                            <circle cx="30" cy="30" r="8" fill={s.dot} />
+                            <circle cx="70" cy="30" r="8" fill={s.dot} />
+                            <circle cx="50" cy="50" r="8" fill={s.dot} />
+                            <circle cx="30" cy="70" r="8" fill={s.dot} />
+                            <circle cx="70" cy="70" r="8" fill={s.dot} />
+                          </svg>
+                          <div>
+                            <div className="text-white font-semibold text-sm">{s.name}</div>
+                            <div className="text-purple-400 text-xs">{s.desc}</div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Custom Image Upload */}
+                  {diceSkin === 'custom' && (
+                    <div className="border border-purple-500/30 rounded-lg p-4 bg-black/20">
+                      <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                        <Upload className="h-4 w-4" /> Upload Custom Dice Faces
+                      </h3>
+                      <p className="text-purple-300/70 text-xs mb-3">Upload an image for each die face (1-6). Images are stored locally in your browser.</p>
+                      <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                        {[1, 2, 3, 4, 5, 6].map((face) => (
+                          <div key={face} className="flex flex-col items-center">
+                            <button
+                              onClick={() => {
+                                setUploadingFace(face);
+                                fileInputRef.current?.click();
+                              }}
+                              className={`w-16 h-16 rounded-lg border-2 border-dashed flex items-center justify-center transition-all hover:border-yellow-400 ${
+                                customDiceImages[face] ? 'border-green-500 p-0 overflow-hidden' : 'border-purple-500/50'
+                              }`}
+                            >
+                              {customDiceImages[face] ? (
+                                <img src={customDiceImages[face]} alt={`Face ${face}`} className="w-full h-full object-cover rounded-lg" />
+                              ) : (
+                                <ImageIcon className="h-6 w-6 text-purple-400" />
+                              )}
+                            </button>
+                            <span className="text-xs text-purple-300 mt-1">Face {face}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file && uploadingFace) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                              const dataUrl = ev.target?.result as string;
+                              setCustomDiceImages(prev => ({ ...prev, [uploadingFace!]: dataUrl }));
+                              setUploadingFace(null);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                          e.target.value = '';
+                        }}
+                      />
+                      {Object.keys(customDiceImages).length > 0 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-3 border-red-500/50 text-red-400 hover:bg-red-500/10"
+                          onClick={() => setCustomDiceImages({})}
+                        >
+                          Clear All Custom Images
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </Card>
 
             {/* Full Solfeggio Frequency Reference (Collapsible) */}
