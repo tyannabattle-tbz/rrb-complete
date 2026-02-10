@@ -110,9 +110,14 @@ export default function SweetMiraclesDashboard() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8 sm:mb-12 text-center">
+          <img
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/XgzdMxKZMmLFByCa.jpeg"
+            alt="Sweet Miracles — A Voice for the Voiceless — Seabrun Candy Hunter"
+            className="mx-auto w-48 md:w-64 rounded-2xl shadow-lg mb-4 sm:mb-6"
+          />
           <h1 className="text-lg md:text-4xl font-bold text-green-900 mb-1 sm:mb-2">Sweet Miracles</h1>
-          <p className="text-base sm:text-xl text-gray-600">A Voice for the Voiceless</p>
-          <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-2">Supporting seniors and vulnerable populations</p>
+          <p className="text-base sm:text-xl text-gray-600">"A Voice for the Voiceless"</p>
+          <p className="text-xs md:text-sm text-gray-500 mt-1 sm:mt-2">Founded by Ty Battle, Seabrun's daughter — Supporting seniors and vulnerable populations</p>
         </div>
 
         {/* Metrics */}

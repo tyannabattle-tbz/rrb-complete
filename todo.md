@@ -1589,3 +1589,5 @@
 - [x] Add Featured Book section to Canryn dashboard
 - [x] Integrate cover images into Books page cards
 - [x] Polish overall Books page design for best presentation
+- [x] Add "To Her ~ From Him" love poems book as special order on Books page with actual cover photo
+- [x] Add Sweet Miracles logo to the Sweet Miracles page

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, ExternalLink, ShoppingCart, Star, Library, Sparkles, ChevronRight } from 'lucide-react';
+import { BookOpen, ExternalLink, ShoppingCart, Star, Library, Sparkles, ChevronRight, Heart, Mail } from 'lucide-react';
 
 interface Book {
   title: string;
@@ -248,7 +248,7 @@ export default function BooksPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="bg-amber-900/30 border-amber-800/40 text-center backdrop-blur-sm">
             <CardContent className="py-5">
-              <p className="text-4xl font-bold text-amber-300">14</p>
+              <p className="text-4xl font-bold text-amber-300">15</p>
               <p className="text-sm text-amber-200/70 mt-1">Published Books</p>
             </CardContent>
           </Card>
@@ -377,6 +377,61 @@ export default function BooksPage() {
         </div>
       </div>
 
+      {/* Special Order — To Her ~ From Him */}
+      <div className="container mx-auto px-4 pb-12">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-rose-950/80 via-pink-950/60 to-amber-950/80 border border-rose-800/40">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-900/20 via-transparent to-transparent" />
+          <div className="relative p-8 md:p-12">
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Heart className="w-5 h-5 text-rose-400 fill-rose-400" />
+              <Badge className="bg-rose-700 text-white text-sm px-4 py-1">Special Edition — Not Available in Stores</Badge>
+              <Heart className="w-5 h-5 text-rose-400 fill-rose-400" />
+            </div>
+            <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+              {/* Book Cover */}
+              <div className="shrink-0 relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-rose-500/20 to-pink-500/20 rounded-2xl blur-xl" />
+                <img
+                  src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/rUXUAVgMAEaCUOgA.jpeg"
+                  alt="To Her ~ From Him: A Collection of 50 Love Poems by Seabrun Candy Hunter"
+                  className="relative w-52 md:w-64 rounded-xl shadow-2xl object-contain"
+                />
+              </div>
+              {/* Details */}
+              <div className="flex-1 text-center lg:text-left space-y-4">
+                <h2 className="text-3xl md:text-4xl font-bold text-rose-200">To Her ~ From Him</h2>
+                <p className="text-lg text-rose-300/80">A Collection of 50 Love Poems</p>
+                <p className="text-stone-300 leading-relaxed max-w-xl">
+                  A deeply personal spiral-bound collection of 50 love poems written by Seabrun "Candy" Hunter.
+                  Cover design by Sharyn Hunter. This special edition is not available in stores — it was produced
+                  exclusively by Canryn Production Co.
+                </p>
+                {/* Dedication */}
+                <div className="bg-black/30 rounded-xl p-6 border border-rose-900/40 max-w-xl">
+                  <p className="text-sm uppercase tracking-widest text-rose-400/70 mb-3">Dedication</p>
+                  <blockquote className="text-stone-300 italic leading-relaxed text-sm space-y-2">
+                    <p>"This book is dedicated to all of the women<br/>Who have been in any way involved with my life:<br/>Wives, daughters, girlfriends, sisters.<br/>Mother, you're at the top of the list.<br/>Thanks to everyone for being my inspiration.<br/>I love you all so much!"</p>
+                    <p className="text-rose-300 not-italic text-right">— Seabrun "Candy" Hunter, Author</p>
+                  </blockquote>
+                  <div className="mt-4 pt-3 border-t border-rose-900/40 text-center">
+                    <p className="text-rose-300/80 italic text-sm">Especially Dedicated to the Memory of</p>
+                    <p className="text-rose-200 font-semibold text-lg mt-1">Valerie E. Caldwell</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-3 justify-center lg:justify-start pt-2">
+                  <a href="/rrb/contact">
+                    <Button className="bg-rose-700 hover:bg-rose-600 text-white gap-2 shadow-lg shadow-rose-900/50">
+                      <Mail className="w-4 h-4" />
+                      Inquire About Special Order
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Footer CTA */}
       <div className="border-t border-amber-900/40 bg-gradient-to-b from-stone-900/80 to-amber-950/40">
         <div className="container mx-auto px-4 py-14 text-center space-y-5">
@@ -403,8 +458,8 @@ export default function BooksPage() {
             </Button>
           </a>
           <p className="text-xs text-stone-500 mt-6">
-            All book covers are artistic representations. Actual cover art may vary.
-            All books are available exclusively through Barnes & Noble.
+            Barnes & Noble book covers are artistic representations. Actual cover art may vary.
+            "To Her ~ From Him" is a special edition available exclusively through Canryn Production Co.
           </p>
         </div>
       </div>
