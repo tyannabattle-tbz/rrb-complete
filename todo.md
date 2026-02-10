@@ -1700,3 +1700,7 @@
 - [x] Fixed SolbonesOnline singleton AudioContext (was creating new ctx per tone)
 - [x] Added global touch unlock to all 3 Solbones pages
 - [x] 0 TypeScript errors
+
+## v9.5.3 Bug Fix — Runtime crash on published site
+- [x] Fix "An unexpected error occurred" crash on Solbones page (nested <a> tags in Home.tsx Solbones featured section)
+- [x] Fix audio tones — global touchstart unlock + synchronous first chirp + singleton AudioContext (testing on published site needed)

@@ -344,8 +344,7 @@ export default function Home() {
         {/* 🎲 PLAY SOLBONES — Featured Game Section */}
         <section className="py-12 md:py-16 bg-gradient-to-br from-amber-900/30 via-orange-900/20 to-red-900/30 border-y-2 border-amber-500/30">
           <div className="container max-w-4xl">
-            <Link href="/solbones">
-              <div className="relative p-8 md:p-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 border-2 border-amber-500/40 hover:border-amber-400 transition-all cursor-pointer group shadow-2xl hover:shadow-amber-500/20 hover:scale-[1.01]">
+            <div className="relative p-8 md:p-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 border-2 border-amber-500/40 hover:border-amber-400 transition-all cursor-pointer group shadow-2xl hover:shadow-amber-500/20 hover:scale-[1.01]">
                 {/* Animated dice background */}
                 <div className="absolute top-4 right-4 text-6xl md:text-8xl opacity-20 group-hover:opacity-40 transition-opacity select-none">
                   🎲
@@ -366,11 +365,13 @@ export default function Home() {
                     The sacred math dice game — 4+3+2=9 Solfeggio frequencies. Play solo, with friends, or challenge QUMUS AI opponents.
                   </p>
                   <div className="flex flex-wrap gap-3">
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-sm group-hover:bg-amber-400 transition">
-                      <Dice5 className="w-4 h-4" />
-                      Play Dice Game
-                      <ArrowRight className="w-4 h-4" />
-                    </span>
+                    <Link href="/solbones">
+                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-sm group-hover:bg-amber-400 transition">
+                        <Dice5 className="w-4 h-4" />
+                        Play Dice Game
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </Link>
                     <Link href="/solbones-online">
                       <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 text-amber-200 font-medium text-sm hover:bg-white/20 transition">
                         <Globe className="w-4 h-4" />
@@ -386,7 +387,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </Link>
           </div>
         </section>
 
