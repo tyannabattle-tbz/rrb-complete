@@ -120,6 +120,7 @@ export default function Navigation() {
     { label: '⚖️ Contracts & Legal', href: '/rrb/legal' },
     { label: '📻 Radio Directory', href: '/rrb/radio-directory' },
     { label: '🎙️ Commercials', href: '/rrb/commercials' },
+    { label: '📢 Advertising', href: '/rrb/advertising' },
   ];
 
   const additionalItems = [

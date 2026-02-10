@@ -2001,3 +2001,72 @@
 - [x] Add QUMUS autonomous commercial scheduling (auto-rotate, frequency control)
 - [x] Create commercial analytics (play count, scheduling history, by-category, by-brand)
 - [x] Write tests for commercial generation system (17 tests, all passing)
+
+## v10.6 Full Ecosystem Activation & Stripe Compliance
+
+### Stripe Donations-Only Model
+- [ ] Update Stripe checkout to donations-only (legacy recovery, community support, general fund)
+- [ ] Remove any product/service purchase flows from Stripe
+- [ ] Add donation tiers (suggested amounts: $5, $10, $25, $50, $100, custom)
+- [ ] Add "In Support of Legacy Recovery Efforts" messaging to all donation flows
+- [ ] Update payment success/confirmation pages for donation receipts
+- [ ] Ensure webhook handles donation events properly
+
+### Studio Contact-for-Pricing
+- [ ] Add "Contact Canryn Production for Pricing Packages" notice in Studio pages
+- [ ] Add contact form or email link for pricing inquiries
+- [ ] Remove any direct pricing/purchase buttons from Studio features
+
+### Full Ecosystem Audit & Gap Fill
+- [x] Audit all navigation links — ensure no dead routes or 404s
+- [x] Audit all tRPC routers — ensure all are wired and functional
+- [x] Verify all 10 AI bots are activated and running
+- [x] Verify QUMUS autonomous loop is processing all decision policies
+- [x] Verify commercial engine is seeded and rotation is active
+- [x] Verify grant discovery engine is scanning
+- [x] Verify offline-first IndexedDB is working for business modules
+- [x] Check all audio components are functional (radio, podcasts, frequencies)
+- [x] Verify HybridCast emergency broadcast is operational
+- [x] Verify Solbones dice game is functional
+- [x] Ensure Sweet Miracles nonprofit integration is complete
+- [x] Ensure all social media bot placeholders are ready for API key connection
+- [x] Verify radio directory submission system is functional
+- [x] Check merchandise/shop integration status (converted to contact-for-pricing)
+- [x] Verify notification system is operational
+- [x] Ensure PWA service worker is registered and caching properly
+- [x] Check SEO meta tags across all pages
+- [x] Verify mobile responsiveness across all new pages
+- [x] Ensure all admin/dashboard features are accessible
+- [x] Final pass: activate everything that's not yet active
+
+## v10.7 Advertising Services — Advertise on RRB Radio
+- [x] Build Advertising Services page (advertise WITH us / on our radio)
+- [x] Add advertising packages (30-sec, 60-sec, sponsorship, custom)
+- [x] Add "Contact Canryn for Advertising" CTA throughout the site
+- [x] Update commercial engine to support client/third-party ad spots
+- [x] Add advertiser inquiry form (contact Canryn for pricing)
+- [x] Wire advertising page into navigation
+- [x] Add advertising info to Radio Directory and Station Profile pages
+
+## v10.8 QUMUS Full Integration & Responsiveness
+### QUMUS Brain Responsiveness
+- [x] Ensure QUMUS responds intelligently when queried via chat
+- [x] QUMUS should report real-time status of all subsystems when asked
+- [x] QUMUS should be able to control/trigger any bot or service on demand
+- [x] QUMUS should provide ecosystem health summary on query
+- [x] QUMUS should respond with awareness of Canryn, RRB, HybridCast, Sweet Miracles
+
+### QUMUS Integration Audit
+- [x] Verify QUMUS autonomous loop is processing all 8+ decision policies
+- [x] Verify QUMUS controls business operations modules
+- [x] Verify QUMUS controls commercial engine and advertising
+- [x] Verify QUMUS controls radio directory and stream health
+- [x] Verify QUMUS controls social media bots and content calendar
+- [x] Verify QUMUS controls grant discovery engine
+- [x] Verify QUMUS controls emergency broadcast (HybridCast)
+
+### Fix Failing Tests
+- [x] Fix router name mismatches in ecosystem completeness tests
+- [x] Fix radio directory getStationProfile null handling
+- [x] Fix grant discovery search procedure path
+- [x] All 69 tests passing across 5 test files

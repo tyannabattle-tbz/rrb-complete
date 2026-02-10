@@ -191,6 +191,7 @@ import BusinessLegal from '@/pages/rrb/BusinessLegal';
 import RadioDirectory from '@/pages/rrb/RadioDirectory';
 import AIBotCommandCenter from '@/pages/rrb/AIBotCommandCenter';
 import CommercialManager from '@/pages/rrb/CommercialManager';
+import AdvertisingServices from '@/pages/rrb/AdvertisingServices';
 
 // Version: 6.3.0 - RRB fully integrated, radio streaming, swipe gestures
 function Router() {
@@ -386,6 +387,7 @@ function Router() {
       <Route path="/rrb/radio-directory" component={RadioDirectory} />
       <Route path="/rrb/ai-command-center" component={AIBotCommandCenter} />
       <Route path="/rrb/commercials" component={CommercialManager} />
+      <Route path="/rrb/advertising" component={AdvertisingServices} />
       {/* Aliases for direct access */}
       <Route path="/bookkeeping" component={BusinessBookkeeping} />
       <Route path="/hr" component={BusinessHR} />

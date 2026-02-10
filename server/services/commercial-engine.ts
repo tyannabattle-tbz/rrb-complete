@@ -25,7 +25,8 @@ export type CommercialCategory =
   | 'station_id'   // Station identification ("You're listening to RRB Radio...")
   | 'jingle'       // Short musical jingles / bumpers
   | 'fundraiser'   // Sweet Miracles fundraising appeals
-  | 'community';   // Community announcements
+  | 'community'    // Community announcements
+  | 'client_ad';   // Third-party advertiser spots (paid advertising)
 
 export type CommercialStatus = 'draft' | 'approved' | 'active' | 'archived' | 'scheduled';
 
@@ -45,6 +46,13 @@ export interface CommercialScript {
   playCount: number;
   audioUrl?: string;       // S3 URL if audio has been generated and uploaded
   generatedBy: 'ai' | 'human';
+  // Advertiser fields (for client_ad category)
+  advertiserName?: string;       // Business/person who purchased the ad
+  advertiserContact?: string;    // Contact email/phone
+  advertiserPackage?: 'basic_30' | 'standard_60' | 'premium_90' | 'sponsorship' | 'custom';
+  campaignStart?: number;        // Campaign start timestamp
+  campaignEnd?: number;          // Campaign end timestamp
+  isPaid?: boolean;              // Whether this is a paid ad vs community/trade
 }
 
 export interface ScheduleSlot {
@@ -116,6 +124,7 @@ const CATEGORY_PROMPTS: Record<CommercialCategory, string> = {
   jingle: `Write lyrics/text for a short radio jingle or bumper. It should be catchy, rhythmic, and capture the brand essence. Keep it very short — 5-10 seconds when read aloud.`,
   fundraiser: `Write a fundraising appeal for radio. It should be heartfelt, explain the mission, share impact, and provide clear donation instructions. This is for the Sweet Miracles Foundation.`,
   community: `Write a community announcement for radio. It should be warm, informative, and encourage community participation and connection.`,
+  client_ad: `Write a radio advertisement for a third-party business or client. It should be professional, highlight the client's key selling points, include their business name prominently, and end with contact information or a call to action. Make it sound natural and engaging for radio listeners.`,
 };
 
 // ─── Commercial Engine ──────────────────────────────────────────────────────
@@ -234,6 +243,7 @@ RULES:
       jingle: `Rockin' Rockin' Boogie! The sound that moves you. RRB Radio!`,
       fundraiser: `Sweet Miracles Foundation needs your support. Every dollar helps us be a Voice for the Voiceless. Donate today and help us empower communities in crisis. Sweet Miracles — because every voice matters.`,
       community: `This is a community announcement from ${brandInfo.name}. We're building something special together. Join our community and be part of the movement. ${brandInfo.tagline}.`,
+      client_ad: `Brought to you by our advertising partners. Contact Canryn Production to advertise on RRB Radio. Reach our growing community of listeners with your message. Canryn Production — Where Legacy Meets Innovation.`,
     };
 
     const script = templates[category];
@@ -403,6 +413,157 @@ RULES:
     console.log(`[Commercial Engine] Seeded ${this.commercials.length} default commercials`);
   }
 
+  // ─── Client Advertising ─────────────────────────────────────────────────
+
+  async generateClientAd(opts: {
+    advertiserName: string;
+    advertiserContact: string;
+    businessDescription: string;
+    package: 'basic_30' | 'standard_60' | 'premium_90' | 'sponsorship' | 'custom';
+    campaignStart?: number;
+    campaignEnd?: number;
+    customPrompt?: string;
+  }): Promise<CommercialScript> {
+    const durationMap = { basic_30: 30, standard_60: 60, premium_90: 90, sponsorship: 30, custom: 30 };
+    const targetDuration = durationMap[opts.package];
+    const wordCount = Math.round(targetDuration * 2.5);
+
+    const systemPrompt = `You are a professional radio commercial copywriter for RRB Radio (Rockin' Rockin' Boogie Radio).
+You are writing an advertisement for a THIRD-PARTY CLIENT who has purchased advertising time on the station.
+
+Client Business: ${opts.advertiserName}
+Client Description: ${opts.businessDescription}
+Client Contact: ${opts.advertiserContact}
+
+RULES:
+- Write ONLY the script text that will be read aloud on air.
+- Target approximately ${wordCount} words (${targetDuration} seconds at normal reading pace).
+- Prominently feature the client's business name at least 3 times.
+- Include their contact information naturally at the end.
+- Make it sound professional and engaging for radio listeners.
+- End with "Brought to you on RRB Radio" or similar station mention.
+- Do NOT include music cues, sound effects notes, or production directions.`;
+
+    const userPrompt = opts.customPrompt
+      ? `Generate a radio ad for ${opts.advertiserName} with this direction: ${opts.customPrompt}`
+      : `Generate a compelling radio advertisement for ${opts.advertiserName}. ${opts.businessDescription}`;
+
+    try {
+      const response = await invokeLLM({
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+      });
+
+      const script = response.choices[0]?.message?.content || 
+        `${opts.advertiserName} — your trusted partner. ${opts.businessDescription}. Contact ${opts.advertiserContact} today. This message brought to you on RRB Radio.`;
+
+      const commercial: CommercialScript = {
+        id: `client_ad_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`,
+        title: `Client Ad: ${opts.advertiserName} — ${opts.package}`,
+        category: 'client_ad',
+        brand: 'rrb_radio',
+        script: script.trim(),
+        duration: Math.round((script.split(/\s+/).length / 150) * 60) || targetDuration,
+        voiceDirection: 'professional, clear, engaging',
+        musicDirection: 'Light background music appropriate for the business type',
+        status: 'draft',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        scheduledSlots: [],
+        playCount: 0,
+        generatedBy: 'ai',
+        advertiserName: opts.advertiserName,
+        advertiserContact: opts.advertiserContact,
+        advertiserPackage: opts.package,
+        campaignStart: opts.campaignStart,
+        campaignEnd: opts.campaignEnd,
+        isPaid: true,
+      };
+
+      this.commercials.push(commercial);
+      return commercial;
+    } catch (error) {
+      const fallbackScript = `${opts.advertiserName} — ${opts.businessDescription}. For more information, contact ${opts.advertiserContact}. This message brought to you on Rockin' Rockin' Boogie Radio — The Sound of a Legacy Restored.`;
+      const commercial: CommercialScript = {
+        id: `client_ad_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`,
+        title: `Client Ad: ${opts.advertiserName} — ${opts.package}`,
+        category: 'client_ad',
+        brand: 'rrb_radio',
+        script: fallbackScript,
+        duration: targetDuration,
+        voiceDirection: 'professional, clear',
+        musicDirection: 'Light background music',
+        status: 'draft',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        scheduledSlots: [],
+        playCount: 0,
+        generatedBy: 'ai',
+        advertiserName: opts.advertiserName,
+        advertiserContact: opts.advertiserContact,
+        advertiserPackage: opts.package,
+        campaignStart: opts.campaignStart,
+        campaignEnd: opts.campaignEnd,
+        isPaid: true,
+      };
+      this.commercials.push(commercial);
+      return commercial;
+    }
+  }
+
+  getClientAds(): CommercialScript[] {
+    return this.commercials
+      .filter(c => c.category === 'client_ad')
+      .sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  getAdvertisingPackages() {
+    return [
+      {
+        id: 'basic_30',
+        name: 'Basic Spot',
+        duration: 30,
+        description: '30-second radio spot aired during standard rotation',
+        features: ['AI-generated script', '30-second airtime', 'Standard rotation scheduling', 'Play count analytics'],
+        contactNote: 'Contact Canryn Production for pricing',
+      },
+      {
+        id: 'standard_60',
+        name: 'Standard Spot',
+        duration: 60,
+        description: '60-second radio spot with prime-time scheduling',
+        features: ['AI-generated script', '60-second airtime', 'Prime-time scheduling (6am-10pm)', 'Play count analytics', 'Priority rotation'],
+        contactNote: 'Contact Canryn Production for pricing',
+      },
+      {
+        id: 'premium_90',
+        name: 'Premium Spot',
+        duration: 90,
+        description: '90-second premium radio spot with top-priority scheduling',
+        features: ['AI-generated script', '90-second airtime', 'All-day priority scheduling', 'Detailed analytics', 'Top rotation priority', 'Custom voice direction'],
+        contactNote: 'Contact Canryn Production for pricing',
+      },
+      {
+        id: 'sponsorship',
+        name: 'Show Sponsorship',
+        duration: 30,
+        description: 'Sponsor a show segment with branded mentions and dedicated spots',
+        features: ['Branded show intro/outro', '30-second dedicated spot', 'Show segment naming rights', 'Premium analytics', 'Social media cross-promotion'],
+        contactNote: 'Contact Canryn Production for pricing',
+      },
+      {
+        id: 'custom',
+        name: 'Custom Campaign',
+        duration: 0,
+        description: 'Fully customized advertising campaign tailored to your needs',
+        features: ['Custom duration', 'Multi-spot campaigns', 'Cross-platform promotion', 'Dedicated account manager', 'Full analytics suite', 'Social media integration'],
+        contactNote: 'Contact Canryn Production for a custom quote',
+      },
+    ];
+  }
+
   // ─── Rotation Logic ───────────────────────────────────────────────────────
 
   startRotation() {
@@ -519,7 +680,7 @@ RULES:
   getStats() {
     const active = this.commercials.filter(c => c.status === 'active');
     const byCategory = Object.fromEntries(
-      (['promo', 'psa', 'sponsor', 'event', 'station_id', 'jingle', 'fundraiser', 'community'] as CommercialCategory[])
+      (['promo', 'psa', 'sponsor', 'event', 'station_id', 'jingle', 'fundraiser', 'community', 'client_ad'] as CommercialCategory[])
         .map(cat => [cat, this.commercials.filter(c => c.category === cat).length])
     );
     const byBrand = Object.fromEntries(
@@ -534,7 +695,9 @@ RULES:
       byCategory,
       byBrand,
       availableBrands: Object.entries(BRANDS).map(([id, info]) => ({ id, name: info.name, tagline: info.tagline })),
-      availableCategories: ['promo', 'psa', 'sponsor', 'event', 'station_id', 'jingle', 'fundraiser', 'community'],
+      availableCategories: ['promo', 'psa', 'sponsor', 'event', 'station_id', 'jingle', 'fundraiser', 'community', 'client_ad'],
+      clientAds: this.getClientAds().length,
+      advertisingPackages: this.getAdvertisingPackages(),
     };
   }
 }

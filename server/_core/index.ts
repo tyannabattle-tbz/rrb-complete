@@ -132,6 +132,17 @@ async function startServer() {
     console.log('[Commercial Engine] Init skipped:', (e as Error).message);
   }
 
+  // Initialize QUMUS Business Operations Oversight (monitors all modules every 5 minutes)
+  try {
+    const { QumusBusinessOversight } = await import("../services/qumus-business-oversight");
+    QumusBusinessOversight.start();
+    console.log('[QUMUS Oversight] Business operations monitoring ACTIVE');
+    console.log('[QUMUS Oversight] Monitoring: Bookkeeping, HR, Accounting, Legal, Commercials, Radio, Advertising, Social Media, Grants');
+    console.log('[QUMUS Oversight] Scan interval: every 5 minutes | Autonomy: 100% QUMUS-controlled');
+  } catch (e) {
+    console.log('[QUMUS Oversight] Init skipped:', (e as Error).message);
+  }
+
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });

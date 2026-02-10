@@ -14,7 +14,7 @@ export const commercialsRouter = router({
   // Get all commercials with optional filters
   getCommercials: publicProcedure
     .input(z.object({
-      category: z.enum(['promo', 'psa', 'sponsor', 'event', 'station_id', 'jingle', 'fundraiser', 'community']).optional(),
+      category: z.enum(['promo', 'psa', 'sponsor', 'event', 'station_id', 'jingle', 'fundraiser', 'community', 'client_ad']).optional(),
       brand: z.string().optional(),
     }).optional())
     .query(({ input }) => {
@@ -33,7 +33,7 @@ export const commercialsRouter = router({
   // Generate a new AI commercial script
   generate: protectedProcedure
     .input(z.object({
-      category: z.enum(['promo', 'psa', 'sponsor', 'event', 'station_id', 'jingle', 'fundraiser', 'community']),
+      category: z.enum(['promo', 'psa', 'sponsor', 'event', 'station_id', 'jingle', 'fundraiser', 'community', 'client_ad']),
       brand: z.string(),
       customPrompt: z.string().optional(),
       targetDuration: z.number().min(5).max(120).optional(),
@@ -103,5 +103,35 @@ export const commercialsRouter = router({
   getStats: publicProcedure.query(() => {
     const engine = getCommercialEngine();
     return engine.getStats();
+  }),
+
+  // ─── Client Advertising Endpoints ─────────────────────────────────────
+
+  // Generate a client advertisement
+  generateClientAd: protectedProcedure
+    .input(z.object({
+      advertiserName: z.string().min(1),
+      advertiserContact: z.string().min(1),
+      businessDescription: z.string().min(10),
+      package: z.enum(['basic_30', 'standard_60', 'premium_90', 'sponsorship', 'custom']),
+      campaignStart: z.number().optional(),
+      campaignEnd: z.number().optional(),
+      customPrompt: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const engine = getCommercialEngine();
+      return engine.generateClientAd(input);
+    }),
+
+  // Get all client ads
+  getClientAds: publicProcedure.query(() => {
+    const engine = getCommercialEngine();
+    return engine.getClientAds();
+  }),
+
+  // Get advertising packages info
+  getAdvertisingPackages: publicProcedure.query(() => {
+    const engine = getCommercialEngine();
+    return engine.getAdvertisingPackages();
   }),
 });

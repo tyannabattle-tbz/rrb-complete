@@ -285,6 +285,41 @@ export default function StateOfTheStudio() {
         </div>
       </section>
 
+      {/* Studio Services — Contact for Pricing */}
+      <Card className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-amber-500/30">
+        <CardContent className="p-5">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <div className="p-3 rounded-lg bg-amber-500/20">
+              <Mic className="w-8 h-8 text-amber-400" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-amber-400 mb-1">Studio Services & Production Packages</h3>
+              <p className="text-sm text-zinc-300 mb-2">
+                For recording studio access, production services, mixing & mastering, commercial production, 
+                broadcast packages, and custom pricing — contact Canryn Production directly.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {['Recording Studio', 'Mixing & Mastering', 'Commercial Production', 'Broadcast Packages', 'Media Production', 'Community Studio Access'].map((service) => (
+                  <Badge key={service} variant="outline" className="text-[10px] border-amber-500/30 text-amber-400">{service}</Badge>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/rrb/contact">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black text-sm font-semibold hover:bg-amber-600 transition-colors cursor-pointer">
+                    <Globe className="w-4 h-4" /> Contact Canryn for Pricing
+                  </span>
+                </Link>
+                <Link href="/donate">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-amber-500/50 text-amber-400 text-sm font-medium hover:bg-amber-500/10 transition-colors cursor-pointer">
+                    <Heart className="w-4 h-4" /> Support Legacy Recovery
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Mission Control Footer */}
       <Card className="bg-zinc-900/40 border-zinc-800">
         <CardContent className="p-4">
