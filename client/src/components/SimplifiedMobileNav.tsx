@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BookOpen, Music, Radio, Heart, Building2, ExternalLink, Headphones, Shield, Podcast, Film, Video, Smartphone } from 'lucide-react';
+import { Menu, X, Home, BookOpen, Music, Radio, Heart, Building2, ExternalLink, Headphones, Shield, Podcast, Film, Video, Smartphone, Dice5, Globe, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavItem {
@@ -27,6 +27,9 @@ export function SimplifiedMobileNav() {
         { id: 'nav-home', label: 'Home', icon: Home, path: '/' },
         { id: 'nav-radio', label: 'Radio Station', icon: Radio, path: '/rrb/radio-station' },
         { id: 'nav-music', label: 'The Music', icon: Music, path: '/rrb/the-music' },
+        { id: 'nav-solbones', label: '⚡ Solbones 4+3+2', icon: Dice5, path: '/solbones' },
+        { id: 'nav-solbones-online', label: 'Online Multiplayer', icon: Globe, path: '/solbones-online' },
+        { id: 'nav-solbones-tournament', label: 'Tournament Brackets', icon: Trophy, path: '/solbones-tournament' },
       ],
     },
     {

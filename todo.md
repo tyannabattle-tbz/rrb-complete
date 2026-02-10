@@ -1661,3 +1661,8 @@
 
 ## v9.2 Fix Homescreen Label
 - [x] Fix homescreen label from QUMUS to Rockin Rockin Boogie (document.title fixed in Home.tsx, manifest already correct, VITE_APP_TITLE needs Settings > General update)
+
+## v9.3 Bug Fixes
+- [x] Fix: Solbones 4+3+2 not visible/accessible on the published platform (was hidden on mobile nav)
+- [ ] Fix: PWA homescreen still showing wrong icon and name (not RRB)
+- [x] Fix: Solbones 4+3+2 hidden on mobile — added to SimplifiedMobileNav hamburger menu with Online Multiplayer and Tournament Brackets
