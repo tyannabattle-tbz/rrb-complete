@@ -1792,3 +1792,26 @@
 - [x] Add agent network status to QUMUS Admin Dashboard
 - [x] Wire agent networking to tRPC router endpoints
 - [x] Add vitest tests for agent networking and autonomy tuning
+
+## Agent Network Dashboard with Visual Topology
+- [x] Create AgentNetworkDashboard page with SVG topology map showing 6 agents
+- [x] Add clickable agent nodes with autonomy percentages and connection lines
+- [x] Display network health stats (agents online, connections, messages, events, uptime)
+- [x] Add connection health panel (healthy/degraded/failed)
+- [x] Add agent messages tab with real-time cross-platform sync data
+- [x] Add cross-platform events tab
+- [x] Register route at /rrb/qumus/agent-network
+## State of the Studio Bridge Component
+- [x] Create StateOfTheStudio page as bridge between Legacy Restored and Legacy Continues
+- [x] Display ecosystem health percentage with all 6 agent cards and autonomy levels
+- [x] Add Legacy Restored tab with 4 preservation pillars (Seabrun Candy Hunter, Little Richard Connection, Family Archives, Medical Journey)
+- [x] Add Legacy Continues tab with active operations and mission control
+- [x] Add Channels tab showing 7 live channels with stream URLs
+- [x] Add QUMUS Brain Status section with decision engine stats, system health bars, and agent network info
+- [x] Add navigation links to all QUMUS dashboards
+- [x] Register routes at /rrb/qumus/state-of-the-studio and /rrb/state-of-the-studio
+## Listen Live Audio Player Testing
+- [x] Verify all 7 channel stream URLs are working (laut.fm, SomaFM, infomaniak, radio.co)
+- [x] Replace broken stream URLs with verified working alternatives
+- [x] Verify HybridCast Live Radio player with channel switching
+- [x] Write vitest tests for State of the Studio and Agent Network (20 tests passing)
