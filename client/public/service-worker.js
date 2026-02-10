@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qumus-v2.0.0';
+const CACHE_NAME = 'rrb-v9.1';
 
 // Only cache truly static assets - NOT index.html or API routes
 const URLS_TO_CACHE = [
@@ -115,7 +115,7 @@ self.addEventListener('sync', (event) => {
 
 // Push notification handling - Emergency Broadcast System
 self.addEventListener('push', (event) => {
-  let data = { title: 'QUMUS Alert', body: 'New notification', level: 'low' };
+  let data = { title: 'RRB Alert', body: 'New notification', level: 'low' };
 
   if (event.data) {
     try {
@@ -139,7 +139,7 @@ self.addEventListener('push', (event) => {
     icon: '/favicon.ico',
     badge: '/favicon.ico',
     vibrate: config.vibrate,
-    tag: `qumus-${data.level}-${Date.now()}`,
+    tag: `rrb-${data.level}-${Date.now()}`,
     requireInteraction: data.level === 'critical' || data.level === 'high',
     actions: [
       { action: 'view', title: 'View Details' },
@@ -172,7 +172,7 @@ self.addEventListener('notificationclick', (event) => {
 // Helper functions for IndexedDB
 function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('qumus-offline', 1);
+    const request = indexedDB.open('rrb-offline', 2);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
     request.onupgradeneeded = (event) => {

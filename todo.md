@@ -1647,6 +1647,14 @@
 - [x] Add Solbones online multiplayer WebSocket rooms with room codes (/solbones-online)
 - [x] Add tournament bracket system (4/8/9 player elimination) (/solbones-tournament)
 - [x] Run tests and verify all changes (10/10 solbones tests pass, 0 TS errors)
-- [ ] Save final checkpoint
-- [ ] Generate updated ZIP
-- [ ] Update skill
+- [x] Save final checkpoint (d32d3d1b)
+- [x] Generate updated ZIP (8.1MB)
+- [x] Update skill (rrb-solbones-multiplayer, validated)
+
+## v9.1 Real-Time Multiplayer & RRB Homescreen Icon
+- [x] Fix homescreen/PWA icon to show RRB branding instead of QUMUS Q (new gold RRB icons for 32/180/192/512, splash screen, service worker rebranded)
+- [x] Connect real-time online multiplayer — sync actual dice rolls between devices via WebSocket
+- [x] Add game state broadcasting (roll results, scores, turn changes) over WebSocket rooms
+- [x] Test and verify changes (0 TS errors, all compiles clean)
+- [ ] Save checkpoint and deliver
+- [x] Create Mac Mini install/execute command script (INSTALL-MAC-MINI.md)
