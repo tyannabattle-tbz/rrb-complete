@@ -23,13 +23,18 @@ export async function recordFrequencyRoll(
   userId: number,
   frequencyName: string,
   frequency: number,
-  notes?: string
+  notes?: string,
+  dice?: [number, number, number],
+  score?: number
 ) {
   const db = await getDb(); return db.insert(solbonesFrequencyRolls).values({
     userId,
-    frequencyName,
+    dice1: dice?.[0] ?? 1,
+    dice2: dice?.[1] ?? 1,
+    dice3: dice?.[2] ?? 1,
     frequency,
-    notes,
+    score: score ?? 0,
+    notes: notes ? `${frequencyName}: ${notes}` : frequencyName,
   });
 }
 
@@ -54,9 +59,10 @@ export async function getOrCreateLeaderboardEntry(userId: number) {
 
   await db.insert(solbonesLeaderboard).values({
     userId,
-    totalRolls: 0,
-    streak: 0,
     score: 0,
+    gamesPlayed: 1,
+    highestScore: 0,
+    totalTallies: 0,
   });
 
   return db
@@ -74,10 +80,9 @@ export async function updateLeaderboardStats(
   const db = await getDb(); return db
     .update(solbonesLeaderboard)
     .set({
-      totalRolls,
-      favoriteFrequency,
-      score,
-      lastRollDate: new Date().toISOString(),
+      gamesPlayed: totalRolls,
+      score: score ?? 0,
+      highestScore: score ?? 0,
     })
     .where(eq(solbonesLeaderboard.userId, userId));
 }

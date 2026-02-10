@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Link } from 'wouter';
-import { Download, Volume2, RotateCcw, Trophy, BookOpen, Users, Sparkles, ChevronDown, ChevronUp, Bot, UserPlus, Swords, Zap, Palette, Upload, Image as ImageIcon } from 'lucide-react';
+import { Download, Volume2, RotateCcw, Trophy, BookOpen, Users, Sparkles, ChevronDown, ChevronUp, Bot, UserPlus, Swords, Zap, Palette, Upload, Image as ImageIcon, Plus, Minus, Crown, Settings2 } from 'lucide-react';
 
 // Dice skin definitions
 type DiceSkin = 'classic' | 'gold' | 'neon' | 'wood' | 'crystal' | 'fire' | 'custom';
@@ -19,13 +22,13 @@ const DICE_SKINS: { id: DiceSkin; name: string; bg: string; dot: string; border:
 ];
 
 // ============================================================
-// SOLBONES DICE GAME
+// SOLBONES 4+3+2 DICE GAME
 // Sacred Math, Frequency, and Joy for the Solbone Nation
 // Based on the official Solbones 4+3+2 Dice Rulebook
 // A Canryn Production
 // ============================================================
 
-// Full Solfeggio frequency set (9 frequencies) + extended healing tones
+// Full Solfeggio frequency set (9 frequencies)
 const ALL_FREQUENCIES = [
   { frequency: 174, note: 'UT', name: 'Foundation', color: 'text-red-400', bgColor: 'from-red-600 to-red-800', description: 'Foundation and security, natural pain relief' },
   { frequency: 285, note: 'RE', name: 'Restoration', color: 'text-orange-400', bgColor: 'from-orange-600 to-orange-800', description: 'Tissue repair and cellular healing' },
@@ -51,6 +54,19 @@ const FREQUENCY_MAP: Record<number, typeof ALL_FREQUENCIES[0]> = {
 // Frequency dice colors per rulebook: red (2), purple (3), blue (4)
 const FREQ_DICE: Record<number, string> = { 2: 'red', 3: 'purple', 4: 'blue' };
 
+// Player colors for up to 9 players
+const PLAYER_COLORS = [
+  { bg: 'from-purple-600 to-purple-800', border: 'border-purple-400', text: 'text-purple-400', glow: 'shadow-purple-500/20' },
+  { bg: 'from-cyan-600 to-cyan-800', border: 'border-cyan-400', text: 'text-cyan-400', glow: 'shadow-cyan-500/20' },
+  { bg: 'from-amber-600 to-amber-800', border: 'border-amber-400', text: 'text-amber-400', glow: 'shadow-amber-500/20' },
+  { bg: 'from-green-600 to-green-800', border: 'border-green-400', text: 'text-green-400', glow: 'shadow-green-500/20' },
+  { bg: 'from-red-600 to-red-800', border: 'border-red-400', text: 'text-red-400', glow: 'shadow-red-500/20' },
+  { bg: 'from-blue-600 to-blue-800', border: 'border-blue-400', text: 'text-blue-400', glow: 'shadow-blue-500/20' },
+  { bg: 'from-pink-600 to-pink-800', border: 'border-pink-400', text: 'text-pink-400', glow: 'shadow-pink-500/20' },
+  { bg: 'from-indigo-600 to-indigo-800', border: 'border-indigo-400', text: 'text-indigo-400', glow: 'shadow-indigo-500/20' },
+  { bg: 'from-yellow-600 to-yellow-800', border: 'border-yellow-400', text: 'text-yellow-400', glow: 'shadow-yellow-500/20' },
+];
+
 // Die face SVG component
 function DieFace({ value, isRolling, size = 80, freqHighlight = false, label, skin = 'classic', customImages }: { value: number; isRolling: boolean; size?: number; freqHighlight?: boolean; label?: string; skin?: DiceSkin; customImages?: Record<number, string> }) {
   const dotPositions: Record<number, [number, number][]> = {
@@ -69,7 +85,6 @@ function DieFace({ value, isRolling, size = 80, freqHighlight = false, label, sk
   const bgColor = isFreqDie && freqHighlight ? `${freqColor}22` : skinDef.bg;
   const dotColor = isFreqDie && freqHighlight ? freqColor : skinDef.dot;
 
-  // Custom image mode
   if (skin === 'custom' && customImages && customImages[value]) {
     return (
       <div className="flex flex-col items-center">
@@ -114,7 +129,7 @@ function scoreRound(dice: number[]): { points: number; tallies: number; label: s
 
   // Zan Zone: 4+3+2 in frequency colors (always first check)
   if (sorted[0] === 2 && sorted[1] === 3 && sorted[2] === 4) {
-    return { points: 18, tallies: 2, label: 'Zan Zone!', bonus: '4+3+2 in frequency colors — 18 pts + 2 tallies' };
+    return { points: 18, tallies: 2, label: 'Zan Zone!', bonus: '4+3+2 in frequency colors \u2014 18 pts + 2 tallies' };
   }
 
   // Tribing Up: 3 of a kind
@@ -123,8 +138,8 @@ function scoreRound(dice: number[]): { points: number; tallies: number; label: s
     return {
       points: isFreq ? dice[0] * 2 : dice[0],
       tallies: 1,
-      label: `Tribing Up!`,
-      bonus: `Three ${dice[0]}s${isFreq ? ' (freq dice = double!)' : ''} — +1 tally`,
+      label: 'Tribing Up!',
+      bonus: `Three ${dice[0]}s${isFreq ? ' (freq dice = double!)' : ''} \u2014 +1 tally`,
     };
   }
 
@@ -163,17 +178,14 @@ function checkInTheNine(dice: number[]): boolean {
 function aiDecision(aiScore: number, currentResult: { points: number } | null, rollsUsed: number, maxRolls: number): 'roll' | 'keep' {
   if (!currentResult) return 'roll';
   if (rollsUsed >= maxRolls) return 'keep';
-  // AI strategy: keep if good score, re-roll if low
   if (currentResult.points >= 8) return 'keep';
   if (currentResult.points >= 5 && rollsUsed >= 2) return 'keep';
-  if (aiScore >= 55 && currentResult.points >= 3) return 'keep'; // conservative near win
+  if (aiScore >= 55 && currentResult.points >= 3) return 'keep';
   return 'roll';
 }
 
 type GameMode = 'standard' | 'advanced' | 'spiral';
-type PlayMode = 'solo' | 'ai' | 'local_multi';
-type GameState = 'idle' | 'rolling' | 'scored' | 'finished' | 'ai_turn' | 'waiting_opponent';
-type PlayerTurn = 'player1' | 'player2';
+type GameState = 'idle' | 'rolling' | 'scored' | 'finished' | 'setup';
 
 interface PlayerState {
   name: string;
@@ -197,18 +209,32 @@ const PDFS = {
   youth: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/SfHSPxXyvDYnySjZ.pdf',
 };
 
+// QUMUS AI personality names
+const AI_NAMES = [
+  'QUMUS Alpha', 'QUMUS Beta', 'QUMUS Gamma', 'QUMUS Delta',
+  'QUMUS Epsilon', 'QUMUS Zeta', 'QUMUS Eta', 'QUMUS Theta', 'QUMUS Iota',
+];
+
 export default function Solbones() {
   const { user } = useAuth();
-  const [playMode, setPlayMode] = useState<PlayMode>('solo');
+
+  // Game phase: setup vs playing
+  const [gamePhase, setGamePhase] = useState<'setup' | 'playing'>('setup');
+
+  // Setup state
+  const [playerCount, setPlayerCount] = useState(2);
+  const [setupPlayers, setSetupPlayers] = useState<{ name: string; isAI: boolean }[]>([
+    { name: '', isAI: false },
+    { name: 'QUMUS AI', isAI: true },
+  ]);
+
+  // Game state
   const [gameMode, setGameMode] = useState<GameMode>('standard');
   const [gameState, setGameState] = useState<GameState>('idle');
   const [dice, setDice] = useState<number[]>([1, 1, 1]);
   const [rollsThisRound, setRollsThisRound] = useState(0);
-  const [currentTurn, setCurrentTurn] = useState<PlayerTurn>('player1');
-  const [players, setPlayers] = useState<Record<PlayerTurn, PlayerState>>({
-    player1: { name: user?.name || 'Player 1', score: 0, tallies: 0, isAI: false },
-    player2: { name: 'Player 2', score: 0, tallies: 0, isAI: false },
-  });
+  const [currentTurnIndex, setCurrentTurnIndex] = useState(0);
+  const [players, setPlayers] = useState<PlayerState[]>([]);
   const [roundHistory, setRoundHistory] = useState<RoundResult[]>([]);
   const [currentRoundScore, setCurrentRoundScore] = useState<{ points: number; tallies: number; label: string; bonus?: string } | null>(null);
   const [isRolling, setIsRolling] = useState(false);
@@ -228,11 +254,12 @@ export default function Solbones() {
 
   // tRPC mutations
   const rollDiceMutation = trpc.solbones.rollDice.useMutation();
-  const leaderboardQuery = trpc.solbones.getLeaderboard.useQuery({ limit: 10 });
+  const leaderboardInput = useMemo(() => ({ limit: 10 }), []);
+  const leaderboardQuery = trpc.solbones.getLeaderboard.useQuery(leaderboardInput);
 
   // Win conditions
   const winScore = gameMode === 'standard' ? 63 : gameMode === 'spiral' ? 36 : 63;
-  const currentPlayer = players[currentTurn];
+  const currentPlayer = players[currentTurnIndex] || { name: 'Player', score: 0, tallies: 0, isAI: false };
   const maxRollsPerRound = currentPlayer.tallies > 0 ? 4 : 3;
 
   useEffect(() => {
@@ -242,32 +269,17 @@ export default function Solbones() {
     } catch { /* audio not available */ }
   }, []);
 
-  // Update player names when play mode changes
+  // Sync player count with setup players array
   useEffect(() => {
-    if (playMode === 'solo') {
-      setPlayers({
-        player1: { name: user?.name || 'You', score: 0, tallies: 0, isAI: false },
-        player2: { name: '', score: 0, tallies: 0, isAI: false },
-      });
-    } else if (playMode === 'ai') {
-      setPlayers({
-        player1: { name: user?.name || 'You', score: 0, tallies: 0, isAI: false },
-        player2: { name: 'QUMUS AI', score: 0, tallies: 0, isAI: true },
-      });
-    } else {
-      setPlayers({
-        player1: { name: 'Player 1', score: 0, tallies: 0, isAI: false },
-        player2: { name: 'Player 2', score: 0, tallies: 0, isAI: false },
-      });
-    }
-    setGameState('idle');
-    setDice([1, 1, 1]);
-    setRollsThisRound(0);
-    setCurrentTurn('player1');
-    setRoundHistory([]);
-    setCurrentRoundScore(null);
-    setWinner(null);
-  }, [playMode, user?.name]);
+    setSetupPlayers(prev => {
+      const newArr = [...prev];
+      while (newArr.length < playerCount) {
+        const idx = newArr.length;
+        newArr.push({ name: `Player ${idx + 1}`, isAI: false });
+      }
+      return newArr.slice(0, playerCount);
+    });
+  }, [playerCount]);
 
   const playFrequency = useCallback((frequency: number) => {
     if (!audioContext) return;
@@ -285,6 +297,34 @@ export default function Solbones() {
       oscillator.stop(audioContext.currentTime + 1.5);
     } catch { /* ignore audio errors */ }
   }, [audioContext]);
+
+  const startGame = useCallback(() => {
+    const gamePlayers: PlayerState[] = setupPlayers.map((sp, i) => ({
+      name: sp.isAI ? (sp.name || AI_NAMES[i] || `QUMUS AI ${i + 1}`) : (sp.name || user?.name || `Player ${i + 1}`),
+      score: 0,
+      tallies: 0,
+      isAI: sp.isAI,
+    }));
+    setPlayers(gamePlayers);
+    setCurrentTurnIndex(0);
+    setGameState('idle');
+    setDice([1, 1, 1]);
+    setRollsThisRound(0);
+    setRoundHistory([]);
+    setCurrentRoundScore(null);
+    setWinner(null);
+    setAiThinking(false);
+    setGamePhase('playing');
+
+    // If first player is AI, trigger AI turn after a short delay
+    if (gamePlayers[0].isAI) {
+      setAiThinking(true);
+      aiTimerRef.current = setTimeout(() => {
+        setAiThinking(false);
+        runAITurnForIndex(0, gamePlayers);
+      }, 1200);
+    }
+  }, [setupPlayers, user?.name]);
 
   const performRoll = useCallback((onComplete: (finalDice: number[]) => void) => {
     setIsRolling(true);
@@ -320,53 +360,67 @@ export default function Solbones() {
     if (inNine) {
       result.points += 9;
       result.label += ' + In the 9!';
-      result.bonus = (result.bonus || '') + ' | Dice total 9 → +9 bonus';
+      result.bonus = (result.bonus || '') + ' | Dice total 9 \u2192 +9 bonus';
     }
 
     setCurrentRoundScore(result);
     setRollsThisRound(prev => prev + 1);
     setGameState('scored');
 
-    // Play the frequency of the highest die
     const highDie = Math.max(...finalDice);
     const freq = FREQUENCY_MAP[highDie];
     if (freq) playFrequency(freq.frequency);
 
     // Record to backend if human player
-    if (user && !players[currentTurn].isAI) {
+    if (user && !players[currentTurnIndex]?.isAI) {
       rollDiceMutation.mutate({ notes: result.label });
     }
 
     return result;
-  }, [gameMode, playFrequency, user, currentTurn, players, rollDiceMutation]);
+  }, [gameMode, playFrequency, user, currentTurnIndex, players, rollDiceMutation]);
 
   const rollDice = useCallback(() => {
     if (rollsThisRound >= maxRollsPerRound) return;
     if (gameState === 'finished') return;
-    if (players[currentTurn].isAI) return; // AI rolls automatically
+    if (players[currentTurnIndex]?.isAI) return;
 
     setGameState('rolling');
     performRoll(processRollResult);
-  }, [rollsThisRound, maxRollsPerRound, gameState, currentTurn, players, performRoll, processRollResult]);
+  }, [rollsThisRound, maxRollsPerRound, gameState, currentTurnIndex, players, performRoll, processRollResult]);
+
+  const advanceToNextPlayer = useCallback((currentPlayers: PlayerState[], fromIndex: number) => {
+    const nextIndex = (fromIndex + 1) % currentPlayers.length;
+    setCurrentTurnIndex(nextIndex);
+    setGameState('idle');
+    setRollsThisRound(0);
+    setCurrentRoundScore(null);
+
+    if (currentPlayers[nextIndex].isAI) {
+      setAiThinking(true);
+      aiTimerRef.current = setTimeout(() => {
+        setAiThinking(false);
+        runAITurnForIndex(nextIndex, currentPlayers);
+      }, 1200);
+    }
+  }, []);
 
   const keepScore = useCallback(() => {
     if (!currentRoundScore) return;
 
-    const turn = currentTurn;
-    const newScore = players[turn].score + currentRoundScore.points;
-    const newTallies = players[turn].tallies + currentRoundScore.tallies;
+    const turnIdx = currentTurnIndex;
+    const newScore = players[turnIdx].score + currentRoundScore.points;
+    const newTallies = players[turnIdx].tallies + currentRoundScore.tallies;
 
-    setPlayers(prev => ({
-      ...prev,
-      [turn]: { ...prev[turn], score: newScore, tallies: newTallies },
-    }));
+    const updatedPlayers = [...players];
+    updatedPlayers[turnIdx] = { ...updatedPlayers[turnIdx], score: newScore, tallies: newTallies };
+    setPlayers(updatedPlayers);
 
     setRoundHistory(prev => [...prev, {
       dice: [...dice],
       score: currentRoundScore,
       inTheNine: gameMode === 'advanced' && checkInTheNine(dice),
       rollNumber: prev.length + 1,
-      player: players[turn].name,
+      player: players[turnIdx].name,
     }]);
 
     setRollsThisRound(0);
@@ -374,37 +428,21 @@ export default function Solbones() {
 
     if (newScore >= winScore) {
       setGameState('finished');
-      setWinner(players[turn].name);
+      setWinner(players[turnIdx].name);
       return;
     }
 
-    // Switch turns in multiplayer/AI modes
-    if (playMode !== 'solo') {
-      const nextTurn = turn === 'player1' ? 'player2' : 'player1';
-      setCurrentTurn(nextTurn);
-      setGameState('idle');
+    advanceToNextPlayer(updatedPlayers, turnIdx);
+  }, [currentRoundScore, currentTurnIndex, dice, gameMode, winScore, players, advanceToNextPlayer]);
 
-      // If next player is AI, trigger AI turn
-      if (players[nextTurn].isAI) {
-        setAiThinking(true);
-        aiTimerRef.current = setTimeout(() => {
-          setAiThinking(false);
-          runAITurn(nextTurn, newScore);
-        }, 1200);
-      }
-    } else {
-      setGameState('idle');
-    }
-  }, [currentRoundScore, currentTurn, dice, gameMode, winScore, playMode, players]);
-
-  // AI turn logic
-  const runAITurn = useCallback((turn: PlayerTurn, _opponentScore: number) => {
-    const aiPlayer = players[turn];
+  // AI turn logic for any player index
+  const runAITurnForIndex = useCallback((turnIdx: number, currentPlayers: PlayerState[]) => {
+    const aiPlayer = currentPlayers[turnIdx];
     let aiRolls = 0;
     const aiMaxRolls = aiPlayer.tallies > 0 ? 4 : 3;
 
     const doAIRoll = () => {
-      setCurrentTurn(turn);
+      setCurrentTurnIndex(turnIdx);
       setGameState('rolling');
 
       performRoll((finalDice) => {
@@ -424,19 +462,16 @@ export default function Solbones() {
         const freq = FREQUENCY_MAP[highDie];
         if (freq) playFrequency(freq.frequency);
 
-        // AI decides: keep or re-roll
         const decision = aiDecision(aiPlayer.score, result, aiRolls, aiMaxRolls);
 
         setTimeout(() => {
           if (decision === 'keep' || aiRolls >= aiMaxRolls) {
-            // AI keeps score
             const newScore = aiPlayer.score + result.points;
             const newTallies = aiPlayer.tallies + result.tallies;
 
-            setPlayers(prev => ({
-              ...prev,
-              [turn]: { ...prev[turn], score: newScore, tallies: newTallies },
-            }));
+            const updatedPlayers = [...currentPlayers];
+            updatedPlayers[turnIdx] = { ...updatedPlayers[turnIdx], score: newScore, tallies: newTallies };
+            setPlayers(updatedPlayers);
 
             setRoundHistory(prev => [...prev, {
               dice: [...finalDice],
@@ -453,11 +488,20 @@ export default function Solbones() {
               setGameState('finished');
               setWinner(aiPlayer.name);
             } else {
-              setCurrentTurn('player1');
+              // Advance to next player
+              const nextIdx = (turnIdx + 1) % updatedPlayers.length;
+              setCurrentTurnIndex(nextIdx);
               setGameState('idle');
+
+              if (updatedPlayers[nextIdx].isAI) {
+                setAiThinking(true);
+                aiTimerRef.current = setTimeout(() => {
+                  setAiThinking(false);
+                  runAITurnForIndex(nextIdx, updatedPlayers);
+                }, 1200);
+              }
             }
           } else {
-            // AI re-rolls
             doAIRoll();
           }
         }, 1000);
@@ -465,14 +509,13 @@ export default function Solbones() {
     };
 
     doAIRoll();
-  }, [players, gameMode, winScore, performRoll, playFrequency]);
+  }, [gameMode, winScore, performRoll, playFrequency]);
 
   const useTally = () => {
     if (currentPlayer.tallies <= 0) return;
-    setPlayers(prev => ({
-      ...prev,
-      [currentTurn]: { ...prev[currentTurn], tallies: prev[currentTurn].tallies - 1 },
-    }));
+    const updatedPlayers = [...players];
+    updatedPlayers[currentTurnIndex] = { ...updatedPlayers[currentTurnIndex], tallies: updatedPlayers[currentTurnIndex].tallies - 1 };
+    setPlayers(updatedPlayers);
   };
 
   const resetGame = () => {
@@ -482,135 +525,430 @@ export default function Solbones() {
     setRoundHistory([]);
     setGameState('idle');
     setWinner(null);
-    setCurrentTurn('player1');
+    setCurrentTurnIndex(0);
     setAiThinking(false);
     if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
-    setPlayers(prev => ({
-      player1: { ...prev.player1, score: 0, tallies: 0 },
-      player2: { ...prev.player2, score: 0, tallies: 0 },
-    }));
+    setPlayers(prev => prev.map(p => ({ ...p, score: 0, tallies: 0 })));
   };
 
-  const isMyTurn = !players[currentTurn].isAI;
+  const backToSetup = () => {
+    resetGame();
+    setGamePhase('setup');
+  };
 
+  const isMyTurn = !players[currentTurnIndex]?.isAI;
+
+  // ============================================================
+  // SETUP SCREEN
+  // ============================================================
+  if (gamePhase === 'setup') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#0d0221] via-[#150530] to-[#0a0118]">
+        {/* Header */}
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/30 via-transparent to-transparent" />
+          <div className="relative max-w-4xl mx-auto px-4 py-8 text-center">
+            <div className="flex items-center gap-4 mb-4">
+              <Link href="/" className="text-purple-400 hover:text-purple-300 text-sm">&larr; Back to Home</Link>
+              <span className="text-purple-600">|</span>
+              <Link href="/solbones-classic" className="text-amber-400 hover:text-amber-300 text-sm">Play Solbones Classic &rarr;</Link>
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-yellow-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-3">
+              Solbones <span className="text-3xl md:text-4xl">4+3+2</span>
+            </h1>
+            <p className="text-purple-200 text-lg md:text-xl max-w-2xl mx-auto mb-2">
+              4+3+2=9 &mdash; Sacred Math, Frequency, and Joy for the Solbone Nation
+            </p>
+
+            {/* 4+3+2=9 Visual Explainer */}
+            <div className="mt-6 mb-2">
+              <div className="inline-flex items-center gap-2 md:gap-4 bg-black/40 backdrop-blur-sm rounded-2xl px-4 py-3 md:px-8 md:py-4 border border-purple-500/30">
+                <div className="flex flex-col items-center">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-lg shadow-blue-500/30">4</div>
+                  <span className="text-blue-400 text-[10px] md:text-xs mt-1">432 Hz</span>
+                </div>
+                <span className="text-yellow-400 text-2xl md:text-3xl font-bold">+</span>
+                <div className="flex flex-col items-center">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-lg shadow-purple-500/30">3</div>
+                  <span className="text-purple-400 text-[10px] md:text-xs mt-1">396 Hz</span>
+                </div>
+                <span className="text-yellow-400 text-2xl md:text-3xl font-bold">+</span>
+                <div className="flex flex-col items-center">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-lg shadow-red-500/30">2</div>
+                  <span className="text-red-400 text-[10px] md:text-xs mt-1">528 Hz</span>
+                </div>
+                <span className="text-yellow-400 text-2xl md:text-3xl font-bold">=</span>
+                <div className="flex flex-col items-center">
+                  <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center text-black font-black text-3xl md:text-4xl shadow-lg shadow-yellow-500/40 ring-2 ring-yellow-400/50">9</div>
+                  <span className="text-yellow-400 text-[10px] md:text-xs mt-1 font-semibold">Sacred Code</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Setup Panel */}
+        <div className="max-w-4xl mx-auto px-4 pb-12">
+          <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6 md:p-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                <Settings2 className="h-6 w-6 text-yellow-400" />
+                Game Setup
+              </h2>
+              <Badge variant="outline" className="border-yellow-500/50 text-yellow-400 text-sm px-3 py-1">
+                {playerCount} Player{playerCount > 1 ? 's' : ''}
+              </Badge>
+            </div>
+
+            {/* Player Count */}
+            <div className="mb-6">
+              <label className="text-purple-200 text-sm font-medium mb-3 block">
+                Number of Players (1-9, sacred number: 4+3+2=9)
+              </label>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPlayerCount(Math.max(1, playerCount - 1))}
+                  disabled={playerCount <= 1}
+                  className="border-purple-500/50 text-purple-300 hover:bg-purple-900/50"
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
+                    <button
+                      key={n}
+                      onClick={() => setPlayerCount(n)}
+                      className={`w-9 h-9 rounded-lg font-bold text-sm transition-all ${
+                        playerCount === n
+                          ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-black scale-110 shadow-lg shadow-yellow-500/30'
+                          : n === 9
+                            ? 'bg-purple-900/50 text-yellow-400 border border-yellow-500/30 hover:bg-purple-800/50'
+                            : 'bg-purple-900/30 text-purple-300 border border-purple-500/20 hover:bg-purple-800/40'
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPlayerCount(Math.min(9, playerCount + 1))}
+                  disabled={playerCount >= 9}
+                  className="border-purple-500/50 text-purple-300 hover:bg-purple-900/50"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              {playerCount === 9 && (
+                <p className="text-yellow-400/70 text-xs mt-2 italic">
+                  9 players &mdash; the sacred number! 4+3+2=9
+                </p>
+              )}
+            </div>
+
+            {/* Player List */}
+            <div className="space-y-3 mb-6">
+              <label className="text-purple-200 text-sm font-medium block">Players</label>
+              {setupPlayers.slice(0, playerCount).map((sp, i) => {
+                const color = PLAYER_COLORS[i];
+                return (
+                  <div key={i} className={`flex items-center gap-3 bg-black/30 rounded-lg p-3 border ${color.border}/30`}>
+                    <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${color.bg} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
+                      {sp.isAI ? <Bot className="h-4 w-4" /> : i + 1}
+                    </div>
+                    <Input
+                      value={sp.name}
+                      onChange={(e) => {
+                        const updated = [...setupPlayers];
+                        updated[i] = { ...updated[i], name: e.target.value };
+                        setSetupPlayers(updated);
+                      }}
+                      placeholder={sp.isAI ? AI_NAMES[i] : (i === 0 && user?.name ? user.name : `Player ${i + 1}`)}
+                      className="bg-purple-900/30 border-purple-500/30 text-white placeholder:text-purple-400/50 flex-1"
+                    />
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className={`text-xs ${sp.isAI ? 'text-cyan-400' : 'text-purple-400/60'}`}>
+                        {sp.isAI ? 'AI' : 'Human'}
+                      </span>
+                      <Switch
+                        checked={sp.isAI}
+                        onCheckedChange={(checked) => {
+                          const updated = [...setupPlayers];
+                          updated[i] = {
+                            ...updated[i],
+                            isAI: checked,
+                            name: checked ? (AI_NAMES[i] || `QUMUS AI ${i + 1}`) : (i === 0 && user?.name ? user.name : `Player ${i + 1}`),
+                          };
+                          setSetupPlayers(updated);
+                        }}
+                      />
+                      <Bot className={`h-4 w-4 ${sp.isAI ? 'text-cyan-400' : 'text-purple-500/30'}`} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Quick Presets */}
+            <div className="mb-6">
+              <label className="text-purple-200 text-sm font-medium mb-3 block">Quick Presets</label>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setPlayerCount(1);
+                    setSetupPlayers([{ name: user?.name || '', isAI: false }]);
+                  }}
+                  className="border-purple-500/50 text-purple-300 hover:bg-purple-900/50 gap-1"
+                >
+                  <Sparkles className="h-3 w-3" /> Solo Practice
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setPlayerCount(2);
+                    setSetupPlayers([
+                      { name: user?.name || '', isAI: false },
+                      { name: 'QUMUS AI', isAI: true },
+                    ]);
+                  }}
+                  className="border-cyan-500/50 text-cyan-300 hover:bg-cyan-900/50 gap-1"
+                >
+                  <Bot className="h-3 w-3" /> vs QUMUS AI
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setPlayerCount(2);
+                    setSetupPlayers([
+                      { name: 'Player 1', isAI: false },
+                      { name: 'Player 2', isAI: false },
+                    ]);
+                  }}
+                  className="border-green-500/50 text-green-300 hover:bg-green-900/50 gap-1"
+                >
+                  <Users className="h-3 w-3" /> 2-Player Local
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setPlayerCount(9);
+                    const newPlayers = Array.from({ length: 9 }, (_, i) => ({
+                      name: i % 2 === 0 ? `Player ${Math.floor(i / 2) + 1}` : AI_NAMES[i],
+                      isAI: i % 2 !== 0,
+                    }));
+                    setSetupPlayers(newPlayers);
+                  }}
+                  className="border-yellow-500/50 text-yellow-300 hover:bg-yellow-900/50 gap-1"
+                >
+                  <Crown className="h-3 w-3" /> Sacred 9 (Mixed)
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setPlayerCount(9);
+                    const newPlayers = Array.from({ length: 9 }, (_, i) => ({
+                      name: AI_NAMES[i],
+                      isAI: true,
+                    }));
+                    setSetupPlayers(newPlayers);
+                  }}
+                  className="border-red-500/50 text-red-300 hover:bg-red-900/50 gap-1"
+                >
+                  <Swords className="h-3 w-3" /> 9 AI Battle Royale
+                </Button>
+              </div>
+            </div>
+
+            {/* Game Mode */}
+            <div className="mb-8">
+              <label className="text-purple-200 text-sm font-medium mb-3 block">Game Mode</label>
+              <div className="flex flex-wrap gap-3">
+                {([
+                  { mode: 'standard' as GameMode, label: 'Standard (First to 63)', icon: '\uD83C\uDFB2' },
+                  { mode: 'advanced' as GameMode, label: 'In the 9 (Advanced)', icon: '\u26A1' },
+                  { mode: 'spiral' as GameMode, label: 'Spiral Up/Down (First to 36)', icon: '\uD83C\uDF00' },
+                ] as const).map(({ mode, label, icon }) => (
+                  <Button
+                    key={mode}
+                    variant={gameMode === mode ? 'default' : 'outline'}
+                    onClick={() => setGameMode(mode)}
+                    className={`gap-2 ${gameMode === mode ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'border-purple-500/50 text-purple-300 hover:bg-purple-900/50'}`}
+                  >
+                    <span>{icon}</span> {label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Start Button */}
+            <Button
+              onClick={startGame}
+              className="w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 hover:from-yellow-600 hover:via-amber-600 hover:to-orange-600 text-black font-black text-xl py-6 gap-3 shadow-lg shadow-yellow-500/30"
+              size="lg"
+            >
+              <Sparkles className="h-6 w-6" />
+              Start Game &mdash; {playerCount} Player{playerCount > 1 ? 's' : ''}
+              <Sparkles className="h-6 w-6" />
+            </Button>
+          </Card>
+
+          {/* Leaderboard in Setup */}
+          <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6 mt-6">
+            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-yellow-400" />
+              Global Leaderboard
+            </h2>
+            {leaderboardQuery.data && leaderboardQuery.data.length > 0 ? (
+              <div className="space-y-2">
+                {leaderboardQuery.data.map((entry: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between bg-purple-900/30 rounded px-3 py-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className={`font-bold ${i === 0 ? 'text-yellow-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-purple-400'}`}>
+                        #{i + 1}
+                      </span>
+                      <span className="text-white truncate max-w-[120px]">{entry.username || 'Player'}</span>
+                    </div>
+                    <span className="text-green-400 font-bold">{entry.score}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-purple-400/60 text-sm text-center py-4">No scores yet. Be the first!</p>
+            )}
+          </Card>
+
+          {/* Downloads in Setup */}
+          <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6 mt-6">
+            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Download className="h-5 w-5 text-green-400" />
+              Downloads
+            </h2>
+            <div className="space-y-3">
+              <a href={PDFS.rulebook} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-3 bg-purple-900/30 hover:bg-purple-900/50 rounded-lg p-3 transition-colors no-underline">
+                <BookOpen className="h-5 w-5 text-purple-400 flex-shrink-0" />
+                <div>
+                  <div className="text-white text-sm font-medium">Official Rulebook</div>
+                  <div className="text-purple-400/60 text-xs">Solbones 4+3+2 Dice Rulebook &amp; Cultural Guide</div>
+                </div>
+              </a>
+              <a href={PDFS.tournament} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-3 bg-purple-900/30 hover:bg-purple-900/50 rounded-lg p-3 transition-colors no-underline">
+                <Trophy className="h-5 w-5 text-yellow-400 flex-shrink-0" />
+                <div>
+                  <div className="text-white text-sm font-medium">Tournament &amp; Score Sheets</div>
+                  <div className="text-purple-400/60 text-xs">Printable brackets and scoring</div>
+                </div>
+              </a>
+              <a href={PDFS.youth} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-3 bg-purple-900/30 hover:bg-purple-900/50 rounded-lg p-3 transition-colors no-underline">
+                <Sparkles className="h-5 w-5 text-blue-400 flex-shrink-0" />
+                <div>
+                  <div className="text-white text-sm font-medium">Youth Scroll Challenges</div>
+                  <div className="text-purple-400/60 text-xs">Zakar Games Legacy Activation Series</div>
+                </div>
+              </a>
+            </div>
+          </Card>
+
+          {/* Footer */}
+          <div className="text-center mt-8 text-purple-400/50 text-sm">
+            <p>This game belongs to the Solbone Nation, Amarukhan heritage, and all remnant people who walk in joy and intelligence.</p>
+            <p className="mt-1">Laughing is healing. Numbers are sacred. We roll in code.</p>
+            <p className="mt-2 text-purple-500/40">A Canryn Production</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ============================================================
+  // GAME SCREEN
+  // ============================================================
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0d0221] via-[#150530] to-[#0a0118]">
       {/* Header */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/30 via-transparent to-transparent" />
-        <div className="relative max-w-6xl mx-auto px-4 py-8 text-center">
-          <div className="flex items-center gap-4 mb-4">
-            <Link href="/" className="text-purple-400 hover:text-purple-300 text-sm">&larr; Back to Home</Link>
+        <div className="relative max-w-6xl mx-auto px-4 py-6 text-center">
+          <div className="flex items-center gap-4 mb-3">
+            <button onClick={backToSetup} className="text-purple-400 hover:text-purple-300 text-sm">&larr; Back to Setup</button>
             <span className="text-purple-600">|</span>
-            <Link href="/solbones-classic" className="text-amber-400 hover:text-amber-300 text-sm">Play Solbones Classic &rarr;</Link>
+            <Link href="/" className="text-purple-400 hover:text-purple-300 text-sm">Home</Link>
+            <span className="text-purple-600">|</span>
+            <Link href="/solbones-classic" className="text-amber-400 hover:text-amber-300 text-sm">Solbones Classic &rarr;</Link>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-yellow-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-3">
-            Solbones <span className="text-3xl md:text-4xl">4+3+2</span>
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-yellow-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">
+            Solbones <span className="text-2xl md:text-3xl">4+3+2</span>
           </h1>
-          <p className="text-purple-200 text-lg md:text-xl max-w-2xl mx-auto mb-2">
-            4+3+2=9 — Sacred Math, Frequency, and Joy for the Solbone Nation
+          <p className="text-purple-300/70 text-sm">
+            {players.length} Player{players.length > 1 ? 's' : ''} &bull; {gameMode === 'standard' ? 'Standard' : gameMode === 'advanced' ? 'In the 9' : 'Spiral'} &bull; First to {winScore}
           </p>
-          <p className="text-purple-400/70 text-sm italic">
-            "Let the scrolls roll. May we laugh, may we learn, may we live in the code."
-          </p>
-
-          {/* 4+3+2=9 Visual Explainer */}
-          <div className="mt-6 mb-2">
-            <div className="inline-flex items-center gap-2 md:gap-4 bg-black/40 backdrop-blur-sm rounded-2xl px-4 py-3 md:px-8 md:py-4 border border-purple-500/30">
-              <div className="flex flex-col items-center">
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-lg shadow-blue-500/30">4</div>
-                <span className="text-blue-400 text-[10px] md:text-xs mt-1">432 Hz</span>
-              </div>
-              <span className="text-yellow-400 text-2xl md:text-3xl font-bold">+</span>
-              <div className="flex flex-col items-center">
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-lg shadow-purple-500/30">3</div>
-                <span className="text-purple-400 text-[10px] md:text-xs mt-1">396 Hz</span>
-              </div>
-              <span className="text-yellow-400 text-2xl md:text-3xl font-bold">+</span>
-              <div className="flex flex-col items-center">
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-lg shadow-red-500/30">2</div>
-                <span className="text-red-400 text-[10px] md:text-xs mt-1">528 Hz</span>
-              </div>
-              <span className="text-yellow-400 text-2xl md:text-3xl font-bold">=</span>
-              <div className="flex flex-col items-center">
-                <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center text-black font-black text-3xl md:text-4xl shadow-lg shadow-yellow-500/40 ring-2 ring-yellow-400/50">9</div>
-                <span className="text-yellow-400 text-[10px] md:text-xs mt-1 font-semibold">Sacred Code</span>
-              </div>
-            </div>
-            <p className="text-purple-300/60 text-xs mt-2">The Solfeggio frequencies reduce to 3, 6, and 9 — the keys to the universe</p>
-          </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-12">
-        {/* Play Mode Selector */}
-        <div className="flex flex-wrap justify-center gap-3 mb-4">
-          {([
-            { mode: 'solo' as PlayMode, label: 'Solo', icon: <Sparkles className="h-4 w-4" /> },
-            { mode: 'ai' as PlayMode, label: 'vs QUMUS AI', icon: <Bot className="h-4 w-4" /> },
-            { mode: 'local_multi' as PlayMode, label: 'Local 2-Player', icon: <UserPlus className="h-4 w-4" /> },
-          ]).map(({ mode, label, icon }) => (
-            <Button
-              key={mode}
-              variant={playMode === mode ? 'default' : 'outline'}
-              onClick={() => setPlayMode(mode)}
-              className={`gap-2 ${playMode === mode ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'border-indigo-500/50 text-indigo-300 hover:bg-indigo-900/50'}`}
-            >
-              {icon} {label}
-            </Button>
-          ))}
-        </div>
-
-        {/* Game Mode Selector */}
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
-          {([
-            { mode: 'standard' as GameMode, label: 'Standard (First to 63)', icon: '🎲' },
-            { mode: 'advanced' as GameMode, label: 'In the 9 (Advanced)', icon: '⚡' },
-            { mode: 'spiral' as GameMode, label: 'Spiral Up/Down (First to 36)', icon: '🌀' },
-          ]).map(({ mode, label, icon }) => (
-            <Button
-              key={mode}
-              variant={gameMode === mode ? 'default' : 'outline'}
-              onClick={() => { setGameMode(mode); resetGame(); }}
-              className={`gap-2 ${gameMode === mode ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'border-purple-500/50 text-purple-300 hover:bg-purple-900/50'}`}
-            >
-              <span>{icon}</span> {label}
-            </Button>
-          ))}
-        </div>
-
-        {/* Player Scoreboard (multiplayer/AI) */}
-        {playMode !== 'solo' && (
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            {(['player1', 'player2'] as PlayerTurn[]).map((p) => (
-              <Card key={p} className={`p-4 border-2 transition-all ${
-                currentTurn === p
-                  ? 'bg-purple-900/40 border-purple-400 shadow-lg shadow-purple-500/20'
-                  : 'bg-[#1a0a30]/60 border-purple-500/20'
-              }`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {players[p].isAI ? <Bot className="h-5 w-5 text-cyan-400" /> : <Users className="h-5 w-5 text-purple-400" />}
-                    <span className="text-white font-bold">{players[p].name}</span>
-                    {currentTurn === p && <span className="text-xs bg-purple-500 text-white px-2 py-0.5 rounded-full animate-pulse">Turn</span>}
+        {/* Multi-Player Scoreboard */}
+        {players.length > 1 && (
+          <div className={`grid gap-3 mb-6 ${
+            players.length <= 3 ? 'grid-cols-2 md:grid-cols-3' :
+            players.length <= 6 ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6' :
+            'grid-cols-3 md:grid-cols-5 lg:grid-cols-9'
+          }`}>
+            {players.map((p, i) => {
+              const color = PLAYER_COLORS[i];
+              const isCurrent = currentTurnIndex === i;
+              return (
+                <Card key={i} className={`p-3 border-2 transition-all ${
+                  isCurrent
+                    ? `bg-gradient-to-br ${color.bg}/20 ${color.border} shadow-lg ${color.glow}`
+                    : 'bg-[#1a0a30]/60 border-purple-500/20'
+                }`}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    {p.isAI ? <Bot className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" /> : <Users className="h-3.5 w-3.5 text-purple-400 flex-shrink-0" />}
+                    <span className="text-white font-bold text-xs truncate">{p.name}</span>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-yellow-400">{players[p].score}</div>
-                    <div className="text-xs text-purple-400">/ {winScore}</div>
+                  {isCurrent && <span className="text-[10px] bg-purple-500 text-white px-1.5 py-0.5 rounded-full animate-pulse inline-block mb-1">Turn</span>}
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-xl font-bold text-yellow-400">{p.score}</span>
+                    <span className="text-[10px] text-purple-400">/{winScore}</span>
                   </div>
-                </div>
-                {players[p].tallies > 0 && (
-                  <div className="text-xs text-green-400 mt-1">Tallies: {players[p].tallies}</div>
-                )}
-                {/* Progress bar */}
-                <div className="mt-2 h-2 bg-purple-900/50 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${players[p].isAI ? 'bg-cyan-500' : 'bg-purple-500'}`}
-                    style={{ width: `${Math.min(100, (players[p].score / winScore) * 100)}%` }}
-                  />
-                </div>
-              </Card>
-            ))}
+                  {p.tallies > 0 && (
+                    <div className="text-[10px] text-green-400">Tallies: {p.tallies}</div>
+                  )}
+                  {/* Progress bar */}
+                  <div className="mt-1 h-1.5 bg-purple-900/50 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${p.isAI ? 'bg-cyan-500' : 'bg-purple-500'}`}
+                      style={{ width: `${Math.min(100, (p.score / winScore) * 100)}%` }}
+                    />
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Solo Score Display */}
+        {players.length === 1 && (
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-4 bg-black/40 backdrop-blur-sm rounded-xl px-6 py-3 border border-purple-500/30">
+              <span className="text-purple-300">Score</span>
+              <span className="text-3xl font-bold text-yellow-400">{players[0]?.score || 0}</span>
+              <span className="text-purple-400">/ {winScore}</span>
+              {(players[0]?.tallies || 0) > 0 && (
+                <span className="text-green-400 text-sm">Tallies: {players[0].tallies}</span>
+              )}
+            </div>
           </div>
         )}
 
@@ -619,7 +957,7 @@ export default function Solbones() {
           <div className="text-center mb-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
             <div className="flex items-center justify-center gap-2 text-cyan-400">
               <Bot className="h-5 w-5 animate-spin" />
-              <span className="font-medium">QUMUS AI is thinking...</span>
+              <span className="font-medium">{currentPlayer.name} is thinking...</span>
             </div>
           </div>
         )}
@@ -631,14 +969,11 @@ export default function Solbones() {
             <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6 md:p-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  {players[currentTurn].isAI ? <Bot className="h-5 w-5 text-cyan-400" /> : <Sparkles className="h-5 w-5 text-yellow-400" />}
-                  {playMode === 'solo' ? 'Roll the Bones' : `${players[currentTurn].name}'s Turn`}
+                  {currentPlayer.isAI ? <Bot className="h-5 w-5 text-cyan-400" /> : <Sparkles className="h-5 w-5 text-yellow-400" />}
+                  {players.length === 1 ? 'Roll the Bones' : `${currentPlayer.name}'s Turn`}
                 </h2>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="text-purple-300">Roll {rollsThisRound}/{maxRollsPerRound}</span>
-                  {playMode === 'solo' && (
-                    <span className="text-yellow-400 font-bold">Score: {players.player1.score}/{winScore}</span>
-                  )}
                 </div>
               </div>
 
@@ -668,13 +1003,22 @@ export default function Solbones() {
               {/* Game Over */}
               {gameState === 'finished' && winner && (
                 <div className="text-center mb-6 p-6 rounded-lg bg-gradient-to-r from-yellow-500/20 via-purple-500/20 to-blue-500/20 border border-yellow-500/30">
-                  <div className="text-4xl mb-2">🏆</div>
+                  <div className="text-4xl mb-2">{'\uD83C\uDFC6'}</div>
                   <div className="text-3xl font-bold text-yellow-400 mb-2">
-                    {winner === 'QUMUS AI' ? 'QUMUS AI Wins!' : `${winner} Wins!`}
+                    {winner} Wins!
                   </div>
                   <div className="text-purple-200">
-                    {gameMode === 'spiral' ? 'Ascension achieved!' : `Final score: ${players.player1.score} - ${playMode !== 'solo' ? players.player2.score : ''}`}
+                    {gameMode === 'spiral' ? 'Ascension achieved!' : 'Final Scores:'}
                   </div>
+                  {gameMode !== 'spiral' && (
+                    <div className="flex flex-wrap justify-center gap-3 mt-3">
+                      {players.map((p, i) => (
+                        <span key={i} className={`text-sm ${p.name === winner ? 'text-yellow-400 font-bold' : 'text-purple-300'}`}>
+                          {p.name}: {p.score}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -686,7 +1030,7 @@ export default function Solbones() {
                   className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-8 text-lg gap-2"
                   size="lg"
                 >
-                  {isRolling ? '🎲 Rolling...' : aiThinking ? '🤖 AI Turn...' : gameState === 'idle' ? '🎲 Roll Dice' : '🎲 Re-Roll'}
+                  {isRolling ? '\uD83C\uDFB2 Rolling...' : aiThinking ? '\uD83E\uDD16 AI Turn...' : gameState === 'idle' ? '\uD83C\uDFB2 Roll Dice' : '\uD83C\uDFB2 Re-Roll'}
                 </Button>
 
                 {currentRoundScore && !isRolling && gameState !== 'finished' && isMyTurn && (
@@ -717,6 +1061,15 @@ export default function Solbones() {
                   size="lg"
                 >
                   <RotateCcw className="h-4 w-4" /> New Game
+                </Button>
+
+                <Button
+                  onClick={backToSetup}
+                  variant="outline"
+                  className="border-amber-500/50 text-amber-300 hover:bg-amber-900/50 gap-2"
+                  size="lg"
+                >
+                  <Settings2 className="h-4 w-4" /> Setup
                 </Button>
               </div>
             </Card>
@@ -870,7 +1223,7 @@ export default function Solbones() {
                   <div className="mt-6 bg-purple-900/30 rounded-lg p-4 border border-purple-500/20">
                     <h3 className="text-white font-bold mb-3 flex items-center gap-2">
                       <Zap className="h-4 w-4 text-yellow-400" />
-                      Dice Face → Frequency Mapping
+                      Dice Face &rarr; Frequency Mapping
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {Object.entries(FREQUENCY_MAP).map(([key, data]) => (
@@ -898,12 +1251,6 @@ export default function Solbones() {
                 <Trophy className="h-5 w-5 text-yellow-400" />
                 Score Sheet
               </h2>
-              {playMode === 'solo' && (
-                <div className="mb-3 flex justify-between items-center">
-                  <span className="text-purple-300">Progress</span>
-                  <span className="text-yellow-400 font-bold">{players.player1.score}/{winScore}</span>
-                </div>
-              )}
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {roundHistory.length === 0 ? (
                   <p className="text-purple-400/60 text-sm text-center py-4">Roll the dice to begin...</p>
@@ -912,11 +1259,11 @@ export default function Solbones() {
                     <div key={i} className="flex items-center justify-between bg-purple-900/30 rounded px-3 py-2 text-sm">
                       <div className="flex items-center gap-2">
                         <span className="text-purple-400 font-mono text-xs">R{r.rollNumber}</span>
-                        {playMode !== 'solo' && <span className="text-purple-500 text-xs">{r.player}</span>}
+                        {players.length > 1 && <span className="text-purple-500 text-xs truncate max-w-[60px]">{r.player}</span>}
                         <span className="text-white">[{r.dice.join(', ')}]</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-purple-400/60 text-xs">{r.score.label}</span>
+                        <span className="text-purple-400/60 text-xs truncate max-w-[80px]">{r.score.label}</span>
                         <span className={`font-bold ${r.inTheNine ? 'text-yellow-400' : 'text-green-400'}`}>
                           +{r.score.points}
                         </span>
@@ -925,12 +1272,6 @@ export default function Solbones() {
                   ))
                 )}
               </div>
-              {playMode === 'solo' && (
-                <div className="mt-4 pt-4 border-t border-purple-500/20 flex justify-between">
-                  <span className="text-purple-300 font-bold">Total</span>
-                  <span className="text-yellow-400 font-bold text-xl">{players.player1.score}</span>
-                </div>
-              )}
             </Card>
 
             {/* Leaderboard */}
@@ -947,7 +1288,7 @@ export default function Solbones() {
                         <span className={`font-bold ${i === 0 ? 'text-yellow-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-purple-400'}`}>
                           #{i + 1}
                         </span>
-                        <span className="text-white truncate max-w-[100px]">Player</span>
+                        <span className="text-white truncate max-w-[100px]">{entry.username || 'Player'}</span>
                       </div>
                       <span className="text-green-400 font-bold">{entry.score}</span>
                     </div>
@@ -970,14 +1311,14 @@ export default function Solbones() {
                   <BookOpen className="h-5 w-5 text-purple-400 flex-shrink-0" />
                   <div>
                     <div className="text-white text-sm font-medium">Official Rulebook</div>
-                    <div className="text-purple-400/60 text-xs">Solbones 4+3+2 Dice Rulebook & Cultural Guide</div>
+                    <div className="text-purple-400/60 text-xs">Solbones 4+3+2 Dice Rulebook &amp; Cultural Guide</div>
                   </div>
                 </a>
                 <a href={PDFS.tournament} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-3 bg-purple-900/30 hover:bg-purple-900/50 rounded-lg p-3 transition-colors no-underline">
                   <Trophy className="h-5 w-5 text-yellow-400 flex-shrink-0" />
                   <div>
-                    <div className="text-white text-sm font-medium">Tournament & Score Sheets</div>
+                    <div className="text-white text-sm font-medium">Tournament &amp; Score Sheets</div>
                     <div className="text-purple-400/60 text-xs">Printable brackets and scoring</div>
                   </div>
                 </a>
@@ -1011,44 +1352,45 @@ export default function Solbones() {
             <div className="mt-6 space-y-6 text-purple-200">
               <div>
                 <h3 className="text-lg font-bold text-white mb-2">Game Setup</h3>
-                <p>You need 3 dice. Use white dice with yellow dots, or frequency dice: <span className="text-red-400 font-bold">red (2)</span>, <span className="text-purple-400 font-bold">purple (3)</span>, <span className="text-blue-400 font-bold">blue (4)</span>.</p>
+                <p>You need 3 dice. Use white dice with yellow dots, or frequency dice: <span className="text-red-400 font-bold">red (2)</span>, <span className="text-purple-400 font-bold">purple (3)</span>, <span className="text-blue-400 font-bold">blue (4)</span>. Up to 9 players can join &mdash; the sacred number (4+3+2=9).</p>
               </div>
 
               <div>
                 <h3 className="text-lg font-bold text-white mb-2">Standard Game (First to 63)</h3>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex gap-2"><span className="text-yellow-400">&#9679;</span> Roll all 3 dice each round. Up to 3 rolls per round (4 if using a tally).</li>
-                  <li className="flex gap-2"><span className="text-yellow-400">&#9679;</span> Score using pairs, frequency matches, or unique sequences.</li>
-                  <li className="flex gap-2"><span className="text-yellow-400">&#9679;</span> <strong className="text-white">Tribing Up:</strong> 3 of a kind = 1 tally + score equals face value.</li>
-                  <li className="flex gap-2"><span className="text-yellow-400">&#9679;</span> <strong className="text-white">Vibing Up:</strong> Score die is a frequency die (2, 3, or 4) = double score.</li>
-                  <li className="flex gap-2"><span className="text-yellow-400">&#9679;</span> <strong className="text-white">In the Ether (4+3+2):</strong> 9 points + 1 tally.</li>
-                  <li className="flex gap-2"><span className="text-yellow-400">&#9679;</span> <strong className="text-white">Zan Zone (4+3+2 in freq. colors):</strong> 18 points + 2 tallies.</li>
+                  <li className="flex gap-2"><span className="text-yellow-400">{'\u25CF'}</span> Roll all 3 dice each round. Up to 3 rolls per round (4 if using a tally).</li>
+                  <li className="flex gap-2"><span className="text-yellow-400">{'\u25CF'}</span> Score using pairs, frequency matches, or unique sequences.</li>
+                  <li className="flex gap-2"><span className="text-yellow-400">{'\u25CF'}</span> <strong className="text-white">Tribing Up:</strong> 3 of a kind = 1 tally + score equals face value.</li>
+                  <li className="flex gap-2"><span className="text-yellow-400">{'\u25CF'}</span> <strong className="text-white">Vibing Up:</strong> Score die is a frequency die (2, 3, or 4) = double score.</li>
+                  <li className="flex gap-2"><span className="text-yellow-400">{'\u25CF'}</span> <strong className="text-white">In the Ether (4+3+2):</strong> 9 points + 1 tally.</li>
+                  <li className="flex gap-2"><span className="text-yellow-400">{'\u25CF'}</span> <strong className="text-white">Zan Zone (4+3+2 in freq. colors):</strong> 18 points + 2 tallies.</li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="text-lg font-bold text-white mb-2">Advanced: In the 9</h3>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex gap-2"><span className="text-blue-400">&#9679;</span> Same basic rules as standard.</li>
-                  <li className="flex gap-2"><span className="text-blue-400">&#9679;</span> <strong className="text-white">Power Rule:</strong> If your dice total 9, you get +9 points and subtract 9 from the highest scorer.</li>
-                  <li className="flex gap-2"><span className="text-blue-400">&#9679;</span> Using a tally with no score = lose 1 point.</li>
+                  <li className="flex gap-2"><span className="text-blue-400">{'\u25CF'}</span> Same basic rules as standard.</li>
+                  <li className="flex gap-2"><span className="text-blue-400">{'\u25CF'}</span> <strong className="text-white">Power Rule:</strong> If your dice total 9, you get +9 points and subtract 9 from the highest scorer.</li>
+                  <li className="flex gap-2"><span className="text-blue-400">{'\u25CF'}</span> Using a tally with no score = lose 1 point.</li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="text-lg font-bold text-white mb-2">Super Advanced: Spiral Up/Down</h3>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex gap-2"><span className="text-green-400">&#9679;</span> Game ends when a player reaches 36 (ascends) or 0 (resets).</li>
-                  <li className="flex gap-2"><span className="text-green-400">&#9679;</span> Designed for high sacred time or divination-like game nights.</li>
+                  <li className="flex gap-2"><span className="text-green-400">{'\u25CF'}</span> Game ends when a player reaches 36 (ascends) or 0 (resets).</li>
+                  <li className="flex gap-2"><span className="text-green-400">{'\u25CF'}</span> Designed for high sacred time or divination-like game nights.</li>
                 </ul>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">Play Modes</h3>
+                <h3 className="text-lg font-bold text-white mb-2">Multiplayer (Up to 9 Players)</h3>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex gap-2"><span className="text-purple-400">&#9679;</span> <strong className="text-white">Solo:</strong> Practice mode — play against yourself, track your score.</li>
-                  <li className="flex gap-2"><span className="text-cyan-400">&#9679;</span> <strong className="text-white">vs QUMUS AI:</strong> Challenge the QUMUS autonomous intelligence. It uses strategy to decide when to keep or re-roll.</li>
-                  <li className="flex gap-2"><span className="text-green-400">&#9679;</span> <strong className="text-white">Local 2-Player:</strong> Pass the device — take turns rolling against a friend or family member.</li>
+                  <li className="flex gap-2"><span className="text-purple-400">{'\u25CF'}</span> <strong className="text-white">Solo:</strong> Practice mode &mdash; play against yourself, track your score.</li>
+                  <li className="flex gap-2"><span className="text-cyan-400">{'\u25CF'}</span> <strong className="text-white">QUMUS AI:</strong> Toggle any player slot to AI. QUMUS uses strategy to decide when to keep or re-roll.</li>
+                  <li className="flex gap-2"><span className="text-green-400">{'\u25CF'}</span> <strong className="text-white">Local Multiplayer:</strong> Up to 9 players on one device &mdash; pass and play!</li>
+                  <li className="flex gap-2"><span className="text-yellow-400">{'\u25CF'}</span> <strong className="text-white">Sacred 9:</strong> Fill all 9 slots for the ultimate game &mdash; mix humans and AI freely.</li>
                 </ul>
               </div>
 
@@ -1068,7 +1410,7 @@ export default function Solbones() {
           >
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-blue-400" />
-              Zakar Games — Youth Scroll Challenges
+              Zakar Games &mdash; Youth Scroll Challenges
             </h2>
             {showYouthChallenges ? <ChevronUp className="h-5 w-5 text-blue-400" /> : <ChevronDown className="h-5 w-5 text-blue-400" />}
           </button>

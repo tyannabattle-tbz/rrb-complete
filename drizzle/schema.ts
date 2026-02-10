@@ -1215,13 +1215,14 @@ export type InsertAlert = typeof alerts.$inferInsert;
 
 export const solbonesFrequencyRolls = mysqlTable("solbones_frequency_rolls", {
 	id: int().autoincrement().notNull().primaryKey(),
-	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-	frequencyName: varchar({ length: 50 }).notNull(), // UT, RE, MI, FA, SOL, LA, TI, DO
+	userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+	dice1: int("dice_1").default(1).notNull(),
+	dice2: int("dice_2").default(1).notNull(),
+	dice3: int("dice_3").default(1).notNull(),
 	frequency: int().notNull(), // Hz value
-	timestamp: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-	sessionId: varchar({ length: 255 }), // Optional session identifier
+	score: int().default(0).notNull(),
 	notes: text(), // User notes about the experience
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
 
 export type SolbonesFrequencyRoll = typeof solbonesFrequencyRolls.$inferSelect;
@@ -1229,14 +1230,14 @@ export type InsertSolbonesFrequencyRoll = typeof solbonesFrequencyRolls.$inferIn
 
 export const solbonesLeaderboard = mysqlTable("solbones_leaderboard", {
 	id: int().autoincrement().notNull().primaryKey(),
-	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-	totalRolls: int().default(0).notNull(),
-	favoriteFrequency: varchar({ length: 50 }),
-	streak: int().default(0).notNull(),
-	lastRollDate: timestamp({ mode: 'string' }),
-	achievements: json(), // JSON array of achievement badges
+	userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+	username: varchar({ length: 255 }),
 	score: int().default(0).notNull(),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	gamesPlayed: int("games_played").default(1).notNull(),
+	highestScore: int("highest_score").default(0).notNull(),
+	totalTallies: int("total_tallies").default(0).notNull(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
 
 export type SolbonesLeaderboard = typeof solbonesLeaderboard.$inferSelect;

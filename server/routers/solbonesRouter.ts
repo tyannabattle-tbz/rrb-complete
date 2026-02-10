@@ -44,7 +44,7 @@ export const solbonesRouter = router({
       // Update leaderboard
       const history = await dbHelpers.getUserFrequencyHistory(ctx.user.id, 100);
       const totalRolls = history.length + 1;
-      const frequencies = history.map((h) => h.frequencyName);
+      const frequencies = history.map((h) => (h.notes || '').split(':')[0]).filter(Boolean);
       const favorite = frequencies.length > 0
         ? frequencies.sort(
             (a, b) =>

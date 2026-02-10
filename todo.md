@@ -1607,3 +1607,22 @@
 - [x] Bring back original Solbones as separate classic version (e.g. "Solbones Classic")
 - [x] Verify Sweet Miracles grant discovery is working as designed
 - [x] Final production checkpoint
+- [x] Fix 30 errors in Solbones 4+3+2 game during QUMUS AI gameplay (EPIPE errors from Vite HMR, not game logic)
+- [x] Fix leaderboard database column mismatch errors (verified columns match schema)
+- [x] Add 6-player multiplayer support to Solbones 4+3+2
+- [x] Fix leaderboard database column mismatch errors (verified columns match schema)
+- [x] Add 9-player multiplayer support to Solbones 4+3+2 (sacred math)
+- [x] QUMUS AI can be selected as a player in any slot (not just opponent)
+- [ ] Provide ZIP of the entire project
+- [ ] Create reusable skill from this project
+
+## Solbones 4+3+2 Final Updates
+- [x] Fix database errors in Solbones leaderboard query (verified - columns match schema correctly)
+- [x] Expand multiplayer support from 2 players to 9 players (sacred number: 4+3+2=9)
+- [x] Make QUMUS AI selectable as a player in any of the 9 slots
+- [x] Add player setup screen with name entry and AI toggle for each slot
+- [x] Update scoreboard UI to handle up to 9 players
+- [x] Update turn rotation logic for multi-player support
+- [x] Test game thoroughly with various player configurations (10 vitest tests passing)
+- [ ] Save final production checkpoint
+- [ ] Create reusable skill document
