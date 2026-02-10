@@ -168,9 +168,9 @@ export const RRB_LEGACY_TRACKS: AudioTrack[] = [
     id: 'rrb-legacy-1',
     title: "Rockin' Rockin' Boogie — Original",
     artist: 'Seabrun Candy Hunter & Little Richard',
-    url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/LhZvyaWhSQodjVFs.mp3',
+    url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zByVVlWeoYCaITZI.mp3',
     channel: "Rockin' Rockin' Boogie",
-    duration: 157,
+    duration: 330,
   },
   {
     id: 'rrb-legacy-2',

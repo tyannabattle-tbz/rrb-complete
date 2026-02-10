@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS solbones_frequency_rolls (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  user_id INT,\n  dice_1 INT NOT NULL DEFAULT 1,\n  dice_2 INT NOT NULL DEFAULT 1,\n  dice_3 INT NOT NULL DEFAULT 1,\n  frequency INT,\n  score INT NOT NULL DEFAULT 0,\n  notes TEXT,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE IF NOT EXISTS solbones_leaderboard (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  user_id INT,\n  username VARCHAR(255),\n  score INT NOT NULL DEFAULT 0,\n  games_played INT NOT NULL DEFAULT 1,\n  highest_score INT NOT NULL DEFAULT 0,\n  total_tallies INT NOT NULL DEFAULT 0,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute CREATE TABLE IF NOT EXISTS solbones_frequency_rolls (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  user_id INT,\n  dice_1 INT NOT NULL DEFAULT 1,\n  dice_2 INT NOT NULL DEFAULT 1,\n  dice_3 INT NOT NULL DEFAULT 1,\n  frequency INT,\n  score INT NOT NULL DEFAULT 0,\n  notes TEXT,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE IF NOT EXISTS solbones_leaderboard (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  user_id INT,\n  username VARCHAR(255),\n  score INT NOT NULL DEFAULT 0,\n  games_played INT NOT NULL DEFAULT 1,\n  highest_score INT NOT NULL DEFAULT 0,\n  total_tallies INT NOT NULL DEFAULT 0,\n  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 962
+}

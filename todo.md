@@ -1473,3 +1473,13 @@
 - [x] Redesign AppHeaderEnhanced with public RRB nav (The Legacy, Music & Radio, Listen Live, Community, Canryn dropdowns)
 - [x] Update mobile navigation for public visitors (Legacy Restored, Listen & Watch, Community, Canryn sections)
 - [x] Verify and checkpoint
+## v8.5 Admin Link, Solbones Dice, Go-Live Polish
+- [x] Add QUMUS Admin link visible only to logged-in admins in nav
+- [x] Restore Solbones dice game to the website and connect to nav/routes
+- [x] Fix autoplay track - replaced 13s clip with full 5:30 Rockin Rockin Boogie track
+- [x] Push Solbones database tables (solbones_frequency_rolls, solbones_leaderboard)
+- [x] Read Solbones rulebook, tournament sheets, and youth challenge PDFs
+- [x] Rebuild Solbones dice game page with accurate rules from official PDFs
+- [x] Upload Solbones PDFs to S3 for download links on the page
+- [x] Fix db-helpers.ts broken imports (getDb() pattern)
+- [x] Verify and checkpoint

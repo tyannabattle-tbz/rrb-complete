@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, Link } from 'wouter';
-import { Search, Share2, Menu, X, Home, Radio, Music, Heart, BookOpen, Shield, Headphones, ChevronDown, ExternalLink, Podcast, Building2, Zap } from 'lucide-react';
+import { Search, Share2, Menu, X, Home, Radio, Music, Heart, BookOpen, Shield, Headphones, ChevronDown, ExternalLink, Podcast, Building2, Zap, Settings, Dice5 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { SimplifiedMobileNav } from '@/components/SimplifiedMobileNav';
+import { useAuth } from '@/_core/hooks/useAuth';
 
 interface DropdownItem {
   label: string;
@@ -75,6 +76,8 @@ export function AppHeaderEnhanced() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const { user, isAuthenticated } = useAuth();
+  const isAdmin = isAuthenticated && user?.role === 'admin';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -241,6 +244,32 @@ export function AppHeaderEnhanced() {
             <Button variant="ghost" size="sm" onClick={handleShare} title="Share page">
               <Share2 className="h-4 w-4" />
             </Button>
+
+            {/* Solbones Dice - visible to all */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/solbones')}
+              title="Solbones Dice Game"
+              className="gap-1.5"
+            >
+              <Dice5 className="h-4 w-4" />
+              <span className="hidden lg:inline text-xs">Solbones</span>
+            </Button>
+
+            {/* Admin-only QUMUS link */}
+            {isAdmin && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/qumus')}
+                title="QUMUS Admin Dashboard"
+                className="gap-1.5 text-cyan-500 hover:text-cyan-400"
+              >
+                <Settings className="h-4 w-4" />
+                <span className="hidden lg:inline text-xs">Admin</span>
+              </Button>
+            )}
           </div>
         </div>
       </header>
