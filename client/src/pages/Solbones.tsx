@@ -801,6 +801,36 @@ export default function Solbones() {
             </Button>
           </Card>
 
+          {/* Online & Tournament Links */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+            <Link href="/solbones-online">
+              <Card className="bg-gradient-to-br from-purple-900/60 to-indigo-900/60 border-purple-500/30 p-5 cursor-pointer hover:border-purple-400/50 transition-all group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
+                    <Users className="h-5 w-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white text-sm">Online Multiplayer</h3>
+                    <p className="text-purple-400/60 text-xs">Create or join rooms &bull; Play with friends worldwide</p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+            <Link href="/solbones-tournament">
+              <Card className="bg-gradient-to-br from-yellow-900/40 to-amber-900/40 border-yellow-500/30 p-5 cursor-pointer hover:border-yellow-400/50 transition-all group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center group-hover:bg-yellow-500/30 transition-colors">
+                    <Trophy className="h-5 w-5 text-yellow-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white text-sm">Tournament Brackets</h3>
+                    <p className="text-yellow-400/60 text-xs">4/8/9-player elimination &bull; Sacred 9 format</p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          </div>
+
           {/* Leaderboard in Setup */}
           <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6 mt-6">
             <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">

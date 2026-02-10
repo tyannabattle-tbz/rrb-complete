@@ -95,10 +95,10 @@ export const LIVE_STREAMS = {
   },
   radioParadise: {
     id: 'live-radio-paradise',
-    title: 'Radio Paradise — Eclectic Mix',
-    artist: 'Radio Paradise',
-    url: 'https://stream.radioparadise.com/mp3-128',
-    channel: 'Canryn Radio',
+    title: "King Richard's 70s Rock — Little Richard Era",
+    artist: "70s Rock & Roll",
+    url: 'https://ice1.somafm.com/seventies-320-mp3',
+    channel: "King Richard's 70s",
     isLiveStream: true,
   },
   fluid: {

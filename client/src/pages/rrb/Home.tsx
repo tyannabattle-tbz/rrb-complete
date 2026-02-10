@@ -127,7 +127,7 @@ function QuickListenSection() {
     { ...LIVE_STREAMS.droneZone, label: 'Ambient Meditation', emoji: '🧘' },
     { ...LIVE_STREAMS.sonicUniverse, label: 'Jazz Fusion', emoji: '🎺' },
     { ...LIVE_STREAMS.lush, label: 'Chillout', emoji: '🌊' },
-    { ...LIVE_STREAMS.radioParadise, label: 'Eclectic Mix', emoji: '🎵' },
+    { ...LIVE_STREAMS.radioParadise, label: "70s Rock & Roll", emoji: '🎸' },
     { ...LIVE_STREAMS.secretAgent, label: 'Lounge', emoji: '🍸' },
   ];
 

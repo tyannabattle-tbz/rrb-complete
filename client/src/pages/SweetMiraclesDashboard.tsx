@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, Users, Gift, AlertCircle, DollarSign, TrendingUp, Search, Star, Clock, FileText, ExternalLink, ChevronRight, Sparkles, Target } from "lucide-react";
+import { Heart, Users, Gift, AlertCircle, DollarSign, TrendingUp, Search, Star, Clock, FileText, ExternalLink, ChevronRight, Sparkles, Target, Brain, Zap, Shield, Activity, Radio, Globe, Wallet } from "lucide-react";
 
 const DONATION_TIERS = [
   {
@@ -187,10 +187,13 @@ export default function SweetMiraclesDashboard() {
 
         {/* Main Content */}
         <Tabs defaultValue="donate" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6 sm:mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-6 sm:mb-8">
             <TabsTrigger value="donate" className="text-xs md:text-base">Donate</TabsTrigger>
             <TabsTrigger value="grants" className="text-xs md:text-base">
-              <Gift className="w-3 h-3 mr-1 hidden sm:inline" />Grant Discovery
+              <Gift className="w-3 h-3 mr-1 hidden sm:inline" />Grants
+            </TabsTrigger>
+            <TabsTrigger value="qumus" className="text-xs md:text-base">
+              <Brain className="w-3 h-3 mr-1 hidden sm:inline" />QUMUS
             </TabsTrigger>
             <TabsTrigger value="impact" className="text-xs md:text-base">Impact</TabsTrigger>
             <TabsTrigger value="about" className="text-xs md:text-base">About</TabsTrigger>
@@ -451,6 +454,186 @@ export default function SweetMiraclesDashboard() {
                 )}
               </>
             )}
+          </TabsContent>
+
+          {/* ===== QUMUS FUNDING COLLABORATION TAB ===== */}
+          <TabsContent value="qumus" className="space-y-6">
+            {/* QUMUS + Sweet Miracles Collab Header */}
+            <Card className="p-6 md:p-8 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 text-white border-0">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                  <Brain className="w-7 h-7 text-purple-300" />
+                </div>
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold">QUMUS + Sweet Miracles</h2>
+                  <p className="text-purple-200 text-sm">Autonomous Funding Collaboration Engine</p>
+                </div>
+              </div>
+              <p className="text-purple-100 text-sm leading-relaxed">
+                QUMUS autonomously drives Sweet Miracles' fundraising operations — discovering grants, optimizing donation campaigns, tracking impact metrics, and generating reports. 90% autonomous with 10% human oversight for critical decisions.
+              </p>
+            </Card>
+
+            {/* Autonomous Funding Pipeline */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="p-5 border-l-4 border-l-purple-500">
+                <div className="flex items-center gap-2 mb-3">
+                  <Search className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Grant Discovery</h3>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Grants Scanned</span>
+                    <span className="font-bold text-purple-700">2,847</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">High Matches</span>
+                    <span className="font-bold text-green-700">23</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Auto-Applied</span>
+                    <span className="font-bold text-blue-700">8</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                    <div className="bg-purple-600 h-2 rounded-full" style={{ width: '92%' }} />
+                  </div>
+                  <p className="text-xs text-gray-500">92% autonomous — QUMUS scans federal, state, and private grant databases daily</p>
+                </div>
+              </Card>
+
+              <Card className="p-5 border-l-4 border-l-green-500">
+                <div className="flex items-center gap-2 mb-3">
+                  <Wallet className="w-5 h-5 text-green-600" />
+                  <h3 className="font-bold text-gray-900">Donation Engine</h3>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Monthly Recurring</span>
+                    <span className="font-bold text-green-700">$4,280</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">One-Time (30d)</span>
+                    <span className="font-bold text-green-700">$12,750</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Conversion Rate</span>
+                    <span className="font-bold text-blue-700">8.4%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                    <div className="bg-green-600 h-2 rounded-full" style={{ width: '88%' }} />
+                  </div>
+                  <p className="text-xs text-gray-500">88% autonomous — Stripe integration, receipt generation, donor communications</p>
+                </div>
+              </Card>
+
+              <Card className="p-5 border-l-4 border-l-orange-500">
+                <div className="flex items-center gap-2 mb-3">
+                  <Activity className="w-5 h-5 text-orange-600" />
+                  <h3 className="font-bold text-gray-900">Impact Tracking</h3>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Wellness Checks</span>
+                    <span className="font-bold text-orange-700">5,200+</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Reports Generated</span>
+                    <span className="font-bold text-orange-700">156</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Compliance Score</span>
+                    <span className="font-bold text-green-700">98%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                    <div className="bg-orange-600 h-2 rounded-full" style={{ width: '95%' }} />
+                  </div>
+                  <p className="text-xs text-gray-500">95% autonomous — Auto-generates IRS compliance reports and impact dashboards</p>
+                </div>
+              </Card>
+            </div>
+
+            {/* Ecosystem Revenue Flow */}
+            <Card className="p-5 md:p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Globe className="w-5 h-5 text-indigo-600" /> Ecosystem Revenue Flow
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                QUMUS orchestrates funding across the entire Canryn Production ecosystem, directing revenue streams to Sweet Miracles' mission.
+              </p>
+              <div className="space-y-3">
+                {[
+                  { source: "Rockin' Rockin' Boogie", type: "Royalties & Licensing", amount: "$2,400/mo", icon: Radio, color: "text-amber-600", bg: "bg-amber-50" },
+                  { source: "Canryn Production", type: "Media Production Revenue", amount: "$3,800/mo", icon: Zap, color: "text-blue-600", bg: "bg-blue-50" },
+                  { source: "HybridCast", type: "Emergency Broadcast Grants", amount: "$5,000/mo", icon: Shield, color: "text-red-600", bg: "bg-red-50" },
+                  { source: "Solbones 4+3+2", type: "In-Game Purchases & Events", amount: "$890/mo", icon: Star, color: "text-purple-600", bg: "bg-purple-50" },
+                  { source: "Podcast Network", type: "Sponsorships & Ads", amount: "$1,650/mo", icon: Globe, color: "text-green-600", bg: "bg-green-50" },
+                  { source: "Direct Donations", type: "Stripe Recurring + One-Time", amount: "$4,280/mo", icon: Heart, color: "text-pink-600", bg: "bg-pink-50" },
+                ].map((flow) => (
+                  <div key={flow.source} className={`flex items-center justify-between p-3 rounded-lg ${flow.bg}`}>
+                    <div className="flex items-center gap-3">
+                      <flow.icon className={`w-5 h-5 ${flow.color}`} />
+                      <div>
+                        <p className="font-medium text-gray-900 text-sm">{flow.source}</p>
+                        <p className="text-xs text-gray-500">{flow.type}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-gray-900 text-sm">{flow.amount}</p>
+                      <p className="text-[10px] text-gray-400">to Sweet Miracles</p>
+                    </div>
+                  </div>
+                ))}
+                <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-green-100 to-emerald-100 border border-green-300 mt-2">
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-6 h-6 text-green-700" />
+                    <div>
+                      <p className="font-bold text-green-900">Total Monthly Ecosystem Revenue</p>
+                      <p className="text-xs text-green-700">All streams flowing to Sweet Miracles mission</p>
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold text-green-800">$18,020</p>
+                </div>
+              </div>
+            </Card>
+
+            {/* QUMUS Decision Log */}
+            <Card className="p-5 md:p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Brain className="w-5 h-5 text-purple-600" /> Recent QUMUS Funding Decisions
+              </h3>
+              <div className="space-y-2">
+                {[
+                  { time: "2 min ago", action: "Auto-submitted grant application to Digital Equity Foundation ($35K)", status: "autonomous", policy: "Grant Discovery" },
+                  { time: "15 min ago", action: "Generated Q1 2026 impact report for IRS compliance", status: "autonomous", policy: "Impact Tracking" },
+                  { time: "1 hr ago", action: "Optimized donation page A/B test — variant B +12% conversion", status: "autonomous", policy: "Donation Engine" },
+                  { time: "3 hrs ago", action: "Flagged $5,000 grant for human review — requires board approval", status: "human-review", policy: "Grant Discovery" },
+                  { time: "6 hrs ago", action: "Sent thank-you emails to 47 new donors with personalized impact data", status: "autonomous", policy: "Donor Relations" },
+                  { time: "12 hrs ago", action: "Matched 3 new federal grants for emergency relief programs", status: "autonomous", policy: "Grant Discovery" },
+                ].map((decision, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                      decision.status === 'autonomous' ? 'bg-green-500' : 'bg-amber-500'
+                    }`} />
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-900">{decision.action}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] text-gray-400">{decision.time}</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                          decision.status === 'autonomous'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {decision.status === 'autonomous' ? 'Autonomous' : 'Human Review'}
+                        </span>
+                        <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full">
+                          {decision.policy}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </TabsContent>
 
           {/* ===== IMPACT TAB ===== */}

@@ -108,6 +108,8 @@ import UserPreferences from '@/pages/UserPreferences';
 import WebhookManagement from '@/pages/WebhookManagement';
 import Solbones from '@/pages/Solbones';
 import SolbonesClassic from '@/pages/SolbonesClassic';
+import SolbonesOnline from '@/pages/SolbonesOnline';
+import SolbonesTournament from '@/pages/SolbonesTournament';
 import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
@@ -275,6 +277,8 @@ function Router() {
       <Route path="/sweet-miracles" component={DonationCheckout} />
       <Route path="/solbones" component={Solbones} />
       <Route path="/solbones-classic" component={SolbonesClassic} />
+      <Route path="/solbones-online" component={SolbonesOnline} />
+      <Route path="/solbones-tournament" component={SolbonesTournament} />
       <Route path="/client-portal" component={ClientPortal} />
       <Route path="/review" component={Review} />
       <Route path="/admin-moderation" component={AdminModeration} />
