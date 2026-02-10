@@ -1991,13 +1991,13 @@
 
 ## v10.5 AI Commercial Generation & Radio Integration
 ### Commercial Generation Engine
-- [ ] Create AI commercial script generator service (LLM-powered)
-- [ ] Generate scripts for Canryn Production, Sweet Miracles, RRB Radio, subsidiaries
-- [ ] Create text-to-speech audio generation for commercials
-- [ ] Build commercial library with categories (promo, PSA, sponsor, event)
-- [ ] Add commercial scheduling into radio broadcast rotation
-- [ ] Create commercial management page (create, preview, schedule, archive)
-- [ ] Wire commercial playback into global audio player
-- [ ] Add QUMUS autonomous commercial scheduling (auto-rotate, frequency control)
-- [ ] Create commercial analytics (play count, scheduling history)
-- [ ] Write tests for commercial generation system
+- [x] Create AI commercial script generator service (LLM-powered)
+- [x] Generate scripts for Canryn Production, Sweet Miracles, RRB Radio, subsidiaries
+- [x] Create text-to-speech audio preview for commercials (Web Speech API)
+- [x] Build commercial library with categories (promo, PSA, sponsor, event, station_id, jingle, fundraiser, community)
+- [x] Add commercial scheduling into radio broadcast rotation
+- [x] Create commercial management page (create, preview, schedule, archive)
+- [x] Wire commercial playback into global audio player
+- [x] Add QUMUS autonomous commercial scheduling (auto-rotate, frequency control)
+- [x] Create commercial analytics (play count, scheduling history, by-category, by-brand)
+- [x] Write tests for commercial generation system (17 tests, all passing)

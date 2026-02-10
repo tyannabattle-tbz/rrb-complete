@@ -110,7 +110,7 @@ async function startServer() {
     console.log('[Grant Discovery] Init skipped:', (e as Error).message);
   }
 
-  // Initialize AI Business Operations Assistants (5 autonomous bots)
+  // Initialize AI Business Operations Assistants (10 autonomous bots)
   try {
     const { startAIBusinessAssistants } = await import("../services/ai-business-assistants");
     startAIBusinessAssistants();
@@ -119,6 +119,17 @@ async function startServer() {
     console.log('[AI Business Bots] Social Media | Content Calendar | Engagement | Grant Discovery | Emergency');
   } catch (e) {
     console.log('[AI Business Bots] Init skipped:', (e as Error).message);
+  }
+
+  // Initialize AI Commercial Generation Engine (radio broadcast integration)
+  try {
+    const { startCommercialEngine } = await import("../services/commercial-engine");
+    startCommercialEngine();
+    console.log('[Commercial Engine] AI commercial generation & rotation active');
+    console.log('[Commercial Engine] 7 default commercials seeded (station IDs, PSAs, promos, fundraisers)');
+    console.log('[Commercial Engine] Auto-rotation scheduling engaged for 24/7 broadcast');
+  } catch (e) {
+    console.log('[Commercial Engine] Init skipped:', (e as Error).message);
   }
 
   server.listen(port, () => {

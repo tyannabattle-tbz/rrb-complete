@@ -68,6 +68,9 @@ import { radioDirectoryRouter } from "./routers/radioDirectory";
 // AI Business Assistants (5 autonomous bots)
 import { aiBusinessAssistantsRouter } from "./routers/aiBusinessAssistants";
 
+// AI Commercial Generation & Radio Integration
+import { commercialsRouter } from "./routers/commercials";
+
 // Radio Content API (serves tracks/playlists from database)
 import { radioContentRouter } from "./routers/radioContentRouter";
 // Content Scheduler (24/7 automated content rotation)
@@ -263,6 +266,9 @@ export const appRouter = router({
 
   // AI Business Assistants (5 autonomous bots)
   aiBusinessAssistants: aiBusinessAssistantsRouter,
+
+  // AI Commercial Generation & Radio Broadcast Integration
+  commercials: commercialsRouter,
 
   // Agent Session Management
   agent: router({
