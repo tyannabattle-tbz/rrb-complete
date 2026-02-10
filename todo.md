@@ -1613,8 +1613,8 @@
 - [x] Fix leaderboard database column mismatch errors (verified columns match schema)
 - [x] Add 9-player multiplayer support to Solbones 4+3+2 (sacred math)
 - [x] QUMUS AI can be selected as a player in any slot (not just opponent)
-- [ ] Provide ZIP of the entire project
-- [ ] Create reusable skill from this project
+- [x] Provide ZIP of the entire project (6.7MB)
+- [x] Create reusable skill from this project (rrb-solbones-multiplayer)
 
 ## Solbones 4+3+2 Final Updates
 - [x] Fix database errors in Solbones leaderboard query (verified - columns match schema correctly)
@@ -1624,5 +1624,18 @@
 - [x] Update scoreboard UI to handle up to 9 players
 - [x] Update turn rotation logic for multi-player support
 - [x] Test game thoroughly with various player configurations (10 vitest tests passing)
-- [ ] Save final production checkpoint
-- [ ] Create reusable skill document
+- [x] Save final production checkpoint (ae2a960d)
+- [x] Create reusable skill document (rrb-solbones-multiplayer, validated)
+
+## v8.7 Online Multiplayer, Tournament Brackets, Publish
+- [ ] Add WebSocket-based online multiplayer rooms for Solbones
+- [ ] Create room creation/join UI with room codes
+- [ ] Implement real-time game state sync between players
+- [ ] Add tournament bracket system (4, 8, 9 player elimination)
+- [ ] Create bracket visualization UI
+- [ ] Integrate tournament results with leaderboard
+- [ ] Save final checkpoint and publish
+
+## v8.8 Home Page Photo & Enhancements
+- [x] Add King Richard photo to the home page
+- [x] Ensure photo displays fully without cut-offs

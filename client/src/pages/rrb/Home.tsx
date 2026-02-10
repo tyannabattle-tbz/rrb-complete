@@ -308,6 +308,33 @@ export default function Home() {
           </div>
         </section>
 
+        {/* King Richard and I — Featured Photo */}
+        <section className="py-16 md:py-24 bg-gradient-to-b from-background to-card">
+          <div className="container max-w-4xl">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border">
+              <img
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/eciPCZbjkGWvgSVs.jpeg"
+                alt="King Richard and I — Canryn Production Inc. announcement documenting 50 years of being R&R stars on and off stage, featuring Little Richard"
+                className="w-full h-auto object-contain"
+                loading="eager"
+              />
+            </div>
+            <div className="mt-6 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+                &ldquo;King Richard and I&rdquo;
+              </h2>
+              <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+                The book documenting 50 years of being Rock &amp; Roll stars on and off stage. A Canryn Production.
+              </p>
+              <Link href="/rrb/the-legacy">
+                <Button variant="outline" className="mt-4">
+                  Read the Full Legacy <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Mission Section */}
         <section className="py-16 md:py-24 bg-card">
           <div className="container max-w-3xl">
