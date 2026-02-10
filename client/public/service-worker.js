@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rrb-v9.1';
+const CACHE_NAME = 'rrb-v9.4';
 
 // Only cache truly static assets - NOT index.html or API routes
 const URLS_TO_CACHE = [

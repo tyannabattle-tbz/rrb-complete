@@ -1664,5 +1664,9 @@
 
 ## v9.3 Bug Fixes
 - [x] Fix: Solbones 4+3+2 not visible/accessible on the published platform (was hidden on mobile nav)
-- [ ] Fix: PWA homescreen still showing wrong icon and name (not RRB)
+- [x] Fix: PWA homescreen still showing wrong icon and name — replaced all icons with splash screen version, bumped SW cache to v9.4
 - [x] Fix: Solbones 4+3+2 hidden on mobile — added to SimplifiedMobileNav hamburger menu with Online Multiplayer and Tournament Brackets
+
+## v9.4 PWA Icon Fix
+- [x] Replace plain RRB letters icon with the RRB splash screen image (microphones/gold/dark bg) as PWA icon
+- [x] Update VITE_APP_TITLE to Rockin Rockin Boogie (built-in secret — user must change in Settings > General)
