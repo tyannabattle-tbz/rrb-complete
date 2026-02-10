@@ -1600,3 +1600,5 @@
 - [x] Upload Helen Hunter Life Care Leader magazine photos to CDN
 - [ ] Update Grandma Helen page with Life Care Leader magazine feature
 - [ ] Add backstage photo and magazine images to Photo Gallery
+- [x] Update Solbones title to "Solbones 4+3+2" throughout the site
+- [x] Update Solbones title to "Solbones 4+3+2" throughout the site

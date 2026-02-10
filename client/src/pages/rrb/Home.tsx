@@ -47,7 +47,7 @@ const PLATFORMS = [
   },
   {
     id: 'solbones',
-    title: 'Solbones Music',
+    title: 'Solbones 4+3+2 Music',
     description: 'Exclusive music collection and audio archive from the legacy',
     icon: Headphones,
     href: '/rrb/the-music',
@@ -413,7 +413,7 @@ export default function Home() {
                   <li>✓ The Music (Recordings & Credits)</li>
                   <li>✓ Proof Vault (Verified Evidence)</li>
                   <li>✓ Grandma Helen (Family History)</li>
-                  <li>✓ Solbones Music Archive</li>
+                  <li>✓ Solbones 4+3+2 Music Archive</li>
                 </ul>
               </div>
 

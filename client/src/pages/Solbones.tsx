@@ -21,7 +21,7 @@ const DICE_SKINS: { id: DiceSkin; name: string; bg: string; dot: string; border:
 // ============================================================
 // SOLBONES DICE GAME
 // Sacred Math, Frequency, and Joy for the Solbone Nation
-// Based on the official Solbones Dice Rulebook
+// Based on the official Solbones 4+3+2 Dice Rulebook
 // A Canryn Production
 // ============================================================
 
@@ -107,7 +107,7 @@ function DieFace({ value, isRolling, size = 80, freqHighlight = false, label, sk
   );
 }
 
-// Score a round based on Solbones rules
+// Score a round based on Solbones 4+3+2 rules
 function scoreRound(dice: number[]): { points: number; tallies: number; label: string; bonus?: string } {
   const sorted = [...dice].sort();
   const sum = dice.reduce((a, b) => a + b, 0);
@@ -501,10 +501,10 @@ export default function Solbones() {
         <div className="relative max-w-6xl mx-auto px-4 py-8 text-center">
           <Link href="/" className="text-purple-400 hover:text-purple-300 text-sm mb-4 inline-block">&larr; Back to Home</Link>
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-yellow-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-3">
-            Solbones
+            Solbones <span className="text-3xl md:text-4xl">4+3+2</span>
           </h1>
           <p className="text-purple-200 text-lg md:text-xl max-w-2xl mx-auto mb-2">
-            Sacred Math, Frequency, and Joy for the Solbone Nation
+            4+3+2=9 — Sacred Math, Frequency, and Joy for the Solbone Nation
           </p>
           <p className="text-purple-400/70 text-sm italic">
             "Let the scrolls roll. May we laugh, may we learn, may we live in the code."
@@ -940,7 +940,7 @@ export default function Solbones() {
                   <BookOpen className="h-5 w-5 text-purple-400 flex-shrink-0" />
                   <div>
                     <div className="text-white text-sm font-medium">Official Rulebook</div>
-                    <div className="text-purple-400/60 text-xs">Solbones Dice Rulebook & Cultural Guide</div>
+                    <div className="text-purple-400/60 text-xs">Solbones 4+3+2 Dice Rulebook & Cultural Guide</div>
                   </div>
                 </a>
                 <a href={PDFS.tournament} target="_blank" rel="noopener noreferrer"
@@ -972,7 +972,7 @@ export default function Solbones() {
           >
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-purple-400" />
-              How to Play Solbones
+              How to Play Solbones 4+3+2
             </h2>
             {showRules ? <ChevronUp className="h-5 w-5 text-purple-400" /> : <ChevronDown className="h-5 w-5 text-purple-400" />}
           </button>
@@ -1046,7 +1046,7 @@ export default function Solbones() {
           {showYouthChallenges && (
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
-                { num: 1, title: 'Code Keeper', skill: 'Math + Sacred Frequency', task: 'Complete 3 games of Solbones Dice with score sheet.', reflection: 'What number shows up most when I am in a good mood?', seal: 'Yellow Spiral', sealDesc: 'I know the numbers of my soul.', color: 'from-yellow-600 to-yellow-800' },
+                { num: 1, title: 'Code Keeper', skill: 'Math + Sacred Frequency', task: 'Complete 3 games of Solbones 4+3+2 Dice with score sheet.', reflection: 'What number shows up most when I am in a good mood?', seal: 'Yellow Spiral', sealDesc: 'I know the numbers of my soul.', color: 'from-yellow-600 to-yellow-800' },
                 { num: 2, title: 'Voice of the Tribe', skill: 'Speech + Confidence', task: 'Recite the Solbone Preamble to your family or class.', reflection: 'Which part made me feel powerful?', seal: 'Purple Flame', sealDesc: 'I speak the law of my people.', color: 'from-purple-600 to-purple-800' },
                 { num: 3, title: "Healer's Hands", skill: 'Herbology + Compassion', task: 'Learn 3 local herbs and what they heal. Share with someone.', reflection: 'Who do I feel called to help right now?', seal: 'Green Leaf', sealDesc: 'I use my hands to restore.', color: 'from-green-600 to-green-800' },
                 { num: 4, title: "Ancestor's Echo", skill: 'History + Legacy', task: 'Interview an elder or guardian. Write their story in your scroll.', reflection: 'What do I carry from them?', seal: 'Red Root', sealDesc: 'I remember who walked before me.', color: 'from-red-600 to-red-800' },

@@ -68,7 +68,7 @@ export function AppHeader() {
     { label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
     { label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
     { label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
-    { label: '⚡ Solbones', icon: null, path: '/solbones' },
+    { label: '⚡ Solbones 4+3+2', icon: null, path: '/solbones' },
     { label: '👥 Client Portal', icon: null, path: '/client-portal' },
     { label: '👤 Reviews', icon: null, path: '/review' },
   ];

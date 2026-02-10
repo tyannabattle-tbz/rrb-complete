@@ -261,16 +261,16 @@ export function AppHeaderEnhanced() {
               <Share2 className="h-4 w-4" />
             </Button>
 
-            {/* Solbones Dice - visible to all */}
+            {/* Solbones 4+3+2 Dice - visible to all */}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/solbones')}
-              title="Solbones Dice Game"
+              title="Solbones 4+3+2 Dice Game"
               className="gap-1.5"
             >
               <Dice5 className="h-4 w-4" />
-              <span className="hidden lg:inline text-xs">Solbones</span>
+              <span className="hidden lg:inline text-xs">Solbones 4+3+2</span>
             </Button>
 
             {/* Admin-only QUMUS link */}

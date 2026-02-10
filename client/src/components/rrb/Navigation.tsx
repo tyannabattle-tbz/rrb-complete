@@ -254,14 +254,14 @@ export default function Navigation() {
             </a>
           </Link>
 
-          {/* Solbones */}
+          {/* Solbones 4+3+2 */}
           <Link href="/solbones">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
               isActive('/solbones')
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
-              ⚡ Solbones
+              ⚡ Solbones 4+3+2
             </a>
           </Link>
 
