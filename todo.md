@@ -1670,3 +1670,13 @@
 ## v9.4 PWA Icon Fix
 - [x] Replace plain RRB letters icon with the RRB splash screen image (microphones/gold/dark bg) as PWA icon
 - [x] Update VITE_APP_TITLE to Rockin Rockin Boogie (built-in secret — user must change in Settings > General)
+
+## v9.5 Make Solbones Discoverable
+- [x] Add prominent Solbones 4+3+2 card/button on the RRB homepage so visitors can find it without a direct link
+- [x] Ensure it's visible on mobile without scrolling far
+- [x] Fix homepage PLATFORMS card: change Solbones link from /rrb/the-music to /solbones, update title/description to reference the dice game
+- [x] Add a dedicated "Play Solbones Dice Game" featured section near the top of the homepage (after King Richard photo)
+- [x] Add Solbones to the Featured Content section alongside Music and Proof Vault
+- [x] Verify mobile hamburger menu has correct Solbones link (already done in v9.3)
+- [x] Test on mobile viewport
+- [ ] Publish fix

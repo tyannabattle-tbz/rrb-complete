@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Radio, Podcast, Music, Zap, Heart, Signal, Sparkles, Users, BookOpen, Brain, Building2, Headphones, Play, Pause } from 'lucide-react';
+import { ArrowRight, Radio, Podcast, Music, Zap, Heart, Signal, Sparkles, Users, BookOpen, Brain, Building2, Headphones, Play, Pause, Dice5, Globe, Trophy } from 'lucide-react';
 import { useAudio } from '@/contexts/AudioContext';
 import { CHANNEL_PRESETS, LIVE_STREAMS, RRB_LEGACY_TRACKS } from '@/lib/streamLibrary';
 import RotatingVinylRecord from "@/components/rrb/RotatingVinylRecord";
@@ -47,12 +47,12 @@ const PLATFORMS = [
   },
   {
     id: 'solbones',
-    title: 'Solbones 4+3+2 Music',
-    description: 'Exclusive music collection and audio archive from the legacy',
-    icon: Headphones,
-    href: '/rrb/the-music',
+    title: 'Solbones 4+3+2 Dice Game',
+    description: 'Sacred math dice game with 9-player multiplayer, QUMUS AI opponents, and Solfeggio frequencies',
+    icon: Dice5,
+    href: '/solbones',
     color: 'from-orange-500/20 to-orange-600/20',
-    badge: '🎵 MUSIC'
+    badge: '🎲 PLAY NOW'
   },
   {
     id: 'legacy',
@@ -292,6 +292,12 @@ export default function Home() {
               A legacy restored — unified ecosystem of platforms, services, and autonomous intelligence
             </p>
             <div className="flex gap-4 flex-wrap justify-center">
+              <Link href="/solbones">
+                <Button size="lg" className="bg-amber-500 hover:bg-amber-400 text-black font-bold">
+                  <Dice5 className="mr-2 w-5 h-5" />
+                  Play Solbones 4+3+2
+                </Button>
+              </Link>
               <Link href="/rrb/proof-vault">
                 <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
                   Explore the Proof Vault
@@ -332,6 +338,55 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* 🎲 PLAY SOLBONES — Featured Game Section */}
+        <section className="py-12 md:py-16 bg-gradient-to-br from-amber-900/30 via-orange-900/20 to-red-900/30 border-y-2 border-amber-500/30">
+          <div className="container max-w-4xl">
+            <Link href="/solbones">
+              <div className="relative p-8 md:p-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 border-2 border-amber-500/40 hover:border-amber-400 transition-all cursor-pointer group shadow-2xl hover:shadow-amber-500/20 hover:scale-[1.01]">
+                {/* Animated dice background */}
+                <div className="absolute top-4 right-4 text-6xl md:text-8xl opacity-20 group-hover:opacity-40 transition-opacity select-none">
+                  🎲
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="px-3 py-1 rounded-full bg-amber-500 text-black text-xs font-bold uppercase tracking-wider animate-pulse">
+                      Play Now
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-bold">
+                      Up to 9 Players
+                    </span>
+                  </div>
+                  <h2 className="text-3xl md:text-5xl font-bold text-amber-100 mb-3 group-hover:text-amber-50 transition">
+                    🎲 Solbones 4+3+2
+                  </h2>
+                  <p className="text-lg md:text-xl text-amber-200/80 mb-6 max-w-xl">
+                    The sacred math dice game — 4+3+2=9 Solfeggio frequencies. Play solo, with friends, or challenge QUMUS AI opponents.
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-sm group-hover:bg-amber-400 transition">
+                      <Dice5 className="w-4 h-4" />
+                      Play Dice Game
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                    <Link href="/solbones-online">
+                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 text-amber-200 font-medium text-sm hover:bg-white/20 transition">
+                        <Globe className="w-4 h-4" />
+                        Online Multiplayer
+                      </span>
+                    </Link>
+                    <Link href="/solbones-tournament">
+                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 text-amber-200 font-medium text-sm hover:bg-white/20 transition">
+                        <Trophy className="w-4 h-4" />
+                        Tournament
+                      </span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </Link>
           </div>
         </section>
 
@@ -440,7 +495,7 @@ export default function Home() {
                   <li>✓ The Music (Recordings & Credits)</li>
                   <li>✓ Proof Vault (Verified Evidence)</li>
                   <li>✓ Grandma Helen (Family History)</li>
-                  <li>✓ Solbones 4+3+2 Music Archive</li>
+                  <li>✓ Solbones 4+3+2 Dice Game</li>
                 </ul>
               </div>
 
@@ -484,7 +539,24 @@ export default function Home() {
               Featured Content
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Play Solbones Dice Game */}
+              <Link href="/solbones">
+                <div className="p-8 rounded-lg border-2 border-amber-500/40 hover:border-amber-400 transition cursor-pointer group bg-gradient-to-br from-amber-500/10 to-orange-600/10 relative overflow-hidden">
+                  <div className="absolute top-2 right-2 text-5xl opacity-15 select-none">🎲</div>
+                  <div className="text-4xl mb-4">🎲</div>
+                  <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-amber-400 transition">
+                    Play Solbones 4+3+2
+                  </h3>
+                  <p className="text-foreground/70 mb-4">
+                    Sacred math dice game with up to 9 players, QUMUS AI opponents, and Solfeggio frequency scoring.
+                  </p>
+                  <div className="flex items-center text-amber-400 font-semibold">
+                    Play Now <ArrowRight className="ml-2 w-4 h-4" />
+                  </div>
+                </div>
+              </Link>
+
               {/* Listen to the Music */}
               <Link href="/rrb/the-music">
                 <div className="p-8 rounded-lg border border-border hover:border-accent transition cursor-pointer group bg-gradient-to-br from-orange-500/10 to-orange-600/10">
