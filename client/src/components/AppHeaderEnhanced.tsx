@@ -164,6 +164,7 @@ export function AppHeaderEnhanced() {
         { label: 'Sweet Miracles', path: 'https://sweetmiraclesattt.wixsite.com/sweet-miracles', external: true },
         { label: 'Books & Miracles', path: '/rrb/books-and-miracles' },
         { label: 'Published Books (B&N)', path: '/rrb/books' },
+        { label: 'Photo Gallery', path: '/rrb/photo-gallery' },
         { label: 'Testimonials & Stories', path: '/rrb/testimonials-and-stories' },
         { label: 'Video Testimonials', path: '/rrb/video-testimonials' },
         { label: 'Family Achievements', path: '/rrb/family-achievements' },

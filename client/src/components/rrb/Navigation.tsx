@@ -86,6 +86,7 @@ export default function Navigation() {
     { label: 'Obituary', href: '/rrb/obituary' },
     { label: 'Books & Miracles', href: '/rrb/books-and-miracles' },
     { label: 'Published Books', href: '/rrb/books' },
+    { label: 'Photo Gallery', href: '/rrb/photo-gallery' },
     { label: 'Systematic Omission', href: '/rrb/systematic-omission' },
     { label: 'Candy Through the Years', href: '/rrb/candy-through-the-years' },
     { label: 'Family Tree', href: '/rrb/family-tree' },

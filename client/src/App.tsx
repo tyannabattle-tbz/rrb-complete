@@ -148,6 +148,7 @@ import RRBLittleRichardConnection from '@/pages/rrb/LittleRichardConnection';
 import RRBVerifiedSources from '@/pages/rrb/VerifiedSources';
 import RRBBooksAndMiracles from '@/pages/rrb/BooksAndMiracles';
 import RRBBooks from '@/pages/rrb/Books';
+import RRBPhotoGallery from '@/pages/rrb/PhotoGallery';
 import RRBTestimonialsAndStories from '@/pages/rrb/TestimonialsAndStories';
 import RRBProducerMentor from '@/pages/rrb/ProducerMentor';
 import RRBMedicalJourney from '@/pages/rrb/MedicalJourney';
@@ -323,6 +324,8 @@ function Router() {
       <Route path="/books" component={RRBBooks} />
       <Route path="/rrb/systematic-omission" component={RRBSystematicOmission} />
       <Route path="/rrb/candy-through-the-years" component={RRBCandyThroughTheYears} />
+      <Route path="/rrb/photo-gallery" component={RRBPhotoGallery} />
+      <Route path="/photo-gallery" component={RRBPhotoGallery} />
       <Route path="/rrb/family-tree" component={RRBFamilyTree} />
       <Route path="/rrb/testimonials-and-stories" component={RRBTestimonialsAndStories} />
       <Route path="/rrb/producer-mentor" component={RRBProducerMentor} />

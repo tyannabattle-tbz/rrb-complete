@@ -6,7 +6,7 @@ import {
   Music, BookOpen, Heart, Shield, BarChart3, Settings, 
   MessageSquare, Video, Palette, Layers, Monitor, Users,
   AlertTriangle, CheckCircle, Search, Sparkles, Bot,
-  Globe, Building2, Award, FileText, Map, Clock, Film, Smartphone
+  Globe, Building2, Award, FileText, Map, Clock, Film, Smartphone, Camera
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -100,6 +100,7 @@ export function UnifiedMobileSidebar() {
         { label: 'Proof Vault', href: '/rrb/proof-vault', icon: Shield },
         { label: 'Books & Miracles', href: '/rrb/books-and-miracles', icon: BookOpen },
         { label: 'Published Books', href: '/rrb/books', icon: BookOpen },
+        { label: 'Photo Gallery', href: '/rrb/photo-gallery', icon: Camera },
         { label: 'Family Tree', href: '/rrb/family-tree', icon: Users },
         { label: 'Testimonials', href: '/rrb/testimonials-and-stories', icon: MessageSquare },
         { label: 'Producer & Mentor', href: '/rrb/producer-mentor', icon: Award },
