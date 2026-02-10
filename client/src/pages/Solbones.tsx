@@ -499,7 +499,11 @@ export default function Solbones() {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/30 via-transparent to-transparent" />
         <div className="relative max-w-6xl mx-auto px-4 py-8 text-center">
-          <Link href="/" className="text-purple-400 hover:text-purple-300 text-sm mb-4 inline-block">&larr; Back to Home</Link>
+          <div className="flex items-center gap-4 mb-4">
+            <Link href="/" className="text-purple-400 hover:text-purple-300 text-sm">&larr; Back to Home</Link>
+            <span className="text-purple-600">|</span>
+            <Link href="/solbones-classic" className="text-amber-400 hover:text-amber-300 text-sm">Play Solbones Classic &rarr;</Link>
+          </div>
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-yellow-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-3">
             Solbones <span className="text-3xl md:text-4xl">4+3+2</span>
           </h1>
@@ -509,6 +513,32 @@ export default function Solbones() {
           <p className="text-purple-400/70 text-sm italic">
             "Let the scrolls roll. May we laugh, may we learn, may we live in the code."
           </p>
+
+          {/* 4+3+2=9 Visual Explainer */}
+          <div className="mt-6 mb-2">
+            <div className="inline-flex items-center gap-2 md:gap-4 bg-black/40 backdrop-blur-sm rounded-2xl px-4 py-3 md:px-8 md:py-4 border border-purple-500/30">
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-lg shadow-blue-500/30">4</div>
+                <span className="text-blue-400 text-[10px] md:text-xs mt-1">432 Hz</span>
+              </div>
+              <span className="text-yellow-400 text-2xl md:text-3xl font-bold">+</span>
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-lg shadow-purple-500/30">3</div>
+                <span className="text-purple-400 text-[10px] md:text-xs mt-1">396 Hz</span>
+              </div>
+              <span className="text-yellow-400 text-2xl md:text-3xl font-bold">+</span>
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-2xl md:text-3xl shadow-lg shadow-red-500/30">2</div>
+                <span className="text-red-400 text-[10px] md:text-xs mt-1">528 Hz</span>
+              </div>
+              <span className="text-yellow-400 text-2xl md:text-3xl font-bold">=</span>
+              <div className="flex flex-col items-center">
+                <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center text-black font-black text-3xl md:text-4xl shadow-lg shadow-yellow-500/40 ring-2 ring-yellow-400/50">9</div>
+                <span className="text-yellow-400 text-[10px] md:text-xs mt-1 font-semibold">Sacred Code</span>
+              </div>
+            </div>
+            <p className="text-purple-300/60 text-xs mt-2">The Solfeggio frequencies reduce to 3, 6, and 9 — the keys to the universe</p>
+          </div>
         </div>
       </div>
 

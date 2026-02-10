@@ -107,6 +107,7 @@ import BroadcastTemplatesLibrary from '@/pages/BroadcastTemplatesLibrary';
 import UserPreferences from '@/pages/UserPreferences';
 import WebhookManagement from '@/pages/WebhookManagement';
 import Solbones from '@/pages/Solbones';
+import SolbonesClassic from '@/pages/SolbonesClassic';
 import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
@@ -273,6 +274,7 @@ function Router() {
       <Route path="/meditation" component={MeditationHub} />
       <Route path="/sweet-miracles" component={DonationCheckout} />
       <Route path="/solbones" component={Solbones} />
+      <Route path="/solbones-classic" component={SolbonesClassic} />
       <Route path="/client-portal" component={ClientPortal} />
       <Route path="/review" component={Review} />
       <Route path="/admin-moderation" component={AdminModeration} />

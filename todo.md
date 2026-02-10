@@ -1579,8 +1579,8 @@
 - [x] Checkpoint and deliver
 
 ## Session 4d: Real Audio Integration
-- [ ] Add Rockin Rockin Boogie audio player to Canryn Ecosystem dashboard
-- [ ] Add the real track to radio rotation (play frequently)
+- [x] Add Rockin Rockin Boogie audio player to Canryn Ecosystem dashboard
+- [x] Add the real track to radio rotation (play frequently)
 - [x] Fix /books route returning 404 error
 - [x] Create /books page showcasing Seabrun's 14 books on Barnes & Noble
 - [x] Fix RadioCommercials bookLink references to point to /rrb/books
@@ -1595,10 +1595,15 @@
 - [x] Create Legacy Photo Gallery page with fair use protections and copyright disclaimers
 - [x] Add gallery to navigation and routes
 - [x] Upload Helen Hunter Life Care Leader magazine photos to CDN
-- [ ] Update Grandma Helen page with Life Care Leader magazine feature and article content
-- [ ] Add backstage photo and magazine images to Photo Gallery
+- [x] Update Grandma Helen page with Life Care Leader magazine feature and article content
+- [x] Add backstage photo and magazine images to Photo Gallery
 - [x] Upload Helen Hunter Life Care Leader magazine photos to CDN
-- [ ] Update Grandma Helen page with Life Care Leader magazine feature
-- [ ] Add backstage photo and magazine images to Photo Gallery
+- [x] Update Grandma Helen page with Life Care Leader magazine feature
+- [x] Add backstage photo and magazine images to Photo Gallery
 - [x] Update Solbones title to "Solbones 4+3+2" throughout the site
 - [x] Update Solbones title to "Solbones 4+3+2" throughout the site
+- [x] Add 4+3+2=9 visual explainer to Solbones game page
+- [x] Create printable Solbones 4+3+2 rulebook PDF download
+- [x] Bring back original Solbones as separate classic version (e.g. "Solbones Classic")
+- [x] Verify Sweet Miracles grant discovery is working as designed
+- [x] Final production checkpoint

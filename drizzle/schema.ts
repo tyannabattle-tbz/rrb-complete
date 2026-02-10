@@ -1464,8 +1464,8 @@ export const musicTracks = mysqlTable('music_tracks', {
   coverArtUrl: varchar('cover_art_url', { length: 500 }),
   isrc: varchar('isrc', { length: 50 }), // International Standard Recording Code
   rights: varchar('rights', { length: 255 }), // Rights holder info
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const musicPlaylists = mysqlTable('music_playlists', {
@@ -1541,7 +1541,7 @@ export const streamingStatus = mysqlTable('streaming_status', {
   latency: int('latency'), // milliseconds
   errorMessage: text('error_message'),
   lastUpdated: timestamp('last_updated').defaultNow().onUpdateNow().notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const viewerMetrics = mysqlTable('viewer_metrics', {
