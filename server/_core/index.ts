@@ -101,6 +101,26 @@ async function startServer() {
     console.log('[Agent Network] Init skipped:', (e as Error).message);
   }
 
+  // Initialize Sweet Miracles Grant Discovery Engine
+  try {
+    const { startGrantDiscovery } = await import("../services/grant-discovery-engine");
+    startGrantDiscovery(3600000); // Scan every hour
+    console.log('[Grant Discovery] Automated grant finding protocol activated');
+  } catch (e) {
+    console.log('[Grant Discovery] Init skipped:', (e as Error).message);
+  }
+
+  // Initialize AI Business Operations Assistants (5 autonomous bots)
+  try {
+    const { startAIBusinessAssistants } = await import("../services/ai-business-assistants");
+    startAIBusinessAssistants();
+    console.log('[AI Business Bots] 10 autonomous AI assistants activated');
+    console.log('[AI Business Bots] Bookkeeping | HR | Accounting | Legal | Radio Directory');
+    console.log('[AI Business Bots] Social Media | Content Calendar | Engagement | Grant Discovery | Emergency');
+  } catch (e) {
+    console.log('[AI Business Bots] Init skipped:', (e as Error).message);
+  }
+
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });

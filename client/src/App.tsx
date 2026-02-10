@@ -183,6 +183,14 @@ import RRBVideoTestimonials from '@/pages/rrb/VideoTestimonials';
 import RRBNavigation from '@/components/rrb/Navigation';
 import { LegalFooter as RRBLegalFooter } from '@/components/rrb/LegalFooter';
 
+// Business Operations Pages
+import BusinessBookkeeping from '@/pages/rrb/BusinessBookkeeping';
+import BusinessHR from '@/pages/rrb/BusinessHR';
+import BusinessAccounting from '@/pages/rrb/BusinessAccounting';
+import BusinessLegal from '@/pages/rrb/BusinessLegal';
+import RadioDirectory from '@/pages/rrb/RadioDirectory';
+import AIBotCommandCenter from '@/pages/rrb/AIBotCommandCenter';
+
 // Version: 6.3.0 - RRB fully integrated, radio streaming, swipe gestures
 function Router() {
   return (
@@ -368,6 +376,20 @@ function Router() {
       <Route path="/rrb/setlist-archive" component={RRBSetlistArchive} />
       <Route path="/rrb/media-hub" component={RRBMediaHub} />
       <Route path="/rrb/faq" component={RRBFAQ} />
+
+      {/* ===== Business Operations (Offline-First) ===== */}
+      <Route path="/rrb/bookkeeping" component={BusinessBookkeeping} />
+      <Route path="/rrb/hr" component={BusinessHR} />
+      <Route path="/rrb/accounting" component={BusinessAccounting} />
+      <Route path="/rrb/legal" component={BusinessLegal} />
+      <Route path="/rrb/radio-directory" component={RadioDirectory} />
+      <Route path="/rrb/ai-command-center" component={AIBotCommandCenter} />
+      {/* Aliases for direct access */}
+      <Route path="/bookkeeping" component={BusinessBookkeeping} />
+      <Route path="/hr" component={BusinessHR} />
+      <Route path="/accounting" component={BusinessAccounting} />
+      <Route path="/legal" component={BusinessLegal} />
+      <Route path="/radio-directory" component={RadioDirectory} />
 
       <Route component={NotFound} />
     </Switch>

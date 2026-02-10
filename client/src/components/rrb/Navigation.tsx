@@ -21,6 +21,7 @@ export default function Navigation() {
   const [isEasterEggOpen, setIsEasterEggOpen] = useState(false);
   const [showEmergencyNotice, setShowEmergencyNotice] = useState(false);
   const [isLegacyDropdownOpen, setIsLegacyDropdownOpen] = useState(false);
+  const [isBusinessDropdownOpen, setIsBusinessDropdownOpen] = useState(false);
   const { user } = useAuth();
   const { installPrompt, handleInstall, isInstallable } = usePWA();
   const [location, navigate] = useLocation();
@@ -108,6 +109,16 @@ export default function Navigation() {
     { label: 'Affiliate Program', href: '/rrb/affiliate-program' },
     { label: 'Video Testimonials', href: '/rrb/video-testimonials' },
     { label: 'News & Updates', href: '/rrb/news' },
+  ];
+
+  // Business Operations
+  const businessOpsItems = [
+    { label: '🧠 AI Command Center', href: '/rrb/ai-command-center' },
+    { label: '📊 Bookkeeping', href: '/rrb/bookkeeping' },
+    { label: '👥 Human Resources', href: '/rrb/hr' },
+    { label: '💰 Accounting', href: '/rrb/accounting' },
+    { label: '⚖️ Contracts & Legal', href: '/rrb/legal' },
+    { label: '📻 Radio Directory', href: '/rrb/radio-directory' },
   ];
 
   const additionalItems = [
@@ -276,6 +287,42 @@ export default function Navigation() {
             </a>
           </Link>
 
+          {/* Business Operations Dropdown */}
+          <div className="relative group">
+            <button
+              className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
+                businessOpsItems.some(item => isActive(item.href))
+                  ? 'bg-accent text-accent-foreground'
+                  : 'text-foreground hover:bg-accent/10'
+              }`}
+              onMouseEnter={() => setIsBusinessDropdownOpen(true)}
+              onMouseLeave={() => setIsBusinessDropdownOpen(false)}
+            >
+              Business Ops ▼
+            </button>
+            {isBusinessDropdownOpen && (
+              <div
+                className="absolute left-0 mt-0 w-48 bg-card border border-border rounded shadow-lg z-50"
+                onMouseEnter={() => setIsBusinessDropdownOpen(true)}
+                onMouseLeave={() => setIsBusinessDropdownOpen(false)}
+              >
+                {businessOpsItems.map((item) => (
+                  <Link key={item.href} href={item.href}>
+                    <a
+                      className={`block px-4 py-2 text-sm transition-colors first:rounded-t last:rounded-b ${
+                        isActive(item.href)
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-foreground hover:bg-accent/10'
+                      }`}
+                    >
+                      {item.label}
+                    </a>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* QUMUS Dashboard */}
           <Link href="/qumus-dashboard">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
@@ -433,6 +480,29 @@ export default function Navigation() {
                   🧘 Meditation
                 </a>
               </Link>
+            </div>
+
+            {/* Business Operations */}
+            <div className="mb-6">
+              <h3 className="font-bold text-accent mb-3 text-sm uppercase tracking-wide">
+                Business Operations
+              </h3>
+              <div className="space-y-2">
+                {businessOpsItems.map((item) => (
+                  <Link key={item.href} href={item.href}>
+                    <a
+                      className={`block px-3 py-2 rounded text-sm transition-colors ${
+                        isActive(item.href)
+                          ? 'bg-accent text-accent-foreground font-medium'
+                          : 'text-foreground hover:bg-accent/10'
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {item.label}
+                    </a>
+                  </Link>
+                ))}
+              </div>
             </div>
 
             {/* Additional Items */}

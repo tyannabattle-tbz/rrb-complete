@@ -6,6 +6,7 @@ import { ArrowRight, Radio, Podcast, Music, Zap, Heart, Signal, Sparkles, Users,
 import { useAudio } from '@/contexts/AudioContext';
 import { CHANNEL_PRESETS, LIVE_STREAMS, RRB_LEGACY_TRACKS } from '@/lib/streamLibrary';
 import RotatingVinylRecord from "@/components/rrb/RotatingVinylRecord";
+import { QUMUSActivityFeed } from "@/components/rrb/QUMUSActivityFeed";
 
 // Platform showcase items
 const PLATFORMS = [
@@ -594,6 +595,25 @@ export default function Home() {
 
         {/* Quick Listen Section */}
         <QuickListenSection />
+
+        {/* QUMUS AI Activity Feed */}
+        <section className="py-12 md:py-16 bg-gradient-to-b from-background to-muted/30">
+          <div className="container">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold">AI Operations Center</h2>
+                <p className="text-muted-foreground text-sm mt-1">10 autonomous AI assistants monitoring all business operations in real-time</p>
+              </div>
+              <Link href="/rrb/ai-command-center">
+                <Button variant="outline" size="sm">
+                  <Brain className="w-4 h-4 mr-2" />
+                  Full Command Center
+                </Button>
+              </Link>
+            </div>
+            <QUMUSActivityFeed />
+          </div>
+        </section>
 
         {/* Call to Action */}
         <section className="py-16 md:py-24 bg-primary text-primary-foreground">

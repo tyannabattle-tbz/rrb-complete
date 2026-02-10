@@ -310,6 +310,9 @@ export default function QumusChatPage() {
             <TabsTrigger value="monitoring" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
               📊 Monitoring
             </TabsTrigger>
+            <TabsTrigger value="activity" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
+              🔴 Activity Feed
+            </TabsTrigger>
           </TabsList>
 
           {/* Chat Tab */}

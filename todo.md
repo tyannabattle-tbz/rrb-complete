@@ -1840,3 +1840,164 @@
 - [x] Wire notifications to QUMUS autonomous loop (escalations, emergencies, agent health)
 - [x] Add notification history and management page
 - [x] Test push notification delivery end-to-end
+
+## Activate Grant Finding Protocol for Sweet Miracles
+- [ ] Build automated grant discovery engine with LLM-powered search
+- [ ] Create grant matching algorithm based on Sweet Miracles mission keywords
+- [ ] Add grant database with categories (nonprofit, community, emergency, media, education, wellness)
+- [ ] Build grant application tracker with status pipeline (discovered → researching → applying → submitted → awarded/denied)
+- [ ] Wire grant discovery to QUMUS autonomous loop for continuous scanning
+- [ ] Add grant alerts and notifications when new matching grants are found
+- [ ] Create grant dashboard UI with discovery feed, match scores, and application status
+
+## QUMUS Activity Feed on Home Page
+- [ ] Build real-time activity feed widget showing latest autonomous decisions
+- [ ] Show agent communications, escalations, and system events
+- [ ] Add to home page for instant ecosystem visibility
+- [ ] Wire to tRPC with live data from QUMUS engine
+
+## Notification Preferences Page
+- [ ] Build notification preferences UI with toggle controls per event type
+- [ ] Add severity threshold selectors for each notification category
+- [ ] Wire to existing notification rule management endpoints
+- [ ] Register route and add to navigation
+
+## Expand Grant Discovery — Production, Startup, Maintenance
+- [x] Add production site grant sources (studio equipment, facility, media production)
+- [x] Add business startup grant sources (SBA, SCORE, minority business, women-owned)
+- [x] Add maintenance/operational grant sources (technology, infrastructure, capacity building)
+- [x] Add Canryn Production-specific grant categories
+- [x] Expand LLM grant matching to score against both Sweet Miracles and Canryn Production missions
+- [x] Add grant category filters for production, startup, maintenance, nonprofit
+
+## v10.1 Advanced Business Operations Modules
+### Bookkeeping Module
+- [x] Create bookkeeping tRPC router with ledger entries, accounts, journal entries
+- [x] Build BookkeepingPage with general ledger, chart of accounts, journal entries, trial balance
+- [ ] Add double-entry accounting logic (debits/credits must balance)
+- [ ] Add income/expense categorization with Canryn Production chart of accounts
+- [ ] Add financial reports (P&L, balance sheet, cash flow)
+
+### Human Resources Module
+- [x] Create HR tRPC router with employee records, departments, payroll, time tracking
+- [x] Build HumanResourcesPage with employee directory, departments, payroll, onboarding
+- [ ] Add employee lifecycle management (hire, promote, transfer, terminate)
+- [ ] Add department management for all 6 Canryn subsidiaries
+- [ ] Add time tracking and attendance system
+- [ ] Add benefits and compensation tracking
+
+### Accounting Module
+- [x] Create accounting tRPC router with invoices, payments, receivables, payables
+- [x] Build AccountingPage with AR/AP, invoicing, payment tracking, reconciliation
+- [ ] Add invoice generation and tracking
+- [ ] Add accounts receivable and payable management
+- [ ] Add bank reconciliation tools
+- [ ] Add tax preparation and reporting
+
+### Contracts & Legal Module
+- [x] Create contracts tRPC router with contract lifecycle, templates, approvals
+- [x] Build ContractsLegalPage with contract management, templates, compliance, IP tracking
+- [ ] Add contract templates (artist agreements, licensing, NDA, employment)
+- [ ] Add contract lifecycle management (draft → review → approved → active → expired)
+- [ ] Add intellectual property tracking and rights management
+- [ ] Add compliance tracking (FCC, copyright, GDPR)
+- [ ] Add legal document repository with version control
+
+### Offline-First Architecture
+- [x] Create IndexedDB offline storage service for business data
+- [x] Build offline queue for create/edit operations with auto-sync
+- [x] Add offline indicators and sync status to all business pages
+- [ ] Cache business data locally for offline viewing
+- [ ] Client-side financial calculations (trial balance, P&L)
+- [ ] Client-side PDF export for reports and contracts
+
+### Integration & Navigation
+- [x] Wire all 5 modules into App.tsx routes
+- [x] Add Business Operations section to navigation (header + mobile)
+- [x] Add QUMUS autonomous oversight for all business operations
+- [x] Write comprehensive tests for all modules (21 tests, all passing)
+
+### QUMUS Activity Feed Widget
+- [x] Build real-time activity feed widget showing latest autonomous decisions
+- [x] Show agent communications, escalations, and system events
+- [x] Add to home page for instant ecosystem visibility
+
+### Notification Preferences Page
+- [ ] Build notification preferences UI with toggle controls per event type (deferred)
+- [ ] Add severity threshold selectors (deferred)
+- [ ] Wire to existing notification rule management endpoints (deferred)
+- [ ] Register route and add to navigation (deferred)
+
+## v10.2 Radio Station Directory Listing & Discovery
+- [x] Create RadioBrowser API integration (programmatic station registration)
+- [x] Build Radio Directory Submission Manager page (submit to 10+ directories from one place)
+- [ ] Create stream metadata endpoint (now-playing info for directory scrapers)
+- [x] Build station profile/public landing page with stream embed and branding
+- [x] Add stream health monitor (uptime tracking for directory compliance)
+- [x] Create directory submission tracker (track which directories station is listed on)
+- [x] Add station branding assets manager (logo, banner, description for submissions)
+- [x] Wire RadioBrowser API for auto-registration with station metadata
+- [x] Add TuneIn, Radio Garden, Radio.net, Streema, Online Radio Box submission guides
+
+## v10.3 AI Bots & Autonomous Assistants — Activation & Engagement
+### QUMUS AI Brain Activation
+- [x] Verify QUMUS autonomous decision loop is running (2-min cycle)
+- [x] Ensure all 8+ decision policies are active and processing
+- [x] Activate QUMUS oversight for new business operations modules
+- [x] Wire QUMUS AI into bookkeeping, HR, accounting, legal, radio directory
+
+### AI Business Operations Assistants
+- [x] Create AI Bookkeeping Assistant (auto-categorize transactions, flag anomalies)
+- [x] Create AI HR Assistant (employee onboarding suggestions, compliance reminders)
+- [x] Create AI Accounting Assistant (invoice validation, payment reminders, reconciliation)
+- [x] Create AI Legal Assistant (contract review, compliance deadline alerts, IP monitoring)
+- [x] Create AI Radio Directory Assistant (auto-submit to directories, monitor listings)
+
+### Bot Agent Network Activation
+- [x] Activate Content Bot (auto-generate broadcast schedules, playlist recommendations)
+- [x] Activate Compliance Bot (monitor regulatory deadlines, auto-flag overdue items)
+- [x] Activate Financial Bot (daily P&L summaries, cash flow alerts, budget tracking)
+- [x] Activate Grant Discovery Bot (continuous grant scanning, auto-match scoring)
+- [x] Activate Emergency Bot (crisis detection, auto-escalation, community alerts)
+
+### AI-Powered Dashboard Widgets
+- [x] Build QUMUS Activity Feed widget showing real-time AI decisions on home page
+- [x] Build AI Assistant Chat panel for each business module
+- [x] Add AI recommendation cards to business dashboards
+- [x] Show bot status indicators (active/idle/error) across all modules
+
+### Autonomous Engagement Features
+- [x] Auto-generate daily business operations summary via AI
+- [x] Auto-flag compliance deadlines approaching within 30 days
+- [x] Auto-categorize new ledger entries using LLM
+- [x] Auto-suggest contract renewals before expiration
+- [x] Auto-monitor stream health and alert on downtime
+
+## v10.4 Social Media Bots & AI Assistants — Full Activation
+### Social Media Bot Network
+- [x] Create Social Media Bot service (auto-post, engagement tracking, content scheduling)
+- [x] Facebook/Meta Bot — auto-post broadcasts, events, Sweet Miracles updates
+- [x] Instagram Bot — auto-share studio content, behind-the-scenes, reels
+- [x] X/Twitter Bot — auto-tweet radio now-playing, breaking news, community alerts
+- [x] YouTube Bot — auto-publish podcast episodes, video content, live stream alerts
+- [x] TikTok Bot — auto-share short-form content, healing frequency clips
+- [x] LinkedIn Bot — auto-post business updates, grant opportunities, partnerships
+- [x] Content Calendar AI — auto-generate weekly social media content plans
+- [x] Engagement Tracker — monitor likes, shares, comments across all platforms
+- [x] Hashtag Optimizer — AI-generated hashtags for maximum reach
+- [x] Cross-Platform Scheduler — unified posting schedule across all social networks
+- [x] Wire social media bots into AI Bot Command Center
+- [x] Add social media activity to QUMUS Activity Feed
+
+## v10.5 AI Commercial Generation & Radio Integration
+### Commercial Generation Engine
+- [ ] Create AI commercial script generator service (LLM-powered)
+- [ ] Generate scripts for Canryn Production, Sweet Miracles, RRB Radio, subsidiaries
+- [ ] Create text-to-speech audio generation for commercials
+- [ ] Build commercial library with categories (promo, PSA, sponsor, event)
+- [ ] Add commercial scheduling into radio broadcast rotation
+- [ ] Create commercial management page (create, preview, schedule, archive)
+- [ ] Wire commercial playback into global audio player
+- [ ] Add QUMUS autonomous commercial scheduling (auto-rotate, frequency control)
+- [ ] Create commercial analytics (play count, scheduling history)
+- [ ] Write tests for commercial generation system

@@ -1876,3 +1876,209 @@ export const playlists = mysqlTable("playlists", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
+
+// ═══════════════════════════════════════════════════════════
+// CANRYN PRODUCTION — BUSINESS OPERATIONS TABLES
+// ═══════════════════════════════════════════════════════════
+
+// ── BOOKKEEPING ──
+export const bookkeepingAccounts = mysqlTable('bookkeeping_accounts', {
+  id: int().autoincrement().notNull(),
+  accountCode: varchar('account_code', { length: 20 }).notNull(),
+  accountName: varchar('account_name', { length: 255 }).notNull(),
+  accountType: mysqlEnum('account_type', ['asset', 'liability', 'equity', 'revenue', 'expense']).notNull(),
+  parentAccountId: int('parent_account_id'),
+  description: text('description'),
+  isActive: boolean('is_active').default(true).notNull(),
+  balance: decimal('balance', { precision: 15, scale: 2 }).default('0.00').notNull(),
+  subsidiary: varchar('subsidiary', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+});
+
+export const bookkeepingJournalEntries = mysqlTable('bookkeeping_journal_entries', {
+  id: int().autoincrement().notNull(),
+  entryNumber: varchar('entry_number', { length: 50 }).notNull(),
+  entryDate: timestamp('entry_date').notNull(),
+  description: text('description').notNull(),
+  reference: varchar('reference', { length: 255 }),
+  status: mysqlEnum('status', ['draft', 'posted', 'voided']).default('draft').notNull(),
+  createdBy: int('created_by'),
+  approvedBy: int('approved_by'),
+  totalDebit: decimal('total_debit', { precision: 15, scale: 2 }).default('0.00').notNull(),
+  totalCredit: decimal('total_credit', { precision: 15, scale: 2 }).default('0.00').notNull(),
+  subsidiary: varchar('subsidiary', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+});
+
+export const bookkeepingLedgerLines = mysqlTable('bookkeeping_ledger_lines', {
+  id: int().autoincrement().notNull(),
+  journalEntryId: int('journal_entry_id').notNull(),
+  accountId: int('account_id').notNull(),
+  debit: decimal('debit', { precision: 15, scale: 2 }).default('0.00').notNull(),
+  credit: decimal('credit', { precision: 15, scale: 2 }).default('0.00').notNull(),
+  memo: text('memo'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// ── HUMAN RESOURCES ──
+export const hrEmployees = mysqlTable('hr_employees', {
+  id: int().autoincrement().notNull(),
+  employeeNumber: varchar('employee_number', { length: 20 }).notNull(),
+  firstName: varchar('first_name', { length: 100 }).notNull(),
+  lastName: varchar('last_name', { length: 100 }).notNull(),
+  email: varchar('email', { length: 320 }),
+  phone: varchar('phone', { length: 20 }),
+  title: varchar('title', { length: 255 }),
+  departmentId: int('department_id'),
+  subsidiary: varchar('subsidiary', { length: 255 }),
+  hireDate: timestamp('hire_date').notNull(),
+  terminationDate: timestamp('termination_date'),
+  status: mysqlEnum('status', ['active', 'on_leave', 'terminated', 'retired']).default('active').notNull(),
+  employmentType: mysqlEnum('employment_type', ['full_time', 'part_time', 'contractor', 'intern']).default('full_time').notNull(),
+  salary: decimal('salary', { precision: 12, scale: 2 }),
+  payFrequency: mysqlEnum('pay_frequency', ['weekly', 'biweekly', 'monthly', 'annual']).default('biweekly').notNull(),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+});
+
+export const hrDepartments = mysqlTable('hr_departments', {
+  id: int().autoincrement().notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
+  code: varchar('code', { length: 20 }).notNull(),
+  subsidiary: varchar('subsidiary', { length: 255 }),
+  managerId: int('manager_id'),
+  description: text('description'),
+  budget: decimal('budget', { precision: 15, scale: 2 }),
+  headcount: int('headcount').default(0).notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+});
+
+export const hrTimeTracking = mysqlTable('hr_time_tracking', {
+  id: int().autoincrement().notNull(),
+  employeeId: int('employee_id').notNull(),
+  date: timestamp('date').notNull(),
+  hoursWorked: decimal('hours_worked', { precision: 5, scale: 2 }).notNull(),
+  overtime: decimal('overtime', { precision: 5, scale: 2 }).default('0.00').notNull(),
+  projectCode: varchar('project_code', { length: 50 }),
+  notes: text('notes'),
+  status: mysqlEnum('status', ['pending', 'approved', 'rejected']).default('pending').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const hrPayroll = mysqlTable('hr_payroll', {
+  id: int().autoincrement().notNull(),
+  employeeId: int('employee_id').notNull(),
+  payPeriodStart: timestamp('pay_period_start').notNull(),
+  payPeriodEnd: timestamp('pay_period_end').notNull(),
+  grossPay: decimal('gross_pay', { precision: 12, scale: 2 }).notNull(),
+  deductions: decimal('deductions', { precision: 12, scale: 2 }).default('0.00').notNull(),
+  netPay: decimal('net_pay', { precision: 12, scale: 2 }).notNull(),
+  taxWithheld: decimal('tax_withheld', { precision: 12, scale: 2 }).default('0.00').notNull(),
+  status: mysqlEnum('status', ['pending', 'processed', 'paid', 'voided']).default('pending').notNull(),
+  paidDate: timestamp('paid_date'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// ── ACCOUNTING ──
+export const accountingInvoices = mysqlTable('accounting_invoices', {
+  id: int().autoincrement().notNull(),
+  invoiceNumber: varchar('invoice_number', { length: 50 }).notNull(),
+  type: mysqlEnum('type', ['receivable', 'payable']).notNull(),
+  clientName: varchar('client_name', { length: 255 }).notNull(),
+  clientEmail: varchar('client_email', { length: 320 }),
+  issueDate: timestamp('issue_date').notNull(),
+  dueDate: timestamp('due_date').notNull(),
+  subtotal: decimal('subtotal', { precision: 15, scale: 2 }).notNull(),
+  tax: decimal('tax', { precision: 15, scale: 2 }).default('0.00').notNull(),
+  total: decimal('total', { precision: 15, scale: 2 }).notNull(),
+  amountPaid: decimal('amount_paid', { precision: 15, scale: 2 }).default('0.00').notNull(),
+  status: mysqlEnum('status', ['draft', 'sent', 'paid', 'partial', 'overdue', 'cancelled', 'void']).default('draft').notNull(),
+  subsidiary: varchar('subsidiary', { length: 255 }),
+  notes: text('notes'),
+  lineItems: json('line_items'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+});
+
+export const accountingPayments = mysqlTable('accounting_payments', {
+  id: int().autoincrement().notNull(),
+  invoiceId: int('invoice_id'),
+  paymentDate: timestamp('payment_date').notNull(),
+  amount: decimal('amount', { precision: 15, scale: 2 }).notNull(),
+  method: mysqlEnum('method', ['cash', 'check', 'wire', 'ach', 'credit_card', 'stripe', 'paypal', 'other']).default('stripe').notNull(),
+  reference: varchar('reference', { length: 255 }),
+  notes: text('notes'),
+  status: mysqlEnum('status', ['pending', 'completed', 'failed', 'refunded']).default('completed').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const accountingReconciliation = mysqlTable('accounting_reconciliation', {
+  id: int().autoincrement().notNull(),
+  accountId: int('account_id').notNull(),
+  reconciliationDate: timestamp('reconciliation_date').notNull(),
+  statementBalance: decimal('statement_balance', { precision: 15, scale: 2 }).notNull(),
+  bookBalance: decimal('book_balance', { precision: 15, scale: 2 }).notNull(),
+  difference: decimal('difference', { precision: 15, scale: 2 }).notNull(),
+  status: mysqlEnum('status', ['in_progress', 'completed', 'discrepancy']).default('in_progress').notNull(),
+  notes: text('notes'),
+  reconciledBy: int('reconciled_by'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// ── CONTRACTS & LEGAL ──
+export const legalContracts = mysqlTable('legal_contracts', {
+  id: int().autoincrement().notNull(),
+  contractNumber: varchar('contract_number', { length: 50 }).notNull(),
+  title: varchar('title', { length: 500 }).notNull(),
+  contractType: mysqlEnum('contract_type', ['artist_agreement', 'licensing', 'nda', 'employment', 'vendor', 'distribution', 'publishing', 'sponsorship', 'partnership', 'other']).notNull(),
+  counterparty: varchar('counterparty', { length: 255 }).notNull(),
+  status: mysqlEnum('status', ['draft', 'review', 'approved', 'active', 'expired', 'terminated', 'disputed']).default('draft').notNull(),
+  startDate: timestamp('start_date'),
+  endDate: timestamp('end_date'),
+  value: decimal('value', { precision: 15, scale: 2 }),
+  subsidiary: varchar('subsidiary', { length: 255 }),
+  description: text('description'),
+  terms: text('terms'),
+  assignedTo: int('assigned_to'),
+  approvedBy: int('approved_by'),
+  documentUrl: varchar('document_url', { length: 500 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+});
+
+export const legalIntellectualProperty = mysqlTable('legal_intellectual_property', {
+  id: int().autoincrement().notNull(),
+  title: varchar('title', { length: 500 }).notNull(),
+  ipType: mysqlEnum('ip_type', ['copyright', 'trademark', 'patent', 'trade_secret', 'licensing_right', 'masters', 'publishing_right']).notNull(),
+  registrationNumber: varchar('registration_number', { length: 100 }),
+  owner: varchar('owner', { length: 255 }).notNull(),
+  status: mysqlEnum('status', ['pending', 'registered', 'active', 'expired', 'disputed', 'transferred']).default('pending').notNull(),
+  filingDate: timestamp('filing_date'),
+  expirationDate: timestamp('expiration_date'),
+  description: text('description'),
+  subsidiary: varchar('subsidiary', { length: 255 }),
+  value: decimal('value', { precision: 15, scale: 2 }),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+});
+
+export const legalComplianceItems = mysqlTable('legal_compliance_items', {
+  id: int().autoincrement().notNull(),
+  title: varchar('title', { length: 500 }).notNull(),
+  category: mysqlEnum('category', ['fcc', 'copyright', 'gdpr', 'ccpa', 'ada', 'tax', 'employment_law', 'broadcast_license', 'other']).notNull(),
+  status: mysqlEnum('status', ['compliant', 'non_compliant', 'pending_review', 'in_progress', 'waived']).default('pending_review').notNull(),
+  dueDate: timestamp('due_date'),
+  assignedTo: int('assigned_to'),
+  description: text('description'),
+  resolution: text('resolution'),
+  subsidiary: varchar('subsidiary', { length: 255 }),
+  priority: mysqlEnum('priority', ['low', 'medium', 'high', 'critical']).default('medium').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+});

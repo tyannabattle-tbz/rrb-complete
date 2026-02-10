@@ -56,6 +56,18 @@ import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
 
+// Business Operations routers
+import { bookkeepingRouter } from "./routers/businessBookkeeping";
+import { hrRouter } from "./routers/businessHR";
+import { accountingRouter } from "./routers/businessAccounting";
+import { legalRouter } from "./routers/businessLegal";
+
+// Radio Directory Listing
+import { radioDirectoryRouter } from "./routers/radioDirectory";
+
+// AI Business Assistants (5 autonomous bots)
+import { aiBusinessAssistantsRouter } from "./routers/aiBusinessAssistants";
+
 // Radio Content API (serves tracks/playlists from database)
 import { radioContentRouter } from "./routers/radioContentRouter";
 // Content Scheduler (24/7 automated content rotation)
@@ -232,6 +244,25 @@ export const appRouter = router({
 
   // Listener Analytics (real-time channel metrics)
   listenerAnalytics: listenerAnalyticsRouter,
+
+  // ===== Business Operations (Offline-First) =====
+  // Bookkeeping (Chart of Accounts, Journal Entries, General Ledger)
+  bookkeeping: bookkeepingRouter,
+
+  // Human Resources (Employees, Departments, Payroll, Time Tracking)
+  hr: hrRouter,
+
+  // Accounting (Invoices AR/AP, Payments, Reconciliation)
+  accounting: accountingRouter,
+
+  // Contracts & Legal (Contracts, IP, Compliance)
+  legal: legalRouter,
+
+  // Radio Directory Listing & Discovery
+  radioDirectory: radioDirectoryRouter,
+
+  // AI Business Assistants (5 autonomous bots)
+  aiBusinessAssistants: aiBusinessAssistantsRouter,
 
   // Agent Session Management
   agent: router({
