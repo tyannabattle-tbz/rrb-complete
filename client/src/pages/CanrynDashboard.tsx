@@ -279,6 +279,44 @@ export function CanrynDashboard() {
         </Card>
       )}
 
+      {/* Featured Book - Dad's Published Works */}
+      <Card className="bg-gradient-to-r from-amber-900/60 to-stone-800 border-amber-700/50 overflow-hidden">
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="shrink-0">
+              <img
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/oiSGBGXClDhKLqMj.png"
+                alt="All About Candy by Seabrun Hunter"
+                className="w-32 h-44 object-cover rounded-lg shadow-xl"
+              />
+            </div>
+            <div className="flex-1 text-center md:text-left space-y-3">
+              <Badge className="bg-amber-600 text-white">Featured Book</Badge>
+              <h3 className="text-2xl font-bold text-amber-200">All About Candy</h3>
+              <p className="text-stone-300">The first book from the HAPPENINGS series — a true autobiography with real occurrences from the past of Seabrun "Candy" Hunter Jr. Available on Barnes & Noble.</p>
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                <a href="https://www.barnesandnoble.com/w/all-about-candy-seabrun-hunter/1122724263?ean=2940150866133" target="_blank" rel="noopener noreferrer">
+                  <Button className="bg-amber-600 hover:bg-amber-500 text-white gap-2">
+                    <BookOpen className="w-4 h-4" />
+                    Buy on Barnes & Noble
+                  </Button>
+                </a>
+                <a href="/rrb/books">
+                  <Button variant="outline" className="border-amber-600 text-amber-300 hover:bg-amber-900/50 gap-2">
+                    View All 14 Books
+                  </Button>
+                </a>
+              </div>
+            </div>
+            <div className="hidden lg:block shrink-0 text-center">
+              <p className="text-5xl font-bold text-amber-400">14</p>
+              <p className="text-sm text-amber-200/70">Published Books</p>
+              <p className="text-xs text-stone-400 mt-1">on Barnes & Noble</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Footer */}
       <div className="text-center text-slate-400 text-sm pt-8 border-t border-slate-600">
         <p>Canryn Production | Founded by {ecosystemConfig.data?.founder}</p>

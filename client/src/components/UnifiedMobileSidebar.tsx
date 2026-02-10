@@ -99,6 +99,7 @@ export function UnifiedMobileSidebar() {
         { label: 'Audiobooks', href: '/rrb/audiobooks', icon: Headphones },
         { label: 'Proof Vault', href: '/rrb/proof-vault', icon: Shield },
         { label: 'Books & Miracles', href: '/rrb/books-and-miracles', icon: BookOpen },
+        { label: 'Published Books', href: '/rrb/books', icon: BookOpen },
         { label: 'Family Tree', href: '/rrb/family-tree', icon: Users },
         { label: 'Testimonials', href: '/rrb/testimonials-and-stories', icon: MessageSquare },
         { label: 'Producer & Mentor', href: '/rrb/producer-mentor', icon: Award },
