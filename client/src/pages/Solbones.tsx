@@ -271,6 +271,12 @@ export default function Solbones() {
       try {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
         setAudioContext(audioContextRef.current);
+        // iOS 17+: Set audio session to 'playback' so Web Audio plays even when mute switch is on
+        try {
+          if ((navigator as any).audioSession) {
+            (navigator as any).audioSession.type = 'playback';
+          }
+        } catch { /* audioSession not supported */ }
       } catch { /* audio not available */ }
     }
     return audioContextRef.current;
@@ -305,6 +311,12 @@ export default function Solbones() {
           const c = new (window.AudioContext || (window as any).webkitAudioContext)();
           audioContextRef.current = c;
           setAudioContext(c);
+          // iOS 17+: bypass mute switch
+          try {
+            if ((navigator as any).audioSession) {
+              (navigator as any).audioSession.type = 'playback';
+            }
+          } catch { /* ignore */ }
           return c;
         } catch { return null; }
       })();

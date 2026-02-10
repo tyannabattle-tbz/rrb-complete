@@ -151,6 +151,12 @@ function getSharedAudioContext(): AudioContext | null {
   if (!_sharedAudioCtx) {
     try {
       _sharedAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      // iOS 17+: Set audio session to 'playback' so Web Audio plays even when mute switch is on
+      try {
+        if ((navigator as any).audioSession) {
+          (navigator as any).audioSession.type = 'playback';
+        }
+      } catch { /* audioSession not supported */ }
     } catch { return null; }
   }
   return _sharedAudioCtx;

@@ -1704,3 +1704,10 @@
 ## v9.5.3 Bug Fix — Runtime crash on published site
 - [x] Fix "An unexpected error occurred" crash on Solbones page (nested <a> tags in Home.tsx Solbones featured section)
 - [x] Fix audio tones — global touchstart unlock + synchronous first chirp + singleton AudioContext (testing on published site needed)
+
+## v9.5.4 Bug Fix — Frequency cards not tappable on iOS + dice tones silent
+- [x] Added navigator.audioSession.type = 'playback' to all 3 Solbones pages (iOS 17+ bypasses mute switch)
+- [x] Applied fix to Solbones.tsx getAudioContext + handleFirstTouch
+- [x] Applied fix to SolbonesClassic.tsx getAudioContext + handleFirstTouch
+- [x] Applied fix to SolbonesOnline.tsx getSharedAudioContext
+- [x] 0 TypeScript errors
