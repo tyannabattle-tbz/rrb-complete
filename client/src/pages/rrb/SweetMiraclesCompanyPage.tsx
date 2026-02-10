@@ -112,7 +112,7 @@ export default function SweetMiraclesCompanyPage() {
             A Canryn Production and its subsidiaries
           </p>
           <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
-            Founded and led by Seabrun Candy Hunter, Sweet Miracles represents decades of creative excellence, artistic innovation, and commitment to music and entertainment
+            Founded and led by Ty Battle, Seabrun Candy Hunter's daughter, Sweet Miracles represents a continuation of the family legacy — decades of creative excellence, artistic innovation, and commitment to music and entertainment
           </p>
         </div>
       </section>
@@ -147,11 +147,11 @@ export default function SweetMiraclesCompanyPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Company Overview</CardTitle>
-                  <CardDescription>Sweet Miracles: Founded by Seabrun Candy Hunter</CardDescription>
+                  <CardDescription>Sweet Miracles: Founded by Ty Battle (Seabrun's Daughter)</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-foreground/80 leading-relaxed">
-                    Sweet Miracles stands as a testament to one man's vision, creativity, and unwavering commitment to excellence in music and entertainment. Founded by Seabrun Candy Hunter, the company has grown from a small production operation into a multifaceted entertainment enterprise.
+                    Sweet Miracles stands as a testament to family legacy and unwavering commitment to excellence in music and entertainment. Founded by Ty Battle, Seabrun Candy Hunter's daughter, the company carries forward the vision her father built — growing from a family-rooted operation into a multifaceted entertainment enterprise.
                   </p>
                   <p className="text-foreground/80 leading-relaxed">
                     At its core, Sweet Miracles is about creating quality music, developing talent, and building lasting relationships with artists, collaborators, and audiences. The company operates on principles of artistic integrity, professional excellence, and innovative thinking.
@@ -252,21 +252,24 @@ export default function SweetMiraclesCompanyPage() {
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Leadership</h2>
           <Card>
             <CardHeader>
-              <CardTitle>Founder & Creative Director</CardTitle>
+              <CardTitle>Founder & CEO</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-xl font-bold text-foreground mb-2">Seabrun Candy Hunter</h4>
+                  <h4 className="text-xl font-bold text-foreground mb-2">Ty Battle</h4>
                   <p className="text-foreground/80 mb-4">
-                    Founder, songwriter, vocalist, and creative visionary. With over 50 years of experience in music and entertainment, Seabrun Candy Hunter has built Sweet Miracles into a respected name in the industry.
+                    Founder and CEO of Sweet Miracles, and daughter of Seabrun "Candy" Hunter Jr. Ty carries forward her father's legacy of music, creativity, and community service — building Sweet Miracles into a respected name in the entertainment industry.
                   </p>
                   <div className="space-y-2">
                     <p className="text-foreground/70">
-                      <strong>Expertise:</strong> Music composition, production, artist development, business strategy
+                      <strong>Legacy:</strong> Daughter of Seabrun "Candy" Hunter Jr., continuing the family tradition of artistic excellence
                     </p>
                     <p className="text-foreground/70">
-                      <strong>Vision:</strong> Creating quality entertainment that enriches lives and stands the test of time
+                      <strong>Expertise:</strong> Business leadership, artist development, brand strategy, community engagement
+                    </p>
+                    <p className="text-foreground/70">
+                      <strong>Vision:</strong> Honoring her father's legacy while building new pathways for music, entertainment, and community impact
                     </p>
                   </div>
                 </div>
