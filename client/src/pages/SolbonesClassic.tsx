@@ -117,6 +117,40 @@ export default function SolbonesClassic() {
     } catch { /* ignore */ }
   }, [getAudioContext]);
 
+  // GLOBAL touch/pointer unlock: attach to window on mount so ANY first tap unlocks audio
+  useEffect(() => {
+    const handleFirstTouch = () => {
+      const ctx = audioContextRef.current || (() => {
+        try {
+          const c = new (window.AudioContext || (window as any).webkitAudioContext)();
+          audioContextRef.current = c;
+          return c;
+        } catch { return null; }
+      })();
+      if (!ctx) return;
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      try {
+        const buffer = ctx.createBuffer(1, 1, 22050);
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.start(0);
+        audioUnlockedRef.current = true;
+      } catch { /* ignore */ }
+      window.removeEventListener('touchstart', handleFirstTouch, true);
+      window.removeEventListener('pointerdown', handleFirstTouch, true);
+      window.removeEventListener('mousedown', handleFirstTouch, true);
+    };
+    window.addEventListener('touchstart', handleFirstTouch, { capture: true, passive: true });
+    window.addEventListener('pointerdown', handleFirstTouch, { capture: true, passive: true });
+    window.addEventListener('mousedown', handleFirstTouch, { capture: true, passive: true });
+    return () => {
+      window.removeEventListener('touchstart', handleFirstTouch, true);
+      window.removeEventListener('pointerdown', handleFirstTouch, true);
+      window.removeEventListener('mousedown', handleFirstTouch, true);
+    };
+  }, []);
+
   const playFrequency = useCallback((frequency: number, duration = 1.5, volume = 0.15) => {
     if (!soundEnabled) return;
     const ctx = getAudioContext();
@@ -147,7 +181,17 @@ export default function SolbonesClassic() {
     setIsRolling(true);
     setRoundResult(null);
 
-    let count = 0;
+    // Play FIRST chirp synchronously within user gesture (critical for iOS)
+    const firstD1 = Math.floor(Math.random() * 6) + 1;
+    const firstD2 = Math.floor(Math.random() * 6) + 1;
+    const firstD3 = Math.floor(Math.random() * 6) + 1;
+    setDice([firstD1, firstD2, firstD3]);
+    if (soundEnabled) {
+      const freq = CLASSIC_FREQ_MAP[firstD1];
+      if (freq) playFrequency(freq.frequency, 0.12, 0.06);
+    }
+
+    let count = 1;
     // Animate with rolling chirps
     const interval = setInterval(() => {
       const d1 = Math.floor(Math.random() * 6) + 1;

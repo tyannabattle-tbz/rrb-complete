@@ -1693,3 +1693,10 @@
 - [x] Added frequency note labels under each die in Classic (e.g. 'RE 285Hz')
 - [x] Added Sound On/Off toggle to Classic
 - [x] Test both games to confirm tones and notes work — verified on dev server, 0 TypeScript errors, 0 console errors
+
+## v9.5.2 Bug Fix — Frequency cards not tappable + tones still not working on iOS
+- [x] Fix frequency cards not responding to taps on iOS (added onTouchEnd, touch-manipulation, z-10, pointer-events)
+- [x] Fix tones not playing during dice rolls on iOS (global touchstart/pointerdown/mousedown unlock, first chirp synchronous)
+- [x] Fixed SolbonesOnline singleton AudioContext (was creating new ctx per tone)
+- [x] Added global touch unlock to all 3 Solbones pages
+- [x] 0 TypeScript errors

@@ -143,10 +143,39 @@ function aiDecision(score: number, result: RollResult | null, rollsUsed: number,
   return 'roll';
 }
 
-// ─── Audio ───────────────────────────────────────────────────
+// ─── Audio (iOS-compatible singleton AudioContext) ──────────
+let _sharedAudioCtx: AudioContext | null = null;
+let _audioUnlocked = false;
+
+function getSharedAudioContext(): AudioContext | null {
+  if (!_sharedAudioCtx) {
+    try {
+      _sharedAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    } catch { return null; }
+  }
+  return _sharedAudioCtx;
+}
+
+function unlockOnlineAudio() {
+  const ctx = getSharedAudioContext();
+  if (!ctx) return;
+  if (_audioUnlocked && ctx.state === 'running') return;
+  if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+  try {
+    const buffer = ctx.createBuffer(1, 1, 22050);
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start(0);
+    _audioUnlocked = true;
+  } catch { /* ignore */ }
+}
+
 function playFrequencyTone(die: number) {
   try {
-    const ctx = new AudioContext();
+    const ctx = getSharedAudioContext();
+    if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.frequency.value = FREQUENCY_MAP[die]?.hz || 432;
@@ -366,11 +395,32 @@ export default function SolbonesOnline() {
   }, [addSystemMessage]);
 
   // ─── Game Actions ──────────────────────────────────────────
+  // GLOBAL touch/pointer unlock for iOS audio
+  useEffect(() => {
+    const handleFirstTouch = () => {
+      unlockOnlineAudio();
+      window.removeEventListener('touchstart', handleFirstTouch, true);
+      window.removeEventListener('pointerdown', handleFirstTouch, true);
+      window.removeEventListener('mousedown', handleFirstTouch, true);
+    };
+    window.addEventListener('touchstart', handleFirstTouch, { capture: true, passive: true });
+    window.addEventListener('pointerdown', handleFirstTouch, { capture: true, passive: true });
+    window.addEventListener('mousedown', handleFirstTouch, { capture: true, passive: true });
+    return () => {
+      window.removeEventListener('touchstart', handleFirstTouch, true);
+      window.removeEventListener('pointerdown', handleFirstTouch, true);
+      window.removeEventListener('mousedown', handleFirstTouch, true);
+    };
+  }, []);
+
   const handleRoll = useCallback(() => {
     if (!roomInfo || roomInfo.state !== 'playing') return;
     const currentPlayer = roomInfo.players[roomInfo.currentTurnIndex];
     if (!currentPlayer || currentPlayer.id !== myId) return;
     if (currentPlayer.rollsThisTurn >= 3) return;
+
+    // Unlock audio on user gesture (critical for iOS Safari)
+    unlockOnlineAudio();
 
     const dice = rollDice();
     const result = scoreRoll(dice, roomInfo.gameMode);

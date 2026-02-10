@@ -297,6 +297,42 @@ export default function Solbones() {
     } catch { /* ignore */ }
   }, [getAudioContext]);
 
+  // GLOBAL touch/pointer unlock: attach to window on mount so ANY first tap unlocks audio
+  useEffect(() => {
+    const handleFirstTouch = () => {
+      const ctx = audioContextRef.current || (() => {
+        try {
+          const c = new (window.AudioContext || (window as any).webkitAudioContext)();
+          audioContextRef.current = c;
+          setAudioContext(c);
+          return c;
+        } catch { return null; }
+      })();
+      if (!ctx) return;
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      try {
+        const buffer = ctx.createBuffer(1, 1, 22050);
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.start(0);
+        audioUnlockedRef.current = true;
+      } catch { /* ignore */ }
+      // Remove after first successful unlock
+      window.removeEventListener('touchstart', handleFirstTouch, true);
+      window.removeEventListener('pointerdown', handleFirstTouch, true);
+      window.removeEventListener('mousedown', handleFirstTouch, true);
+    };
+    window.addEventListener('touchstart', handleFirstTouch, { capture: true, passive: true });
+    window.addEventListener('pointerdown', handleFirstTouch, { capture: true, passive: true });
+    window.addEventListener('mousedown', handleFirstTouch, { capture: true, passive: true });
+    return () => {
+      window.removeEventListener('touchstart', handleFirstTouch, true);
+      window.removeEventListener('pointerdown', handleFirstTouch, true);
+      window.removeEventListener('mousedown', handleFirstTouch, true);
+    };
+  }, []);
+
   // Also try to init on mount (works on desktop, won't unlock on iOS until gesture)
   useEffect(() => {
     getAudioContext();
@@ -377,6 +413,14 @@ export default function Solbones() {
     setCurrentRoundScore(null);
     let count = 0;
     if (rollAnimRef.current) clearInterval(rollAnimRef.current);
+
+    // Play the FIRST chirp synchronously (still within user gesture on iOS)
+    const firstD1 = Math.floor(Math.random() * 6) + 1;
+    const firstD2 = Math.floor(Math.random() * 6) + 1;
+    const firstD3 = Math.floor(Math.random() * 6) + 1;
+    setDice([firstD1, firstD2, firstD3]);
+    playRollingChirp(firstD1);
+    count = 1;
 
     rollAnimRef.current = setInterval(() => {
       const d1 = Math.floor(Math.random() * 6) + 1;
@@ -1290,7 +1334,9 @@ export default function Solbones() {
                       <button
                         key={data.frequency}
                         onClick={() => { unlockAudio(); playFrequency(data.frequency); }}
-                        className={`bg-gradient-to-br ${data.bgColor} p-4 rounded-lg text-left hover:scale-105 transition-transform cursor-pointer border border-white/10`}
+                        onTouchEnd={(e) => { e.preventDefault(); unlockAudio(); playFrequency(data.frequency); }}
+                        className={`bg-gradient-to-br ${data.bgColor} p-4 rounded-lg text-left hover:scale-105 transition-transform cursor-pointer border border-white/10 relative z-10 touch-manipulation`}
+                        style={{ WebkitTapHighlightColor: 'transparent', WebkitUserSelect: 'none' } as React.CSSProperties}
                       >
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-white font-bold text-lg">{data.note}</span>
