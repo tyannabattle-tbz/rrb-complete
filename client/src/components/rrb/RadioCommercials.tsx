@@ -127,6 +127,171 @@ export default function RadioCommercials() {
       bookLink: '/',
       playCount: 0,
       clickCount: 0
+    },
+    {
+      id: 10,
+      title: 'RRB Radio — 7 Channels 24/7',
+      bookTitle: 'Seven Channels of Legacy',
+      duration: 30,
+      audioUrl: '/audio/commercials/rrb-7channel.wav',
+      description: 'Seven channels. Twenty-four seven. From classic funk and soul to gospel, R&B, jazz, and the original recordings of Seabrun Candy Hunter. Every channel curated by QUMUS.',
+      bookLink: '/rrb/radio-station',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 11,
+      title: 'QUMUS — The Brain Behind the Boogie',
+      bookTitle: 'Autonomous Intelligence',
+      duration: 30,
+      audioUrl: '/audio/commercials/qumus-brain.wav',
+      description: 'Ninety percent autonomous. Ten percent human oversight. QUMUS manages radio scheduling, podcast distribution, commercial rotation, emergency broadcasting, and real-time analytics.',
+      bookLink: '/rrb/ecosystem',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 12,
+      title: 'RRB Podcast Network',
+      bookTitle: 'Stories That Matter',
+      duration: 30,
+      audioUrl: '/audio/commercials/podcast-network.wav',
+      description: 'Dive deep into the untold history of Seabrun Candy Hunter. Video participation, live call-ins, and QUMUS AI-powered episode recommendations.',
+      bookLink: '/rrb/podcasts',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 13,
+      title: 'Call In Live — Your Voice on RRB',
+      bookTitle: 'Live Audience Interaction',
+      duration: 25,
+      audioUrl: '/audio/commercials/callin-promo.wav',
+      description: 'Join by video — Skype, Zoom, Google Meet, or right from your browser. Call in by phone. Send a voice message. Be part of the conversation.',
+      bookLink: '/rrb/radio-station',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 14,
+      title: 'The Legacy of Seabrun Candy Hunter',
+      bookTitle: 'Legacy Restored, Legacy Continued',
+      duration: 30,
+      audioUrl: '/audio/commercials/seabrun-legacy.wav',
+      description: 'Before the world knew rock and roll, there was Seabrun Candy Hunter. A voice that shaped an era. A talent that inspired legends. Explore the Proof Vault.',
+      bookLink: '/rrb/the-legacy',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 15,
+      title: 'Healing Frequencies — Solfeggio Therapy',
+      bookTitle: 'Find Your Frequency',
+      duration: 30,
+      audioUrl: '/audio/commercials/healing-frequencies.wav',
+      description: 'Ancient Solfeggio tones for relaxation, focus, and spiritual alignment. 396Hz liberation. 528Hz transformation. 852Hz awakening. Stream 24/7.',
+      bookLink: '/rrb/healing-frequencies',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 16,
+      title: 'The Proof Vault',
+      bookTitle: 'Archival Documentation',
+      duration: 25,
+      audioUrl: '/audio/commercials/proof-vault.wav',
+      description: 'Original recordings, legal documents, photographs, and historical evidence preserving the legacy. Every document authenticated. Every recording preserved.',
+      bookLink: '/rrb/proof-vault',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 17,
+      title: 'RRB Merchandise — Wear the Legacy',
+      bookTitle: 'Official Merchandise',
+      duration: 25,
+      audioUrl: '/audio/commercials/merch-shop.wav',
+      description: 'T-shirts, hoodies, hats, and exclusive collectibles. Every purchase supports the Sweet Miracles Foundation. Limited edition drops.',
+      bookLink: '/rrb/merchandise',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 18,
+      title: 'Sweet Miracles — Tax-Deductible Giving',
+      bookTitle: '501(c)(3) / 508(c) Nonprofit',
+      duration: 30,
+      audioUrl: '/audio/commercials/donate-501c.wav',
+      description: 'Your donation is fully tax-deductible. Every dollar goes to emergency communication tools, community wellness programs, and crisis support.',
+      bookLink: '/rrb/sweet-miracles',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 19,
+      title: 'HybridCast Emergency Broadcast',
+      bookTitle: 'When Every Second Counts',
+      duration: 25,
+      audioUrl: '/audio/commercials/hybridcast-promo.wav',
+      description: 'Offline-first mesh networking keeps you connected when it matters most. Your device becomes part of a resilient communication network.',
+      bookLink: '/hybridcast',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 20,
+      title: 'RRB Studio Suite',
+      bookTitle: 'Create, Produce, Broadcast',
+      duration: 30,
+      audioUrl: '/audio/commercials/studio-suite.wav',
+      description: 'Audio production tools, content scheduling, commercial generation, and direct broadcast to seven radio channels. Let QUMUS handle the rest.',
+      bookLink: '/rrb/studio',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 21,
+      title: 'QMunity — Join the Movement',
+      bookTitle: 'Community Powered by QUMUS',
+      duration: 25,
+      audioUrl: '/audio/commercials/qmunity.wav',
+      description: 'Connect with fellow music lovers, legacy supporters, and community builders. Share your story. Discover new music. Join free.',
+      bookLink: '/rrb/community',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 22,
+      title: 'Advertise on RRB Radio',
+      bookTitle: 'Reach Our Audience',
+      duration: 30,
+      audioUrl: '/audio/commercials/advertise-with-us.wav',
+      description: 'Thirty, sixty, or ninety-second spots. AI-generated scripts. Professional voice production. Reach engaged listeners who care about community and culture.',
+      bookLink: '/rrb/advertising',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 23,
+      title: 'Solbones 4+3+2 — Sacred Math',
+      bookTitle: 'The Sacred Dice Game',
+      duration: 25,
+      audioUrl: '/audio/commercials/solbones-promo.wav',
+      description: 'Solfeggio healing frequencies meet multiplayer competition. Play solo, challenge friends, or face QUMUS AI opponents. Every roll resonates with ancient frequencies.',
+      bookLink: '/solbones',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 24,
+      title: 'RRB Mobile — Take the Boogie Everywhere',
+      bookTitle: 'Works on Every Device',
+      duration: 25,
+      audioUrl: '/audio/commercials/mobile-pwa.wav',
+      description: 'Phone, tablet, desktop, smart TV. Install as an app from your browser. Stream radio. Listen to podcasts. Play Solbones. Chat with QUMUS.',
+      bookLink: '/',
+      playCount: 0,
+      clickCount: 0
     }
   ];
 

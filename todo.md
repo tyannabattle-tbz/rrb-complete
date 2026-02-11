@@ -2179,3 +2179,6 @@
 - [x] Integrate QUMUS AI assistant into podcast page
 - [x] Add call-in feature for live radio and podcast feedback/interaction
 - [x] Add video participation support (Skype-style) for podcast call-ins
+
+## Commercial Rotation Expansion - Feb 2026
+- [x] Add comprehensive platform commercials to streaming rotation (all ecosystem features)

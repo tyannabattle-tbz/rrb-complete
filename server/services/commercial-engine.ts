@@ -432,7 +432,261 @@ RULES:
       generatedBy: 'ai',
     });
 
-    console.log(`[Commercial Engine] Seeded ${this.commercials.length} default commercials`);
+    // ─── FULL PLATFORM COMMERCIAL LINEUP ────────────────────────────────
+
+    // RRB Radio — 7-Channel 24/7 Broadcasting
+    this.commercials.push({
+      id: 'commercial_rrb_7channel',
+      title: "RRB Radio — Seven Channels, Twenty-Four Seven",
+      category: 'promo',
+      brand: 'rrb_radio',
+      script: "Seven channels. Twenty-four hours a day. Seven days a week. RRB Radio brings you the sound of a legacy restored — from classic funk and soul to gospel, R&B, jazz, and the original recordings of Seabrun Candy Hunter and Little Richard. Every channel curated by QUMUS autonomous intelligence. Every song a piece of history. Tune in to RRB Radio — the heartbeat of Canryn Production. Stream now at rockinrockinboogie.com.",
+      duration: 30,
+      voiceDirection: 'energetic, soulful, building excitement',
+      musicDirection: 'Funky bass groove, 70s soul feel, channel-surfing transitions',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // QUMUS AI Brain
+    this.commercials.push({
+      id: 'commercial_qumus_brain',
+      title: "QUMUS — The Autonomous Brain Behind It All",
+      category: 'promo',
+      brand: 'canryn_production',
+      script: "Meet QUMUS — the autonomous intelligence that powers the entire Rockin' Rockin' Boogie ecosystem. Ninety percent autonomous. Ten percent human oversight. QUMUS manages radio scheduling, podcast distribution, commercial rotation, emergency broadcasting, content recommendations, and real-time analytics — all without missing a beat. From grant discovery to listener engagement, QUMUS makes decisions in milliseconds so the music never stops. QUMUS — the brain behind the boogie. Powered by Canryn Production.",
+      duration: 30,
+      voiceDirection: 'futuristic, confident, warm with tech authority',
+      musicDirection: 'Electronic pulse intro, warm synth pads, modern production',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: [{ id: 'slot_qumus_prime', dayOfWeek: [0,1,2,3,4,5,6], hourStart: 8, hourEnd: 20, frequency: 3, priority: 8 }],
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Podcast Network
+    this.commercials.push({
+      id: 'commercial_podcast_network',
+      title: "RRB Podcast Network — Stories That Matter",
+      category: 'promo',
+      brand: 'rrb_radio',
+      script: "The RRB Podcast Network — where stories come alive. Dive deep into the untold history of Seabrun Candy Hunter. Explore the roots of rock and roll. Hear firsthand accounts of a legacy stolen and now restored. With video participation, live call-ins, and QUMUS AI-powered episode recommendations, every listen is an experience. New episodes weekly. Subscribe now on the Rockin' Rockin' Boogie platform. The legacy continues — one episode at a time.",
+      duration: 30,
+      voiceDirection: 'storytelling, intimate, compelling',
+      musicDirection: 'Warm acoustic intro, subtle bass, podcast-style ambient',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Call-In Feature Promo
+    this.commercials.push({
+      id: 'commercial_callin_feature',
+      title: "Call In Live — Your Voice on RRB",
+      category: 'promo',
+      brand: 'rrb_radio',
+      script: "Your voice matters. Call in live to RRB Radio and the RRB Podcast Network. Join by video — Skype, Zoom, Google Meet, or right from your browser. Call in by phone. Send a voice message. Or text your thoughts directly to the show. Every call-in is heard. Every voice amplified. Be part of the conversation. Be part of the legacy. Call in now at rockinrockinboogie.com. RRB — where every listener has a voice.",
+      duration: 25,
+      voiceDirection: 'inviting, energetic, community-focused',
+      musicDirection: 'Upbeat funk groove, phone ring sound effect intro, crowd energy',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: [{ id: 'slot_callin_all', dayOfWeek: [0,1,2,3,4,5,6], hourStart: 6, hourEnd: 23, frequency: 3, priority: 8 }],
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Seabrun Candy Hunter Legacy
+    this.commercials.push({
+      id: 'commercial_legacy_seabrun',
+      title: "The Legacy of Seabrun Candy Hunter",
+      category: 'promo',
+      brand: 'canryn_production',
+      script: "Before the world knew rock and roll, there was Seabrun Candy Hunter. A voice that shaped an era. A talent that inspired legends. And a story that was nearly lost to history. Canryn Production is restoring that legacy — through music, through media, through truth. Explore the Proof Vault. Listen to the original recordings. Discover the real story behind the music that changed the world. Seabrun Candy Hunter — legacy restored, legacy continued. At rockinrockinboogie.com.",
+      duration: 30,
+      voiceDirection: 'reverent, storytelling, building emotion',
+      musicDirection: 'Vintage vinyl crackle intro, classic R&B, building to modern production',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: [{ id: 'slot_legacy_prime', dayOfWeek: [0,1,2,3,4,5,6], hourStart: 6, hourEnd: 22, frequency: 3, priority: 9 }],
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Healing Frequencies / Meditation Hub
+    this.commercials.push({
+      id: 'commercial_healing_frequencies',
+      title: "Healing Frequencies — Solfeggio Sound Therapy",
+      category: 'promo',
+      brand: 'canryn_production',
+      script: "Find your frequency. The RRB Healing Frequencies channel brings you Solfeggio sound therapy — ancient tones scientifically tuned for relaxation, focus, and spiritual alignment. Three ninety-six hertz for liberation. Five twenty-eight hertz for transformation. Eight fifty-two hertz for awakening. Stream healing frequencies twenty-four seven on the Rockin' Rockin' Boogie platform. Integrated with Solbones sacred math gaming for a complete mind-body experience. Heal. Play. Grow. At rockinrockinboogie.com.",
+      duration: 30,
+      voiceDirection: 'calm, meditative, gently inviting',
+      musicDirection: 'Solfeggio 528Hz tone bed, gentle chimes, ambient pads',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Proof Vault / Archival
+    this.commercials.push({
+      id: 'commercial_proof_vault',
+      title: "The Proof Vault — Archival Documentation",
+      category: 'promo',
+      brand: 'canryn_production',
+      script: "The truth is in the vault. The Canryn Production Proof Vault houses original recordings, legal documents, photographs, and historical evidence preserving the legacy of Seabrun Candy Hunter. Every document authenticated. Every recording preserved. Every piece of history protected for future generations. Explore the Proof Vault at rockinrockinboogie.com. Because the truth deserves to be heard. A Canryn Production archival initiative.",
+      duration: 25,
+      voiceDirection: 'authoritative, documentary-style, reverent',
+      musicDirection: 'Dramatic strings, vault door sound, archival documentary feel',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Merchandise Shop
+    this.commercials.push({
+      id: 'commercial_merch_shop',
+      title: "RRB Merchandise — Wear the Legacy",
+      category: 'promo',
+      brand: 'rrb_radio',
+      script: "Wear the legacy. The Rockin' Rockin' Boogie merchandise collection is here — t-shirts, hoodies, hats, and exclusive collectibles celebrating Seabrun Candy Hunter and the RRB movement. Every purchase supports the Sweet Miracles Foundation. Limited edition drops. Exclusive designs. Represent the boogie wherever you go. Shop now at the RRB Merchandise Store on rockinrockinboogie.com. Wear it. Share it. Live it.",
+      duration: 25,
+      voiceDirection: 'trendy, energetic, youthful appeal',
+      musicDirection: 'Upbeat funk, shopping vibe, modern production',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Donation / Sweet Miracles 501(c)(3) / 508(c)
+    this.commercials.push({
+      id: 'commercial_donate_501c_508c',
+      title: "Sweet Miracles — 501(c)(3) / 508(c) Tax-Deductible Giving",
+      category: 'fundraiser',
+      brand: 'sweet_miracles',
+      script: "Your generosity changes lives. The Sweet Miracles Foundation is a registered 501(c)(3) and 508(c) nonprofit organization — meaning your donation is fully tax-deductible. Every dollar goes directly to emergency communication tools, community wellness programs, and crisis support for those who need it most. Donate securely through our website. Set up recurring giving. Or sponsor a community event. Sweet Miracles Foundation — Voice for the Voiceless. Donate today at rockinrockinboogie.com.",
+      duration: 30,
+      voiceDirection: 'sincere, warm, trustworthy',
+      musicDirection: 'Gentle piano, warm strings, hopeful and uplifting',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: [{ id: 'slot_donate_all', dayOfWeek: [0,1,2,3,4,5,6], hourStart: 6, hourEnd: 22, frequency: 3, priority: 9 }],
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Studio Suite
+    this.commercials.push({
+      id: 'commercial_studio_suite',
+      title: "RRB Studio Suite — Create, Produce, Broadcast",
+      category: 'promo',
+      brand: 'canryn_production',
+      script: "From concept to broadcast in one platform. The RRB Studio Suite gives you everything you need — audio production tools, content scheduling, commercial generation, and direct broadcast to seven radio channels. Upload your tracks. Schedule your shows. Let QUMUS handle the rest. Whether you're an artist, a podcaster, or a community broadcaster, the Studio Suite puts professional production at your fingertips. RRB Studio Suite — create, produce, broadcast. At rockinrockinboogie.com.",
+      duration: 30,
+      voiceDirection: 'professional, creative, empowering',
+      musicDirection: 'Studio ambiance, beat-making sounds, modern production',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // QMunity Community
+    this.commercials.push({
+      id: 'commercial_qmunity',
+      title: "QMunity — Join the Movement",
+      category: 'community',
+      brand: 'qmunity',
+      script: "You're not just a listener — you're part of the QMunity. Connect with fellow music lovers, legacy supporters, and community builders on the QMunity platform. Share your story. Discover new music. Participate in live events and discussions. Support the Sweet Miracles Foundation together. The QMunity is where the Rockin' Rockin' Boogie family comes together. Join free at rockinrockinboogie.com. QMunity — community powered by QUMUS.",
+      duration: 25,
+      voiceDirection: 'friendly, inclusive, welcoming',
+      musicDirection: 'Community feel, claps, warm group energy',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('community'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Grant Discovery
+    this.commercials.push({
+      id: 'commercial_grant_discovery',
+      title: "Grant Discovery — Funding the Mission",
+      category: 'psa',
+      brand: 'sweet_miracles',
+      script: "The Sweet Miracles Foundation is actively seeking grants and partnerships to expand our mission. As a 501(c)(3) and 508(c) organization, we qualify for federal, state, and private foundation funding. Our QUMUS-powered grant discovery engine identifies matching opportunities in real time. If you represent a foundation, government agency, or corporate giving program, we'd love to connect. Help us amplify every voice. Contact Sweet Miracles Foundation through rockinrockinboogie.com.",
+      duration: 30,
+      voiceDirection: 'professional, mission-driven, inviting partnership',
+      musicDirection: 'Corporate-warm hybrid, professional but heartfelt',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: [{ id: 'slot_grant_weekday', dayOfWeek: [1,2,3,4,5], hourStart: 9, hourEnd: 17, frequency: 2, priority: 7 }],
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Advertising Opportunities
+    this.commercials.push({
+      id: 'commercial_advertise_with_us',
+      title: "Advertise on RRB Radio — Reach Our Audience",
+      category: 'promo',
+      brand: 'rrb_radio',
+      script: "Want your business heard by thousands? Advertise on RRB Radio — the fastest-growing internet radio station in the Canryn Production ecosystem. Choose from thirty-second, sixty-second, or ninety-second spots. Sponsorship packages available. AI-generated scripts tailored to your brand. Professional voice production included. Reach engaged listeners who care about community, legacy, and culture. Contact us today at rockinrockinboogie.com to book your airtime. RRB Radio — where your message resonates.",
+      duration: 30,
+      voiceDirection: 'business-professional, confident, persuasive',
+      musicDirection: 'Modern business, upbeat, professional production',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: [{ id: 'slot_advertise_business', dayOfWeek: [1,2,3,4,5], hourStart: 9, hourEnd: 18, frequency: 2, priority: 7 }],
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Mobile App / PWA
+    this.commercials.push({
+      id: 'commercial_mobile_pwa',
+      title: "RRB Mobile — Take the Boogie Everywhere",
+      category: 'promo',
+      brand: 'rrb_radio',
+      script: "Take the boogie with you. The Rockin' Rockin' Boogie platform works on every device — phone, tablet, desktop, smart TV. Install it as an app right from your browser. No app store needed. Stream radio. Listen to podcasts. Play Solbones. Chat with QUMUS. Call in live. All from the palm of your hand. Rockin' Rockin' Boogie — your pocket-sized legacy platform. Visit rockinrockinboogie.com on any device.",
+      duration: 25,
+      voiceDirection: 'modern, tech-savvy, accessible',
+      musicDirection: 'Mobile notification sounds, modern beat, tech-forward',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    console.log(`[Commercial Engine] Seeded ${this.commercials.length} default commercials (full platform lineup)`);
   }
 
   // ─── Client Advertising ─────────────────────────────────────────────────
