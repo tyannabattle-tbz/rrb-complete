@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertCircle, CheckCircle, Activity } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle, Activity, Wrench, ArrowRight } from "lucide-react";
 import AICollaborationHub from "@/components/rrb/AICollaborationHub";
+import { Link } from "wouter";
 
 export default function EcosystemDashboard() {
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -19,6 +20,10 @@ export default function EcosystemDashboard() {
 
   // Fetch human review queue
   const { data: reviewQueue, isLoading: reviewLoading, refetch: refetchQueue } = trpc.ecosystem.getHumanReviewQueue.useQuery();
+
+  // Fetch Code Maintenance health
+  const { data: codeMaintenance } = trpc.codeMaintenance.getSummary.useQuery(undefined, { refetchInterval: 30000 });
+  const { data: schedulerStatus } = trpc.codeMaintenance.getSchedulerStatus.useQuery(undefined, { refetchInterval: 30000 });
 
   // Auto-refresh every 5 seconds
   useEffect(() => {
@@ -155,6 +160,53 @@ export default function EcosystemDashboard() {
             )}
           </Card>
         </div>
+
+        {/* Code Maintenance Health */}
+        <Card className="p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Wrench className="w-5 h-5 text-amber-500" /> Code Maintenance — Policy #9
+            </h2>
+            <Link href="/rrb/qumus/code-maintenance">
+              <Button variant="outline" size="sm" className="gap-1">
+                Dashboard <ArrowRight className="w-3 h-3" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Total Issues</p>
+              <p className="text-2xl font-bold text-foreground">{codeMaintenance?.totalIssues ?? '—'}</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Open</p>
+              <p className="text-2xl font-bold text-red-500">{codeMaintenance?.openIssues ?? '—'}</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Auto-Fixed</p>
+              <p className="text-2xl font-bold text-green-500">{codeMaintenance?.autoFixedIssues ?? '—'}</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Scans Run</p>
+              <p className="text-2xl font-bold text-blue-500">{codeMaintenance?.scanCount ?? '—'}</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Scheduler</p>
+              <p className="text-lg font-bold text-foreground">
+                {schedulerStatus?.enabled ? (
+                  <span className="text-green-500">● {schedulerStatus.intervalHuman}</span>
+                ) : (
+                  <span className="text-gray-400">○ Off</span>
+                )}
+              </p>
+            </div>
+          </div>
+          {codeMaintenance?.lastScanAt ? (
+            <p className="text-xs text-foreground/40 mt-3">
+              Last scan: {new Date(codeMaintenance.lastScanAt).toLocaleString()}
+            </p>
+          ) : null}
+        </Card>
 
         {/* Event Bus & QUMUS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

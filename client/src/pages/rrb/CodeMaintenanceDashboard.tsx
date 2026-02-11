@@ -67,6 +67,17 @@ export default function CodeMaintenanceDashboard() {
     activeFilter !== 'all' ? { category: activeFilter as ScanCategory } : undefined
   );
   const historyQuery = trpc.codeMaintenance.getScanHistory.useQuery();
+  const schedulerQuery = trpc.codeMaintenance.getSchedulerStatus.useQuery(undefined, { refetchInterval: 30000 });
+
+  const startSchedulerMut = trpc.codeMaintenance.startScheduler.useMutation({
+    onSuccess: () => { schedulerQuery.refetch(); toast('Scheduler started'); },
+  });
+  const stopSchedulerMut = trpc.codeMaintenance.stopScheduler.useMutation({
+    onSuccess: () => { schedulerQuery.refetch(); toast('Scheduler stopped'); },
+  });
+  const updateIntervalMut = trpc.codeMaintenance.updateSchedulerInterval.useMutation({
+    onSuccess: () => { schedulerQuery.refetch(); toast('Interval updated'); },
+  });
 
   const fullScanMutation = trpc.codeMaintenance.runFullScan.useMutation({
     onSuccess: (report) => {
@@ -227,6 +238,63 @@ export default function CodeMaintenanceDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Scheduler Control */}
+        <Card className="bg-gray-900/60 border-gray-800">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-amber-400" />
+                <h3 className="font-semibold">Automated Scan Scheduler</h3>
+              </div>
+              <Badge variant="outline" className={schedulerQuery.data?.enabled ? 'border-green-500 text-green-400' : 'border-gray-600 text-gray-400'}>
+                {schedulerQuery.data?.enabled ? '● Active' : '○ Stopped'}
+              </Badge>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-end">
+              <div>
+                <p className="text-xs text-gray-400 mb-1">Interval</p>
+                <p className="text-lg font-bold">{schedulerQuery.data?.intervalHuman || '—'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-1">Scheduled Scans</p>
+                <p className="text-lg font-bold">{schedulerQuery.data?.totalScheduledScans ?? 0}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-400 mb-1">Next Scan</p>
+                <p className="text-sm font-medium">
+                  {schedulerQuery.data?.nextScanEstimate
+                    ? new Date(schedulerQuery.data.nextScanEstimate).toLocaleTimeString()
+                    : '—'}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                {schedulerQuery.data?.enabled ? (
+                  <Button size="sm" variant="outline" className="text-red-400 border-red-500/30 hover:bg-red-500/10" onClick={() => stopSchedulerMut.mutate()}>Stop</Button>
+                ) : (
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => startSchedulerMut.mutate()}>Start</Button>
+                )}
+              </div>
+              <div className="flex gap-1">
+                {[1, 3, 6, 12].map(h => (
+                  <Button
+                    key={h}
+                    size="sm"
+                    variant="outline"
+                    className={`text-xs px-2 ${
+                      schedulerQuery.data?.intervalMs === h * 60 * 60 * 1000
+                        ? 'border-amber-500 text-amber-400'
+                        : 'border-gray-700 text-gray-400'
+                    }`}
+                    onClick={() => updateIntervalMut.mutate({ intervalMs: h * 60 * 60 * 1000 })}
+                  >
+                    {h}h
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Category Breakdown */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3">

@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Brain, Radio, AlertTriangle, Heart, Users, Zap, Activity,
   Globe, Shield, Network, Music, Headphones, BookOpen, Mic,
-  ArrowLeft, Clock, TrendingUp, CheckCircle, XCircle,
+  ArrowLeft, Clock, TrendingUp, CheckCircle, XCircle, Wrench,
 } from 'lucide-react';
 import { Link } from 'wouter';
 
@@ -39,6 +39,7 @@ export default function StateOfTheStudio() {
   const { data: dashboard, isLoading } = trpc.qumusComplete.getDashboardData.useQuery(undefined, { refetchInterval: 10000 });
   const { data: channels } = trpc.qumusComplete.getContentSchedulerChannels.useQuery(undefined, { refetchInterval: 30000 });
   const { data: netStatus } = trpc.qumusComplete.getNetworkStatus.useQuery(undefined, { refetchInterval: 10000 });
+  const { data: codeHealth } = trpc.codeMaintenance.getSummary.useQuery(undefined, { refetchInterval: 30000 });
 
   const ecosystemHealth = useMemo(() => {
     const autonomyAvg = dashboard?.autonomyRate || 0;
@@ -55,7 +56,8 @@ export default function StateOfTheStudio() {
     { label: 'Content Scheduler', value: channels ? Math.round((channels.filter((c: any) => c.isActive).length / Math.max(1, channels.length)) * 100) : 100 },
     { label: 'Data Integrity', value: 96 },
     { label: 'API Response', value: 99 },
-  ], [dashboard, channels]);
+    { label: 'Code Health', value: codeHealth ? Math.max(0, 100 - (codeHealth.openIssues * 10)) : 100 },
+  ], [dashboard, channels, codeHealth]);
 
   if (isLoading) {
     return (

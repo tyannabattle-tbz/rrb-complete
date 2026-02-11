@@ -16,6 +16,10 @@ import {
   getScanHistory,
   getLastScanTime,
   getMaintenanceSummary,
+  startScheduledScans,
+  stopScheduledScans,
+  getSchedulerStatus,
+  updateSchedulerInterval,
   type ScanCategory,
 } from '../services/code-maintenance-policy';
 
@@ -103,5 +107,46 @@ export const codeMaintenanceRouter = router({
   getLastScanTime: publicProcedure
     .query(() => {
       return { lastScanAt: getLastScanTime() };
+    }),
+
+  // ─── Scheduler Control ──────────────────────────────────────────────────
+
+  /**
+   * Get scheduler status
+   */
+  getSchedulerStatus: publicProcedure
+    .query(() => {
+      return getSchedulerStatus();
+    }),
+
+  /**
+   * Start the automated scan scheduler
+   */
+  startScheduler: protectedProcedure
+    .input(z.object({
+      intervalMs: z.number().min(300000).optional(), // min 5 minutes
+    }).optional())
+    .mutation(({ input }) => {
+      return startScheduledScans(input?.intervalMs);
+    }),
+
+  /**
+   * Stop the automated scan scheduler
+   */
+  stopScheduler: protectedProcedure
+    .mutation(() => {
+      stopScheduledScans();
+      return { stopped: true };
+    }),
+
+  /**
+   * Update scheduler interval
+   */
+  updateSchedulerInterval: protectedProcedure
+    .input(z.object({
+      intervalMs: z.number().min(300000), // min 5 minutes
+    }))
+    .mutation(({ input }) => {
+      return updateSchedulerInterval(input.intervalMs);
     }),
 });

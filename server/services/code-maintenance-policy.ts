@@ -14,6 +14,7 @@
  */
 
 import QumusCompleteEngine from '../qumus-complete-engine';
+import { queueNotification } from './qumus-notifications';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -536,6 +537,41 @@ export async function runFullScan(): Promise<CodeMaintenanceReport> {
 
   console.log(`[QUMUS CodeMaintenance] Full scan complete — Health: ${healthGrade} (${healthScore}%), ${totalIssues} issues, ${autoFixedCount} auto-fixed`);
 
+  // ─── Notification Alerts ─────────────────────────────────────────────────
+  // Notify owner on critical issues
+  if (criticalIssues > 0) {
+    queueNotification({
+      type: 'system',
+      severity: 'critical',
+      title: `Code Maintenance: ${criticalIssues} Critical Issue(s)`,
+      body: `Health Grade ${healthGrade} (${healthScore}%). ${criticalIssues} critical issue(s) detected across CDN assets, audio streams, and routes. Immediate attention required.`,
+      url: '/rrb/qumus/code-maintenance',
+    });
+  }
+
+  // Notify on health grade degradation
+  if (healthGrade === 'D' || healthGrade === 'F') {
+    queueNotification({
+      type: 'agent_health',
+      severity: 'high',
+      title: `Code Health Degraded: Grade ${healthGrade}`,
+      body: `Platform code health has dropped to ${healthScore}%. ${totalIssues} total issues detected. Review the Code Maintenance dashboard for details.`,
+      url: '/rrb/qumus/code-maintenance',
+    });
+  }
+
+  // Notify on audio stream failures (affects live listeners)
+  const streamIssues = scanResults.find(r => r.category === 'audio_streams');
+  if (streamIssues && streamIssues.issuesFound >= 3) {
+    queueNotification({
+      type: 'emergency',
+      severity: 'high',
+      title: `Multiple Audio Streams Down (${streamIssues.issuesFound}/${streamIssues.itemsScanned})`,
+      body: `${streamIssues.issuesFound} out of ${streamIssues.itemsScanned} audio streams are unreachable. Live listeners may be affected.`,
+      url: '/rrb/qumus/code-maintenance',
+    });
+  }
+
   return report;
 }
 
@@ -634,6 +670,113 @@ export function getLastScanTime(): number {
 /**
  * Get summary statistics
  */
+// ─── Automated Scan Scheduler ─────────────────────────────────────────────
+
+let schedulerInterval: ReturnType<typeof setInterval> | null = null;
+let schedulerConfig = {
+  enabled: true,
+  intervalMs: 6 * 60 * 60 * 1000, // 6 hours default
+  lastScheduledScan: 0,
+  totalScheduledScans: 0,
+};
+
+/**
+ * Start the automated scan scheduler
+ * Runs full scans at the configured interval (default: every 6 hours)
+ */
+export function startScheduledScans(intervalMs?: number): { enabled: boolean; intervalMs: number } {
+  if (intervalMs) schedulerConfig.intervalMs = intervalMs;
+
+  if (schedulerInterval) {
+    clearInterval(schedulerInterval);
+  }
+
+  schedulerConfig.enabled = true;
+
+  schedulerInterval = setInterval(async () => {
+    if (!schedulerConfig.enabled) return;
+
+    console.log('[QUMUS CodeMaintenance] Scheduled scan starting...');
+    try {
+      const report = await runFullScan();
+      schedulerConfig.lastScheduledScan = Date.now();
+      schedulerConfig.totalScheduledScans++;
+      console.log(`[QUMUS CodeMaintenance] Scheduled scan complete — Grade: ${report.healthGrade}, Issues: ${report.totalIssues}`);
+    } catch (err) {
+      console.error('[QUMUS CodeMaintenance] Scheduled scan failed:', (err as Error).message);
+      queueNotification({
+        type: 'system',
+        severity: 'high',
+        title: 'Scheduled Code Maintenance Scan Failed',
+        body: `The automated code maintenance scan failed: ${(err as Error).message}`,
+        url: '/rrb/qumus/code-maintenance',
+      });
+    }
+  }, schedulerConfig.intervalMs);
+
+  console.log(`[QUMUS CodeMaintenance] Scheduler started — interval: ${schedulerConfig.intervalMs / 1000 / 60} minutes`);
+
+  return { enabled: true, intervalMs: schedulerConfig.intervalMs };
+}
+
+/**
+ * Stop the automated scan scheduler
+ */
+export function stopScheduledScans(): void {
+  schedulerConfig.enabled = false;
+  if (schedulerInterval) {
+    clearInterval(schedulerInterval);
+    schedulerInterval = null;
+  }
+  console.log('[QUMUS CodeMaintenance] Scheduler stopped');
+}
+
+/**
+ * Get scheduler status
+ */
+export function getSchedulerStatus(): {
+  enabled: boolean;
+  intervalMs: number;
+  intervalHuman: string;
+  lastScheduledScan: number;
+  totalScheduledScans: number;
+  nextScanEstimate: number;
+} {
+  const nextScan = schedulerConfig.lastScheduledScan > 0
+    ? schedulerConfig.lastScheduledScan + schedulerConfig.intervalMs
+    : Date.now() + schedulerConfig.intervalMs;
+
+  const hours = Math.floor(schedulerConfig.intervalMs / (60 * 60 * 1000));
+  const minutes = Math.floor((schedulerConfig.intervalMs % (60 * 60 * 1000)) / (60 * 1000));
+  const intervalHuman = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+
+  return {
+    enabled: schedulerConfig.enabled,
+    intervalMs: schedulerConfig.intervalMs,
+    intervalHuman,
+    lastScheduledScan: schedulerConfig.lastScheduledScan,
+    totalScheduledScans: schedulerConfig.totalScheduledScans,
+    nextScanEstimate: nextScan,
+  };
+}
+
+/**
+ * Update scheduler interval
+ */
+export function updateSchedulerInterval(intervalMs: number): { enabled: boolean; intervalMs: number } {
+  if (intervalMs < 5 * 60 * 1000) {
+    throw new Error('Minimum scan interval is 5 minutes');
+  }
+  schedulerConfig.intervalMs = intervalMs;
+  if (schedulerConfig.enabled) {
+    return startScheduledScans(intervalMs);
+  }
+  return { enabled: schedulerConfig.enabled, intervalMs };
+}
+
+// Auto-start scheduler on module load
+startScheduledScans();
+
 export function getMaintenanceSummary(): {
   totalIssues: number;
   openIssues: number;

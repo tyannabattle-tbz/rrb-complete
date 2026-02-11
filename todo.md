@@ -2436,3 +2436,14 @@
 - [x] Log all scan results and fixes to QUMUS decision tables
 - [x] Write vitest tests for Code Maintenance policy (37 tests passing)
 - [x] Add route at /code-maintenance and /rrb/qumus/code-maintenance
+
+## v11.1 QUMUS Code Maintenance — Complete Integration
+- [x] Add Code Maintenance link to QUMUS Admin sidebar navigation
+- [x] Add automated scan scheduling (cron-style interval, default 6 hours, configurable 1h/3h/6h/12h)
+- [x] Add owner notification alerts for critical issues (broken CDN, streams down, health degradation)
+- [x] Wire Code Maintenance health into Ecosystem Dashboard widget
+- [x] Wire Code Maintenance status into State of the Studio
+- [x] Add Code Maintenance commands to QUMUS Command Console (code scan, code health, code scheduler)
+- [x] Add scheduler control panel to Code Maintenance Dashboard (start/stop, interval buttons)
+- [x] Write/update vitest tests for all new integration points (29 tests passing)
+- [ ] Create reusable Manus skill from the Code Maintenance pattern

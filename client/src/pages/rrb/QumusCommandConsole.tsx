@@ -115,6 +115,9 @@ export default function QumusCommandConsole() {
           `  donation report — Fundraising summary\n` +
           `  grant search    — Find matching grants\n` +
           `  studio status   — Production studio info\n` +
+          `  code scan       — Run code maintenance scan\n` +
+          `  code health     — Code health grade & issues\n` +
+          `  code scheduler  — Scan scheduler status\n` +
           `  clear           — Clear console output\n` +
           `  help            — Show this message`,
         timestamp: Date.now(),

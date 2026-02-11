@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { QumusCompleteEngine } from '../qumus-complete-engine';
 import { getAgentNetworkingService } from '../services/agent-networking';
 import { getContentScheduler } from '../services/contentSchedulerService';
+import { runFullScan, getMaintenanceSummary, getSchedulerStatus } from '../services/code-maintenance-policy';
 
 // In-memory command history (production would use DB)
 interface CommandRecord {
@@ -261,6 +262,16 @@ function parseCommand(message: string): ParsedCommand {
     requiresApproval = /override|reset/i.test(message);
     impact = /override|reset/i.test(message) ? 'high' : 'low';
   }
+  // Code Maintenance commands
+  else if (/code\s*(scan|health|maintenance|scheduler|issues)/i.test(message)) {
+    type = 'code_maintenance';
+    subsystem = 'QUMUS';
+    if (/scan/i.test(message)) action = 'code_scan';
+    else if (/health/i.test(message)) action = 'code_health';
+    else if (/scheduler/i.test(message)) action = 'code_scheduler';
+    else action = 'code_health';
+    autonomyLevel = 90;
+  }
   // Community commands
   else if (/community|event|member|forum|poll|announce/i.test(message)) {
     type = 'community';
@@ -461,6 +472,63 @@ async function executeAgentCommand(parsed: ParsedCommand): Promise<CommandRespon
         };
       }
 
+      case 'code_maintenance': {
+        if (parsed.action === 'code_scan') {
+          const report = await runFullScan();
+          return {
+            status: 'executed',
+            message: `🔧 Code Maintenance scan complete — Grade: ${report.healthGrade}`,
+            agentResponse: `[QUMUS Policy #9 — Code Maintenance]\n` +
+              `• Health Grade: ${report.healthGrade} (${report.overallHealth}%)\n` +
+              `• Total Issues: ${report.totalIssues}\n` +
+              `• Critical: ${report.criticalIssues}\n` +
+              `• Auto-Fixed: ${report.autoFixedCount}\n` +
+              `• Escalated: ${report.escalatedCount}\n` +
+              `• Recommendations:\n${report.recommendations.map(r => `  → ${r}`).join('\n')}`,
+            data: report,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        if (parsed.action === 'code_health') {
+          const summary = getMaintenanceSummary();
+          return {
+            status: 'executed',
+            message: `🔧 Code health status retrieved`,
+            agentResponse: `[QUMUS Policy #9 — Code Maintenance]\n` +
+              `• Total Issues: ${summary.totalIssues}\n` +
+              `• Open: ${summary.openIssues}\n` +
+              `• Auto-Fixed: ${summary.autoFixedIssues}\n` +
+              `• Resolved: ${summary.resolvedIssues}\n` +
+              `• Escalated: ${summary.escalatedIssues}\n` +
+              `• Scans Run: ${summary.scanCount}\n` +
+              `• Last Scan: ${summary.lastScanAt ? new Date(summary.lastScanAt).toLocaleString() : 'Never'}`,
+            data: summary,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        if (parsed.action === 'code_scheduler') {
+          const sched = getSchedulerStatus();
+          return {
+            status: 'executed',
+            message: `⏰ Scan scheduler status`,
+            agentResponse: `[QUMUS Policy #9 — Code Maintenance Scheduler]\n` +
+              `• Status: ${sched.enabled ? '● ACTIVE' : '○ STOPPED'}\n` +
+              `• Interval: ${sched.intervalHuman}\n` +
+              `• Total Scheduled Scans: ${sched.totalScheduledScans}\n` +
+              `• Last Scheduled: ${sched.lastScheduledScan ? new Date(sched.lastScheduledScan).toLocaleString() : 'Not yet'}\n` +
+              `• Next Scan: ${new Date(sched.nextScanEstimate).toLocaleString()}`,
+            data: sched,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        return {
+          status: 'executed',
+          message: '🔧 Code Maintenance command processed',
+          agentResponse: `[QUMUS Policy #9] ${parsed.action} — command acknowledged`,
+          executionTime: Date.now() - startTime,
+        };
+      }
+
       default: {
         // Route through QUMUS brain for unknown commands
         const engine = QumusCompleteEngine.getInstance();
@@ -502,12 +570,13 @@ function generateSuggestions(message: string): string[] {
   if (/^r/i.test(lower)) suggestions.push('RRB: play blues channel', 'RRB: list channels', 'RRB: now playing');
   if (/^h/i.test(lower)) suggestions.push('HybridCast: broadcast status', 'HybridCast: test alert', 'HybridCast: mesh status');
   if (/^s/i.test(lower)) suggestions.push('Sweet Miracles: donation report', 'Sweet Miracles: grant search', 'Sweet Miracles: campaign status');
-  if (/^c/i.test(lower)) suggestions.push('Canryn: studio status', 'Canryn: start meditation 432hz');
+  if (/^c/i.test(lower)) suggestions.push('Canryn: studio status', 'Canryn: start meditation 432hz', 'code scan', 'code health', 'code scheduler');
   if (/broadcast|emergency/i.test(lower)) suggestions.push('HybridCast: start emergency broadcast', 'HybridCast: test alert', 'HybridCast: broadcast status');
   if (/play|music|channel/i.test(lower)) suggestions.push('RRB: play blues channel', 'RRB: switch channel jazz', 'RRB: list channels');
   if (/donat|fund|grant/i.test(lower)) suggestions.push('Sweet Miracles: donation report', 'Sweet Miracles: grant search', 'Sweet Miracles: create campaign');
   if (/meditat|heal|freq/i.test(lower)) suggestions.push('Canryn: start meditation 432hz', 'Canryn: play healing frequency 528hz');
-  if (/status|health/i.test(lower)) suggestions.push('QUMUS: health check', 'QUMUS: autonomy status', 'RRB: now playing');
+  if (/status|health/i.test(lower)) suggestions.push('QUMUS: health check', 'QUMUS: autonomy status', 'RRB: now playing', 'code health');
+  if (/code|scan|maintenance/i.test(lower)) suggestions.push('code scan', 'code health', 'code scheduler');
 
   return [...new Set(suggestions)].slice(0, 6);
 }
