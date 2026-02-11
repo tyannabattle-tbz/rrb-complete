@@ -85,6 +85,17 @@ const EVENT_TEMPLATES: Record<string, Array<{ input: Record<string, any>; confid
     { input: { type: 'security_audit', scope: 'api_endpoints', severity: 'routine', timestamp: Date.now() }, description: 'Routine security audit' },
     { input: { type: 'financial_report', period: 'quarterly', regulations: ['SOX', 'PCI-DSS'], timestamp: Date.now() }, confidence: 55, description: 'Quarterly financial compliance (needs review)' },
   ],
+
+  // Policy 9: Code Maintenance (90% autonomy)
+  policy_code_maintenance: [
+    { input: { scanType: 'cdn_assets', assetsChecked: 4, brokenCount: 0, healthScore: 100, timestamp: Date.now() }, description: 'CDN asset health check — all assets healthy' },
+    { input: { scanType: 'audio_streams', streamsChecked: 7, downCount: 0, healthScore: 100, timestamp: Date.now() }, description: 'Audio stream health check — all streams live' },
+    { input: { scanType: 'route_health', routesChecked: 25, deadRoutes: 0, healthScore: 100, timestamp: Date.now() }, description: 'Route health scan — all critical routes accessible' },
+    { input: { scanType: 'code_quality', patternsChecked: 4, issuesFound: 0, autoFixed: 0, healthScore: 95, timestamp: Date.now() }, description: 'Code quality scan — no anti-patterns detected' },
+    { input: { scanType: 'dependency_health', packagesChecked: 5, outdated: 0, vulnerable: 0, healthScore: 100, timestamp: Date.now() }, description: 'Dependency health check — all packages current' },
+    { input: { scanType: 'cdn_assets', assetsChecked: 4, brokenCount: 1, healthScore: 75, assetUrl: 'broken-image.jpg', page: '/rrb/the-music', timestamp: Date.now() }, confidence: 50, description: 'Broken CDN image detected (needs human review)' },
+    { input: { scanType: 'audio_streams', streamsChecked: 7, downCount: 2, healthScore: 60, channels: ['Blues', 'Jazz'], timestamp: Date.now() }, confidence: 45, description: 'Multiple audio streams down (needs investigation)' },
+  ],
 };
 
 /**
@@ -161,7 +172,7 @@ export class QumusAutonomousLoop {
     this.startTime = Date.now();
 
     console.log(`[QUMUS Loop] Starting autonomous event loop (interval: ${intervalMs / 1000}s)`);
-    console.log(`[QUMUS Loop] Processing events across ${Object.keys(EVENT_TEMPLATES).length} policies`);
+    console.log(`[QUMUS Loop] Processing events across ${Object.keys(EVENT_TEMPLATES).length} policies (including Code Maintenance)`);
 
     // Process initial batch immediately
     this.processBatch().then(result => {

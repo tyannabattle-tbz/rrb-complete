@@ -144,6 +144,7 @@ import RRBQumusMonitoringDashboard from '@/pages/rrb/QumusMonitoringDashboard';
 import RRBQumusHumanReviewDashboard from '@/pages/rrb/QumusHumanReviewDashboard';
 import RRBQumusAdminDashboard from '@/pages/rrb/QumusAdminDashboard';
 import RRBQumusPolicyAnalyticsDashboard from '@/pages/rrb/QumusPolicyAnalyticsDashboard';
+import CodeMaintenanceDashboard from '@/pages/rrb/CodeMaintenanceDashboard';
 import RRBQumusBroadcastAdminDashboard from '@/pages/rrb/QumusBroadcastAdminDashboard';
 import RRBAgentNetworkDashboard from '@/pages/rrb/AgentNetworkDashboard';
 import RRBStateOfTheStudio from '@/pages/rrb/StateOfTheStudio';
@@ -320,6 +321,8 @@ function Router() {
       <Route path="/rrb/qumus/human-review" component={RRBQumusHumanReviewDashboard} />
       <Route path="/rrb/qumus/admin" component={RRBQumusAdminDashboard} />
       <Route path="/rrb/qumus/analytics" component={RRBQumusPolicyAnalyticsDashboard} />
+      <Route path="/rrb/qumus/code-maintenance" component={CodeMaintenanceDashboard} />
+      <Route path="/code-maintenance" component={CodeMaintenanceDashboard} />
       <Route path="/rrb/qumus/agent-network" component={RRBAgentNetworkDashboard} />
       <Route path="/rrb/qumus/state-of-the-studio" component={RRBStateOfTheStudio} />
       <Route path="/rrb/state-of-the-studio" component={RRBStateOfTheStudio} />

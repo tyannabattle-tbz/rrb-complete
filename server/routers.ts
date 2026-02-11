@@ -67,6 +67,9 @@ import { aiCompareRouter } from "./routers/aiCompareRouter";
 import { royaltyTrackerRouter } from "./routers/royaltyTracker";
 import { royaltyPayoutsRouter } from "./routers/royaltyPayouts";
 
+// QUMUS Code Maintenance Policy (9th autonomous decision policy)
+import { codeMaintenanceRouter } from "./routers/codeMaintenanceRouter";
+
 // Business Operations routers
 import { bookkeepingRouter } from "./routers/businessBookkeeping";
 import { hrRouter } from "./routers/businessHR";
@@ -293,6 +296,9 @@ export const appRouter = router({
 
   // AI Commercial Generation & Radio Broadcast Integration
   commercials: commercialsRouter,
+
+  // QUMUS Code Maintenance (9th policy — broken images, dead links, asset health)
+  codeMaintenance: codeMaintenanceRouter,
 
   // Agent Session Management
   agent: router({

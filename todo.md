@@ -2420,3 +2420,19 @@
 - [x] Add transfer.paid and account.updated webhook handlers
 - [x] Build payout UI in RoyaltyTracker (Setup Payout button, pending payouts panel, Pay/Pay All buttons)
 - [x] Write vitest tests for the payout integration (33 tests passing)
+
+## v11.1 QUMUS Code Maintenance Policy — 9th Autonomous Decision Policy
+- [x] Create Code Maintenance policy service (broken image detection, dead link scanning, asset health checks)
+- [x] Add CDN/S3 asset validation (check all image URLs return 200)
+- [x] Add route health scanner (detect 404s across all registered routes)
+- [x] Add audio stream health checker (verify streaming URLs are live)
+- [x] Add dependency/package vulnerability scanner
+- [x] Add code quality metrics (TypeScript errors, unused imports, dead code detection)
+- [x] Wire Code Maintenance policy into QUMUS autonomous decision loop (9th policy, 90% autonomy)
+- [x] Create codeMaintenanceRouter tRPC router with scan/fix/history procedures
+- [x] Build Code Maintenance Dashboard UI at /rrb/qumus/code-maintenance
+- [x] Add auto-fix capability for common issues (replace broken CDN URLs, update dead links)
+- [x] Add human review escalation for complex fixes (low-confidence events escalated)
+- [x] Log all scan results and fixes to QUMUS decision tables
+- [x] Write vitest tests for Code Maintenance policy (37 tests passing)
+- [x] Add route at /code-maintenance and /rrb/qumus/code-maintenance

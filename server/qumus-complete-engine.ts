@@ -92,6 +92,13 @@ export const CORE_POLICIES = {
     autonomyLevel: 88,
     description: 'Regulatory compliance and audit reporting',
   },
+  CODE_MAINTENANCE: {
+    id: 'policy_code_maintenance',
+    name: 'Code Maintenance',
+    type: 'code_maintenance',
+    autonomyLevel: 90,
+    description: 'Autonomous detection and repair of broken images, dead links, stale CDN assets, audio stream failures, and code health issues',
+  },
 };
 
 // In-memory metrics cache for fast reads (synced to DB periodically)
@@ -175,7 +182,7 @@ export class QumusCompleteEngine {
         console.log(`[QUMUS] Heartbeat — ${health.totalDecisions} decisions, ${health.autonomyPercentage}% autonomy, status: ${health.status}`);
       }, 300_000);
 
-      console.log('[QUMUS] Complete Engine initialized — 8 policies active, DB persistence enabled');
+      console.log('[QUMUS] Complete Engine initialized — 9 policies active, DB persistence enabled');
     } catch (error) {
       console.error('[QUMUS] Initialization error (non-fatal):', error);
       // Engine still works with in-memory fallback
