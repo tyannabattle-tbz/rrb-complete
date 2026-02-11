@@ -108,6 +108,16 @@ const EVENT_TEMPLATES: Record<string, Array<{ input: Record<string, any>; confid
     { input: { type: 'page_load', url: '/rrb/the-music', loadTime: 4500, timestamp: Date.now() }, confidence: 55, description: 'Slow page load detected (needs investigation)' },
     { input: { type: 'memory_usage', heapUsed: 88, heapTotal: 100, rss: 250, timestamp: Date.now() }, confidence: 40, description: 'High memory usage alert (needs review)' },
   ],
+
+  // Policy 12: Royalty Audit (88% autonomy)
+  policy_royalty_audit: [
+    { input: { type: 'source_check', platform: 'bmi', songTitle: "Rockin' Rockin' Boogie", status: 'verified', timestamp: Date.now() }, description: 'BMI registration verification — confirmed' },
+    { input: { type: 'rate_check', platform: 'spotify', expectedRate: 0.4, actualRate: 0.38, songTitle: "Let's Work Together", timestamp: Date.now() }, description: 'Spotify rate check — within tolerance' },
+    { input: { type: 'discrepancy_scan', totalSources: 11, discrepancies: 0, healthScore: 100, timestamp: Date.now() }, description: 'Quarterly discrepancy scan — clean' },
+    { input: { type: 'platform_audit', platform: 'apple_music', totalPlays: 0, expectedPayment: 0, actualPayment: 0, timestamp: Date.now() }, description: 'Apple Music payout audit — no activity' },
+    { input: { type: 'rate_check', platform: 'youtube', expectedRate: 0.2, actualRate: 0.08, songTitle: "Rockin' Rockin' Boogie", timestamp: Date.now() }, confidence: 45, description: 'YouTube rate mismatch detected (needs review)' },
+    { input: { type: 'missing_credit', platform: 'soundexchange', songTitle: "Rockin' Rockin' Boogie", artist: 'Seabrun Candy Hunter', timestamp: Date.now() }, confidence: 35, description: 'SoundExchange credit missing (needs human review)' },
+  ],
 };
 
 /**

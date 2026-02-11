@@ -10,6 +10,7 @@ import { getContentScheduler } from '../services/contentSchedulerService';
 import { runFullScan, getMaintenanceSummary, getSchedulerStatus } from '../services/code-maintenance-policy';
 import { takeSnapshot as runPerformanceBenchmark, getMonitoringStatus as getPerformanceSchedulerStatus } from '../services/performance-monitoring-policy';
 import { executeCommand as executeArchivalCommand, runArchivalScan as runArchivalFullScan, getArchivalSummary, getSchedulerStatus as getArchivalSchedulerStatus } from '../services/content-archival-policy';
+import { executeCommand as executeRoyaltyCommand, runAudit as runRoyaltyAudit, getAuditSummary as getRoyaltyAuditSummary, getAuditSchedulerStatus as getRoyaltySchedulerStatus } from '../services/royalty-audit-policy';
 
 // In-memory command history (production would use DB)
 interface CommandRecord {
@@ -295,6 +296,18 @@ function parseCommand(message: string): ParsedCommand {
     else if (/scheduler/i.test(message)) action = 'archive_scheduler';
     else action = 'archive_status';
     autonomyLevel = 90;
+  }
+  // Royalty Audit commands
+  else if (/royalty\s*(status|run|audit|discrepancies|platforms|scheduler)/i.test(message)) {
+    type = 'royalty_audit';
+    subsystem = 'QUMUS';
+    if (/run|audit/i.test(message)) action = 'royalty_run';
+    else if (/status/i.test(message)) action = 'royalty_status';
+    else if (/discrepancies/i.test(message)) action = 'royalty_discrepancies';
+    else if (/platforms/i.test(message)) action = 'royalty_platforms';
+    else if (/scheduler/i.test(message)) action = 'royalty_scheduler';
+    else action = 'royalty_status';
+    autonomyLevel = 88;
   }
   // Community commands
   else if (/community|event|member|forum|poll|announce/i.test(message)) {
@@ -641,6 +654,63 @@ async function executeAgentCommand(parsed: ParsedCommand): Promise<CommandRespon
         };
       }
 
+      case 'royalty_audit': {
+        if (parsed.action === 'royalty_run') {
+          const report = runRoyaltyAudit();
+          return {
+            status: 'executed',
+            message: `💰 Royalty audit complete — ${report.totalSources} sources, ${report.totalDiscrepancies} discrepancies`,
+            agentResponse: `[QUMUS Policy #12 — Royalty Audit]\n` +
+              `• Period: ${report.period}\n` +
+              `• Sources Audited: ${report.totalSources}\n` +
+              `• Discrepancies: ${report.totalDiscrepancies}\n` +
+              `• Expected: $${(report.totalExpected / 100).toFixed(2)}\n` +
+              `• Actual: $${(report.totalActual / 100).toFixed(2)}\n` +
+              `• Recommendations:\n${report.recommendations.map((r: string) => `  → ${r}`).join('\n')}`,
+            data: report,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        if (parsed.action === 'royalty_status') {
+          const summary = getRoyaltyAuditSummary();
+          return {
+            status: 'executed',
+            message: `💰 Royalty audit status retrieved`,
+            agentResponse: `[QUMUS Policy #12 — Royalty Audit]\n` +
+              `• Sources: ${summary.totalSources} (${summary.verifiedSources} verified, ${summary.pendingSources} pending)\n` +
+              `• Platforms: ${summary.platformCount} | Songs: ${summary.songCount}\n` +
+              `• Discrepancies: ${summary.totalDiscrepancies} (${summary.criticalDiscrepancies} critical)\n` +
+              `• Health: ${summary.healthGrade} (${summary.healthScore}/100)\n` +
+              `• Audits Run: ${summary.totalAudits}\n` +
+              `• Last Audit: ${summary.lastAuditRun ? new Date(summary.lastAuditRun).toLocaleString() : 'Never'}`,
+            data: summary,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        if (parsed.action === 'royalty_scheduler') {
+          const sched = getRoyaltySchedulerStatus();
+          return {
+            status: 'executed',
+            message: `⏰ Royalty audit scheduler status`,
+            agentResponse: `[QUMUS Policy #12 — Royalty Audit Scheduler]\n` +
+              `• Status: ${sched.enabled ? '● ACTIVE' : '○ STOPPED'}\n` +
+              `• Interval: ${sched.intervalHuman}\n` +
+              `• Total Audits: ${sched.totalAudits}\n` +
+              `• Last Run: ${sched.lastRun ? new Date(sched.lastRun).toLocaleString() : 'Not yet'}`,
+            data: sched,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        // royalty discrepancies, royalty platforms — use the generic command handler
+        const royaltyResult = executeRoyaltyCommand(`royalty ${parsed.action.replace('royalty_', '')}`);
+        return {
+          status: 'executed',
+          message: '💰 Royalty audit command processed',
+          agentResponse: royaltyResult,
+          executionTime: Date.now() - startTime,
+        };
+      }
+
       default: {
         // Route through QUMUS brain for unknown commands
         const engine = QumusCompleteEngine.getInstance();
@@ -691,6 +761,7 @@ function generateSuggestions(message: string): string[] {
   if (/code|scan|maintenance/i.test(lower)) suggestions.push('code scan', 'code health', 'code scheduler');
   if (/perf|bench|latency|memory/i.test(lower)) suggestions.push('performance benchmark', 'performance status', 'performance latency', 'performance memory');
   if (/archive|wayback|linkrot|link.rot|preserv/i.test(lower)) suggestions.push('archive scan', 'archive status', 'archive wayback', 'archive linkrot', 'archive scheduler');
+  if (/royalty|audit|bmi|payout|discrepanc/i.test(lower)) suggestions.push('royalty status', 'royalty run', 'royalty discrepancies', 'royalty platforms', 'royalty scheduler');
 
   return [...new Set(suggestions)].slice(0, 6);
 }

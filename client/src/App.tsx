@@ -147,6 +147,7 @@ import RRBQumusPolicyAnalyticsDashboard from '@/pages/rrb/QumusPolicyAnalyticsDa
 import CodeMaintenanceDashboard from '@/pages/rrb/CodeMaintenanceDashboard';
 import PerformanceMonitoringDashboard from '@/pages/rrb/PerformanceMonitoringDashboard';
 import ContentArchivalDashboard from '@/pages/rrb/ContentArchivalDashboard';
+import RoyaltyAuditDashboard from '@/pages/rrb/RoyaltyAuditDashboard';
 import RRBQumusBroadcastAdminDashboard from '@/pages/rrb/QumusBroadcastAdminDashboard';
 import RRBAgentNetworkDashboard from '@/pages/rrb/AgentNetworkDashboard';
 import RRBStateOfTheStudio from '@/pages/rrb/StateOfTheStudio';
@@ -329,6 +330,8 @@ function Router() {
       <Route path="/performance-monitoring" component={PerformanceMonitoringDashboard} />
       <Route path="/rrb/qumus/content-archival" component={ContentArchivalDashboard} />
       <Route path="/content-archival" component={ContentArchivalDashboard} />
+      <Route path="/rrb/qumus/royalty-audit" component={RoyaltyAuditDashboard} />
+      <Route path="/royalty-audit" component={RoyaltyAuditDashboard} />
       <Route path="/rrb/qumus/agent-network" component={RRBAgentNetworkDashboard} />
       <Route path="/rrb/qumus/state-of-the-studio" component={RRBStateOfTheStudio} />
       <Route path="/rrb/state-of-the-studio" component={RRBStateOfTheStudio} />

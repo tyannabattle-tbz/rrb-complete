@@ -76,6 +76,9 @@ import { performanceMonitoringRouter } from "./routers/performanceMonitoringRout
 // QUMUS Content Archival Policy (11th autonomous decision policy)
 import { contentArchivalRouter } from "./routers/contentArchivalRouter";
 
+// QUMUS Royalty Audit Policy (12th autonomous decision policy)
+import { royaltyAuditRouter } from "./routers/royaltyAuditRouter";
+
 // Business Operations routers
 import { bookkeepingRouter } from "./routers/businessBookkeeping";
 import { hrRouter } from "./routers/businessHR";
@@ -311,6 +314,9 @@ export const appRouter = router({
 
   // QUMUS Content Archival (11th policy — link monitoring, Wayback archival, link rot detection)
   contentArchival: contentArchivalRouter,
+
+  // QUMUS Royalty Audit (12th policy — BMI cross-reference, streaming payout discrepancy detection)
+  royaltyAudit: royaltyAuditRouter,
 
   // Agent Session Management
   agent: router({

@@ -123,6 +123,11 @@ export default function QumusCommandConsole() {
           `  archive wayback — Check Wayback Machine\n` +
           `  archive linkrot — List dead links\n` +
           `  archive scheduler — Archival scheduler status\n` +
+          `  royalty status   — Royalty audit summary\n` +
+          `  royalty run      — Run full royalty audit\n` +
+          `  royalty discrepancies — View open discrepancies\n` +
+          `  royalty platforms — List monitored platforms\n` +
+          `  royalty scheduler — Audit scheduler status\n` +
           `  clear           — Clear console output\n` +
           `  help            — Show this message`,
         timestamp: Date.now(),

@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Activity, RefreshCw, Zap, Shield, Clock, Wrench, ExternalLink, BarChart3, Radio, Image, Route, Code, Package, Archive } from "lucide-react";
+import { CheckCircle, Activity, RefreshCw, Zap, Shield, Clock, Wrench, ExternalLink, BarChart3, Radio, Image, Route, Code, Package, Archive, DollarSign } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
 
@@ -145,6 +145,15 @@ export default function QumusAdminDashboard() {
                 <Archive className="w-6 h-6 mx-auto mb-2 text-blue-500 group-hover:scale-110 transition-transform" />
                 <div className="text-sm font-medium">Content Archival</div>
                 <div className="text-xs text-foreground/50">Policy #11</div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link href="/rrb/qumus/royalty-audit">
+            <Card className="cursor-pointer hover:border-green-500/50 transition-all group">
+              <CardContent className="pt-4 pb-3 text-center">
+                <DollarSign className="w-6 h-6 mx-auto mb-2 text-green-500 group-hover:scale-110 transition-transform" />
+                <div className="text-sm font-medium">Royalty Audit</div>
+                <div className="text-xs text-foreground/50">Policy #12</div>
               </CardContent>
             </Card>
           </Link>

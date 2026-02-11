@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertCircle, CheckCircle, Activity, Wrench, ArrowRight, Archive } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle, Activity, Wrench, ArrowRight, Archive, DollarSign } from "lucide-react";
 import AICollaborationHub from "@/components/rrb/AICollaborationHub";
 import { Link } from "wouter";
 
@@ -272,6 +272,39 @@ export default function EcosystemDashboard() {
             </div>
           </div>
           <p className="text-xs text-foreground/40 mt-3">Monitoring BMI, Discogs, Copyright Office, streaming platforms, and legal resources</p>
+        </Card>
+
+        {/* Royalty Audit Health */}
+        <Card className="p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-green-500" /> Royalty Audit — Policy #12
+            </h2>
+            <Link href="/rrb/qumus/royalty-audit">
+              <Button variant="outline" size="sm" className="gap-1">
+                Dashboard <ArrowRight className="w-3 h-3" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Royalty Sources</p>
+              <p className="text-2xl font-bold text-foreground">11</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Platforms</p>
+              <p className="text-2xl font-bold text-blue-500">6</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Discrepancies</p>
+              <p className="text-2xl font-bold text-green-500">0</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Autonomy</p>
+              <p className="text-2xl font-bold text-amber-500">88%</p>
+            </div>
+          </div>
+          <p className="text-xs text-foreground/40 mt-3">Cross-referencing BMI registrations with Spotify, Apple Music, YouTube, SoundExchange payouts</p>
         </Card>
 
         {/* Event Bus & QUMUS */}

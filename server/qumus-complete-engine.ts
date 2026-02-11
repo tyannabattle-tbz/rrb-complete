@@ -106,6 +106,20 @@ export const CORE_POLICIES = {
     autonomyLevel: 92,
     description: 'Real-time tracking of page load times, API response latency, memory usage, and ecosystem performance metrics with automated alerting',
   },
+  CONTENT_ARCHIVAL: {
+    id: 'policy_content_archival',
+    name: 'Content Archival',
+    type: 'content_archival',
+    autonomyLevel: 90,
+    description: 'Monitoring evidence links for availability, preserving content via Wayback Machine, and detecting link rot across BMI, Discogs, Copyright Office, and streaming platforms',
+  },
+  ROYALTY_AUDIT: {
+    id: 'policy_royalty_audit',
+    name: 'Royalty Audit',
+    type: 'royalty_audit',
+    autonomyLevel: 88,
+    description: 'Cross-referencing BMI registrations with streaming platform payouts to detect royalty discrepancies, missing credits, and rate mismatches for Seabrun Candy Hunter legacy works',
+  },
 };
 
 // In-memory metrics cache for fast reads (synced to DB periodically)
