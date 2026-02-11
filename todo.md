@@ -2300,3 +2300,9 @@
 ## Home Page Overlap Glitch Fix - Feb 2026
 - [x] Fix text bleed-through on home page where next section text shows behind "View Ecosystem Dashboard" button area
 - [x] Ensure proper z-index and background coverage between hero section and subsequent sections
+
+## Vinyl Record Visibility Restoration - Feb 2026
+- [x] Restore spinning vinyl record as a prominent visual element in hero section (not faint background)
+- [x] Keep text bleed-through fix in place (no album text labels showing behind buttons)
+- [x] Generated custom vinyl record image with RRB branding and uploaded to CDN
+- [x] Updated RotatingVinylRecord component to use CDN image URL
