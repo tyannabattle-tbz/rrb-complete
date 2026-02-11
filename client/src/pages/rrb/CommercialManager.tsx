@@ -158,6 +158,41 @@ export default function CommercialManager() {
     onSuccess: () => stats.refetch(),
   });
 
+  const uploadAudioMutation = trpc.commercials.uploadAudio.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Audio uploaded for commercial! URL: ${data.audioUrl?.slice(0, 50)}...`);
+      commercials.refetch();
+    },
+    onError: (err) => toast.error(`Upload failed: ${err.message}`),
+  });
+
+  const handleAudioUpload = (commercialId: string) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'audio/mpeg,audio/wav,audio/mp3,audio/ogg,audio/m4a,.mp3,.wav,.ogg,.m4a';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      if (file.size > 16 * 1024 * 1024) {
+        toast.error('Audio file must be under 16MB');
+        return;
+      }
+      toast.info(`Uploading ${file.name}...`);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(',')[1];
+        uploadAudioMutation.mutate({
+          id: commercialId,
+          audioBase64: base64,
+          fileName: file.name,
+          mimeType: file.type || 'audio/mpeg',
+        });
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  };
+
   const handleGenerate = () => {
     if (!user) { toast.error('Please sign in to generate commercials'); return; }
     generateMutation.mutate({
@@ -368,6 +403,17 @@ export default function CommercialManager() {
                               📦 Archive
                             </button>
                           )}
+                          <button
+                            onClick={e => { e.stopPropagation(); handleAudioUpload(commercial.id); }}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                              commercial.audioUrl
+                                ? 'bg-purple-500/20 text-purple-300 hover:bg-purple-500/30'
+                                : 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 animate-pulse'
+                            }`}
+                            disabled={uploadAudioMutation.isPending}
+                          >
+                            {uploadAudioMutation.isPending ? '⏳ Uploading...' : commercial.audioUrl ? '🎵 Replace Audio' : '🎤 Upload Audio'}
+                          </button>
                           <button
                             onClick={e => { e.stopPropagation(); deleteMutation.mutate({ id: commercial.id }); }}
                             className="px-3 py-1.5 bg-red-500/20 text-red-300 rounded-lg text-xs font-medium hover:bg-red-500/30"

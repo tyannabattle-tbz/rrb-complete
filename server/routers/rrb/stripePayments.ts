@@ -11,11 +11,50 @@
 import { router, protectedProcedure, publicProcedure } from '../../_core/trpc';
 import { z } from 'zod';
 import { getDonationTiers, getTierById, isValidDonationAmount, getDonationPurposes, getOneTimeDonationAmounts } from '../../config/stripeProducts';
+import { getDb } from '../../db';
+import { usersWithStripe } from '../../../drizzle/schema';
+import { eq } from 'drizzle-orm';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2023-10-16',
 });
+
+/** Helper to get user's Stripe customer ID from the mapping table */
+async function getUserStripeCustomerId(userId: number): Promise<string | null> {
+  try {
+    const db = await getDb();
+    if (!db) return null;
+    const rows = await db.select().from(usersWithStripe).where(eq(usersWithStripe.userId, userId)).limit(1);
+    return rows[0]?.stripeCustomerId || null;
+  } catch { return null; }
+}
+
+/** Helper to get user's Stripe subscription ID from the mapping table */
+async function getUserStripeSubscriptionId(userId: number): Promise<string | null> {
+  try {
+    const db = await getDb();
+    if (!db) return null;
+    const rows = await db.select().from(usersWithStripe).where(eq(usersWithStripe.userId, userId)).limit(1);
+    return rows[0]?.stripeSubscriptionId || null;
+  } catch { return null; }
+}
+
+/** Helper to save/update Stripe customer mapping */
+async function saveStripeCustomerId(userId: number, stripeCustomerId: string): Promise<void> {
+  try {
+    const db = await getDb();
+    if (!db) return;
+    const existing = await db.select().from(usersWithStripe).where(eq(usersWithStripe.userId, userId)).limit(1);
+    if (existing.length > 0) {
+      await db.update(usersWithStripe).set({ stripeCustomerId }).where(eq(usersWithStripe.userId, userId));
+    } else {
+      await db.insert(usersWithStripe).values({ userId, stripeCustomerId });
+    }
+  } catch (e) {
+    console.log('[Stripe] Error saving customer mapping:', e);
+  }
+}
 
 export const stripePaymentsRouter = router({
   /**
@@ -36,7 +75,7 @@ export const stripePaymentsRouter = router({
           throw new Error(`Invalid donation tier: ${input.tierId}`);
         }
 
-        let customerId = ctx.user.stripeCustomerId;
+        let customerId = await getUserStripeCustomerId(ctx.user.id);
         if (!customerId) {
           const customer = await stripe.customers.create({
             email: ctx.user.email || undefined,
@@ -47,6 +86,7 @@ export const stripePaymentsRouter = router({
             },
           });
           customerId = customer.id;
+          await saveStripeCustomerId(ctx.user.id, customerId);
         }
 
         const origin = ctx.req?.headers?.origin || process.env.VITE_APP_URL || 'http://localhost:3000';
@@ -94,7 +134,6 @@ export const stripePaymentsRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Map old tier names to new ones
       const tierMap: Record<string, string> = {
         bronze: 'friend', silver: 'supporter', gold: 'champion', platinum: 'guardian',
         friend: 'friend', supporter: 'supporter', champion: 'champion', guardian: 'guardian', benefactor: 'benefactor',
@@ -103,7 +142,7 @@ export const stripePaymentsRouter = router({
       const tier = getTierById(mappedTier);
       if (!tier) throw new Error(`Invalid tier: ${input.tierId}`);
 
-      let customerId = ctx.user.stripeCustomerId;
+      let customerId = await getUserStripeCustomerId(ctx.user.id);
       if (!customerId) {
         const customer = await stripe.customers.create({
           email: ctx.user.email || undefined,
@@ -111,6 +150,7 @@ export const stripePaymentsRouter = router({
           metadata: { userId: ctx.user.id.toString() },
         });
         customerId = customer.id;
+        await saveStripeCustomerId(ctx.user.id, customerId);
       }
 
       const origin = ctx.req?.headers?.origin || process.env.VITE_APP_URL || 'http://localhost:3000';
@@ -164,6 +204,7 @@ export const stripePaymentsRouter = router({
 
         const purposeLabel = getDonationPurposes().find(p => p.id === input.purpose)?.name || 'Legacy Recovery';
 
+        const origin = process.env.VITE_APP_URL || 'http://localhost:3000';
         const session = await stripe.checkout.sessions.create({
           customer: customer.id,
           payment_method_types: ['card'],
@@ -182,8 +223,8 @@ export const stripePaymentsRouter = router({
           ],
           mode: 'payment',
           allow_promotion_codes: true,
-          success_url: `${process.env.VITE_APP_URL || 'http://localhost:3000'}/donation-success?session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `${process.env.VITE_APP_URL || 'http://localhost:3000'}/sweet-miracles`,
+          success_url: `${origin}/donation-success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${origin}/sweet-miracles`,
           metadata: {
             donorName: input.name,
             donorEmail: input.email,
@@ -222,6 +263,7 @@ export const stripePaymentsRouter = router({
         email: input.email,
         name: input.name,
       });
+      const origin = process.env.VITE_APP_URL || 'http://localhost:3000';
       const session = await stripe.checkout.sessions.create({
         customer: customer.id,
         payment_method_types: ['card'],
@@ -238,8 +280,8 @@ export const stripePaymentsRouter = router({
         }],
         mode: 'payment',
         allow_promotion_codes: true,
-        success_url: `${process.env.VITE_APP_URL || 'http://localhost:3000'}/donation-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.VITE_APP_URL || 'http://localhost:3000'}/sweet-miracles`,
+        success_url: `${origin}/donation-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/sweet-miracles`,
         metadata: {
           donorName: input.name,
           donorEmail: input.email,
@@ -255,9 +297,10 @@ export const stripePaymentsRouter = router({
    */
   getDonationHistory: protectedProcedure.query(async ({ ctx }) => {
     try {
-      if (!ctx.user.stripeCustomerId) return [];
+      const customerId = await getUserStripeCustomerId(ctx.user.id);
+      if (!customerId) return [];
       const invoices = await stripe.invoices.list({
-        customer: ctx.user.stripeCustomerId,
+        customer: customerId,
         limit: 50,
       });
       return invoices.data.map((invoice) => ({
@@ -280,8 +323,9 @@ export const stripePaymentsRouter = router({
    */
   getSubscriptions: protectedProcedure.query(async ({ ctx }) => {
     try {
-      if (!ctx.user.stripeSubscriptionId) return [];
-      const subscription = await stripe.subscriptions.retrieve(ctx.user.stripeSubscriptionId);
+      const subscriptionId = await getUserStripeSubscriptionId(ctx.user.id);
+      if (!subscriptionId) return [];
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
       if (!subscription) return [];
       const item = subscription.items.data[0];
       const price = item.price;
@@ -306,10 +350,11 @@ export const stripePaymentsRouter = router({
    */
   cancelSubscription: protectedProcedure.mutation(async ({ ctx }) => {
     try {
-      if (!ctx.user.stripeSubscriptionId) {
+      const subscriptionId = await getUserStripeSubscriptionId(ctx.user.id);
+      if (!subscriptionId) {
         throw new Error('No active recurring donation found');
       }
-      const subscription = await stripe.subscriptions.update(ctx.user.stripeSubscriptionId, {
+      const subscription = await stripe.subscriptions.update(subscriptionId, {
         cancel_at_period_end: true,
       });
       return {
@@ -331,15 +376,16 @@ export const stripePaymentsRouter = router({
     .input(z.object({ newTierId: z.enum(['friend', 'supporter', 'champion', 'guardian', 'benefactor']) }))
     .mutation(async ({ ctx, input }) => {
       try {
-        if (!ctx.user.stripeSubscriptionId) {
+        const subscriptionId = await getUserStripeSubscriptionId(ctx.user.id);
+        if (!subscriptionId) {
           throw new Error('No active recurring donation found');
         }
         const newTier = getTierById(input.newTierId);
         if (!newTier) throw new Error(`Invalid tier: ${input.newTierId}`);
 
-        const subscription = await stripe.subscriptions.retrieve(ctx.user.stripeSubscriptionId);
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const item = subscription.items.data[0];
-        const updated = await stripe.subscriptions.update(ctx.user.stripeSubscriptionId, {
+        const updated = await stripe.subscriptions.update(subscriptionId, {
           items: [{ id: item.id, price: newTier.priceId }],
         });
         return { success: true, subscription: updated };

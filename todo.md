@@ -2230,3 +2230,11 @@
 - [x] Fix sound/audio buttons — Solbones uses Web Audio oscillators (working), radio streams verified
 - [x] Verify all audio playback works end-to-end — 61 audio tests passing
 - [x] Ensure HybridCast is clearly labeled as emergency-only — updated widget, nav labels, and description
+
+## Apply All Next Steps Round 2 - Feb 2026
+- [x] Set up Stripe sandbox testing — webhook registered at /api/stripe/webhook, donations table created, stripePayments router fixed to use usersWithStripe table
+- [x] Enhance commercial audio upload flow — added uploadAudio endpoint to commercials router, Upload Audio button in CommercialManager with S3 storage
+- [x] Configure LiveCallIn meeting URL environment variables — VITE_SKYPE_URL, VITE_ZOOM_URL, VITE_MEET_URL, VITE_DISCORD_URL all set
+- [x] Verify Stripe webhook endpoint is functional — returns proper signature error when hit without stripe-signature header
+- [x] Add payment success/cancel pages — DonationSuccess page created at /donation-success with session details
+- [x] Test commercial audio upload — uploadAudio mutation wired to CommercialManager UI with file picker, S3 upload, and audioUrl update

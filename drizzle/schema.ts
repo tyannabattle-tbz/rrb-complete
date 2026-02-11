@@ -2082,3 +2082,26 @@ export const legalComplianceItems = mysqlTable('legal_compliance_items', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
+
+
+// Stripe integration tables
+export const donations = mysqlTable("donations", {
+  id: int().autoincrement().notNull().primaryKey(),
+  userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+  amount: varchar({ length: 20 }).notNull(),
+  stripePaymentIntentId: varchar({ length: 255 }),
+  stripeInvoiceId: varchar({ length: 255 }),
+  stripeCustomerId: varchar({ length: 255 }),
+  status: mysqlEnum(['pending', 'completed', 'refunded', 'failed']).default('pending').notNull(),
+  purpose: varchar({ length: 100 }).default('general-fund'),
+  createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const usersWithStripe = mysqlTable("users_with_stripe", {
+  id: int().autoincrement().notNull().primaryKey(),
+  userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+  stripeCustomerId: varchar({ length: 255 }).notNull(),
+  stripeSubscriptionId: varchar({ length: 255 }),
+  createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});

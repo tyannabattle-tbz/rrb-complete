@@ -90,6 +90,7 @@ import DocumentUpload from '@/pages/DocumentUpload';
 import AuditTrailViewer from '@/pages/AuditTrailViewer';
 import { AutonomousDashboardPage } from '@/pages/AutonomousDashboardPage';
 import { DonationCheckout } from '@/pages/DonationCheckout';
+import DonationSuccess from '@/pages/DonationSuccess';
 import { ProofVaultSearch } from '@/pages/ProofVaultSearch';
 import { ListenerDashboard } from '@/pages/ListenerDashboard';
 import ComprehensiveDashboardPage from '@/pages/ComprehensiveDashboardPage';
@@ -271,6 +272,7 @@ function Router() {
       <Route path="/podcast" component={PodcastPlayer} />
       <Route path="/podcast-discovery" component={PodcastDiscovery} />
       <Route path="/donate" component={DonationCheckout} />
+      <Route path="/donation-success" component={DonationSuccess} />
       <Route path="/proof-vault" component={ProofVaultSearch} />
       <Route path="/dashboard" component={ListenerDashboard} />
       <Route path="/comprehensive-dashboard" component={ComprehensiveDashboardPage} />

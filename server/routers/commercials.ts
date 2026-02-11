@@ -9,6 +9,7 @@ import { z } from "zod";
 import { publicProcedure, protectedProcedure } from "../_core/trpc";
 import { router } from "../_core/trpc";
 import { getCommercialEngine } from "../services/commercial-engine";
+import { storagePut } from "../storage";
 
 export const commercialsRouter = router({
   // Get all commercials with optional filters
@@ -134,4 +135,29 @@ export const commercialsRouter = router({
     const engine = getCommercialEngine();
     return engine.getAdvertisingPackages();
   }),
+
+  // Upload audio file for a commercial
+  uploadAudio: protectedProcedure
+    .input(z.object({
+      id: z.string(),
+      audioBase64: z.string(),
+      fileName: z.string(),
+      mimeType: z.string().default('audio/mpeg'),
+    }))
+    .mutation(async ({ input }) => {
+      const engine = getCommercialEngine();
+      const commercial = engine.getCommercial(input.id);
+      if (!commercial) throw new Error('Commercial not found');
+
+      // Upload to S3
+      const buffer = Buffer.from(input.audioBase64, 'base64');
+      const suffix = Math.random().toString(36).slice(2, 8);
+      const ext = input.fileName.split('.').pop() || 'mp3';
+      const key = `commercials/${input.id}-${suffix}.${ext}`;
+      const { url } = await storagePut(key, buffer, input.mimeType);
+
+      // Update the commercial with the new audio URL
+      const updated = engine.updateCommercial(input.id, { audioUrl: url });
+      return { success: true, audioUrl: url, commercial: updated };
+    }),
 });
