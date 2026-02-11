@@ -109,10 +109,12 @@ export default function Navigation() {
     { label: 'Affiliate Program', href: '/rrb/affiliate-program' },
     { label: 'Video Testimonials', href: '/rrb/video-testimonials' },
     { label: 'News & Updates', href: '/rrb/news' },
+    { label: '🤖 AI Assistants', href: '/rrb/ai-assistants' },
   ];
 
   // Business Operations
   const businessOpsItems = [
+    { label: '🤖 AI Assistants', href: '/rrb/ai-assistants' },
     { label: '🧠 AI Command Center', href: '/rrb/ai-command-center' },
     { label: '📊 Bookkeeping', href: '/rrb/bookkeeping' },
     { label: '👥 Human Resources', href: '/rrb/hr' },

@@ -127,6 +127,7 @@ import ListenerAnalytics from '@/pages/ListenerAnalytics';
 // ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
 import RRBHome from '@/pages/rrb/Home';
 import RRBRadioStation from '@/pages/rrb/RadioStation';
+import AIAssistants from '@/pages/rrb/AIAssistants';
 import RRBPodcasts from '@/pages/rrb/Podcasts';
 import RRBTheMusic from '@/pages/rrb/TheMusic';
 import RRBTheLegacyPage from '@/pages/rrb/TheLegacyPage';
@@ -338,6 +339,8 @@ function Router() {
       <Route path="/rrb/verified-sources" component={RRBVerifiedSources} />
       
       {/* RRB Legacy Restored Pages */}
+      <Route path="/rrb/ai-assistants" component={AIAssistants} />
+      <Route path="/ai-assistants" component={AIAssistants} />
       <Route path="/rrb/radio-station" component={RRBRadioStation} />
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
       <Route path="/rrb/hybridcast" component={RRBHybridCastPage} />

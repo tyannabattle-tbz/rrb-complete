@@ -139,6 +139,7 @@ export function AppHeaderEnhanced() {
         { label: 'The Music', path: '/rrb/the-music' },
         { label: 'Radio Station', path: '/rrb/radio-station' },
         { label: 'Podcast & Video', path: '/rrb/podcast-and-video' },
+        { label: 'AI Assistants', path: '/rrb/ai-assistants' },
         { label: 'Healing Frequencies', path: '/rrb/healing-music-frequencies' },
         { label: 'Audiobooks', path: '/rrb/audiobooks' },
         { label: 'Candy Through the Years', path: '/rrb/candy-through-the-years' },

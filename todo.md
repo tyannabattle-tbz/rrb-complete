@@ -2187,3 +2187,11 @@
 - [x] Fix policies not loading on /qumus-monitoring page (qumusIdentityRouter was not imported/mounted)
 - [x] Fix services not loading on /qumus-monitoring page
 - [x] Fix 19 rendering errors on QUMUS monitoring page
+
+## ChatGPT Custom GPTs Integration - Feb 2026
+- [x] Integrate Hubaru Restoration Government GPT
+- [x] Integrate Sweet Miracles - A Voice for the Voiceless GPT
+- [x] Integrate Candy Hunter Public Legacy Archivist GPT
+- [x] Create AI Assistants hub page with online QUMUS chat + offline reference library
+- [x] Add GPT links to all navigation menus (desktop, mobile, sidebar)
+- [x] Integrate The People's Guide GPT
