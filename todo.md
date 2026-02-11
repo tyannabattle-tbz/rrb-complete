@@ -2277,4 +2277,4 @@
 - [x] Provide execute/install commands — INSTALL.md with Quick Start, Mac Mini setup, cross-device access
 
 ## Naming Fix - Feb 2026
-- [ ] Replace all instances of "Qunity" with "QumUnity" across the entire codebase
+- [x] Replace all instances of "Qunity" with "QumUnity" — verified: already correct everywhere (streamLibrary, QumusCommandConsole, StateOfTheStudio, commandExecutionRouter, agent-networking, tests). Zero misspellings found.
