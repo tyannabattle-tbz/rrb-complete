@@ -410,6 +410,28 @@ RULES:
       generatedBy: 'ai',
     });
 
+    // Ecosystem Explainer — Featured Promo (airs on radio + podcasts)
+    this.commercials.push({
+      id: 'commercial_default_ecosystem_explainer',
+      title: "RRB Ecosystem Explainer — The Complete Platform",
+      category: 'promo',
+      brand: 'canryn_production',
+      script: "Welcome to the Rockin' Rockin' Boogie ecosystem — a Canryn Production. Five platforms. One autonomous brain. QUMUS coordinates everything — from seven-channel twenty-four-seven radio broadcasting to HybridCast emergency communication, from Sweet Miracles Foundation charitable giving to Solbones sacred math gaming. Preserving the legacy of Seabrun Candy Hunter while building the future of autonomous media. Rockin' Rockin' Boogie — where legacy restored becomes legacy continued. Visit rockinrockinboogie.com. A Voice for the Voiceless.",
+      duration: 30,
+      voiceDirection: 'cinematic, inspiring, warm with authority',
+      musicDirection: 'Warm jazz intro building to cinematic orchestral, boogie rhythm undertone',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: [
+        { id: `slot_explainer_prime`, dayOfWeek: [0,1,2,3,4,5,6], hourStart: 6, hourEnd: 22, frequency: 4, priority: 9 },
+        { id: `slot_explainer_overnight`, dayOfWeek: [0,1,2,3,4,5,6], hourStart: 22, hourEnd: 6, frequency: 2, priority: 8 }
+      ],
+      playCount: 0,
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/exAiEXAcoNyDDhbS.mp4',
+      generatedBy: 'ai',
+    });
+
     console.log(`[Commercial Engine] Seeded ${this.commercials.length} default commercials`);
   }
 

@@ -116,6 +116,17 @@ export default function RadioCommercials() {
       clickCount: 0,
       seasonal: true,
       seasonalPeriod: 'New Year Campaign'
+    },
+    {
+      id: 9,
+      title: 'RRB Ecosystem Explainer',
+      bookTitle: 'The Complete Canryn Production Platform',
+      duration: 30,
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/exAiEXAcoNyDDhbS.mp4',
+      description: 'Five platforms. One autonomous brain. QUMUS coordinates everything — from radio broadcasting to emergency communication, from charitable giving to entertainment. A Canryn Production.',
+      bookLink: '/',
+      playCount: 0,
+      clickCount: 0
     }
   ];
 
@@ -208,11 +219,11 @@ export default function RadioCommercials() {
       <div className="container max-w-4xl">
         <div className="flex items-center gap-4 mb-8">
           <Volume2 className="w-8 h-8 text-accent" />
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground">Book Commercials</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground">RRB Commercials</h2>
         </div>
 
         <p className="text-lg text-foreground/80 mb-8">
-          Tune in to hear about Seabrun Candy Hunter's published works. Discover stories of legacy, inspiration, and transformation.
+          Tune in to hear about Seabrun Candy Hunter's published works, the Canryn Production ecosystem, and the mission behind it all. Discover stories of legacy, inspiration, and transformation.
         </p>
 
         {/* Commercial Player */}
@@ -343,7 +354,7 @@ export default function RadioCommercials() {
           {/* Learn More Button */}
           <a href={currentCommercial.bookLink} onClick={() => trackCommercialClick(currentCommercial.id)}>
             <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-              Explore All Books
+              Learn More
             </Button>
           </a>
         </div>
