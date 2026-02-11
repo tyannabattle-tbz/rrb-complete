@@ -428,7 +428,7 @@ RULES:
         { id: `slot_explainer_overnight`, dayOfWeek: [0,1,2,3,4,5,6], hourStart: 22, hourEnd: 6, frequency: 2, priority: 8 }
       ],
       playCount: 0,
-      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/exAiEXAcoNyDDhbS.mp4',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/cfWvEqBGZbBnvEIe.mp4',
       generatedBy: 'ai',
     });
 

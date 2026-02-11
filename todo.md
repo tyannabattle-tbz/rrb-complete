@@ -2157,3 +2157,7 @@
 - [x] Update project zips and build files
 - [x] Ensure all audio components functional
 - [x] Final checkpoint with all assets
+
+## Video Fix - Feb 2026
+- [x] Regenerate explainer video with complete messaging (no cut-off)
+- [x] Update commercial engine with new video URL
