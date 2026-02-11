@@ -46,7 +46,7 @@ export default function RotatingVinylRecord() {
       <div className="vinyl-container">
         <div className="vinyl-record">
           <img
-            src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/FzdTwBrSOfPrqEwJ.png"
+            src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/dvidjRisUJpNxgGn.jpg"
             alt="Rockin Rockin Boogie - Music and Vocal by Little Richard, Story lyrics and vocal melody by Seabrun Candy Hunter"
             className="w-full h-full"
           />

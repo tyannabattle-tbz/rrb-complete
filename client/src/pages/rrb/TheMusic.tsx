@@ -5,6 +5,7 @@ import AudioPlayer from '@/components/rrb/AudioPlayer';
 import ExpertValidationBadge from '@/components/rrb/ExpertValidationBadge';
 import { PageMeta } from '@/components/rrb/PageMeta';
 import { OpenGraphMeta } from '@/components/rrb/OpenGraphMeta';
+import { toast } from 'sonner';
 
 export default function TheMusic() {
   const songs = [
@@ -151,7 +152,7 @@ export default function TheMusic() {
             <div className="bg-card border border-border rounded-lg overflow-hidden">
               <div className="aspect-square bg-muted">
                 <img
-                  src="/images/1974RockinRockinBoogieUKRepriseRecordsRelease.JPG"
+                  src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/YwnkxmBkPOjavWBg.jpg"
                   alt="Rockin' Rockin' Boogie - Little Richard Album Cover"
                   className="w-full h-full object-cover"
                 />
@@ -166,7 +167,7 @@ export default function TheMusic() {
             <div className="bg-card border border-border rounded-lg overflow-hidden">
               <div className="aspect-square bg-muted">
                 <img
-                  src="/images/exhibit-j-california-im-coming.png"
+                  src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/MDgMDLJcZQNjkspa.jpg"
                   alt="California I'm Coming - The Little Richard Band Album Cover"
                   className="w-full h-full object-cover"
                 />
@@ -417,14 +418,13 @@ export default function TheMusic() {
                 <h3 className="text-xl font-bold text-foreground mb-2">{interview.title}</h3>
                 <p className="text-sm text-accent font-semibold mb-3">{interview.type}</p>
                 <p className="text-foreground/70 text-sm mb-4">{interview.description}</p>
-                <a
-                  href={`/downloads/${interview.file}`}
-                  download
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded text-accent font-semibold transition-colors"
+                <button
+                  onClick={() => toast.info('Document coming soon — archival PDFs are being digitized for online access.')}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded text-accent font-semibold transition-colors cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
                   Download PDF
-                </a>
+                </button>
               </div>
             ))}
             </div>
@@ -448,22 +448,20 @@ export default function TheMusic() {
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <a
-                  href={`/downloads/${collab.file1}`}
-                  download
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded text-accent font-semibold transition-colors"
+                <button
+                  onClick={() => toast.info('Document coming soon — archival materials are being digitized for online access.')}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded text-accent font-semibold transition-colors cursor-pointer"
                 >
                   <FileText className="w-4 h-4" />
                   Professional Message
-                </a>
-                <a
-                  href={`/downloads/${collab.file2}`}
-                  download
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded text-accent font-semibold transition-colors"
+                </button>
+                <button
+                  onClick={() => toast.info('Document coming soon — archival materials are being digitized for online access.')}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/20 rounded text-accent font-semibold transition-colors cursor-pointer"
                 >
                   <FileText className="w-4 h-4" />
                   Referral Documentation
-                </a>
+                </button>
               </div>
             </div>
           ))}

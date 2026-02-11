@@ -2393,3 +2393,13 @@
 - [x] Add white-label customization section to SKILL.md for others to deploy their own ecosystem
 - [x] Add CUSTOMIZE.md to project root with step-by-step branding/theming instructions
 - [x] Include in final zip archive (3.1MB)
+
+### Bug Fix: Channel Picker Panel Overlap on Mobile - Feb 2026
+- [x] Fix "Start Listening" channel picker panel overlapping main content on mobile
+- [x] Ensure channel picker doesn't block hero buttons, archive section, or Proof Vault button
+- [x] Proper mobile positioning and z-index management (backdrop overlay, click-outside-to-close, reduced width)
+## Bug Fix: Broken Album Images and Song Links - Feb 2026
+- [x] Fix broken album art images on music page (generated album covers, uploaded to CDN)
+- [x] Fix non-working song links (download links now show toast notifications for pending digitization)
+- [x] Compress vinyl record hero image from 6MB to 20KB for faster mobile loading
+- [x] Reduce expanded channel panel height on mobile (max-h-48 vs max-h-60)

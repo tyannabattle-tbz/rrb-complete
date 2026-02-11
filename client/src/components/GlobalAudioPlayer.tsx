@@ -159,7 +159,7 @@ export function GlobalAudioPlayer() {
 
       {/* Expanded panel */}
       {expanded && (
-        <div className="border-t border-zinc-800 p-3 max-h-60 overflow-y-auto">
+        <div className="border-t border-zinc-800 p-3 max-h-48 sm:max-h-60 overflow-y-auto">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold">Quick Channels</h3>
             <button
@@ -248,46 +248,66 @@ function QuickPlayButton() {
   const [showPicker, setShowPicker] = useState(false);
 
   return (
-    <div className="fixed bottom-[70px] md:bottom-4 right-4 z-50">
+    <>
+      {/* Backdrop overlay — closes picker when tapping outside */}
       {showPicker && (
-        <div className="absolute bottom-14 right-0 w-72 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden mb-2">
-          <div className="p-3 border-b border-zinc-800">
-            <h3 className="text-sm font-semibold text-white">Start Listening</h3>
-            <p className="text-xs text-zinc-400">Choose a channel</p>
-          </div>
-          <div className="max-h-64 overflow-y-auto p-2 space-y-1">
-            {CHANNEL_PRESETS.map(channel => (
-              <button
-                key={channel.id}
-                onClick={() => {
-                  audio.playQueue(channel.streams, 0);
-                  setShowPicker(false);
-                }}
-                className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-zinc-800 transition-colors text-left"
-              >
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: channel.color + '30' }}
-                >
-                  <Radio className="w-4 h-4" style={{ color: channel.color }} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{channel.name}</p>
-                  <p className="text-xs text-zinc-500 truncate">{channel.subsidiary}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
+        <div
+          className="fixed inset-0 z-40 bg-black/30"
+          onClick={() => setShowPicker(false)}
+          aria-hidden="true"
+        />
       )}
 
-      <button
-        onClick={() => setShowPicker(!showPicker)}
-        className="w-12 h-12 bg-amber-500 hover:bg-amber-400 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
-        aria-label="Open audio player"
-      >
-        <Radio className="w-6 h-6 text-black" />
-      </button>
-    </div>
+      <div className="fixed bottom-[70px] md:bottom-4 right-4 z-50">
+        {showPicker && (
+          <div className="absolute bottom-14 right-0 w-56 sm:w-64 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden mb-2">
+            <div className="p-2.5 border-b border-zinc-800 flex items-center justify-between">
+              <div>
+                <h3 className="text-xs font-semibold text-white">Start Listening</h3>
+                <p className="text-[10px] text-zinc-400">Choose a channel</p>
+              </div>
+              <button
+                onClick={() => setShowPicker(false)}
+                className="p-1 hover:bg-zinc-800 rounded-full"
+                aria-label="Close channel picker"
+              >
+                <X className="w-3.5 h-3.5 text-zinc-400" />
+              </button>
+            </div>
+            <div className="max-h-52 overflow-y-auto p-1.5 space-y-0.5">
+              {CHANNEL_PRESETS.map(channel => (
+                <button
+                  key={channel.id}
+                  onClick={() => {
+                    audio.playQueue(channel.streams, 0);
+                    setShowPicker(false);
+                  }}
+                  className="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-zinc-800 transition-colors text-left"
+                >
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: channel.color + '30' }}
+                  >
+                    <Radio className="w-3.5 h-3.5" style={{ color: channel.color }} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-white truncate">{channel.name}</p>
+                    <p className="text-[10px] text-zinc-500 truncate">{channel.subsidiary}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={() => setShowPicker(!showPicker)}
+          className="w-12 h-12 bg-amber-500 hover:bg-amber-400 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+          aria-label="Open audio player"
+        >
+          <Radio className="w-6 h-6 text-black" />
+        </button>
+      </div>
+    </>
   );
 }

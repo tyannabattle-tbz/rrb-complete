@@ -283,7 +283,7 @@ export default function Home() {
           <div className="absolute left-[-30px] md:left-[3%] top-[15%] md:top-[20%] opacity-50 md:opacity-60 pointer-events-none">
             <div className="w-[120px] h-[120px] md:w-[180px] md:h-[180px] rounded-full overflow-hidden" style={{ animation: 'vinylSpin 6s linear infinite', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
               <img
-                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/FzdTwBrSOfPrqEwJ.png"
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/dvidjRisUJpNxgGn.jpg"
                   alt="Rockin Rockin Boogie vinyl record"
                   className="w-full h-full object-cover"
               />
