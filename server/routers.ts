@@ -63,6 +63,9 @@ import { qumusIntelligenceRouter } from "./routers/qumusIntelligenceRouter";
 // AI Compare Responses (live LLM-powered multi-system comparison)
 import { aiCompareRouter } from "./routers/aiCompareRouter";
 
+// Royalty Tracker for collaborating artists
+import { royaltyTrackerRouter } from "./routers/royaltyTracker";
+
 // Business Operations routers
 import { bookkeepingRouter } from "./routers/businessBookkeeping";
 import { hrRouter } from "./routers/businessHR";
@@ -218,6 +221,9 @@ export const appRouter = router({
 
   // AI Compare Responses (live LLM multi-system comparison)
   aiCompare: aiCompareRouter,
+
+  // Royalty Tracker (artist collaboration earnings)
+  royalties: royaltyTrackerRouter,
 
   // Radio Content API (public tracks, playlists, schedules)
   radioContent: radioContentRouter,

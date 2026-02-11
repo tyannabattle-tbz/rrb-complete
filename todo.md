@@ -2357,3 +2357,16 @@
 - [x] JSON schema structured responses for consistent output
 - [x] Fallback handling when LLM unavailable
 - [x] 5 aiCompare tests passing, 9 intelligence tests passing
+
+## Royalty Tracker for Collaborating Artists - Feb 2026
+- [x] Database schema: royalty_projects, royalty_collaborators, royalty_payments, royalty_distributions, royalty_statements
+- [x] Backend router: CRUD for projects, add/remove collaborators, set split percentages
+- [x] Backend router: Record payments, auto-distribute based on splits, calculate earnings per artist
+- [x] Frontend: Royalty Tracker dashboard with summary cards (total projects, earned, paid, pending)
+- [x] Frontend: Project detail view with collaborator splits and visual split bar
+- [x] Frontend: Individual artist earnings view (my royalties across all projects)
+- [x] Frontend: Add/edit project form with collaborator management dialogs
+- [x] Frontend: Payment recording with source type tracking (streaming, download, sync license, etc.)
+- [x] Frontend: Statement generation and distribution tracking
+- [x] Route registered at /rrb/royalties in App.tsx
+- [x] Vitest tests for royalty calculation logic (10 tests, all passing)

@@ -2105,3 +2105,76 @@ export const usersWithStripe = mysqlTable("users_with_stripe", {
   createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
   updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
+
+// ===== Royalty Tracker Tables =====
+
+export const royaltyProjects = mysqlTable("royalty_projects", {
+	id: int().autoincrement().notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	description: text(),
+	projectType: mysqlEnum(['single','album','ep','compilation','soundtrack','podcast','commercial','other']).default('single').notNull(),
+	releaseDate: timestamp({ mode: 'string' }),
+	isrcCode: varchar({ length: 20 }),
+	upcCode: varchar({ length: 20 }),
+	totalRevenue: decimal({ precision: 12, scale: 2 }).default('0.00').notNull(),
+	currency: varchar({ length: 3 }).default('USD').notNull(),
+	status: mysqlEnum(['draft','active','completed','archived']).default('draft').notNull(),
+	createdBy: int().notNull().references(() => users.id),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const royaltyCollaborators = mysqlTable("royalty_collaborators", {
+	id: int().autoincrement().notNull(),
+	projectId: int().notNull().references(() => royaltyProjects.id, { onDelete: "cascade" }),
+	userId: int().references(() => users.id),
+	artistName: varchar({ length: 255 }).notNull(),
+	role: mysqlEnum(['artist','producer','songwriter','engineer','featured','session_musician','other']).default('artist').notNull(),
+	splitPercentage: decimal({ precision: 5, scale: 2 }).default('0.00').notNull(),
+	email: varchar({ length: 320 }),
+	isRegistered: boolean().default(false).notNull(),
+	inviteStatus: mysqlEnum(['pending','accepted','declined']).default('pending').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const royaltyPayments = mysqlTable("royalty_payments", {
+	id: int().autoincrement().notNull(),
+	projectId: int().notNull().references(() => royaltyProjects.id, { onDelete: "cascade" }),
+	source: varchar({ length: 255 }).notNull(),
+	sourceType: mysqlEnum(['streaming','download','sync_license','performance','mechanical','merch','other']).default('streaming').notNull(),
+	grossAmount: decimal({ precision: 12, scale: 2 }).notNull(),
+	netAmount: decimal({ precision: 12, scale: 2 }).notNull(),
+	currency: varchar({ length: 3 }).default('USD').notNull(),
+	periodStart: timestamp({ mode: 'string' }),
+	periodEnd: timestamp({ mode: 'string' }),
+	statementRef: varchar({ length: 255 }),
+	notes: text(),
+	recordedBy: int().notNull().references(() => users.id),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const royaltyDistributions = mysqlTable("royalty_distributions", {
+	id: int().autoincrement().notNull(),
+	paymentId: int().notNull().references(() => royaltyPayments.id, { onDelete: "cascade" }),
+	collaboratorId: int().notNull().references(() => royaltyCollaborators.id, { onDelete: "cascade" }),
+	amount: decimal({ precision: 12, scale: 2 }).notNull(),
+	splitPercentage: decimal({ precision: 5, scale: 2 }).notNull(),
+	status: mysqlEnum(['calculated','pending_payment','paid','disputed']).default('calculated').notNull(),
+	paidAt: timestamp({ mode: 'string' }),
+	transactionRef: varchar({ length: 255 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const royaltyStatements = mysqlTable("royalty_statements", {
+	id: int().autoincrement().notNull(),
+	collaboratorId: int().notNull().references(() => royaltyCollaborators.id, { onDelete: "cascade" }),
+	projectId: int().notNull().references(() => royaltyProjects.id, { onDelete: "cascade" }),
+	periodStart: timestamp({ mode: 'string' }).notNull(),
+	periodEnd: timestamp({ mode: 'string' }).notNull(),
+	totalEarnings: decimal({ precision: 12, scale: 2 }).default('0.00').notNull(),
+	totalPaid: decimal({ precision: 12, scale: 2 }).default('0.00').notNull(),
+	balance: decimal({ precision: 12, scale: 2 }).default('0.00').notNull(),
+	status: mysqlEnum(['draft','issued','acknowledged']).default('draft').notNull(),
+	generatedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
