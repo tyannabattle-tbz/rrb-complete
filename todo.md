@@ -2278,3 +2278,21 @@
 
 ## Naming Fix - Feb 2026
 - [x] Replace all instances of "Qunity" with "QumUnity" — verified: already correct everywhere (streamLibrary, QumusCommandConsole, StateOfTheStudio, commandExecutionRouter, agent-networking, tests). Zero misspellings found.
+
+## Production Deployment Documentation - Feb 2026
+- [x] Rewrite INSTALL.md with complete production deployment guide (Nginx, SSL, PM2, systemd, firewall, monitoring, backup)
+- [x] Create ecosystem.config.cjs for PM2 process management
+- [x] Add Mac Mini server setup with step-by-step instructions
+- [x] Add Nginx reverse proxy configuration (with and without SSL)
+- [x] Add systemd service configuration as PM2 alternative
+- [x] Add firewall configuration (UFW for Ubuntu, macOS firewall)
+- [x] Add health check script with cron scheduling
+- [x] Add database backup and recovery procedures
+- [x] Add cross-device access documentation with PWA instructions
+- [x] Add Stripe production setup guide (test mode and go-live)
+- [x] Add RSS feed directory submission guide (Apple, Spotify, Feedly, TuneIn)
+- [x] Add comprehensive troubleshooting table
+- [x] Update comprehensive skill (SKILL.md) with production deployment references
+- [x] Create references/production-deployment.md for skill
+- [x] Create references/page-routes.md with all 179 routes documented
+- [x] Update references/ecosystem-architecture.md with complete service/router/table inventory
