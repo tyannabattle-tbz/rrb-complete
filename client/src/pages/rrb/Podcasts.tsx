@@ -659,7 +659,7 @@ export default function Podcasts() {
                   <Button size="sm" className="flex-1 bg-amber-500 hover:bg-amber-600 text-black" onClick={() => toast.success('Subscribed!')}>
                     Subscribe
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1" onClick={() => toast.info('RSS feed coming soon')}>
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => window.open('/api/rss/podcast', '_blank')}>
                     RSS Feed
                   </Button>
                 </div>

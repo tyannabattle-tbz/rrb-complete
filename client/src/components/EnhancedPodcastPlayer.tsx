@@ -342,18 +342,18 @@ export default function EnhancedPodcastPlayer({
         <Button
           size="sm"
           variant="outline"
-          disabled
           className="flex-1 text-xs"
-          title="Coming soon"
+          onClick={() => window.open('/api/rss/podcast', '_blank')}
+          title="Subscribe via RSS"
         >
           Spotify
         </Button>
         <Button
           size="sm"
           variant="outline"
-          disabled
           className="flex-1 text-xs"
-          title="Coming soon"
+          onClick={() => window.open('/api/rss/podcast', '_blank')}
+          title="Subscribe via RSS"
         >
           Apple
         </Button>
