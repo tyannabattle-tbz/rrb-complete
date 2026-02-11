@@ -81,7 +81,7 @@ export default function Navigation() {
     { label: 'Home', href: '/' },
     { label: 'Radio Station', href: '/rrb/radio-station' },
     { label: 'Podcast & Video', href: '/rrb/podcast-and-video' },
-    { label: 'HybridCast', href: '/hybridcast' },
+    { label: 'HybridCast Emergency', href: '/hybridcast' },
     { label: 'Audiobooks', href: '/rrb/audiobooks' },
     { label: 'Proof Vault', href: '/rrb/proof-vault' },
     { label: 'Obituary', href: '/rrb/obituary' },
@@ -227,7 +227,7 @@ export default function Navigation() {
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
-              HybridCast
+              HybridCast Emergency
             </a>
           </Link>
 

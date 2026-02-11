@@ -29,6 +29,14 @@ interface LiveCallInProps {
   isLive?: boolean;
 }
 
+// External platform URLs — configurable via env vars or set directly here
+const CALL_IN_URLS = {
+  skype: import.meta.env.VITE_CALLIN_SKYPE_URL || 'https://join.skype.com/invite/rrbshow',
+  zoom: import.meta.env.VITE_CALLIN_ZOOM_URL || 'https://zoom.us/j/rrbshow',
+  meet: import.meta.env.VITE_CALLIN_MEET_URL || 'https://meet.google.com/rrb-show-live',
+  discord: import.meta.env.VITE_CALLIN_DISCORD_URL || 'https://discord.gg/rrbshow',
+};
+
 export function LiveCallIn({ context, showName = "Rockin' Rockin' Boogie", isLive = true }: LiveCallInProps) {
   const { user } = useAuth();
   const [expanded, setExpanded] = useState(false);
@@ -473,7 +481,7 @@ export function LiveCallIn({ context, showName = "Rockin' Rockin' Boogie", isLiv
                     variant="outline"
                     className="text-xs gap-1 border-sky-500/30 text-sky-300 hover:bg-sky-500/10"
                     onClick={() => {
-                      window.open('https://join.skype.com/invite/rrbshow', '_blank');
+                      window.open(CALL_IN_URLS.skype, '_blank');
                       toast.info('Opening Skype — join the RRB show call');
                     }}
                   >
@@ -484,7 +492,7 @@ export function LiveCallIn({ context, showName = "Rockin' Rockin' Boogie", isLiv
                     variant="outline"
                     className="text-xs gap-1 border-blue-500/30 text-blue-300 hover:bg-blue-500/10"
                     onClick={() => {
-                      window.open('https://zoom.us/j/rrbshow', '_blank');
+                      window.open(CALL_IN_URLS.zoom, '_blank');
                       toast.info('Opening Zoom — join the RRB show call');
                     }}
                   >
@@ -495,7 +503,7 @@ export function LiveCallIn({ context, showName = "Rockin' Rockin' Boogie", isLiv
                     variant="outline"
                     className="text-xs gap-1 border-green-500/30 text-green-300 hover:bg-green-500/10"
                     onClick={() => {
-                      window.open('https://meet.google.com/rrb-show-live', '_blank');
+                      window.open(CALL_IN_URLS.meet, '_blank');
                       toast.info('Opening Google Meet — join the RRB show call');
                     }}
                   >
@@ -506,7 +514,7 @@ export function LiveCallIn({ context, showName = "Rockin' Rockin' Boogie", isLiv
                     variant="outline"
                     className="text-xs gap-1 border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10"
                     onClick={() => {
-                      window.open('https://discord.gg/rrbshow', '_blank');
+                      window.open(CALL_IN_URLS.discord, '_blank');
                       toast.info('Opening Discord — join the RRB voice channel');
                     }}
                   >

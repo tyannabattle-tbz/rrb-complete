@@ -195,7 +195,7 @@ export function AppHeaderEnhanced() {
       items: [
         { label: 'Canryn Production', path: '/rrb/canryn-production' },
         { label: 'Divisions', path: '/rrb/divisions' },
-        { label: 'HybridCast', path: '/hybridcast' },
+        { label: 'HybridCast Emergency', path: '/hybridcast' },
         { label: 'Producer & Mentor', path: '/rrb/producer-mentor' },
         { label: 'Business Partnerships', path: '/rrb/business-partnerships' },
         { label: 'Merchandise', path: '/rrb/merchandise-shop' },

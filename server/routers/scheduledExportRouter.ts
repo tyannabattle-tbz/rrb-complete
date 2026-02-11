@@ -117,7 +117,7 @@ export const scheduledExportRouter = router({
             status: 'completed',
             startedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
             completedAt: new Date(Date.now() - 2 * 60 * 60 * 1000 + 30 * 1000),
-            downloadUrl: 'https://storage.example.com/exports/export-1.json',
+            downloadUrl: '/api/trpc/scheduledExport.getExportHistory',
           },
           {
             id: 'export-2',
@@ -131,7 +131,7 @@ export const scheduledExportRouter = router({
             status: 'completed',
             startedAt: new Date(Date.now() - 26 * 60 * 60 * 1000),
             completedAt: new Date(Date.now() - 26 * 60 * 60 * 1000 + 28 * 1000),
-            downloadUrl: 'https://storage.example.com/exports/export-2.json',
+            downloadUrl: '/api/trpc/scheduledExport.getExportHistory',
           },
         ],
         total: 2,

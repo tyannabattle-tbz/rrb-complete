@@ -199,13 +199,28 @@ export const batchProcessingRouter = router({
     .input(z.object({ jobId: z.string() }))
     .query(async ({ input }) => {
       try {
-        return {
-          jobId: input.jobId,
-          downloadUrl: `https://studio-exports.s3.amazonaws.com/${input.jobId}/results.zip`,
-          fileSize: "2.4 GB",
-          itemCount: 5,
-          expiresIn: "7 days",
-        };
+        // Attempt to get presigned URL from S3 for actual batch results
+        const { storageGet } = await import('../storage');
+        try {
+          const { url } = await storageGet(`batch-exports/${input.jobId}/results.zip`);
+          return {
+            jobId: input.jobId,
+            downloadUrl: url,
+            fileSize: "Calculating...",
+            itemCount: 5,
+            expiresIn: "7 days",
+          };
+        } catch {
+          // If file doesn't exist in S3 yet, return a pending status
+          return {
+            jobId: input.jobId,
+            downloadUrl: null as string | null,
+            fileSize: "Pending",
+            itemCount: 0,
+            expiresIn: "N/A",
+            status: "Results not yet available. Processing may still be in progress.",
+          };
+        }
       } catch (error) {
         console.error("Failed to get download URL:", error);
         throw error;

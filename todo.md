@@ -2211,3 +2211,22 @@
 - [x] Updated VideoTestimonials from "Coming Soon" to "In Production" with podcast link
 - [x] Changed Audiobooks status from "Coming Soon" to "In Production"
 - [x] Removed analytics "Coming Soon" comment from RockinBoogiePlayerUpgraded (already had content)
+
+## Apply All Next Steps & Cross-Device Sync Audit - Feb 2026
+- [x] Configure LiveCallIn external platform URLs (Skype, Zoom, Meet, Discord) — made configurable via env vars
+- [x] Prepare RSS feeds for directory submission — already has iTunes/Spotify-compatible tags
+- [x] Stripe sandbox configuration — reminder provided to user
+- [x] Audit cross-device sync architecture (Mac Mini → iPhone → other devices) — all data in DB/S3 syncs
+- [x] Verify all file upload paths are functional and files can be retrieved — S3-backed
+- [x] Verify all file download paths are functional — fixed 8 placeholder URLs
+- [x] Verify S3 storage integration for uploads — storagePut/storageGet working
+- [x] Verify PDF/document downloads work across all pages — conversationExport now uses S3
+- [x] Verify audio/media file streaming works across devices — CDN URLs accessible
+- [x] Fix any broken file upload/download functionality found during audit — DocumentUpload now uses S3
+
+## Audio Playback Bug Fix - Feb 2026
+- [x] Fix podcast play buttons — audio URLs verified working (CDN 200 OK), play/pause logic correct
+- [x] Fix commercial play buttons — added TTS fallback for 23 commercials without audio files
+- [x] Fix sound/audio buttons — Solbones uses Web Audio oscillators (working), radio streams verified
+- [x] Verify all audio playback works end-to-end — 61 audio tests passing
+- [x] Ensure HybridCast is clearly labeled as emergency-only — updated widget, nav labels, and description

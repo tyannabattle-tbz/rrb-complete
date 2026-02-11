@@ -254,7 +254,7 @@ export const featureAnalyticsRouter = router({
           status: 'generating',
           createdAt: new Date(),
           estimatedCompletionTime: 15,
-          downloadUrl: `https://storage.example.com/reports/report-${Date.now()}.${input.format}`,
+          downloadUrl: `/api/trpc/featureAnalytics.exportReport?format=${input.format}`,
         },
       };
     }),

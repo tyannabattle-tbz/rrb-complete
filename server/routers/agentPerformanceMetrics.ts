@@ -170,7 +170,7 @@ export const agentPerformanceMetricsRouter = router({
     .mutation(async ({ ctx, input }) => {
       return {
         success: true,
-        downloadUrl: `https://api.manus.im/metrics/export-${input.agentId}.${input.format}`,
+        downloadUrl: `/api/trpc/agentPerformanceMetrics.exportMetricsReport`,
         filename: `agent-metrics-${input.agentId}.${input.format}`,
       };
     }),

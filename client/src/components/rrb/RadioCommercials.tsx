@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, SkipForward, SkipBack, BarChart3 } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Play, Pause, Volume2, VolumeX, SkipForward, SkipBack, BarChart3, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Commercial {
@@ -9,6 +9,7 @@ interface Commercial {
   duration: number;
   audioUrl: string;
   description: string;
+  script: string; // The actual script text for TTS fallback
   bookLink: string;
   playCount?: number;
   clickCount?: number;
@@ -16,15 +17,23 @@ interface Commercial {
   seasonalPeriod?: string;
 }
 
+// Check if a URL is a real CDN/remote URL (not a local placeholder)
+function isRealAudioUrl(url: string): boolean {
+  return url.startsWith('https://') || url.startsWith('http://');
+}
+
 export default function RadioCommercials() {
   const [currentCommercialIndex, setCurrentCommercialIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isTTS, setIsTTS] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [autoRotate, setAutoRotate] = useState(true);
   const [commercialStats, setCommercialStats] = useState<Record<number, { plays: number; clicks: number }>>({});
   const audioRef = useRef<HTMLAudioElement>(null);
   const rotationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const ttsRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const ttsIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const commercials: Commercial[] = [
     {
@@ -33,6 +42,7 @@ export default function RadioCommercials() {
       bookTitle: "Rockin' Rockin' Boogie: The Legacy Restored",
       duration: 60,
       audioUrl: '/audio/commercials/rockin-rockin-boogie-commercial.wav',
+      script: "Rockin' Rockin' Boogie — The Legacy Restored. The definitive autobiography documenting the creative journey and cultural impact of Seabrun Candy Hunter. From the streets of Georgia to the stages of the world, this is the story that changed music history. Available now at rockinrockinboogie.com. A Canryn Production.",
       description: 'The definitive autobiography documenting the creative journey and cultural impact of the Rockin\' Rockin\' Boogie legacy.',
       bookLink: '/rrb/books',
       playCount: 0,
@@ -44,6 +54,7 @@ export default function RadioCommercials() {
       bookTitle: 'Miracles Books 1-7',
       duration: 45,
       audioUrl: '/audio/commercials/miracles-series-commercial.wav',
+      script: "The Miracles Series — seven volumes of inspiration, hope, and transformation. From the first miracle to the seventh, each book takes you deeper into a journey of faith and discovery. The complete Miracles collection — available now. A Canryn Production.",
       description: 'A complete spiritual journey through seven volumes of inspiration, hope, and transformation.',
       bookLink: '/rrb/books',
       playCount: 0,
@@ -55,6 +66,7 @@ export default function RadioCommercials() {
       bookTitle: "A Woman's Instinct",
       duration: 45,
       audioUrl: '/audio/commercials/womans-instinct-commercial.wav',
+      script: "A Woman's Instinct — a celebration of the strength and wisdom of women everywhere. Trust your instinct. Trust your power. Trust your voice. Available now from Canryn Production.",
       description: 'A celebration of the strength and wisdom of women everywhere.',
       bookLink: '/rrb/books',
       playCount: 0,
@@ -66,6 +78,7 @@ export default function RadioCommercials() {
       bookTitle: 'Just Imagine',
       duration: 30,
       audioUrl: '/audio/commercials/just-imagine-commercial.wav',
+      script: "Just Imagine — unlock your creative potential and explore infinite possibilities. What would you do if you knew you couldn't fail? Just imagine. Available now. A Canryn Production.",
       description: 'Unlock your creative potential and explore infinite possibilities.',
       bookLink: '/rrb/books',
       playCount: 0,
@@ -77,6 +90,7 @@ export default function RadioCommercials() {
       bookTitle: 'It Animal Poetry Time',
       duration: 30,
       audioUrl: '/audio/commercials/animal-poetry-commercial.wav',
+      script: "It's Animal Poetry Time! Poetry that celebrates the beauty and wisdom of our natural world. From the eagle's flight to the whale's song, discover nature through verse. Perfect for all ages. Available now. A Canryn Production.",
       description: 'Poetry that celebrates the beauty and wisdom of our natural world.',
       bookLink: '/rrb/books',
       playCount: 0,
@@ -88,6 +102,7 @@ export default function RadioCommercials() {
       bookTitle: 'King Richard and I',
       duration: 45,
       audioUrl: '/audio/commercials/king-richard-commercial.wav',
+      script: "King Richard and I — the untold story of a legendary partnership that changed music history. Seabrun Candy Hunter and Little Richard — two voices, one legacy. The story you've never heard, told by the one who lived it. Available now. A Canryn Production.",
       description: 'The untold story of a legendary partnership that changed music history.',
       bookLink: '/rrb/books',
       playCount: 0,
@@ -99,6 +114,7 @@ export default function RadioCommercials() {
       bookTitle: 'All About Candy',
       duration: 30,
       audioUrl: '/audio/commercials/all-about-candy-commercial.wav',
+      script: "All About Candy — the personal memoir behind the legacy. Get to know the man, the music, and the mission. All About Candy. Available now. A Canryn Production.",
       description: 'The personal memoir behind the legacy.',
       bookLink: '/rrb/books',
       playCount: 0,
@@ -110,6 +126,7 @@ export default function RadioCommercials() {
       bookTitle: 'Drawn to Danger',
       duration: 45,
       audioUrl: '/audio/commercials/drawn-to-danger-commercial.wav',
+      script: "Drawn to Danger — stories of risk, courage, and transformation. When life pulls you toward the edge, what do you do? You face it. Drawn to Danger. Available now. A Canryn Production.",
       description: 'Stories of risk, courage, and transformation.',
       bookLink: '/rrb/books',
       playCount: 0,
@@ -123,6 +140,7 @@ export default function RadioCommercials() {
       bookTitle: 'The Complete Canryn Production Platform',
       duration: 30,
       audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/cfWvEqBGZbBnvEIe.mp4',
+      script: "Welcome to the Rockin' Rockin' Boogie ecosystem — a Canryn Production. Five platforms. One autonomous brain. QUMUS coordinates everything.",
       description: 'Five platforms. One autonomous brain. QUMUS coordinates everything — from radio broadcasting to emergency communication, from charitable giving to entertainment. A Canryn Production.',
       bookLink: '/',
       playCount: 0,
@@ -134,6 +152,7 @@ export default function RadioCommercials() {
       bookTitle: 'Seven Channels of Legacy',
       duration: 30,
       audioUrl: '/audio/commercials/rrb-7channel.wav',
+      script: "Seven channels. Twenty-four hours a day. Seven days a week. RRB Radio brings you the sound of a legacy restored — from classic funk and soul to gospel, R&B, jazz, and the original recordings of Seabrun Candy Hunter. Every channel curated by QUMUS autonomous intelligence. Tune in now at rockinrockinboogie.com.",
       description: 'Seven channels. Twenty-four seven. From classic funk and soul to gospel, R&B, jazz, and the original recordings of Seabrun Candy Hunter. Every channel curated by QUMUS.',
       bookLink: '/rrb/radio-station',
       playCount: 0,
@@ -145,6 +164,7 @@ export default function RadioCommercials() {
       bookTitle: 'Autonomous Intelligence',
       duration: 30,
       audioUrl: '/audio/commercials/qumus-brain.wav',
+      script: "QUMUS — the autonomous brain behind it all. Ninety percent autonomous. Ten percent human oversight. QUMUS manages radio scheduling, podcast distribution, commercial rotation, emergency broadcasting, and real-time analytics. The future of media is autonomous. The future is QUMUS. A Canryn Production.",
       description: 'Ninety percent autonomous. Ten percent human oversight. QUMUS manages radio scheduling, podcast distribution, commercial rotation, emergency broadcasting, and real-time analytics.',
       bookLink: '/rrb/ecosystem',
       playCount: 0,
@@ -156,6 +176,7 @@ export default function RadioCommercials() {
       bookTitle: 'Stories That Matter',
       duration: 30,
       audioUrl: '/audio/commercials/podcast-network.wav',
+      script: "The RRB Podcast Network — stories that matter. Dive deep into the untold history of Seabrun Candy Hunter. Video participation, live call-ins, and QUMUS AI-powered episode recommendations. Subscribe now. A Canryn Production.",
       description: 'Dive deep into the untold history of Seabrun Candy Hunter. Video participation, live call-ins, and QUMUS AI-powered episode recommendations.',
       bookLink: '/rrb/podcasts',
       playCount: 0,
@@ -167,6 +188,7 @@ export default function RadioCommercials() {
       bookTitle: 'Live Audience Interaction',
       duration: 25,
       audioUrl: '/audio/commercials/callin-promo.wav',
+      script: "Your voice matters. Call in live to RRB Radio. Join by video — Skype, Zoom, Google Meet, or right from your browser. Call in by phone. Send a voice message. Be part of the conversation. A Canryn Production.",
       description: 'Join by video — Skype, Zoom, Google Meet, or right from your browser. Call in by phone. Send a voice message. Be part of the conversation.',
       bookLink: '/rrb/radio-station',
       playCount: 0,
@@ -178,6 +200,7 @@ export default function RadioCommercials() {
       bookTitle: 'Legacy Restored, Legacy Continued',
       duration: 30,
       audioUrl: '/audio/commercials/seabrun-legacy.wav',
+      script: "Before the world knew rock and roll, there was Seabrun Candy Hunter. A voice that shaped an era. A talent that inspired legends. The legacy restored. The legacy continued. Explore the Proof Vault at rockinrockinboogie.com. A Canryn Production.",
       description: 'Before the world knew rock and roll, there was Seabrun Candy Hunter. A voice that shaped an era. A talent that inspired legends. Explore the Proof Vault.',
       bookLink: '/rrb/the-legacy',
       playCount: 0,
@@ -189,6 +212,7 @@ export default function RadioCommercials() {
       bookTitle: 'Find Your Frequency',
       duration: 30,
       audioUrl: '/audio/commercials/healing-frequencies.wav',
+      script: "Find your frequency. Ancient Solfeggio tones for relaxation, focus, and spiritual alignment. Three ninety-six hertz for liberation. Five twenty-eight hertz for transformation. Eight fifty-two hertz for awakening. Stream twenty-four seven on RRB Radio. A Canryn Production.",
       description: 'Ancient Solfeggio tones for relaxation, focus, and spiritual alignment. 396Hz liberation. 528Hz transformation. 852Hz awakening. Stream 24/7.',
       bookLink: '/rrb/healing-frequencies',
       playCount: 0,
@@ -200,6 +224,7 @@ export default function RadioCommercials() {
       bookTitle: 'Archival Documentation',
       duration: 25,
       audioUrl: '/audio/commercials/proof-vault.wav',
+      script: "The Proof Vault — original recordings, legal documents, photographs, and historical evidence preserving the legacy. Every document authenticated. Every recording preserved. The truth is in the vault. Visit rockinrockinboogie.com. A Canryn Production.",
       description: 'Original recordings, legal documents, photographs, and historical evidence preserving the legacy. Every document authenticated. Every recording preserved.',
       bookLink: '/rrb/proof-vault',
       playCount: 0,
@@ -211,6 +236,7 @@ export default function RadioCommercials() {
       bookTitle: 'Official Merchandise',
       duration: 25,
       audioUrl: '/audio/commercials/merch-shop.wav',
+      script: "Wear the legacy. RRB Merchandise — t-shirts, hoodies, hats, and exclusive collectibles. Every purchase supports the Sweet Miracles Foundation. Limited edition drops. Shop now at rockinrockinboogie.com. A Canryn Production.",
       description: 'T-shirts, hoodies, hats, and exclusive collectibles. Every purchase supports the Sweet Miracles Foundation. Limited edition drops.',
       bookLink: '/rrb/merchandise',
       playCount: 0,
@@ -222,6 +248,7 @@ export default function RadioCommercials() {
       bookTitle: '501(c)(3) / 508(c) Nonprofit',
       duration: 30,
       audioUrl: '/audio/commercials/donate-501c.wav',
+      script: "Every voice deserves to be heard. The Sweet Miracles Foundation — a five oh one c three and five oh eight c nonprofit. Your donation is fully tax-deductible. Every dollar goes to emergency communication tools, community wellness programs, and crisis support. Donate today. A Voice for the Voiceless.",
       description: 'Your donation is fully tax-deductible. Every dollar goes to emergency communication tools, community wellness programs, and crisis support.',
       bookLink: '/rrb/sweet-miracles',
       playCount: 0,
@@ -233,6 +260,7 @@ export default function RadioCommercials() {
       bookTitle: 'When Every Second Counts',
       duration: 25,
       audioUrl: '/audio/commercials/hybridcast-promo.wav',
+      script: "Are you prepared? HybridCast Emergency Broadcast keeps you connected when it matters most. Offline-first mesh networking — your device becomes part of a resilient communication network, even without internet or cell service. Download HybridCast today. When every second counts. A Canryn Production.",
       description: 'Offline-first mesh networking keeps you connected when it matters most. Your device becomes part of a resilient communication network.',
       bookLink: '/hybridcast',
       playCount: 0,
@@ -244,6 +272,7 @@ export default function RadioCommercials() {
       bookTitle: 'Create, Produce, Broadcast',
       duration: 30,
       audioUrl: '/audio/commercials/studio-suite.wav',
+      script: "RRB Studio Suite — create, produce, broadcast. Audio production tools, content scheduling, commercial generation, and direct broadcast to seven radio channels. Let QUMUS handle the rest. The studio is open. A Canryn Production.",
       description: 'Audio production tools, content scheduling, commercial generation, and direct broadcast to seven radio channels. Let QUMUS handle the rest.',
       bookLink: '/rrb/studio',
       playCount: 0,
@@ -255,6 +284,7 @@ export default function RadioCommercials() {
       bookTitle: 'Community Powered by QUMUS',
       duration: 25,
       audioUrl: '/audio/commercials/qmunity.wav',
+      script: "QMunity — join the movement. Connect with fellow music lovers, legacy supporters, and community builders. Share your story. Discover new music. Join free at rockinrockinboogie.com. A Canryn Production.",
       description: 'Connect with fellow music lovers, legacy supporters, and community builders. Share your story. Discover new music. Join free.',
       bookLink: '/rrb/community',
       playCount: 0,
@@ -266,6 +296,7 @@ export default function RadioCommercials() {
       bookTitle: 'Reach Our Audience',
       duration: 30,
       audioUrl: '/audio/commercials/advertise-with-us.wav',
+      script: "Advertise on RRB Radio. Thirty, sixty, or ninety-second spots. AI-generated scripts. Professional voice production. Reach engaged listeners who care about community and culture. Contact us at rockinrockinboogie.com. A Canryn Production.",
       description: 'Thirty, sixty, or ninety-second spots. AI-generated scripts. Professional voice production. Reach engaged listeners who care about community and culture.',
       bookLink: '/rrb/advertising',
       playCount: 0,
@@ -277,6 +308,7 @@ export default function RadioCommercials() {
       bookTitle: 'The Sacred Dice Game',
       duration: 25,
       audioUrl: '/audio/commercials/solbones-promo.wav',
+      script: "Ready to roll? Solbones four plus three plus two — the sacred math dice game. Solfeggio healing frequencies meet multiplayer competition. Play solo, challenge friends, or face QUMUS AI opponents. Every roll resonates with ancient frequencies. Play now at rockinrockinboogie.com. A Canryn Production.",
       description: 'Solfeggio healing frequencies meet multiplayer competition. Play solo, challenge friends, or face QUMUS AI opponents. Every roll resonates with ancient frequencies.',
       bookLink: '/solbones',
       playCount: 0,
@@ -288,6 +320,7 @@ export default function RadioCommercials() {
       bookTitle: 'Works on Every Device',
       duration: 25,
       audioUrl: '/audio/commercials/mobile-pwa.wav',
+      script: "Take the boogie everywhere. RRB Mobile works on every device — phone, tablet, desktop, smart TV. Install as an app from your browser. Stream radio. Listen to podcasts. Play Solbones. Chat with QUMUS. The boogie never stops. A Canryn Production.",
       description: 'Phone, tablet, desktop, smart TV. Install as an app from your browser. Stream radio. Listen to podcasts. Play Solbones. Chat with QUMUS.',
       bookLink: '/',
       playCount: 0,
@@ -296,25 +329,102 @@ export default function RadioCommercials() {
   ];
 
   const currentCommercial = commercials[currentCommercialIndex];
+  const hasRealAudio = isRealAudioUrl(currentCommercial.audioUrl);
+
+  // Stop TTS
+  const stopTTS = useCallback(() => {
+    window.speechSynthesis?.cancel();
+    ttsRef.current = null;
+    if (ttsIntervalRef.current) {
+      clearInterval(ttsIntervalRef.current);
+      ttsIntervalRef.current = null;
+    }
+    setIsTTS(false);
+  }, []);
+
+  // Play via TTS
+  const playTTS = useCallback((script: string, duration: number) => {
+    stopTTS();
+    const utterance = new SpeechSynthesisUtterance(script);
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+    // Try to find a good voice
+    const voices = window.speechSynthesis?.getVoices() || [];
+    const preferred = voices.find(v => v.name.includes('Google') && v.lang.startsWith('en'))
+      || voices.find(v => v.lang.startsWith('en-US'))
+      || voices.find(v => v.lang.startsWith('en'));
+    if (preferred) utterance.voice = preferred;
+
+    ttsRef.current = utterance;
+    setIsTTS(true);
+    setIsPlaying(true);
+    setCurrentTime(0);
+
+    // Simulate progress
+    const startTime = Date.now();
+    ttsIntervalRef.current = setInterval(() => {
+      const elapsed = (Date.now() - startTime) / 1000;
+      setCurrentTime(elapsed);
+    }, 200);
+
+    utterance.onend = () => {
+      setIsPlaying(false);
+      setIsTTS(false);
+      setCurrentTime(0);
+      if (ttsIntervalRef.current) {
+        clearInterval(ttsIntervalRef.current);
+        ttsIntervalRef.current = null;
+      }
+      trackCommercialPlay(currentCommercial.id);
+      if (autoRotate) handleNext();
+    };
+
+    utterance.onerror = () => {
+      setIsPlaying(false);
+      setIsTTS(false);
+      if (ttsIntervalRef.current) {
+        clearInterval(ttsIntervalRef.current);
+        ttsIntervalRef.current = null;
+      }
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }, [currentCommercial.id, autoRotate]);
 
   const handlePlayPause = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
+    if (hasRealAudio) {
+      // Use HTML audio element for real audio files
+      if (audioRef.current) {
+        if (isPlaying) {
+          audioRef.current.pause();
+        } else {
+          audioRef.current.play();
+        }
+        setIsPlaying(!isPlaying);
       }
-      setIsPlaying(!isPlaying);
+    } else {
+      // Use TTS for commercials without real audio
+      if (isPlaying) {
+        stopTTS();
+        setIsPlaying(false);
+      } else {
+        playTTS(currentCommercial.script, currentCommercial.duration);
+      }
     }
   };
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
+    stopTTS();
+    if (audioRef.current) audioRef.current.pause();
     setCurrentCommercialIndex((prev) => (prev + 1) % commercials.length);
     setCurrentTime(0);
     setIsPlaying(false);
-  };
+  }, [commercials.length, stopTTS]);
 
   const handlePrevious = () => {
+    stopTTS();
+    if (audioRef.current) audioRef.current.pause();
     setCurrentCommercialIndex((prev) => (prev - 1 + commercials.length) % commercials.length);
     setCurrentTime(0);
     setIsPlaying(false);
@@ -329,7 +439,7 @@ export default function RadioCommercials() {
   const handleEnded = () => {
     setIsPlaying(false);
     trackCommercialPlay(currentCommercial.id);
-    handleNext();
+    if (autoRotate) handleNext();
   };
 
   const trackCommercialPlay = (commercialId: number) => {
@@ -354,7 +464,7 @@ export default function RadioCommercials() {
 
   // Auto-rotate commercials every 5 minutes
   useEffect(() => {
-    if (autoRotate) {
+    if (autoRotate && !isPlaying) {
       rotationIntervalRef.current = setInterval(() => {
         handleNext();
       }, 300000); // 5 minutes
@@ -365,7 +475,25 @@ export default function RadioCommercials() {
         clearInterval(rotationIntervalRef.current);
       }
     };
-  }, [autoRotate, currentCommercialIndex]);
+  }, [autoRotate, isPlaying, currentCommercialIndex, handleNext]);
+
+  // Cleanup TTS on unmount
+  useEffect(() => {
+    return () => {
+      stopTTS();
+    };
+  }, [stopTTS]);
+
+  // Stop playback when commercial changes
+  useEffect(() => {
+    stopTTS();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    setCurrentTime(0);
+    setIsPlaying(false);
+  }, [currentCommercialIndex, stopTTS]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -373,7 +501,7 @@ export default function RadioCommercials() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const progressPercent = (currentTime / currentCommercial.duration) * 100;
+  const progressPercent = Math.min((currentTime / currentCommercial.duration) * 100, 100);
 
   // Calculate total stats
   const totalPlays = Object.values(commercialStats).reduce((sum, stat) => sum + stat.plays, 0);
@@ -399,11 +527,18 @@ export default function RadioCommercials() {
               <div>
                 <h3 className="text-2xl font-bold text-foreground mb-2">{currentCommercial.title}</h3>
                 <p className="text-accent font-semibold mb-3">{currentCommercial.bookTitle}</p>
-                {currentCommercial.seasonal && (
-                  <p className="text-xs bg-accent/20 text-accent px-2 py-1 rounded inline-block mb-3">
-                    {currentCommercial.seasonalPeriod}
-                  </p>
-                )}
+                <div className="flex gap-2 flex-wrap">
+                  {currentCommercial.seasonal && (
+                    <span className="text-xs bg-accent/20 text-accent px-2 py-1 rounded inline-block">
+                      {currentCommercial.seasonalPeriod}
+                    </span>
+                  )}
+                  {!hasRealAudio && (
+                    <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded inline-flex items-center gap-1">
+                      <Mic className="w-3 h-3" /> Voice Preview
+                    </span>
+                  )}
+                </div>
               </div>
               <Button
                 onClick={() => setShowAnalytics(!showAnalytics)}
@@ -418,15 +553,17 @@ export default function RadioCommercials() {
             <p className="text-foreground/80 mb-4">{currentCommercial.description}</p>
           </div>
 
-          {/* Audio Element */}
-          <audio
-            ref={audioRef}
-            src={currentCommercial.audioUrl}
-            onTimeUpdate={handleTimeUpdate}
-            onEnded={handleEnded}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-          />
+          {/* Audio Element (only used for real audio URLs) */}
+          {hasRealAudio && (
+            <audio
+              ref={audioRef}
+              src={currentCommercial.audioUrl}
+              onTimeUpdate={handleTimeUpdate}
+              onEnded={handleEnded}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+            />
+          )}
 
           {/* Progress Bar */}
           <div className="mb-4">
@@ -470,6 +607,22 @@ export default function RadioCommercials() {
               <SkipForward className="w-5 h-5" />
             </Button>
           </div>
+
+          {/* TTS indicator when playing */}
+          {isTTS && isPlaying && (
+            <div className="text-center mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full">
+                <div className="flex gap-0.5">
+                  <div className="w-1 h-3 bg-blue-400 rounded-full animate-pulse" />
+                  <div className="w-1 h-4 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.1s' }} />
+                  <div className="w-1 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+                  <div className="w-1 h-5 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+                  <div className="w-1 h-3 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+                </div>
+                <span className="text-xs text-blue-400">Voice Preview Playing</span>
+              </div>
+            </div>
+          )}
 
           {/* Auto-Rotate Toggle */}
           <div className="flex items-center justify-center gap-4 mb-6">
@@ -549,40 +702,51 @@ export default function RadioCommercials() {
 
         {/* Commercial List */}
         <div>
-          <h3 className="text-xl font-bold text-foreground mb-4">All Commercials</h3>
+          <h3 className="text-xl font-bold text-foreground mb-4">All Commercials ({commercials.length})</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {commercials.map((commercial, index) => (
               <button
                 key={commercial.id}
                 onClick={() => {
+                  stopTTS();
+                  if (audioRef.current) audioRef.current.pause();
                   setCurrentCommercialIndex(index);
                   setCurrentTime(0);
                   setIsPlaying(false);
                 }}
-                className={`p-4 rounded-lg border transition-all ${
+                className={`p-4 rounded-lg border transition-all text-left ${
                   index === currentCommercialIndex
                     ? 'bg-accent/20 border-accent'
                     : 'bg-background border-border hover:border-accent/50'
                 }`}
               >
-                <div className="text-left">
-                  <div className="flex items-start justify-between mb-1">
-                    <h4 className="font-bold text-foreground">{commercial.title}</h4>
+                <div className="flex items-start justify-between mb-1">
+                  <h4 className="font-bold text-foreground">{commercial.title}</h4>
+                  <div className="flex gap-1">
                     {commercial.seasonal && (
                       <span className="text-xs bg-accent/20 text-accent px-1.5 py-0.5 rounded">
                         Seasonal
                       </span>
                     )}
-                  </div>
-                  <p className="text-sm text-foreground/70 mb-2">{commercial.bookTitle}</p>
-                  <div className="flex justify-between items-center">
-                    <p className="text-xs text-accent font-semibold">{commercial.duration} seconds</p>
-                    {showAnalytics && (
-                      <p className="text-xs text-foreground/60">
-                        {commercialStats[commercial.id]?.plays || 0} plays
-                      </p>
+                    {isRealAudioUrl(commercial.audioUrl) ? (
+                      <span className="text-xs bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded">
+                        Audio
+                      </span>
+                    ) : (
+                      <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded">
+                        Voice
+                      </span>
                     )}
                   </div>
+                </div>
+                <p className="text-sm text-foreground/70 mb-2">{commercial.bookTitle}</p>
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-accent font-semibold">{commercial.duration} seconds</p>
+                  {showAnalytics && (
+                    <p className="text-xs text-foreground/60">
+                      {commercialStats[commercial.id]?.plays || 0} plays
+                    </p>
+                  )}
                 </div>
               </button>
             ))}
@@ -594,6 +758,9 @@ export default function RadioCommercials() {
           <h3 className="text-lg font-bold text-foreground mb-3">About These Commercials</h3>
           <p className="text-foreground/80 mb-3">
             These radio commercials are designed to introduce listeners to Seabrun Candy Hunter's published works. Each commercial highlights a different book or series, showcasing the themes, inspiration, and impact of Candy's literary legacy.
+          </p>
+          <p className="text-foreground/80 mb-3">
+            <strong>Voice Preview:</strong> Commercials marked with "Voice" use your device's text-to-speech engine to read the script aloud. Commercials with "Audio" play pre-recorded audio files.
           </p>
           <p className="text-foreground/80 mb-3">
             <strong>Auto-Rotation:</strong> Enable auto-rotate to automatically cycle through commercials every 5 minutes, simulating a real radio station experience.

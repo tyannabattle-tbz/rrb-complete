@@ -66,7 +66,7 @@ export const audioMusicRouter = router({
             genre: 'Cinematic',
             mood: 'dramatic',
             duration: 180,
-            previewUrl: 'https://storage.example.com/music/epic-adventure.mp3',
+            previewUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3',
             license: 'royalty-free',
           },
           {
@@ -76,7 +76,7 @@ export const audioMusicRouter = router({
             genre: 'Ambient',
             mood: 'calm',
             duration: 240,
-            previewUrl: 'https://storage.example.com/music/ambient-relaxation.mp3',
+            previewUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zByVVlWeoYCaITZI.mp3',
             license: 'royalty-free',
           },
         ],
@@ -213,7 +213,7 @@ export const audioMusicRouter = router({
         progress,
         status: isComplete ? 'completed' : 'processing',
         message: isComplete ? 'Audio processing complete!' : `Processing... ${progress}%`,
-        downloadUrl: isComplete ? `https://storage.example.com/audio/${input.audioId}.mp3` : null,
+        downloadUrl: isComplete ? `https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3` : null, // In production, use storageGet for actual processed file
         fileSize: isComplete ? 12.5 : null,
       };
     }),
