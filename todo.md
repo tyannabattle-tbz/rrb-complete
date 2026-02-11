@@ -2296,3 +2296,7 @@
 - [x] Create references/production-deployment.md for skill
 - [x] Create references/page-routes.md with all 179 routes documented
 - [x] Update references/ecosystem-architecture.md with complete service/router/table inventory
+
+## Home Page Overlap Glitch Fix - Feb 2026
+- [x] Fix text bleed-through on home page where next section text shows behind "View Ecosystem Dashboard" button area
+- [x] Ensure proper z-index and background coverage between hero section and subsequent sections

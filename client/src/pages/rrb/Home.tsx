@@ -278,11 +278,24 @@ export default function Home() {
 
         {/* Hero Section */}
         <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary/20 to-background">
-          <div className="absolute inset-0 opacity-10">
-            <RotatingVinylRecord />
+          {/* Vinyl record background — only show the spinning record, clip the text below */}
+          <style>{`@keyframes spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }`}</style>
+          <div className="absolute inset-0 opacity-10 overflow-hidden" style={{ maxHeight: '100%' }}>
+            <div className="flex items-center justify-center h-full">
+              <div style={{ perspective: '1000px', width: '400px', height: '400px' }}>
+                <div style={{ width: '100%', height: '100%', animation: 'spin 8s linear infinite', transformStyle: 'preserve-3d' }}>
+                  <img
+                    src="/images/vinyl-record-credits.jpg"
+                    alt=""
+                    className="w-full h-full object-contain rounded-xl"
+                    style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           
-          <div className="relative container flex flex-col items-center justify-center text-center gap-6 py-20">
+          <div className="relative z-10 container flex flex-col items-center justify-center text-center gap-6 py-20">
             <h1 className="text-5xl md:text-7xl font-bold text-foreground drop-shadow-lg">
               Rockin' Rockin' Boogie
             </h1>
