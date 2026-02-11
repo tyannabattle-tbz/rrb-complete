@@ -2175,5 +2175,7 @@
 - [x] Fix Solbones game screen jump on mobile after rolling dice
 
 ## Podcast Enhancements - Feb 2026
-- [ ] Ensure podcast video/audio has active playback content
-- [ ] Integrate QUMUS AI assistant into podcast page
+- [x] Ensure podcast video/audio has active playback content
+- [x] Integrate QUMUS AI assistant into podcast page
+- [x] Add call-in feature for live radio and podcast feedback/interaction
+- [x] Add video participation support (Skype-style) for podcast call-ins

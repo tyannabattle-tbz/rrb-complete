@@ -6,6 +6,7 @@ import RadioCommercials from '@/components/rrb/RadioCommercials';
 import SeasonalCampaigns from '@/components/rrb/SeasonalCampaigns';
 import { trpc } from '@/lib/trpc';
 import { AudioUploadManager } from '@/components/AudioUploadManager';
+import { LiveCallIn } from '@/components/rrb/LiveCallIn';
 
 function formatPlayCount(count: number): string {
   if (count >= 1000) return `${(count / 1000).toFixed(1).replace(/\.0$/, '')}k`;
@@ -326,6 +327,13 @@ export default function RadioStation() {
 
       {/* Book Commercials */}
       <RadioCommercials />
+
+      {/* Live Call-In */}
+      <section className="py-8 md:py-12 bg-background">
+        <div className="container max-w-4xl">
+          <LiveCallIn context="radio" showName="RRB Radio Station" isLive={true} />
+        </div>
+      </section>
 
       {/* Seasonal Campaigns */}
       <SeasonalCampaigns />

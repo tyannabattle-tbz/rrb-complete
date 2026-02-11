@@ -2,9 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar, Radio, MonitorPlay, Maximize2, Minimize2 } from 'lucide-react';
+import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar, Radio, MonitorPlay, Maximize2, Minimize2, Bot, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { LiveCallIn } from '@/components/rrb/LiveCallIn';
 
 interface PodcastEpisode {
   id: string;
@@ -121,9 +123,47 @@ export default function Podcasts() {
   const [volume, setVolume] = useState(80);
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [showVideo, setShowVideo] = useState(false);
+  const [showVideo, setShowVideo] = useState(true);
   const [isVideoFullscreen, setIsVideoFullscreen] = useState(false);
   const videoContainerRef = useRef<HTMLDivElement>(null);
+
+  // QUMUS AI Assistant
+  const { user } = useAuth();
+  const [showAI, setShowAI] = useState(true);
+  const [aiMessages, setAiMessages] = useState<{role: 'user' | 'assistant'; content: string}[]>([
+    { role: 'assistant', content: "Hey there! I'm QUMUS, your podcast AI assistant. I can help you explore episodes, discuss the legacy of Seabrun Candy Hunter, recommend content, and answer questions about the Rockin' Rockin' Boogie ecosystem. What would you like to know?" }
+  ]);
+  const [aiInput, setAiInput] = useState('');
+  const aiScrollRef = useRef<HTMLDivElement>(null);
+  const chatMutation = trpc.ai.qumusChat.chat.useMutation({
+    onSuccess: (data) => {
+      const content = typeof data.message === 'string' ? data.message : 'I encountered an issue. Please try again.';
+      setAiMessages(prev => [...prev, { role: 'assistant', content }]);
+    },
+    onError: () => {
+      setAiMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I had trouble connecting. Please try again.' }]);
+    }
+  });
+
+  const sendAiMessage = () => {
+    if (!aiInput.trim() || chatMutation.isPending) return;
+    const userMsg = aiInput.trim();
+    setAiMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    setAiInput('');
+    const contextPrefix = selectedEpisode 
+      ? `[User is currently on the podcast page, viewing "${selectedEpisode.title}" - Episode ${selectedEpisode.episodeNumber}, Season ${selectedEpisode.season}. The podcast is about the legacy of Seabrun Candy Hunter and Little Richard.] ` 
+      : '[User is on the podcast page of Rockin\' Rockin\' Boogie.] ';
+    chatMutation.mutate({
+      query: contextPrefix + userMsg,
+      messages: aiMessages.slice(-6).map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }))
+    });
+  };
+
+  useEffect(() => {
+    if (aiScrollRef.current) {
+      aiScrollRef.current.scrollTop = aiScrollRef.current.scrollHeight;
+    }
+  }, [aiMessages]);
 
   // Real audio URLs — Seabrun Candy Hunter legacy content
   useEffect(() => {
@@ -497,6 +537,81 @@ export default function Podcasts() {
 
                 {/* Podcast Commercial Break */}
                 <PodcastCommercialBreak />
+
+                {/* QUMUS AI Podcast Assistant */}
+                <Card className="overflow-hidden border-amber-500/30">
+                  <button
+                    onClick={() => setShowAI(!showAI)}
+                    className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-amber-500/10 to-purple-500/10 hover:from-amber-500/15 hover:to-purple-500/15 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-purple-600 flex items-center justify-center">
+                        <Bot className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <p className="font-semibold text-foreground">QUMUS Podcast Assistant</p>
+                        <p className="text-xs text-foreground/60">Ask about episodes, legacy, or get recommendations</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">Active</Badge>
+                      {showAI ? <ChevronUp className="w-4 h-4 text-foreground/60" /> : <ChevronDown className="w-4 h-4 text-foreground/60" />}
+                    </div>
+                  </button>
+                  {showAI && (
+                    <div className="border-t border-border">
+                      <div ref={aiScrollRef} className="h-64 overflow-y-auto p-4 space-y-3">
+                        {aiMessages.map((msg, i) => (
+                          <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            {msg.role === 'assistant' && (
+                              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1">
+                                <Bot className="w-3.5 h-3.5 text-white" />
+                              </div>
+                            )}
+                            <div className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
+                              msg.role === 'user'
+                                ? 'bg-amber-500 text-black'
+                                : 'bg-card border border-border text-foreground'
+                            }`}>
+                              {msg.content}
+                            </div>
+                          </div>
+                        ))}
+                        {chatMutation.isPending && (
+                          <div className="flex gap-2 justify-start">
+                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                              <Bot className="w-3.5 h-3.5 text-white animate-pulse" />
+                            </div>
+                            <div className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground/60">
+                              Thinking...
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3 border-t border-border flex gap-2">
+                        <input
+                          type="text"
+                          value={aiInput}
+                          onChange={(e) => setAiInput(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && sendAiMessage()}
+                          placeholder="Ask QUMUS about this episode..."
+                          className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        />
+                        <Button
+                          size="sm"
+                          onClick={sendAiMessage}
+                          disabled={chatMutation.isPending || !aiInput.trim()}
+                          className="bg-amber-500 hover:bg-amber-600 text-black"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </Card>
+
+                {/* Live Call-In */}
+                <LiveCallIn context="podcast" showName={selectedEpisode?.title || "RRB Podcast"} isLive={true} />
 
                 {/* Chapters */}
                 {selectedEpisode.chapters && selectedEpisode.chapters.length > 0 && (
