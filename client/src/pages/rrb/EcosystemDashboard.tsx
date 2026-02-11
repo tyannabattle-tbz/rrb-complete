@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, AlertCircle, CheckCircle, Activity } from "lucide-react";
+import AICollaborationHub from "@/components/rrb/AICollaborationHub";
 
 export default function EcosystemDashboard() {
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -38,6 +39,14 @@ export default function EcosystemDashboard() {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
+        {/* AI Collaboration Hub - Upper Left */}
+        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-4 mb-6">
+          <div>
+            <AICollaborationHub />
+          </div>
+          <div />
+        </div>
+
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
