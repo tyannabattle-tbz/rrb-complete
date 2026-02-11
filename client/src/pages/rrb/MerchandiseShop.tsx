@@ -1,7 +1,7 @@
 /**
  * Legacy Merchandise Catalog
  * Contact Canryn Production for pricing, availability, and orders.
- * All donations go through Sweet Miracles Foundation 501(c)(3).
+ * All donations go through Sweet Miracles Foundation 501(c)(3) / 508(c).
  */
 
 import { useState } from 'react';
@@ -350,7 +350,7 @@ export default function MerchandiseShop() {
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-sm text-foreground/50">
             Merchandise catalog is subject to change. For pricing, availability, and custom orders,
-            contact Canryn Production directly. Sweet Miracles Foundation is a registered 501(c)(3) nonprofit.
+            contact Canryn Production directly. Sweet Miracles Foundation is a registered 501(c)(3) / 508(c) nonprofit.
           </p>
         </div>
       </section>

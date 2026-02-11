@@ -140,7 +140,7 @@ export const sweetMiraclesGrantsRouter = router({
         : `Worth investigating — ${g.matchReasons[0]}`,
       nextSteps: [
         'Review grant requirements and eligibility',
-        'Prepare organizational documents (501c3 letter, annual report)',
+        'Prepare organizational documents (501(c)(3) / 508(c) letter, annual report)',
         `Submit application before ${g.deadline}`,
       ],
       category: g.category,

@@ -2161,3 +2161,6 @@
 ## Video Fix - Feb 2026
 - [x] Regenerate explainer video with complete messaging (no cut-off)
 - [x] Update commercial engine with new video URL
+
+## Sweet Miracles Designation Fix - Feb 2026
+- [ ] Upd- [x] Update all 501(c)(3) references to include 508(c) designation

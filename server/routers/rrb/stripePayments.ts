@@ -2,7 +2,7 @@
  * Stripe Payment Router — DONATIONS ONLY
  * 
  * In Support of Legacy Recovery Efforts
- * Sweet Miracles Foundation 501(c)(3)
+ * Sweet Miracles Foundation 501(c)(3) / 508(c)
  * 
  * All payment flows are donation-based. No product/service purchases.
  * For studio services and production packages, contact Canryn Production directly.
@@ -71,7 +71,7 @@ export const stripePaymentsRouter = router({
             type: 'donation_recurring',
             tierId: input.tierId,
             purpose: input.purpose,
-            organization: 'Sweet Miracles Foundation 501(c)(3)',
+            organization: 'Sweet Miracles Foundation 501(c)(3) / 508(c)',
           },
         });
 
@@ -129,7 +129,7 @@ export const stripePaymentsRouter = router({
           customer_name: ctx.user.name || '',
           type: 'donation_recurring',
           tierId: mappedTier,
-          organization: 'Sweet Miracles Foundation 501(c)(3)',
+          organization: 'Sweet Miracles Foundation 501(c)(3) / 508(c)',
         },
       });
 
@@ -190,7 +190,7 @@ export const stripePaymentsRouter = router({
             type: 'donation_one_time',
             purpose: input.purpose,
             message: input.message || '',
-            organization: 'Sweet Miracles Foundation 501(c)(3)',
+            organization: 'Sweet Miracles Foundation 501(c)(3) / 508(c)',
           },
         });
 
@@ -244,7 +244,7 @@ export const stripePaymentsRouter = router({
           donorName: input.name,
           donorEmail: input.email,
           type: 'donation_one_time',
-          organization: 'Sweet Miracles Foundation 501(c)(3)',
+          organization: 'Sweet Miracles Foundation 501(c)(3) / 508(c)',
         },
       });
       return { sessionId: session.id, url: session.url };

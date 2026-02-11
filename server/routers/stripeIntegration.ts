@@ -18,7 +18,7 @@ export const stripeIntegrationRouter = router({
       return {
         acceptingDonations: true,
         organization: 'Sweet Miracles Foundation',
-        taxStatus: '501(c)(3) Nonprofit',
+        taxStatus: '501(c)(3) / 508(c) Nonprofit',
         mission: 'Voice for the Voiceless — Legacy Recovery & Community Empowerment',
         donationUrl: '/donate',
         contactForServices: {

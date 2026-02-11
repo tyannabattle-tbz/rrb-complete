@@ -21,7 +21,7 @@
 
 1. **Rockin' Rockin' Boogie** — 7-channel 24/7 radio, podcasts, audiobooks, healing frequencies, merchandise, books, proof vault, photo gallery, legacy documentation
 2. **HybridCast** — Offline-first emergency broadcast PWA with mesh networking
-3. **Sweet Miracles Foundation** — 501(c)(3) nonprofit, Stripe donations, grant discovery
+3. **Sweet Miracles Foundation** — 501(c)(3) / 508(c) nonprofit, Stripe donations, grant discovery
 4. **Solbones 4+3+2** — Sacred math dice game with Solfeggio frequencies
 5. **Canryn Production** — Parent company with AI-managed business operations
 

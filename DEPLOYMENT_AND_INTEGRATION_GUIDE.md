@@ -66,7 +66,7 @@ Your Stripe account has been approved for LIVE payments!
 **Account Details:**
 - Account ID: `acct_1St9hSRzKOILZyAN`
 - Status: LIVE (Production Ready)
-- Nonprofit Status: Verified 501(c)(3)
+- Nonprofit Status: Verified 501(c)(3) / 508(c)
 
 ### LIVE API Keys
 

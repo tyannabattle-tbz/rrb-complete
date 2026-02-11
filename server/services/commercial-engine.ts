@@ -90,7 +90,7 @@ const BRANDS = {
   'sweet_miracles': {
     name: 'Sweet Miracles Foundation',
     tagline: 'Voice for the Voiceless',
-    description: '501(c)(3) nonprofit empowering communities through crisis communication and support.',
+    description: '501(c)(3) / 508(c) nonprofit empowering communities through crisis communication and support.',
     tone: 'compassionate, urgent, hopeful',
   },
   'hybridcast': {

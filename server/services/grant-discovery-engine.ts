@@ -4,7 +4,7 @@
  * 
  * Continuously discovers, scores, and tracks grants for the entire RRB ecosystem:
  * 
- * Sweet Miracles (501(c)(3) Nonprofit):
+ * Sweet Miracles (501(c)(3) / 508(c) Nonprofit):
  * - "A Voice for the Voiceless" — community access to broadcast tools
  * - Emergency communication and disaster response
  * - Wellness programs and healing frequencies
@@ -329,7 +329,7 @@ async function runDiscoveryScan(): Promise<DiscoveredGrant[]> {
           messages: [
             {
               role: 'system',
-              content: `You are a grant research assistant for Sweet Miracles (501(c)(3) nonprofit) and Canryn Production (media production company). Sweet Miracles focuses on: emergency communication, community broadcasting, wellness programs, media production, digital literacy, and serving as "A Voice for the Voiceless." Canryn Production focuses on: music production, radio broadcasting, podcast networks, studio operations, content creation, and generational wealth building through media. Together they need grants for: nonprofit programs, production studio equipment & facilities, business startup & expansion, and operational maintenance. Generate a realistic grant opportunity from the given source. Return ONLY valid JSON.`
+              content: `You are a grant research assistant for Sweet Miracles (501(c)(3) / 508(c) nonprofit) and Canryn Production (media production company). Sweet Miracles focuses on: emergency communication, community broadcasting, wellness programs, media production, digital literacy, and serving as "A Voice for the Voiceless." Canryn Production focuses on: music production, radio broadcasting, podcast networks, studio operations, content creation, and generational wealth building through media. Together they need grants for: nonprofit programs, production studio equipment & facilities, business startup & expansion, and operational maintenance. Generate a realistic grant opportunity from the given source. Return ONLY valid JSON.`
             },
             {
               role: 'user',
@@ -380,7 +380,7 @@ Return JSON with these fields:
             amount,
             deadline: generateDeadline(),
             description: grantData.description || `Funding opportunity from ${source.name} for ${source.focus}`,
-            requirements: grantData.requirements || ['501(c)(3) status', 'Annual report'],
+            requirements: grantData.requirements || ['501(c)(3) / 508(c) status', 'Annual report'],
             matchScore,
             matchReasons: generateMatchReasons(grantData.title || '', grantData.description || ''),
             category: categorizeGrant(grantData.title || '', grantData.description || ''),
@@ -412,7 +412,7 @@ Return JSON with these fields:
             amount,
             deadline: generateDeadline(),
             description,
-            requirements: ['501(c)(3) status', 'Organizational budget', 'Program description', 'Board of directors list'],
+            requirements: ['501(c)(3) / 508(c) status', 'Organizational budget', 'Program description', 'Board of directors list'],
             matchScore,
             matchReasons: generateMatchReasons(title, description),
             category: categorizeGrant(title, description),

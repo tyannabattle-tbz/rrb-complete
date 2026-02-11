@@ -119,7 +119,7 @@ BUSINESS OPERATIONS STATUS:
 - Advertising Services: ACTIVE (contact Canryn for pricing)
 
 DONATION STATUS:
-- Model: Donations only (Sweet Miracles Foundation 501(c)(3))
+- Model: Donations only (Sweet Miracles Foundation 501(c)(3) / 508(c))
 - Purpose: Legacy recovery efforts
 - Processor: Stripe (configured and active)
 - Studio Services: Contact Canryn Production for pricing packages
@@ -243,7 +243,7 @@ export const qumusChatRouter = router({
         donations: {
           model: 'donations-only',
           organization: 'Sweet Miracles Foundation',
-          taxStatus: '501(c)(3)',
+          taxStatus: '501(c)(3) / 508(c)',
           purpose: 'Legacy recovery efforts',
           processor: 'Stripe',
           status: 'ACTIVE',

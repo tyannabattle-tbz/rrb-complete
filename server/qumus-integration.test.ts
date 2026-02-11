@@ -150,7 +150,7 @@ describe('QUMUS Ecosystem Status', () => {
     expect(result.donations).toBeDefined();
     expect(result.donations.model).toBe('donations-only');
     expect(result.donations.organization).toBe('Sweet Miracles Foundation');
-    expect(result.donations.taxStatus).toBe('501(c)(3)');
+    expect(result.donations.taxStatus).toBe('501(c)(3) / 508(c)');
     expect(result.donations.purpose).toBe('Legacy recovery efforts');
     expect(result.donations.processor).toBe('Stripe');
 

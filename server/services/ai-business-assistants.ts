@@ -534,7 +534,7 @@ class AIBusinessAssistantEngine {
           },
           {
             role: 'user',
-            content: `Current time: ${new Date().toISOString()}. Generate a legal/compliance monitoring insight for Canryn Production. Consider: FCC broadcasting compliance, music licensing (ASCAP/BMI), nonprofit 501(c)(3) requirements, employment contracts, vendor agreements, and intellectual property (copyrights, trademarks).`,
+            content: `Current time: ${new Date().toISOString()}. Generate a legal/compliance monitoring insight for Canryn Production. Consider: FCC broadcasting compliance, music licensing (ASCAP/BMI), nonprofit 501(c)(3) / 508(c) requirements, employment contracts, vendor agreements, and intellectual property (copyrights, trademarks).`,
           },
         ],
       });
@@ -815,7 +815,7 @@ class AIBusinessAssistantEngine {
           },
           {
             role: 'user',
-            content: `Current time: ${new Date().toISOString()}. Scan for grant opportunities matching: 1) Sweet Miracles Foundation (501c3 nonprofit, community empowerment, crisis communication) 2) Canryn Production (minority-owned media production, broadcasting, studio equipment) 3) RRB Radio (community radio, emergency broadcasting). Report any high-priority matches.`,
+            content: `Current time: ${new Date().toISOString()}. Scan for grant opportunities matching: 1) Sweet Miracles Foundation (501(c)(3) / 508(c) nonprofit, community empowerment, crisis communication) 2) Canryn Production (minority-owned media production, broadcasting, studio equipment) 3) RRB Radio (community radio, emergency broadcasting). Report any high-priority matches.`,
           },
         ],
       });

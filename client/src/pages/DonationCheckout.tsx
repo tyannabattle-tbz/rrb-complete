@@ -1,6 +1,6 @@
 /**
  * Donation Checkout — In Support of Legacy Recovery Efforts
- * Sweet Miracles Foundation 501(c)(3)
+ * Sweet Miracles Foundation 501(c)(3) / 508(c)
  * 
  * All proceeds support the preservation and continuation of the
  * Rockin' Rockin' Boogie legacy and community empowerment programs.
@@ -160,7 +160,7 @@ export function DonationCheckout() {
         <div className="text-center mb-8 md:mb-12">
           <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 rounded-full px-4 py-2 mb-4">
             <Heart className="w-4 h-4 text-amber-500" />
-            <span className="text-amber-400 text-sm font-medium">Sweet Miracles Foundation 501(c)(3)</span>
+            <span className="text-amber-400 text-sm font-medium">Sweet Miracles Foundation 501(c)(3) / 508(c)</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
             In Support of Legacy Recovery Efforts
@@ -410,7 +410,7 @@ export function DonationCheckout() {
         {/* Disclaimer */}
         <div className="text-center space-y-2">
           <p className="text-slate-500 text-xs">
-            Sweet Miracles Foundation is a registered 501(c)(3) nonprofit organization. 
+            Sweet Miracles Foundation is a registered 501(c)(3) / 508(c) nonprofit organization. 
             Your donation may be tax-deductible to the extent allowed by law.
           </p>
           <p className="text-slate-500 text-xs">

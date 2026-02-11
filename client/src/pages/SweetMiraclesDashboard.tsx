@@ -672,7 +672,7 @@ export default function SweetMiraclesDashboard() {
               <h3 className="text-2xl font-bold text-gray-900 mb-4">About Sweet Miracles</h3>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  Sweet Miracles NPO is a 501(c)(3) registered nonprofit organization dedicated to providing compassionate support to seniors and vulnerable populations in our community.
+                  Sweet Miracles NPO is a 501(c)(3) / 508(c) registered nonprofit organization dedicated to providing compassionate support to seniors and vulnerable populations in our community.
                 </p>
                 <p>
                   Our mission is to be a voice for the voiceless, ensuring that every senior receives the care, respect, and assistance they deserve. We believe that everyone deserves dignity and support, regardless of their circumstances.

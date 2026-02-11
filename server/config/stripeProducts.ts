@@ -2,7 +2,7 @@
  * Stripe Products Configuration
  * DONATIONS ONLY — In Support of Legacy Recovery Efforts
  * 
- * Sweet Miracles Foundation 501(c)(3)
+ * Sweet Miracles Foundation 501(c)(3) / 508(c)
  * All proceeds support the preservation and continuation of the
  * Rockin' Rockin' Boogie legacy and community empowerment programs.
  * 
@@ -17,7 +17,7 @@ export const STRIPE_PRODUCTS = {
   legacyRecoveryDonations: {
     productId: process.env.STRIPE_SWEET_MIRACLES_PRODUCT_ID || 'prod_sweet_miracles',
     name: 'Sweet Miracles Foundation — Legacy Recovery Donation',
-    description: 'Your donation supports the recovery, preservation, and continuation of the Rockin\' Rockin\' Boogie legacy through Sweet Miracles Foundation 501(c)(3).',
+    description: 'Your donation supports the recovery, preservation, and continuation of the Rockin\' Rockin\' Boogie legacy through Sweet Miracles Foundation 501(c)(3) / 508(c).',
     tiers: {
       friend: {
         priceId: process.env.STRIPE_BRONZE_PRICE_ID || 'price_bronze',
@@ -95,7 +95,7 @@ export const STRIPE_PRODUCTS = {
   oneTimeDonation: {
     productId: process.env.STRIPE_ONE_TIME_PRODUCT_ID || 'prod_one_time',
     name: 'One-Time Donation — Legacy Recovery Fund',
-    description: 'Make a one-time contribution in support of legacy recovery efforts. Sweet Miracles Foundation 501(c)(3) — A Voice for the Voiceless.',
+    description: 'Make a one-time contribution in support of legacy recovery efforts. Sweet Miracles Foundation 501(c)(3) / 508(c) — A Voice for the Voiceless.',
     amounts: [
       { amount: 500, label: '$5' },
       { amount: 1000, label: '$10' },

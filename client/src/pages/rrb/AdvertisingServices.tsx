@@ -403,7 +403,7 @@ export default function AdvertisingServices() {
           <p className="text-sm text-foreground/50">
             All advertising inquiries are handled by Canryn Production Inc.
             Advertising rates and availability are subject to change.
-            Sweet Miracles Foundation is a registered 501(c)(3) nonprofit organization.
+            Sweet Miracles Foundation is a registered 501(c)(3) / 508(c) nonprofit organization.
           </p>
         </div>
       </section>
