@@ -1,6 +1,6 @@
 # RRB QUMUS Ecosystem — Complete Production Installation Guide
 
-**Canryn Production and its subsidiaries** | v3.0.0 | Feb 2026
+**Canryn Production and its subsidiaries** | v3.1.0 | Feb 2026
 
 ---
 
@@ -682,19 +682,19 @@ pm2 startup                      # Auto-start on boot
 rrb-ecosystem/
 ├── client/                     # Frontend (React 19 + Tailwind 4 + shadcn/ui)
 │   ├── src/
-│   │   ├── pages/              # 181 page components
+│   │   ├── pages/              # 184 page components
 │   │   ├── components/         # 276 reusable components
 │   │   │   ├── ui/             # shadcn/ui primitives
 │   │   │   └── rrb/            # RRB-specific components
 │   │   ├── contexts/           # Auth, Audio, Theme contexts
 │   │   ├── hooks/              # Custom React hooks
 │   │   ├── lib/                # tRPC client, utilities
-│   │   └── App.tsx             # Routes & layout (179 routes)
+│   │   └── App.tsx             # Routes & layout (182 routes)
 │   └── index.html              # Entry point with RSS auto-discovery tags
 ├── server/                     # Backend (Express 4 + tRPC 11)
-│   ├── routers/                # 167 tRPC routers
+│   ├── routers/                # 170 tRPC routers
 │   ├── routerChunks/           # Router chunks (TS compiler optimization)
-│   ├── services/               # 73 service classes
+│   ├── services/               # 74 service classes
 │   ├── webhooks/               # Stripe webhook handler
 │   ├── _core/                  # Framework plumbing (do not edit)
 │   ├── db.ts                   # Database query helpers
@@ -702,7 +702,7 @@ rrb-ecosystem/
 │   ├── storage.ts              # S3 helpers (storagePut/storageGet)
 │   └── rss-feeds.ts            # RSS feed endpoints
 ├── drizzle/                    # Database (Drizzle ORM)
-│   └── schema.ts               # 145 tables, 2107 lines
+│   └── schema.ts               # 150 tables
 ├── shared/                     # Shared types and constants
 ├── ecosystem.config.cjs        # PM2 configuration
 ├── INSTALL.md                  # This file
@@ -724,6 +724,8 @@ rrb-ecosystem/
 | Nginx 502 Bad Gateway | Check Node.js is running: `pm2 status`. Verify port matches Nginx config. |
 | WebSocket disconnects | Add `proxy_read_timeout 86400;` to Nginx location block |
 | High memory usage | Set `max_memory_restart: '1G'` in PM2 config. Monitor with `pm2 monit`. |
+| Voice commands not working | Ensure HTTPS is enabled (required for Web Speech API). Check browser compatibility. |
+| Accessibility panel not showing | Clear localStorage and reload. Panel is fixed bottom-right on all pages. |
 
 ---
 

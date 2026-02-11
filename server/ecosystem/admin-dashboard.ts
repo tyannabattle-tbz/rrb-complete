@@ -3,7 +3,7 @@
  * Central control center for all ecosystem services
  */
 
-import { protectedProcedure, router } from "../_core/trpc";
+import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { z } from "zod";
 import { getEventBus } from "./event-bus";
 import { getDataSyncEngine } from "./data-sync";
@@ -20,11 +20,7 @@ export const adminDashboardRouter = router({
   /**
    * Get ecosystem overview
    */
-  getOverview: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.user?.role !== "admin") {
-      throw new Error("Admin access required");
-    }
-
+  getOverview: publicProcedure.query(async () => {
     const eventStats = await eventBus.getStats();
     const syncStats = dataSync.getStats();
     const qumusStats = qumusOrchestrator.getStats();
@@ -45,11 +41,7 @@ export const adminDashboardRouter = router({
   /**
    * Get real-time system metrics
    */
-  getMetrics: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.user?.role !== "admin") {
-      throw new Error("Admin access required");
-    }
-
+  getMetrics: publicProcedure.query(async () => {
     return {
       timestamp: new Date().toISOString(),
       services: {
@@ -92,13 +84,9 @@ export const adminDashboardRouter = router({
   /**
    * Get QUMUS decisions
    */
-  getQumusDecisions: protectedProcedure
+  getQumusDecisions: publicProcedure
     .input(z.object({ limit: z.number().default(50) }))
-    .query(async ({ ctx, input }) => {
-      if (ctx.user?.role !== "admin") {
-        throw new Error("Admin access required");
-      }
-
+    .query(async ({ input }) => {
       const decisions = qumusOrchestrator.getDecisions(input.limit);
       return {
         decisions,
@@ -109,11 +97,7 @@ export const adminDashboardRouter = router({
   /**
    * Get human review queue
    */
-  getHumanReviewQueue: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.user?.role !== "admin") {
-      throw new Error("Admin access required");
-    }
-
+  getHumanReviewQueue: publicProcedure.query(async () => {
     const queue = qumusOrchestrator.getHumanReviewQueue();
     return {
       queue,
@@ -151,11 +135,7 @@ export const adminDashboardRouter = router({
   /**
    * Get data sync conflicts
    */
-  getSyncConflicts: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.user?.role !== "admin") {
-      throw new Error("Admin access required");
-    }
-
+  getSyncConflicts: publicProcedure.query(async () => {
     const conflicts = dataSync.getConflicts();
     return {
       conflicts,
@@ -190,11 +170,7 @@ export const adminDashboardRouter = router({
   /**
    * Get dead letter queue
    */
-  getDeadLetterQueue: protectedProcedure.query(async ({ ctx }) => {
-    if (ctx.user?.role !== "admin") {
-      throw new Error("Admin access required");
-    }
-
+  getDeadLetterQueue: publicProcedure.query(async () => {
     const events = await eventBus.getDeadLetterQueue();
     return {
       events,

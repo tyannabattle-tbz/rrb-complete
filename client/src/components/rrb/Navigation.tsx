@@ -123,6 +123,8 @@ export default function Navigation() {
     { label: '📻 Radio Directory', href: '/rrb/radio-directory' },
     { label: '🎙️ Commercials', href: '/rrb/commercials' },
     { label: '📢 Advertising', href: '/rrb/advertising' },
+    { label: '💰 Royalty Tracker', href: '/rrb/royalties' },
+    { label: '🧠 Intelligence Dashboard', href: '/rrb/intelligence' },
   ];
 
   const additionalItems = [

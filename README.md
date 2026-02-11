@@ -1,7 +1,7 @@
 # Rockin' Rockin' Boogie — QUMUS Autonomous Ecosystem
 
 **A Canryn Production and its subsidiaries**
-**Version:** 9.5.5 | **Status:** Production | **Autonomy:** 90%+ | **Live:** [rockinrockinboogie.manus.space](https://rockinrockinboogie.manus.space)
+**Version:** 3.1.0 | **Status:** Production | **Autonomy:** 90%+ | **Live:** [rockinrockinboogie.manus.space](https://rockinrockinboogie.manus.space)
 
 ---
 
@@ -18,7 +18,7 @@ The platform is designed for **generational wealth creation** through Canryn Pro
 ```
 QUMUS Brain (90% autonomous, 10% human override)
 │
-├── Decision Engine (8 policies, 75-98% autonomy per policy)
+├── Decision Engine v11.0 (8 policies, 75-98% autonomy per policy)
 │   ├── Content Scheduling (85%)      → 7-channel radio, podcasts, 24/7 airwaves
 │   ├── Emergency Broadcast (95%)     → HybridCast mesh network, offline-first
 │   ├── Listener Engagement (80%)     → Analytics optimization, recommendations
@@ -41,6 +41,18 @@ QUMUS Brain (90% autonomous, 10% human override)
 │   ├── Trust Scoring & Heartbeat Monitoring
 │   └── Capability Delegation & Consensus
 │
+├── Advanced Intelligence Layer         → v11.0 upgrades
+│   ├── Cross-Policy Correlation (4 rules)
+│   ├── Anomaly Detection (EMA baselines)
+│   ├── Adaptive Scheduling (30s-5min)
+│   ├── Learning Feedback Loop
+│   └── Self-Assessment (A-F grades)
+│
+├── AI Collaboration Hub               → External AI engagement
+│   ├── 12 Open-Source AI Systems
+│   ├── Compare Responses (live LLM)
+│   └── Protocol-Agnostic Messaging
+│
 └── Cross-Platform Communication       → Unified messaging protocol
     ├── HybridCast (emergency, mesh, offline)
     ├── RRB Radio (streaming, podcasts, scheduling)
@@ -56,12 +68,12 @@ QUMUS Brain (90% autonomous, 10% human override)
 |-------|-----------|---------|
 | Frontend | React 19, Tailwind CSS 4, shadcn/ui | Responsive PWA with dark amber/purple/gold theme |
 | Backend | Express 4, tRPC 11, Superjson | Type-safe API with end-to-end type inference |
-| Database | Drizzle ORM, MySQL/TiDB | 130 tables, schema-first migrations |
+| Database | Drizzle ORM, MySQL/TiDB | 150 tables, schema-first migrations |
 | Storage | S3 (via storagePut/storageGet) | Media files, uploads, static assets |
 | Auth | Manus OAuth, JWT sessions | Protected procedures, role-based access |
 | Payments | Stripe (checkout, webhooks, subscriptions) | Merchandise, donations, premium features |
 | Audio | Web Audio API (iOS-compatible) | Solfeggio frequency tones, healing sounds |
-| Testing | Vitest | 96 test files across server routers and services |
+| Testing | Vitest | 100+ test files across server routers and services |
 | Deployment | Manus hosting, PWA service worker | Auto-deploy on checkpoint, offline support |
 
 ---
@@ -70,13 +82,15 @@ QUMUS Brain (90% autonomous, 10% human override)
 
 | Metric | Count |
 |--------|-------|
-| Database Tables | 130 |
-| tRPC Routers | 141 |
-| Server Services | 64 |
-| React Components | 270 |
-| Pages | 165 |
-| Test Files | 96 |
+| Database Tables | 150 |
+| tRPC Routers | 170 |
+| Server Services | 74 |
+| React Components | 280+ |
+| Pages | 184 |
+| Test Files | 100+ |
 | QUMUS Decision Policies | 8 |
+| QUMUS Engine Version | v11.0 |
+| AI Collaboration Systems | 12 |
 | Radio Channels | 7 |
 | Solbones Game Modes | 3 |
 | Solfeggio Frequencies | 9 |
@@ -120,6 +134,18 @@ E-commerce storefront with Stripe checkout integration, product catalog manageme
 ### Proof Vault
 
 Archival documentation system preserving the Hunter family legacy with verified sources, legal disclaimers, copyright compliance, and structured evidence presentation. All content credited as "A Canryn Production and its subsidiaries."
+
+### Royalty Tracker
+
+Collaborating artists can monitor their earnings, splits, and payment history from projects they work on together. Features include project CRUD, collaborator management with split percentages, automatic payment distribution based on splits, earnings dashboards with per-project breakdowns, and source type tracking (streaming, download, sync license, performance, mechanical, merchandise).
+
+### QUMUS Intelligence Dashboard
+
+Dedicated full-page view showing cross-policy correlation alerts, anomaly detection reports, self-assessment scores with A-F health grades, policy chain activity, adaptive scheduling state, and learning feedback entries. The QUMUS engine (v11.0) features cross-policy correlation (4 rules), anomaly detection with exponential moving average baselines, adaptive loop scheduling (30s-5min), learning feedback loop, and 3 policy chains (fraud detection, content-compliance, growth activation).
+
+### AI Collaboration Hub
+
+Compact widget enabling QUMUS to engage with 12 open-source AI autonomous systems (AutoGPT, LangChain, CrewAI, MetaGPT, AutoGen, BabyAGI, SuperAGI, OpenDevin, and more) for experience, growth, knowledge, collaboration, and mentorship — without requiring direct integration. Includes a Compare Responses tab powered by live LLM that generates side-by-side AI reasoning comparisons.
 
 ### QUMUS Admin Dashboards
 
@@ -178,15 +204,15 @@ client/
       MeditationHub.tsx  → Healing frequency sessions
       Studio*.tsx        → 5 studio production tools
       Admin*.tsx         → QUMUS admin dashboards
-    components/          → 270 reusable UI components
+    components/          → 280+ reusable UI components
     contexts/            → React contexts (auth, theme, audio)
     hooks/               → Custom hooks
     lib/trpc.ts          → tRPC client binding
-    App.tsx              → Routes & layout (165 pages)
+    App.tsx              → Routes & layout (184 pages)
     index.css            → OKLCH theme variables
 server/
-  routers/               → 141 tRPC procedure files
-  services/              → 64 service classes
+  routers/               → 170 tRPC procedure files
+  services/              → 74 service classes
     agentNetworkService.ts           → Agent discovery & P2P
     crossPlatformCommunicationService.ts → Unified messaging
     seamlessAgentConnectionService.ts → Encrypted channels
@@ -195,7 +221,7 @@ server/
   routers.ts             → Root router aggregation
   storage.ts             → S3 helpers
 drizzle/
-  schema.ts              → 130 database tables
+  schema.ts              → 150 database tables
 shared/                  → Shared types & constants
 ```
 
