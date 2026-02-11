@@ -2403,3 +2403,20 @@
 - [x] Fix non-working song links (download links now show toast notifications for pending digitization)
 - [x] Compress vinyl record hero image from 6MB to 20KB for faster mobile loading
 - [x] Reduce expanded channel panel height on mobile (max-h-48 vs max-h-60)
+
+## Bug Fix: Channel Picker Too Narrow - Feb 2026
+- [x] Widen channel picker panel so station names are fully visible on mobile (w-72, text-base)
+- [x] Ensure panel doesn't overflow screen but shows full station names
+
+## Feature: Stripe Payouts for Royalty Tracker - Feb 2026
+- [x] Connect Stripe payment processing to Royalty Tracker
+- [x] Implement automated split distribution when payments are received
+- [x] Add payout history and status tracking for each collaborator
+- [x] Create Stripe Connect onboarding flow for artists to receive payouts
+- [x] Add payment recording that triggers real Stripe transfers
+- [x] Add stripeConnectAccountId and payoutMethod fields to royalty_collaborators schema
+- [x] Create payDistribution mutation for individual Stripe Transfers
+- [x] Create batchPayProject mutation for bulk payouts
+- [x] Add transfer.paid and account.updated webhook handlers
+- [x] Build payout UI in RoyaltyTracker (Setup Payout button, pending payouts panel, Pay/Pay All buttons)
+- [x] Write vitest tests for the payout integration (33 tests passing)

@@ -65,6 +65,7 @@ import { aiCompareRouter } from "./routers/aiCompareRouter";
 
 // Royalty Tracker for collaborating artists
 import { royaltyTrackerRouter } from "./routers/royaltyTracker";
+import { royaltyPayoutsRouter } from "./routers/royaltyPayouts";
 
 // Business Operations routers
 import { bookkeepingRouter } from "./routers/businessBookkeeping";
@@ -224,6 +225,9 @@ export const appRouter = router({
 
   // Royalty Tracker (artist collaboration earnings)
   royalties: royaltyTrackerRouter,
+
+  // Royalty Payouts (Stripe Connect transfers to artists)
+  royaltyPayouts: royaltyPayoutsRouter,
 
   // Radio Content API (public tracks, playlists, schedules)
   radioContent: radioContentRouter,

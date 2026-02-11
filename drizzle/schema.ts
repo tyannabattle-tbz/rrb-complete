@@ -2134,6 +2134,9 @@ export const royaltyCollaborators = mysqlTable("royalty_collaborators", {
 	email: varchar({ length: 320 }),
 	isRegistered: boolean().default(false).notNull(),
 	inviteStatus: mysqlEnum(['pending','accepted','declined']).default('pending').notNull(),
+	stripeConnectAccountId: varchar({ length: 255 }),
+	stripeOnboardingComplete: boolean().default(false).notNull(),
+	payoutMethod: mysqlEnum(['stripe_connect','manual','check','wire','paypal']).default('manual').notNull(),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });

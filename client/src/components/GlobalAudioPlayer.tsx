@@ -260,7 +260,7 @@ function QuickPlayButton() {
 
       <div className="fixed bottom-[70px] md:bottom-4 right-4 z-50">
         {showPicker && (
-          <div className="absolute bottom-14 right-0 w-56 sm:w-64 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden mb-2">
+          <div className="absolute bottom-14 right-0 w-72 sm:w-80 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden mb-2">
             <div className="p-2.5 border-b border-zinc-800 flex items-center justify-between">
               <div>
                 <h3 className="text-xs font-semibold text-white">Start Listening</h3>
@@ -290,8 +290,8 @@ function QuickPlayButton() {
                   >
                     <Radio className="w-3.5 h-3.5" style={{ color: channel.color }} />
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-medium text-white truncate">{channel.name}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-white truncate">{channel.name}</p>
                     <p className="text-[10px] text-zinc-500 truncate">{channel.subsidiary}</p>
                   </div>
                 </button>

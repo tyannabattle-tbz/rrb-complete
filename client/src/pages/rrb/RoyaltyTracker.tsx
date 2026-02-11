@@ -12,7 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import {
   DollarSign, Users, Music, Plus, ArrowRight, TrendingUp,
-  FileText, Percent, Clock, CheckCircle, AlertCircle, BarChart3
+  FileText, Percent, Clock, CheckCircle, AlertCircle, BarChart3,
+  CreditCard, Send, ExternalLink, Loader2, Banknote, Zap
 } from "lucide-react";
 
 type TabType = "dashboard" | "projects" | "earnings" | "project-detail";
@@ -44,6 +45,8 @@ export default function RoyaltyTracker() {
   const [payNet, setPayNet] = useState("");
   const [payNotes, setPayNotes] = useState("");
 
+  const [showPayoutPanel, setShowPayoutPanel] = useState(false);
+
   const utils = trpc.useUtils();
 
   const projectsQuery = trpc.royalties.listProjects.useQuery(undefined, { enabled: !!user });
@@ -55,6 +58,10 @@ export default function RoyaltyTracker() {
   const paymentsQuery = trpc.royalties.listPayments.useQuery(
     { projectId: selectedProjectId! },
     { enabled: !!selectedProjectId }
+  );
+  const pendingPayoutsQuery = trpc.royaltyPayouts.getPendingPayouts.useQuery(
+    { projectId: selectedProjectId! },
+    { enabled: !!selectedProjectId && showPayoutPanel }
   );
 
   const createProject = trpc.royalties.createProject.useMutation({
@@ -95,6 +102,33 @@ export default function RoyaltyTracker() {
       utils.royalties.listProjects.invalidate();
       setShowAddPayment(false);
       setPaySource(""); setPaySourceType("streaming"); setPayGross(""); setPayNet(""); setPayNotes("");
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const connectOnboarding = trpc.royaltyPayouts.createConnectOnboarding.useMutation({
+    onSuccess: (data) => {
+      toast.success("Opening Stripe Connect onboarding...");
+      window.open(data.url, "_blank");
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const payDistribution = trpc.royaltyPayouts.payDistribution.useMutation({
+    onSuccess: (data) => {
+      toast.success(`$${data.amount} paid to ${data.artistName}`);
+      utils.royaltyPayouts.getPendingPayouts.invalidate({ projectId: selectedProjectId! });
+      utils.royalties.getMyEarnings.invalidate();
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const batchPay = trpc.royaltyPayouts.batchPayProject.useMutation({
+    onSuccess: (data) => {
+      toast.success(`Batch payout complete: ${data.summary.paid} paid, ${data.summary.skipped} skipped, ${data.summary.failed} failed. Total: $${data.summary.totalPaid}`);
+      utils.royaltyPayouts.getPendingPayouts.invalidate({ projectId: selectedProjectId! });
+      utils.royalties.listPayments.invalidate({ projectId: selectedProjectId! });
+      utils.royalties.getMyEarnings.invalidate();
     },
     onError: (err) => toast.error(err.message),
   });
@@ -527,10 +561,32 @@ export default function RoyaltyTracker() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3">
                         <div className="text-right">
                           <p className="text-xl font-bold text-amber-800">{c.splitPercentage}%</p>
                           <p className="text-xs text-gray-500">Split</p>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          {(c as any).stripeOnboardingComplete ? (
+                            <span className="text-xs text-green-600 flex items-center gap-0.5">
+                              <CreditCard className="w-3 h-3" /> Stripe Ready
+                            </span>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs h-7 border-blue-300 text-blue-700 hover:bg-blue-50"
+                              disabled={connectOnboarding.isPending}
+                              onClick={() => connectOnboarding.mutate({ collaboratorId: c.id })}
+                            >
+                              {connectOnboarding.isPending ? (
+                                <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                              ) : (
+                                <CreditCard className="w-3 h-3 mr-1" />
+                              )}
+                              Setup Payout
+                            </Button>
+                          )}
                         </div>
                         {projectDetail.collaborators.length > 1 && (
                           <Button
@@ -578,6 +634,104 @@ export default function RoyaltyTracker() {
                   </div>
                 </div>
               </CardContent>
+            </Card>
+
+            {/* ===== STRIPE PAYOUTS SECTION ===== */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Banknote className="w-5 h-5" /> Stripe Payouts
+                  </CardTitle>
+                  <CardDescription>Send royalty earnings directly to collaborators via Stripe Connect</CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPayoutPanel(!showPayoutPanel)}
+                  >
+                    {showPayoutPanel ? "Hide" : "Show"} Pending
+                  </Button>
+                  {showPayoutPanel && (pendingPayoutsQuery.data?.length || 0) > 0 && (
+                    <Button
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                      disabled={batchPay.isPending}
+                      onClick={() => {
+                        if (confirm(`Pay all eligible pending distributions for this project via Stripe?`)) {
+                          batchPay.mutate({ projectId: selectedProjectId! });
+                        }
+                      }}
+                    >
+                      {batchPay.isPending ? (
+                        <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Processing...</>
+                      ) : (
+                        <><Zap className="w-4 h-4 mr-1" /> Pay All Eligible</>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </CardHeader>
+              {showPayoutPanel && (
+                <CardContent>
+                  {pendingPayoutsQuery.isLoading ? (
+                    <div className="text-center py-6 text-gray-500">
+                      <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
+                      <p className="text-sm">Loading pending payouts...</p>
+                    </div>
+                  ) : !pendingPayoutsQuery.data || pendingPayoutsQuery.data.length === 0 ? (
+                    <div className="text-center py-6 text-gray-500">
+                      <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-400" />
+                      <p className="text-sm font-medium">All distributions are paid</p>
+                      <p className="text-xs">Record a new payment to generate distributions</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {pendingPayoutsQuery.data.map((row) => {
+                        const canPay = row.stripeConnectAccountId && row.stripeOnboardingComplete;
+                        const amountNum = parseFloat(row.distribution.amount);
+                        return (
+                          <div key={row.distribution.id} className="flex items-center justify-between p-3 rounded-lg border bg-white">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-800 font-bold text-xs">
+                                {row.artistName.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <p className="font-medium text-sm">{row.artistName}</p>
+                                <p className="text-xs text-gray-500">
+                                  {row.distribution.splitPercentage}% split · {row.paymentSource}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <p className="font-bold text-green-700">${row.distribution.amount}</p>
+                              {canPay ? (
+                                <Button
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700 text-white h-8"
+                                  disabled={payDistribution.isPending || amountNum < 0.50}
+                                  onClick={() => payDistribution.mutate({ distributionId: row.distribution.id })}
+                                >
+                                  {payDistribution.isPending ? (
+                                    <Loader2 className="w-3 h-3 animate-spin" />
+                                  ) : (
+                                    <><Send className="w-3 h-3 mr-1" /> Pay</>
+                                  )}
+                                </Button>
+                              ) : (
+                                <span className="text-xs text-orange-600 flex items-center gap-1">
+                                  <AlertCircle className="w-3 h-3" /> No Stripe
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </CardContent>
+              )}
             </Card>
 
             {/* Payment History */}
