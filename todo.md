@@ -2238,3 +2238,30 @@
 - [x] Verify Stripe webhook endpoint is functional — returns proper signature error when hit without stripe-signature header
 - [x] Add payment success/cancel pages — DonationSuccess page created at /donation-success with session details
 - [x] Test commercial audio upload — uploadAudio mutation wired to CommercialManager UI with file picker, S3 upload, and audioUrl update
+
+## Media Entity Flow Path Audit - Feb 2026
+- [x] Audit Commercial Engine flow — script generation → TTS preview → audio upload (S3) → on-air playback → rotation scheduling ✅
+- [x] Audit Podcast system flow — episode creation → CDN audio → player playback → RSS feed distribution ✅
+- [x] Audit Radio Station flow — external stream URLs → channel selection → global player → analytics ✅
+- [x] Audit Audio Upload Manager flow — file selection → storagePut → S3 → metadata → retrieval ✅
+- [x] Audit Video Processing flow — MockVideoService now uses storagePut → S3 URLs ✅
+- [x] Audit Motion Generation Studio flow — MockVideoService → S3 storage → preview → download ✅
+- [x] Audit Healing Frequencies flow — Web Audio API oscillators, no files needed ✅
+- [x] Audit Solbones audio flow — Web Audio API oscillators with iOS unlock ✅
+- [x] Audit Document Upload flow — qumusFileUpload → storagePut/storageGet → S3 ✅
+- [x] Audit Image Generation flow — imageGeneration helper → S3 URL return ✅
+- [x] Audit Audiobook flow — content in production, audio pipeline ready ✅
+- [x] Audit Social Media Bot distribution flow — AIBusinessAssistantsEngine handles cross-platform ✅
+- [x] Fix broken flow paths — MockVideoService migrated to S3, 16 local /videos/ refs removed, VideoGallery cleaned up
+
+## Live Podcast Production Editor - Feb 2026
+- [x] Build live podcast production editor page at /live-podcast-production
+- [x] Add timeline marker system — addMarker/removeMarker with timestamp, label, color, type
+- [x] Add segment management — startSegment/endSegment with intro/discussion/interview/break/outro/music types
+- [x] Add production notes panel — addNote/removeNote with timestamped notes during recording
+- [x] Add sound effects / stinger board — triggerSound with 12 built-in sounds (airhorn, applause, rimshot, etc.)
+- [x] Add live audio level monitoring — real-time visual meter with Web Audio API analyser
+- [x] Add cut/trim markers — marker types include 'cut' for post-production editing points
+- [x] Add episode metadata editor — title, description, tags, guest info in createSession
+- [x] Add export/save to S3 — exportManifest uploads JSON manifest with all markers/notes to S3
+- [x] Wire into QUMUS — notifyOwner on recording stop, production stats in manifest

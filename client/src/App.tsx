@@ -131,6 +131,7 @@ import RRBRadioStation from '@/pages/rrb/RadioStation';
 import AIAssistants from '@/pages/rrb/AIAssistants';
 import RSSSubscribe from '@/pages/rrb/RSSSubscribe';
 import RRBPodcasts from '@/pages/rrb/Podcasts';
+import LivePodcastProduction from '@/pages/LivePodcastProduction';
 import RRBTheMusic from '@/pages/rrb/TheMusic';
 import RRBTheLegacyPage from '@/pages/rrb/TheLegacyPage';
 import RRBSweetMiraclesCompanyPage from '@/pages/rrb/SweetMiraclesCompanyPage';
@@ -348,6 +349,7 @@ function Router() {
       <Route path="/rss" component={RSSSubscribe} />
       <Route path="/rrb/radio-station" component={RRBRadioStation} />
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
+      <Route path="/live-podcast-production" component={LivePodcastProduction} />
       <Route path="/rrb/hybridcast" component={RRBHybridCastPage} />
       <Route path="/rrb/audiobooks" component={RRBAudiobooks} />
       <Route path="/rrb/proof-vault" component={RRBProofVault} />

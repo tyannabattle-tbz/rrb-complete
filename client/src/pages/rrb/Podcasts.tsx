@@ -371,6 +371,20 @@ export default function Podcasts() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Live Production Banner */}
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Podcast & Video</h1>
+            <p className="text-sm text-foreground/60">A Canryn Production — QUMUS Orchestrated</p>
+          </div>
+          <a href="/live-podcast-production">
+            <Button className="bg-red-600 hover:bg-red-700 text-white gap-2">
+              <Radio className="w-4 h-4" />
+              <span className="hidden sm:inline">Live Production</span>
+              <span className="sm:hidden">Go Live</span>
+            </Button>
+          </a>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Player */}
           <div className="lg:col-span-2 space-y-6">

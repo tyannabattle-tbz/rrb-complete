@@ -46,7 +46,7 @@ export const liveStreamingRouter = {
         title: "Live Creative Session",
         creatorName: "Alex Creator",
         viewerCount: 234,
-        thumbnail: "/videos/thumbnail-1.jpg",
+        thumbnail: "",
         isLive: true,
       },
       {
@@ -54,7 +54,7 @@ export const liveStreamingRouter = {
         title: "Video Editing Tutorial",
         creatorName: "Pro Editor",
         viewerCount: 156,
-        thumbnail: "/videos/thumbnail-2.jpg",
+        thumbnail: "",
         isLive: true,
       },
     ];

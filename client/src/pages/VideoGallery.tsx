@@ -29,39 +29,12 @@ export default function VideoGallery() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<"newest" | "popular" | "trending">("newest");
 
-  // Mock video data - in production, fetch from API
+  // Gallery loads videos generated via Motion Studio or Video Processing
+  // Videos are stored in S3 and URLs are returned by the generation pipeline
   useEffect(() => {
-    const mockVideos: GalleryVideo[] = [
-      {
-        videoId: "video-1770028842286-0v6pzrmxd",
-        url: "/videos/video-1770028842286-0v6pzrmxd.mp4",
-        duration: 10,
-        resolution: "1080p",
-        style: "cinematic",
-        fps: 24,
-        aspectRatio: "16:9",
-        createdAt: new Date(Date.now() - 3600000),
-        views: 245,
-        downloads: 12,
-        shares: 8,
-      },
-      {
-        videoId: "video-1770027261553-4v2do7gu",
-        url: "/videos/video-1770027261553-4v2do7gu.mp4",
-        duration: 10,
-        resolution: "1080p",
-        style: "cinematic",
-        fps: 24,
-        aspectRatio: "16:9",
-        createdAt: new Date(Date.now() - 7200000),
-        views: 189,
-        downloads: 9,
-        shares: 5,
-      },
-    ];
-
-    setVideos(mockVideos);
-    setFilteredVideos(mockVideos);
+    // Start empty — videos populate as they are generated
+    setVideos([]);
+    setFilteredVideos([]);
     setLoading(false);
   }, []);
 
@@ -233,9 +206,13 @@ export default function VideoGallery() {
           <Card className="p-12 text-center">
             <div className="text-4xl mb-4">🎬</div>
             <h3 className="text-xl font-semibold mb-2">No videos found</h3>
-            <p className="text-muted-foreground">
-              Try adjusting your filters or search terms
+            <p className="text-muted-foreground mb-4">
+              Generate videos using the Motion Studio or Video Processing tools.
+              They will appear here automatically.
             </p>
+            <a href="/motion-studio">
+              <Button variant="outline">Open Motion Studio</Button>
+            </a>
           </Card>
         ) : viewMode === "grid" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

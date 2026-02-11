@@ -28,7 +28,7 @@ export const notificationsRouter = router({
           userAvatar: "https://via.placeholder.com/40?text=S",
           createdAt: new Date(Date.now() - 3600000),
           read: false,
-          actionUrl: "/videos/video-123#comments",
+          actionUrl: "/gallery",
         },
         {
           id: "notif-2",
@@ -41,7 +41,7 @@ export const notificationsRouter = router({
           reactionType: "love",
           createdAt: new Date(Date.now() - 7200000),
           read: false,
-          actionUrl: "/videos/video-456",
+          actionUrl: "/gallery",
         },
         {
           id: "notif-3",
@@ -65,7 +65,7 @@ export const notificationsRouter = router({
           milestone: "1000_views",
           createdAt: new Date(Date.now() - 172800000),
           read: true,
-          actionUrl: "/videos/video-123",
+          actionUrl: "/gallery",
         },
       ];
 
