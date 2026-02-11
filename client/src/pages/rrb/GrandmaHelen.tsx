@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heart, Users, Home, Star, BookOpen, Award, Sparkles, Quote, X, ChevronLeft, ChevronRight, Camera } from 'lucide-react';
+import { Heart, Users, Home, Star, BookOpen, Award, Sparkles, Quote, X, ChevronLeft, ChevronRight, Camera, FileText, ExternalLink, Landmark } from 'lucide-react';
 import { Link } from 'wouter';
 
 // Life Care Leader Magazine Images
@@ -67,6 +67,7 @@ const timelineEvents = [
   { year: 'Career', event: 'Became the second Black director, then the first Black senior director at Mary Kay; earned five cars total including two pink Cadillacs' },
   { year: '1994', event: 'Gave up directorship due to illness but continued helping women with skincare' },
   { year: '2014', event: 'Featured on the cover of Life Care Leader magazine — "Beauty More Than Skin Deep"' },
+  { year: '2016', event: 'Honored by the Missouri Senate — Senator Holsman offered Senate Resolution No. 1462, regarding Helen Logan Hunter, Grandview, which was adopted by the full Senate on February 17, 2016' },
 ];
 
 export default function GrandmaHelen() {
@@ -321,6 +322,89 @@ export default function GrandmaHelen() {
           <p className="text-[10px] text-stone-600 text-center mt-4 italic">
             Life Care Leader is a publication of Life Care Centers of America. Magazine images reproduced with 
             family authorization for biographical and historical documentation purposes. &copy; 2014 Life Care Centers of America.
+          </p>
+        </div>
+      </section>
+
+      {/* Missouri Senate Resolution */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-rose-100 mb-3 text-center flex items-center justify-center gap-3">
+            <Landmark className="w-8 h-8 text-amber-400" />
+            Missouri Senate Resolution
+          </h2>
+          <p className="text-stone-400 text-center mb-8 max-w-2xl mx-auto">
+            Official recognition from the Missouri State Senate — a verified government record honoring Helen Logan Hunter.
+          </p>
+          <Card className="bg-gradient-to-br from-amber-950/30 via-stone-900/60 to-stone-900/60 border-amber-800/40">
+            <CardContent className="pt-8 pb-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-14 h-14 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                  <FileText className="w-7 h-7 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-amber-200 mb-1">Senate Resolution No. 1462</h3>
+                  <p className="text-stone-400 text-sm">98th General Assembly, Second Regular Session</p>
+                </div>
+              </div>
+              
+              <div className="bg-stone-950/50 rounded-lg p-6 mb-6 border border-amber-900/20">
+                <p className="text-amber-100/90 text-lg leading-relaxed italic">
+                  "Senator Holsman offered Senate Resolution No. 1462, regarding Helen Logan Hunter, Grandview, which was adopted."
+                </p>
+                <p className="text-stone-500 text-sm mt-3">
+                  — Journal of the Senate, Twenty-Fourth Day, Wednesday, February 17, 2016
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="bg-stone-900/50 rounded-lg p-4">
+                  <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Resolution Number</p>
+                  <p className="text-amber-200 font-bold">SR 1462</p>
+                </div>
+                <div className="bg-stone-900/50 rounded-lg p-4">
+                  <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Date Adopted</p>
+                  <p className="text-amber-200 font-bold">February 17, 2016</p>
+                </div>
+                <div className="bg-stone-900/50 rounded-lg p-4">
+                  <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Sponsor</p>
+                  <p className="text-amber-200 font-bold">Senator Jason Holsman</p>
+                  <p className="text-stone-500 text-xs">District 7 — Kansas City Metro Area</p>
+                </div>
+                <div className="bg-stone-900/50 rounded-lg p-4">
+                  <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Subject</p>
+                  <p className="text-amber-200 font-bold">Helen Logan Hunter, Grandview</p>
+                </div>
+              </div>
+
+              <p className="text-stone-400 text-sm leading-relaxed mb-4">
+                Missouri Senate Resolutions are official legislative acts adopted by the full chamber. They are typically used to 
+                honor individuals for extraordinary community service, lifetime achievements, or significant milestones. The fact that 
+                the Missouri State Senate formally recognized Helen Logan Hunter speaks to the depth of her impact — not just on her 
+                family, but on the broader Grandview, Missouri community.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="https://www.senate.mo.gov/16info/pdf-jrnl/DAY24.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-5 py-2.5 bg-amber-700 hover:bg-amber-600 text-white rounded-lg font-medium transition-colors text-sm"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  View Official Senate Journal (PDF)
+                </a>
+                <Badge className="bg-green-900/50 text-green-300 border-green-700/50 self-start px-3 py-2">
+                  <Award className="w-3.5 h-3.5 mr-1.5" />
+                  Verified Government Record
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <p className="text-[10px] text-stone-600 text-center mt-4 italic">
+            Source: Journal of the Senate, Missouri General Assembly, 98th Session, Second Regular Session, 
+            Twenty-Fourth Day — Wednesday, February 17, 2016, Page 334. Public record available at senate.mo.gov.
           </p>
         </div>
       </section>

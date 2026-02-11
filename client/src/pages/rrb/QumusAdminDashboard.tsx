@@ -130,6 +130,15 @@ export default function QumusAdminDashboard() {
               </CardContent>
             </Card>
           </Link>
+          <Link href="/rrb/qumus/performance-monitoring">
+            <Card className="cursor-pointer hover:border-cyan-500/50 transition-all group">
+              <CardContent className="pt-4 pb-3 text-center">
+                <BarChart3 className="w-6 h-6 mx-auto mb-2 text-cyan-500 group-hover:scale-110 transition-transform" />
+                <div className="text-sm font-medium">Performance</div>
+                <div className="text-xs text-foreground/50">Policy #10</div>
+              </CardContent>
+            </Card>
+          </Link>
           <Link href="/rrb/qumus/monitoring">
             <Card className="cursor-pointer hover:border-blue-500/50 transition-all group">
               <CardContent className="pt-4 pb-3 text-center">

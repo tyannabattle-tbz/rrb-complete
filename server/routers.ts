@@ -70,6 +70,9 @@ import { royaltyPayoutsRouter } from "./routers/royaltyPayouts";
 // QUMUS Code Maintenance Policy (9th autonomous decision policy)
 import { codeMaintenanceRouter } from "./routers/codeMaintenanceRouter";
 
+// QUMUS Performance Monitoring Policy (10th autonomous decision policy)
+import { performanceMonitoringRouter } from "./routers/performanceMonitoringRouter";
+
 // Business Operations routers
 import { bookkeepingRouter } from "./routers/businessBookkeeping";
 import { hrRouter } from "./routers/businessHR";
@@ -299,6 +302,9 @@ export const appRouter = router({
 
   // QUMUS Code Maintenance (9th policy — broken images, dead links, asset health)
   codeMaintenance: codeMaintenanceRouter,
+
+  // QUMUS Performance Monitoring (10th policy — page load, API latency, memory, uptime)
+  performanceMonitoring: performanceMonitoringRouter,
 
   // Agent Session Management
   agent: router({

@@ -1,6 +1,6 @@
 /**
  * QUMUS Autonomous Event Loop
- * Generates real autonomous decisions across all 8 policies
+ * Generates real autonomous decisions across all 10 policies
  * Simulates realistic platform events that the QUMUS engine processes
  * 
  * This creates the 90% autonomous / 10% human override operational model
@@ -96,6 +96,18 @@ const EVENT_TEMPLATES: Record<string, Array<{ input: Record<string, any>; confid
     { input: { scanType: 'cdn_assets', assetsChecked: 4, brokenCount: 1, healthScore: 75, assetUrl: 'broken-image.jpg', page: '/rrb/the-music', timestamp: Date.now() }, confidence: 50, description: 'Broken CDN image detected (needs human review)' },
     { input: { scanType: 'audio_streams', streamsChecked: 7, downCount: 2, healthScore: 60, channels: ['Blues', 'Jazz'], timestamp: Date.now() }, confidence: 45, description: 'Multiple audio streams down (needs investigation)' },
   ],
+
+  // Policy 10: Performance Monitoring (92% autonomy)
+  policy_performance_monitoring: [
+    { input: { type: 'page_load', url: '/rrb', loadTime: 1200, timestamp: Date.now() }, description: 'Home page load time check — normal' },
+    { input: { type: 'api_latency', endpoint: '/api/trpc/rrbQumusComplete.getMetrics', latency: 180, timestamp: Date.now() }, description: 'QUMUS metrics API latency — normal' },
+    { input: { type: 'memory_usage', heapUsed: 65, heapTotal: 100, rss: 150, timestamp: Date.now() }, description: 'Server memory usage check — normal' },
+    { input: { type: 'stream_health', activeStreams: 7, healthyStreams: 7, avgBitrate: 128, timestamp: Date.now() }, description: 'Audio stream performance — all healthy' },
+    { input: { type: 'error_rate', totalRequests: 10000, errorCount: 50, rate: 0.5, timestamp: Date.now() }, description: 'Error rate monitoring — within threshold' },
+    { input: { type: 'uptime', uptimePercent: 99.98, lastDowntime: null, timestamp: Date.now() }, description: 'Uptime monitoring — excellent' },
+    { input: { type: 'page_load', url: '/rrb/the-music', loadTime: 4500, timestamp: Date.now() }, confidence: 55, description: 'Slow page load detected (needs investigation)' },
+    { input: { type: 'memory_usage', heapUsed: 88, heapTotal: 100, rss: 250, timestamp: Date.now() }, confidence: 40, description: 'High memory usage alert (needs review)' },
+  ],
 };
 
 /**
@@ -172,7 +184,7 @@ export class QumusAutonomousLoop {
     this.startTime = Date.now();
 
     console.log(`[QUMUS Loop] Starting autonomous event loop (interval: ${intervalMs / 1000}s)`);
-    console.log(`[QUMUS Loop] Processing events across ${Object.keys(EVENT_TEMPLATES).length} policies (including Code Maintenance)`);
+    console.log(`[QUMUS Loop] Processing events across ${Object.keys(EVENT_TEMPLATES).length} policies (including Code Maintenance & Performance Monitoring)`);
 
     // Process initial batch immediately
     this.processBatch().then(result => {

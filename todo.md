@@ -2446,4 +2446,27 @@
 - [x] Add Code Maintenance commands to QUMUS Command Console (code scan, code health, code scheduler)
 - [x] Add scheduler control panel to Code Maintenance Dashboard (start/stop, interval buttons)
 - [x] Write/update vitest tests for all new integration points (29 tests passing)
-- [ ] Create reusable Manus skill from the Code Maintenance pattern
+- [x] Create reusable Manus skill from the Code Maintenance pattern (qumus-code-maintenance-policy)
+
+## Saint Luke's Heart Failure Device Article — Feb 2026
+- [x] Research and extract content from Saint Luke's KC article about heart failure device for musicians
+- [x] Add article to Medical Journey page with full text, doctor quotes, and procedure summary table
+- [x] Include proper attribution and source link to saintlukeskc.org
+- [x] Added "Verified Medical Documentation" badge from Saint Luke's Mid America Heart Institute
+
+## v11.2 QUMUS Performance Monitoring — 10th Autonomous Decision Policy
+- [x] Create Performance Monitoring policy service (page load, API latency, memory usage, stream health, error rate, uptime)
+- [x] Wire into QUMUS engine as 10th policy (92% autonomy)
+- [x] Add event templates to autonomous loop
+- [x] Create tRPC router with monitoring procedures (snapshot, alerts, scheduler control)
+- [x] Build Performance Monitoring dashboard UI at /rrb/qumus/performance-monitoring
+- [x] Wire into Ecosystem Dashboard widget, State of the Studio metric, and Command Console commands
+- [x] Wire into QUMUS Admin Dashboard quick-access card
+- [x] Write vitest tests (22 tests passing)
+
+## Missouri Senate Journal — Grandma Helen - Feb 2026
+- [x] Download and read Missouri Senate Day 24 journal PDF for Grandma Helen reference
+- [x] Extract relevant content: Senate Resolution No. 1462, offered by Senator Holsman, Feb 17, 2016
+- [x] Add Senate Resolution section to Grandma Helen page with 4-panel detail grid and "Verified Government Record" badge
+- [x] Add proper attribution and direct link to original PDF source
+- [x] Added 2016 to Grandma Helen's life timeline

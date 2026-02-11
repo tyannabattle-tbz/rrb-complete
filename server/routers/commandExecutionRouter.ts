@@ -8,6 +8,7 @@ import { QumusCompleteEngine } from '../qumus-complete-engine';
 import { getAgentNetworkingService } from '../services/agent-networking';
 import { getContentScheduler } from '../services/contentSchedulerService';
 import { runFullScan, getMaintenanceSummary, getSchedulerStatus } from '../services/code-maintenance-policy';
+import { takeSnapshot as runPerformanceBenchmark, getMonitoringStatus as getPerformanceSchedulerStatus } from '../services/performance-monitoring-policy';
 
 // In-memory command history (production would use DB)
 interface CommandRecord {
@@ -262,6 +263,16 @@ function parseCommand(message: string): ParsedCommand {
     requiresApproval = /override|reset/i.test(message);
     impact = /override|reset/i.test(message) ? 'high' : 'low';
   }
+  // Performance Monitoring commands
+  else if (/perf(ormance)?\s*(bench(mark)?|status|monitor|latency|memory|health)/i.test(message)) {
+    type = 'performance_monitoring';
+    subsystem = 'QUMUS';
+    if (/bench/i.test(message)) action = 'perf_benchmark';
+    else if (/latency/i.test(message)) action = 'perf_latency';
+    else if (/memory/i.test(message)) action = 'perf_memory';
+    else action = 'perf_status';
+    autonomyLevel = 85;
+  }
   // Code Maintenance commands
   else if (/code\s*(scan|health|maintenance|scheduler|issues)/i.test(message)) {
     type = 'code_maintenance';
@@ -472,6 +483,35 @@ async function executeAgentCommand(parsed: ParsedCommand): Promise<CommandRespon
         };
       }
 
+      case 'performance_monitoring': {
+        if (parsed.action === 'perf_benchmark') {
+          const benchmark = await runPerformanceBenchmark();
+          return {
+            status: 'executed',
+            message: `⚡ Performance benchmark complete — Grade: ${benchmark.overallGrade} (${benchmark.overallScore}/100)`,
+            agentResponse: `[QUMUS Policy #10 — Performance Monitoring]\n` +
+              `Overall Grade: ${benchmark.overallGrade} (Score: ${benchmark.overallScore}/100)\n` +
+              `API Latency: avg ${benchmark.apiLatency.avgMs.toFixed(0)}ms, p95 ${benchmark.apiLatency.p95Ms.toFixed(0)}ms\n` +
+              `Memory: ${benchmark.memoryUsage.heapUsedMB.toFixed(1)}MB heap used of ${benchmark.memoryUsage.heapTotalMB.toFixed(1)}MB\n` +
+              `Streams: ${benchmark.streamHealth.healthyCount}/${benchmark.streamHealth.totalStreams} healthy\n` +
+              `DB: avg ${benchmark.dbPerformance.avgQueryMs.toFixed(0)}ms query latency\n` +
+              (benchmark.recommendations.length > 0 ? `\nRecommendations:\n${benchmark.recommendations.map((r: string) => `  • ${r}`).join('\n')}` : '\nNo issues detected.'),
+            data: benchmark,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        const benchmark = await runPerformanceBenchmark();
+        return {
+          status: 'executed',
+          message: `⚡ Performance status — Grade: ${benchmark.overallGrade}`,
+          agentResponse: `[QUMUS Policy #10 — Performance Monitoring]\n` +
+            `Grade: ${benchmark.overallGrade} | Score: ${benchmark.overallScore}/100\n` +
+            `API: ${benchmark.apiLatency.avgMs.toFixed(0)}ms avg | Memory: ${benchmark.memoryUsage.heapUsedMB.toFixed(1)}MB | Streams: ${benchmark.streamHealth.healthyCount}/${benchmark.streamHealth.totalStreams}`,
+          data: benchmark,
+          executionTime: Date.now() - startTime,
+        };
+      }
+
       case 'code_maintenance': {
         if (parsed.action === 'code_scan') {
           const report = await runFullScan();
@@ -577,6 +617,7 @@ function generateSuggestions(message: string): string[] {
   if (/meditat|heal|freq/i.test(lower)) suggestions.push('Canryn: start meditation 432hz', 'Canryn: play healing frequency 528hz');
   if (/status|health/i.test(lower)) suggestions.push('QUMUS: health check', 'QUMUS: autonomy status', 'RRB: now playing', 'code health');
   if (/code|scan|maintenance/i.test(lower)) suggestions.push('code scan', 'code health', 'code scheduler');
+  if (/perf|bench|latency|memory/i.test(lower)) suggestions.push('performance benchmark', 'performance status', 'performance latency', 'performance memory');
 
   return [...new Set(suggestions)].slice(0, 6);
 }

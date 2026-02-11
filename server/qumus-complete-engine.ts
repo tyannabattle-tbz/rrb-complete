@@ -1,6 +1,6 @@
 /**
  * QUMUS Complete Autonomous Orchestration Engine
- * Intelligent decision-making with 8 core policies, human oversight, and 75-98% autonomy
+ * Intelligent decision-making with 10 core policies, human oversight, and 75-98% autonomy
  * 
  * FULLY OPERATIONAL — All decisions, metrics, reviews, and audit trails persist to database
  */
@@ -33,7 +33,7 @@ export type DecisionInput = {
 };
 
 /**
- * 8 Core Decision Policies with Autonomy Levels
+ * 10 Core Decision Policies with Autonomy Levels
  */
 export const CORE_POLICIES = {
   RECOMMENDATION_ENGINE: {
@@ -98,6 +98,13 @@ export const CORE_POLICIES = {
     type: 'code_maintenance',
     autonomyLevel: 90,
     description: 'Autonomous detection and repair of broken images, dead links, stale CDN assets, audio stream failures, and code health issues',
+  },
+  PERFORMANCE_MONITORING: {
+    id: 'policy_performance_monitoring',
+    name: 'Performance Monitoring',
+    type: 'performance_monitoring',
+    autonomyLevel: 92,
+    description: 'Real-time tracking of page load times, API response latency, memory usage, and ecosystem performance metrics with automated alerting',
   },
 };
 
