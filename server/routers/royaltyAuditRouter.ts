@@ -28,6 +28,8 @@ import {
   crossReferenceMusicBrainz,
   getMusicBrainzResults,
   getMusicBrainzCrossRefs,
+  importCSVPayoutData,
+  getCSVImportHistory,
 } from '../services/royalty-audit-policy';
 
 export const royaltyAuditRouter = router({
@@ -161,4 +163,16 @@ export const royaltyAuditRouter = router({
 
   getMusicBrainzCrossRefs: publicProcedure
     .query(() => getMusicBrainzCrossRefs()),
+
+  // ─── CSV Payout Data Import ────────────────────────────────────────────
+
+  importCSV: protectedProcedure
+    .input(z.object({
+      csvContent: z.string().min(10, 'CSV content too short'),
+      platform: z.string().optional(),
+    }))
+    .mutation(({ input }) => importCSVPayoutData(input.csvContent, input.platform)),
+
+  getImportHistory: publicProcedure
+    .query(() => getCSVImportHistory()),
 });

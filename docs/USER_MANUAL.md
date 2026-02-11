@@ -107,9 +107,9 @@ QUMUS is the central autonomous brain that controls all platform systems. It ope
 - Real-time system health monitoring
 - Autonomous error detection and recovery
 
-### 4.2 The 13 QUMUS Policies
+### 4.2 The 14 QUMUS Policies
 
-QUMUS operates under 13 autonomous decision policies:
+QUMUS operates under 14 autonomous decision policies:
 
 | # | Policy | Autonomy | Purpose |
 |---|--------|----------|---------|
@@ -126,6 +126,7 @@ QUMUS operates under 13 autonomous decision policies:
 | 11 | Content Archival | 90% | Link monitoring, Wayback Machine preservation |
 | 12 | Royalty Audit | 88% | BMI cross-reference, payout discrepancy detection, MusicBrainz integration |
 | 13 | Community Engagement | 85% | Listener tracking, donation patterns, campaign optimization |
+| 14 | AI Content Generation | 87% | Auto-generate show descriptions, social posts, broadcast schedules |
 
 ### 4.3 Royalty Audit & MusicBrainz
 
@@ -134,6 +135,14 @@ The Royalty Audit Policy (Policy #12) monitors all revenue streams across 6 plat
 ### 4.4 Community Engagement
 
 The Community Engagement Policy (Policy #13) tracks listener interactions across all 9 channels (radio, podcast, forum, donation, Solbones, meditation, social, HybridCast, merchandise). It monitors engagement scores, donation patterns, campaign effectiveness, and member tiers (new, active, engaged, champion, ambassador). Access the dashboard at **Admin > QUMUS > Community Engagement**.
+
+### 4.5 AI Content Generation
+
+The AI Content Generation Policy (Policy #14) uses the built-in LLM to auto-generate show descriptions, social media posts, broadcast schedules, and promotional content for all 7 channels. It includes a template system with configurable prompts, an approval workflow (auto-approve above 85% confidence, escalate below), and a scheduler for recurring generation. Access the dashboard at **Admin > QUMUS > AI Content** to manage templates, review pending content, approve/reject/publish, and view generation reports.
+
+### 4.6 CSV Payout Data Import
+
+The Royalty Audit dashboard now includes a **CSV Import** tab that accepts payout reports from DistroKid, TuneCore, CD Baby, Spotify for Artists, and Apple Music Analytics. The system auto-detects column names (title/song/track, artist, streams/plays, earnings/revenue, platform/store, period/date) and cross-references actual payouts against expected rates to detect discrepancies automatically.
 
 ---
 

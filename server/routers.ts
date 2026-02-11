@@ -79,6 +79,7 @@ import { contentArchivalRouter } from "./routers/contentArchivalRouter";
 // QUMUS Royalty Audit Policy (12th autonomous decision policy)
 import { royaltyAuditRouter } from "./routers/royaltyAuditRouter";
 import { communityEngagementRouter } from "./routers/communityEngagementRouter";
+import { aiContentGenerationRouter } from "./routers/aiContentGenerationRouter";
 
 // Business Operations routers
 import { bookkeepingRouter } from "./routers/businessBookkeeping";
@@ -319,6 +320,7 @@ export const appRouter = router({
   // QUMUS Royalty Audit (12th policy — BMI cross-reference, streaming payout discrepancy detection)
   royaltyAudit: royaltyAuditRouter,
   communityEngagement: communityEngagementRouter,
+  aiContentGeneration: aiContentGenerationRouter,
 
   // Agent Session Management
   agent: router({

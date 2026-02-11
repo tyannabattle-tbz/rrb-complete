@@ -128,6 +128,13 @@ const EVENT_TEMPLATES: Record<string, Array<{ input: Record<string, any>; confid
     { input: { type: 'outreach_event', event: 'community_broadcast', attendees: 0, rsvps: 35, channel: 'hybridcast', timestamp: Date.now() }, confidence: 40, description: 'Community broadcast event — low attendance vs RSVPs (needs review)' },
     { input: { type: 'engagement_score', overall: 85, channels: 7, activeChannels: 5, trend: 'stable', timestamp: Date.now() }, description: 'Weekly engagement score assessment — stable at 85' },
   ],
+  policy_ai_content_generation: [
+    { input: { type: 'content_generation', template: 'show_description', channel: 'rrb-radio', wordCount: 45, confidence: 91, timestamp: Date.now() }, description: 'Auto-generated RRB Radio show description — high confidence' },
+    { input: { type: 'content_generation', template: 'social_post', channel: 'sweet-miracles', wordCount: 38, confidence: 87, timestamp: Date.now() }, description: 'Sweet Miracles social post generated — above threshold' },
+    { input: { type: 'content_review', template: 'broadcast_schedule', channel: 'all-channels', wordCount: 120, confidence: 75, timestamp: Date.now() }, confidence: 40, description: 'Broadcast schedule generated — below confidence threshold (needs review)' },
+    { input: { type: 'content_generation', template: 'promo', channel: 'hybridcast', wordCount: 32, confidence: 93, timestamp: Date.now() }, description: 'HybridCast emergency promo auto-approved' },
+    { input: { type: 'content_publish', template: 'newsletter', channel: 'canryn', wordCount: 95, confidence: 88, timestamp: Date.now() }, description: 'Canryn newsletter content ready for publishing' },
+  ],
 };
 
 /**

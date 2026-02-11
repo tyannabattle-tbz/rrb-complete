@@ -1,13 +1,15 @@
 # Royalty Collection Guide — Generating Revenue from Your Airwaves
 
 **Canryn Production Inc. / Rockin' Rockin' Boogie Ecosystem**
-**Version 11.5 — February 2026**
+**Version 11.6 — February 2026**
 
 ---
 
 ## Overview
 
 This guide explains how to set up each revenue stream so that when content plays through the RRB broadcast channels, it generates royalties for Seabrun Candy Hunter's estate and Canryn Production. The QUMUS Royalty Audit Policy (Policy #12) monitors all of these streams automatically at 88% autonomy.
+
+> **New in v11.6:** The Royalty Audit dashboard now includes a **CSV Import** tab for uploading payout reports from DistroKid, TuneCore, CD Baby, Spotify for Artists, and Apple Music Analytics. The system auto-detects columns and cross-references actual payouts against expected rates. The **AI Content Generation Policy** (14th QUMUS policy) can auto-generate promotional content for all 7 channels to increase listener engagement and drive royalty-generating plays.
 
 ---
 
@@ -292,3 +294,4 @@ This guide provides general information about music royalty collection and is no
 
 *Document prepared for Canryn Production Inc. — Preserving and monetizing the legacy of Seabrun Candy Hunter.*
 *QUMUS Royalty Audit Policy (Policy #12) provides continuous automated monitoring of all revenue streams.*
+*AI Content Generation Policy (Policy #14) auto-generates promotional content to drive listener engagement and royalty-generating plays.*

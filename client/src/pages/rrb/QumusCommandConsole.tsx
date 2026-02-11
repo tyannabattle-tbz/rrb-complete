@@ -134,6 +134,10 @@ export default function QumusCommandConsole() {
           `  community campaigns — View active campaigns\n` +
           `  community channels — List monitored channels\n` +
           `  community score  — View engagement score\n` +
+          `  aicontent status    — AI content generation summary\n` +
+          `  aicontent generate  — Run content generation now\n` +
+          `  aicontent templates — List active templates\n` +
+          `  aicontent pending   — View pending review items\n` +
           `  clear           — Clear console output\n` +
           `  help            — Show this message`,
         timestamp: Date.now(),

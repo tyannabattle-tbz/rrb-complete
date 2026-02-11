@@ -127,6 +127,13 @@ export const CORE_POLICIES = {
     autonomyLevel: 91,
     description: 'Tracking listener interactions, forum activity, donation patterns, and community health to optimize outreach and detect engagement drops across all ecosystem channels',
   },
+  AI_CONTENT_GENERATION: {
+    id: 'policy_ai_content_generation',
+    name: 'AI Content Generation',
+    type: 'ai_content_generation',
+    autonomyLevel: 82,
+    description: 'Auto-generating show descriptions, social media posts, broadcast schedules, and promotional content for all 7 radio channels using built-in LLM with human review for brand-critical content',
+  },
 };
 
 // In-memory metrics cache for fast reads (synced to DB periodically)

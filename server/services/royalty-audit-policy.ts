@@ -719,6 +719,189 @@ export function getAuditSchedulerStatus(): AuditSchedulerStatus {
   };
 }
 
+// ─── CSV Payout Data Import ─────────────────────────────────────────────────
+
+export interface CSVImportResult {
+  totalRows: number;
+  sourcesUpdated: number;
+  sourcesCreated: number;
+  discrepanciesDetected: number;
+  errors: string[];
+  platform: string;
+  importedAt: Date;
+}
+
+const csvImportHistory: CSVImportResult[] = [];
+
+/**
+ * Parse CSV payout data from streaming platforms and update royalty sources.
+ * Supports formats from: DistroKid, TuneCore, CD Baby, Spotify for Artists, Apple Music Analytics
+ * 
+ * Expected CSV columns (flexible matching):
+ * - song/title/track: Song title
+ * - artist/performer: Artist name
+ * - plays/streams/quantity: Number of plays
+ * - earnings/revenue/amount/payout: Earnings amount
+ * - platform/store/service: Platform name (if multi-platform CSV)
+ * - period/date/month: Reporting period
+ */
+export function importCSVPayoutData(csvContent: string, platformOverride?: string): CSVImportResult {
+  const lines = csvContent.trim().split('\n');
+  if (lines.length < 2) throw new Error('CSV must have at least a header row and one data row');
+
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/["']/g, ''));
+
+  // Flexible column matching
+  const songCol = headers.findIndex(h => /^(song|title|track|track.?name)$/i.test(h));
+  const artistCol = headers.findIndex(h => /^(artist|performer|artist.?name)$/i.test(h));
+  const playsCol = headers.findIndex(h => /^(plays|streams|quantity|units|stream.?count)$/i.test(h));
+  const earningsCol = headers.findIndex(h => /^(earnings|revenue|amount|payout|royalt|net.?amount)$/i.test(h));
+  const platformCol = headers.findIndex(h => /^(platform|store|service|source|dsp)$/i.test(h));
+  const periodCol = headers.findIndex(h => /^(period|date|month|reporting.?period|pay.?period)$/i.test(h));
+
+  if (songCol === -1) throw new Error('CSV must contain a song/title/track column');
+  if (earningsCol === -1 && playsCol === -1) throw new Error('CSV must contain an earnings or plays column');
+
+  const result: CSVImportResult = {
+    totalRows: 0,
+    sourcesUpdated: 0,
+    sourcesCreated: 0,
+    discrepanciesDetected: 0,
+    errors: [],
+    platform: platformOverride || 'multi',
+    importedAt: new Date(),
+  };
+
+  for (let i = 1; i < lines.length; i++) {
+    const row = parseCSVRow(lines[i]);
+    if (row.length === 0 || row.every(c => !c.trim())) continue;
+    result.totalRows++;
+
+    try {
+      const songTitle = row[songCol]?.trim();
+      const artist = artistCol >= 0 ? row[artistCol]?.trim() : 'Unknown';
+      const plays = playsCol >= 0 ? parseInt(row[playsCol]?.replace(/[^\d.-]/g, '') || '0') : 0;
+      const earnings = earningsCol >= 0 ? parseFloat(row[earningsCol]?.replace(/[^\d.-]/g, '') || '0') : 0;
+      const platform = platformCol >= 0 ? row[platformCol]?.trim().toLowerCase() : (platformOverride || 'unknown');
+      const period = periodCol >= 0 ? row[periodCol]?.trim() : `${new Date().getFullYear()}-Q${Math.ceil((new Date().getMonth() + 1) / 3)}`;
+
+      if (!songTitle) {
+        result.errors.push(`Row ${i + 1}: Missing song title`);
+        continue;
+      }
+
+      // Normalize platform name
+      const normalizedPlatform = normalizePlatformName(platform);
+
+      // Find existing source
+      const existing = royaltySources.find(s =>
+        s.songTitle.toLowerCase() === songTitle.toLowerCase() &&
+        s.platform === normalizedPlatform
+      );
+
+      if (existing) {
+        // Update existing source with real payout data
+        const oldActualRate = existing.actualRate || 0;
+        existing.totalPlays = (existing.totalPlays || 0) + plays;
+        existing.totalEarned = (existing.totalEarned || 0) + earnings;
+        existing.actualRate = existing.totalPlays > 0 ? (existing.totalEarned / existing.totalPlays) * 100 : 0;
+        existing.lastChecked = new Date();
+        existing.period = period;
+        existing.status = 'verified';
+        result.sourcesUpdated++;
+
+        // Check for discrepancy
+        if (existing.expectedRate > 0 && existing.actualRate > 0) {
+          const deviation = Math.abs(existing.actualRate - existing.expectedRate) / existing.expectedRate;
+          if (deviation > 0.25) {
+            discrepancies.push({
+              id: `disc_csv_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+              sourceId: existing.id,
+              platform: normalizedPlatform,
+              songTitle,
+              artist,
+              type: deviation > 0.5 ? 'underpayment' : 'rate_mismatch',
+              severity: deviation > 0.5 ? 'critical' : 'high',
+              expectedAmount: existing.expectedRate * existing.totalPlays,
+              actualAmount: existing.actualRate * existing.totalPlays,
+              difference: (existing.expectedRate - existing.actualRate) * existing.totalPlays,
+              period,
+              detectedAt: new Date(),
+              status: 'open',
+            });
+            result.discrepanciesDetected++;
+          }
+        }
+      } else {
+        // Create new source from CSV data
+        const newSource: RoyaltySource = {
+          id: `src_csv_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          platform: normalizedPlatform,
+          type: 'streaming',
+          songTitle,
+          artist,
+          expectedRate: 0,
+          actualRate: plays > 0 ? (earnings / plays) * 100 : 0,
+          totalPlays: plays,
+          totalEarned: earnings,
+          status: 'verified',
+          period,
+          lastChecked: new Date(),
+          notes: `Imported from CSV (${platformOverride || 'multi-platform'})`,
+        };
+        royaltySources.push(newSource);
+        result.sourcesCreated++;
+      }
+    } catch (err: any) {
+      result.errors.push(`Row ${i + 1}: ${err.message}`);
+    }
+  }
+
+  csvImportHistory.push(result);
+  console.log(`[QUMUS RoyaltyAudit] CSV import: ${result.totalRows} rows, ${result.sourcesUpdated} updated, ${result.sourcesCreated} created, ${result.discrepanciesDetected} discrepancies`);
+  return result;
+}
+
+function parseCSVRow(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+    } else if (ch === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+function normalizePlatformName(raw: string): string {
+  const lower = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const map: Record<string, string> = {
+    spotify: 'spotify', spotifyforartists: 'spotify',
+    apple: 'apple_music', applemusic: 'apple_music', itunes: 'apple_music',
+    youtube: 'youtube', youtubemusic: 'youtube', ytmusic: 'youtube',
+    amazon: 'amazon_music', amazonmusic: 'amazon_music',
+    tidal: 'tidal',
+    deezer: 'deezer',
+    pandora: 'pandora',
+    soundexchange: 'soundexchange',
+    bmi: 'bmi', ascap: 'ascap',
+    distrokid: 'distrokid', tunecore: 'tunecore', cdbaby: 'cd_baby',
+  };
+  return map[lower] || lower;
+}
+
+export function getCSVImportHistory(): CSVImportResult[] {
+  return [...csvImportHistory].sort((a, b) => b.importedAt.getTime() - a.importedAt.getTime());
+}
+
 // ─── Command Console Integration ─────────────────────────────────────────────
 
 export function executeCommand(command: string): string {

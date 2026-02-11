@@ -12,6 +12,7 @@ import { takeSnapshot as runPerformanceBenchmark, getMonitoringStatus as getPerf
 import { executeCommand as executeArchivalCommand, runArchivalScan as runArchivalFullScan, getArchivalSummary, getSchedulerStatus as getArchivalSchedulerStatus } from '../services/content-archival-policy';
 import { executeCommand as executeRoyaltyCommand, runAudit as runRoyaltyAudit, getAuditSummary as getRoyaltyAuditSummary, getAuditSchedulerStatus as getRoyaltySchedulerStatus } from '../services/royalty-audit-policy';
 import { executeCommand as executeCommunityCommand, getEngagementSummary as getCommunityEngagementSummary } from '../services/community-engagement-policy';
+import { executeCommand as executeAIContentCommand, getSummary as getAIContentSummary } from '../services/ai-content-generation-policy';
 
 // In-memory command history (production would use DB)
 interface CommandRecord {
@@ -329,6 +330,17 @@ function parseCommand(message: string): ParsedCommand {
     else if (/announce/i.test(message)) action = 'announcement';
     else action = 'community_status';
     autonomyLevel = 85;
+  }
+  // AI Content Generation commands
+  else if (/aicontent\s*(status|generate|templates?|pending|publish)/i.test(message)) {
+    type = 'ai_content_generation';
+    subsystem = 'QUMUS';
+    if (/generate/i.test(message)) action = 'ai_generate';
+    else if (/templates?/i.test(message)) action = 'ai_templates';
+    else if (/pending/i.test(message)) action = 'ai_pending';
+    else if (/publish/i.test(message)) action = 'ai_publish';
+    else action = 'ai_status';
+    autonomyLevel = 82;
   }
 
   return { type, subsystem, action, parameters, autonomyLevel, impact, requiresApproval };
@@ -692,6 +704,32 @@ async function executeAgentCommand(parsed: ParsedCommand): Promise<CommandRespon
         };
       }
 
+      case 'ai_content_generation': {
+        if (parsed.action === 'ai_status') {
+          const summary = getAIContentSummary();
+          return {
+            status: 'executed',
+            message: `🤖 AI content generation status retrieved`,
+            agentResponse: `[QUMUS Policy #14 — AI Content Generation]\n` +
+              `• Templates: ${summary.totalTemplates} (${summary.activeTemplates} active)\n` +
+              `• Total Generated: ${summary.totalGenerated}\n` +
+              `• Pending Review: ${summary.pendingReview}\n` +
+              `• Published: ${summary.published}\n` +
+              `• Avg Confidence: ${summary.avgConfidence}%\n` +
+              `• Top Channel: ${summary.topChannel}`,
+            data: summary,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        const aiResult = executeAIContentCommand(`aicontent ${parsed.action.replace('ai_', '')}`);
+        return {
+          status: 'executed',
+          message: '🤖 AI content generation command processed',
+          agentResponse: aiResult,
+          executionTime: Date.now() - startTime,
+        };
+      }
+
       case 'royalty_audit': {
         if (parsed.action === 'royalty_run') {
           const report = runRoyaltyAudit();
@@ -801,6 +839,7 @@ function generateSuggestions(message: string): string[] {
   if (/archive|wayback|linkrot|link.rot|preserv/i.test(lower)) suggestions.push('archive scan', 'archive status', 'archive wayback', 'archive linkrot', 'archive scheduler');
   if (/royalty|audit|bmi|payout|discrepanc/i.test(lower)) suggestions.push('royalty status', 'royalty run', 'royalty discrepancies', 'royalty platforms', 'royalty scheduler');
   if (/community|engagement|campaign|listener|donation/i.test(lower)) suggestions.push('community status', 'community campaigns', 'community channels', 'community score');
+  if (/aicontent|ai.*content|generate|template|content.*gen/i.test(lower)) suggestions.push('aicontent status', 'aicontent generate', 'aicontent templates', 'aicontent pending');
 
   return [...new Set(suggestions)].slice(0, 6);
 }

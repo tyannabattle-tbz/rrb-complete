@@ -44,9 +44,9 @@ Once logged in as an admin, the **Admin** link appears in the top navigation bar
 
 ## 3. QUMUS Autonomous System
 
-### 3.1 The 13 Policies
+### 3.1 The 14 Policies
 
-QUMUS operates under 13 autonomous decision policies. Each policy has a configurable autonomy level that determines what percentage of decisions are made automatically versus escalated for human review.
+QUMUS operates under 14 autonomous decision policies. Each policy has a configurable autonomy level that determines what percentage of decisions are made automatically versus escalated for human review.
 
 | # | Policy | Autonomy | Admin Path |
 |---|--------|----------|------------|
@@ -63,6 +63,7 @@ QUMUS operates under 13 autonomous decision policies. Each policy has a configur
 | 11 | Content Archival | 90% | `/rrb/qumus/content-archival` |
 | 12 | Royalty Audit | 88% | `/rrb/qumus/royalty-audit` |
 | 13 | Community Engagement | 85% | `/rrb/qumus/community-engagement` |
+| 14 | AI Content Generation | 87% | `/rrb/qumus/ai-content` |
 
 ### 3.2 Decision Flow
 
@@ -147,6 +148,21 @@ community score            — Overall engagement score
 community report           — Generate engagement report
 community members          — List community members by tier
 ```
+
+**AI Content Generation Commands:**
+```
+aicontent status            — Content generation summary
+aicontent generate          — Run content generation now
+aicontent templates         — List active templates
+aicontent pending           — Show pending review items
+aicontent scheduler         — Scheduler status
+aicontent reports           — Recent generation reports
+```
+
+**CSV Import Commands (via Royalty Audit dashboard):**
+- Navigate to Royalty Audit > CSV Import tab
+- Paste CSV or upload .csv file from DistroKid, TuneCore, CD Baby, Spotify, Apple Music
+- System auto-detects columns and cross-references against expected payout rates
 
 **HybridCast Commands:**
 ```

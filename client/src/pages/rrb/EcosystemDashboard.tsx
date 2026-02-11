@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertCircle, CheckCircle, Activity, Wrench, ArrowRight, Archive, DollarSign, Users } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle, Activity, Wrench, ArrowRight, Archive, DollarSign, Users, Bot } from "lucide-react";
 import AICollaborationHub from "@/components/rrb/AICollaborationHub";
 import { Link } from "wouter";
 
@@ -338,6 +338,39 @@ export default function EcosystemDashboard() {
             </div>
           </div>
           <p className="text-xs text-foreground/40 mt-3">Tracking listener interactions, donation patterns, forum activity, and outreach campaigns across all channels</p>
+        </Card>
+
+        {/* AI Content Generation — Policy #14 */}
+        <Card className="p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Bot className="w-5 h-5 text-violet-500" /> AI Content Generation — Policy #14
+            </h2>
+            <Link href="/rrb/qumus/ai-content">
+              <Button variant="outline" size="sm" className="gap-1">
+                Dashboard <ArrowRight className="w-3 h-3" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Templates</p>
+              <p className="text-2xl font-bold text-foreground">8</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Content Types</p>
+              <p className="text-2xl font-bold text-violet-500">6</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Channels Covered</p>
+              <p className="text-2xl font-bold text-green-500">7</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Autonomy</p>
+              <p className="text-2xl font-bold text-amber-500">82%</p>
+            </div>
+          </div>
+          <p className="text-xs text-foreground/40 mt-3">Auto-generating show descriptions, social posts, broadcast schedules, and promotional content using built-in LLM</p>
         </Card>
 
         {/* Event Bus & QUMUS */}

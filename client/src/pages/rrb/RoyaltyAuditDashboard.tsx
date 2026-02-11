@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Link } from "wouter";
 import {
   ArrowLeft, DollarSign, AlertTriangle, CheckCircle, Clock, Play, Square,
-  RefreshCw, BarChart3, Music, Shield, FileText, TrendingUp, XCircle, Globe, Search,
+  RefreshCw, BarChart3, Music, Shield, FileText, TrendingUp, XCircle, Globe, Search, Upload,
 } from "lucide-react";
 
 export default function RoyaltyAuditDashboard() {
@@ -21,6 +21,19 @@ export default function RoyaltyAuditDashboard() {
   const { data: scheduler } = trpc.royaltyAudit.getSchedulerStatus.useQuery(undefined, { refetchInterval: 10000 });
   const { data: mbCrossRefs, refetch: refetchMB } = trpc.royaltyAudit.getMusicBrainzCrossRefs.useQuery();
   const { data: mbResults } = trpc.royaltyAudit.getMusicBrainzResults.useQuery();
+  const { data: importHistory } = trpc.royaltyAudit.getImportHistory.useQuery();
+  const [csvContent, setCsvContent] = useState('');
+  const [csvPlatform, setCsvPlatform] = useState('');
+
+  const importCSVMut = trpc.royaltyAudit.importCSV.useMutation({
+    onSuccess: (data) => {
+      toast.success(`CSV Import Complete — ${data.totalRows} rows processed, ${data.sourcesUpdated} updated, ${data.sourcesCreated} created, ${data.discrepanciesDetected} discrepancies detected`);
+      setCsvContent('');
+      refetchSummary();
+      refetchDisc();
+    },
+    onError: (err) => toast.error(`Import Failed — ${err.message}`),
+  });
 
   const runAuditMut = trpc.royaltyAudit.runAudit.useMutation({
     onSuccess: () => {
@@ -161,6 +174,7 @@ export default function RoyaltyAuditDashboard() {
           <TabsTrigger value="reports">Reports ({reports?.length || 0})</TabsTrigger>
           <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
           <TabsTrigger value="musicbrainz">MusicBrainz</TabsTrigger>
+          <TabsTrigger value="csvimport">CSV Import</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -451,6 +465,122 @@ export default function RoyaltyAuditDashboard() {
         </TabsContent>
 
         {/* Scheduler Tab */}
+        <TabsContent value="csvimport" className="space-y-4">
+          <Card className="bg-zinc-900/50 border-zinc-800">
+            <CardHeader>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Upload className="w-4 h-4 text-green-400" />
+                Import Streaming Payout Data (CSV)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-xs text-zinc-400">
+                Upload CSV payout reports from DistroKid, TuneCore, CD Baby, Spotify for Artists, or Apple Music Analytics.
+                The system auto-detects columns: song/title/track, artist, plays/streams, earnings/revenue, platform/store, period/date.
+              </p>
+              <div className="space-y-2">
+                <label className="text-xs text-zinc-500">Platform (optional — auto-detected from CSV if present)</label>
+                <select
+                  value={csvPlatform}
+                  onChange={(e) => setCsvPlatform(e.target.value)}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm text-zinc-200"
+                >
+                  <option value="">Auto-detect from CSV</option>
+                  <option value="spotify">Spotify</option>
+                  <option value="apple_music">Apple Music</option>
+                  <option value="youtube">YouTube Music</option>
+                  <option value="amazon_music">Amazon Music</option>
+                  <option value="tidal">Tidal</option>
+                  <option value="deezer">Deezer</option>
+                  <option value="distrokid">DistroKid</option>
+                  <option value="tunecore">TuneCore</option>
+                  <option value="cd_baby">CD Baby</option>
+                  <option value="soundexchange">SoundExchange</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs text-zinc-500">Paste CSV content or upload file</label>
+                <textarea
+                  value={csvContent}
+                  onChange={(e) => setCsvContent(e.target.value)}
+                  placeholder={`title,artist,streams,earnings,platform,period\n"Rockin' Rockin' Boogie","Seabrun Candy Hunter",15420,6.17,spotify,2026-Q1`}
+                  className="w-full h-40 bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-xs font-mono text-zinc-200 resize-y"
+                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    accept=".csv,.txt"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => setCsvContent(ev.target?.result as string || '');
+                        reader.readAsText(file);
+                      }
+                    }}
+                    className="text-xs text-zinc-400"
+                  />
+                </div>
+              </div>
+              <Button
+                onClick={() => importCSVMut.mutate({ csvContent, platform: csvPlatform || undefined })}
+                disabled={importCSVMut.isPending || !csvContent.trim()}
+                className="gap-2 bg-green-600 hover:bg-green-700"
+              >
+                <Upload className="w-4 h-4" />
+                {importCSVMut.isPending ? 'Importing...' : 'Import Payout Data'}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Import History */}
+          {importHistory && importHistory.length > 0 && (
+            <Card className="bg-zinc-900/50 border-zinc-800">
+              <CardHeader>
+                <CardTitle className="text-sm">Import History</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {importHistory.map((imp, i) => (
+                    <div key={i} className="flex items-center justify-between p-2 bg-zinc-800/50 rounded text-xs">
+                      <div>
+                        <span className="text-zinc-200">{imp.platform}</span>
+                        <span className="text-zinc-500 ml-2">{new Date(imp.importedAt).toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-zinc-400">{imp.totalRows} rows</span>
+                        <Badge variant="outline" className="text-green-400 border-green-500/30">{imp.sourcesUpdated} updated</Badge>
+                        <Badge variant="outline" className="text-blue-400 border-blue-500/30">{imp.sourcesCreated} created</Badge>
+                        {imp.discrepanciesDetected > 0 && (
+                          <Badge variant="outline" className="text-red-400 border-red-500/30">{imp.discrepanciesDetected} discrepancies</Badge>
+                        )}
+                        {imp.errors.length > 0 && (
+                          <Badge variant="outline" className="text-yellow-400 border-yellow-500/30">{imp.errors.length} errors</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* CSV Format Guide */}
+          <Card className="bg-zinc-900/50 border-zinc-800">
+            <CardHeader>
+              <CardTitle className="text-sm">Supported CSV Formats</CardTitle>
+            </CardHeader>
+            <CardContent className="text-xs text-zinc-400 space-y-2">
+              <p><strong className="text-zinc-300">DistroKid:</strong> Title, Artist, Streams, Earnings, Store, Reporting Month</p>
+              <p><strong className="text-zinc-300">TuneCore:</strong> Song, Artist Name, Quantity, Revenue, Platform, Period</p>
+              <p><strong className="text-zinc-300">CD Baby:</strong> Track, Performer, Units, Amount, Service, Date</p>
+              <p><strong className="text-zinc-300">Spotify for Artists:</strong> Track, Streams, Earnings (single platform)</p>
+              <p><strong className="text-zinc-300">Apple Music Analytics:</strong> Title, Plays, Payout (single platform)</p>
+              <p className="text-zinc-500 pt-2">The system auto-detects column names. If your CSV uses non-standard headers, select the platform override above.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="scheduler" className="space-y-4">
           <Card className="bg-zinc-900 border-zinc-800">
             <CardHeader>

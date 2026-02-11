@@ -64,7 +64,7 @@ manus-agent-web/
 │   │   ├── communityEngagementRouter.ts # Policy #13
 │   │   └── ...
 │   ├── services/                # 78 service files
-│   │   ├── qumus-complete-engine.ts   # QUMUS brain (13 policies)
+│   │   ├── qumus-complete-engine.ts   # QUMUS brain (14 policies)
 │   │   ├── qumus-autonomous-loop.ts   # Autonomous event loop
 │   │   ├── qumus-orchestration.ts     # Decision orchestration
 │   │   ├── code-maintenance-policy.ts # Policy #9
@@ -99,9 +99,9 @@ manus-agent-web/
 
 ### 3.1 Core Engine
 
-The QUMUS Complete Engine (`server/qumus-complete-engine.ts`) is a singleton that manages all 13 autonomous decision policies. It maintains:
+The QUMUS Complete Engine (`server/qumus-complete-engine.ts`) is a singleton that manages all 14 autonomous decision policies. It maintains:
 
-- **Policy Registry** — All 13 policies with autonomy levels and descriptions
+- **Policy Registry** — All 14 policies with autonomy levels and descriptions
 - **Metrics Cache** — In-memory metrics for fast reads, synced to DB periodically
 - **Decision Pipeline** — Event → Confidence → Threshold → Execute/Escalate → Audit
 
@@ -191,6 +191,7 @@ All API communication uses tRPC. Procedures are organized by domain:
 | `contentArchival` | `contentArchival.*` | Mixed | Policy #11 (queries public, mutations protected) |
 | `royaltyAudit` | `royaltyAudit.*` | Mixed | Policy #12 (queries public, mutations protected) |
 | `communityEngagement` | `communityEngagement.*` | Mixed | Policy #13 (queries public, mutations protected) |
+| `aiContentGeneration` | `aiContentGeneration.*` | Mixed | Policy #14 (queries public, mutations protected) |
 | `commandExecution` | `commandExecution.*` | Protected | Command Console |
 | `stripePayments` | `stripePayments.*` | Protected | Payment processing |
 | `rrbBroadcast` | `rrbBroadcast.*` | Public/Protected | Broadcasting |
@@ -251,7 +252,7 @@ The platform uses a dark theme with amber/gold accent colors. Theme variables ar
 
 The project includes 101 test files using Vitest. Tests cover:
 
-- Service logic (all 13 QUMUS policies)
+- Service logic (all 14 QUMUS policies)
 - Router procedures
 - Command Console parsing and execution
 - Data integrity (default sources, proof items)
@@ -350,7 +351,7 @@ To add a 14th (or beyond) QUMUS policy:
 | Backend Services | 78 |
 | Database Tables | 150 |
 | Test Files | 101 |
-| QUMUS Policies | 13 |
+| QUMUS Policies | 14 |
 | Radio Channels | 7 |
 | Solfeggio Frequencies | 10 |
 

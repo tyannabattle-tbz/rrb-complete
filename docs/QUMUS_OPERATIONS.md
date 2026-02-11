@@ -14,6 +14,8 @@
 3. Check the **Ecosystem Dashboard** for any overnight alerts
 4. Review the **Human Review Queue** for any escalated decisions
 5. Verify all 7 radio channels are broadcasting
+6. Check **AI Content Generation** dashboard for pending review items
+7. Review and publish approved AI-generated content
 
 ### Weekly Operations
 
@@ -22,12 +24,17 @@
 3. Run a **Code Health Scan** to detect broken images, dead links, or stale assets
 4. Run a **Performance Benchmark** to baseline system performance
 5. Review QUMUS decision analytics for autonomy rate trends
+6. Run **AI Content Generation** to create fresh show descriptions, social posts, and schedules
+7. Import latest **CSV payout data** from DistroKid/TuneCore/CD Baby into Royalty Audit
+8. Review **Community Engagement** report for listener trends and campaign effectiveness
 
 ### Monthly Operations
 
 1. Export royalty audit reports for accounting
 2. Review and update Proof Vault with any new evidence
 3. Audit user accounts and admin access
+4. Review AI Content Generation templates and update prompts as needed
+5. Cross-reference MusicBrainz data with BMI registrations for new releases
 4. Review Stripe donation reports
 5. Update content scheduling for the upcoming month
 
@@ -110,6 +117,7 @@ Each policy's autonomy level determines the confidence threshold for automatic e
 | Content Archival | 80% | 90% | 95% |
 | Royalty Audit | 75% | 88% | 92% |
 | Community Engagement | 72% | 85% | 90% |
+| AI Content Generation | 75% | 87% | 93% |
 
 ### 3.2 Policy Interaction Matrix
 
@@ -122,6 +130,10 @@ Some policies interact with each other. Understanding these interactions helps w
 - **Community Engagement + Recommendation Engine** — Engagement data informs content recommendations
 - **Community Engagement + Payment Processing** — Donation patterns tracked across engagement channels
 - **Royalty Audit + MusicBrainz** — Cross-references BMI registrations with open music database
+- **AI Content Generation + Recommendation Engine** — Generated content feeds into recommendation pipeline
+- **AI Content Generation + Content Moderation** — Generated content passes through moderation before publishing
+- **AI Content Generation + Community Engagement** — Engagement data informs content generation topics and timing
+- **Royalty Audit + CSV Import** — Imported payout data cross-referenced against expected rates for discrepancy detection
 
 ---
 
@@ -163,6 +175,7 @@ The platform provides real-time monitoring through:
 - **Performance Monitoring** — Page load, API latency, memory usage
 - **Royalty Audit** — Payout discrepancies and MusicBrainz cross-references
 - **Community Engagement** — Listener engagement scores and campaign effectiveness
+- **AI Content Generation** — Template status, pending review queue, generation reports, scheduler status
 
 ### 5.2 Alert Channels
 
