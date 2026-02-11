@@ -6,7 +6,7 @@ import {
   Music, BookOpen, Heart, Shield, BarChart3, Settings, 
   MessageSquare, Video, Palette, Layers, Monitor, Users,
   AlertTriangle, CheckCircle, Search, Sparkles, Bot,
-  Globe, Building2, Award, FileText, Map, Clock, Film, Smartphone, Camera
+  Globe, Building2, Award, FileText, Map, Clock, Film, Smartphone, Camera, Rss
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -79,6 +79,7 @@ export function UnifiedMobileSidebar() {
         { label: 'AI Assistants', href: '/rrb/ai-assistants', icon: Bot },
         { label: 'The Music', href: '/rrb/the-music', icon: Music },
         { label: 'Meditation', href: '/rrb/meditation-guides', icon: Sparkles },
+        { label: 'RSS Feeds', href: '/rss', icon: Rss },
       ],
     },
     {

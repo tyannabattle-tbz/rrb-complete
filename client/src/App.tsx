@@ -128,6 +128,7 @@ import ListenerAnalytics from '@/pages/ListenerAnalytics';
 import RRBHome from '@/pages/rrb/Home';
 import RRBRadioStation from '@/pages/rrb/RadioStation';
 import AIAssistants from '@/pages/rrb/AIAssistants';
+import RSSSubscribe from '@/pages/rrb/RSSSubscribe';
 import RRBPodcasts from '@/pages/rrb/Podcasts';
 import RRBTheMusic from '@/pages/rrb/TheMusic';
 import RRBTheLegacyPage from '@/pages/rrb/TheLegacyPage';
@@ -341,6 +342,8 @@ function Router() {
       {/* RRB Legacy Restored Pages */}
       <Route path="/rrb/ai-assistants" component={AIAssistants} />
       <Route path="/ai-assistants" component={AIAssistants} />
+      <Route path="/rrb/rss" component={RSSSubscribe} />
+      <Route path="/rss" component={RSSSubscribe} />
       <Route path="/rrb/radio-station" component={RRBRadioStation} />
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
       <Route path="/rrb/hybridcast" component={RRBHybridCastPage} />

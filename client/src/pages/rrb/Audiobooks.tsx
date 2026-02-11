@@ -45,7 +45,7 @@ const audiobooks = [
       'Legal Battles and Landmark Cases',
       'Towards a More Equitable Future',
     ],
-    status: 'Coming Soon',
+    status: 'In Production',
   },
 ];
 
@@ -53,7 +53,7 @@ export default function Audiobooks() {
   const [activeTab, setActiveTab] = useState('all');
 
   const availableAudiobooks = audiobooks.filter(a => a.status === 'Available');
-  const comingSoonAudiobooks = audiobooks.filter(a => a.status === 'Coming Soon');
+  const comingSoonAudiobooks = audiobooks.filter(a => a.status === 'In Production');
 
   const renderAudiobookList = (list) => (
     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -64,7 +64,7 @@ export default function Audiobooks() {
               <BookOpen className="w-6 h-6 text-amber-500" />
               {audiobook.title}
             </CardTitle>
-            <CardDescription>{audiobook.status === 'Coming Soon' ? <span className="text-red-500 font-semibold">Coming Soon</span> : 'Now Available'}</CardDescription>
+            <CardDescription>{audiobook.status === 'In Production' ? <span className="text-amber-500 font-semibold">In Production</span> : 'Now Available'}</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow flex flex-col">
             <p className="text-foreground/80 mb-4 flex-grow">{audiobook.description}</p>
@@ -111,7 +111,7 @@ export default function Audiobooks() {
             <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto mb-12">
               <TabsTrigger value="all">All Audiobooks</TabsTrigger>
               <TabsTrigger value="available">Available Now</TabsTrigger>
-              <TabsTrigger value="coming-soon">Coming Soon</TabsTrigger>
+              <TabsTrigger value="coming-soon">In Production</TabsTrigger>
             </TabsList>
             <TabsContent value="all">
               {renderAudiobookList(audiobooks)}

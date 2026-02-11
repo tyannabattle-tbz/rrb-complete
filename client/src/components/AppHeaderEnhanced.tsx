@@ -144,6 +144,7 @@ export function AppHeaderEnhanced() {
         { label: 'Audiobooks', path: '/rrb/audiobooks' },
         { label: 'Candy Through the Years', path: '/rrb/candy-through-the-years' },
         { label: 'Setlist Archive', path: '/rrb/setlist-archive' },
+        { label: 'RSS Feeds', path: '/rss' },
       ],
     },
     {

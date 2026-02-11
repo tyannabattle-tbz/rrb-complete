@@ -185,7 +185,7 @@ export default function MobileResponsiveAdminPanel() {
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
                   {menuItems.find((m) => m.id === activeTab)?.label}
                 </h2>
-                <p className="text-slate-600 dark:text-slate-400">Content for this section coming soon...</p>
+                <p className="text-slate-600 dark:text-slate-400">This admin section is available through the main QUMUS dashboard. Navigate to <a href="/rrb/qumus/admin" className="text-blue-500 hover:underline">QUMUS Admin</a> for full controls.</p>
               </Card>
             )}
           </div>

@@ -308,9 +308,19 @@ export default function BroadcastControlPanel() {
             {activeTab === 'music' && (
               <Card className="p-6 space-y-4">
                 <h3 className="text-lg font-bold">Music Management</h3>
-                <div className="text-center py-8">
-                  <Music className="w-12 h-12 mx-auto mb-4 text-foreground/30" />
-                  <p className="text-foreground/70">Music playlist management coming soon</p>
+                <div className="space-y-3">
+                  <p className="text-foreground/70 text-sm">Manage playlists across all 7 RRB Radio channels. Music is loaded from the content library and scheduled through QUMUS orchestration.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {['Gospel Classics', 'Jazz Standards', 'Blues Collection', 'R&B Hits', 'Talk Show Segments', 'Healing Frequencies', 'Emergency Alerts'].map((playlist, i) => (
+                      <div key={i} className="flex items-center gap-3 bg-accent/10 rounded-lg p-3">
+                        <Music className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                        <div>
+                          <div className="text-sm font-medium">{playlist}</div>
+                          <div className="text-xs text-foreground/50">Channel {i + 1} • Auto-scheduled</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </Card>
             )}

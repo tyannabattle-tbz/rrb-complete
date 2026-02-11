@@ -317,7 +317,7 @@ export function RockinBoogiePlayerUpgraded() {
         </div>
       </Card>
 
-      {/* Analytics - Coming Soon */}
+      {/* Analytics */}
       <Card className="p-6">
         <h3 className="text-lg font-bold mb-4">📊 Analytics</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -246,8 +246,8 @@ function renderFeatureContent(featureId: string): React.ReactNode {
   if (!feature) {
     return (
       <div className="text-center py-8">
-        <h2 className="text-2xl font-bold text-white mb-2">Feature Coming Soon</h2>
-        <p className="text-slate-400">This feature is under development.</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Feature In Development</h2>
+        <p className="text-slate-400">This HybridCast module is being built for production deployment. Visit <a href="/hybridcast" className="text-blue-400 hover:underline">/hybridcast</a> for the full emergency broadcast system.</p>
       </div>
     );
   }

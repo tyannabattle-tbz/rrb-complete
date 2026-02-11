@@ -96,16 +96,16 @@ export default function VideoTestimonials() {
         </div>
       </section>
 
-      {/* Video Coming Soon Notice */}
+      {/* Video Recording Status */}
       <section className="py-6 px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 text-center">
-            <Play className="w-10 h-10 text-red-500 mx-auto mb-3" />
-            <h2 className="text-xl font-bold text-foreground mb-2">Video Recordings Coming Soon</h2>
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-6 text-center">
+            <Play className="w-10 h-10 text-amber-500 mx-auto mb-3" />
+            <h2 className="text-xl font-bold text-foreground mb-2">Video Testimonials in Production</h2>
             <p className="text-foreground/70">
-              We are currently recording video testimonials from family members, collaborators, and 
-              community members. Below are written excerpts from interviews that will be available 
-              as full video testimonials soon.
+              Video testimonials are actively being recorded with family members, collaborators, and 
+              community members. Written excerpts from completed interviews are available below. 
+              Use the <a href="/rrb/podcast-and-video" className="text-amber-400 hover:underline">Podcast &amp; Video</a> section to watch available video content.
             </p>
           </div>
         </div>

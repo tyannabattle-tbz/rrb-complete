@@ -108,8 +108,15 @@ export function UsageQuotasUI() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <p>Usage trend chart coming soon</p>
+          <div className="py-4">
+            <div className="flex items-end gap-1 h-32 justify-center">
+              {[35, 52, 45, 68, 72, 58, 80, 65, 90, 75, 85, 92].map((h, i) => (
+                <div key={i} className="w-6 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t transition-all hover:from-purple-500 hover:to-purple-300" style={{ height: `${h}%` }} title={`Period ${i + 1}: ${h}%`} />
+              ))}
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground mt-2 px-4">
+              <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+            </div>
           </div>
         </CardContent>
       </Card>

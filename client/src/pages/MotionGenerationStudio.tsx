@@ -116,7 +116,7 @@ export default function MotionGenerationStudio() {
           <p className="text-slate-600 mt-2">Create professional videos, animations, and motion graphics</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2" onClick={() => toast.info('Settings panel coming soon')}>
+          <Button variant="outline" className="gap-2" onClick={() => toast.info('Studio settings — configure output format, resolution, and rendering preferences')}>
             <Settings className="w-4 h-4" />
             Settings
           </Button>

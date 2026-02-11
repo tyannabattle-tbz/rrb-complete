@@ -343,7 +343,7 @@ export default function EnhancedPodcastPlayer({
           size="sm"
           variant="outline"
           className="flex-1 text-xs"
-          onClick={() => window.open('/api/rss/podcast', '_blank')}
+          onClick={() => window.open('/rss', '_blank')}
           title="Subscribe via RSS"
         >
           Spotify
@@ -352,7 +352,7 @@ export default function EnhancedPodcastPlayer({
           size="sm"
           variant="outline"
           className="flex-1 text-xs"
-          onClick={() => window.open('/api/rss/podcast', '_blank')}
+          onClick={() => window.open('/rss', '_blank')}
           title="Subscribe via RSS"
         >
           Apple
