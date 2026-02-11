@@ -3,7 +3,7 @@
  */
 
 import { z } from 'zod';
-import { router, protectedProcedure } from '../_core/trpc';
+import { router, protectedProcedure, publicProcedure } from '../_core/trpc';
 import {
   takeSnapshot,
   getSnapshots,
@@ -26,17 +26,17 @@ export const performanceMonitoringRouter = router({
   }),
 
   // Get snapshot history
-  getSnapshots: protectedProcedure.query(() => {
+  getSnapshots: publicProcedure.query(() => {
     return getSnapshots();
   }),
 
   // Get performance summary
-  getSummary: protectedProcedure.query(() => {
+  getSummary: publicProcedure.query(() => {
     return getPerformanceSummary();
   }),
 
   // Get alerts with optional filters
-  getAlerts: protectedProcedure
+  getAlerts: publicProcedure
     .input(z.object({
       category: z.enum(['page_load', 'api_latency', 'memory_usage', 'stream_health', 'error_rate', 'uptime']).optional(),
       severity: z.enum(['normal', 'warning', 'critical', 'emergency']).optional(),
@@ -70,7 +70,7 @@ export const performanceMonitoringRouter = router({
     }),
 
   // Scheduler control
-  getMonitoringStatus: protectedProcedure.query(() => {
+  getMonitoringStatus: publicProcedure.query(() => {
     return getMonitoringStatus();
   }),
 

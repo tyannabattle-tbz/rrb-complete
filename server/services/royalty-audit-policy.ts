@@ -10,6 +10,202 @@
  * A Canryn Production — Past, Protection, Presentation, and Preservation
  */
 
+// ─── MusicBrainz Integration ────────────────────────────────────────────────
+
+export interface MusicBrainzResult {
+  id: string;
+  title: string;
+  artist: string;
+  mbid: string;              // MusicBrainz ID
+  type: 'recording' | 'work' | 'release' | 'artist';
+  score: number;             // Match confidence 0-100
+  isrcs?: string[];
+  iswcs?: string[];
+  disambiguation?: string;
+  relations?: MusicBrainzRelation[];
+  credits?: MusicBrainzCredit[];
+  releases?: { title: string; date: string; country: string; label?: string }[];
+  lookupDate: Date;
+}
+
+export interface MusicBrainzRelation {
+  type: string;              // 'songwriter', 'composer', 'performer', 'producer', 'publisher'
+  target: string;            // Name of related entity
+  targetMbid?: string;
+  attributes?: string[];
+}
+
+export interface MusicBrainzCredit {
+  name: string;
+  role: string;              // 'writer', 'composer', 'lyricist', 'performer', 'publisher'
+  mbid?: string;
+}
+
+export interface MusicBrainzCrossRef {
+  sourceId: string;
+  songTitle: string;
+  artist: string;
+  mbRecordingId?: string;
+  mbWorkId?: string;
+  mbArtistId?: string;
+  creditsMatch: 'verified' | 'mismatch' | 'missing' | 'partial' | 'not_found';
+  details: string;
+  checkedAt: Date;
+}
+
+// MusicBrainz state
+let musicBrainzResults: MusicBrainzResult[] = [];
+let musicBrainzCrossRefs: MusicBrainzCrossRef[] = [];
+
+/**
+ * Search MusicBrainz for a recording by title and artist.
+ * Uses the public MusicBrainz API (rate-limited to 1 req/sec).
+ */
+export async function searchMusicBrainz(
+  title: string,
+  artist: string,
+  type: 'recording' | 'work' = 'recording'
+): Promise<MusicBrainzResult[]> {
+  const query = encodeURIComponent(`${type}:"${title}" AND artist:"${artist}"`);
+  const url = `https://musicbrainz.org/ws/2/${type}/?query=${query}&fmt=json&limit=5`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'CanrynProduction-QUMUS/1.0 (contact@canrynproduction.com)',
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.error(`[MusicBrainz] API error: ${response.status} ${response.statusText}`);
+      return [];
+    }
+
+    const data = await response.json();
+    const items = data[`${type}s`] || [];
+
+    const results: MusicBrainzResult[] = items.map((item: any) => ({
+      id: `mb_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      title: item.title || title,
+      artist: item['artist-credit']?.[0]?.name || artist,
+      mbid: item.id,
+      type,
+      score: item.score || 0,
+      isrcs: item.isrcs || [],
+      iswcs: item.iswcs || [],
+      disambiguation: item.disambiguation || '',
+      relations: (item.relations || []).map((r: any) => ({
+        type: r.type || 'unknown',
+        target: r.artist?.name || r.work?.title || r.label?.name || 'unknown',
+        targetMbid: r.artist?.id || r.work?.id || r.label?.id,
+        attributes: r.attributes || [],
+      })),
+      credits: (item['artist-credit'] || []).map((c: any) => ({
+        name: c.name || c.artist?.name || 'unknown',
+        role: 'performer',
+        mbid: c.artist?.id,
+      })),
+      releases: (item.releases || []).slice(0, 5).map((r: any) => ({
+        title: r.title,
+        date: r.date || 'unknown',
+        country: r.country || 'unknown',
+        label: r['label-info']?.[0]?.label?.name,
+      })),
+      lookupDate: new Date(),
+    }));
+
+    musicBrainzResults.push(...results);
+    console.log(`[MusicBrainz] Found ${results.length} results for "${title}" by ${artist}`);
+    return results;
+  } catch (error) {
+    console.error(`[MusicBrainz] Lookup failed for "${title}" by ${artist}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Cross-reference all royalty sources against MusicBrainz database.
+ * Checks for matching recordings, verifies credits, and detects missing entries.
+ */
+export async function crossReferenceMusicBrainz(): Promise<MusicBrainzCrossRef[]> {
+  const newCrossRefs: MusicBrainzCrossRef[] = [];
+  const uniqueSongs = new Map<string, RoyaltySource>();
+
+  // Deduplicate by song title + artist
+  for (const source of royaltySources) {
+    const key = `${source.songTitle}::${source.artist}`;
+    if (!uniqueSongs.has(key)) {
+      uniqueSongs.set(key, source);
+    }
+  }
+
+  for (const [, source] of uniqueSongs) {
+    // Rate limit: wait 1.1 seconds between requests
+    await new Promise(resolve => setTimeout(resolve, 1100));
+
+    const results = await searchMusicBrainz(source.songTitle, source.artist, 'recording');
+
+    let crossRef: MusicBrainzCrossRef;
+
+    if (results.length === 0) {
+      crossRef = {
+        sourceId: source.id,
+        songTitle: source.songTitle,
+        artist: source.artist,
+        creditsMatch: 'not_found',
+        details: `No MusicBrainz recording found for "${source.songTitle}" by ${source.artist}. Consider submitting to MusicBrainz.`,
+        checkedAt: new Date(),
+      };
+    } else {
+      const bestMatch = results[0];
+      crossRef = {
+        sourceId: source.id,
+        songTitle: source.songTitle,
+        artist: source.artist,
+        mbRecordingId: bestMatch.mbid,
+        creditsMatch: bestMatch.score >= 90 ? 'verified' : bestMatch.score >= 70 ? 'partial' : 'mismatch',
+        details: bestMatch.score >= 90
+          ? `MusicBrainz match verified (score: ${bestMatch.score}). MBID: ${bestMatch.mbid}`
+          : bestMatch.score >= 70
+            ? `Partial MusicBrainz match (score: ${bestMatch.score}). Manual verification recommended. MBID: ${bestMatch.mbid}`
+            : `Low confidence MusicBrainz match (score: ${bestMatch.score}). Credits may not match.`,
+        checkedAt: new Date(),
+      };
+
+      // Check ISRCs match
+      if (source.isrc && bestMatch.isrcs && bestMatch.isrcs.length > 0) {
+        if (bestMatch.isrcs.includes(source.isrc)) {
+          crossRef.details += ' | ISRC verified.';
+        } else {
+          crossRef.details += ` | ISRC mismatch: expected ${source.isrc}, found ${bestMatch.isrcs.join(', ')}.`;
+          crossRef.creditsMatch = 'mismatch';
+        }
+      }
+    }
+
+    newCrossRefs.push(crossRef);
+  }
+
+  musicBrainzCrossRefs = newCrossRefs;
+  console.log(`[MusicBrainz] Cross-reference complete: ${newCrossRefs.length} songs checked`);
+  return newCrossRefs;
+}
+
+/**
+ * Get cached MusicBrainz results.
+ */
+export function getMusicBrainzResults(): MusicBrainzResult[] {
+  return [...musicBrainzResults].sort((a, b) => b.lookupDate.getTime() - a.lookupDate.getTime());
+}
+
+/**
+ * Get cached MusicBrainz cross-references.
+ */
+export function getMusicBrainzCrossRefs(): MusicBrainzCrossRef[] {
+  return [...musicBrainzCrossRefs].sort((a, b) => b.checkedAt.getTime() - a.checkedAt.getTime());
+}
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface RoyaltySource {
@@ -588,6 +784,25 @@ export function executeCommand(command: string): string {
       ].filter(Boolean).join('\n');
     }
 
+    case 'musicbrainz':
+    case 'mb': {
+      const refs = getMusicBrainzCrossRefs();
+      if (refs.length === 0) return '🎵 No MusicBrainz cross-references yet. Run "royalty mb-scan" to check.';
+      const verified = refs.filter(r => r.creditsMatch === 'verified').length;
+      const issues = refs.filter(r => ['mismatch', 'missing', 'not_found'].includes(r.creditsMatch)).length;
+      return [
+        `🎵 MusicBrainz Cross-Reference: ${refs.length} songs checked`,
+        `  Verified: ${verified} | Issues: ${issues}`,
+        ...refs.slice(0, 5).map(r =>
+          `  • ${r.songTitle} — ${r.creditsMatch.toUpperCase()}${r.mbRecordingId ? ` (MBID: ${r.mbRecordingId.slice(0, 8)}...)` : ''}`
+        ),
+      ].join('\n');
+    }
+
+    case 'mb-scan': {
+      return '🔄 MusicBrainz cross-reference scan initiated. This may take a moment due to API rate limits...';
+    }
+
     default:
       return [
         '📊 Royalty Audit Commands:',
@@ -596,6 +811,8 @@ export function executeCommand(command: string): string {
         '  royalty discrepancies — View open discrepancies',
         '  royalty platforms  — List monitored platforms',
         '  royalty scheduler  — View scheduler status',
+        '  royalty musicbrainz — View MusicBrainz cross-references',
+        '  royalty mb-scan    — Run MusicBrainz cross-reference scan',
       ].join('\n');
   }
 }

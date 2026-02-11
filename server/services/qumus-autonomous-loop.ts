@@ -118,6 +118,16 @@ const EVENT_TEMPLATES: Record<string, Array<{ input: Record<string, any>; confid
     { input: { type: 'rate_check', platform: 'youtube', expectedRate: 0.2, actualRate: 0.08, songTitle: "Rockin' Rockin' Boogie", timestamp: Date.now() }, confidence: 45, description: 'YouTube rate mismatch detected (needs review)' },
     { input: { type: 'missing_credit', platform: 'soundexchange', songTitle: "Rockin' Rockin' Boogie", artist: 'Seabrun Candy Hunter', timestamp: Date.now() }, confidence: 35, description: 'SoundExchange credit missing (needs human review)' },
   ],
+
+  // Policy 13: Community Engagement (85% autonomy)
+  policy_community_engagement: [
+    { input: { type: 'listener_interaction', channel: 'rrb_main', metric: 'daily_listeners', value: 142, trend: 'up', timestamp: Date.now() }, description: 'Daily listener count tracking — upward trend' },
+    { input: { type: 'donation_pattern', source: 'sweet_miracles', amount: 25, frequency: 'monthly', donorSegment: 'recurring', timestamp: Date.now() }, description: 'Sweet Miracles recurring donation pattern detected' },
+    { input: { type: 'campaign_performance', campaign: 'legacy_awareness', impressions: 1200, engagement: 8.5, conversions: 12, timestamp: Date.now() }, description: 'Legacy awareness campaign performing above threshold' },
+    { input: { type: 'forum_activity', topic: 'community_stories', posts: 5, replies: 18, sentiment: 'positive', timestamp: Date.now() }, description: 'Community stories forum — high engagement' },
+    { input: { type: 'outreach_event', event: 'community_broadcast', attendees: 0, rsvps: 35, channel: 'hybridcast', timestamp: Date.now() }, confidence: 40, description: 'Community broadcast event — low attendance vs RSVPs (needs review)' },
+    { input: { type: 'engagement_score', overall: 85, channels: 7, activeChannels: 5, trend: 'stable', timestamp: Date.now() }, description: 'Weekly engagement score assessment — stable at 85' },
+  ],
 };
 
 /**

@@ -75,6 +75,7 @@ manus-agent-web/
 │   ├── ADMIN_CREATOR_GUIDE.md   # Admin & creator procedures
 │   ├── SYSTEM_ARCHITECTURE.md   # Technical architecture
 │   ├── QUMUS_OPERATIONS.md      # QUMUS operations procedures
+│   ├── ROYALTY_COLLECTION_GUIDE.md # Royalty revenue stream setup
 │   └── README_INSTALL.md        # This file
 └── todo.md               # Feature tracking
 ```
@@ -100,17 +101,19 @@ manus-agent-web/
 | **ADMIN_CREATOR_GUIDE.md** | Admins, creators | System administration and content creation |
 | **SYSTEM_ARCHITECTURE.md** | Developers | Technical architecture and extension guide |
 | **QUMUS_OPERATIONS.md** | Operators | Daily/weekly/monthly operational procedures |
+| **ROYALTY_COLLECTION_GUIDE.md** | Admins | How to set up royalty revenue streams from airwaves |
 | **README_INSTALL.md** | Everyone | Installation and quick start |
 
 ---
 
 ## Platform Highlights
 
-- **12 QUMUS Autonomous Policies** — 90% autonomous, 10% human oversight
+- **13 QUMUS Autonomous Policies** — 90% autonomous, 10% human oversight
 - **7-Channel 24/7 Radio** — Live broadcasting with emergency override
 - **Proof Vault** — Verified evidence repository with BMI screenshots
-- **Royalty Audit** — Cross-platform payout discrepancy detection
+- **Royalty Audit** — Cross-platform payout discrepancy detection with MusicBrainz integration
 - **Content Archival** — Wayback Machine preservation of evidence links
+- **Community Engagement** — Listener tracking, donation patterns, campaign optimization
 - **HybridCast** — Offline-first emergency broadcast with mesh networking
 - **Solbones 4+3+2** — Sacred math dice game with AI opponents
 - **Solfeggio Frequencies** — 10 healing frequency meditation sessions

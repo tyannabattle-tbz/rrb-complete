@@ -120,6 +120,13 @@ export const CORE_POLICIES = {
     autonomyLevel: 88,
     description: 'Cross-referencing BMI registrations with streaming platform payouts to detect royalty discrepancies, missing credits, and rate mismatches for Seabrun Candy Hunter legacy works',
   },
+  COMMUNITY_ENGAGEMENT: {
+    id: 'policy_community_engagement',
+    name: 'Community Engagement',
+    type: 'community_engagement',
+    autonomyLevel: 91,
+    description: 'Tracking listener interactions, forum activity, donation patterns, and community health to optimize outreach and detect engagement drops across all ecosystem channels',
+  },
 };
 
 // In-memory metrics cache for fast reads (synced to DB periodically)
@@ -591,13 +598,21 @@ export class QumusCompleteEngine {
    * Approve/reject human review decision — UPDATES DATABASE
    */
   static async reviewDecision(
-    decisionId: string,
+    reviewIdOrDecisionId: string,
     decision: 'approved' | 'rejected' | 'modified',
     reviewerNotes: string,
     reviewerId?: number
   ): Promise<void> {
     try {
       const dbConn = await getDb();
+      
+      // Determine if this is a numeric DB id or a string decisionId
+      const isNumericId = /^\d+$/.test(reviewIdOrDecisionId);
+      const whereClause = isNumericId
+        ? eq(qumusHumanReview.id, parseInt(reviewIdOrDecisionId, 10))
+        : eq(qumusHumanReview.decisionId, reviewIdOrDecisionId);
+      
+      // Update the human review record
       await dbConn.update(qumusHumanReview)
         .set({
           decision,
@@ -606,7 +621,17 @@ export class QumusCompleteEngine {
           reviewedAt: new Date(),
           status: 'completed',
         })
-        .where(eq(qumusHumanReview.decisionId, decisionId));
+        .where(whereClause);
+      
+      // Look up the decisionId if we matched by numeric id, for updating autonomous actions
+      let actualDecisionId = reviewIdOrDecisionId;
+      if (isNumericId) {
+        const rows = await dbConn.select({ decisionId: qumusHumanReview.decisionId })
+          .from(qumusHumanReview)
+          .where(eq(qumusHumanReview.id, parseInt(reviewIdOrDecisionId, 10)))
+          .limit(1);
+        if (rows.length > 0) actualDecisionId = rows[0].decisionId;
+      }
 
       // Update the autonomous action status too
       await dbConn.update(qumusAutonomousActions)
@@ -615,9 +640,9 @@ export class QumusCompleteEngine {
           result: decision === 'approved' ? 'success' : 'failure',
           completedAt: new Date(),
         })
-        .where(eq(qumusAutonomousActions.decisionId, decisionId));
+        .where(eq(qumusAutonomousActions.decisionId, actualDecisionId));
 
-      console.log(`[QUMUS] Decision reviewed: ${decisionId} → ${decision}`);
+      console.log(`[QUMUS] Decision reviewed: ${reviewIdOrDecisionId} → ${decision}`);
     } catch (error) {
       console.error('[QUMUS] Failed to review decision:', error);
       throw error;

@@ -61,15 +61,17 @@ manus-agent-web/
 │   │   ├── commandExecutionRouter.ts  # Command Console handler
 │   │   ├── contentArchivalRouter.ts   # Policy #11
 │   │   ├── royaltyAuditRouter.ts      # Policy #12
+│   │   ├── communityEngagementRouter.ts # Policy #13
 │   │   └── ...
 │   ├── services/                # 78 service files
-│   │   ├── qumus-complete-engine.ts   # QUMUS brain (12 policies)
+│   │   ├── qumus-complete-engine.ts   # QUMUS brain (13 policies)
 │   │   ├── qumus-autonomous-loop.ts   # Autonomous event loop
 │   │   ├── qumus-orchestration.ts     # Decision orchestration
 │   │   ├── code-maintenance-policy.ts # Policy #9
 │   │   ├── performance-monitoring-policy.ts # Policy #10
 │   │   ├── content-archival-policy.ts # Policy #11
 │   │   ├── royalty-audit-policy.ts    # Policy #12
+│   │   ├── community-engagement-policy.ts # Policy #13
 │   │   └── ...
 │   ├── webhooks/                # Webhook handlers
 │   │   └── stripeWebhook.ts    # Stripe webhook
@@ -84,7 +86,10 @@ manus-agent-web/
 ├── docs/                        # Documentation
 │   ├── USER_MANUAL.md
 │   ├── ADMIN_CREATOR_GUIDE.md
-│   └── SYSTEM_ARCHITECTURE.md
+│   ├── SYSTEM_ARCHITECTURE.md
+│   ├── QUMUS_OPERATIONS.md
+│   ├── ROYALTY_COLLECTION_GUIDE.md
+│   └── README_INSTALL.md
 └── todo.md                      # Feature tracking
 ```
 
@@ -94,9 +99,9 @@ manus-agent-web/
 
 ### 3.1 Core Engine
 
-The QUMUS Complete Engine (`server/qumus-complete-engine.ts`) is a singleton that manages all 12 autonomous decision policies. It maintains:
+The QUMUS Complete Engine (`server/qumus-complete-engine.ts`) is a singleton that manages all 13 autonomous decision policies. It maintains:
 
-- **Policy Registry** — All 12 policies with autonomy levels and descriptions
+- **Policy Registry** — All 13 policies with autonomy levels and descriptions
 - **Metrics Cache** — In-memory metrics for fast reads, synced to DB periodically
 - **Decision Pipeline** — Event → Confidence → Threshold → Execute/Escalate → Audit
 
@@ -117,6 +122,7 @@ policy_code_maintenance → Code health scan events
 policy_performance_monitoring → Performance benchmark events
 policy_content_archival → Link monitoring events
 policy_royalty_audit → Royalty verification events
+policy_community_engagement → Community engagement events
 ```
 
 ### 3.3 Decision Orchestration
@@ -181,9 +187,10 @@ All API communication uses tRPC. Procedures are organized by domain:
 | `qumusComplete` | `qumusComplete.*` | Protected | QUMUS brain operations |
 | `ecosystem` | `ecosystem.*` | Protected | Ecosystem overview |
 | `codeMaintenance` | `codeMaintenance.*` | Protected | Policy #9 |
-| `performanceMonitoring` | `performanceMonitoring.*` | Protected | Policy #10 |
-| `contentArchival` | `contentArchival.*` | Protected | Policy #11 |
-| `royaltyAudit` | `royaltyAudit.*` | Protected | Policy #12 |
+| `performanceMonitoring` | `performanceMonitoring.*` | Mixed | Policy #10 (queries public, mutations protected) |
+| `contentArchival` | `contentArchival.*` | Mixed | Policy #11 (queries public, mutations protected) |
+| `royaltyAudit` | `royaltyAudit.*` | Mixed | Policy #12 (queries public, mutations protected) |
+| `communityEngagement` | `communityEngagement.*` | Mixed | Policy #13 (queries public, mutations protected) |
 | `commandExecution` | `commandExecution.*` | Protected | Command Console |
 | `stripePayments` | `stripePayments.*` | Protected | Payment processing |
 | `rrbBroadcast` | `rrbBroadcast.*` | Public/Protected | Broadcasting |
@@ -244,7 +251,7 @@ The platform uses a dark theme with amber/gold accent colors. Theme variables ar
 
 The project includes 101 test files using Vitest. Tests cover:
 
-- Service logic (all 12 QUMUS policies)
+- Service logic (all 13 QUMUS policies)
 - Router procedures
 - Command Console parsing and execution
 - Data integrity (default sources, proof items)
@@ -304,7 +311,7 @@ The platform deploys through the Manus Management UI:
 
 ### 9.1 Adding a New QUMUS Policy
 
-To add a 13th (or beyond) QUMUS policy:
+To add a 14th (or beyond) QUMUS policy:
 
 1. **Create the service** — `server/services/new-policy.ts` following the pattern in `royalty-audit-policy.ts`
 2. **Create the router** — `server/routers/newPolicyRouter.ts` following `royaltyAuditRouter.ts`
@@ -343,7 +350,7 @@ To add a 13th (or beyond) QUMUS policy:
 | Backend Services | 78 |
 | Database Tables | 150 |
 | Test Files | 101 |
-| QUMUS Policies | 12 |
+| QUMUS Policies | 13 |
 | Radio Channels | 7 |
 | Solfeggio Frequencies | 10 |
 

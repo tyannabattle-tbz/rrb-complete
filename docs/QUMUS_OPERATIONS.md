@@ -109,6 +109,7 @@ Each policy's autonomy level determines the confidence threshold for automatic e
 | Performance Monitoring | 85% | 92% | 98% |
 | Content Archival | 80% | 90% | 95% |
 | Royalty Audit | 75% | 88% | 92% |
+| Community Engagement | 72% | 85% | 90% |
 
 ### 3.2 Policy Interaction Matrix
 
@@ -118,6 +119,9 @@ Some policies interact with each other. Understanding these interactions helps w
 - **Content Archival + Royalty Audit** — Both monitor external links; archival ensures links are alive, royalty audit verifies payout data
 - **Payment Processing + Compliance Reporting** — Payment events trigger compliance checks
 - **Content Moderation + Recommendation Engine** — Moderated content is excluded from recommendations
+- **Community Engagement + Recommendation Engine** — Engagement data informs content recommendations
+- **Community Engagement + Payment Processing** — Donation patterns tracked across engagement channels
+- **Royalty Audit + MusicBrainz** — Cross-references BMI registrations with open music database
 
 ---
 
@@ -157,6 +161,8 @@ The platform provides real-time monitoring through:
 - **Ecosystem Dashboard** — Detailed system metrics
 - **QUMUS Admin** — Decision analytics and policy performance
 - **Performance Monitoring** — Page load, API latency, memory usage
+- **Royalty Audit** — Payout discrepancies and MusicBrainz cross-references
+- **Community Engagement** — Listener engagement scores and campaign effectiveness
 
 ### 5.2 Alert Channels
 

@@ -61,6 +61,7 @@ export default function StateOfTheStudio() {
     { label: 'Performance', value: perfBenchmark?.overallScore ?? 95 },
     { label: 'Content Archival', value: 100 },
     { label: 'Royalty Audit', value: 100 },
+    { label: 'Community', value: 85 },
   ], [dashboard, channels, codeHealth, perfBenchmark]);
 
   if (isLoading) {
@@ -342,6 +343,7 @@ export default function StateOfTheStudio() {
               { label: 'Broadcast Admin', href: '/rrb/broadcast/admin', icon: Radio },
               { label: 'Content Archival', href: '/rrb/qumus/content-archival', icon: Archive },
               { label: 'Royalty Audit', href: '/rrb/qumus/royalty-audit', icon: DollarSign },
+              { label: 'Community', href: '/rrb/qumus/community-engagement', icon: Users },
             ].map((link) => {
               const Icon = link.icon;
               return (

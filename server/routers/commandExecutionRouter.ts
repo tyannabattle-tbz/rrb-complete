@@ -11,6 +11,7 @@ import { runFullScan, getMaintenanceSummary, getSchedulerStatus } from '../servi
 import { takeSnapshot as runPerformanceBenchmark, getMonitoringStatus as getPerformanceSchedulerStatus } from '../services/performance-monitoring-policy';
 import { executeCommand as executeArchivalCommand, runArchivalScan as runArchivalFullScan, getArchivalSummary, getSchedulerStatus as getArchivalSchedulerStatus } from '../services/content-archival-policy';
 import { executeCommand as executeRoyaltyCommand, runAudit as runRoyaltyAudit, getAuditSummary as getRoyaltyAuditSummary, getAuditSchedulerStatus as getRoyaltySchedulerStatus } from '../services/royalty-audit-policy';
+import { executeCommand as executeCommunityCommand, getEngagementSummary as getCommunityEngagementSummary } from '../services/community-engagement-policy';
 
 // In-memory command history (production would use DB)
 interface CommandRecord {
@@ -309,7 +310,18 @@ function parseCommand(message: string): ParsedCommand {
     else action = 'royalty_status';
     autonomyLevel = 88;
   }
-  // Community commands
+  // Community Engagement commands
+  else if (/communitys*(status|campaigns?|channels?|score|engagement|scan)/i.test(message)) {
+    type = 'community_engagement';
+    subsystem = 'QUMUS';
+    if (/campaigns?/i.test(message)) action = 'community_campaigns';
+    else if (/channels?/i.test(message)) action = 'community_channels';
+    else if (/score|engagement/i.test(message)) action = 'community_score';
+    else if (/scan/i.test(message)) action = 'community_scan';
+    else action = 'community_status';
+    autonomyLevel = 85;
+  }
+  // Community general commands
   else if (/community|event|member|forum|poll|announce/i.test(message)) {
     type = 'community';
     subsystem = agentMatch ? subsystem : 'QumUnity';
@@ -654,6 +666,32 @@ async function executeAgentCommand(parsed: ParsedCommand): Promise<CommandRespon
         };
       }
 
+      case 'community_engagement': {
+        if (parsed.action === 'community_status') {
+          const summary = getCommunityEngagementSummary();
+          return {
+            status: 'executed',
+            message: `💬 Community engagement status retrieved`,
+            agentResponse: `[QUMUS Policy #13 — Community Engagement]\n` +
+              `• Channels: ${summary.totalChannels} (${summary.activeChannels} active)\n` +
+              `• Engagement Score: ${summary.engagementScore}/100 (${summary.engagementGrade})\n` +
+              `• Active Campaigns: ${summary.activeCampaigns}\n` +
+              `• Total Interactions: ${summary.totalInteractions}\n` +
+              `• Donation Patterns: ${summary.donationPatterns} tracked\n` +
+              `• Last Scan: ${summary.lastScanRun ? new Date(summary.lastScanRun).toLocaleString() : 'Never'}`,
+            data: summary,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        const communityResult = executeCommunityCommand(`community ${parsed.action.replace('community_', '')}`);
+        return {
+          status: 'executed',
+          message: '💬 Community engagement command processed',
+          agentResponse: communityResult,
+          executionTime: Date.now() - startTime,
+        };
+      }
+
       case 'royalty_audit': {
         if (parsed.action === 'royalty_run') {
           const report = runRoyaltyAudit();
@@ -762,6 +800,7 @@ function generateSuggestions(message: string): string[] {
   if (/perf|bench|latency|memory/i.test(lower)) suggestions.push('performance benchmark', 'performance status', 'performance latency', 'performance memory');
   if (/archive|wayback|linkrot|link.rot|preserv/i.test(lower)) suggestions.push('archive scan', 'archive status', 'archive wayback', 'archive linkrot', 'archive scheduler');
   if (/royalty|audit|bmi|payout|discrepanc/i.test(lower)) suggestions.push('royalty status', 'royalty run', 'royalty discrepancies', 'royalty platforms', 'royalty scheduler');
+  if (/community|engagement|campaign|listener|donation/i.test(lower)) suggestions.push('community status', 'community campaigns', 'community channels', 'community score');
 
   return [...new Set(suggestions)].slice(0, 6);
 }

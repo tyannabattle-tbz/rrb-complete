@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Link } from "wouter";
 import {
   ArrowLeft, DollarSign, AlertTriangle, CheckCircle, Clock, Play, Square,
-  RefreshCw, BarChart3, Music, Shield, FileText, TrendingUp, XCircle,
+  RefreshCw, BarChart3, Music, Shield, FileText, TrendingUp, XCircle, Globe, Search,
 } from "lucide-react";
 
 export default function RoyaltyAuditDashboard() {
@@ -19,6 +19,8 @@ export default function RoyaltyAuditDashboard() {
   const { data: discrepancies, refetch: refetchDisc } = trpc.royaltyAudit.getDiscrepancies.useQuery({});
   const { data: reports } = trpc.royaltyAudit.getAuditReports.useQuery();
   const { data: scheduler } = trpc.royaltyAudit.getSchedulerStatus.useQuery(undefined, { refetchInterval: 10000 });
+  const { data: mbCrossRefs, refetch: refetchMB } = trpc.royaltyAudit.getMusicBrainzCrossRefs.useQuery();
+  const { data: mbResults } = trpc.royaltyAudit.getMusicBrainzResults.useQuery();
 
   const runAuditMut = trpc.royaltyAudit.runAudit.useMutation({
     onSuccess: () => {
@@ -34,6 +36,14 @@ export default function RoyaltyAuditDashboard() {
 
   const stopSchedulerMut = trpc.royaltyAudit.stopScheduler.useMutation({
     onSuccess: () => toast.info("Scheduler Stopped"),
+  });
+
+  const crossRefMBMut = trpc.royaltyAudit.crossReferenceMusicBrainz.useMutation({
+    onSuccess: () => {
+      toast.success("MusicBrainz cross-reference complete");
+      refetchMB();
+    },
+    onError: () => toast.error("MusicBrainz cross-reference failed"),
   });
 
   const acknowledgeMut = trpc.royaltyAudit.acknowledgeDiscrepancy.useMutation({
@@ -150,6 +160,7 @@ export default function RoyaltyAuditDashboard() {
           <TabsTrigger value="discrepancies">Discrepancies ({discrepancies?.length || 0})</TabsTrigger>
           <TabsTrigger value="reports">Reports ({reports?.length || 0})</TabsTrigger>
           <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
+          <TabsTrigger value="musicbrainz">MusicBrainz</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -325,6 +336,118 @@ export default function RoyaltyAuditDashboard() {
               <p className="text-xs text-zinc-600 mt-1">Run an audit to generate the first report</p>
             </div>
           )}
+        </TabsContent>
+
+        {/* MusicBrainz Tab */}
+        <TabsContent value="musicbrainz" className="space-y-4">
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Globe className="w-5 h-5 text-purple-400" /> MusicBrainz Cross-Reference
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-zinc-400">
+                Cross-reference all monitored royalty sources against the MusicBrainz open database to verify
+                song registrations, collaborator credits, ISRCs, and publisher information.
+              </p>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="p-3 bg-zinc-800/50 rounded text-center">
+                  <div className="text-xs text-zinc-500 mb-1">Songs Checked</div>
+                  <div className="text-lg font-bold text-purple-400">{mbCrossRefs?.length || 0}</div>
+                </div>
+                <div className="p-3 bg-zinc-800/50 rounded text-center">
+                  <div className="text-xs text-zinc-500 mb-1">Verified</div>
+                  <div className="text-lg font-bold text-green-400">
+                    {mbCrossRefs?.filter((r: any) => r.creditsMatch === 'verified').length || 0}
+                  </div>
+                </div>
+                <div className="p-3 bg-zinc-800/50 rounded text-center">
+                  <div className="text-xs text-zinc-500 mb-1">Partial</div>
+                  <div className="text-lg font-bold text-amber-400">
+                    {mbCrossRefs?.filter((r: any) => r.creditsMatch === 'partial').length || 0}
+                  </div>
+                </div>
+                <div className="p-3 bg-zinc-800/50 rounded text-center">
+                  <div className="text-xs text-zinc-500 mb-1">Issues</div>
+                  <div className="text-lg font-bold text-red-400">
+                    {mbCrossRefs?.filter((r: any) => ['mismatch', 'missing', 'not_found'].includes(r.creditsMatch)).length || 0}
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => crossRefMBMut.mutate()}
+                disabled={crossRefMBMut.isPending}
+                className="gap-2 bg-purple-600 hover:bg-purple-700"
+              >
+                <Search className="w-4 h-4" />
+                {crossRefMBMut.isPending ? 'Scanning MusicBrainz...' : 'Run Cross-Reference Scan'}
+              </Button>
+
+              {/* Cross-reference results */}
+              {mbCrossRefs && mbCrossRefs.length > 0 ? (
+                <div className="space-y-2">
+                  {mbCrossRefs.map((ref: any, i: number) => (
+                    <div key={i} className="p-3 bg-zinc-800/50 rounded border border-zinc-700">
+                      <div className="flex items-center justify-between">
+                        <div className="font-semibold text-sm flex items-center gap-2">
+                          <Music className="w-4 h-4 text-purple-400" />
+                          {ref.songTitle}
+                          <span className="text-zinc-500 text-xs">by {ref.artist}</span>
+                        </div>
+                        <Badge variant="outline" className={`text-xs ${
+                          ref.creditsMatch === 'verified' ? 'border-green-500/30 text-green-400' :
+                          ref.creditsMatch === 'partial' ? 'border-amber-500/30 text-amber-400' :
+                          'border-red-500/30 text-red-400'
+                        }`}>
+                          {ref.creditsMatch.toUpperCase()}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-zinc-400 mt-1">{ref.details}</div>
+                      {ref.mbRecordingId && (
+                        <a
+                          href={`https://musicbrainz.org/recording/${ref.mbRecordingId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-purple-400 hover:text-purple-300 mt-1 inline-flex items-center gap-1"
+                        >
+                          <Globe className="w-3 h-3" /> View on MusicBrainz
+                        </a>
+                      )}
+                      <div className="text-[10px] text-zinc-600 mt-1">
+                        Checked: {new Date(ref.checkedAt).toLocaleString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-zinc-500">
+                  <Globe className="w-12 h-12 mx-auto text-zinc-700 mb-3" />
+                  <p>No MusicBrainz cross-references yet</p>
+                  <p className="text-xs text-zinc-600 mt-1">Run a cross-reference scan to verify song registrations</p>
+                </div>
+              )}
+
+              {/* Recent MusicBrainz lookup results */}
+              {mbResults && mbResults.length > 0 && (
+                <Card className="bg-zinc-800/30 border-zinc-700">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-zinc-400">Recent MusicBrainz Lookups</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-1">
+                    {mbResults.slice(0, 10).map((r: any, i: number) => (
+                      <div key={i} className="flex items-center justify-between text-xs p-1">
+                        <span className="text-zinc-300">{r.title} — {r.artist}</span>
+                        <span className="text-zinc-500">Score: {r.score} | MBID: {r.mbid?.slice(0, 8)}...</span>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Scheduler Tab */}

@@ -4,7 +4,7 @@
  * audit execution, and scheduler control.
  */
 
-import { router, protectedProcedure } from '../_core/trpc';
+import { router, protectedProcedure, publicProcedure } from '../_core/trpc';
 import { z } from 'zod';
 import {
   getSources,
@@ -24,12 +24,16 @@ import {
   stopAuditScheduler,
   updateAuditSchedulerInterval,
   getAuditSchedulerStatus,
+  searchMusicBrainz,
+  crossReferenceMusicBrainz,
+  getMusicBrainzResults,
+  getMusicBrainzCrossRefs,
 } from '../services/royalty-audit-policy';
 
 export const royaltyAuditRouter = router({
   // ─── Sources ─────────────────────────────────────────────────────────────
 
-  getSources: protectedProcedure
+  getSources: publicProcedure
     .input(z.object({
       platform: z.string().optional(),
       type: z.string().optional(),
@@ -37,7 +41,7 @@ export const royaltyAuditRouter = router({
     }).optional())
     .query(({ input }) => getSources(input)),
 
-  getSourceById: protectedProcedure
+  getSourceById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input }) => getSourceById(input.id)),
 
@@ -79,7 +83,7 @@ export const royaltyAuditRouter = router({
 
   // ─── Discrepancies ───────────────────────────────────────────────────────
 
-  getDiscrepancies: protectedProcedure
+  getDiscrepancies: publicProcedure
     .input(z.object({
       severity: z.string().optional(),
       status: z.string().optional(),
@@ -108,15 +112,15 @@ export const royaltyAuditRouter = router({
   runAudit: protectedProcedure
     .mutation(() => runAudit()),
 
-  getAuditReports: protectedProcedure
+  getAuditReports: publicProcedure
     .query(() => getAuditReports()),
 
-  getAuditSummary: protectedProcedure
+  getAuditSummary: publicProcedure
     .query(() => getAuditSummary()),
 
   // ─── Scheduler ────────────────────────────────────────────────────────────
 
-  getSchedulerStatus: protectedProcedure
+  getSchedulerStatus: publicProcedure
     .query(() => getAuditSchedulerStatus()),
 
   startScheduler: protectedProcedure
@@ -138,4 +142,23 @@ export const royaltyAuditRouter = router({
       updateAuditSchedulerInterval(input.intervalMs);
       return getAuditSchedulerStatus();
     }),
+
+  // ─── MusicBrainz Integration ─────────────────────────────────────────────
+
+  searchMusicBrainz: publicProcedure
+    .input(z.object({
+      title: z.string(),
+      artist: z.string(),
+      type: z.enum(['recording', 'work']).optional(),
+    }))
+    .query(async ({ input }) => searchMusicBrainz(input.title, input.artist, input.type)),
+
+  crossReferenceMusicBrainz: protectedProcedure
+    .mutation(async () => crossReferenceMusicBrainz()),
+
+  getMusicBrainzResults: publicProcedure
+    .query(() => getMusicBrainzResults()),
+
+  getMusicBrainzCrossRefs: publicProcedure
+    .query(() => getMusicBrainzCrossRefs()),
 });

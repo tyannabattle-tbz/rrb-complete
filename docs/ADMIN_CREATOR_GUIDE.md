@@ -44,9 +44,9 @@ Once logged in as an admin, the **Admin** link appears in the top navigation bar
 
 ## 3. QUMUS Autonomous System
 
-### 3.1 The 12 Policies
+### 3.1 The 13 Policies
 
-QUMUS operates under 12 autonomous decision policies. Each policy has a configurable autonomy level that determines what percentage of decisions are made automatically versus escalated for human review.
+QUMUS operates under 13 autonomous decision policies. Each policy has a configurable autonomy level that determines what percentage of decisions are made automatically versus escalated for human review.
 
 | # | Policy | Autonomy | Admin Path |
 |---|--------|----------|------------|
@@ -62,6 +62,7 @@ QUMUS operates under 12 autonomous decision policies. Each policy has a configur
 | 10 | Performance Monitoring | 92% | `/rrb/qumus/performance-monitoring` |
 | 11 | Content Archival | 90% | `/rrb/qumus/content-archival` |
 | 12 | Royalty Audit | 88% | `/rrb/qumus/royalty-audit` |
+| 13 | Community Engagement | 85% | `/rrb/qumus/community-engagement` |
 
 ### 3.2 Decision Flow
 
@@ -133,6 +134,18 @@ royalty run                — Run full royalty audit
 royalty discrepancies      — View open discrepancies
 royalty platforms          — List monitored platforms
 royalty scheduler          — Audit scheduler status
+royalty musicbrainz        — View MusicBrainz cross-references
+royalty mb-scan            — Run MusicBrainz scan
+```
+
+**Community Engagement (Policy #13):**
+```
+community status           — Community engagement summary
+community channels         — Channel metrics overview
+community campaigns        — Active campaigns list
+community score            — Overall engagement score
+community report           — Generate engagement report
+community members          — List community members by tier
 ```
 
 **HybridCast Commands:**

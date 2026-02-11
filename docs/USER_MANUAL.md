@@ -107,9 +107,9 @@ QUMUS is the central autonomous brain that controls all platform systems. It ope
 - Real-time system health monitoring
 - Autonomous error detection and recovery
 
-### 4.2 The 12 QUMUS Policies
+### 4.2 The 13 QUMUS Policies
 
-QUMUS operates under 12 autonomous decision policies:
+QUMUS operates under 13 autonomous decision policies:
 
 | # | Policy | Autonomy | Purpose |
 |---|--------|----------|---------|
@@ -123,8 +123,17 @@ QUMUS operates under 12 autonomous decision policies:
 | 8 | Compliance Reporting | 75% | Legal and regulatory compliance |
 | 9 | Code Maintenance | 90% | Automated code health scanning |
 | 10 | Performance Monitoring | 92% | Page load, API latency, memory |
-| 11 | Content Archival | 90% | Link monitoring, Wayback preservation |
-| 12 | Royalty Audit | 88% | BMI cross-reference, payout discrepancy detection |
+| 11 | Content Archival | 90% | Link monitoring, Wayback Machine preservation |
+| 12 | Royalty Audit | 88% | BMI cross-reference, payout discrepancy detection, MusicBrainz integration |
+| 13 | Community Engagement | 85% | Listener tracking, donation patterns, campaign optimization |
+
+### 4.3 Royalty Audit & MusicBrainz
+
+The Royalty Audit Policy (Policy #12) monitors all revenue streams across 6 platforms (BMI, Spotify, Apple Music, YouTube, SoundExchange, and more). It includes **MusicBrainz integration** that cross-references song registrations and collaborator credits against the open music database. Access the Royalty Audit dashboard at **Admin > QUMUS > Royalty Audit** to view sources, discrepancies, audit reports, and MusicBrainz cross-references. For a complete guide on setting up revenue streams from your airwaves, see the **Royalty Collection Guide** in the docs folder.
+
+### 4.4 Community Engagement
+
+The Community Engagement Policy (Policy #13) tracks listener interactions across all 9 channels (radio, podcast, forum, donation, Solbones, meditation, social, HybridCast, merchandise). It monitors engagement scores, donation patterns, campaign effectiveness, and member tiers (new, active, engaged, champion, ambassador). Access the dashboard at **Admin > QUMUS > Community Engagement**.
 
 ---
 

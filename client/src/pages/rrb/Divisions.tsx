@@ -187,6 +187,7 @@ export default function Divisions() {
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-foreground">Our Family of Companies</h2>
             <p className="text-foreground/60 mt-2">The subsidiaries and divisions that make up the Canryn Production ecosystem</p>
+            <p className="text-xs text-amber-500/50 mt-1 italic">Company logos designed by Seabrun Candy Hunter</p>
           </div>
 
           {/* Main Logo */}
@@ -199,6 +200,7 @@ export default function Divisions() {
               />
               <h3 className="text-lg font-bold text-amber-500">Canryn Production Inc.</h3>
               <p className="text-sm text-foreground/60">Parent Company — Est. by LaShanna Hunter</p>
+              <p className="text-xs text-amber-500/60 mt-1 italic">Logo designed by Seabrun Candy Hunter</p>
             </div>
           </div>
 

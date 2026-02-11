@@ -3,7 +3,7 @@
  */
 
 import { z } from 'zod';
-import { router, protectedProcedure } from '../_core/trpc';
+import { router, protectedProcedure, publicProcedure } from '../_core/trpc';
 import {
   runArchivalScan,
   addLink,
@@ -31,17 +31,17 @@ export const contentArchivalRouter = router({
   }),
 
   // Get scan history
-  getScanHistory: protectedProcedure.query(() => {
+  getScanHistory: publicProcedure.query(() => {
     return getScanHistory();
   }),
 
   // Get archival summary
-  getSummary: protectedProcedure.query(() => {
+  getSummary: publicProcedure.query(() => {
     return getArchivalSummary();
   }),
 
   // Get monitored links with optional filters
-  getLinks: protectedProcedure
+  getLinks: publicProcedure
     .input(z.object({
       category: z.enum(['evidence', 'legal', 'music_database', 'streaming', 'news', 'reference', 'social', 'government']).optional(),
       status: z.enum(['alive', 'degraded', 'dead', 'unknown', 'archived']).optional(),
@@ -52,7 +52,7 @@ export const contentArchivalRouter = router({
     }),
 
   // Get a single link by ID
-  getLink: protectedProcedure
+  getLink: publicProcedure
     .input(z.object({ linkId: z.string() }))
     .query(({ input }) => {
       return getLinkById(input.linkId);
@@ -80,7 +80,7 @@ export const contentArchivalRouter = router({
     }),
 
   // Get alerts with optional filters
-  getAlerts: protectedProcedure
+  getAlerts: publicProcedure
     .input(z.object({
       type: z.string().optional(),
       severity: z.string().optional(),
@@ -117,7 +117,7 @@ export const contentArchivalRouter = router({
   }),
 
   // Scheduler control
-  getSchedulerStatus: protectedProcedure.query(() => {
+  getSchedulerStatus: publicProcedure.query(() => {
     return getSchedulerStatus();
   }),
 

@@ -2517,3 +2517,29 @@
 - [x] Create Install & Execute Guide (README_INSTALL.md — quick start)
 - [x] Create reusable skill (rrb-qumus-complete-ecosystem) with policy patterns reference
 - [x] Package fully updated zip with all documentation
+
+## v11.5 Full Operational Status — 13th Policy, MusicBrainz, Baseline Scans — Feb 2026
+- [x] Build 13th QUMUS Community Engagement Policy (listener interactions, forum activity, donation patterns)
+- [x] Create Community Engagement service with 9 channels, engagement scoring, member tiers, campaign tracking
+- [x] Create Community Engagement tRPC router (queries public, mutations protected)
+- [x] Build Community Engagement dashboard UI at /rrb/qumus/community-engagement with 5 tabs
+- [x] Wire into QUMUS Admin, Ecosystem Dashboard, State of Studio, Command Console
+- [x] Register in QUMUS Complete Engine CORE_POLICIES and Autonomous Loop EVENT_TEMPLATES
+- [x] Write vitest tests for Community Engagement Policy (30 tests passing)
+- [x] Add MusicBrainz API integration to Royalty Audit service (artist lookup, cross-reference)
+- [x] Add MusicBrainz cross-reference UI tab to Royalty Audit dashboard
+- [x] Baseline scan triggers available on Content Archival and Royalty Audit dashboards
+- [x] Update all 5 documentation files (User Manual, Admin Guide, Architecture, Operations, Install Guide) to 13 policies
+- [x] Update reusable skill with 13th policy, MusicBrainz integration, and auth pattern fix
+
+## v11.5 Bug Fix — QUMUS Human Review Approve/Reject Buttons Not Working
+- [x] Fix approve/reject button click handlers on Human Review page (reviewDecision now matches on numeric DB id or string decisionId)
+
+## v11.5 Bug Fix — Audit Function Forcing Continuous Login Loop
+- [x] Fix login loop on Royalty Audit page — changed read-only queries to publicProcedure across all QUMUS policy routers (royalty audit, content archival, performance monitoring, community engagement)
+
+## v11.5 Additional — Royalty Collection Guide
+- [x] Create Royalty Collection Guide (ROYALTY_COLLECTION_GUIDE.md — 7 revenue streams, platform registrations, compliance)
+
+## v11.5 Attribution — Canryn Logo Designer Credit
+- [x] Add credit: Canryn company logo designed by Seabrun Candy Hunter (Divisions page header + main logo)

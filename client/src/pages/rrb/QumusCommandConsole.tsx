@@ -128,6 +128,12 @@ export default function QumusCommandConsole() {
           `  royalty discrepancies — View open discrepancies\n` +
           `  royalty platforms — List monitored platforms\n` +
           `  royalty scheduler — Audit scheduler status\n` +
+          `  royalty musicbrainz — MusicBrainz cross-references\n` +
+          `  royalty mb-scan  — Run MusicBrainz scan\n` +
+          `  community status — Community engagement summary\n` +
+          `  community campaigns — View active campaigns\n` +
+          `  community channels — List monitored channels\n` +
+          `  community score  — View engagement score\n` +
           `  clear           — Clear console output\n` +
           `  help            — Show this message`,
         timestamp: Date.now(),
