@@ -186,6 +186,7 @@ export function AppHeaderEnhanced() {
         { label: 'Video Production', path: '/video-production' },
         { label: 'Audio Editor', path: '/audio-editor' },
         { label: 'Media Hub', path: '/rrb/media-hub' },
+        { label: 'Live Podcast Production', path: '/live-podcast-production' },
       ],
     },
     {

@@ -119,6 +119,7 @@ export function UnifiedMobileSidebar() {
         { label: 'Video Production', href: '/video-production', icon: Video },
         { label: 'Audio Editor', href: '/audio-editor', icon: Headphones },
         { label: 'Media Hub', href: '/rrb/media-hub', icon: Film },
+        { label: 'Live Podcast Production', href: '/live-podcast-production', icon: Radio },
       ],
     },
     {

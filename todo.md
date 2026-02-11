@@ -2265,3 +2265,16 @@
 - [x] Add episode metadata editor — title, description, tags, guest info in createSession
 - [x] Add export/save to S3 — exportManifest uploads JSON manifest with all markers/notes to S3
 - [x] Wire into QUMUS — notifyOwner on recording stop, production stats in manifest
+
+## Final Apply All & Finalize - Feb 2026
+- [x] Add navigation link to Live Podcast Production from Studio menu (desktop + mobile)
+- [x] Add Stripe test card guidance to DonationCheckout page (already present: 4242 4242 4242 4242)
+- [x] Ensure commercial audio upload UI has clear instructions (Upload Audio button in CommercialManager)
+- [x] Final platform polish — 59 tests passing, zero TypeScript errors, all media flows verified
+- [x] Finalize QUMUS as autonomous entity — 90% autonomy, 10 bots, 8 policies, owner override
+- [x] Create comprehensive skill (SKILL.md) — rrb-qumus-ecosystem-complete with references
+- [x] Generate updated zip — rrb-qumus-ecosystem-v3.0.0.zip (3.0MB)
+- [x] Provide execute/install commands — INSTALL.md with Quick Start, Mac Mini setup, cross-device access
+
+## Naming Fix - Feb 2026
+- [ ] Replace all instances of "Qunity" with "QumUnity" across the entire codebase
