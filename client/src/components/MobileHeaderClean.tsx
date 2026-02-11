@@ -31,7 +31,7 @@ export function MobileHeaderClean() {
   return (
     <header className="md:hidden sticky top-0 z-50 w-full bg-background border-b border-border">
       <div className="flex h-16 items-center justify-between px-4">
-        <div className="text-2xl font-bold text-primary">Qumus</div>
+        <div className="text-2xl font-bold text-primary">RRB</div>
         
         <Button
           variant="ghost"

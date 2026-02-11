@@ -62,7 +62,7 @@ const newsItems = {
       date: '2025-10-22',
       title: 'HybridCast Technology Aids in Emergency Broadcast Drill',
       description: 'The HybridCast system was successfully utilized in a statewide emergency broadcast drill, proving its reliability and effectiveness in critical situations.',
-      link: '/rrb/hybridcast',
+      link: '/hybridcast',
       icon: Megaphone
     },
   ],

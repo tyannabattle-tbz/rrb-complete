@@ -2070,3 +2070,65 @@
 - [x] Fix radio directory getStationProfile null handling
 - [x] Fix grant discovery search procedure path
 - [x] All 69 tests passing across 5 test files
+
+## v10.9 Bug Fixes & Polish
+### HybridCast Navigation Fix
+- [ ] Fix HybridCast navigation — users can't navigate to it
+- [ ] Ensure full HybridCast system is accessible from the main site
+- [ ] Review hybridcast.sbs for integration reference
+
+### Share Link / Branding Fix
+- [ ] Fix share link showing "QUMUS" instead of RRB branding
+- [ ] Ensure logo is RRB (not QUMUS) in social share metadata
+- [ ] Update Open Graph and Twitter Card meta tags
+
+### Commercials in All Audio Areas
+- [ ] Wire commercials into radio stream playback
+- [ ] Wire commercials into podcast playback
+- [ ] Ensure commercial rotation works across all audio channels
+
+### Mobile Responsiveness
+- [ ] Audit and fix mobile layout across all pages
+- [ ] Ensure navigation works on mobile (dropdowns, menus)
+- [ ] Test all business module pages on mobile viewport
+
+### QUMUS Owner Recognition
+- [ ] Update QUMUS to greet owner as "Ty Bat Zan"
+- [ ] QUMUS should recognize and acknowledge the owner identity
+- [ ] Ensure personalized greeting appears in QUMUS chat
+
+## Latest Fixes - Feb 2026
+
+### HybridCast Navigation Fix
+- [x] Fix HybridCast link in AppHeaderEnhanced to point to /hybridcast (full system)
+- [x] Fix HybridCast link in SimplifiedMobileNav
+- [x] Fix HybridCast link in UnifiedMobileSidebar
+- [x] Fix HybridCast link in HybridCastStatusWidget
+- [x] Fix HybridCast link in HybridCastNotificationCenter
+- [x] Fix HybridCast link in RRB Home page
+- [x] Fix HybridCast link in RRB News page
+
+### Share Link Branding Fix
+- [x] Generate new RRB-branded OG share image (replacing QUMUS image)
+- [x] Update OG meta tags in index.html with RRB branding
+- [x] Update Twitter card meta tags with RRB branding
+- [x] OG title: "Rockin Rockin Boogie — Seabrun Candy Hunter Legacy"
+
+### Mobile Branding Fix
+- [x] Change MobileHeaderClean from "Qumus" to "RRB"
+- [x] Change AppHeader from "Qumus" to "RRB"
+- [x] Change MobileHeader from "Qumus" to "RRB"
+- [x] Change UnifiedMobileSidebar section title from "Qumus AI" to "QUMUS AI"
+
+### Commercial Distribution to Podcasts
+- [x] Add PodcastCommercialBreak component to Podcasts page
+- [x] Commercial sponsor messages rotate in podcast player area
+- [x] Fallback Canryn Production promo when no commercials loaded
+
+### QUMUS Personalization for Ty Bat Zan
+- [x] Add owner recognition to QUMUS identity system prompt
+- [x] Inject Ty Bat Zan context into QUMUS chat router
+- [x] QUMUS now greets owner as "Ty Bat Zan" in all conversations
+
+### Test Fixes
+- [x] Fix qumusChatIdentity.test.ts to match actual integrated services names

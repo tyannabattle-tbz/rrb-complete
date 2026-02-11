@@ -81,7 +81,7 @@ export default function Navigation() {
     { label: 'Home', href: '/' },
     { label: 'Radio Station', href: '/rrb/radio-station' },
     { label: 'Podcast & Video', href: '/rrb/podcast-and-video' },
-    { label: 'HybridCast', href: '/rrb/hybridcast' },
+    { label: 'HybridCast', href: '/hybridcast' },
     { label: 'Audiobooks', href: '/rrb/audiobooks' },
     { label: 'Proof Vault', href: '/rrb/proof-vault' },
     { label: 'Obituary', href: '/rrb/obituary' },
@@ -139,7 +139,7 @@ export default function Navigation() {
   const isActive = (href) => location === href;
 
   return (
-    <nav className="sticky top-0 z-50 bg-background border-b border-border shadow-sm hidden md:block">
+    <nav className="sticky top-0 z-50 bg-background border-b border-border shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/">
@@ -219,9 +219,9 @@ export default function Navigation() {
           </Link>
 
           {/* HybridCast */}
-          <Link href="/rrb/hybridcast">
+          <Link href="/hybridcast">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-              isActive('/rrb/hybridcast')
+              isActive('/hybridcast')
                 ? 'bg-accent text-accent-foreground'
                 : 'text-foreground hover:bg-accent/10'
             }`}>
@@ -348,13 +348,31 @@ export default function Navigation() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="hidden lg:block p-2 hover:bg-accent/10 rounded transition-colors"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile Actions */}
+        <div className="lg:hidden flex items-center gap-2">
+          <button
+            onClick={() => navigate('/emergency')}
+            className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full transition-colors flex items-center justify-center w-8 h-8"
+            title="Emergency SOS"
+          >
+            <AlertTriangle size={16} />
+          </button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 px-2 text-xs"
+            onClick={() => setIsDonateOpen(true)}
+          >
+            <Heart size={14} className="mr-1" />
+            Donate
+          </Button>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 hover:bg-accent/10 rounded transition-colors"
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
 
         {/* Right Actions */}
         <div className="hidden lg:flex items-center gap-2">
@@ -397,7 +415,7 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="hidden lg:block bg-background border-t border-border max-h-[80vh] overflow-y-auto">
+        <div className="lg:hidden bg-background border-t border-border max-h-[80vh] overflow-y-auto">
           <div className="container mx-auto px-4 py-4">
             {/* Legacy Foundation Section */}
             <div className="mb-6">

@@ -34,9 +34,8 @@ describe('QUMUS Chat Identity System', () => {
     const identity = QumusIdentitySystem.getIdentity();
     
     expect(identity.integratedServices.length).toBeGreaterThanOrEqual(11);
-    expect(identity.integratedServices).toContain('Stripe (Payment Processing)');
-    expect(identity.integratedServices).toContain('Slack (Notifications)');
-    expect(identity.integratedServices).toContain('Email (Delivery)');
+    expect(identity.integratedServices).toContain('Stripe (Donation Processing)');
+    expect(identity.integratedServices).toContain('LLM (AI Brain)');
     expect(identity.integratedServices).toContain('Analytics (Tracking)');
     expect(identity.integratedServices).toContain('Webhooks (Integration)');
     expect(identity.integratedServices).toContain('Authentication (User Management)');
@@ -44,7 +43,8 @@ describe('QUMUS Chat Identity System', () => {
     expect(identity.integratedServices).toContain('WebSocket (Real-time Updates)');
     expect(identity.integratedServices).toContain('Compliance (Logging)');
     expect(identity.integratedServices).toContain('Notifications (System)');
-    expect(identity.integratedServices).toContain('LLM (AI Integration)');
+    expect(identity.integratedServices).toContain('Commercial Engine (Radio Ads)');
+    expect(identity.integratedServices).toContain('Grant Discovery Engine (50+ Sources)');
   });
 
   it('should return full identification string', () => {

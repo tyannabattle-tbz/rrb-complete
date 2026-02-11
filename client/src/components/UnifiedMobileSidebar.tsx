@@ -56,7 +56,7 @@ export function UnifiedMobileSidebar() {
 
   const menuSections: MenuSection[] = [
     {
-      title: 'Qumus AI',
+      title: 'QUMUS AI',
       icon: Bot,
       defaultOpen: true,
       items: [
@@ -95,7 +95,7 @@ export function UnifiedMobileSidebar() {
       title: 'Legacy Restored',
       icon: BookOpen,
       items: [
-        { label: 'HybridCast', href: '/rrb/hybridcast', icon: Tv },
+        { label: 'HybridCast', href: '/hybridcast', icon: Tv },
         { label: 'Audiobooks', href: '/rrb/audiobooks', icon: Headphones },
         { label: 'Proof Vault', href: '/rrb/proof-vault', icon: Shield },
         { label: 'Books & Miracles', href: '/rrb/books-and-miracles', icon: BookOpen },

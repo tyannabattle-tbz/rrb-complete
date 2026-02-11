@@ -87,7 +87,7 @@ const PLATFORMS = [
     title: 'HybridCast',
     description: 'Emergency broadcast system with offline mesh networking',
     icon: Signal,
-    href: '/rrb/hybridcast',
+    href: '/hybridcast',
     color: 'from-cyan-500/20 to-cyan-600/20',
     badge: '📡 BROADCAST'
   },

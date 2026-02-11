@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar } from 'lucide-react';
+import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar, Radio } from 'lucide-react';
 import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
 
 interface PodcastEpisode {
   id: string;
@@ -30,6 +31,83 @@ interface PodcastSeries {
   rssUrl?: string;
   thumbnailUrl?: string;
   subscriberCount: number;
+}
+
+// Commercial break component for podcast pages
+function PodcastCommercialBreak() {
+  const { data: commercials } = trpc.commercials.getCommercials.useQuery(undefined, {
+    retry: false,
+  });
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Get active commercials
+  const activeCommercials = commercials?.filter(
+    (c: any) => c.status === 'active' || c.status === 'approved'
+  ) || [];
+
+  // Rotate every 60 seconds
+  useEffect(() => {
+    if (activeCommercials.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIdx(prev => (prev + 1) % activeCommercials.length);
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [activeCommercials.length]);
+
+  const current = activeCommercials[currentIdx];
+
+  if (!current) {
+    // Show a static promo if no commercials loaded
+    return (
+      <Card className="p-4 bg-gradient-to-r from-amber-500/10 to-purple-500/10 border-amber-500/30">
+        <div className="flex items-center gap-3">
+          <Radio className="w-5 h-5 text-amber-500 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">Brought to you by Canryn Production</p>
+            <p className="text-xs text-foreground/60">Supporting the legacy of Seabrun Candy Hunter</p>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="p-4 bg-gradient-to-r from-amber-500/10 to-purple-500/10 border-amber-500/30">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <Radio className="w-4 h-4 text-amber-500" />
+          <span className="text-xs font-semibold text-amber-500 uppercase tracking-wide">Sponsor Message</span>
+        </div>
+        {activeCommercials.length > 1 && (
+          <span className="text-xs text-foreground/40">{currentIdx + 1}/{activeCommercials.length}</span>
+        )}
+      </div>
+      <p className="text-sm font-semibold text-foreground mb-1">{current.title}</p>
+      <p className={`text-xs text-foreground/70 ${isExpanded ? '' : 'line-clamp-2'}`}>
+        {current.script}
+      </p>
+      {current.script && current.script.length > 120 && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-xs text-amber-500 hover:text-amber-400 mt-1"
+        >
+          {isExpanded ? 'Show less' : 'Read more'}
+        </button>
+      )}
+      <div className="flex items-center justify-between mt-2">
+        <span className="text-xs text-foreground/40">{current.brand?.replace('_', ' ')}</span>
+        {activeCommercials.length > 1 && (
+          <button
+            onClick={() => setCurrentIdx(prev => (prev + 1) % activeCommercials.length)}
+            className="text-xs text-amber-500 hover:text-amber-400"
+          >
+            Next sponsor →
+          </button>
+        )}
+      </div>
+    </Card>
+  );
 }
 
 export default function Podcasts() {
@@ -339,6 +417,9 @@ export default function Podcasts() {
                   </div>
                 </Card>
 
+                {/* Podcast Commercial Break */}
+                <PodcastCommercialBreak />
+
                 {/* Chapters */}
                 {selectedEpisode.chapters && selectedEpisode.chapters.length > 0 && (
                   <Card className="p-6">
@@ -429,6 +510,13 @@ export default function Podcasts() {
           </div>
         </div>
       </div>
+
+      {/* Podcast Commercial Break - also in sidebar for mobile */}
+      {!selectedEpisode && (
+        <div className="container mx-auto px-4 max-w-7xl mb-8">
+          <PodcastCommercialBreak />
+        </div>
+      )}
 
       {/* Hidden Audio Element */}
       <audio

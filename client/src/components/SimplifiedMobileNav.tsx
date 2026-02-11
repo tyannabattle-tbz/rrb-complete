@@ -81,7 +81,7 @@ export function SimplifiedMobileNav() {
       items: [
         { id: 'nav-canryn', label: 'Canryn Production', icon: Building2, path: '/rrb/canryn-production' },
         { id: 'nav-divisions', label: 'Divisions', icon: Building2, path: '/rrb/divisions' },
-        { id: 'nav-hybridcast', label: 'HybridCast', icon: Radio, path: '/rrb/hybridcast' },
+        { id: 'nav-hybridcast', label: 'HybridCast', icon: Radio, path: '/hybridcast' },
         { id: 'nav-merch', label: 'Merchandise', icon: Building2, path: '/rrb/merchandise-shop' },
       ],
     },

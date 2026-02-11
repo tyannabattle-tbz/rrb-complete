@@ -46,7 +46,7 @@ export default function HybridCastNotificationCenter() {
       message: 'System-wide emergency broadcast protocol activated',
       timestamp: new Date(Date.now() - 5 * 60000),
       read: false,
-      actionUrl: '/rrb/hybridcast',
+      actionUrl: '/hybridcast',
     },
     {
       id: '2',
@@ -56,7 +56,7 @@ export default function HybridCastNotificationCenter() {
       message: 'Critical infrastructure update broadcast from regional coordinator',
       timestamp: new Date(Date.now() - 15 * 60000),
       read: false,
-      actionUrl: '/rrb/hybridcast',
+      actionUrl: '/hybridcast',
     },
     {
       id: '3',

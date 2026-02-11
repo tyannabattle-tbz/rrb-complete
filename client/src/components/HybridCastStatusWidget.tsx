@@ -150,7 +150,7 @@ export function HybridCastStatusWidget() {
         {/* Actions */}
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => navigate('/rrb/hybridcast')}
+          onClick={() => navigate('/hybridcast')}
           className="cursor-pointer"
         >
           <div className="flex items-center gap-2">

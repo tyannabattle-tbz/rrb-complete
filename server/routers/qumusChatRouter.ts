@@ -152,10 +152,13 @@ export const qumusChatRouter = router({
         // Inject real-time ecosystem data into the context
         const ecosystemContext = await getEcosystemContext();
 
+        // Owner recognition context
+        const ownerContext = `\n\n--- OWNER CONTEXT ---\nThe person chatting with you right now is Ty Bat Zan (Tyanna Battle), the owner and visionary of Canryn Production. Always greet them warmly by name "Ty Bat Zan" in your first response. They are the creator of this entire ecosystem and the legacy keeper of Seabrun Candy Hunter. Show respect, familiarity, and proactive engagement. Address them as "Ty Bat Zan" — never as "user" or generic terms.`;
+
         const messages = [
           {
             role: 'system' as const,
-            content: systemPrompt + '\n\n--- REAL-TIME ECOSYSTEM DATA ---\n' + ecosystemContext,
+            content: systemPrompt + '\n\n--- REAL-TIME ECOSYSTEM DATA ---\n' + ecosystemContext + ownerContext,
           },
           ...input.messages.map(msg => ({
             role: msg.role as 'user' | 'assistant',
