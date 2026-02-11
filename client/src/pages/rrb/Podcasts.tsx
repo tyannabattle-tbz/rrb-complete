@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar, Radio } from 'lucide-react';
+import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar, Radio, MonitorPlay, Maximize2, Minimize2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 
@@ -20,6 +20,7 @@ interface PodcastEpisode {
   transcript?: string;
   chapters?: { time: number; title: string }[];
   downloadUrl?: string;
+  videoUrl?: string;
 }
 
 interface PodcastSeries {
@@ -119,6 +120,10 @@ export default function Podcasts() {
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [volume, setVolume] = useState(80);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [showVideo, setShowVideo] = useState(false);
+  const [isVideoFullscreen, setIsVideoFullscreen] = useState(false);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
 
   // Real audio URLs — Seabrun Candy Hunter legacy content
   useEffect(() => {
@@ -134,6 +139,7 @@ export default function Podcasts() {
           title: "Episode 1: The Beginning - Seabrun's Journey",
           description: "In this inaugural episode, we explore the early life of Seabrun Candy Hunter and how he became involved with Little Richard. From the streets of Georgia to the stages of the world, this is where the legacy began.",
           audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3',
+          videoUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/cfWvEqBGZbBnvEIe.mp4',
           duration: 330,
           publishedAt: new Date('2024-01-15'),
           author: "Rockin' Rockin' Boogie",
@@ -151,6 +157,7 @@ export default function Podcasts() {
           title: 'Episode 2: The Music - Recordings & Performances',
           description: "Deep dive into the recordings, performances, and musical contributions of Seabrun Candy Hunter. The songs that defined an era.",
           audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zByVVlWeoYCaITZI.mp3',
+          videoUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/cfWvEqBGZbBnvEIe.mp4',
           duration: 372,
           publishedAt: new Date('2024-01-22'),
           author: "Rockin' Rockin' Boogie",
@@ -329,6 +336,77 @@ export default function Podcasts() {
           <div className="lg:col-span-2 space-y-6">
             {selectedEpisode && (
               <>
+                {/* Video Viewing Screen */}
+                {selectedEpisode.videoUrl && (
+                  <Card className="overflow-hidden" ref={videoContainerRef}>
+                    {showVideo ? (
+                      <div className={`relative bg-black ${isVideoFullscreen ? 'fixed inset-0 z-50' : ''}`}>
+                        <video
+                          ref={videoRef}
+                          src={selectedEpisode.videoUrl}
+                          className="w-full aspect-video object-contain"
+                          controls
+                          playsInline
+                          poster=""
+                        />
+                        <div className="absolute top-3 right-3 flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="bg-black/60 border-white/20 text-white hover:bg-black/80 backdrop-blur-sm"
+                            onClick={() => {
+                              if (isVideoFullscreen) {
+                                document.exitFullscreen?.();
+                                setIsVideoFullscreen(false);
+                              } else {
+                                videoContainerRef.current?.requestFullscreen?.();
+                                setIsVideoFullscreen(true);
+                              }
+                            }}
+                          >
+                            {isVideoFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                          </Button>
+                        </div>
+                        <div className="p-4 bg-gradient-to-t from-black/80 to-transparent absolute bottom-0 left-0 right-0">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <MonitorPlay className="w-4 h-4 text-amber-500" />
+                              <span className="text-sm text-white font-medium">Video Podcast</span>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="bg-black/40 border-white/20 text-white hover:bg-black/60 text-xs"
+                              onClick={() => setShowVideo(false)}
+                            >
+                              Audio Only
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative bg-gradient-to-br from-zinc-900 to-zinc-800 aspect-video flex items-center justify-center cursor-pointer group"
+                        onClick={() => setShowVideo(true)}
+                      >
+                        <div className="text-center space-y-3">
+                          <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto group-hover:bg-amber-500/30 transition-colors">
+                            <MonitorPlay className="w-8 h-8 text-amber-500" />
+                          </div>
+                          <div>
+                            <p className="text-white font-semibold">Watch Video Version</p>
+                            <p className="text-white/60 text-sm">Tap to switch to video podcast</p>
+                          </div>
+                        </div>
+                        <div className="absolute top-3 left-3">
+                          <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+                            <MonitorPlay className="w-3 h-3 mr-1" /> Video Available
+                          </Badge>
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                )}
+
                 <Card className="p-6">
                   <div className="space-y-4">
                     <div>

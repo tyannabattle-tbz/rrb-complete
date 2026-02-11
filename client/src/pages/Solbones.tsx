@@ -1106,7 +1106,7 @@ export default function Solbones() {
           {/* Main Game Area */}
           <div className="lg:col-span-2 space-y-6">
             {/* Dice Area */}
-            <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-6 md:p-8">
+            <Card className="bg-[#1a0a30]/80 border-purple-500/30 p-4 sm:p-6 md:p-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
                   {currentPlayer.isAI ? <Bot className="h-5 w-5 text-cyan-400" /> : <Sparkles className="h-5 w-5 text-yellow-400" />}
@@ -1118,27 +1118,37 @@ export default function Solbones() {
               </div>
 
               {/* Dice Display */}
-              <div className="flex justify-center items-center gap-4 md:gap-8 mb-8 py-4">
+              <div className="flex justify-center items-center gap-3 sm:gap-4 md:gap-8 mb-6 py-4">
                 {dice.map((d, i) => (
-                  <DieFace key={i} value={d} isRolling={isRolling} size={90} freqHighlight={!isRolling} skin={diceSkin} customImages={customDiceImages} />
+                  <DieFace key={i} value={d} isRolling={isRolling} size={typeof window !== 'undefined' && window.innerWidth < 640 ? 70 : 90} freqHighlight={!isRolling} skin={diceSkin} customImages={customDiceImages} />
                 ))}
               </div>
 
-              {/* Score Display */}
-              {currentRoundScore && !isRolling && (
-                <div className={`text-center mb-6 p-4 rounded-lg border ${
-                  currentRoundScore.tallies > 0
-                    ? 'bg-yellow-500/10 border-yellow-500/30'
-                    : 'bg-purple-500/10 border-purple-500/30'
-                }`}>
-                  <div className="text-2xl font-bold text-white mb-1">+{currentRoundScore.points} points</div>
-                  <div className="text-lg text-purple-200 font-semibold">{currentRoundScore.label}</div>
-                  {currentRoundScore.bonus && <div className="text-purple-400 text-sm mt-1">{currentRoundScore.bonus}</div>}
-                  {currentRoundScore.tallies > 0 && (
-                    <div className="text-yellow-400 text-sm mt-1">+{currentRoundScore.tallies} tally earned!</div>
-                  )}
-                </div>
-              )}
+              {/* Score Display - fixed min-height to prevent layout jump on mobile */}
+              <div className="min-h-[100px] mb-6">
+                {currentRoundScore && !isRolling ? (
+                  <div className={`text-center p-4 rounded-lg border transition-all duration-200 ${
+                    currentRoundScore.tallies > 0
+                      ? 'bg-yellow-500/10 border-yellow-500/30'
+                      : 'bg-purple-500/10 border-purple-500/30'
+                  }`}>
+                    <div className="text-xl sm:text-2xl font-bold text-white mb-1">+{currentRoundScore.points} points</div>
+                    <div className="text-base sm:text-lg text-purple-200 font-semibold">{currentRoundScore.label}</div>
+                    {currentRoundScore.bonus && <div className="text-purple-400 text-xs sm:text-sm mt-1">{currentRoundScore.bonus}</div>}
+                    {currentRoundScore.tallies > 0 && (
+                      <div className="text-yellow-400 text-xs sm:text-sm mt-1">+{currentRoundScore.tallies} tally earned!</div>
+                    )}
+                  </div>
+                ) : isRolling ? (
+                  <div className="text-center p-4 rounded-lg border border-purple-500/20 bg-purple-500/5">
+                    <div className="text-xl font-bold text-purple-300 animate-pulse">Rolling...</div>
+                  </div>
+                ) : (
+                  <div className="text-center p-4 rounded-lg border border-purple-500/10 bg-transparent">
+                    <div className="text-sm text-purple-400/50">Roll the dice to score</div>
+                  </div>
+                )}
+              </div>
 
               {/* Game Over */}
               {gameState === 'finished' && winner && (
@@ -1162,55 +1172,58 @@ export default function Solbones() {
                 </div>
               )}
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap justify-center gap-3">
-                <Button
-                  onClick={rollDice}
-                  disabled={isRolling || gameState === 'finished' || !isMyTurn || aiThinking || (rollsThisRound >= maxRollsPerRound && !currentRoundScore)}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-8 text-lg gap-2"
-                  size="lg"
-                >
-                  {isRolling ? '\uD83C\uDFB2 Rolling...' : aiThinking ? '\uD83E\uDD16 AI Turn...' : gameState === 'idle' ? '\uD83C\uDFB2 Roll Dice' : '\uD83C\uDFB2 Re-Roll'}
-                </Button>
-
-                {currentRoundScore && !isRolling && gameState !== 'finished' && isMyTurn && (
+              {/* Action Buttons - fixed layout to prevent mobile screen jump */}
+              <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-2 sm:gap-3">
+                {/* Primary row: Roll + Keep always visible */}
+                <div className="flex gap-2 sm:gap-3 w-full sm:w-auto justify-center">
                   <Button
-                    onClick={keepScore}
-                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6"
+                    onClick={rollDice}
+                    disabled={isRolling || gameState === 'finished' || !isMyTurn || aiThinking || (rollsThisRound >= maxRollsPerRound && !currentRoundScore)}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-6 sm:px-8 text-base sm:text-lg gap-2 flex-1 sm:flex-none"
                     size="lg"
                   >
-                    Keep Score
+                    {isRolling ? '\uD83C\uDFB2 Rolling...' : aiThinking ? '\uD83E\uDD16 AI Turn...' : gameState === 'idle' ? '\uD83C\uDFB2 Roll Dice' : '\uD83C\uDFB2 Re-Roll'}
                   </Button>
-                )}
 
-                {currentPlayer.tallies > 0 && rollsThisRound >= 3 && gameState !== 'finished' && isMyTurn && (
+                  {currentRoundScore && !isRolling && gameState !== 'finished' && isMyTurn && (
+                    <Button
+                      onClick={keepScore}
+                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 sm:px-6 flex-1 sm:flex-none"
+                      size="lg"
+                    >
+                      Keep Score
+                    </Button>
+                  )}
+                </div>
+
+                {/* Secondary row: Tally + New Game + Setup */}
+                <div className="flex gap-2 sm:gap-3 w-full sm:w-auto justify-center">
+                  {currentPlayer.tallies > 0 && rollsThisRound >= 3 && gameState !== 'finished' && isMyTurn && (
+                    <Button
+                      onClick={useTally}
+                      variant="outline"
+                      className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10 text-sm"
+                    >
+                      Use Tally (+1 Roll)
+                    </Button>
+                  )}
+
                   <Button
-                    onClick={useTally}
+                    onClick={resetGame}
                     variant="outline"
-                    className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10"
-                    size="lg"
+                    className="border-purple-500/50 text-purple-300 hover:bg-purple-900/50 gap-1 text-sm"
                   >
-                    Use Tally (+1 Roll)
+                    <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" /> New Game
                   </Button>
-                )}
 
-                <Button
-                  onClick={resetGame}
-                  variant="outline"
-                  className="border-purple-500/50 text-purple-300 hover:bg-purple-900/50 gap-2"
-                  size="lg"
-                >
-                  <RotateCcw className="h-4 w-4" /> New Game
-                </Button>
-
-                <Button
-                  onClick={backToSetup}
-                  variant="outline"
-                  className="border-amber-500/50 text-amber-300 hover:bg-amber-900/50 gap-2"
-                  size="lg"
-                >
-                  <Settings2 className="h-4 w-4" /> Setup
-                </Button>
+                  <Button
+                    onClick={backToSetup}
+                    variant="outline"
+                    className="border-amber-500/50 text-amber-300 hover:bg-amber-900/50 gap-1 text-sm"
+                  >
+                    <Settings2 className="h-3 w-3 sm:h-4 sm:w-4" /> Setup
+                  </Button>
+                </div>
               </div>
             </Card>
 

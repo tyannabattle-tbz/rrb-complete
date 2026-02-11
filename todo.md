@@ -2164,3 +2164,16 @@
 
 ## Sweet Miracles Designation Fix - Feb 2026
 - [ ] Upd- [x] Update all 501(c)(3) references to include 508(c) designation
+
+## Deployment Zip Update - Feb 2026
+- [x] Create updated deployment zip with all source files
+- [x] Include install/execute commands and README
+- [x] Upload zip to S3 for download
+
+## Testing Fixes - Feb 2026
+- [x] Add video viewing screen to podcast page
+- [x] Fix Solbones game screen jump on mobile after rolling dice
+
+## Podcast Enhancements - Feb 2026
+- [ ] Ensure podcast video/audio has active playback content
+- [ ] Integrate QUMUS AI assistant into podcast page
