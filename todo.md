@@ -2333,3 +2333,27 @@
 - [x] Add decision history buffer (500 records)
 - [x] Wire qumusIntelligence router to tRPC
 - [x] Write vitest tests for intelligence module (9 tests, all passing)
+
+## Vinyl Album Relocation & Size - Feb 2026
+- [x] Shrink vinyl album to smaller size (120px mobile, 180px desktop)
+- [x] Relocate vinyl album to left corner of hero section
+
+## QUMUS Intelligence Dashboard Page - Feb 2026
+- [x] Create dedicated full-page Intelligence Dashboard at /rrb/intelligence
+- [x] Show correlation alerts with resolve actions
+- [x] Show anomaly reports with severity indicators
+- [x] Show self-assessment score with health grade (A-F)
+- [x] Show policy chain activity and status
+- [x] Show adaptive scheduling state
+- [x] Show learning feedback entries
+- [x] Show decision history stats
+- [x] Add route to App.tsx
+
+## Live LLM Compare Responses - Feb 2026
+- [x] Connect Compare Responses to dedicated aiCompare tRPC router with live LLM
+- [x] Generate responses reflecting each AI system's unique reasoning style via system prompts
+- [x] Display side-by-side comparison with confidence scoring and approach summary
+- [x] 8 AI system personality profiles (QUMUS, AutoGPT, LangChain, CrewAI, MetaGPT, AutoGen, BabyAGI, SuperAGI)
+- [x] JSON schema structured responses for consistent output
+- [x] Fallback handling when LLM unavailable
+- [x] 5 aiCompare tests passing, 9 intelligence tests passing

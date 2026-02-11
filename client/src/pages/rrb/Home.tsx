@@ -280,8 +280,8 @@ export default function Home() {
         <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary/20 to-background">
           {/* Spinning vinyl record — prominent visual, no text labels */}
           <style>{`@keyframes vinylSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-          <div className="absolute right-[-60px] md:right-[5%] top-1/2 -translate-y-1/2 opacity-40 md:opacity-50 pointer-events-none">
-            <div className="w-[280px] h-[280px] md:w-[400px] md:h-[400px] rounded-full overflow-hidden" style={{ animation: 'vinylSpin 6s linear infinite', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+          <div className="absolute left-[-30px] md:left-[3%] top-[15%] md:top-[20%] opacity-50 md:opacity-60 pointer-events-none">
+            <div className="w-[120px] h-[120px] md:w-[180px] md:h-[180px] rounded-full overflow-hidden" style={{ animation: 'vinylSpin 6s linear infinite', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
               <img
                 src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/FzdTwBrSOfPrqEwJ.png"
                   alt="Rockin Rockin Boogie vinyl record"

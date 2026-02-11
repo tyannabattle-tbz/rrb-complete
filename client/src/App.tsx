@@ -137,6 +137,7 @@ import RRBTheLegacyPage from '@/pages/rrb/TheLegacyPage';
 import RRBSweetMiraclesCompanyPage from '@/pages/rrb/SweetMiraclesCompanyPage';
 import RRBBroadcastControlPanel from '@/pages/rrb/BroadcastControlPanel';
 import RRBEcosystemDashboard from '@/pages/rrb/EcosystemDashboard';
+import RRBIntelligenceDashboard from '@/pages/rrb/IntelligenceDashboard';
 import RRBEntertainmentMonitoringDashboard from '@/pages/rrb/EntertainmentMonitoringDashboard';
 import RRBQumusMonitoringDashboard from '@/pages/rrb/QumusMonitoringDashboard';
 import RRBQumusHumanReviewDashboard from '@/pages/rrb/QumusHumanReviewDashboard';
@@ -333,6 +334,7 @@ function Router() {
       
       {/* RRB Unified Ecosystem Dashboard */}
       <Route path="/rrb/ecosystem/dashboard" component={RRBEcosystemDashboard} />
+      <Route path="/rrb/intelligence" component={RRBIntelligenceDashboard} />
       
       {/* RRB Legacy Foundation Pages */}
       <Route path="/rrb/the-legacy" component={RRBTheLegacyPage} />

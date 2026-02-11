@@ -92,8 +92,8 @@ export default function AICollaborationHub() {
   const [compareResults, setCompareResults] = useState<CompareResult[]>([]);
   const [isComparing, setIsComparing] = useState(false);
 
-  // Use the QUMUS chat mutation for compare
-  const qumusChat = trpc.ai.qumusChat.chat.useMutation();
+  // Use the dedicated AI Compare router for live LLM-powered comparisons
+  const compareResponsesMutation = trpc.aiCompare.compareResponses.useMutation();
 
   const handleEngage = (systemId: string) => {
     const system = KNOWN_AI_SYSTEMS.find(s => s.id === systemId);
@@ -128,68 +128,36 @@ export default function AICollaborationHub() {
     setIsComparing(true);
     setCompareResults([]);
 
-    const results: CompareResult[] = [];
+    try {
+      const result = await compareResponsesMutation.mutateAsync({
+        scenario: comparePrompt,
+        systemIds: compareSystems,
+      });
 
-    for (const sysId of compareSystems) {
-      const system = KNOWN_AI_SYSTEMS.find(s => s.id === sysId);
-      if (!system) continue;
-
-      const startTime = Date.now();
-
-      if (sysId === "qumus") {
-        // Use actual QUMUS LLM for its response
-        try {
-          const response = await qumusChat.mutateAsync({
-            messages: [],
-            query: `As QUMUS, respond concisely (max 3 sentences) to this scenario: ${comparePrompt}`,
-          });
-          results.push({
-            systemId: sysId,
-            systemName: system.name,
-            response: response.message || "Processing...",
-            confidence: 92,
-            approach: "Multi-policy autonomous orchestration with real-time ecosystem data",
-            latency: Date.now() - startTime,
-          });
-        } catch {
-          results.push({
-            systemId: sysId,
-            systemName: system.name,
-            response: "QUMUS would apply its 8-policy framework: analyze the scenario against Content, Security, Performance, and Compliance policies simultaneously, then execute the highest-confidence autonomous decision while logging for audit.",
-            confidence: 90,
-            approach: "Multi-policy autonomous orchestration",
-            latency: Date.now() - startTime,
-          });
-        }
-      } else {
-        // Simulate other AI system responses based on their specialization
-        try {
-          const response = await qumusChat.mutateAsync({
-            messages: [],
-            query: `You are simulating how ${system.name} (${system.specialization}) would respond. Their strengths are: ${system.strengths.join(", ")}. Respond concisely (max 3 sentences) as ${system.name} would approach this scenario: ${comparePrompt}`,
-          });
-          results.push({
-            systemId: sysId,
-            systemName: system.name,
-            response: response.message || "Processing...",
-            confidence: 70 + Math.floor(Math.random() * 20),
-            approach: system.specialization,
-            latency: Date.now() - startTime,
-          });
-        } catch {
-          results.push({
-            systemId: sysId,
-            systemName: system.name,
-            response: `${system.name} would leverage its ${system.specialization} approach: ${system.strengths.slice(0, 2).join(" and ")} to address this scenario.`,
-            confidence: 70 + Math.floor(Math.random() * 20),
-            approach: system.specialization,
-            latency: Date.now() - startTime,
-          });
-        }
-      }
-
-      // Update results progressively
-      setCompareResults([...results]);
+      // Map the live LLM responses to our display format
+      const mapped: CompareResult[] = result.responses.map(r => ({
+        systemId: r.systemId,
+        systemName: r.systemName,
+        response: r.response,
+        confidence: r.confidence,
+        approach: r.approach,
+        latency: Date.now() - r.timestamp + 500, // approximate latency
+      }));
+      setCompareResults(mapped);
+    } catch {
+      // Fallback: generate local placeholder responses
+      const fallback: CompareResult[] = compareSystems.map(sysId => {
+        const system = KNOWN_AI_SYSTEMS.find(s => s.id === sysId);
+        return {
+          systemId: sysId,
+          systemName: system?.name || sysId,
+          response: `${system?.name || sysId} would leverage its ${system?.specialization || 'capabilities'} to address this scenario using ${system?.strengths?.slice(0, 2).join(' and ') || 'its core strengths'}.`,
+          confidence: 70 + Math.floor(Math.random() * 20),
+          approach: system?.specialization || 'General AI approach',
+          latency: 500,
+        };
+      });
+      setCompareResults(fallback);
     }
 
     setIsComparing(false);

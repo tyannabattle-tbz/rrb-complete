@@ -60,6 +60,9 @@ import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization
 // QUMUS Advanced Intelligence (cross-policy correlation, anomaly detection, self-assessment)
 import { qumusIntelligenceRouter } from "./routers/qumusIntelligenceRouter";
 
+// AI Compare Responses (live LLM-powered multi-system comparison)
+import { aiCompareRouter } from "./routers/aiCompareRouter";
+
 // Business Operations routers
 import { bookkeepingRouter } from "./routers/businessBookkeeping";
 import { hrRouter } from "./routers/businessHR";
@@ -212,6 +215,9 @@ export const appRouter = router({
 
   // QUMUS Advanced Intelligence (v11.0)
   qumusIntelligence: qumusIntelligenceRouter,
+
+  // AI Compare Responses (live LLM multi-system comparison)
+  aiCompare: aiCompareRouter,
 
   // Radio Content API (public tracks, playlists, schedules)
   radioContent: radioContentRouter,
