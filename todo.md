@@ -2314,3 +2314,22 @@
 - [x] No direct integration required - engagement via protocol-agnostic messaging
 - [x] Integrate widget into ecosystem dashboard upper-left corner
 - [x] Engagement activity log with status tracking (initiated → acknowledged)
+
+## AI Collaboration Hub Enhancement & QUMUS Audit - Feb 2026
+- [x] Add Compare Responses tab to AI Collaboration Hub (side-by-side AI system response comparison)
+- [x] Expand hub to 12 AI systems with detailed profiles and capabilities
+- [x] Add Insights tab with engagement analytics and trend visualization
+- [x] Audit QUMUS decision engine for limitations (7 gaps found)
+- [x] Audit QUMUS policies for gaps and missing coverage
+- [x] Audit QUMUS orchestration loop for reliability issues
+- [x] Audit QUMUS services for missing capabilities
+- [x] Upgrade QUMUS engine to v11.0 with Advanced Intelligence module
+- [x] Add cross-policy correlation engine (4 correlation rules)
+- [x] Add anomaly detection with exponential moving average baselines
+- [x] Add adaptive loop scheduling (30s-5min dynamic intervals)
+- [x] Add learning feedback loop (outcome tracking, confidence adjustment)
+- [x] Add self-assessment scoring with health grades (A-F)
+- [x] Add policy chaining (3 chains: fraud detection, content-compliance, growth activation)
+- [x] Add decision history buffer (500 records)
+- [x] Wire qumusIntelligence router to tRPC
+- [x] Write vitest tests for intelligence module (9 tests, all passing)

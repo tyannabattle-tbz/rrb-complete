@@ -233,7 +233,7 @@ export class QumusCompleteEngine {
       // Update in-memory metrics (flushed to DB periodically)
       this.updateMetricsCache(policyId, isAutonomous, result, confidence, executionTime);
 
-      return {
+      const decisionResult: DecisionResult = {
         decisionId,
         autonomousFlag: isAutonomous,
         result,
@@ -243,6 +243,27 @@ export class QumusCompleteEngine {
           ? `Decision approved autonomously (confidence: ${confidence}%)`
           : `Decision escalated for human review (reason: ${escalationReason})`,
       };
+
+      // Process through Advanced Intelligence layer
+      try {
+        const { processDecisionIntelligence } = await import('./services/qumus-advanced-intelligence');
+        const intelligence = processDecisionIntelligence(
+          decisionId, policyId, confidence, result, executionTime, input.input
+        );
+        if (intelligence.anomalies.length > 0) {
+          console.log(`[QUMUS] Anomalies detected: ${intelligence.anomalies.length}`);
+        }
+        if (intelligence.correlations.length > 0) {
+          console.log(`[QUMUS] Cross-policy correlations: ${intelligence.correlations.length}`);
+        }
+        if (intelligence.chainTriggered) {
+          console.log(`[QUMUS] Policy chain triggered for ${policyId}`);
+        }
+      } catch (err) {
+        // Non-fatal: intelligence layer is optional
+      }
+
+      return decisionResult;
     } catch (error) {
       console.error('[QUMUS] Decision Error:', error);
       throw error;
@@ -266,7 +287,22 @@ export class QumusCompleteEngine {
     if (input.input?.timestamp) score += 3;
     if (input.input?.userId) score += 2;
     if (input.input?.type || input.input?.action || input.input?.metric) score += 2;
-    return Math.min(score, 100);
+
+    // Apply learning feedback adjustment
+    try {
+      const { getConfidenceAdjustment } = require('./services/qumus-advanced-intelligence');
+      const policyKey = input.policyId;
+      const policy = CORE_POLICIES[policyKey as keyof typeof CORE_POLICIES]
+        || Object.values(CORE_POLICIES).find(p => p.id === policyKey);
+      if (policy) {
+        const adjustment = getConfidenceAdjustment(policy.id);
+        score += adjustment;
+      }
+    } catch {
+      // Learning module not yet loaded — use base score
+    }
+
+    return Math.min(Math.max(score, 0), 100);
   }
 
   /**
@@ -599,7 +635,7 @@ export class QumusCompleteEngine {
         autonomyPercentage: Math.round(autonomyPercentage * 100) / 100,
         policyCount: Object.keys(CORE_POLICIES).length,
         activePolicies: Object.keys(CORE_POLICIES).length,
-        engineVersion: '10.0',
+        engineVersion: '11.0',
         uptime: process.uptime(),
         timestamp: new Date(),
       };

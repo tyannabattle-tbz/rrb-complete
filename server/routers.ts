@@ -57,6 +57,9 @@ import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
 
+// QUMUS Advanced Intelligence (cross-policy correlation, anomaly detection, self-assessment)
+import { qumusIntelligenceRouter } from "./routers/qumusIntelligenceRouter";
+
 // Business Operations routers
 import { bookkeepingRouter } from "./routers/businessBookkeeping";
 import { hrRouter } from "./routers/businessHR";
@@ -206,6 +209,9 @@ export const appRouter = router({
 
   // Qumus Autonomous Finalization
   qumusFinalization: qumusAutonomousFinalizationRouter,
+
+  // QUMUS Advanced Intelligence (v11.0)
+  qumusIntelligence: qumusIntelligenceRouter,
 
   // Radio Content API (public tracks, playlists, schedules)
   radioContent: radioContentRouter,
