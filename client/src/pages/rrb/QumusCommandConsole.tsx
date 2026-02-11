@@ -118,6 +118,11 @@ export default function QumusCommandConsole() {
           `  code scan       — Run code maintenance scan\n` +
           `  code health     — Code health grade & issues\n` +
           `  code scheduler  — Scan scheduler status\n` +
+          `  archive scan    — Run content archival scan\n` +
+          `  archive status  — Archival health summary\n` +
+          `  archive wayback — Check Wayback Machine\n` +
+          `  archive linkrot — List dead links\n` +
+          `  archive scheduler — Archival scheduler status\n` +
           `  clear           — Clear console output\n` +
           `  help            — Show this message`,
         timestamp: Date.now(),

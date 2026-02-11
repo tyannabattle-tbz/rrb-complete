@@ -182,6 +182,101 @@ export default function Divisions() {
           </Tabs>
         </section>
 
+        {/* Subsidiary Logos Showcase */}
+        <section className="mt-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-foreground">Our Family of Companies</h2>
+            <p className="text-foreground/60 mt-2">The subsidiaries and divisions that make up the Canryn Production ecosystem</p>
+          </div>
+
+          {/* Main Logo */}
+          <div className="flex justify-center mb-10">
+            <div className="bg-card border border-amber-500/30 rounded-xl p-6 shadow-lg shadow-amber-500/5 max-w-sm w-full text-center">
+              <img
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/eSIjztuNImvhgWiE.jpeg"
+                alt="Canryn Production Inc."
+                className="w-full h-auto rounded-lg mb-3"
+              />
+              <h3 className="text-lg font-bold text-amber-500">Canryn Production Inc.</h3>
+              <p className="text-sm text-foreground/60">Parent Company — Est. by LaShanna Hunter</p>
+            </div>
+          </div>
+
+          {/* Subsidiary Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              {
+                name: 'Canryn Publishing Co.',
+                logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/mTiGfPFFlpHcvZTm.jpeg',
+                desc: 'Music Publishing & Rights Administration',
+              },
+              {
+                name: 'Canryn Promo',
+                logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/giQvuyIzYStoLwtj.jpeg',
+                desc: 'Promotion & Marketing',
+              },
+              {
+                name: 'Little C',
+                logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jAGbowmiNIBjqruW.jpeg',
+                desc: 'Youth & Education Initiatives',
+              },
+              {
+                name: "Anna's Promotion Co.",
+                logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/NOXrVGzekgvevsQT.jpeg',
+                desc: 'Artist Promotion & Events',
+              },
+              {
+                name: 'Candy Worldwide',
+                logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/vGJdwZhZCGKBYxZs.jpeg',
+                desc: 'Global Distribution & Licensing',
+              },
+              {
+                name: 'Jaelon Enterprises',
+                logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jcgFmBvwKebLhriU.jpeg',
+                desc: 'Business Development & Ventures',
+              },
+              {
+                name: 'Sean Music',
+                logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/pFmKZSoKEyjfghpL.jpeg',
+                desc: 'Music Production & Recording',
+              },
+              {
+                name: 'Seasha Distribution Co.',
+                logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xdhjNQYMyvMBSdks.jpeg',
+                desc: 'Physical & Digital Distribution',
+              },
+            ].map((sub) => (
+              <Card key={sub.name} className="bg-card border-border hover:border-amber-500/30 transition-colors group overflow-hidden">
+                <div className="aspect-square overflow-hidden bg-white/5">
+                  <img
+                    src={sub.logo}
+                    alt={sub.name}
+                    className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <CardContent className="p-3 text-center">
+                  <h4 className="font-semibold text-sm text-foreground">{sub.name}</h4>
+                  <p className="text-xs text-foreground/50 mt-0.5">{sub.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* All Logos Combined */}
+          <div className="mt-8 text-center">
+            <Card className="bg-card border-border inline-block">
+              <CardContent className="p-4">
+                <img
+                  src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/TskQDmeWoFOCaDQq.jpeg"
+                  alt="All Canryn Production Company Logos"
+                  className="max-w-full md:max-w-2xl h-auto rounded-lg"
+                />
+                <p className="text-sm text-foreground/50 mt-2">The complete Canryn Production family of companies</p>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
         {/* Interconnectivity Section */}
         <section className="mt-16">
             <Card className="bg-card border-border">

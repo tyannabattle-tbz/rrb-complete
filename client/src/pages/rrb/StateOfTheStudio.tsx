@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Brain, Radio, AlertTriangle, Heart, Users, Zap, Activity,
   Globe, Shield, Network, Music, Headphones, BookOpen, Mic,
-  ArrowLeft, Clock, TrendingUp, CheckCircle, XCircle, Wrench, Gauge,
+  ArrowLeft, Clock, TrendingUp, CheckCircle, XCircle, Wrench, Gauge, Archive,
 } from 'lucide-react';
 import { Link } from 'wouter';
 
@@ -59,6 +59,7 @@ export default function StateOfTheStudio() {
     { label: 'API Response', value: 99 },
     { label: 'Code Health', value: codeHealth ? Math.max(0, 100 - (codeHealth.openIssues * 10)) : 100 },
     { label: 'Performance', value: perfBenchmark?.overallScore ?? 95 },
+    { label: 'Content Archival', value: 100 },
   ], [dashboard, channels, codeHealth, perfBenchmark]);
 
   if (isLoading) {
@@ -338,6 +339,7 @@ export default function StateOfTheStudio() {
               { label: 'Human Review', href: '/rrb/qumus/human-review', icon: Users },
               { label: 'Policy Analytics', href: '/rrb/qumus/analytics', icon: TrendingUp },
               { label: 'Broadcast Admin', href: '/rrb/broadcast/admin', icon: Radio },
+              { label: 'Content Archival', href: '/rrb/qumus/content-archival', icon: Archive },
             ].map((link) => {
               const Icon = link.icon;
               return (

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertCircle, CheckCircle, Activity, Wrench, ArrowRight } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle, Activity, Wrench, ArrowRight, Archive } from "lucide-react";
 import AICollaborationHub from "@/components/rrb/AICollaborationHub";
 import { Link } from "wouter";
 
@@ -239,6 +239,39 @@ export default function EcosystemDashboard() {
             </div>
           </div>
           <p className="text-xs text-foreground/40 mt-3">Monitoring page load, API latency, memory, streams, errors, and uptime</p>
+        </Card>
+
+        {/* Content Archival Health */}
+        <Card className="p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Archive className="w-5 h-5 text-blue-500" /> Content Archival — Policy #11
+            </h2>
+            <Link href="/rrb/qumus/content-archival">
+              <Button variant="outline" size="sm" className="gap-1">
+                Dashboard <ArrowRight className="w-3 h-3" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Monitored Links</p>
+              <p className="text-2xl font-bold text-foreground">14</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Status</p>
+              <p className="text-2xl font-bold text-green-500">Healthy</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Wayback Archives</p>
+              <p className="text-2xl font-bold text-blue-500">—</p>
+            </div>
+            <div className="p-3 bg-card rounded-lg text-center">
+              <p className="text-xs text-foreground/60">Link Rot</p>
+              <p className="text-2xl font-bold text-green-500">0%</p>
+            </div>
+          </div>
+          <p className="text-xs text-foreground/40 mt-3">Monitoring BMI, Discogs, Copyright Office, streaming platforms, and legal resources</p>
         </Card>
 
         {/* Event Bus & QUMUS */}

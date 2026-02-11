@@ -9,6 +9,7 @@ import { getAgentNetworkingService } from '../services/agent-networking';
 import { getContentScheduler } from '../services/contentSchedulerService';
 import { runFullScan, getMaintenanceSummary, getSchedulerStatus } from '../services/code-maintenance-policy';
 import { takeSnapshot as runPerformanceBenchmark, getMonitoringStatus as getPerformanceSchedulerStatus } from '../services/performance-monitoring-policy';
+import { executeCommand as executeArchivalCommand, runArchivalScan as runArchivalFullScan, getArchivalSummary, getSchedulerStatus as getArchivalSchedulerStatus } from '../services/content-archival-policy';
 
 // In-memory command history (production would use DB)
 interface CommandRecord {
@@ -281,6 +282,18 @@ function parseCommand(message: string): ParsedCommand {
     else if (/health/i.test(message)) action = 'code_health';
     else if (/scheduler/i.test(message)) action = 'code_scheduler';
     else action = 'code_health';
+    autonomyLevel = 90;
+  }
+  // Content Archival commands
+  else if (/archive\s*(scan|status|wayback|linkrot|link.rot|scheduler|health)/i.test(message)) {
+    type = 'content_archival';
+    subsystem = 'QUMUS';
+    if (/scan/i.test(message)) action = 'archive_scan';
+    else if (/status|health/i.test(message)) action = 'archive_status';
+    else if (/wayback/i.test(message)) action = 'archive_wayback';
+    else if (/linkrot|link.rot/i.test(message)) action = 'archive_linkrot';
+    else if (/scheduler/i.test(message)) action = 'archive_scheduler';
+    else action = 'archive_status';
     autonomyLevel = 90;
   }
   // Community commands
@@ -569,6 +582,65 @@ async function executeAgentCommand(parsed: ParsedCommand): Promise<CommandRespon
         };
       }
 
+      case 'content_archival': {
+        if (parsed.action === 'archive_scan') {
+          const report = await runArchivalFullScan();
+          return {
+            status: 'executed',
+            message: `📦 Content Archival scan complete — ${report.alive} alive, ${report.dead} dead`,
+            agentResponse: `[QUMUS Policy #11 — Content Archival]\n` +
+              `• Total Links: ${report.totalLinks}\n` +
+              `• Alive: ${report.alive}\n` +
+              `• Degraded: ${report.degraded}\n` +
+              `• Dead: ${report.dead}\n` +
+              `• New Archives: ${report.newArchives}\n` +
+              `• Link Rot: ${report.linkRotDetected.length > 0 ? report.linkRotDetected.join(', ') : 'None detected'}\n` +
+              `• Recommendations:\n${report.recommendations.map(r => `  → ${r}`).join('\n')}`,
+            data: report,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        if (parsed.action === 'archive_status') {
+          const summary = getArchivalSummary();
+          return {
+            status: 'executed',
+            message: `📦 Content Archival status retrieved`,
+            agentResponse: `[QUMUS Policy #11 — Content Archival]\n` +
+              `• Total Links: ${summary.totalLinks}\n` +
+              `• Alive: ${summary.aliveLinks} | Degraded: ${summary.degradedLinks} | Dead: ${summary.deadLinks}\n` +
+              `• Wayback Archives: ${summary.archivedLinks}\n` +
+              `• Health Score: ${summary.healthScore}/100 (${summary.healthGrade})\n` +
+              `• Link Rot Rate: ${summary.linkRotRate}%\n` +
+              `• Active Alerts: ${summary.activeAlerts}\n` +
+              `• Last Scan: ${summary.lastScanAt ? new Date(summary.lastScanAt).toLocaleString() : 'Never'}`,
+            data: summary,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        if (parsed.action === 'archive_scheduler') {
+          const sched = getArchivalSchedulerStatus();
+          return {
+            status: 'executed',
+            message: `⏰ Archival scheduler status`,
+            agentResponse: `[QUMUS Policy #11 — Content Archival Scheduler]\n` +
+              `• Status: ${sched.enabled ? '● ACTIVE' : '○ STOPPED'}\n` +
+              `• Interval: ${sched.intervalHuman}\n` +
+              `• Total Checks: ${sched.totalChecks}\n` +
+              `• Last Check: ${sched.lastCheck ? new Date(sched.lastCheck).toLocaleString() : 'Not yet'}`,
+            data: sched,
+            executionTime: Date.now() - startTime,
+          };
+        }
+        // archive wayback, archive linkrot — use the generic command handler
+        const archResult = executeArchivalCommand(`archive ${parsed.action.replace('archive_', '')}`);
+        return {
+          status: 'executed',
+          message: '📦 Content Archival command processed',
+          agentResponse: archResult,
+          executionTime: Date.now() - startTime,
+        };
+      }
+
       default: {
         // Route through QUMUS brain for unknown commands
         const engine = QumusCompleteEngine.getInstance();
@@ -618,6 +690,7 @@ function generateSuggestions(message: string): string[] {
   if (/status|health/i.test(lower)) suggestions.push('QUMUS: health check', 'QUMUS: autonomy status', 'RRB: now playing', 'code health');
   if (/code|scan|maintenance/i.test(lower)) suggestions.push('code scan', 'code health', 'code scheduler');
   if (/perf|bench|latency|memory/i.test(lower)) suggestions.push('performance benchmark', 'performance status', 'performance latency', 'performance memory');
+  if (/archive|wayback|linkrot|link.rot|preserv/i.test(lower)) suggestions.push('archive scan', 'archive status', 'archive wayback', 'archive linkrot', 'archive scheduler');
 
   return [...new Set(suggestions)].slice(0, 6);
 }

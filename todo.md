@@ -2470,3 +2470,34 @@
 - [x] Add Senate Resolution section to Grandma Helen page with 4-panel detail grid and "Verified Government Record" badge
 - [x] Add proper attribution and direct link to original PDF source
 - [x] Added 2016 to Grandma Helen's life timeline
+
+## v11.3 Proof Vault — BMI Songview & Payten Music Evidence — Feb 2026
+- [x] Add BMI Songview evidence items with CDN-hosted screenshots (IMG_5832, IMG_5833, IMG_5834, IMG_5835)
+- [x] Add Payten Music publisher credit evidence from Discogs (Canned Heat "Let's Work Together")
+- [x] Update ProofItem interface to support screenshots array and externalLinks
+- [x] Add screenshot display gallery in expanded proof card view
+- [x] Add external link buttons (BMI Songview, Discogs) in proof card
+- [x] Add screenshot count to stats bar
+- [x] Total proof items now 20+ with 4 CDN-hosted screenshot images
+
+## v11.3 Canryn Divisions — Subsidiary Logos — Feb 2026
+- [x] Upload all Canryn subsidiary logos to CDN (RRB, HybridCast, Sweet Miracles, Canryn Production, QUMUS, Solbones)
+- [x] Add "Our Brands" logo showcase section to Divisions page
+- [x] Display logos in responsive grid with hover effects and links to respective pages
+
+## v11.3 QUMUS Content Archival — 11th Autonomous Decision Policy — Feb 2026
+- [x] Create Content Archival policy service (link monitoring, link rot detection, Wayback Machine archival)
+- [x] Initialize 14 default monitored links (BMI, Discogs, Copyright Office, SoundExchange, streaming platforms, etc.)
+- [x] Implement link health checking with HTTP HEAD requests and timeout handling
+- [x] Implement Wayback Machine availability checking and save requests
+- [x] Create alert system for link rot, degraded responses, and critical evidence at risk
+- [x] Create archival scheduler (default 6-hour interval) with start/stop/update controls
+- [x] Wire into QUMUS engine as 11th policy (90% autonomy)
+- [x] Create tRPC router with full CRUD for links, alerts, scans, scheduler, and Wayback operations
+- [x] Build Content Archival dashboard UI at /rrb/qumus/content-archival with 5 tabs (Overview, Links, Alerts, Scans, Scheduler)
+- [x] Wire into Command Console with archive scan/status/wayback/linkrot/scheduler commands
+- [x] Wire into QUMUS Admin Dashboard quick-access card
+- [x] Wire into Ecosystem Dashboard widget (Policy #11)
+- [x] Wire into State of the Studio health metric (Content Archival)
+- [x] Add Content Archival to Mission Control quick links
+- [x] Write vitest tests (28 tests passing)

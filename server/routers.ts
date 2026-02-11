@@ -73,6 +73,9 @@ import { codeMaintenanceRouter } from "./routers/codeMaintenanceRouter";
 // QUMUS Performance Monitoring Policy (10th autonomous decision policy)
 import { performanceMonitoringRouter } from "./routers/performanceMonitoringRouter";
 
+// QUMUS Content Archival Policy (11th autonomous decision policy)
+import { contentArchivalRouter } from "./routers/contentArchivalRouter";
+
 // Business Operations routers
 import { bookkeepingRouter } from "./routers/businessBookkeeping";
 import { hrRouter } from "./routers/businessHR";
@@ -305,6 +308,9 @@ export const appRouter = router({
 
   // QUMUS Performance Monitoring (10th policy — page load, API latency, memory, uptime)
   performanceMonitoring: performanceMonitoringRouter,
+
+  // QUMUS Content Archival (11th policy — link monitoring, Wayback archival, link rot detection)
+  contentArchival: contentArchivalRouter,
 
   // Agent Session Management
   agent: router({

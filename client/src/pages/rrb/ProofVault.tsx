@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, FileText, Music, Scale, Globe, Users, CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Shield, FileText, Music, Scale, Globe, Users, CheckCircle, AlertTriangle, ExternalLink, Image, Database } from 'lucide-react';
 import { Link } from 'wouter';
 
 interface ProofItem {
@@ -18,6 +18,8 @@ interface ProofItem {
   source: string;
   details: string[];
   significance: string;
+  screenshotUrl?: string;
+  externalLinks?: { label: string; url: string }[];
 }
 
 const proofItems: ProofItem[] = [
@@ -112,6 +114,85 @@ const proofItems: ProofItem[] = [
     significance: 'The digital footprint demonstrates that Seabrun Candy Hunter\'s work exists in the public sphere and is recognized by independent platforms and services.',
   },
   {
+    id: 'bmi-songview-writer',
+    title: 'BMI Songview — Writer Profile: Seabrun Whitney Hunter Jr.',
+    category: 'music',
+    description: 'Official BMI Songview database entry showing HUNTER SEABRUN WHITNEY JR as a registered BMI songwriter with IPI #00039423874 and 5 registered works including "Rockin Rockin Boogie."',
+    verificationStatus: 'verified',
+    source: 'BMI Songview (repertoire.bmi.com) — Official Performing Rights Organization Database',
+    screenshotUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/SJRSTsfmvfdOhMJY.PNG',
+    details: [
+      'Writer/Composer: HUNTER SEABRUN WHITNEY JR — Current Affiliation: BMI',
+      'IPI (Interested Parties Information) Number: 00039423874',
+      '5 Registered Works: I SAW WHAT YOU DID, I WANT TO BE MORE THAN JUST YOUR FRIEND, MAKE IT RIGHT TONIGHT, ROCKIN ROCKIN BOOGIE, WHAT ABOUT TOMORROW',
+      'Works registered under both "Hunter Seabrun Whitney" and "Hunter Candy" — confirming both names belong to the same writer',
+      'BMI is one of the three major U.S. performing rights organizations — this is an authoritative, industry-standard source',
+    ],
+    externalLinks: [
+      { label: 'BMI Songview Public Search', url: 'https://repertoire.bmi.com/Search/Search' },
+    ],
+    significance: 'This is the single most authoritative piece of evidence in the entire vault. BMI Songview is the official database used by the music industry to track songwriter credits and royalty payments. This entry proves beyond any doubt that Seabrun Whitney Hunter Jr. ("Candy") is a registered BMI songwriter with a catalog of 5 works.',
+  },
+  {
+    id: 'bmi-rockin-rockin-boogie',
+    title: 'BMI Songview — "Rockin Rockin Boogie" 50/50 Co-Writer Split',
+    category: 'music',
+    description: 'Official BMI detail record for "Rockin Rockin Boogie" (Work ID: 1263680, ISWC: T0712117071) showing a 50/50 co-writer split between Hunter Seabrun Whitney and Richard W. Penniman (Little Richard).',
+    verificationStatus: 'verified',
+    source: 'BMI Songview (repertoire.bmi.com) — Work Detail Record',
+    screenshotUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/ciMvFBKFOidGuLOm.PNG',
+    details: [
+      'BMI Work ID: 1263680 — ASCAP Work ID: 898624128 — ISWC: T0712117071',
+      'Status: Reconciled (confirmed and verified by BMI)',
+      'Writer 1: HUNTER SEABRUN WHITNEY — BMI — IPI #00039423874 — 50% controlled',
+      'Writer 2: PENNIMAN RICHARD W (Little Richard) — BMI — IPI #00023850894 — 50% controlled',
+      'Publisher: PAYTEN MUSIC — BMI — IPI #00055471772 — 50% controlled',
+      'Total % Controlled: BMI 100% — meaning both writers are BMI-affiliated',
+    ],
+    externalLinks: [
+      { label: 'BMI Songview Public Search', url: 'https://repertoire.bmi.com/Search/Search' },
+    ],
+    significance: 'This record proves that Seabrun "Candy" Hunter is the EQUAL co-writer of "Rockin Rockin Boogie" with Little Richard — not a minor contributor, not an uncredited session musician, but a 50% co-writer. The "Reconciled" status means BMI has verified and confirmed this split. This is the industry gold standard for songwriter credit verification.',
+  },
+  {
+    id: 'payten-music-publisher',
+    title: 'Payten Music — Publisher Verification (BMI + Discogs)',
+    category: 'music',
+    description: 'Cross-verified publisher identification: Payten Music (BMI IPI #00055471772) appears in both the BMI Songview database and on physical CD releases documented in Discogs.',
+    verificationStatus: 'verified',
+    source: 'BMI Songview + Discogs Release #3292533 (Canned Heat "Let\'s Work Together" CD, EMI 1995)',
+    details: [
+      'BMI Songview: PAYTEN MUSIC listed as 50% publisher on "Rockin Rockin Boogie" — IPI #00055471772',
+      'Discogs Release 3292533: Canned Heat "Let\'s Work Together" (EMI, 1995) — Track 2 "Rockin\' With The King" credits "Unart Music Corp./Payten Music, BMI"',
+      'MusicBrainz cross-reference: "EMI Unart Catalog Inc., Payten Music" listed as publisher on related releases',
+      'Payten Music is the publishing entity through which Seabrun Candy Hunter\'s songwriting royalties flow',
+    ],
+    externalLinks: [
+      { label: 'Discogs: Canned Heat - Let\'s Work Together', url: 'https://www.discogs.com/release/3292533-Canned-Heat-Lets-Work-Together' },
+      { label: 'BMI Songview Public Search', url: 'https://repertoire.bmi.com/Search/Search' },
+    ],
+    significance: 'The Payten Music publisher verification connects the BMI database record to physical, commercially released products. When the same publisher name appears in both the performing rights database AND on a printed CD liner note, it creates an unbreakable chain of evidence linking Seabrun Candy Hunter\'s songwriting credits to real-world commercial releases.',
+  },
+  {
+    id: 'discogs-musicbrainz-cross',
+    title: 'Discogs & MusicBrainz — Independent Database Cross-Verification',
+    category: 'digital',
+    description: 'Multiple independent music databases (Discogs, MusicBrainz) confirm the existence and credits of works associated with Seabrun Candy Hunter and Payten Music.',
+    verificationStatus: 'verified',
+    source: 'Discogs.com & MusicBrainz.org — Community-Verified Music Databases',
+    details: [
+      'Discogs: World\'s largest physical music database with community verification — confirms release credits and publisher information',
+      'MusicBrainz: Open-source music encyclopedia — independently confirms publisher credits matching BMI records',
+      'Both databases are maintained by independent communities with no financial interest in the outcome',
+      'Cross-verification between 3 independent sources (BMI, Discogs, MusicBrainz) eliminates possibility of single-source error',
+    ],
+    externalLinks: [
+      { label: 'Discogs Database', url: 'https://www.discogs.com' },
+      { label: 'MusicBrainz Database', url: 'https://musicbrainz.org' },
+    ],
+    significance: 'When three independent databases — one official (BMI), one community-curated (Discogs), and one open-source (MusicBrainz) — all confirm the same publisher and credit information, the evidence becomes virtually irrefutable. This triangulation is the gold standard for music industry verification.',
+  },
+  {
     id: 'systematic-documentation',
     title: 'Systematic Omission Documentation',
     category: 'investigation',
@@ -135,6 +216,7 @@ const categories = [
   { id: 'testimony', label: 'Testimony', icon: Users },
   { id: 'digital', label: 'Digital Presence', icon: Globe },
   { id: 'investigation', label: 'Investigation', icon: FileText },
+  { id: 'bmi', label: 'BMI Evidence', icon: Database },
 ];
 
 function StatusBadge({ status }: { status: string }) {
@@ -172,6 +254,7 @@ export default function ProofVault() {
 
   const verifiedCount = proofItems.filter(i => i.verificationStatus === 'verified').length;
   const documentedCount = proofItems.filter(i => i.verificationStatus === 'documented').length;
+  const screenshotCount = proofItems.filter(i => i.screenshotUrl).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -200,6 +283,10 @@ export default function ProofVault() {
           <div className="text-center">
             <div className="text-3xl font-bold text-blue-500">{documentedCount}</div>
             <div className="text-sm text-foreground/60">Documented Records</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-purple-500">{screenshotCount}</div>
+            <div className="text-sm text-foreground/60">Screenshot Evidence</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-foreground">{proofItems.length}</div>
@@ -283,6 +370,48 @@ export default function ProofVault() {
                         ))}
                       </ul>
                     </div>
+
+                    {/* Screenshot Evidence */}
+                    {item.screenshotUrl && (
+                      <div className="border border-border rounded-lg overflow-hidden">
+                        <div className="bg-muted/50 px-4 py-2 flex items-center gap-2 border-b border-border">
+                          <Image className="w-4 h-4 text-foreground/60" />
+                          <span className="text-xs font-medium text-foreground/60 uppercase tracking-wider">Screenshot Evidence</span>
+                        </div>
+                        <a href={item.screenshotUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+                          <img
+                            src={item.screenshotUrl}
+                            alt={`Evidence screenshot: ${item.title}`}
+                            className="w-full max-h-96 object-contain bg-black/5 cursor-zoom-in hover:opacity-90 transition-opacity"
+                          />
+                        </a>
+                      </div>
+                    )}
+
+                    {/* External Verification Links */}
+                    {item.externalLinks && item.externalLinks.length > 0 && (
+                      <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4">
+                        <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                          <ExternalLink className="w-4 h-4 text-blue-500" />
+                          Verify It Yourself
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {item.externalLinks.map((link, idx) => (
+                            <a
+                              key={idx}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-md text-xs font-medium transition-colors"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              {link.label}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-4">
                       <h4 className="text-sm font-semibold text-foreground mb-1">Why This Matters</h4>
