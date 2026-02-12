@@ -2695,3 +2695,14 @@
 - [x] Extract pageant photo from District 1 PDF
 - [x] Upload to S3
 - [x] Add to Grandma Helen Family Archive gallery
+
+## News Station Feature
+- [ ] Database schema: news_articles, news_categories, news_submissions tables
+- [ ] tRPC procedures: CRUD for articles, categories, submissions
+- [ ] News Station page with article feed and category filters
+- [ ] Live news broadcast stream integration
+- [ ] Community news tip/story submission form
+- [ ] Admin article publishing and moderation
+- [ ] Add News channel(s) to broadcast system
+- [ ] Navigation integration under existing menu structure
+- [ ] News station tests
