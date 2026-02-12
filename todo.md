@@ -2654,3 +2654,22 @@
 - [x] Added 2 new timeline events: 2015 Mother's Day tribute, 2018 Canryn Production Facebook share
 - [x] Mobile-responsive layout (stacked left-aligned on mobile, alternating on desktop)
 - [x] No TypeScript errors, compiles cleanly
+
+## Helen Hunter Resume Integration
+- [x] Update Grandma Helen page with full maiden name: Helen Mildred Warren
+- [x] Add exact birth date: April 17, 1929
+- [x] Add Buffalo, N.Y. grade school detail to biography
+- [x] Update high school name: Commerce High School, Detroit
+- [x] Add Pharmacology classes detail
+- [x] Update career section: 23 years as Senior Director
+- [x] Update car details: 2 Pink Cadillacs, Buick Regal, Pontiac Grand Am
+- [x] Add private church school detail for children
+- [x] Update timeline with corrected/new events from resume
+- [x] Add resume as a primary source document on the page
+- [ ] Fix failing tests
+- [x] Final production checkpoint
+
+## Helen's Letter to Richard Rogers (Mary Kay Ash's Son)
+- [x] Add letter to Grandma Helen page as primary source document
+- [x] Add beauty pageant first runner up detail to timeline (2013)
+- [x] Add letter content showing Helen's relationship with Mary Kay Ash family

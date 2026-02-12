@@ -80,9 +80,9 @@ const timelineEras: TimelineEra[] = [
     bgColor: 'bg-amber-500/10',
     borderColor: 'border-amber-500/30',
     events: [
-      { year: '1929', event: 'Born in Campbell, Ohio, shortly before the stock market crash', icon: Star },
+      { year: '1929', event: 'Helen Mildred Warren born April 17 in Campbell, Ohio — one of two children, arriving just before the stock market crash', icon: Star },
       { year: '1938', event: 'Contracted polio at age 9 — fought back with determination and her brother\'s support to fully recover', highlight: true, icon: Heart },
-      { year: '1946', event: 'Put education on hold to get married and start a family', icon: Home },
+      { year: '1946', event: 'Fell in love, got married, and soon had three children — putting high school on hold', icon: Home },
     ],
   },
   {
@@ -91,9 +91,9 @@ const timelineEras: TimelineEra[] = [
     bgColor: 'bg-sky-500/10',
     borderColor: 'border-sky-500/30',
     events: [
-      { year: '1954', event: 'Family relocated to Detroit; began career as a runway model for a designer', icon: Sparkles },
-      { year: '1961', event: 'Returned to school while still modeling; her three children helped her study and graduate', highlight: true, icon: BookOpen },
-      { year: 'c. 1965', event: 'Earned Licensed Practical Nurse (LPN) certification while continuing to model', icon: Award },
+      { year: '1954', event: 'Family relocated to Detroit, Michigan; began career as a fashion model', icon: Sparkles },
+      { year: '1961', event: 'Enrolled at Commerce High School while still modeling; her three children helped her study and graduate', highlight: true, icon: BookOpen },
+      { year: 'c. 1965', event: 'Earned LPN certification with Pharmacology training; worked two jobs to send children to private church school', highlight: true, icon: Award },
     ],
   },
   {
@@ -104,8 +104,8 @@ const timelineEras: TimelineEra[] = [
     events: [
       { year: '1971', event: 'Joined Mary Kay Cosmetics as a second job alongside nursing', icon: Sparkles },
       { year: '1972', event: 'Mary Kay Ash personally handed Helen the keys to her first pink Cadillac at the annual Seminar conference', highlight: true, icon: Star },
-      { year: '1970s–80s', event: 'Became the second Black director, then the first Black senior director at Mary Kay; earned five cars total including two pink Cadillacs', highlight: true, icon: Award },
-      { year: '1994', event: 'Gave up directorship due to illness but continued helping women with skincare', icon: Heart },
+      { year: '1970s–90s', event: 'First Black Senior Director at Mary Kay — held the position for 23 years; won highest honors including 2 Pink Cadillacs, a Buick Regal, and a Pontiac Grand Am', highlight: true, icon: Award },
+      { year: 'c. 1994', event: 'Health issues forced retirement from Mary Kay, but she never retired from helping others — "not from society"', icon: Heart },
     ],
   },
   {
@@ -114,6 +114,7 @@ const timelineEras: TimelineEra[] = [
     bgColor: 'bg-rose-500/10',
     borderColor: 'border-rose-500/30',
     events: [
+      { year: '2013', event: 'First runner-up in beauty pageant at Life Care Center of Grandview; wrote letter to Richard Rogers (Mary Kay Ash\'s son) advocating for Candy\'s books', icon: Star },
       { year: '2014', event: 'Featured on the cover of Life Care Leader magazine — "Beauty More Than Skin Deep"', highlight: true, icon: Camera },
       { year: '2015', event: 'Candy Hunter published Mother\'s Day tribute on Facebook: "YOU ARE REALLY ARE MY QUEEN!"', icon: Heart },
       { year: '2016', event: 'Honored by the Missouri Senate — Senate Resolution No. 1462, adopted February 17, 2016', highlight: true, icon: Landmark },
@@ -143,15 +144,20 @@ export default function GrandmaHelen() {
                 <Heart className="w-3.5 h-3.5 mr-2" />
                 Family Matriarch
               </Badge>
-              <h1 className="text-4xl md:text-6xl font-bold text-rose-100 mb-4">
+              <h1 className="text-4xl md:text-6xl font-bold text-rose-100 mb-2">
                 Helen Hunter
               </h1>
+              <p className="text-sm text-rose-400/60 mb-4 font-medium tracking-wide">
+                Born Helen Mildred Warren &middot; April 17, 1929 &middot; Campbell, Ohio
+              </p>
               <p className="text-xl md:text-2xl text-rose-300/80 mb-2 italic">
                 "Beauty More Than Skin Deep"
               </p>
               <p className="text-lg text-stone-400 max-w-xl leading-relaxed mb-6">
-                Born in Campbell, Ohio in 1929. Polio survivor. Runway model. Licensed Practical Nurse. 
-                The first Black senior director at Mary Kay Cosmetics. Five-time pink Cadillac earner. 
+                Born Helen Mildred Warren in Campbell, Ohio on April 17, 1929. Polio survivor. Runway model. 
+                Commerce High School graduate. Licensed Practical Nurse with Pharmacology training. 
+                The first Black Senior Director at Mary Kay Cosmetics — a position she held for 23 years. 
+                Winner of Mary Kay's highest honors: two Pink Cadillacs, a Buick Regal, and a Pontiac Grand Am. 
                 Mother. Grandmother. The foundation of the Hunter legacy.
               </p>
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
@@ -211,17 +217,18 @@ export default function GrandmaHelen() {
                 <CardContent className="pt-6">
                   <h3 className="text-xl font-bold text-rose-200 mb-3">From Campbell, Ohio to the World</h3>
                   <p className="text-stone-300 leading-relaxed mb-4">
-                    Helen Hunter was born in Campbell, Ohio, shortly before the crash of the stock market in 1929. 
-                    As a young child, her family moved to Buffalo, New York, but an absent father left Helen, along 
-                    with her half-brother and mother, struggling to survive. This struggle was quickly compounded when 
-                    she contracted polio at 9 years old, a disease that often left children paralyzed or crippled, 
-                    if they survived at all.
+                    Helen Mildred Warren was born in Campbell, Ohio on April 17, 1929 — one of two children, 
+                    arriving shortly before the crash of the stock market. As a young child, her family moved to 
+                    Buffalo, New York, but an absent father left Helen, along with her half-brother and mother, 
+                    struggling to survive. As she later wrote in her own resume: she "didn't have aspirations of 
+                    achieving any goals, only to survive." This struggle was quickly compounded when she contracted 
+                    polio at 9 years old, a disease that often left children paralyzed or crippled, if they survived at all.
                   </p>
                   <p className="text-stone-300 leading-relaxed">
                     It was the determination in her heart and the support of her brother, especially, that gave her 
                     the strength to fully recover from polio, eventually regaining full mobility. As Helen regained 
-                    her strength, she finished grade school and continued her education until 1946, when she put a 
-                    hold on high school to get married and start a family.
+                    her strength, she finished grade school in Buffalo, N.Y. and continued her education until 1946, 
+                    when she fell in love, got married, and soon had three children.
                   </p>
                 </CardContent>
               </Card>
@@ -230,20 +237,21 @@ export default function GrandmaHelen() {
                 <CardContent className="pt-6">
                   <h3 className="text-xl font-bold text-rose-200 mb-3">Model, Nurse, Mother</h3>
                   <p className="text-stone-300 leading-relaxed mb-4">
-                    In 1954, the young family was relocated to Detroit, where Helen began a career as a runway model 
-                    for a designer. Over the next eight years, her modeling career kept her busy, but the desire to 
-                    finish high school never left her mind. In 1961, she began classes while still modeling, and 
-                    enlisted her three children to help her graduate. They stayed up late after school and quizzed 
-                    her so she could pass her exams. The family's efforts and hard work paid off, and one year later, 
-                    she graduated.
+                    In 1954, the young family relocated to Detroit, Michigan, where Helen began a career as a 
+                    fashion model. Over the next several years, her modeling career kept her busy, but the desire to 
+                    finish high school never left her mind. In 1961, she began classes at <strong className="text-rose-300">Commerce High School</strong> while 
+                    still modeling, and enlisted her three children to help her graduate. They stayed up late after 
+                    school and quizzed her so she could pass her exams. The family's efforts and hard work paid off, 
+                    and she graduated.
                   </p>
                   <p className="text-stone-300 leading-relaxed">
-                    After graduating, Helen's life was thrown into disarray when she went through a divorce, something 
-                    she admits was the most difficult experience of her life. "The hardest thing was to find a way to 
-                    rear my children the way I wanted to," shared Helen. "I had to work two jobs to pay for church 
-                    school and to take care of everything that you have to take care of to live in this world." 
-                    The hardship couldn't stop her drive. She earned her Licensed Practical Nurse certification while 
-                    continuing to model, again with the help of her children.
+                    The rocky marriage ended in divorce — something she admits was the most difficult experience of 
+                    her life. "The hardest thing was to find a way to rear my children the way I wanted to," shared 
+                    Helen. "I had to work two jobs to pay for church school and to take care of everything that you 
+                    have to take care of to live in this world." She worked two jobs to send her children to a 
+                    <strong className="text-rose-300">private church school</strong>. The hardship couldn't stop her drive. She earned her Licensed 
+                    Practical Nurse certification, took classes in <strong className="text-rose-300">Pharmacology</strong>, and continued to model — 
+                    again with the help of her children.
                   </p>
                 </CardContent>
               </Card>
@@ -261,13 +269,14 @@ export default function GrandmaHelen() {
                     "I came into a white world, and it was a little bit difficult there," said Helen. "I had a lot of 
                     obstacles to overcome." But Mary Kay Ash worked with her personally to encourage and develop her 
                     business. Within a year of joining, Helen became the second Black director in the company. She 
-                    eventually became the <strong className="text-rose-300">first Black senior director</strong> at 
-                    Mary Kay Cosmetics.
+                    set her sights on being the <strong className="text-rose-300">first Black Senior Director</strong> at 
+                    Mary Kay Cosmetics — and she achieved it, holding that position for <strong className="text-rose-300">23 years</strong>.
                   </p>
                   <p className="text-stone-300 leading-relaxed">
                     Helen's proudest moment came when Mary Kay Ash personally handed her the keys to her first pink 
-                    Cadillac at the 1972 annual conference. Throughout her career, she earned <strong className="text-rose-300">five 
-                    cars, including two pink Cadillacs</strong>, and kept close to her mentor. "She was just like the 
+                    Cadillac at the 1972 annual conference. Throughout her career, she won Mary Kay's highest honors 
+                    for achievement, earning <strong className="text-rose-300">two Pink Cadillacs, a Buick Regal, and a 
+                    Pontiac Grand Am</strong>, and kept close to her mentor. "She was just like the 
                     girl next door," Helen said of Mary Kay Ash. "She was like a mom to me... giving me a pink 
                     Cadillac, mink coat and lots of diamonds along the way."
                   </p>
@@ -403,6 +412,115 @@ export default function GrandmaHelen() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* In Her Own Words — Resume */}
+      <section className="py-12 px-4">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-rose-100 mb-2 text-center">In Her Own Words</h2>
+          <p className="text-stone-400 text-center mb-8">From Helen's personal resume, written circa 2013</p>
+          
+          <Card className="bg-gradient-to-br from-rose-950/30 via-stone-900/60 to-stone-900/60 border-rose-800/40">
+            <CardContent className="pt-8 pb-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center shrink-0">
+                  <FileText className="w-6 h-6 text-rose-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-rose-200 mb-1">Resume</h3>
+                  <p className="text-stone-400 text-sm">Helen Mildred Warren AKA Helen Logan Hunter</p>
+                </div>
+              </div>
+              
+              <div className="bg-stone-950/50 rounded-lg p-6 border border-rose-900/20 space-y-4">
+                <p className="text-rose-100/90 leading-relaxed italic">
+                  "She came from very humble beginnings during the aftermath of WW1 being born in Campbell Ohio 
+                  April 17 1929 one of two children. Helen didn't have aspirations of achieving any goals, only to survive."
+                </p>
+                <p className="text-rose-100/90 leading-relaxed italic">
+                  "She joined Mary Kay Cosmetics as a beauty consultant, set her sights on being the first Black 
+                  Senior Director and held that position for 23 years winning Mary Kay's highest honors for achievement, 
+                  2 Pink Cadillacs, a Buick Regal and a Pontiac Grand Am!"
+                </p>
+                <p className="text-rose-100/90 leading-relaxed italic">
+                  "Health issues made it physically unable for her to continue so she retired from the Company, 
+                  but not from society."
+                </p>
+                <p className="text-rose-100/90 leading-relaxed italic">
+                  "Today Helen Is 84 years young and is still a mighty motivating force sharing her experiences, 
+                  her love and being a great role model for everyone she meets!"
+                </p>
+                <p className="text-rose-100/90 leading-relaxed italic font-semibold">
+                  "Not bad coming from humble beginnings, HUH?"
+                </p>
+              </div>
+              
+              <div className="mt-4 flex items-center gap-2">
+                <Badge className="bg-green-900/50 text-green-300 border-green-700/50 px-3 py-1">
+                  <FileText className="w-3 h-3 mr-1.5" />
+                  Primary Source Document
+                </Badge>
+                <span className="text-stone-500 text-xs">Personal resume, circa 2013 (Helen age 84)</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Letter to Richard Rogers */}
+      <section className="py-12 px-4 bg-stone-900/30">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-rose-100 mb-2 text-center">A Mother's Advocacy</h2>
+          <p className="text-stone-400 text-center mb-8">Letter to Richard Rogers, son of Mary Kay Ash — July 10, 2013</p>
+          
+          <Card className="bg-gradient-to-br from-amber-950/20 via-stone-900/60 to-stone-900/60 border-amber-800/30">
+            <CardContent className="pt-8 pb-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                  <FileText className="w-6 h-6 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-amber-200 mb-1">Letter to Mr. Richard Rogers</h3>
+                  <p className="text-stone-400 text-sm">Mary Kay Cosmetics, Inc. &middot; From Life Care Center of Grandview, MO</p>
+                </div>
+              </div>
+              
+              <div className="bg-stone-950/50 rounded-lg p-6 border border-amber-900/20 space-y-4">
+                <p className="text-stone-300 leading-relaxed">
+                  In this remarkable letter, Helen — at age 84 and living at the Life Care Center of Grandview — 
+                  wrote directly to <strong className="text-amber-200">Richard Rogers, the son of Mary Kay Ash</strong>, 
+                  to advocate for her son Candy's literary career. She reported that all of Candy's books had been 
+                  accepted by Barnes &amp; Noble, with four books being uploaded to B&amp;N E-books, Google Books, and Amazon.
+                </p>
+                <blockquote className="border-l-2 border-amber-500/40 pl-4 text-rose-100/90 italic">
+                  "His belief in the fact that God is still doing Miracles is an understatement in the way that how 
+                  God has even touched my life and I've been given a second chance to promote Mary Kay at this age 
+                  and under these conditions by letting me be selected to represent my nursing home, being chosen 
+                  as first runner up in this beauty pageant."
+                </blockquote>
+                <p className="text-stone-300 leading-relaxed">
+                  Helen described Candy as "trying to stay in the background" to let her light shine, comparing 
+                  their mother-son bond to Rogers' own relationship with his mother, Mary Kay Ash. She called 
+                  Mary Kay Ash <strong className="text-amber-200">"one of the most fascinating ladies I've ever had 
+                  the pleasure of calling my friend."</strong>
+                </p>
+                <blockquote className="border-l-2 border-amber-500/40 pl-4 text-rose-100/90 italic">
+                  "I wish you could do something to help get his books to reach the best sellers list by perhaps 
+                  asking all of the consultants coast to coast to at least purchase a book or more to help make 
+                  his dream come true. Just a few words from you could help prove that Miracles are still happening today!"
+                </blockquote>
+              </div>
+              
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <Badge className="bg-green-900/50 text-green-300 border-green-700/50 px-3 py-1">
+                  <FileText className="w-3 h-3 mr-1.5" />
+                  Primary Source Document
+                </Badge>
+                <span className="text-stone-500 text-xs">Personal letter, July 10, 2013 — Life Care Center of Grandview, MO 64030</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -676,10 +794,10 @@ export default function GrandmaHelen() {
         <div className="max-w-4xl mx-auto text-center space-y-2">
           <p className="text-xs text-stone-600">
             This page is part of the Seabrun "Candy" Hunter Jr. Legacy Archive. All content is presented for 
-            historical preservation and educational purposes. Family stories and photographs are shared with the 
-            authorization of the Hunter family. Magazine content from Life Care Leader (2014 Edition) is reproduced 
-            for biographical documentation purposes. &copy; 2014 Life Care Centers of America. All rights reserved by 
-            their respective owners.
+            historical preservation and educational purposes. Family stories, photographs, and personal documents 
+            (including Helen's resume and her 2013 letter to Richard Rogers) are shared with the authorization of the Hunter family. Magazine content from 
+            Life Care Leader (2014 Edition) is reproduced for biographical documentation purposes. &copy; 2014 Life 
+            Care Centers of America. All rights reserved by their respective owners.
           </p>
           <p className="text-xs text-stone-700">
             A Canryn Production and its subsidiaries.
