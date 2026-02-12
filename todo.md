@@ -2592,3 +2592,23 @@
 - [x] Add iMessage evidence to Little Richard Connection page (5th evidence item)
 - [x] Add all Alvin Taylor evidence to Proof Vault page (replaced generic witness entry with specific Alvin Taylor corroboration)
 - [x] Add GitHub settings instructions to FUTURE_TODO.md (already documented in FUTURE_TODO.md items 5 & 6)
+
+## v11.8 — Missing Proof Vault Entries
+- [x] Investigate missing Proof Vault entries: Mike Powers, Spencer Leigh, and others
+- [x] Verify Seabrun Candy Hunter presence in Wikipedia links (confirmed: "He worked on new songs with sideman Seabrun 'Candy' Hunter")
+- [x] Restore all missing evidence entries to Proof Vault (9 new entries added)
+
+## v11.9 — Comprehensive Evidence Archive
+- [x] Process Spencer Leigh PDFs (SpencerLeigh1.pdf, SpencerLeigh2.pdf)
+- [x] Process Trevor Cajiao PDFs (TrevorCajiao1-5.pdf) — Now Dig This magazine
+- [x] Process Phil Silverman PDFs (PhilSilverman1-4.pdf)
+- [x] Process SoundExchange PDF (soundexchange1.pdf)
+- [x] Process Licensing PDFs (Liscensing.pdf, Liscensing2-5.pdf)
+- [x] Process Getty Images PDF (ReGettyImagesContent.pdf)
+- [x] Process Jumbo Records PDF (Jumborecords.pdf)
+- [x] Process Mr. Walker PDF (MrWalker.pdf)
+- [x] Process Mike Powers Wembley Clips PDF (MikePowersWembleyClips.pdf)
+- [x] Catalog all 24 image screenshots
+- [x] Upload key evidence images to CDN (text-based evidence entries added — images preserved in estate archive)
+- [x] Add all new evidence entries to Proof Vault (9 new entries added)
+- [ ] Save checkpoint

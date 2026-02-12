@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, FileText, Music, Scale, Globe, Users, CheckCircle, AlertTriangle, ExternalLink, Image, Database } from 'lucide-react';
+import { Shield, FileText, Music, Scale, Globe, Users, CheckCircle, AlertTriangle, ExternalLink, Image, Database, BookOpen, Film, Newspaper, Phone, Mail, MapPin } from 'lucide-react';
 import { Link } from 'wouter';
 
 interface ProofItem {
@@ -194,20 +194,205 @@ const proofItems: ProofItem[] = [
     ],
     significance: 'When three independent databases — one official (BMI), one community-curated (Discogs), and one open-source (MusicBrainz) — all confirm the same publisher and credit information, the evidence becomes virtually irrefutable. This triangulation is the gold standard for music industry verification.',
   },
+  // === Third-Party Testimony & Corroboration ===
+  {
+    id: 'alvin-taylor-documentary-call',
+    title: 'Alvin Taylor — Documentary Inclusion Call (Recorded)',
+    category: 'testimony',
+    description: 'Recorded phone call where Alvin Taylor, in front of his documentary director Nelson, states he would not make his documentary without including Candy Hunter and credits Hunter for his entire career.',
+    verificationStatus: 'verified',
+    source: 'Recorded Phone Call — Alvin Taylor with Director Nelson (2025)',
+    details: [
+      '"I would not have a career without your dad." — Alvin Taylor',
+      '"And of course, I wouldn\'t do it without including you to talk about your dad, Candy."',
+      '"Over the years, I\'ve seen how people have done stuff. And not one person mentioned your dad\'s name." — confirms systematic omission',
+      '"Your dad did a lot of stuff for a lot of people, but mainly Little Richard. He took care of him."',
+      '"Had it not been for him, I wouldn\'t be in the band." — Candy Hunter recruited Alvin Taylor',
+      'Director Nelson confirmed on call: wants TyAnna on camera for Alvin Taylor documentary',
+      'Call recorded with consent — audio file preserved in estate archive',
+    ],
+    significance: 'This is among the strongest evidence in the vault. A living witness — in front of his own documentary director — voluntarily credits Candy Hunter for his career, confirms the systematic omission of Hunter\'s name, and insists on correcting the record. The recording is a primary source document.',
+  },
+  {
+    id: 'spencer-leigh-correspondence',
+    title: 'Spencer Leigh — Little Richard Biographer Correspondence',
+    category: 'testimony',
+    description: 'Email correspondence with Spencer Leigh, author of "Little Richard: Send Me Some Lovin\'" biography, who acknowledged Candy Hunter\'s contributions and offered to help restore his legacy.',
+    verificationStatus: 'verified',
+    source: 'Email Correspondence — Spencer Leigh (May-June 2025)',
+    details: [
+      'Spencer Leigh is the author of "Little Richard: Send Me Some Lovin\'" — a published biography of Little Richard',
+      'May 21, 2025: Leigh directed TyAnna to Trevor Cajiao, editor of "Now Dig This" magazine, for further research',
+      'June 23, 2025: Leigh stated "I think you are one that holds the key to his legacy"',
+      'Leigh offered to help identify who recorded Candy Hunter\'s songs: "I am sure I can help you to find out who recorded them"',
+      'Acknowledged his book focused on Richard\'s early Specialty years and covered the Reprise period (Candy\'s era) with less detail',
+    ],
+    externalLinks: [
+      { label: 'Spencer Leigh\'s Book on Amazon', url: 'https://www.amazon.com/Little-Richard-Send-Some-Lovin/dp/0857162446' },
+    ],
+    significance: 'A published biographer of Little Richard acknowledges Candy Hunter\'s importance and actively assists the legacy restoration effort. Leigh\'s admission that the Reprise period received less coverage in his book highlights the gap this project fills.',
+  },
+  {
+    id: 'now-dig-this-publication',
+    title: 'Now Dig This Magazine — Published Article (July 2025, No. 508)',
+    category: 'media',
+    description: 'Article about Seabrun Candy Hunter\'s contributions to Little Richard\'s music published in Now Dig This, a respected UK rock and roll magazine, in the July 2025 issue.',
+    verificationStatus: 'verified',
+    source: 'Now Dig This Magazine, Issue No. 508 (July 2025) — Editor: Trevor Cajiao',
+    details: [
+      'Trevor Cajiao confirmed: "I don\'t believe we\'ve ever ran an article in NDT detailing your father\'s work with Little Richard during the Reprise period"',
+      'June 9, 2025: Cajiao confirmed the article would be published in the July issue',
+      'Article includes verified 1972 Wembley photograph with Candy Hunter at the piano',
+      'August 2025: Cajiao published correction of contact email in the August issue',
+      'Cajiao expressed willingness to review expanded feature on Little Richard\'s 1970s era',
+      'Magazine is print-only — Cajiao stated it will "NEVER be available in digital form"',
+      'Now Dig This reaches dedicated Little Richard collectors and rock and roll historians worldwide',
+    ],
+    externalLinks: [
+      { label: 'Now Dig This Magazine', url: 'https://www.nowdigthis.co.uk' },
+    ],
+    significance: 'Publication in a respected rock and roll history magazine creates a permanent, independent, third-party record of Candy Hunter\'s contributions. This is the first time his story has been told in a dedicated music publication, reaching the exact audience of collectors and historians who can corroborate and expand the evidence.',
+  },
+  {
+    id: 'phil-silverman-testimony',
+    title: 'Phil Silverman — Researcher & Wikipedia Editor',
+    category: 'testimony',
+    description: 'Phil Silverman, a Little Richard researcher who corresponded directly with Candy Hunter during his lifetime, added Hunter\'s name to the Little Richard Wikipedia page and wrote an Amazon review crediting Hunter — which was later mysteriously removed.',
+    verificationStatus: 'verified',
+    source: 'Email Correspondence — Phil Silverman (April 2022 - August 2023)',
+    details: [
+      'Silverman corresponded directly with Candy Hunter during his lifetime and sent him a cassette of Little Richard from 1975',
+      'Silverman confirmed: "I added your dads name to the little richard wiki, for 1975" — Candy Hunter now appears on Wikipedia',
+      'Silverman wrote an Amazon review for the "California, I\'m Coming" album giving credit to Candy Hunter — the review was later REMOVED from Amazon',
+      'Israel Judah Battle (Candy\'s son) stated his father "may have written the majority of the songs on the King of Rock n Roll album"',
+      'Silverman suggested contacting Timo Reijola, who ran the official Little Richard website, for more information',
+      'Silverman confirmed Candy Hunter\'s estate had not received royalties for over 50 years',
+    ],
+    significance: 'Phil Silverman is a direct witness who knew Candy Hunter personally and took concrete action to restore his name — editing Wikipedia and writing public reviews. The mysterious removal of his Amazon review suggests active suppression of Hunter\'s contributions, supporting the systematic omission thesis.',
+  },
+  {
+    id: 'wikipedia-reference',
+    title: 'Wikipedia — Little Richard Article References Candy Hunter',
+    category: 'digital',
+    description: 'The Wikipedia article for Little Richard explicitly mentions Seabrun "Candy" Hunter as a sideman, confirming his presence in the world\'s most-accessed encyclopedia.',
+    verificationStatus: 'verified',
+    source: 'Wikipedia — Little Richard Article (en.wikipedia.org/wiki/Little_Richard)',
+    details: [
+      'Wikipedia states: "He worked on new songs with sideman Seabrun \'Candy\' Hunter"',
+      'Edit was made by Phil Silverman, who confirmed this in email correspondence',
+      'The article is one of the most-viewed music biography pages on Wikipedia',
+      'Establishes Candy Hunter\'s name in the permanent public record accessible to billions',
+    ],
+    externalLinks: [
+      { label: 'Little Richard — Wikipedia', url: 'https://en.wikipedia.org/wiki/Little_Richard' },
+    ],
+    significance: 'Wikipedia is the world\'s most-accessed reference source. Candy Hunter\'s presence on the Little Richard page means his name is now part of the permanent, globally accessible historical record — a critical milestone in the legacy restoration.',
+  },
+  {
+    id: 'mike-powers-documentary',
+    title: 'Mike Powers — "I Am Everything" Documentary Producer',
+    category: 'media',
+    description: 'Mike Powers, EVP and Head of Production at Bungalow Media + Entertainment (producers of the CNN/HBO documentary "Little Richard: I Am Everything"), confirmed Candy Hunter appeared in their research and in the documentary footage.',
+    verificationStatus: 'verified',
+    source: 'Email Correspondence & Recorded Phone Call — Mike Powers, Bungalow Media (July 2025)',
+    details: [
+      'Mike Powers confirmed: "I think he came up in the research as a band member, for sure"',
+      'Candy Hunter is visible in the Wembley concert footage used in the documentary',
+      'Powers confirmed: "clearly, your dad was a part of, you know, Richard\'s success"',
+      'Alvin Taylor told the production team the documentary "could not be made without improperly including my dad into the story"',
+      'The production team was told someone would contact the family — "which obviously never happened"',
+      'Powers offered to find raw footage from Kino Library and consider a documentary about Candy Hunter',
+      'Magnolia Pictures (distributor) referred TyAnna to Mike Powers directly',
+    ],
+    significance: 'The producer of the most significant Little Richard documentary in recent history acknowledges Candy Hunter\'s role and admits the family was never contacted despite being flagged during production. This confirms the pattern of omission extends even to modern documentary filmmaking.',
+  },
+  // === NEW EVIDENCE: Legal & Licensing ===
+  {
+    id: 'soundexchange-estate-claim',
+    title: 'SoundExchange — Formal Legacy Rights Claim',
+    category: 'legal',
+    description: 'Formal estate claim submitted to SoundExchange for legacy performer royalties owed to Seabrun Candy Hunter Jr., with acknowledgment of receipt and processing.',
+    verificationStatus: 'documented',
+    source: 'SoundExchange Correspondence (June-July 2025)',
+    details: [
+      'June 27, 2025: Formal legacy rights and royalty submission bundle sent to SoundExchange',
+      'July 7, 2025: SoundExchange (Robert Williams) acknowledged receipt — 60 business days to process',
+      'July 14, 2025: SoundExchange (Jay Aikens) requested full Estate packet',
+      'Required documents: Claimant Questionnaire, Indemnification Card, Attorney Declaration, Full Registration, Death Certificate',
+      'Claim establishes Candy Hunter as a "documented performer and co-writer affiliated with Little Richard\'s band and recordings in the 1970s"',
+    ],
+    significance: 'This formal claim to a major royalty organization creates an official record of the estate\'s pursuit of rightful compensation. SoundExchange\'s acceptance and processing of the claim validates the legitimacy of the estate\'s position.',
+  },
+  {
+    id: 'getty-alamy-licensing',
+    title: 'Getty Images & Alamy — Photo Identification & Licensing',
+    category: 'licensing',
+    description: 'Formal licensing inquiries to Getty Images and Alamy for photographs from the 1972 Wembley concert and other events where Candy Hunter appears alongside Little Richard.',
+    verificationStatus: 'documented',
+    source: 'Getty Images & Alamy Correspondence (June 2025)',
+    details: [
+      'Getty Images: 9 specific editorial image IDs identified showing Little Richard with band at Wembley (1972) and Copenhagen (1975)',
+      'Photographers include David Redfern, Gijsbert Hanekroot, Evening Standard, Jan Persson, Mirrorpix',
+      'Heathrow Airport arrival photos (Aug 3, 1972) show Candy Hunter with Little Richard',
+      'Alamy: Licensing requested for "Little Richard performing at the London Rock \'n\' Roll Show 1974" by Gijsbert Hanekroot',
+      'Candy Hunter identified as performer in the Alamy photograph',
+      'Project: "In Battle Tyme: The Case for Legacy & Truth"',
+      'Getty responded positively and requested specific image IDs for pricing',
+    ],
+    significance: 'Professional photo agencies hold archival images that physically document Candy Hunter\'s presence at major performances. The licensing process creates an official record linking Hunter to these historical events through metadata, captions, and photographer records.',
+  },
+  // === NEW EVIDENCE: Institutional Outreach ===
+  {
+    id: 'macon-bibb-resource-house',
+    title: 'Macon-Bibb County — Little Richard Resource House Request',
+    category: 'investigation',
+    description: 'Formal request to include Seabrun Candy Hunter Jr. in the Little Richard Resource House in Macon, Georgia — Little Richard\'s hometown. The request went unanswered.',
+    verificationStatus: 'documented',
+    source: 'Email to Robert Walker, Macon-Bibb County (June 2025)',
+    details: [
+      'June 4, 2025: TyAnna requested inclusion of Candy Hunter\'s contributions in the Little Richard Resource House',
+      'Request highlighted the 1972-1976 era and co-writing credit on "Rockin\' Rockin\' Boogie"',
+      'Follow-up emails sent to additional county officials: Wendy Mullis and Armand Burnett',
+      'June 7, 2025: Second email to Robert Walker — also went unanswered',
+      'Attempt to contact Rock and Roll Hall of Fame on June 7, 2025 — email failed',
+      'No response received from any Macon-Bibb County official',
+    ],
+    significance: 'The complete lack of response from the institution dedicated to preserving Little Richard\'s legacy is itself evidence of the ongoing pattern of omission. The Little Richard Resource House in his hometown does not acknowledge one of his most significant collaborators.',
+  },
+  {
+    id: 'now-dig-this-expanded',
+    title: 'Now Dig This — Expanded Feature Proposal (August 2025)',
+    category: 'media',
+    description: 'Ongoing correspondence with Now Dig This editor Trevor Cajiao about an expanded feature covering Little Richard\'s 1970s era, with access to unpublished archival material.',
+    verificationStatus: 'documented',
+    source: 'Email Correspondence — Trevor Cajiao (August 2025)',
+    details: [
+      'August 9, 2025: TyAnna proposed expanded feature on Little Richard\'s 1970s era',
+      'Offered access to unpublished archival material and first-hand accounts',
+      'Cajiao expressed willingness to review but noted readers prefer Richard\'s earlier career',
+      'Cajiao stated the 1970s was when Richard "lost his way" — reflecting the bias that erases Candy\'s era',
+      'Correction published in August issue with correct contact email',
+    ],
+    significance: 'The editor\'s comment that the 1970s was when Richard "lost his way" reveals the exact bias that has erased Candy Hunter\'s contributions. The very period when Hunter was most active is the period historians dismiss — making this expanded feature crucial for correcting the record.',
+  },
   {
     id: 'systematic-documentation',
-    title: 'Systematic Omission Documentation',
+    title: 'Systematic Omission — Comprehensive Pattern',
     category: 'investigation',
-    description: 'Documented evidence of systematic omission of credits, recognition, and compensation owed to Seabrun Candy Hunter throughout his career.',
+    description: 'Documented evidence of systematic omission across multiple institutions, platforms, and media — from Amazon review removal to unanswered institutional requests to documentary exclusion.',
     verificationStatus: 'documented',
-    source: 'Comparative Analysis & Historical Records',
+    source: 'Compiled Evidence from Multiple Sources (2022-2026)',
     details: [
-      'Credit discrepancies between original documentation and published records',
-      'Timeline of omissions correlated with industry practices',
-      'Comparative analysis with contemporaneous artists\' treatment',
-      'Pattern documentation showing systematic rather than incidental omission',
+      'Phil Silverman\'s Amazon review crediting Candy Hunter was mysteriously removed',
+      'Macon-Bibb County officials did not respond to inclusion requests for the Little Richard Resource House',
+      'The "I Am Everything" documentary team was told to include Candy Hunter but never contacted the family',
+      'Alvin Taylor confirms: "Not one person mentioned your dad\'s name" over decades',
+      'Spencer Leigh\'s biography covered the Reprise period (Candy\'s era) with minimal detail',
+      'Trevor Cajiao confirms Now Dig This never ran an article on Candy Hunter\'s work with Little Richard',
+      'Over 50 years of unpaid royalties documented by the estate',
+      'The 1970s — Candy Hunter\'s most active period — is systematically dismissed as when Richard "lost his way"',
     ],
-    significance: 'This documentation establishes that the lack of public recognition was not due to lack of contribution, but rather systematic omission — a critical distinction for legacy restoration.',
+    significance: 'The pattern is not incidental. When an Amazon review is removed, a documentary team fails to follow through, institutional requests go unanswered, and an entire decade of collaboration is dismissed — the evidence points to systematic erasure rather than simple oversight.',
   },
 ];
 
@@ -216,6 +401,8 @@ const categories = [
   { id: 'legal', label: 'Legal Records', icon: Scale },
   { id: 'music', label: 'Music Records', icon: Music },
   { id: 'testimony', label: 'Testimony', icon: Users },
+  { id: 'media', label: 'Media & Publications', icon: Newspaper },
+  { id: 'licensing', label: 'Licensing & Photos', icon: Film },
   { id: 'digital', label: 'Digital Presence', icon: Globe },
   { id: 'investigation', label: 'Investigation', icon: FileText },
   { id: 'bmi', label: 'BMI Evidence', icon: Database },
@@ -269,8 +456,9 @@ export default function ProofVault() {
             Verified Documentation & Evidence Archive
           </p>
           <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
-            Every claim in this legacy is backed by verifiable evidence. This vault contains the documented proof 
-            supporting Seabrun Candy Hunter's contributions, rights, and the systematic omission of his recognition.
+            Every claim in this legacy is backed by verifiable evidence. This vault contains testimony from session musicians, 
+            biographers, documentary producers, magazine editors, and researchers — alongside legal filings, licensing records, 
+            and digital verification confirming Seabrun Candy Hunter's contributions and the systematic omission of his recognition.
           </p>
         </div>
       </section>
@@ -432,9 +620,9 @@ export default function ProofVault() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-foreground mb-4">The Evidence Speaks</h2>
           <p className="text-foreground/70 mb-6 max-w-2xl mx-auto">
-            This is not speculation. This is not opinion. Every piece of evidence in this vault is sourced, 
-            verified, and documented. The legacy of Seabrun Candy Hunter is built on facts — and the facts 
-            are here for anyone willing to look.
+            This is not speculation. This is not opinion. Session musicians, biographers, documentary producers, 
+            magazine editors, royalty organizations, and photo archives all confirm the same truth. The legacy of 
+            Seabrun Candy Hunter is built on facts — and the facts are here for anyone willing to look.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/rrb/systematic-omission">
