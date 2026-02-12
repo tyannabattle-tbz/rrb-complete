@@ -2629,3 +2629,10 @@
 - [x] Update Proof Vault gallery with specific captions for all 27 images
 - [x] Add confidentiality check note to bar mediation entry
 - [x] Save checkpoint
+
+## v11.11 — Poetry Hour & Poetry Station
+- [ ] Add Poetry station (Channel 8) to radio channel configuration
+- [ ] Create Poetry Hour page with schedule and featured poems
+- [ ] Add Poetry Hour to navigation under Listen Live or Music & Radio
+- [ ] Add route in App.tsx
+- [ ] Update skill, build zip, save checkpoint
