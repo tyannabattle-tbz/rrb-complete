@@ -65,19 +65,61 @@ const familyValues = [
   },
 ];
 
-const timelineEvents = [
-  { year: '1929', event: 'Born in Campbell, Ohio, shortly before the stock market crash' },
-  { year: '1938', event: 'Contracted polio at age 9 — fought back with determination and her brother\'s support to fully recover' },
-  { year: '1946', event: 'Put education on hold to get married and start a family' },
-  { year: '1954', event: 'Family relocated to Detroit; began career as a runway model for a designer' },
-  { year: '1961', event: 'Returned to school while still modeling; her three children helped her study and graduate' },
-  { year: 'c. 1965', event: 'Earned Licensed Practical Nurse (LPN) certification while continuing to model' },
-  { year: '1971', event: 'Joined Mary Kay Cosmetics as a second job alongside nursing' },
-  { year: '1972', event: 'Mary Kay Ash personally handed Helen the keys to her first pink Cadillac at the annual Seminar conference' },
-  { year: 'Career', event: 'Became the second Black director, then the first Black senior director at Mary Kay; earned five cars total including two pink Cadillacs' },
-  { year: '1994', event: 'Gave up directorship due to illness but continued helping women with skincare' },
-  { year: '2014', event: 'Featured on the cover of Life Care Leader magazine — "Beauty More Than Skin Deep"' },
-  { year: '2016', event: 'Honored by the Missouri Senate — Senator Holsman offered Senate Resolution No. 1462, regarding Helen Logan Hunter, Grandview, which was adopted by the full Senate on February 17, 2016' },
+type TimelineEra = {
+  era: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  events: { year: string; event: string; highlight?: boolean; icon: typeof Heart }[];
+};
+
+const timelineEras: TimelineEra[] = [
+  {
+    era: 'Early Life & Resilience',
+    color: 'text-amber-400',
+    bgColor: 'bg-amber-500/10',
+    borderColor: 'border-amber-500/30',
+    events: [
+      { year: '1929', event: 'Born in Campbell, Ohio, shortly before the stock market crash', icon: Star },
+      { year: '1938', event: 'Contracted polio at age 9 — fought back with determination and her brother\'s support to fully recover', highlight: true, icon: Heart },
+      { year: '1946', event: 'Put education on hold to get married and start a family', icon: Home },
+    ],
+  },
+  {
+    era: 'Detroit: Model, Student, Mother',
+    color: 'text-sky-400',
+    bgColor: 'bg-sky-500/10',
+    borderColor: 'border-sky-500/30',
+    events: [
+      { year: '1954', event: 'Family relocated to Detroit; began career as a runway model for a designer', icon: Sparkles },
+      { year: '1961', event: 'Returned to school while still modeling; her three children helped her study and graduate', highlight: true, icon: BookOpen },
+      { year: 'c. 1965', event: 'Earned Licensed Practical Nurse (LPN) certification while continuing to model', icon: Award },
+    ],
+  },
+  {
+    era: 'Mary Kay Pioneer',
+    color: 'text-pink-400',
+    bgColor: 'bg-pink-500/10',
+    borderColor: 'border-pink-500/30',
+    events: [
+      { year: '1971', event: 'Joined Mary Kay Cosmetics as a second job alongside nursing', icon: Sparkles },
+      { year: '1972', event: 'Mary Kay Ash personally handed Helen the keys to her first pink Cadillac at the annual Seminar conference', highlight: true, icon: Star },
+      { year: '1970s–80s', event: 'Became the second Black director, then the first Black senior director at Mary Kay; earned five cars total including two pink Cadillacs', highlight: true, icon: Award },
+      { year: '1994', event: 'Gave up directorship due to illness but continued helping women with skincare', icon: Heart },
+    ],
+  },
+  {
+    era: 'Legacy & Recognition',
+    color: 'text-rose-400',
+    bgColor: 'bg-rose-500/10',
+    borderColor: 'border-rose-500/30',
+    events: [
+      { year: '2014', event: 'Featured on the cover of Life Care Leader magazine — "Beauty More Than Skin Deep"', highlight: true, icon: Camera },
+      { year: '2015', event: 'Candy Hunter published Mother\'s Day tribute on Facebook: "YOU ARE REALLY ARE MY QUEEN!"', icon: Heart },
+      { year: '2016', event: 'Honored by the Missouri Senate — Senate Resolution No. 1462, adopted February 17, 2016', highlight: true, icon: Landmark },
+      { year: '2018', event: 'Candy shared Life Care Leader cover on Facebook via Canryn Production Inc.', icon: Users },
+    ],
+  },
 ];
 
 export default function GrandmaHelen() {
@@ -284,18 +326,80 @@ export default function GrandmaHelen() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="py-12 px-4 bg-stone-900/30">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-rose-100 mb-8 text-center">Life Timeline</h2>
-          <div className="space-y-4">
-            {timelineEvents.map((event, idx) => (
-              <div key={idx} className="flex gap-4 items-start">
-                <div className="w-20 shrink-0 text-right">
-                  <span className="text-sm font-bold text-rose-400">{event.year}</span>
+      {/* Timeline Visualization */}
+      <section className="py-16 px-4 bg-stone-900/30">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-rose-100 mb-2 text-center">Life Timeline</h2>
+          <p className="text-stone-400 text-center mb-12">A journey of resilience, reinvention, and recognition</p>
+          
+          <div className="relative">
+            {/* Central vertical line */}
+            <div className="absolute left-[28px] md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-amber-500/40 via-pink-500/40 to-rose-500/40" />
+            
+            {timelineEras.map((era, eraIdx) => (
+              <div key={eraIdx} className="mb-12 last:mb-0">
+                {/* Era Header */}
+                <div className="relative flex items-center mb-6">
+                  <div className="absolute left-[20px] md:left-1/2 md:-translate-x-1/2 w-[18px] h-[18px] rounded-full bg-stone-950 border-2 border-current z-10" style={{ borderColor: era.color === 'text-amber-400' ? '#fbbf24' : era.color === 'text-sky-400' ? '#38bdf8' : era.color === 'text-pink-400' ? '#f472b6' : '#fb7185' }} />
+                  <div className={`ml-16 md:ml-0 md:mx-auto ${era.bgColor} ${era.borderColor} border rounded-full px-6 py-2 relative z-10`}>
+                    <span className={`text-sm font-bold ${era.color}`}>{era.era}</span>
+                  </div>
                 </div>
-                <div className="w-3 h-3 rounded-full bg-rose-500 mt-1.5 shrink-0 ring-4 ring-rose-500/20" />
-                <p className="text-stone-300 text-sm leading-relaxed">{event.event}</p>
+                
+                {/* Events */}
+                <div className="space-y-4">
+                  {era.events.map((event, eventIdx) => {
+                    const isRight = (eraIdx * 4 + eventIdx) % 2 === 0;
+                    return (
+                      <div key={eventIdx} className="relative flex items-start">
+                        {/* Dot on the line */}
+                        <div className={`absolute left-[22px] md:left-1/2 md:-translate-x-1/2 w-[13px] h-[13px] rounded-full z-10 mt-1 ${
+                          event.highlight 
+                            ? 'ring-4 ring-current/20 bg-current' 
+                            : 'bg-stone-700 border-2 border-stone-500'
+                        }`} style={event.highlight ? { backgroundColor: era.color === 'text-amber-400' ? '#fbbf24' : era.color === 'text-sky-400' ? '#38bdf8' : era.color === 'text-pink-400' ? '#f472b6' : '#fb7185', boxShadow: `0 0 12px ${era.color === 'text-amber-400' ? '#fbbf2440' : era.color === 'text-sky-400' ? '#38bdf840' : era.color === 'text-pink-400' ? '#f472b640' : '#fb718540'}` } : {}} />
+                        
+                        {/* Mobile: always right */}
+                        <div className="md:hidden ml-16 flex-1">
+                          <div className={`rounded-lg p-4 ${event.highlight ? `${era.bgColor} ${era.borderColor} border` : 'bg-stone-900/60 border border-stone-800/50'}`}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <event.icon className={`w-4 h-4 ${event.highlight ? era.color : 'text-stone-500'}`} />
+                              <span className={`text-sm font-bold ${event.highlight ? era.color : 'text-stone-400'}`}>{event.year}</span>
+                            </div>
+                            <p className={`text-sm leading-relaxed ${event.highlight ? 'text-stone-200' : 'text-stone-400'}`}>{event.event}</p>
+                          </div>
+                        </div>
+                        
+                        {/* Desktop: alternating left/right */}
+                        <div className="hidden md:flex w-full items-start">
+                          <div className={`w-[calc(50%-24px)] ${isRight ? 'pr-6' : ''}`}>
+                            {isRight && (
+                              <div className={`rounded-lg p-4 text-right ${event.highlight ? `${era.bgColor} ${era.borderColor} border` : 'bg-stone-900/60 border border-stone-800/50'}`}>
+                                <div className="flex items-center gap-2 justify-end mb-1">
+                                  <span className={`text-sm font-bold ${event.highlight ? era.color : 'text-stone-400'}`}>{event.year}</span>
+                                  <event.icon className={`w-4 h-4 ${event.highlight ? era.color : 'text-stone-500'}`} />
+                                </div>
+                                <p className={`text-sm leading-relaxed ${event.highlight ? 'text-stone-200' : 'text-stone-400'}`}>{event.event}</p>
+                              </div>
+                            )}
+                          </div>
+                          <div className="w-12 shrink-0" />
+                          <div className={`w-[calc(50%-24px)] ${!isRight ? 'pl-6' : ''}`}>
+                            {!isRight && (
+                              <div className={`rounded-lg p-4 ${event.highlight ? `${era.bgColor} ${era.borderColor} border` : 'bg-stone-900/60 border border-stone-800/50'}`}>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <event.icon className={`w-4 h-4 ${event.highlight ? era.color : 'text-stone-500'}`} />
+                                  <span className={`text-sm font-bold ${event.highlight ? era.color : 'text-stone-400'}`}>{event.year}</span>
+                                </div>
+                                <p className={`text-sm leading-relaxed ${event.highlight ? 'text-stone-200' : 'text-stone-400'}`}>{event.event}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ))}
           </div>

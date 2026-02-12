@@ -2640,3 +2640,17 @@
 - [x] Verify Dad on both Wikipedia links (CONFIRMED: both pages credit Seabrun Hunter)
 - [x] Update Wikipedia Proof Vault entry with both links and The Second Coming album credit
 - [x] Update skill, build zip, save final checkpoint (v11.11 — 3638e171)
+
+## v11.12 — Grandma Helen Timeline Visualization
+- [ ] Design and build interactive timeline visualization for Grandma Helen's page
+- [ ] Save checkpoint
+
+## Grandma Helen Timeline Visualization (COMPLETED)
+- [x] Redesigned Life Timeline with 4 era groupings (Early Life & Resilience, Detroit: Model/Student/Mother, Mary Kay Pioneer, Legacy & Recognition)
+- [x] Added alternating left/right card layout on desktop with central vertical gradient line
+- [x] Added era header badges with color-coded themes (amber, sky, pink, rose)
+- [x] Added highlight glow effects for key milestone events
+- [x] Added Lucide icons per event (Star, Heart, Home, Sparkles, BookOpen, Award, Camera, Landmark, Users)
+- [x] Added 2 new timeline events: 2015 Mother's Day tribute, 2018 Canryn Production Facebook share
+- [x] Mobile-responsive layout (stacked left-aligned on mobile, alternating on desktop)
+- [x] No TypeScript errors, compiles cleanly
