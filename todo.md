@@ -2586,3 +2586,9 @@
 - [x] Upload Alvin Taylor Instagram DM (drummer confirms "written by your dad, arranged/produced by HB Barnum") to CDN
 - [x] Upload Reprise Records 45 RPM vinyl label (Rockin' Rockin' Boogie - Penniman/Hunter - Payten Music) to CDN
 - [x] Add both evidence items to Little Richard Connection page (4 total evidence items now on page)
+
+## v11.8 — Alvin Taylor iMessage + Proof Vault + GitHub Settings
+- [x] Upload Alvin Taylor iMessage (Feb 11, 2026) "Awesome and amazing. I played drums on this song." to CDN
+- [x] Add iMessage evidence to Little Richard Connection page (5th evidence item)
+- [x] Add all Alvin Taylor evidence to Proof Vault page (replaced generic witness entry with specific Alvin Taylor corroboration)
+- [x] Add GitHub settings instructions to FUTURE_TODO.md (already documented in FUTURE_TODO.md items 5 & 6)

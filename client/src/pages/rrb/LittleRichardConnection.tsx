@@ -87,6 +87,16 @@ const facebookEvidence = [
     caption: '"I\'m so grateful that you\'d take the time to share with me. I\'m the drummer on this great piece of music Rockin Boogie, written by your dad and arranged and produced by HB Barnum."',
     significance: 'Third-party corroboration from Alvin Taylor, the actual session drummer who played on "Rockin\' Rockin\' Boogie." He independently confirms: (1) the song was "written by your dad" (Seabrun Candy Hunter), (2) it was "arranged and produced by HB Barnum" (H.B. Barnum, legendary arranger/producer). This is independent verification from a musician who was physically present during the recording session.',
   },
+  {
+    id: 'alvin-taylor-imessage-2026',
+    title: 'Alvin Taylor — Confirms Playing Drums (February 11, 2026)',
+    date: 'February 11, 2026',
+    platform: 'iMessage',
+    postedBy: 'Alvin Taylor',
+    imageUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/HVDoobsaivxDcRBI.jpeg',
+    caption: '"Awesome and amazing. I played drums on this song."',
+    significance: 'Real-time confirmation from Alvin Taylor after being shown the RRB platform on February 11, 2026. He confirmed: \"I played drums on this song.\" This is ongoing, living corroboration from the session drummer who was present during the recording.',
+  },
 ];
 
 export default function LittleRichardConnection() {
@@ -127,9 +137,9 @@ export default function LittleRichardConnection() {
             <h2 className="text-3xl font-bold text-foreground text-center">Primary Source Evidence</h2>
           </div>
           <p className="text-center text-foreground/60 mb-10 max-w-2xl mx-auto">
-            The following evidence includes social media posts by Candy Hunter, the physical Reprise Records 
-            vinyl label, and independent corroboration from session drummer Alvin Taylor — together forming 
-            an irrefutable chain of primary source documentation.
+            Five pieces of primary source evidence: social media posts by Candy Hunter, the physical Reprise Records 
+            vinyl label, and multiple independent confirmations from session drummer Alvin Taylor — together forming 
+            an irrefutable chain of documentation spanning 2018 to 2026.
           </p>
 
           <div className="space-y-10">
@@ -280,10 +290,11 @@ export default function LittleRichardConnection() {
               <h3 className="text-2xl font-bold text-foreground mb-4 text-center">The Bigger Picture</h3>
               <p className="text-foreground/70 leading-relaxed text-center max-w-2xl mx-auto mb-4">
                 The connection between Seabrun Candy Hunter and Little Richard is not speculation or distant 
-                musical influence. It is documented by four independent sources: Candy Hunter's public social 
+                musical influence. It is documented by five independent sources: Candy Hunter's public social 
                 media posts identifying Little Richard as family, her detailed personal announcement describing 
-                their collaboration, the physical Reprise Records vinyl crediting "Penniman/Hunter," and 
-                independent confirmation from session drummer Alvin Taylor. They were family. They toured 
+                their collaboration, the physical Reprise Records vinyl crediting "Penniman/Hunter," 
+                independent confirmation from session drummer Alvin Taylor, and his live 2026 reaction 
+                confirming "I played drums on this song." They were family. They toured 
                 together. They recorded together. Little Richard personally mentored and produced Seabrun's music.
               </p>
               <p className="text-foreground/70 leading-relaxed text-center max-w-2xl mx-auto">
