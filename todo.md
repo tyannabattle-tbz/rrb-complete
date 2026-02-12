@@ -2631,8 +2631,12 @@
 - [x] Save checkpoint
 
 ## v11.11 — Poetry Hour & Poetry Station
-- [ ] Add Poetry station (Channel 8) to radio channel configuration
-- [ ] Create Poetry Hour page with schedule and featured poems
-- [ ] Add Poetry Hour to navigation under Listen Live or Music & Radio
-- [ ] Add route in App.tsx
-- [ ] Update skill, build zip, save checkpoint
+- [x] Add Poetry station (Channel 8) to radio channel configuration
+- [x] Create Poetry Hour page with schedule and featured poems
+- [x] Add Poetry Hour to navigation under Listen Live or Music & Radio
+- [x] Add route in App.tsx
+- [x] Fix narrow channel bar (widened to w-80/sm:w-96)
+- [x] Add Poetry Hour to streamLibrary CHANNEL_PRESETS
+- [x] Verify Dad on both Wikipedia links (CONFIRMED: both pages credit Seabrun Hunter)
+- [x] Update Wikipedia Proof Vault entry with both links and The Second Coming album credit
+- [ ] Update skill, build zip, save final checkpoint

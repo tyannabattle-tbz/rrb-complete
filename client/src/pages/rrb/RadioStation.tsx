@@ -189,6 +189,25 @@ export default function RadioStation() {
         </section>
       )}
 
+      {/* Poetry Hour Channel 8 */}
+      <section className="py-8 md:py-12 bg-gradient-to-b from-purple-950/10 to-background">
+        <div className="container max-w-4xl">
+          <a href="/rrb/poetry-hour" className="block p-6 rounded-xl bg-card border border-purple-500/20 hover:border-purple-500/40 transition-all group">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl">✒️</span>
+                  <h3 className="text-xl font-bold text-foreground group-hover:text-purple-400 transition-colors">Poetry Hour — Channel 8</h3>
+                  <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/10 text-green-400 border border-green-500/20 animate-pulse">LIVE</span>
+                </div>
+                <p className="text-sm text-muted-foreground">24/7 spoken word, poetry readings from Dad's Miracles collections, and community open mic. Broadcasting at 174 Hz.</p>
+              </div>
+              <span className="text-muted-foreground group-hover:text-purple-400 transition-colors text-xl">→</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
       {/* HybridCast Widget Section */}
       <section className="py-12 md:py-16 bg-gradient-to-b from-accent/10 to-background">
         <div className="container max-w-4xl">

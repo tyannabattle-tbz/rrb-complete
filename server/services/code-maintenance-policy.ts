@@ -94,6 +94,7 @@ const KNOWN_AUDIO_STREAMS: Array<{ url: string; channel: string }> = [
   { url: 'https://stream.laut.fm/funk', channel: 'Funk Channel' },
   { url: 'https://somafm.com/seventies130.pls', channel: 'King Richards 70s Rock' },
   { url: 'https://stream.laut.fm/rocknroll', channel: 'RRB Main Radio' },
+  { url: 'https://stream.zeno.fm/3fmqr74a7f8uv', channel: 'Poetry Hour' },
 ];
 
 // ─── Known Routes ────────────────────────────────────────────────────────────
@@ -105,7 +106,7 @@ const CRITICAL_ROUTES = [
   '/rrb/podcast-and-video', '/rrb/radio-station', '/hybridcast',
   '/rrb/sweet-miracles/fundraising', '/rrb/bookkeeping', '/rrb/hr',
   '/rrb/accounting', '/rrb/legal', '/rrb/commercials', '/rrb/advertising',
-  '/rrb/ai-command-center', '/rrb/radio-directory',
+  '/rrb/ai-command-center', '/rrb/radio-directory', '/rrb/poetry-hour',
 ];
 
 // ─── In-Memory Issue Store ───────────────────────────────────────────────────

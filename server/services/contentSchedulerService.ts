@@ -11,6 +11,7 @@
  *  5. Gospel Channel — Gospel and praise music
  *  6. Funk Channel — Funk, boogie, and dance
  *  7. King Richard's 70s Rock — Classic 70s rock
+ *  8. Poetry Hour — Spoken word, poetry readings, and open mic
  */
 
 export interface ScheduleSlot {
@@ -114,6 +115,13 @@ export class ContentSchedulerService {
         fallbackUrl: 'http://nashe1.hostingradio.ru/rock-128.mp3',
         frequency: '963Hz',
       },
+      {
+        id: 'ch-008', name: 'Poetry Hour', type: 'radio', status: 'active',
+        currentContent: 'Spoken Word & Poetry', listeners: 2800, genre: 'spoken-word',
+        streamUrl: 'https://stream.zeno.fm/3fmqr74a7f8uv',
+        fallbackUrl: 'http://jazzradio.ice.infomaniak.ch/jazzradio-high.mp3',
+        frequency: '174Hz',
+      },
     ];
     defaultChannels.forEach(ch => this.channels.set(ch.id, ch));
   }
@@ -205,6 +213,19 @@ export class ContentSchedulerService {
       { id: 'slot-056', channelId: 'ch-007', startTime: '18:00', endTime: '21:00', contentType: 'radio', title: 'Classic Rock Block', priority: 8, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
       { id: 'slot-057', channelId: 'ch-007', startTime: '21:00', endTime: '23:59', contentType: 'radio', title: 'Vinyl Sessions — Full Albums', priority: 5, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
       { id: 'slot-058', channelId: 'ch-007', startTime: '12:00', endTime: '18:00', contentType: 'radio', title: 'Saturday Rock Marathon', priority: 9, daysOfWeek: [6], isActive: true, createdAt: Date.now() },
+
+      // ═══════════════════════════════════════════════════════════
+      // CH-008: Poetry Hour — Spoken Word & Poetry Programming
+      // ═══════════════════════════════════════════════════════════
+      { id: 'slot-063', channelId: 'ch-008', startTime: '00:00', endTime: '06:00', contentType: 'radio', title: 'Midnight Verses — Reflective Poetry', priority: 3, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'slot-064', channelId: 'ch-008', startTime: '06:00', endTime: '09:00', contentType: 'radio', title: 'Morning Words — Poetry & Affirmations', priority: 8, daysOfWeek: [1,2,3,4,5], isActive: true, createdAt: Date.now() },
+      { id: 'slot-065', channelId: 'ch-008', startTime: '09:00', endTime: '12:00', contentType: 'radio', title: 'Miracles Hour — Candy Hunter Poetry', priority: 10, daysOfWeek: [1,2,3,4,5], isActive: true, createdAt: Date.now() },
+      { id: 'slot-066', channelId: 'ch-008', startTime: '12:00', endTime: '15:00', contentType: 'radio', title: '50 Love Poems — Afternoon Readings', priority: 7, daysOfWeek: [1,2,3,4,5], isActive: true, createdAt: Date.now() },
+      { id: 'slot-067', channelId: 'ch-008', startTime: '15:00', endTime: '18:00', contentType: 'radio', title: 'Community Voices — Open Mic Poetry', priority: 8, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'slot-068', channelId: 'ch-008', startTime: '18:00', endTime: '21:00', contentType: 'radio', title: 'Evening Spoken Word — Featured Poets', priority: 8, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'slot-069', channelId: 'ch-008', startTime: '21:00', endTime: '23:59', contentType: 'radio', title: 'Good-bye Poems — Nighttime Reflections', priority: 5, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'slot-070', channelId: 'ch-008', startTime: '10:00', endTime: '16:00', contentType: 'radio', title: 'Saturday Poetry Marathon — Full Collections', priority: 9, daysOfWeek: [6], isActive: true, createdAt: Date.now() },
+      { id: 'slot-071', channelId: 'ch-008', startTime: '08:00', endTime: '12:00', contentType: 'radio', title: 'Sunday Devotional Poetry', priority: 9, daysOfWeek: [0], isActive: true, createdAt: Date.now() },
 
       // ═══════════════════════════════════════════════════════════
       // Commercial Breaks — Across All Channels

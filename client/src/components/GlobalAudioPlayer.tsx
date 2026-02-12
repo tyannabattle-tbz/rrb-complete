@@ -260,7 +260,7 @@ function QuickPlayButton() {
 
       <div className="fixed bottom-[70px] md:bottom-4 right-4 z-50">
         {showPicker && (
-          <div className="absolute bottom-14 right-0 w-72 sm:w-80 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden mb-2">
+          <div className="absolute bottom-14 right-0 w-80 sm:w-96 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden mb-2">
             <div className="p-2.5 border-b border-zinc-800 flex items-center justify-between">
               <div>
                 <h3 className="text-xs font-semibold text-white">Start Listening</h3>

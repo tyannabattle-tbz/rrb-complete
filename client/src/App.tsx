@@ -164,6 +164,7 @@ import RRBFamilyTree from '@/pages/rrb/FamilyTree';
 import RRBCandyThroughTheYears from '@/pages/rrb/CandyThroughTheYears';
 import RRBObituary from '@/pages/rrb/Obituary';
 import RRBLittleRichardConnection from '@/pages/rrb/LittleRichardConnection';
+import RRBPoetryHour from '@/pages/rrb/PoetryHour';
 import RRBVerifiedSources from '@/pages/rrb/VerifiedSources';
 import RRBBooksAndMiracles from '@/pages/rrb/BooksAndMiracles';
 import RRBBooks from '@/pages/rrb/Books';
@@ -370,6 +371,7 @@ function Router() {
       <Route path="/rrb/rss" component={RSSSubscribe} />
       <Route path="/rss" component={RSSSubscribe} />
       <Route path="/rrb/radio-station" component={RRBRadioStation} />
+      <Route path="/rrb/poetry-hour" component={RRBPoetryHour} />
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
       <Route path="/live-podcast-production" component={LivePodcastProduction} />
       <Route path="/rrb/hybridcast" component={RRBHybridCastPage} />

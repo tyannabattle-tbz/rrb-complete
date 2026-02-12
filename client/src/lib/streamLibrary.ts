@@ -581,6 +581,17 @@ export const CHANNEL_PRESETS: ChannelPreset[] = [
       LIVE_STREAMS.radioParadise,
     ],
   },
+  {
+    id: 'ch-008',
+    name: 'Poetry Hour',
+    description: 'Spoken word, poetry readings, and open mic — 174Hz healing frequency',
+    subsidiary: 'Canryn Production',
+    color: '#a855f7',
+    streams: [
+      LIVE_STREAMS.droneZone,
+      LIVE_STREAMS.deepSpaceOne,
+    ],
+  },
 ];
 
 // Helper: get all live streams as an array

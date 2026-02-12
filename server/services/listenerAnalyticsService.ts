@@ -394,7 +394,7 @@ class ListenerAnalyticsService {
       { id: 'r-20', name: 'New Orleans', state: 'LA', lat: 29.9511, lng: -90.0715, listeners: 920 },
     ];
 
-    const channelNames = ['RRB Main Radio', 'Podcast Network', 'Sweet Miracles FM', 'Emergency Broadcast', 'Meditation Channel', 'Community Voice', 'HybridCast Live'];
+    const channelNames = ['RRB Main Radio', 'Podcast Network', 'Sweet Miracles FM', 'Emergency Broadcast', 'Meditation Channel', 'Community Voice', 'HybridCast Live', 'Poetry Hour'];
 
     this.regionData = regions.map(r => ({
       ...r,
