@@ -558,8 +558,8 @@ export const CHANNEL_PRESETS: ChannelPreset[] = [
   },
   {
     id: 'ch-hybridcast',
-    name: 'HybridCast Broadcast',
-    description: 'Instrumental hip hop, indie, and experimental broadcast',
+    name: 'Voice of the Voiceless',
+    description: 'A voice for those unheard — instrumental hip hop, indie, and experimental broadcast',
     subsidiary: 'HybridCast',
     color: '#ef4444',
     streams: [

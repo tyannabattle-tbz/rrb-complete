@@ -2706,3 +2706,7 @@
 - [ ] Add News channel(s) to broadcast system
 - [ ] Navigation integration under existing menu structure
 - [ ] News station tests
+
+## Channel Rename
+- [x] Rename HybridCast Broadcast channel to Voice of the Voiceless in streamLibrary.ts
+- [x] Update FamilyAchievements.tsx reference

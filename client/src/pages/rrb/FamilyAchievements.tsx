@@ -60,7 +60,7 @@ const achievements = [
   {
     title: 'Multi-Platform Broadcasting',
     category: 'Media',
-    description: 'Establishment of a multi-channel broadcasting network including RRB Legacy Radio, Sweet Miracles Lounge, Drop Radio, C.J. Battle, and HybridCast Broadcast — bringing the family\'s music and message to listeners 24/7.',
+    description: 'Establishment of a multi-channel broadcasting network including RRB Legacy Radio, Sweet Miracles Lounge, Drop Radio, C.J. Battle, and Voice of the Voiceless — bringing the family\'s music and message to listeners 24/7.',
     icon: Music,
     color: 'orange',
   },
