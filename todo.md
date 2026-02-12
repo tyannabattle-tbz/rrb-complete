@@ -2623,3 +2623,9 @@
 
 ## v11.10 — Wording Fix
 - [x] Fix "without improperly" to "without properly" in Mike Powers Proof Vault entry
+
+## v11.10c — Gallery Captions & Mediation Note
+- [x] Identify each of the 27 gallery images and match to specific correspondence
+- [x] Update Proof Vault gallery with specific captions for all 27 images
+- [x] Add confidentiality check note to bar mediation entry
+- [x] Save checkpoint
