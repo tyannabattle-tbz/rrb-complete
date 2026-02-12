@@ -2583,6 +2583,6 @@
 - [x] Upload Candy Hunter's Facebook post (Nov 13, 2018) with rare Little Richard photo to CDN
 - [x] Add the photo and post caption to the Richard Connection page as evidence
 - [x] Upload Candy Hunter's "My Personal Announcement" Facebook post (June 20, 2020) to CDN — primary source evidence of family connection
-- [ ] Upload Alvin Taylor Instagram DM (drummer confirms "written by your dad, arranged/produced by HB Barnum") to CDN
-- [ ] Upload Reprise Records 45 RPM vinyl label (Rockin' Rockin' Boogie - Penniman/Hunter - Payten Music) to CDN
-- [ ] Add both evidence items to Little Richard Connection page
+- [x] Upload Alvin Taylor Instagram DM (drummer confirms "written by your dad, arranged/produced by HB Barnum") to CDN
+- [x] Upload Reprise Records 45 RPM vinyl label (Rockin' Rockin' Boogie - Penniman/Hunter - Payten Music) to CDN
+- [x] Add both evidence items to Little Richard Connection page (4 total evidence items now on page)

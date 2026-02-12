@@ -5,7 +5,7 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Music, Star, Zap, BookOpen, Quote, Mic, Camera, FileText } from 'lucide-react';
+import { Music, Star, Zap, BookOpen, Quote, Mic, Camera, FileText, Disc } from 'lucide-react';
 import { Link } from 'wouter';
 
 const connectionPoints = [
@@ -67,6 +67,26 @@ const facebookEvidence = [
     caption: '"Sometimes a sudden crosswind blows the air out from under the Eagle\'s wings... That\'s the same wind that took the air from my sails when I learned my best friend, Father, Brother, Uncle, Mentor, Cousin, Manager and more including being the awesome Undisputed King of Rock and Roll \'Little Richard\' had left us..."',
     significance: 'A detailed personal statement documenting the family relationship, mentorship, shared stage performances worldwide, recording sessions together, writing of "Rockin Rockin Boogie," and the deep personal bond between Seabrun Candy Hunter and Little Richard. This is the most comprehensive primary source evidence of the connection.',
   },
+  {
+    id: 'reprise-vinyl-label',
+    title: 'Reprise Records 45 RPM Vinyl — "Rockin\' Rockin\' Boogie"',
+    date: 'Posted to Little Richard News Facebook Group',
+    platform: 'Facebook / Physical Record',
+    postedBy: 'Candy Hunter',
+    imageUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qEVEmYsfaDKfwLoL.jpeg',
+    caption: '"My daughter TyAnna, sent this to me and I thought I would share it with anybody. It\'s an amazing find for me to see something that Richard and I did so many years ago! Hope you enjoy it and will be printed in the book! ATTT!"',
+    significance: 'The physical Reprise Records 45 RPM single (K 14343) shows: Track 1 — "ROCKIN\' ROCKIN\' BOOGIE" credited to (Penniman/Hunter) under PAYTEN MUSIC. Track 2 — "KING OF ROCK AND ROLL" credited to (Barnum/Craig). Released under LITTLE RICHARD on Reprise Records, Made in UK, 1971/1972. This is the definitive physical evidence that Seabrun Hunter co-wrote the song with Richard Penniman (Little Richard) and that it was published by Payten Music.',
+  },
+  {
+    id: 'alvin-taylor-dm',
+    title: 'Alvin Taylor — Session Drummer Confirmation',
+    date: 'Instagram Direct Message',
+    platform: 'Instagram',
+    postedBy: 'Alvin Taylor (@battle_ty)',
+    imageUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/ehKubkoiFHqHVyqI.jpeg',
+    caption: '"I\'m so grateful that you\'d take the time to share with me. I\'m the drummer on this great piece of music Rockin Boogie, written by your dad and arranged and produced by HB Barnum."',
+    significance: 'Third-party corroboration from Alvin Taylor, the actual session drummer who played on "Rockin\' Rockin\' Boogie." He independently confirms: (1) the song was "written by your dad" (Seabrun Candy Hunter), (2) it was "arranged and produced by HB Barnum" (H.B. Barnum, legendary arranger/producer). This is independent verification from a musician who was physically present during the recording session.',
+  },
 ];
 
 export default function LittleRichardConnection() {
@@ -82,7 +102,8 @@ export default function LittleRichardConnection() {
           </p>
           <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
             Primary source evidence documenting the direct family connection between 
-            Seabrun Candy Hunter and Little Richard — confirmed in Candy Hunter's own words.
+            Seabrun Candy Hunter and Little Richard — confirmed by Candy Hunter's own words, 
+            the physical Reprise Records vinyl, and independent corroboration from session musicians.
           </p>
         </div>
       </section>
@@ -106,9 +127,9 @@ export default function LittleRichardConnection() {
             <h2 className="text-3xl font-bold text-foreground text-center">Primary Source Evidence</h2>
           </div>
           <p className="text-center text-foreground/60 mb-10 max-w-2xl mx-auto">
-            The following Facebook posts by Candy Hunter serve as primary source documentation of the 
-            family connection between Seabrun Candy Hunter and Little Richard. These are her own words, 
-            posted publicly on social media.
+            The following evidence includes social media posts by Candy Hunter, the physical Reprise Records 
+            vinyl label, and independent corroboration from session drummer Alvin Taylor — together forming 
+            an irrefutable chain of primary source documentation.
           </p>
 
           <div className="space-y-10">
@@ -259,9 +280,11 @@ export default function LittleRichardConnection() {
               <h3 className="text-2xl font-bold text-foreground mb-4 text-center">The Bigger Picture</h3>
               <p className="text-foreground/70 leading-relaxed text-center max-w-2xl mx-auto mb-4">
                 The connection between Seabrun Candy Hunter and Little Richard is not speculation or distant 
-                musical influence. It is a documented, personal, familial bond — confirmed by Candy Hunter 
-                herself in public social media posts. They were family. They toured together. They recorded 
-                together. Little Richard personally mentored and produced Seabrun's music.
+                musical influence. It is documented by four independent sources: Candy Hunter's public social 
+                media posts identifying Little Richard as family, her detailed personal announcement describing 
+                their collaboration, the physical Reprise Records vinyl crediting "Penniman/Hunter," and 
+                independent confirmation from session drummer Alvin Taylor. They were family. They toured 
+                together. They recorded together. Little Richard personally mentored and produced Seabrun's music.
               </p>
               <p className="text-foreground/70 leading-relaxed text-center max-w-2xl mx-auto">
                 By preserving these primary source documents and restoring the historical record, we honor 
@@ -298,9 +321,10 @@ export default function LittleRichardConnection() {
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-sm text-foreground/50">
             This page documents the family connection and musical collaboration between Seabrun Candy Hunter 
-            and Little Richard using primary source evidence from Candy Hunter's public Facebook posts. 
-            All quotes are reproduced verbatim from the original posts. Screenshots are preserved as evidence 
-            and archived in the QUMUS Content Archival system.
+            and Little Richard using primary source evidence including Candy Hunter's public Facebook posts, 
+            the physical Reprise Records 45 RPM vinyl label (K 14343), and an Instagram message from session 
+            drummer Alvin Taylor. All quotes are reproduced verbatim from the original sources. Screenshots 
+            and images are preserved as evidence and archived in the QUMUS Content Archival system.
           </p>
         </div>
       </section>
