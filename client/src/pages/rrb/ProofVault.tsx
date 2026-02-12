@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, FileText, Music, Scale, Globe, Users, CheckCircle, AlertTriangle, ExternalLink, Image, Database, BookOpen, Film, Newspaper, Phone, Mail, MapPin } from 'lucide-react';
+import { Shield, FileText, Music, Scale, Globe, Users, CheckCircle, AlertTriangle, ExternalLink, Image, Database, BookOpen, Film, Newspaper, Phone, Mail, MapPin, Gavel, Camera, Volume2 } from 'lucide-react';
 import { Link } from 'wouter';
 
 interface ProofItem {
@@ -19,6 +19,9 @@ interface ProofItem {
   details: string[];
   significance: string;
   screenshotUrl?: string;
+  screenshotGallery?: { url: string; caption: string }[];
+  audioUrl?: string;
+  audioLabel?: string;
   externalLinks?: { label: string; url: string }[];
 }
 
@@ -87,18 +90,22 @@ const proofItems: ProofItem[] = [
     id: 'alvin-taylor-testimony',
     title: 'Alvin Taylor — Session Drummer Corroboration',
     category: 'testimony',
-    description: 'Independent confirmation from Alvin Taylor, the session drummer on "Rockin\' Rockin\' Boogie," verifying authorship and production credits across multiple platforms.',
+    description: 'Independent confirmation from Alvin Taylor, the session drummer on "Rockin\' Rockin\' Boogie," verifying authorship and production credits across multiple platforms — including a recorded call with his documentary director.',
     verificationStatus: 'verified',
-    source: 'Alvin Taylor — Instagram DM & iMessage (2026)',
+    source: 'Alvin Taylor — Instagram DM, iMessage, & Recorded Documentary Call (2026)',
     screenshotUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/ehKubkoiFHqHVyqI.jpeg',
     details: [
       'Instagram DM: "I\'m the drummer on this great piece of music Rockin Boogie, written by your dad and arranged and produced by HB Barnum."',
       'iMessage (Feb 11, 2026): "Awesome and amazing. I played drums on this song." — after viewing the RRB platform',
-      'Confirms Seabrun Candy Hunter as songwriter',
-      'Confirms H.B. Barnum as arranger and producer',
+      'Recorded call with documentary director Nelson: "I would not have a career without your dad"',
+      'Taylor states he would NOT do his own documentary without including Candy Hunter',
+      'Taylor on the systematic omission: "Not one person mentioned your dad\'s name" over decades',
+      'Taylor on Candy\'s role: "Your dad did a lot of stuff for a lot of people, but mainly Little Richard. He took care of him."',
+      'Director Nelson wants TyAnna on camera for the documentary',
+      'Confirms Seabrun Candy Hunter as songwriter, H.B. Barnum as arranger/producer',
       'Alvin Taylor was physically present during the recording session',
     ],
-    significance: 'Third-party corroboration from a session musician who was present during the recording. Alvin Taylor independently confirms authorship (Seabrun Candy Hunter) and production (H.B. Barnum) — matching the credits on the Reprise Records vinyl and BMI database.',
+    significance: 'The strongest testimony in the archive. Alvin Taylor — in front of his own documentary director — states on record that he would not have a career without Candy Hunter, refuses to make his documentary without including him, and confirms witnessing decades of systematic omission. This is a living witness voluntarily correcting the historical record.',
   },
   {
     id: 'public-footprint',
@@ -202,6 +209,8 @@ const proofItems: ProofItem[] = [
     description: 'Recorded phone call where Alvin Taylor, in front of his documentary director Nelson, states he would not make his documentary without including Candy Hunter and credits Hunter for his entire career.',
     verificationStatus: 'verified',
     source: 'Recorded Phone Call — Alvin Taylor with Director Nelson (2025)',
+    audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qoJAPaZKhYWEOKPq.mp3',
+    audioLabel: 'Alvin Taylor Documentary Call — With Director Nelson',
     details: [
       '"I would not have a career without your dad." — Alvin Taylor',
       '"And of course, I wouldn\'t do it without including you to talk about your dad, Candy."',
@@ -394,6 +403,73 @@ const proofItems: ProofItem[] = [
     ],
     significance: 'The pattern is not incidental. When an Amazon review is removed, a documentary team fails to follow through, institutional requests go unanswered, and an entire decade of collaboration is dismissed — the evidence points to systematic erasure rather than simple oversight.',
   },
+  {
+    id: 'bar-mediation-crane',
+    title: 'Missouri Bar Mediation — Jacob Crane',
+    category: 'legal-proceedings',
+    description: 'Formal bar complaint mediation through the Missouri Bar Complaint Resolution Program documenting the legal system\'s failure to protect the Hunter estate.',
+    verificationStatus: 'documented',
+    source: 'Missouri Bar Complaint Resolution Program — Facilitated by Michael Gunn (25+ years, probate specialist)',
+    details: [
+      'Attorney Jacob Crane retained for $1,000 to handle probate/letters of administration',
+      'Judge explicitly told Crane to prove the tort so he could administer the letters — Crane never returned to court',
+      'Crane was supposed to call Gloria (aunt who took possession of assets) — admitted he never did because he was "fearful"',
+      'Crane told Ty not to contact Gloria without a lawyer — while HE was the lawyer',
+      'Crane kept telling the family the father\'s company "didn\'t exist" — then his own file contained the company records',
+      'Crane identified 19+ defendants on a phone call, then reworded his email to say TY identified them',
+      'Death certificate was fraudulent from a funeral home now out of business — delayed estate opening past the 1-year statute',
+      'Facilitator acknowledged Ty\'s "zeal" and that she "did a pretty good job" filing motions pro se',
+      'No resolution reached — mediation concluded without agreement',
+    ],
+    significance: 'This mediation documents the legal system\'s failure at every level: a fraudulent death certificate blocked timely filing, the attorney failed to pursue the path the judge explicitly offered, evidence was suppressed, and the family was left without legal recourse — all while the legacy continues to be denied.',
+  },
+  {
+    id: 'evidence-gallery',
+    title: 'Primary Source Evidence Gallery',
+    category: 'investigation',
+    description: 'Collection of primary source screenshots documenting correspondence, social media posts, and institutional interactions related to the Seabrun Candy Hunter legacy restoration effort.',
+    verificationStatus: 'documented',
+    source: 'Estate Archive — Screenshots and Correspondence (2018-2026)',
+    screenshotGallery: [
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/kHPnqdCsTjvrwAyg.jpg', caption: 'Estate correspondence documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/PfSaoKQPRWnVIdEd.jpg', caption: 'Estate correspondence documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/BwZzNdTYFYxUiyBl.jpg', caption: 'Estate correspondence documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/vWBeKZxmWtnkQByq.jpg', caption: 'Industry correspondence' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/pebMNaesKjiUcmFd.PNG', caption: 'Royalty platform documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/dkXAPbkhEUJtoYhS.PNG', caption: 'Royalty platform documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/FPZswRgtcChkmdzG.PNG', caption: 'Industry correspondence' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/QQAztkOIaPZnGYVq.PNG', caption: 'Legal documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/yRikBQUkUBdrqfJl.PNG', caption: 'Legal documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/HQZwrnGycrTnzRZd.PNG', caption: 'Estate records' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/CpCSxZuvJWwiAiyu.PNG', caption: 'Industry correspondence' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/EMQqbtYWSuutUqqE.PNG', caption: 'Industry correspondence' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/wjKDOuzPEEhSCwqz.PNG', caption: 'Social media documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/PPvJlAVLFekncWtN.PNG', caption: 'Social media documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/LhuifuVufyurMQtW.PNG', caption: 'Institutional correspondence' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/NFxXeXyQlOSEWcfL.PNG', caption: 'Institutional correspondence' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/JDOkJQIwhDnGCXjC.PNG', caption: 'Industry records' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/TpaigSeWiiixfDIi.PNG', caption: 'Industry records' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xwZdjPDDtBmbKVoM.PNG', caption: 'Publishing documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/RUaaSFqpISTPJnrR.PNG', caption: 'Publishing documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/rSQJSnLIgujOVPZC.PNG', caption: 'Media documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/SfhppkfEolrQVnei.PNG', caption: 'Media documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/CiXmsHBQiHuaWQqG.PNG', caption: 'Estate records' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/dzhouMsqUJSoaqRD.PNG', caption: 'Legal correspondence' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/KJBHGGBcqPLKlQvY.PNG', caption: 'Legal correspondence' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/ZemqAnijPAUSpHvq.PNG', caption: 'Historical documentation' },
+      { url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/tQWuBRlBFlzGdLFb.PNG', caption: 'Historical documentation' },
+    ],
+    details: [
+      '27 primary source documents uploaded and archived',
+      'Includes correspondence with Spencer Leigh, Trevor Cajiao, Phil Silverman, and industry contacts',
+      'Social media posts from Candy Hunter documenting the family connection to Little Richard',
+      'Royalty platform screenshots showing registered credits and payment records',
+      'Legal correspondence related to estate proceedings and institutional requests',
+      'Industry records from SoundExchange, BMI, and licensing entities',
+      'All images preserved in original resolution for evidentiary purposes',
+    ],
+    significance: 'This gallery represents the physical evidence trail spanning 2018 to 2026 — every screenshot, every correspondence, every institutional interaction documented and preserved. Together they form an irrefutable pattern of both the legacy\'s existence and the systematic barriers to its recognition.',
+  },
 ];
 
 const categories = [
@@ -406,6 +482,7 @@ const categories = [
   { id: 'digital', label: 'Digital Presence', icon: Globe },
   { id: 'investigation', label: 'Investigation', icon: FileText },
   { id: 'bmi', label: 'BMI Evidence', icon: Database },
+  { id: 'legal-proceedings', label: 'Legal Proceedings', icon: Gavel },
 ];
 
 function StatusBadge({ status }: { status: string }) {
@@ -443,7 +520,7 @@ export default function ProofVault() {
 
   const verifiedCount = proofItems.filter(i => i.verificationStatus === 'verified').length;
   const documentedCount = proofItems.filter(i => i.verificationStatus === 'documented').length;
-  const screenshotCount = proofItems.filter(i => i.screenshotUrl).length;
+  const screenshotCount = proofItems.filter(i => i.screenshotUrl).length + proofItems.reduce((acc, i) => acc + (i.screenshotGallery?.length || 0), 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -575,6 +652,62 @@ export default function ProofVault() {
                             className="w-full max-h-96 object-contain bg-black/5 cursor-zoom-in hover:opacity-90 transition-opacity"
                           />
                         </a>
+                      </div>
+                    )}
+
+                    {/* Audio Evidence */}
+                    {item.audioUrl && (
+                      <div className="border border-border rounded-lg overflow-hidden">
+                        <div className="bg-muted/50 px-4 py-2 flex items-center gap-2 border-b border-border">
+                          <Volume2 className="w-4 h-4 text-foreground/60" />
+                          <span className="text-xs font-medium text-foreground/60 uppercase tracking-wider">Audio Evidence</span>
+                        </div>
+                        <div className="p-4 bg-black/5">
+                          <p className="text-sm text-foreground/70 mb-3">{item.audioLabel || 'Recorded Audio Evidence'}</p>
+                          <audio
+                            controls
+                            className="w-full"
+                            onClick={(e) => e.stopPropagation()}
+                            onPlay={(e) => e.stopPropagation()}
+                          >
+                            <source src={item.audioUrl} type="audio/mpeg" />
+                            Your browser does not support audio playback.
+                          </audio>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Screenshot Gallery */}
+                    {item.screenshotGallery && item.screenshotGallery.length > 0 && (
+                      <div className="border border-border rounded-lg overflow-hidden">
+                        <div className="bg-muted/50 px-4 py-2 flex items-center gap-2 border-b border-border">
+                          <Camera className="w-4 h-4 text-foreground/60" />
+                          <span className="text-xs font-medium text-foreground/60 uppercase tracking-wider">
+                            Evidence Gallery — {item.screenshotGallery.length} Documents
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 p-3">
+                          {item.screenshotGallery.map((img, idx) => (
+                            <a
+                              key={idx}
+                              href={img.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="group relative border border-border rounded-md overflow-hidden hover:border-red-500/50 transition-colors"
+                            >
+                              <img
+                                src={img.url}
+                                alt={img.caption}
+                                className="w-full h-24 object-cover cursor-zoom-in group-hover:opacity-90 transition-opacity"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+                                <span className="text-[10px] text-white p-1.5 leading-tight">{img.caption}</span>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
                       </div>
                     )}
 

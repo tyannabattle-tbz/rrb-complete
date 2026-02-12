@@ -2611,4 +2611,12 @@
 - [x] Catalog all 24 image screenshots
 - [x] Upload key evidence images to CDN (text-based evidence entries added — images preserved in estate archive)
 - [x] Add all new evidence entries to Proof Vault (9 new entries added)
+- [x] Save checkpoint
+
+## v11.10 — Comprehensive Evidence Expansion + BMI Mediation
+- [x] Transcribe bar mediation recording with Jacob Crane (Missouri Bar Complaint Resolution Program)
+- [x] Add mediation evidence to Proof Vault (Missouri Bar Mediation — Jacob Crane entry with Legal Proceedings category)
+- [x] Upload all 27 image screenshots to CDN (all 27 uploaded successfully)
+- [x] Add image screenshots as visual evidence to Proof Vault (27-image gallery with hover captions and zoom)
+- [x] Add Alvin Taylor documentary call audio to the site (audio player in Proof Vault + CDN hosted)
 - [ ] Save checkpoint
