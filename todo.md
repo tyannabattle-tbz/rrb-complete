@@ -2639,4 +2639,4 @@
 - [x] Add Poetry Hour to streamLibrary CHANNEL_PRESETS
 - [x] Verify Dad on both Wikipedia links (CONFIRMED: both pages credit Seabrun Hunter)
 - [x] Update Wikipedia Proof Vault entry with both links and The Second Coming album credit
-- [ ] Update skill, build zip, save final checkpoint
+- [x] Update skill, build zip, save final checkpoint (v11.11 — 3638e171)

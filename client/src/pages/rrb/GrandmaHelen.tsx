@@ -22,6 +22,13 @@ const magazineImages = {
   portraitCloseup: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/HEmHnfUqncOWGCeQ.JPG',
 };
 
+// Family Photos
+const familyPhotos = {
+  facebookLeaderPost: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/NpmdhBkNyNlkalAw.jpeg',
+  polaroids1989_1990: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/PNkKRfFeHtZLHQDr.jpeg',
+  candyTributeText: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/kFAuntHHpEwLMLqd.jpeg',
+};
+
 const magazineGallery = [
   { src: magazineImages.cover, title: 'Life Care Leader Cover, 2014 Edition', caption: 'Helen Hunter graces the cover of Life Care Leader magazine' },
   { src: magazineImages.tableOfContents, title: 'Table of Contents', caption: 'Helen\'s story "Beauty More Than Skin Deep" featured on page 14' },
@@ -30,6 +37,9 @@ const magazineGallery = [
   { src: magazineImages.portraitCloseup, title: 'Helen Hunter Portrait', caption: 'Close-up portrait of Helen Hunter, photo by Matilda McIntyre' },
   { src: magazineImages.articleMary, title: 'The Mary Kay Journey', caption: 'Helen\'s rise to become the first Black senior director at Mary Kay' },
   { src: magazineImages.articleEnd, title: 'A Legacy of Inspiration', caption: 'The conclusion of Helen\'s remarkable story' },
+  { src: familyPhotos.facebookLeaderPost, title: 'Candy\'s Facebook Post — Nov 7, 2018', caption: 'Candy Hunter shared the Life Care Leader cover on Facebook: "CANRYN PRODUCTION INC. LEADER MAGAZINE HELEN HUNTER LIFE STORY"' },
+  { src: familyPhotos.polaroids1989_1990, title: 'Helen Logan Hunter (1990) & David Lee Logan (1989)', caption: 'Polaroid photos of Helen Logan Hunter and David Lee Logan — family archive' },
+  { src: familyPhotos.candyTributeText, title: 'Candy\'s Mother\'s Day Tribute — May 30, 2015', caption: 'Candy\'s tribute to Helen: "Her son: Seabrun Candy Hunter a well known Hall of Fame Songwriter, Singer and successful Author!" — describing all of Helen\'s children and their achievements' },
 ];
 
 const familyValues = [
@@ -448,6 +458,72 @@ export default function GrandmaHelen() {
               <p className="text-stone-500 text-sm text-center">
                 — Gloria Walker, Helen's daughter
               </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Family Photos & Candy's Tribute */}
+      <section className="py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-rose-100 mb-2 text-center">Family Archive</h2>
+          <p className="text-stone-400 text-center mb-8">Photos and tributes from the Hunter family collection</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            {/* Polaroids */}
+            <Card className="bg-stone-900/60 border-stone-800/50 overflow-hidden">
+              <img 
+                src={familyPhotos.polaroids1989_1990}
+                alt="Polaroid photos: Helen Logan Hunter (1990) and David Lee Logan (1989)"
+                className="w-full h-64 object-contain bg-black"
+              />
+              <CardContent className="pt-4 pb-4">
+                <h3 className="text-lg font-bold text-rose-200 mb-1">Helen Logan Hunter & David Lee Logan</h3>
+                <p className="text-stone-400 text-sm">Polaroid photos from the family archive — Helen (1990) and David Lee Logan (1989)</p>
+              </CardContent>
+            </Card>
+
+            {/* Facebook Leader Post */}
+            <Card className="bg-stone-900/60 border-stone-800/50 overflow-hidden">
+              <img 
+                src={familyPhotos.facebookLeaderPost}
+                alt="Candy Hunter's Facebook post sharing Helen's Life Care Leader magazine cover, November 7, 2018"
+                className="w-full h-64 object-contain bg-black"
+              />
+              <CardContent className="pt-4 pb-4">
+                <h3 className="text-lg font-bold text-rose-200 mb-1">Candy's Facebook Post — Nov 7, 2018</h3>
+                <p className="text-stone-400 text-sm">Candy Hunter shared the Life Care Leader cover: "CANRYN PRODUCTION INC. LEADER MAGAZINE HELEN HUNTER LIFE STORY PT 4"</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Candy's Mother's Day Tribute */}
+          <Card className="bg-rose-950/20 border-rose-900/30">
+            <CardContent className="pt-6 pb-6">
+              <div className="flex flex-col md:flex-row gap-6 items-start">
+                <img 
+                  src={familyPhotos.candyTributeText}
+                  alt="Candy Hunter's Mother's Day tribute to Helen Hunter on Facebook, May 30, 2015"
+                  className="w-full md:w-1/3 rounded-lg border border-stone-800"
+                />
+                <div className="flex-1">
+                  <Badge className="bg-rose-600/20 text-rose-300 border-rose-700/30 mb-3">Candy's Mother's Day Tribute — May 30, 2015</Badge>
+                  <h3 className="text-xl font-bold text-rose-200 mb-3">"YOU ARE REALLY ARE MY 'QUEEN'!"</h3>
+                  <p className="text-stone-400 leading-relaxed mb-3">
+                    In this Facebook tribute, Candy described Helen winning the beauty pageant at Life Care Center: 
+                    "HELEN HUNTER continues to raise the bar for, 'those that want it, go get it'!"
+                  </p>
+                  <p className="text-stone-400 leading-relaxed mb-3">
+                    He listed each of Helen's children and their achievements — Gloria Walker (flight attendant for 20 years, 
+                    then became an RN), "Her son: Seabrun Candy Hunter a well known Hall of Fame Songwriter, Singer and 
+                    successful Author!" and Linda Hunter.
+                  </p>
+                  <p className="text-stone-500 text-sm italic">
+                    "All of them contribute their success to having a Mom that never quit striving to reach her goals 
+                    and demanding them to never quit just like she didn't."
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
