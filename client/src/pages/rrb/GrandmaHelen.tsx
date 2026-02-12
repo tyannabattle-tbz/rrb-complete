@@ -82,7 +82,7 @@ const timelineEras: TimelineEra[] = [
     events: [
       { year: '1929', event: 'Helen Mildred Warren born April 17 in Campbell, Ohio — one of two children, arriving just before the stock market crash', icon: Star },
       { year: '1938', event: 'Contracted polio at age 9 — fought back with determination and her brother\'s support to fully recover', highlight: true, icon: Heart },
-      { year: '1946', event: 'Fell in love, got married, and soon had three children — putting high school on hold', icon: Home },
+      { year: '1946', event: 'At age 17, married Seabrun Whitney Hunter, Sr. in Buffalo, N.Y. and soon had three children — putting high school on hold', icon: Home },
     ],
   },
   {
@@ -104,7 +104,7 @@ const timelineEras: TimelineEra[] = [
     events: [
       { year: '1971', event: 'Joined Mary Kay Cosmetics as a second job alongside nursing', icon: Sparkles },
       { year: '1972', event: 'Mary Kay Ash personally handed Helen the keys to her first pink Cadillac at the annual Seminar conference', highlight: true, icon: Star },
-      { year: '1970s–90s', event: 'First Black Senior Director at Mary Kay — held the position for 23 years; won highest honors including 2 Pink Cadillacs, a Buick Regal, and a Pontiac Grand Am', highlight: true, icon: Award },
+      { year: '1970s–90s', event: 'First Black Senior Director at Mary Kay — held the position for 23 years; won highest honors including 2 Pink Cadillacs, 2 Buick Regals, and a Pontiac Grand Am', highlight: true, icon: Award },
       { year: 'c. 1994', event: 'Health issues forced retirement from Mary Kay, but she never retired from helping others — "not from society"', icon: Heart },
     ],
   },
@@ -116,6 +116,7 @@ const timelineEras: TimelineEra[] = [
     events: [
       { year: '2013', event: 'First runner-up in beauty pageant at Life Care Center of Grandview; wrote letter to Richard Rogers (Mary Kay Ash\'s son) advocating for Candy\'s books', icon: Star },
       { year: '2014', event: 'Featured on the cover of Life Care Leader magazine — "Beauty More Than Skin Deep"', highlight: true, icon: Camera },
+      { year: 'c. 2015', event: 'District 1 beauty pageant contestant at age 86; President of the Resident Council at Life Care Center of Grandview', highlight: true, icon: Award },
       { year: '2015', event: 'Candy Hunter published Mother\'s Day tribute on Facebook: "YOU ARE REALLY ARE MY QUEEN!"', icon: Heart },
       { year: '2016', event: 'Honored by the Missouri Senate — Senate Resolution No. 1462, adopted February 17, 2016', highlight: true, icon: Landmark },
       { year: '2018', event: 'Candy shared Life Care Leader cover on Facebook via Canryn Production Inc.', icon: Users },
@@ -157,8 +158,9 @@ export default function GrandmaHelen() {
                 Born Helen Mildred Warren in Campbell, Ohio on April 17, 1929. Polio survivor. Runway model. 
                 Commerce High School graduate. Licensed Practical Nurse with Pharmacology training. 
                 The first Black Senior Director at Mary Kay Cosmetics — a position she held for 23 years. 
-                Winner of Mary Kay's highest honors: two Pink Cadillacs, a Buick Regal, and a Pontiac Grand Am. 
-                Mother. Grandmother. The foundation of the Hunter legacy.
+                Winner of Mary Kay's highest honors: two Pink Cadillacs, two Buick Regals, and a Pontiac Grand Am. 
+                Wife of Seabrun Whitney Hunter, Sr. Mother of three. Blessed with 7 grandchildren, 
+                17 great grandchildren, and 4 great great grandchildren. The foundation of the Hunter legacy.
               </p>
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                 <Badge variant="outline" className="border-rose-700/50 text-rose-300 px-3 py-1">
@@ -228,7 +230,7 @@ export default function GrandmaHelen() {
                     It was the determination in her heart and the support of her brother, especially, that gave her 
                     the strength to fully recover from polio, eventually regaining full mobility. As Helen regained 
                     her strength, she finished grade school in Buffalo, N.Y. and continued her education until 1946, 
-                    when she fell in love, got married, and soon had three children.
+                    when she fell in love with Seabrun Whitney Hunter, Sr., got married at age 17 in Buffalo, and soon had three children.
                   </p>
                 </CardContent>
               </Card>
@@ -275,8 +277,8 @@ export default function GrandmaHelen() {
                   <p className="text-stone-300 leading-relaxed">
                     Helen's proudest moment came when Mary Kay Ash personally handed her the keys to her first pink 
                     Cadillac at the 1972 annual conference. Throughout her career, she won Mary Kay's highest honors 
-                    for achievement, earning <strong className="text-rose-300">two Pink Cadillacs, a Buick Regal, and a 
-                    Pontiac Grand Am</strong>, and kept close to her mentor. "She was just like the 
+                    for achievement, earning <strong className="text-rose-300">two Pink Cadillacs, two Buick Regals, and a 
+                    Pontiac Grand Am</strong> — five cars in total — and kept close to her mentor. "She was just like the 
                     girl next door," Helen said of Mary Kay Ash. "She was like a mom to me... giving me a pink 
                     Cadillac, mink coat and lots of diamonds along the way."
                   </p>
@@ -441,7 +443,7 @@ export default function GrandmaHelen() {
                 <p className="text-rose-100/90 leading-relaxed italic">
                   "She joined Mary Kay Cosmetics as a beauty consultant, set her sights on being the first Black 
                   Senior Director and held that position for 23 years winning Mary Kay's highest honors for achievement, 
-                  2 Pink Cadillacs, a Buick Regal and a Pontiac Grand Am!"
+                  2 Pink Cadillacs, 2 Buick Regals and a Pontiac Grand Am!"
                 </p>
                 <p className="text-rose-100/90 leading-relaxed italic">
                   "Health issues made it physically unable for her to continue so she retired from the Company, 
@@ -758,11 +760,15 @@ export default function GrandmaHelen() {
             <CardContent className="pt-8 pb-8 text-center">
               <Home className="w-12 h-12 text-rose-400 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-rose-100 mb-4">From Her Home to the World</h3>
-              <p className="text-stone-400 leading-relaxed max-w-2xl mx-auto mb-6">
-                Helen Hunter's legacy lives on through her children and grandchildren. The same determination 
-                that carried her through polio, through single motherhood, through breaking barriers at Mary Kay — 
-                that same fire burns in the Hunter family today. The music that Seabrun "Candy" Hunter brought to 
+              <p className="text-stone-400 leading-relaxed max-w-2xl mx-auto mb-4">
+                Helen and Seabrun Whitney Hunter, Sr. built a family that would change the world. The same determination 
+                that carried her through polio, through raising three children as a single mother, through breaking barriers at Mary Kay — 
+                that same fire burns in the Hunter family today. The music that their son Seabrun "Candy" Hunter brought to 
                 the world was first nurtured in Helen's home. Every song carries echoes of her encouragement.
+              </p>
+              <p className="text-stone-500 text-sm max-w-xl mx-auto mb-6">
+                Today Helen's legacy extends through 3 children, 7 grandchildren, 17 great grandchildren, 
+                and 4 great great grandchildren — loved by family and by thousands of friends worldwide.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/rrb/family-tree">
@@ -795,7 +801,7 @@ export default function GrandmaHelen() {
           <p className="text-xs text-stone-600">
             This page is part of the Seabrun "Candy" Hunter Jr. Legacy Archive. All content is presented for 
             historical preservation and educational purposes. Family stories, photographs, and personal documents 
-            (including Helen's resume and her 2013 letter to Richard Rogers) are shared with the authorization of the Hunter family. Magazine content from 
+            (including Helen's resume, her 2013 letter to Richard Rogers, and the District 1 beauty pageant profile) are shared with the authorization of the Hunter family. Magazine content from 
             Life Care Leader (2014 Edition) is reproduced for biographical documentation purposes. &copy; 2014 Life 
             Care Centers of America. All rights reserved by their respective owners.
           </p>

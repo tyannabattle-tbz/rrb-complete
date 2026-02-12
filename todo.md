@@ -2673,3 +2673,20 @@
 - [x] Add letter to Grandma Helen page as primary source document
 - [x] Add beauty pageant first runner up detail to timeline (2013)
 - [x] Add letter content showing Helen's relationship with Mary Kay Ash family
+
+## District 1 Beauty Pageant Document (circa 2015)
+- [x] Correct car count: 2 Pink Cadillacs, 2 Buick Regals, Pontiac Grand Am (5 total)
+- [x] Add family stats: 3 children, 7 grandchildren, 17 great grandchildren, 4 great great grandchildren
+- [x] Add President of Resident Council detail
+- [x] Add District 1 pageant event to timeline (circa 2015, age 86)
+- [x] Update marriage detail: married at age 17 in Buffalo, NY
+- [x] Add pageant document as primary source
+
+## District 1 Beauty Pageant Document (circa 2015)
+- [x] Correct car count: 2 Pink Cadillacs, 2 Buick Regals, Pontiac Grand Am (5 total)
+- [x] Add family stats: 3 children, 7 grandchildren, 17 great grandchildren, 4 great great grandchildren
+- [x] Add President of Resident Council detail
+- [x] Add District 1 pageant event to timeline (circa 2015, age 86)
+- [x] Update marriage detail: married at age 17 in Buffalo, NY
+- [x] Add pageant document as primary source
+- [x] Mention grandfather Seabrun Whitney Hunter, Sr. on the page
