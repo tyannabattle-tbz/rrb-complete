@@ -2565,3 +2565,20 @@
 - [x] Create README_MASTER.md (project overview with all stats and doc index)
 - [x] Verify skill (rrb-qumus-complete-ecosystem) with 14 policies intact
 - [x] Final checkpoint and zip — DELIVERED
+
+## v11.6 Bug Fix — Production Site Shows Plain Text (No Styling/Layout)
+- [x] Fix broken page rendering when accessed via Google search / custom domain (browser cache issue — resolved, site loads in Safari and after Opera cache clear)
+
+## v11.7 — Future To-Do List & QUMUS Awareness Registration — Feb 2026
+- [x] Create FUTURE_TODO.md with all pending operational tasks
+- [x] Register future tasks in QUMUS awareness (pending tasks tracker — getPendingOperationalTasks endpoint)
+- [ ] Enable GitHub Discussions on tyannabattle-tbz/rrb-qumus-platform repo (OWNER ACTION: Settings → Features → Discussions)
+- [ ] Enable auto-delete head branches on GitHub repo (OWNER ACTION: Settings → General → Pull Requests)
+- [x] Run initial Content Archival baseline scan — 13 links: 9 alive, 4 degraded, 0 dead, Health B (85/100)
+- [x] Run initial Royalty Audit baseline scan — 10 sources, 3 verified, 7 pending, 0 discrepancies, Health C (79/100)
+- [x] Update documentation files with future to-do instructions (README_MASTER, USER_MANUAL updated)
+- [x] Update zip archive with FUTURE_TODO.md and BASELINE_SCAN_RESULTS.md (v11.7 zip created)
+
+## v11.7 — Add Little Richard Facebook Post to Richard Connection Page
+- [ ] Upload Candy Hunter's Facebook post (Nov 13, 2018) with rare Little Richard photo to CDN
+- [ ] Add the photo and post caption to the Richard Connection page as evidence

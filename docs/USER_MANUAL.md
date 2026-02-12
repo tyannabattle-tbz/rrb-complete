@@ -196,7 +196,27 @@ The platform is designed with the impaired community in mind:
 
 ---
 
-## 9. Contact & Support
+## 9. Pending Operational Tasks
+
+The QUMUS autonomous brain tracks a list of pending tasks that require owner action. These are not code changes — they are operational steps you take when ready. You can view the full list at any time by visiting the **QUMUS Ecosystem Dashboard** or reading the `FUTURE_TODO.md` document.
+
+The most important pending tasks are:
+
+| Priority | Task | When to Do It |
+|----------|------|---------------|
+| 1 (Critical) | Import CSV payout data from your distributor | When you receive your first payout report |
+| 1 (Critical) | Register with BMI as publisher | As soon as possible |
+| 1 (Critical) | Register with SoundExchange | As soon as possible |
+| 2 (Important) | Run Content Archival baseline scan | Can do now from the dashboard |
+| 2 (Important) | Run Royalty Audit baseline scan | After importing CSV data |
+| 3 (Standard) | Enable GitHub Discussions | 2-minute GitHub settings change |
+| 3 (Standard) | Enable auto-delete head branches | 2-minute GitHub settings change |
+
+See `FUTURE_TODO.md` for the complete list with detailed instructions.
+
+---
+
+## 10. Contact & Support
 
 For all inquiries regarding advertising, studio services, and production packages, contact **Canryn Production** directly. The platform's Stripe integration accepts donations exclusively for legacy recovery efforts through the Sweet Miracles Foundation.
 

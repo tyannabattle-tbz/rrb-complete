@@ -577,6 +577,150 @@ export const qumusCompleteRouter = router({
       });
       return { success: true, message: 'Notification queued for delivery' };
     }),
+
+  /**
+   * Get pending operational tasks — QUMUS awareness of future to-do items
+   * These are owner-action items that QUMUS tracks but cannot execute autonomously
+   */
+  getPendingOperationalTasks: publicProcedure.query(async () => {
+    const tasks = [
+      {
+        id: 'task_csv_import',
+        priority: 1,
+        category: 'Revenue Protection',
+        title: 'Import CSV Payout Data',
+        description: 'Upload payout reports from DistroKid, TuneCore, CD Baby, Spotify, or Apple Music to the Royalty Audit system',
+        route: '/rrb/qumus/royalty-audit',
+        action: 'Go to CSV Import tab and upload your distributor payout file',
+        status: 'waiting_for_owner',
+        prerequisite: 'Must have a distributor account and at least one payout report',
+        relatedPolicy: 'Royalty Audit (#12)',
+      },
+      {
+        id: 'task_bmi_registration',
+        priority: 1,
+        category: 'Revenue Protection',
+        title: 'Register with BMI as Publisher',
+        description: 'Required to collect performance royalties for Seabrun Candy Hunter compositions',
+        route: null,
+        action: 'Visit bmi.com and register as a publisher',
+        status: 'waiting_for_owner',
+        prerequisite: 'None — can do immediately',
+        relatedPolicy: 'Royalty Audit (#12)',
+      },
+      {
+        id: 'task_soundexchange',
+        priority: 1,
+        category: 'Revenue Protection',
+        title: 'Register with SoundExchange',
+        description: 'Collects digital performance royalties from internet and satellite radio plays',
+        route: null,
+        action: 'Visit soundexchange.com and register',
+        status: 'waiting_for_owner',
+        prerequisite: 'None — can do immediately',
+        relatedPolicy: 'Royalty Audit (#12)',
+      },
+      {
+        id: 'task_distributor_setup',
+        priority: 1,
+        category: 'Revenue Protection',
+        title: 'Set Up Music Distributor',
+        description: 'Choose and set up DistroKid, TuneCore, or CD Baby to distribute music to streaming platforms',
+        route: null,
+        action: 'Sign up at distrokid.com, tunecore.com, or cdbaby.com',
+        status: 'waiting_for_owner',
+        prerequisite: 'Music files ready for distribution',
+        relatedPolicy: 'Royalty Audit (#12)',
+      },
+      {
+        id: 'task_archival_baseline',
+        priority: 2,
+        category: 'Evidence Protection',
+        title: 'Run Content Archival Baseline Scan',
+        description: 'Check all evidence links in Proof Vault for availability and archive to Wayback Machine',
+        route: '/rrb/qumus/content-archival',
+        action: 'Click Run Scan on the Content Archival dashboard',
+        status: 'ready_to_execute',
+        prerequisite: 'None — can do now',
+        relatedPolicy: 'Content Archival (#11)',
+      },
+      {
+        id: 'task_royalty_baseline',
+        priority: 2,
+        category: 'Revenue Protection',
+        title: 'Run Royalty Audit Baseline Scan',
+        description: 'Establish baseline for QUMUS to detect future royalty discrepancies',
+        route: '/rrb/qumus/royalty-audit',
+        action: 'Click Run Scan on the Royalty Audit dashboard',
+        status: 'ready_to_execute',
+        prerequisite: 'Best after importing first CSV data, but can run empty baseline now',
+        relatedPolicy: 'Royalty Audit (#12)',
+      },
+      {
+        id: 'task_github_discussions',
+        priority: 3,
+        category: 'Repository Maintenance',
+        title: 'Enable GitHub Discussions',
+        description: 'Creates a community forum on the GitHub repository',
+        route: null,
+        action: 'GitHub repo → Settings → Features → check Discussions',
+        status: 'waiting_for_owner',
+        prerequisite: 'GitHub repo access',
+        relatedPolicy: 'Community Engagement (#13)',
+      },
+      {
+        id: 'task_github_auto_delete',
+        priority: 3,
+        category: 'Repository Maintenance',
+        title: 'Enable Auto-Delete Head Branches',
+        description: 'Automatically cleans up branches after merging pull requests',
+        route: null,
+        action: 'GitHub repo → Settings → General → Pull Requests → check auto-delete',
+        status: 'waiting_for_owner',
+        prerequisite: 'GitHub repo access',
+        relatedPolicy: 'Code Maintenance (#9)',
+      },
+      {
+        id: 'task_stripe_connect',
+        priority: 4,
+        category: 'Future Enhancement',
+        title: 'Activate Stripe Connect for Collaborator Payouts',
+        description: 'Already built — activate when collaborating artists need direct payouts',
+        route: '/rrb/royalties',
+        action: 'Configure Stripe Connect accounts for collaborators',
+        status: 'deferred',
+        prerequisite: 'Collaborating artists identified and ready for payouts',
+        relatedPolicy: 'Payment Processing (#2)',
+      },
+      {
+        id: 'task_sweet_miracles_npo',
+        priority: 4,
+        category: 'Future Enhancement',
+        title: 'Sweet Miracles NPO Integration',
+        description: 'Connect donation system to nonprofit entity when established',
+        route: '/sweet-miracles/donate-checkout',
+        action: 'Set up NPO entity and connect to donation system',
+        status: 'deferred',
+        prerequisite: 'Sweet Miracles NPO entity established',
+        relatedPolicy: 'Payment Processing (#2)',
+      },
+    ];
+
+    const summary = {
+      total: tasks.length,
+      readyToExecute: tasks.filter(t => t.status === 'ready_to_execute').length,
+      waitingForOwner: tasks.filter(t => t.status === 'waiting_for_owner').length,
+      deferred: tasks.filter(t => t.status === 'deferred').length,
+      byPriority: {
+        critical: tasks.filter(t => t.priority === 1).length,
+        important: tasks.filter(t => t.priority === 2).length,
+        standard: tasks.filter(t => t.priority === 3).length,
+        optional: tasks.filter(t => t.priority === 4).length,
+      },
+    };
+
+    return { tasks, summary };
+  }),
 });
 
 /**

@@ -2,7 +2,7 @@
 
 **A Canryn Production and its subsidiaries**
 **Logo designed by Seabrun Candy Hunter**
-**Version 11.6 FINAL — 14 QUMUS Autonomous Policies**
+**Version 11.7 — 14 QUMUS Autonomous Policies, Baseline Scans Complete**
 
 ---
 
@@ -53,6 +53,8 @@ The Rockin' Rockin' Boogie (RRB) Ecosystem is a comprehensive digital platform p
 | Recovery | `RECOVERY.md` | Troubleshooting procedures |
 | Whiteboard | `WHITEBOARD.md` | Architecture diagrams |
 | Quick Start | `README_INSTALL.md` | Quick setup guide |
+| **Future To-Do** | `FUTURE_TODO.md` | Pending operational tasks |
+| **Baseline Scans** | `BASELINE_SCAN_RESULTS.md` | Initial scan results (Feb 2026) |
 
 ## Quick Start
 
@@ -79,8 +81,17 @@ React 19, Tailwind 4, Express 4, tRPC 11, Drizzle ORM, MySQL/TiDB, S3 Storage, S
 | Test Files | 103 |
 | Tests | 2,166 (93% pass) |
 | QUMUS Policies | 14 |
-| Documentation Files | 10 |
+| Documentation Files | 12 |
 | Radio Channels | 7 |
+
+## Baseline Scan Status (February 11, 2026)
+
+| System | Health | Grade | Details |
+|--------|--------|-------|---------|
+| Content Archival | 85/100 | B | 13 links: 9 alive, 4 degraded, 0 dead |
+| Royalty Audit | 79/100 | C | 10 sources: 3 verified, 7 pending (awaiting CSV import) |
+
+See `FUTURE_TODO.md` for the complete list of pending operational tasks that QUMUS is tracking.
 
 ## Advertising
 
