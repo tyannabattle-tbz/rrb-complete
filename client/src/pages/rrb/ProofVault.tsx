@@ -308,7 +308,7 @@ const proofItems: ProofItem[] = [
       'Mike Powers confirmed: "I think he came up in the research as a band member, for sure"',
       'Candy Hunter is visible in the Wembley concert footage used in the documentary',
       'Powers confirmed: "clearly, your dad was a part of, you know, Richard\'s success"',
-      'Alvin Taylor told the production team the documentary "could not be made without improperly including my dad into the story"',
+      'Alvin Taylor told the production team the documentary "could not be made without properly including my dad into the story"',
       'The production team was told someone would contact the family — "which obviously never happened"',
       'Powers offered to find raw footage from Kino Library and consider a documentary about Candy Hunter',
       'Magnolia Pictures (distributor) referred TyAnna to Mike Powers directly',
