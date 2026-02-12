@@ -27,6 +27,7 @@ const familyPhotos = {
   facebookLeaderPost: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/NpmdhBkNyNlkalAw.jpeg',
   polaroids1989_1990: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/PNkKRfFeHtZLHQDr.jpeg',
   candyTributeText: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/kFAuntHHpEwLMLqd.jpeg',
+  district1Pageant: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/sQhWRErPXxuwthGb.png',
 };
 
 const magazineGallery = [
@@ -39,7 +40,8 @@ const magazineGallery = [
   { src: magazineImages.articleEnd, title: 'A Legacy of Inspiration', caption: 'The conclusion of Helen\'s remarkable story' },
   { src: familyPhotos.facebookLeaderPost, title: 'Candy\'s Facebook Post — Nov 7, 2018', caption: 'Candy Hunter shared the Life Care Leader cover on Facebook: "CANRYN PRODUCTION INC. LEADER MAGAZINE HELEN HUNTER LIFE STORY"' },
   { src: familyPhotos.polaroids1989_1990, title: 'Helen Logan Hunter (1990) & David Lee Logan (1989)', caption: 'Polaroid photos of Helen Logan Hunter and David Lee Logan — family archive' },
-  { src: familyPhotos.candyTributeText, title: 'Candy\'s Mother\'s Day Tribute — May 30, 2015', caption: 'Candy\'s tribute to Helen: "Her son: Seabrun Candy Hunter a well known Hall of Fame Songwriter, Singer and successful Author!" — describing all of Helen\'s children and their achievements' },
+  { src: familyPhotos.candyTributeText, title: 'Candy\'s Mother\'s Day Tribute \u2014 May 30, 2015', caption: 'Candy\'s tribute to Helen: "Her son: Seabrun Candy Hunter a well known Hall of Fame Songwriter, Singer and successful Author!" \u2014 describing all of Helen\'s children and their achievements' },
+  { src: familyPhotos.district1Pageant, title: 'Ms. District 1 Beauty Pageant \u2014 Age 86', caption: 'Helen Logan Hunter, District 1 contestant at Life Care Center of Grandview. "86 Year Young" \u2014 Pageant Coordinator: Shannon Wakeman, Edgewood Manor Nursing' },
 ];
 
 const familyValues = [
@@ -717,6 +719,18 @@ export default function GrandmaHelen() {
               <CardContent className="pt-4 pb-4">
                 <h3 className="text-lg font-bold text-rose-200 mb-1">Candy's Facebook Post — Nov 7, 2018</h3>
                 <p className="text-stone-400 text-sm">Candy Hunter shared the Life Care Leader cover: "CANRYN PRODUCTION INC. LEADER MAGAZINE HELEN HUNTER LIFE STORY PT 4"</p>
+              </CardContent>
+            </Card>
+            {/* District 1 Beauty Pageant */}
+            <Card className="bg-stone-900/60 border-stone-800/50 overflow-hidden">
+              <img 
+                src={familyPhotos.district1Pageant}
+                alt="Helen Logan Hunter, Ms. District 1 beauty pageant contestant at age 86, Life Care Center of Grandview"
+                className="w-full h-64 object-contain bg-black"
+              />
+              <CardContent className="pt-4 pb-4">
+                <h3 className="text-lg font-bold text-rose-200 mb-1">Ms. District 1 Beauty Pageant — Age 86</h3>
+                <p className="text-stone-400 text-sm">Helen Logan Hunter, District 1 contestant at Life Care Center of Grandview. Escorted by Lonnie Craig. Pageant Coordinator: Shannon Wakeman.</p>
               </CardContent>
             </Card>
           </div>

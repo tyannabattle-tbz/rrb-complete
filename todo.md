@@ -2690,3 +2690,8 @@
 - [x] Update marriage detail: married at age 17 in Buffalo, NY
 - [x] Add pageant document as primary source
 - [x] Mention grandfather Seabrun Whitney Hunter, Sr. on the page
+
+## Beauty Pageant Photo
+- [x] Extract pageant photo from District 1 PDF
+- [x] Upload to S3
+- [x] Add to Grandma Helen Family Archive gallery
