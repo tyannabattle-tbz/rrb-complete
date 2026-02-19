@@ -56,8 +56,201 @@ const CHANNELS: Channel[] = [
   { id: 'little-c', name: 'Little C Productions', listeners: 203, isLive: true, color: 'green' },
 ];
 
+// Channel-specific episode data
+const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
+  'rrb-main': [
+    {
+      id: '1',
+      title: "Episode 1: The Beginning - Seabrun's Journey",
+      description: "In this inaugural episode, we explore the early life of Seabrun Candy Hunter and how he became involved with Little Richard.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      duration: 330,
+      publishedAt: new Date('2024-01-15'),
+      author: "Rockin' Rockin' Boogie",
+      episodeNumber: 1,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: '2',
+      title: 'Episode 2: The Music - Recordings & Performances',
+      description: "Deep dive into the recordings, performances, and musical contributions of Seabrun Candy Hunter.",
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zByVVlWeoYCaITZI.mp3',
+      duration: 372,
+      publishedAt: new Date('2024-01-22'),
+      author: "Rockin' Rockin' Boogie",
+      episodeNumber: 2,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: '3',
+      title: 'Episode 3: The Archive - Proof & Documentation',
+      description: "Exploring the archival evidence, documentation, and verification of Seabrun's contributions to music history.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      duration: 600,
+      publishedAt: new Date('2024-01-29'),
+      author: "Rockin' Rockin' Boogie",
+      episodeNumber: 3,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: '4',
+      title: 'Episode 4: The Legacy - Impact & Influence',
+      description: "Examining how Seabrun's work continues to influence modern music and culture.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      duration: 420,
+      publishedAt: new Date('2024-02-05'),
+      author: "Rockin' Rockin' Boogie",
+      episodeNumber: 4,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: '5',
+      title: 'Episode 5: The Collaborations - Working with Legends',
+      description: "Exploring Seabrun's collaborations with other legendary musicians and artists.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+      duration: 480,
+      publishedAt: new Date('2024-02-12'),
+      author: "Rockin' Rockin' Boogie",
+      episodeNumber: 5,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: '6',
+      title: 'Episode 6: The Performances - Live Recordings',
+      description: "A collection of live performances and concert recordings from Seabrun's career.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+      duration: 540,
+      publishedAt: new Date('2024-02-19'),
+      author: "Rockin' Rockin' Boogie",
+      episodeNumber: 6,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+  ],
+  'sean-music': [
+    {
+      id: 'sean-1',
+      title: "Sean's Session 1: Musical Foundations",
+      description: "Sean explores the foundations of music theory and composition.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      duration: 360,
+      publishedAt: new Date('2024-01-20'),
+      author: "Sean's Music",
+      episodeNumber: 1,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: 'sean-2',
+      title: "Sean's Session 2: Production Techniques",
+      description: "Advanced production techniques and studio workflows.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+      duration: 420,
+      publishedAt: new Date('2024-02-03'),
+      author: "Sean's Music",
+      episodeNumber: 2,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: 'sean-3',
+      title: "Sean's Session 3: Artist Interviews",
+      description: "In-depth conversations with emerging and established artists.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+      duration: 480,
+      publishedAt: new Date('2024-02-17'),
+      author: "Sean's Music",
+      episodeNumber: 3,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+  ],
+  'anna-company': [
+    {
+      id: 'anna-1',
+      title: "Anna's Talk 1: Creative Conversations",
+      description: "Anna discusses creativity and artistic expression.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      duration: 350,
+      publishedAt: new Date('2024-01-25'),
+      author: "Anna's Company",
+      episodeNumber: 1,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: 'anna-2',
+      title: "Anna's Talk 2: Business & Entrepreneurship",
+      description: "Insights into building creative businesses and ventures.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      duration: 400,
+      publishedAt: new Date('2024-02-08'),
+      author: "Anna's Company",
+      episodeNumber: 2,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+  ],
+  'jaelon-enterprises': [
+    {
+      id: 'jaelon-1',
+      title: "Jaelon's Insights 1: Industry Trends",
+      description: "Jaelon analyzes current trends in entertainment and media.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+      duration: 380,
+      publishedAt: new Date('2024-01-28'),
+      author: "Jaelon Enterprises",
+      episodeNumber: 1,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: 'jaelon-2',
+      title: "Jaelon's Insights 2: Strategic Planning",
+      description: "Strategic approaches to growth and development.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+      duration: 420,
+      publishedAt: new Date('2024-02-11'),
+      author: "Jaelon Enterprises",
+      episodeNumber: 2,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+  ],
+  'little-c': [
+    {
+      id: 'littlec-1',
+      title: "Little C's Corner 1: Young Voices",
+      description: "Fresh perspectives from the next generation of creators.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      duration: 320,
+      publishedAt: new Date('2024-02-01'),
+      author: "Little C Productions",
+      episodeNumber: 1,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+    {
+      id: 'littlec-2',
+      title: "Little C's Corner 2: Creative Experiments",
+      description: "Experimental projects and creative explorations.",
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      duration: 360,
+      publishedAt: new Date('2024-02-14'),
+      author: "Little C Productions",
+      episodeNumber: 2,
+      season: 1,
+      videoUrl: 'https://www.youtube.com/embed/Gsbw8XkT5z0',
+    },
+  ],
+};
+
 export default function Podcasts() {
-  const [series, setSeries] = useState<PodcastSeries[]>([]);
   const [selectedEpisode, setSelectedEpisode] = useState<PodcastEpisode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -74,115 +267,68 @@ export default function Podcasts() {
   const eqFilterRef = useRef<FrequencyEQFilter | null>(null);
   const { user } = useAuth();
 
-  // Initialize EQ filter
+  // Initialize EQ filter on component mount
   useEffect(() => {
-    if (audioRef.current && !eqFilterRef.current) {
-      eqFilterRef.current = new FrequencyEQFilter(audioRef.current);
-    }
+    const initializeEQ = async () => {
+      if (audioRef.current && !eqFilterRef.current) {
+        try {
+          eqFilterRef.current = new FrequencyEQFilter(audioRef.current);
+          await eqFilterRef.current.initialize();
+          console.log('Frequency EQ Filter initialized successfully');
+        } catch (error) {
+          console.error('Failed to initialize EQ filter:', error);
+        }
+      }
+    };
+    initializeEQ();
+
+    return () => {
+      if (eqFilterRef.current) {
+        eqFilterRef.current.destroy();
+        eqFilterRef.current = null;
+      }
+    };
   }, []);
 
-  // Apply frequency filter when selected frequency changes
+  // Apply frequency filter when selected frequency changes and audio is playing
   useEffect(() => {
-    if (eqFilterRef.current && isPlaying) {
-      eqFilterRef.current.setFrequency(selectedFrequency);
+    if (eqFilterRef.current && isPlaying && audioRef.current) {
+      try {
+        eqFilterRef.current.setFrequency(selectedFrequency);
+        console.log(`Frequency changed to ${selectedFrequency} Hz`);
+      } catch (error) {
+        console.error('Error applying frequency:', error);
+      }
     }
   }, [selectedFrequency, isPlaying]);
 
-  // Mock podcast data
+  // Get episodes for selected channel
+  const currentChannelEpisodes = CHANNEL_EPISODES[selectedChannelId] || CHANNEL_EPISODES['rrb-main'];
+
+  // Set initial episode when channel changes
   useEffect(() => {
-    const mockSeries: PodcastSeries = {
-      id: '1',
-      title: "Rockin' Rockin' Boogie Podcast",
-      description: "Exploring the legacy of Seabrun Candy Hunter and Little Richard through music, history, and archival stories.",
-      author: "Rockin' Rockin' Boogie",
-      subscriberCount: 1250,
-      episodes: [
-        {
-          id: '1',
-          title: "Episode 1: The Beginning - Seabrun's Journey",
-          description: "In this inaugural episode, we explore the early life of Seabrun Candy Hunter and how he became involved with Little Richard.",
-          audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-          duration: 330,
-          publishedAt: new Date('2024-01-15'),
-          author: "Rockin' Rockin' Boogie",
-          episodeNumber: 1,
-          season: 1,
-          videoUrl: 'https://www.youtube.com/embed/jNQXAC9IVRw',
-        },
-        {
-          id: '2',
-          title: 'Episode 2: The Music - Recordings & Performances',
-          description: "Deep dive into the recordings, performances, and musical contributions of Seabrun Candy Hunter.",
-          audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zByVVlWeoYCaITZI.mp3',
-          duration: 372,
-          publishedAt: new Date('2024-01-22'),
-          author: "Rockin' Rockin' Boogie",
-          episodeNumber: 2,
-          season: 1,
-          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-        },
-        {
-          id: '3',
-          title: 'Episode 3: The Archive - Proof & Documentation',
-          description: "Exploring the archival evidence, documentation, and verification of Seabrun's contributions to music history.",
-          audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-          duration: 600,
-          publishedAt: new Date('2024-01-29'),
-          author: "Rockin' Rockin' Boogie",
-          episodeNumber: 3,
-          season: 1,
-          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-        },
-        {
-          id: '4',
-          title: 'Episode 4: The Legacy - Impact & Influence',
-          description: "Examining how Seabrun's work continues to influence modern music and culture.",
-          audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-          duration: 420,
-          publishedAt: new Date('2024-02-05'),
-          author: "Rockin' Rockin' Boogie",
-          episodeNumber: 4,
-          season: 1,
-          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-        },
-        {
-          id: '5',
-          title: 'Episode 5: The Collaborations - Working with Legends',
-          description: "Exploring Seabrun's collaborations with other legendary musicians and artists.",
-          audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-          duration: 480,
-          publishedAt: new Date('2024-02-12'),
-          author: "Rockin' Rockin' Boogie",
-          episodeNumber: 5,
-          season: 1,
-          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-        },
-        {
-          id: '6',
-          title: 'Episode 6: The Performances - Live Recordings',
-          description: "A collection of live performances and concert recordings from Seabrun's career.",
-          audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-          duration: 540,
-          publishedAt: new Date('2024-02-19'),
-          author: "Rockin' Rockin' Boogie",
-          episodeNumber: 6,
-          season: 1,
-          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-        },
-      ],
-    };
-    setSeries([mockSeries]);
-    setSelectedEpisode(mockSeries.episodes[0]);
-  }, []);
+    if (currentChannelEpisodes.length > 0) {
+      setSelectedEpisode(currentChannelEpisodes[0]);
+      setIsPlaying(false);
+    }
+  }, [selectedChannelId]);
 
   const handlePlayPause = () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
+        setIsPlaying(false);
       } else {
-        audioRef.current.play();
+        // Resume audio context if needed
+        if (eqFilterRef.current && eqFilterRef.current['audioContext']) {
+          const ctx = eqFilterRef.current['audioContext'] as AudioContext;
+          if (ctx.state === 'suspended') {
+            ctx.resume().catch(err => console.error('Failed to resume audio context:', err));
+          }
+        }
+        audioRef.current.play().catch(err => console.error('Failed to play audio:', err));
+        setIsPlaying(true);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -217,10 +363,10 @@ export default function Podcasts() {
     });
   };
 
-  const filteredEpisodes = series[0]?.episodes.filter(ep =>
+  const filteredEpisodes = currentChannelEpisodes.filter(ep =>
     ep.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     ep.description.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  );
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -378,6 +524,7 @@ export default function Podcasts() {
               onTimeUpdate={handleTimeUpdate}
               onLoadedMetadata={handleLoadedMetadata}
               onEnded={() => setIsPlaying(false)}
+              crossOrigin="anonymous"
             />
           </Card>
         </div>
@@ -450,121 +597,74 @@ export default function Podcasts() {
       {/* Recently Played */}
       {recentlyPlayed.length > 0 && (
         <div className="container mx-auto px-4 py-6">
-          <h2 className="text-xl font-bold mb-3 text-orange-500">Recently Played</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <h3 className="text-lg font-bold mb-4">Recently Played</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {recentlyPlayed.map(episode => (
-              <Card
-                key={episode.id}
-                className="p-3 cursor-pointer border-2 border-orange-200 hover:border-orange-500 transition-all"
-                onClick={() => handleEpisodeSelect(episode)}
-              >
-                <div className="font-semibold text-sm line-clamp-2">{episode.title}</div>
-                <div className="text-xs text-foreground/60 mt-1">{formatTime(episode.duration)}</div>
+              <Card key={episode.id} className="p-4 cursor-pointer hover:bg-accent transition-colors" onClick={() => handleEpisodeSelect(episode)}>
+                <h4 className="font-semibold text-sm mb-2 line-clamp-2">{episode.title}</h4>
+                <p className="text-xs text-foreground/60 mb-3 line-clamp-2">{episode.description}</p>
+                <div className="flex items-center justify-between text-xs">
+                  <span>{formatTime(episode.duration)}</span>
+                  <span className="text-foreground/40">{new Date(episode.publishedAt).toLocaleDateString()}</span>
+                </div>
               </Card>
             ))}
           </div>
         </div>
       )}
 
-      {/* Episode Search & List */}
+      {/* Search Episodes */}
       <div className="container mx-auto px-4 py-6">
-        <div className="mb-4 flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Search episodes..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 px-4 py-2 border rounded-lg bg-background"
-          />
-        </div>
-        <h2 className="text-2xl font-bold mb-4">All Episodes ({filteredEpisodes.length})</h2>
-        <div className="space-y-3">
+        <input
+          type="text"
+          placeholder="Search episodes..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
+
+      {/* All Episodes */}
+      <div className="container mx-auto px-4 py-6">
+        <h3 className="text-lg font-bold mb-4">All Episodes ({filteredEpisodes.length})</h3>
+        <div className="space-y-4">
           {filteredEpisodes.map(episode => (
             <Card
               key={episode.id}
-              className={`p-4 cursor-pointer transition-all border-2 ${
-                selectedEpisode?.id === episode.id
-                  ? 'border-orange-500 bg-orange-500/5'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
+              className="p-4 cursor-pointer hover:bg-accent transition-colors"
               onClick={() => handleEpisodeSelect(episode)}
             >
-              <div className="flex items-start gap-3 flex-1">
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedEpisode(episode);
-                    handlePlayPause();
-                  }}
-                  className="rounded-full w-10 h-10 p-0 bg-orange-500 hover:bg-orange-600 flex-shrink-0 mt-1"
-                >
-                  <Play className="w-5 h-5 ml-0.5" />
-                </Button>
-
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm line-clamp-2">{episode.title}</h3>
-                  <p className="text-xs text-foreground/60 mt-1 line-clamp-2">{episode.description}</p>
-                  <div className="flex items-center gap-3 mt-2 text-xs text-foreground/50">
-                    <span>{formatTime(episode.duration)}</span>
-                    <span>{new Date(episode.publishedAt).toLocaleDateString()}</span>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h4 className="font-semibold mb-2">{episode.title}</h4>
+                  <p className="text-sm text-foreground/60 mb-3">{episode.description}</p>
+                  <div className="flex items-center gap-4 text-xs text-foreground/60">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {formatTime(episode.duration)}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {new Date(episode.publishedAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEpisodeSelect(episode);
+                    setIsPlaying(true);
+                  }}
+                >
+                  <Play className="w-4 h-4" />
+                </Button>
               </div>
             </Card>
           ))}
         </div>
       </div>
-
-      {/* Transcript Section */}
-      {selectedEpisode?.transcript && (
-        <div className="container mx-auto px-4 py-6">
-          <button
-            onClick={() => setShowTranscript(!showTranscript)}
-            className="flex items-center gap-2 text-lg font-bold mb-3 text-blue-500 hover:text-blue-600 w-full"
-          >
-            Transcript
-            {showTranscript ? (
-              <ChevronUp className="w-5 h-5 ml-auto" />
-            ) : (
-              <ChevronDown className="w-5 h-5 ml-auto" />
-            )}
-          </button>
-
-          {showTranscript && (
-            <Card className="p-4 bg-gray-50 dark:bg-gray-900">
-              {/* Chapter Navigation */}
-              {selectedEpisode.chapters && selectedEpisode.chapters.length > 0 && (
-                <div className="mb-4 pb-4 border-b">
-                  <h4 className="font-semibold text-sm mb-2">Chapters</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedEpisode.chapters.map((chapter, idx) => (
-                      <Button
-                        key={idx}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          if (audioRef.current) {
-                            audioRef.current.currentTime = chapter.time;
-                            setCurrentTime(chapter.time);
-                            setIsPlaying(true);
-                          }
-                        }}
-                      >
-                        {chapter.title} ({formatTime(chapter.time)})
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Transcript Text */}
-              <div className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/80">
-                {selectedEpisode.transcript}
-              </div>
-            </Card>
-          )}
-        </div>
-      )}
     </div>
   );
 }
