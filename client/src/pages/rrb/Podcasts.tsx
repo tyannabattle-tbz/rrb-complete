@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { LiveCallIn } from '@/components/rrb/LiveCallIn';
+import { VideoAutopilotPlayer } from '@/components/rrb/VideoAutopilotPlayer';
 
 interface PodcastEpisode {
   id: string;
@@ -385,6 +386,16 @@ export default function Podcasts() {
             </Button>
           </a>
         </div>
+
+        {/* Video Autopilot Section */}
+        <div className="mb-8 bg-slate-900/50 rounded-lg p-6 border border-slate-800">
+          <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <MonitorPlay className="w-5 h-5 text-amber-500" />
+            Autonomous Video Playback
+          </h2>
+          <VideoAutopilotPlayer />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Player */}
           <div className="lg:col-span-2 space-y-6">

@@ -98,6 +98,9 @@ import { commercialsRouter } from "./routers/commercials";
 
 // Radio Content API (serves tracks/playlists from database)
 import { radioContentRouter } from "./routers/radioContentRouter";
+
+// Video Autopilot (YouTube + Spoke Feeds + Open Source Channels)
+import { videoAutopilotRouter } from "./routers/videoAutopilotRouter";
 // Content Scheduler (24/7 automated content rotation)
 import { contentSchedulerRouter } from "./routers/contentSchedulerRouter";
 // Push Notifications (emergency broadcast system)
@@ -182,6 +185,9 @@ export const appRouter = router({
 
   // Podcast Playback
   podcastPlayback: podcastPlaybackRouter,
+
+  // Video Autopilot (YouTube + Spoke Feeds + Open Source)
+  videoAutopilot: videoAutopilotRouter,
 
   // Radio Stations
   radioStations: radioStationsRouter,
