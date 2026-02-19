@@ -82,27 +82,32 @@ export default function Annas() {
           </div>
 
           {/* Brand Identity */}
-          <div className="bg-stone-800/40 rounded-xl p-8 border border-amber-900/30 mb-12">
+          <div className="bg-stone-800/60 rounded-xl p-8 border border-amber-900/30 mb-12">
             <h2 className="text-2xl font-bold text-amber-50 mb-6">Brand Identity</h2>
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-48 h-48 rounded-lg bg-stone-900/40 border-2 border-dashed border-amber-500/30">
-                <div className="text-center">
-                  <p className="text-4xl">❤️</p>
-                  <p className="text-amber-300/60 text-sm mt-2">Logo Placeholder</p>
+            <div className="flex flex-col md:flex-row gap-8 items-center">
+              <div className="flex-shrink-0">
+                <img 
+                  src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jFASyCvWHTSWwwiV.jpeg"
+                  alt="Anna's Logo"
+                  className="w-48 h-48 object-contain rounded-lg shadow-lg"
+                />
+              </div>
+              <div className="flex-1">
+                <p className="text-amber-200/80 leading-relaxed mb-4">
+                  Anna's represents the entrepreneurial vision of Seabrun Hunter, operated by Tyanna Battle and LaShanna Russell. 
+                  The brand embodies promotion, talent development, and community engagement.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-amber-300/60 text-sm">Connect With Us</p>
+                    <div className="flex gap-2 mt-2">
+                      <a href="#" className="text-amber-400 hover:text-amber-300">Website</a>
+                      <span className="text-amber-900/40">•</span>
+                      <a href="#" className="text-amber-400 hover:text-amber-300">Facebook</a>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <p className="text-amber-200/80 mb-4">
-              Upload Anna's company logo here. Guidelines below.
-            </p>
-            <div className="bg-stone-900/40 rounded-lg p-6">
-              <h3 className="text-amber-300 font-semibold mb-3">Logo Guidelines</h3>
-              <ul className="text-amber-200/60 text-sm space-y-2">
-                <li>• Format: PNG or SVG</li>
-                <li>• Minimum dimensions: 400x400px</li>
-                <li>• Recommended: Square or circular format</li>
-                <li>• Use cases: Website header, social media, print materials</li>
-              </ul>
             </div>
           </div>
 
