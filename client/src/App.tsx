@@ -133,6 +133,9 @@ import RSSSubscribe from '@/pages/rrb/RSSSubscribe';
 import RRBPodcasts from '@/pages/rrb/Podcasts';
 import RRBBroadcast from '@/pages/rrb/Broadcast';
 import RRBRSSFeedGenerator from '@/pages/rrb/RSSFeedGenerator';
+import CallInFeature from '@/pages/rrb/CallInFeature';
+import EpisodeTranscripts from '@/pages/rrb/EpisodeTranscripts';
+import ListenerAnalytics from '@/pages/rrb/ListenerAnalytics';
 import LivePodcastProduction from '@/pages/LivePodcastProduction';
 import RRBTheMusic from '@/pages/rrb/TheMusic';
 import RRBTheLegacyPage from '@/pages/rrb/TheLegacyPage';
@@ -396,6 +399,9 @@ function Router() {
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
       <Route path="/rrb/broadcast" component={RRBBroadcast} />
       <Route path="/rrb/rss-feeds" component={RRBRSSFeedGenerator} />
+      <Route path="/rrb/call-in" component={CallInFeature} />
+      <Route path="/rrb/transcripts" component={EpisodeTranscripts} />
+      <Route path="/rrb/analytics" component={ListenerAnalytics} />
       <Route path="/live-podcast-production" component={LivePodcastProduction} />
       <Route path="/rrb/hybridcast" component={RRBHybridCastPage} />
       <Route path="/rrb/audiobooks" component={RRBAudiobooks} />

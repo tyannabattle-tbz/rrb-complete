@@ -651,7 +651,18 @@ export default function Podcasts() {
               <Card className="p-4 bg-gradient-to-br from-blue-500/5 to-purple-500/5 border-blue-500/20">
                 <FrequencyPresetButtons
                   selectedFrequency={selectedFrequency}
-                  onFrequencySelect={setSelectedFrequency}
+                  onFrequencySelect={(frequency: number) => {
+                    setSelectedFrequency(frequency);
+                    if (eqFilterRef.current) {
+                      try {
+                        eqFilterRef.current.setFrequency(frequency);
+                        console.log(`Frequency set to ${frequency} Hz`);
+                      } catch (err) {
+                        console.error('Failed to set frequency:', err);
+                        toast.info(`Frequency ${frequency} Hz selected (filter unavailable)`);
+                      }
+                    }
+                  }}
                 />
               </Card>
             )}
