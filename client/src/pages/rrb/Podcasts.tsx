@@ -65,7 +65,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: '1',
       title: "Episode 1: The Beginning - Seabrun's Journey",
       description: "In this inaugural episode, we explore the early life of Seabrun Candy Hunter and how he became involved with Little Richard.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/XEsPNqJcdIqMCsKG.wav',
       duration: 330,
       publishedAt: new Date('2024-01-15'),
       author: "Rockin' Rockin' Boogie",
@@ -77,7 +77,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: '2',
       title: 'Episode 2: The Music - Recordings & Performances',
       description: "Deep dive into the recordings, performances, and musical contributions of Seabrun Candy Hunter.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zYwomtGGOldyuItU.wav',
       duration: 372,
       publishedAt: new Date('2024-01-22'),
       author: "Rockin' Rockin' Boogie",
@@ -89,7 +89,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: '3',
       title: 'Episode 3: The Archive - Proof & Documentation',
       description: "Exploring the archival evidence, documentation, and verification of Seabrun's contributions to music history.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qJWXIMArCnbEWALh.wav',
       duration: 600,
       publishedAt: new Date('2024-01-29'),
       author: "Rockin' Rockin' Boogie",
@@ -101,7 +101,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: '4',
       title: 'Episode 4: The Legacy - Impact & Influence',
       description: "Examining how Seabrun's work continues to influence modern music and culture.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/idmclxXAZsQSdveW.wav',
       duration: 420,
       publishedAt: new Date('2024-02-05'),
       author: "Rockin' Rockin' Boogie",
@@ -113,7 +113,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: '5',
       title: 'Episode 5: The Collaborations - Working with Legends',
       description: "Exploring Seabrun's collaborations with other legendary musicians and artists.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/STvmvyQQaHVurqwt.wav',
       duration: 480,
       publishedAt: new Date('2024-02-12'),
       author: "Rockin' Rockin' Boogie",
@@ -125,7 +125,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: '6',
       title: 'Episode 6: The Performances - Live Recordings',
       description: "A collection of live performances and concert recordings from Seabrun's career.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/HkbiktfjTTvvIlXi.wav',
       duration: 540,
       publishedAt: new Date('2024-02-19'),
       author: "Rockin' Rockin' Boogie",
@@ -139,7 +139,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: 'sean-1',
       title: "Sean's Session 1: Musical Foundations",
       description: "Sean explores the foundations of music theory and composition.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/XEsPNqJcdIqMCsKG.wav',
       duration: 360,
       publishedAt: new Date('2024-01-20'),
       author: "Sean's Music",
@@ -151,7 +151,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: 'sean-2',
       title: "Sean's Session 2: Production Techniques",
       description: "Advanced production techniques and studio workflows.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zYwomtGGOldyuItU.wav',
       duration: 420,
       publishedAt: new Date('2024-02-03'),
       author: "Sean's Music",
@@ -163,7 +163,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: 'sean-3',
       title: "Sean's Session 3: Artist Interviews",
       description: "In-depth conversations with emerging and established artists.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qJWXIMArCnbEWALh.wav',
       duration: 480,
       publishedAt: new Date('2024-02-17'),
       author: "Sean's Music",
@@ -177,7 +177,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: 'anna-1',
       title: "Anna's Talk 1: Creative Conversations",
       description: "Anna discusses creativity and artistic expression.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/idmclxXAZsQSdveW.wav',
       duration: 350,
       publishedAt: new Date('2024-01-25'),
       author: 'Anna Promotion Co.',
@@ -203,7 +203,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: 'jaelon-1',
       title: "Jaelon's Insights 1: Industry Trends",
       description: "Jaelon analyzes current trends in entertainment and media.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zYwomtGGOldyuItU.wav',
       duration: 380,
       publishedAt: new Date('2024-01-28'),
       author: "Jaelon Enterprises",
@@ -215,7 +215,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: 'jaelon-2',
       title: "Jaelon's Insights 2: Strategic Planning",
       description: "Strategic approaches to growth and development.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qJWXIMArCnbEWALh.wav',
       duration: 420,
       publishedAt: new Date('2024-02-11'),
       author: "Jaelon Enterprises",
@@ -229,7 +229,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: 'littlec-1',
       title: "Little C's Corner 1: Young Voices",
       description: "Fresh perspectives from the next generation of creators.",
-      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/idmclxXAZsQSdveW.wav',
       duration: 320,
       publishedAt: new Date('2024-02-01'),
       author: 'Little C Recording Co.',
@@ -263,6 +263,7 @@ export default function Podcasts() {
   const [selectedFrequency, setSelectedFrequency] = useState(440);
   const [isFrequencyModalOpen, setIsFrequencyModalOpen] = useState(false);
   const [showFrequencyControls, setShowFrequencyControls] = useState(false);
+  const [audioQuality, setAudioQuality] = useState<'128' | '192' | '320'>('192');
   const [searchQuery, setSearchQuery] = useState('');
   const [recentlyPlayed, setRecentlyPlayed] = useState<PodcastEpisode[]>([]);
   const [showTranscript, setShowTranscript] = useState(false);
@@ -501,22 +502,40 @@ export default function Podcasts() {
                     Tune In @ {selectedFrequency} Hz
                   </Button>
 
-                  <div className="flex items-center gap-2">
-                    <Volume2 className="w-4 h-4 text-foreground/60" />
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={volume}
-                      onChange={(e) => {
-                        setVolume(parseFloat(e.target.value));
-                        if (audioRef.current) {
-                          audioRef.current.volume = parseFloat(e.target.value) / 100;
-                        }
-                      }}
-                      className="w-20 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                    />
-                    <span className="text-xs text-foreground/60 w-8">{volume}%</span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Volume2 className="w-4 h-4 text-foreground/60" />
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={volume}
+                        onChange={(e) => {
+                          setVolume(parseFloat(e.target.value));
+                          if (audioRef.current) {
+                            audioRef.current.volume = parseFloat(e.target.value) / 100;
+                          }
+                        }}
+                        className="w-20 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <span className="text-xs text-foreground/60 w-8">{volume}%</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-foreground/60">Quality:</span>
+                      <select
+                        value={audioQuality}
+                        onChange={(e) => {
+                          setAudioQuality(e.target.value as '128' | '192' | '320');
+                          toast.success(`Audio quality set to ${e.target.value} kbps`);
+                        }}
+                        className="text-xs bg-gray-800 text-white rounded px-2 py-1 border border-gray-700 focus:border-orange-500 outline-none"
+                      >
+                        <option value="128">128 kbps</option>
+                        <option value="192">192 kbps</option>
+                        <option value="320">320 kbps</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
@@ -569,7 +588,7 @@ export default function Podcasts() {
                 console.log('Audio ready to play:', selectedEpisode.audioUrl);
               }}
               onLoadStart={() => {
-                console.log('Loading audio:', selectedEpisode.audioUrl);
+                console.log('Loading audio:', selectedEpisode.audioUrl, `Quality: ${audioQuality} kbps`);
               }}
             />
           </Card>
