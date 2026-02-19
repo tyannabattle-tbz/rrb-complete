@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar, Radio, MonitorPlay, Maximize2, Minimize2, Bot, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar, Radio, MonitorPlay, Maximize2, Minimize2, Bot, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -13,6 +13,8 @@ import { FrequencyPresetButtons } from '@/components/rrb/FrequencyPresetButtons'
 import { FrequencyIndicatorBadge } from '@/components/rrb/FrequencyIndicatorBadge';
 import { FrequencyModal } from '@/components/rrb/FrequencyModal';
 import { FrequencyEQFilter } from '@/lib/frequencyEQFilter';
+import { FloatingActionMenu } from '@/components/rrb/FloatingActionMenu';
+import { Music, MessageSquare } from 'lucide-react';
 
 interface PodcastEpisode {
   id: string;
@@ -740,16 +742,20 @@ export default function Podcasts() {
             </Card>
           </div>
 
-          {/* Mobile Frequency Button - Opens Modal */}
-          <div className="lg:hidden fixed bottom-24 right-4 z-40">
-            <Button
-              onClick={() => setIsFrequencyModalOpen(true)}
-              className="rounded-full w-14 h-14 p-0 bg-blue-500 hover:bg-blue-600 text-white shadow-lg"
-              title="Open Frequency Tuner"
-            >
-              <span className="text-lg">🎵</span>
-            </Button>
-          </div>
+          {/* Mobile Floating Action Menu */}
+          <FloatingActionMenu
+            items={[
+              {
+                id: 'frequency',
+                icon: <Music className="w-6 h-6" />,
+                label: 'Frequency Tuner',
+                onClick: () => setIsFrequencyModalOpen(true),
+                color: 'bg-blue-500 hover:bg-blue-600',
+              },
+            ]}
+            primaryIcon={<Music className="w-6 h-6" />}
+            primaryLabel="Quick Actions"
+          />
 
           {/* Frequency Modal */}
           <FrequencyModal
