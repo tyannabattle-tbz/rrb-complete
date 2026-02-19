@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Zap, Users, Eye, Radio, Volume2, Settings, X } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Zap, Users, Eye, Radio, Volume2, Settings, X, Archive } from 'lucide-react';
 import { toast } from 'sonner';
+import { BroadcastSettingsModal } from '@/components/rrb/BroadcastSettingsModal';
+import { BroadcastChatEnhanced } from '@/components/rrb/BroadcastChatEnhanced';
+import { BroadcastRecordingArchiveEnhanced } from '@/components/rrb/BroadcastRecordingArchiveEnhanced';
 
 export default function Broadcast() {
   const [isLive, setIsLive] = useState(true);
@@ -12,6 +16,8 @@ export default function Broadcast() {
   const [bitrate, setBitrate] = useState('5.0 Mbps');
   const [quality, setQuality] = useState('1080p');
   const [volume, setVolume] = useState(80);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(true);
 
   // Simulate viewer count increasing
   useEffect(() => {
@@ -40,7 +46,8 @@ export default function Broadcast() {
 
   const handleEndBroadcast = () => {
     setIsLive(false);
-    toast.success('🔴 Broadcast ended. Thank you for tuning in!');
+    setIsRecording(false);
+    toast.success('🔴 Broadcast ended. Recording saved to archive!');
     setTimeout(() => {
       window.location.href = '/rrb/podcast-and-video';
     }, 2000);
@@ -55,6 +62,12 @@ export default function Broadcast() {
             <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
             <h1 className="text-2xl font-bold text-white">LIVE BROADCAST</h1>
             <Badge className="bg-red-500 text-white animate-pulse">ON AIR</Badge>
+            {isRecording && (
+              <Badge className="bg-blue-600 text-white flex items-center gap-1">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                REC
+              </Badge>
+            )}
           </div>
           <Button
             onClick={handleEndBroadcast}
@@ -72,68 +85,88 @@ export default function Broadcast() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Video Area */}
             <div className="lg:col-span-2">
-              <Card className="bg-black border-red-500/30 overflow-hidden">
-                <div className="aspect-video bg-gradient-to-br from-red-500/20 to-purple-500/20 flex items-center justify-center relative">
-                  <div className="text-center">
-                    <Radio className="w-24 h-24 text-red-500 mx-auto mb-4 animate-pulse" />
-                    <h2 className="text-3xl font-bold text-white mb-2">Rockin' Rockin' Boogie</h2>
-                    <p className="text-gray-400 text-lg">Live Broadcast - Canryn Production</p>
-                  </div>
-                  
-                  {/* Live Indicator */}
-                  <div className="absolute top-4 right-4 flex items-center gap-2 bg-red-500 px-3 py-1 rounded-full">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                    <span className="text-white font-semibold text-sm">LIVE</span>
-                  </div>
-                </div>
+              <Tabs defaultValue="broadcast" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 bg-gray-800 mb-4">
+                  <TabsTrigger value="broadcast" className="data-[state=active]:bg-red-600">
+                    Live Broadcast
+                  </TabsTrigger>
+                  <TabsTrigger value="archive" className="data-[state=active]:bg-purple-600">
+                    <Archive className="w-4 h-4 mr-2" />
+                    Archive
+                  </TabsTrigger>
+                </TabsList>
 
-                {/* Broadcast Controls */}
-                <div className="p-6 bg-gray-900/50 border-t border-red-500/20 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm text-gray-400 mb-2 block">Quality</label>
-                      <select
-                        value={quality}
-                        onChange={(e) => setQuality(e.target.value)}
-                        className="w-full bg-gray-800 text-white rounded px-3 py-2 border border-gray-700 focus:border-red-500 outline-none"
-                      >
-                        <option>480p</option>
-                        <option>720p</option>
-                        <option>1080p</option>
-                        <option>4K</option>
-                      </select>
+                {/* Broadcast Tab */}
+                <TabsContent value="broadcast">
+                  <Card className="bg-black border-red-500/30 overflow-hidden">
+                    <div className="aspect-video bg-gradient-to-br from-red-500/20 to-purple-500/20 flex items-center justify-center relative">
+                      <div className="text-center">
+                        <Radio className="w-24 h-24 text-red-500 mx-auto mb-4 animate-pulse" />
+                        <h2 className="text-3xl font-bold text-white mb-2">Rockin' Rockin' Boogie</h2>
+                        <p className="text-gray-400 text-lg">Live Broadcast - Canryn Production</p>
+                      </div>
+                      
+                      {/* Live Indicator */}
+                      <div className="absolute top-4 right-4 flex items-center gap-2 bg-red-500 px-3 py-1 rounded-full">
+                        <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                        <span className="text-white font-semibold text-sm">LIVE</span>
+                      </div>
                     </div>
-                    <div>
-                      <label className="text-sm text-gray-400 mb-2 block">Bitrate</label>
-                      <input
-                        type="text"
-                        value={bitrate}
-                        disabled
-                        className="w-full bg-gray-800 text-white rounded px-3 py-2 border border-gray-700 opacity-60"
-                      />
-                    </div>
-                  </div>
 
-                  <div>
-                    <label className="text-sm text-gray-400 mb-2 flex items-center gap-2">
-                      <Volume2 className="w-4 h-4" />
-                      Volume
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={volume}
-                      onChange={(e) => setVolume(parseInt(e.target.value))}
-                      className="w-full"
-                    />
-                    <span className="text-xs text-gray-400 mt-1">{volume}%</span>
-                  </div>
-                </div>
-              </Card>
+                    {/* Broadcast Controls */}
+                    <div className="p-6 bg-gray-900/50 border-t border-red-500/20 space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm text-gray-400 mb-2 block">Quality</label>
+                          <select
+                            value={quality}
+                            onChange={(e) => setQuality(e.target.value)}
+                            className="w-full bg-gray-800 text-white rounded px-3 py-2 border border-gray-700 focus:border-red-500 outline-none"
+                          >
+                            <option>480p</option>
+                            <option>720p</option>
+                            <option>1080p</option>
+                            <option>4K</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-sm text-gray-400 mb-2 block">Bitrate</label>
+                          <input
+                            type="text"
+                            value={bitrate}
+                            disabled
+                            className="w-full bg-gray-800 text-white rounded px-3 py-2 border border-gray-700 opacity-60"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-sm text-gray-400 mb-2 flex items-center gap-2">
+                          <Volume2 className="w-4 h-4" />
+                          Volume
+                        </label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={volume}
+                          onChange={(e) => setVolume(parseInt(e.target.value))}
+                          className="w-full"
+                        />
+                        <span className="text-xs text-gray-400 mt-1">{volume}%</span>
+                      </div>
+                    </div>
+                  </Card>
+                </TabsContent>
+
+                {/* Archive Tab */}
+                <TabsContent value="archive">
+                  <BroadcastRecordingArchiveEnhanced />
+                </TabsContent>
+              </Tabs>
             </div>
 
-            {/* Sidebar - Stats & Info */}
+            {/* Sidebar - Stats & Chat */}
             <div className="space-y-4">
               {/* Viewers */}
               <Card className="bg-gray-900/50 border-red-500/30 p-4">
@@ -174,24 +207,22 @@ export default function Broadcast() {
                     <span className="text-gray-400">Status:</span>
                     <span className="text-green-400 font-semibold">Connected</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Recording:</span>
+                    <span className="text-blue-400 font-semibold">{isRecording ? 'Active' : 'Off'}</span>
+                  </div>
                 </div>
               </Card>
 
-              {/* Chat Placeholder */}
-              <Card className="bg-gray-900/50 border-red-500/30 p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <Users className="w-5 h-5 text-red-500" />
-                  <h3 className="font-semibold text-white">Live Chat</h3>
-                </div>
-                <div className="bg-gray-800 rounded p-3 h-32 flex items-center justify-center text-gray-500 text-sm">
-                  Chat coming soon...
-                </div>
-              </Card>
+              {/* Live Chat */}
+              <div className="h-96">
+                <BroadcastChatEnhanced broadcastId="live-1" />
+              </div>
 
-              {/* Settings */}
+              {/* Settings Button */}
               <Button 
-                onClick={() => toast.info('📺 Broadcast settings panel opening...')}
-                className="w-full bg-gray-800 hover:bg-gray-700 text-white gap-2"
+                onClick={() => setSettingsOpen(true)}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white gap-2"
               >
                 <Settings className="w-4 h-4" />
                 Broadcast Settings
@@ -200,6 +231,9 @@ export default function Broadcast() {
           </div>
         </div>
       </div>
+
+      {/* Settings Modal */}
+      <BroadcastSettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
   );
 }

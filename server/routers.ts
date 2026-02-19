@@ -31,6 +31,8 @@ import { locationSharingRouter } from "./routers/locationSharingRouter";
 import { fileAnalysisRouter } from "./routers/fileAnalysisRouter";
 import { dashboardRouter } from "./routers/dashboardRouter";
 import { broadcastRouter } from "./routers/broadcastRouter";
+import { broadcastChatRouter } from "./routers/broadcastChatRouter";
+import { broadcastRecordingRouter } from "./routers/broadcastRecordingRouter";
 import { hybridcastRouter } from "./routers/hybridcastRouter";
 import { hybridcastSyncRouter } from "./routers/hybridcastSyncRouter";
 import { solbonesRouter } from "./routers/solbonesRouter";
@@ -164,6 +166,12 @@ export const appRouter = router({
 
   // Broadcast Management
   broadcast: broadcastRouter,
+
+  // Broadcast Chat (Real-time messages)
+  broadcastChat: broadcastChatRouter,
+
+  // Broadcast Recording Archive (VOD)
+  broadcastRecording: broadcastRecordingRouter,
 
   // HybridCast Streaming
   hybridcast: hybridcastRouter,
