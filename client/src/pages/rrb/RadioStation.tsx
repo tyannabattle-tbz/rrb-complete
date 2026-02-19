@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { PageMeta } from '@/components/rrb/PageMeta';
 import { RadioPlayer, Track } from '@/components/rrb/RadioPlayer';
 import { HybridCastWidgetContainer } from '@/components/rrb/HybridCastWidgetContainer';
@@ -26,7 +26,7 @@ export default function RadioStation() {
   // Fetch live play counts
   const { data: playCountData } = trpc.audio.getPlayCounts.useQuery();
 
-  // Curated playlist of Seabrun and Helen's music (fallback)
+  // Curated playlist of Seabrun and Helen's music + Poetry Station (fallback)
   const fallbackTracks: Track[] = [
     {
       id: '1',
@@ -40,7 +40,7 @@ export default function RadioStation() {
       id: '2',
       title: 'California I\'m Coming',
       artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
       description: 'Limited edition unreleased track from 1975',
       duration: 240,
     },
@@ -48,7 +48,7 @@ export default function RadioStation() {
       id: '3',
       title: 'I Saw What You Did',
       artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
       description: 'Seabrun Candy Hunter original composition',
       duration: 210,
     },
@@ -56,7 +56,7 @@ export default function RadioStation() {
       id: '4',
       title: 'Voicemail to C.J. Battle from Dad',
       artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
       description: 'A heartfelt personal message to his grandson',
       duration: 89,
     },
@@ -64,15 +64,15 @@ export default function RadioStation() {
       id: '5',
       title: 'Can-Ryn Production Inc. - A Corporation with the Right Stuff',
       artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-      description: 'Overview of Can-Ryn Production and its six specialized subsidiaries: Can-Ryn Publishing, Seasha Distribution, Anna Promotion, Jaelon Enterprises, Little G Recording, and Sean\'s Music World',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      description: 'Overview of Can-Ryn Production and its six specialized subsidiaries',
       duration: 180,
     },
     {
       id: '6',
       title: 'Rare Photo of Candy and Richard at Piano',
       artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
       description: 'Candy shares gratitude for a rare photo and requests more for her book project',
       duration: 45,
     },
@@ -80,7 +80,7 @@ export default function RadioStation() {
       id: '7',
       title: 'Book Release Timeline Update',
       artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
       description: 'Candy provides an update on her book project timeline',
       duration: 38,
     },
@@ -88,25 +88,73 @@ export default function RadioStation() {
       id: '8',
       title: 'Piano Strings and Touring Memories',
       artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
       description: 'Candy shares anecdotes about traveling with Little Richard and his playing style',
       duration: 52,
     },
     {
       id: '9',
-      title: 'Memorial Reflection on Little Richard',
-      artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
-      description: 'Candy shares a heartfelt memorial reflection on Little Richard',
-      duration: 28,
+      title: 'Poetry Reading 1: Voices of the Heart',
+      artist: 'Poetry Station',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      description: 'Beautiful poetry readings exploring themes of love, loss, and transformation.',
+      duration: 420,
     },
     {
       id: '10',
+      title: 'Poetry Reading 2: Nature & Reflection',
+      artist: 'Poetry Station',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      description: 'Contemplative poetry celebrating the beauty of nature and inner peace.',
+      duration: 380,
+    },
+    {
+      id: '11',
+      title: 'Poetry Reading 3: Stories & Dreams',
+      artist: 'Poetry Station',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      description: 'Narrative poetry and spoken word exploring imagination and possibilities.',
+      duration: 450,
+    },
+    {
+      id: '12',
+      title: 'Memorial Reflection on Little Richard',
+      artist: 'Seabrun Candy Hunter',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      description: 'Candy shares a heartfelt memorial reflection on Little Richard',
+      duration: 52,
+    },
+    {
+      id: '13',
       title: 'Concert Stage Management',
       artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
-      description: 'Candy discusses professional stage management during touring with Little Richard',
-      duration: 35,
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      description: 'Candy reflects on her role managing concert stages and logistics',
+      duration: 67,
+    },
+    {
+      id: '14',
+      title: 'Rockin\' Rockin\' Boogie - The Documentary',
+      artist: 'Seabrun Candy Hunter',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      description: 'Candy announces the upcoming documentary about her life and legacy',
+      duration: 91,
+    },
+    {
+      id: '15',
+      title: 'Thank You & Gratitude',
+      artist: 'Seabrun Candy Hunter',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      description: 'Candy expresses gratitude to all her supporters and collaborators',
+      duration: 72,
+    },
+    {
+      id: '16',
+      title: 'The Rockin\' Rockin\' Boogie Jingle',
+      artist: 'Seabrun Candy Hunter',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      description: 'The iconic jingle that introduces the Rockin\' Rockin\' Boogie brand',
+      duration: 30,
     },
   ];
 
@@ -125,305 +173,129 @@ export default function RadioStation() {
     return fallbackTracks;
   }, [dbTracks]);
 
+  // Get play count for a track
+  const getPlayCount = (trackId: string): number => {
+    if (!playCountData) return 0;
+    const track = playCountData.find(t => t.trackId === trackId);
+    return track?.playCount || 0;
+  };
+
+  // Get top 4 tracks by play count
+  const topTracks = useMemo(() => {
+    return tracks
+      .map(track => ({
+        ...track,
+        playCount: getPlayCount(track.id),
+      }))
+      .sort((a, b) => b.playCount - a.playCount)
+      .slice(0, 4);
+  }, [tracks, playCountData]);
+
   return (
     <>
-      <PageMeta
-        title="Radio Station — Seabrun & Helen's Music | Rockin' Rockin' Boogie"
-        description="Listen to curated playlist of Seabrun Candy Hunter and Helen Logan Hunter's music. Stream songs, interviews, and audio archive."
-        keywords="Seabrun Candy Hunter music, Helen Hunter, radio station, music playlist, streaming, audio archive"
+      <PageMeta 
+        title="Radio Station - Rockin' Rockin' Boogie"
+        description="24/7 radio streaming with Seabrun Candy Hunter's legacy music and Poetry Station content"
       />
-      <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-accent/20 to-accent/10 py-12 md:py-16">
-        <div className="container max-w-4xl">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">🎙️ Legacy Radio Station</h1>
-          <p className="text-lg text-foreground/80 mb-2">
-            Experience the music and voice of Seabrun Candy Hunter and his family legacy
-          </p>
-          <p className="text-foreground/70">
-            A curated collection of recordings, interviews, and personal messages that capture the essence of a musical legacy
-          </p>
+      
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        {/* Main Radio Player */}
+        <div className="container mx-auto px-4 py-8">
+          <RadioPlayer tracks={tracks} />
         </div>
-      </section>
 
-      {/* 432Hz Information Banner */}
-      <section className="py-8 md:py-12 bg-accent/10 border-y border-accent/20">
-        <div className="container max-w-4xl">
-          <div className="flex items-start gap-4">
-            <div className="text-3xl">🎵</div>
-            <div>
-              <h3 className="text-lg font-bold text-foreground mb-2">All Music Resonated at 432Hz</h3>
-              <p className="text-foreground/80 mb-4">
-                All recordings on this station have been carefully resonated at 432Hz, known as the "universal frequency" or "frequency of the universe." This tuning is believed to promote healing, harmony, and spiritual alignment. Experience the music as it was meant to be heard.
-              </p>
-              <div className="bg-background/50 p-4 rounded-lg border border-accent/20">
-                <p className="text-sm text-foreground/70 leading-relaxed">
-                  <strong>Frequency Disclaimer:</strong> The 432Hz tuning represents an alternative to the standard 440Hz concert pitch. While many believe 432Hz has therapeutic and healing properties, these claims are not scientifically established. The frequency is used here as part of our commitment to holistic wellness and spiritual resonance. Individual experiences may vary. If you have hearing sensitivities or audio-related health concerns, please consult with a healthcare professional.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Live Streaming Channels */}
-      {streamingChannels && streamingChannels.length > 0 && (
-        <section className="py-8 md:py-12 bg-background">
-          <div className="container max-w-4xl">
-            <h2 className="text-2xl font-bold text-foreground mb-4">📡 Live Channels</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {streamingChannels.map(ch => (
-                <div key={ch.id} className="bg-card p-4 rounded-lg border border-border hover:border-accent transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`w-2.5 h-2.5 rounded-full ${ch.isLive ? 'bg-red-500 animate-pulse' : 'bg-gray-400'}`} />
-                    <span className="text-sm font-semibold text-foreground">{ch.channelName}</span>
+        {/* Top Tracks Chart */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-slate-800/50 rounded-lg p-6 backdrop-blur">
+            <h2 className="text-2xl font-bold text-white mb-6">📊 Top Tracks</h2>
+            <div className="space-y-4">
+              {topTracks.map((track, index) => (
+                <div key={track.id} className="flex items-center gap-4">
+                  <div className="text-3xl font-bold text-purple-400 w-12">
+                    {RANK_BADGES[index]}
                   </div>
-                  <div className="text-xs text-foreground/60 space-y-1">
-                    <p>{ch.isLive ? '🔴 LIVE' : '⚫ Offline'} · {ch.currentListeners?.toLocaleString() || 0} listeners</p>
-                    <p>{ch.quality} · {ch.bitrate}</p>
+                  <div className="flex-1">
+                    <div className="flex justify-between mb-2">
+                      <div>
+                        <p className="font-semibold text-white">{track.title}</p>
+                        <p className="text-sm text-slate-300">{track.artist}</p>
+                      </div>
+                      <p className="text-purple-300 font-bold">{formatPlayCount(track.playCount)} plays</p>
+                    </div>
+                    <div className="w-full bg-slate-700 rounded-full h-2">
+                      <div
+                        className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full"
+                        style={{ width: BAR_WIDTHS[index] }}
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </section>
-      )}
-
-      {/* Poetry Hour Channel 8 */}
-      <section className="py-8 md:py-12 bg-gradient-to-b from-purple-950/10 to-background">
-        <div className="container max-w-4xl">
-          <a href="/rrb/poetry-hour" className="block p-6 rounded-xl bg-card border border-purple-500/20 hover:border-purple-500/40 transition-all group">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">✒️</span>
-                  <h3 className="text-xl font-bold text-foreground group-hover:text-purple-400 transition-colors">Poetry Hour — Channel 8</h3>
-                  <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/10 text-green-400 border border-green-500/20 animate-pulse">LIVE</span>
-                </div>
-                <p className="text-sm text-muted-foreground">24/7 spoken word, poetry readings from Dad's Miracles collections, and community open mic. Broadcasting at 174 Hz.</p>
-              </div>
-              <span className="text-muted-foreground group-hover:text-purple-400 transition-colors text-xl">→</span>
-            </div>
-          </a>
         </div>
-      </section>
 
-      {/* HybridCast Widget Section */}
-      <section className="py-12 md:py-16 bg-gradient-to-b from-accent/10 to-background">
-        <div className="container max-w-4xl">
-          <h2 className="text-3xl font-bold text-foreground mb-6">🎙️ HybridCast Live Radio</h2>
-          <p className="text-foreground/80 mb-8">
-            Tune in to live broadcasts, emergency alerts, and community check-ins powered by HybridCast technology
-          </p>
+        {/* Streaming Channels */}
+        {streamingChannels && streamingChannels.length > 0 && (
+          <div className="container mx-auto px-4 py-8">
+            <div className="bg-slate-800/50 rounded-lg p-6 backdrop-blur">
+              <h2 className="text-2xl font-bold text-white mb-6">🔴 Live Channels</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {streamingChannels.map(channel => (
+                  <div key={channel.id} className="bg-slate-700/50 rounded p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+                      <h3 className="font-semibold text-white">{channel.name}</h3>
+                    </div>
+                    <p className="text-sm text-slate-300">{channel.listeners} listeners</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Playlists */}
+        {playlists && playlists.length > 0 && (
+          <div className="container mx-auto px-4 py-8">
+            <div className="bg-slate-800/50 rounded-lg p-6 backdrop-blur">
+              <h2 className="text-2xl font-bold text-white mb-6">🎵 Playlists</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {playlists.map(playlist => (
+                  <div key={playlist.id} className="bg-slate-700/50 rounded p-4">
+                    <h3 className="font-semibold text-white mb-2">{playlist.name}</h3>
+                    <p className="text-sm text-slate-300">{playlist.trackCount} tracks</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Widgets */}
+        <div className="container mx-auto px-4 py-8">
           <HybridCastWidgetContainer />
         </div>
-      </section>
 
-      {/* Radio Player Section */}
-      <section className="py-12 md:py-16">
-        <div className="container max-w-4xl">
-          <RadioPlayer
-            tracks={tracks}
-            title="🎵 Seabrun Candy Hunter & Family Legacy"
-            description="Play through the complete collection of verified recordings and personal messages"
-          />
+        {/* Commercials */}
+        <div className="container mx-auto px-4 py-8">
+          <RadioCommercials />
         </div>
-      </section>
 
-      {/* Most Played Section — Live Data */}
-      <section className="py-12 md:py-16 bg-accent/5">
-        <div className="container max-w-4xl">
-          <h2 className="text-3xl font-bold text-foreground mb-6">🔥 Most Played</h2>
-          <p className="text-foreground/80 mb-8">
-            Live play counts from our listeners — updated in real time as tracks are played
-          </p>
-          
-          <div className="grid md:grid-cols-2 gap-6">
-            {(() => {
-              const topTracks = (playCountData?.tracks as any[]) || [];
-              const maxPlays = topTracks.length > 0 ? (topTracks[0]?.play_count || 1) : 1;
-              
-              // Default tracks if no play data yet
-              const defaultTracks = [
-                { track_id: '1', title: "Rockin' Rockin' Boogie", artist: 'Seabrun Candy Hunter & Little Richard', play_count: 0 },
-                { track_id: '4', title: 'Voicemail to C.J. Battle from Dad', artist: 'Seabrun Candy Hunter', play_count: 0 },
-                { track_id: '2', title: "California I'm Coming", artist: 'Seabrun Candy Hunter', play_count: 0 },
-                { track_id: '8', title: 'The Creative Process', artist: 'Seabrun Candy Hunter', play_count: 0 },
-              ];
-              
-              const displayTracks = topTracks.length > 0 ? topTracks.slice(0, 4) : defaultTracks;
-              
-              return displayTracks.map((track: any, idx: number) => {
-                const barWidth = topTracks.length > 0
-                  ? `${Math.max(10, (track.play_count / maxPlays) * 100)}%`
-                  : BAR_WIDTHS[idx] || '50%';
-                return (
-                  <div key={track.track_id} className={`bg-card p-6 rounded-lg border ${idx === 0 ? 'border-accent/20' : 'border-border'} hover:border-accent transition-colors`}>
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <div className="text-sm font-semibold text-accent mb-1">{RANK_BADGES[idx] || '🎵'} {RANK_LABELS[idx] || `#${idx + 1}`}</div>
-                        <h3 className="text-xl font-bold text-foreground">{track.title}</h3>
-                        <p className="text-sm text-foreground/70 mt-1">{track.artist}</p>
-                      </div>
-                      <div className="text-3xl font-bold text-accent/40">{idx < 3 ? idx + 1 : '↑'}</div>
-                    </div>
-                    <div className="w-full bg-border rounded-full h-2">
-                      <div className="bg-accent h-2 rounded-full transition-all duration-500" style={{width: barWidth}}></div>
-                    </div>
-                    <p className="text-xs text-foreground/50 mt-2">
-                      {track.play_count > 0 ? `${formatPlayCount(track.play_count)} plays` : 'No plays yet — be the first!'}
-                      {idx === 3 && track.play_count > 0 ? ' (trending up)' : ''}
-                    </p>
-                  </div>
-                );
-              });
-            })()}
-          </div>
+        {/* Seasonal Campaigns */}
+        <div className="container mx-auto px-4 py-8">
+          <SeasonalCampaigns />
         </div>
-      </section>
 
-      {/* About This Collection */}
-      <section className="py-12 md:py-16 bg-card">
-        <div className="container max-w-4xl">
-          <h2 className="text-3xl font-bold text-foreground mb-6">About This Collection</h2>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-semibold text-accent mb-3">🎵 The Music</h3>
-              <p className="text-foreground/80 mb-4">
-                Listen to the iconic "Rockin' Rockin' Boogie" and other verified recordings that showcase Seabrun Candy Hunter's musical talent and contributions to 1970s soul and funk music.
-              </p>
-              <p className="text-foreground/70 text-sm">
-                All tracks are verified through Discogs, BMI, and USCO records.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold text-accent mb-3">🎙️ Personal Messages</h3>
-              <p className="text-foreground/80 mb-4">
-                Hear intimate recordings including a heartfelt voicemail to his grandson C.J. Battle and discussions about his creative process and musical legacy.
-              </p>
-              <p className="text-foreground/70 text-sm">
-                These personal recordings capture the warmth and wisdom of a grandfather's love.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How to Use */}
-      <section className="py-12 md:py-16">
-        <div className="container max-w-4xl">
-          <h2 className="text-3xl font-bold text-foreground mb-6">How to Use the Radio Player</h2>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-card p-6 rounded-lg border border-border">
-              <div className="text-3xl mb-3">▶️</div>
-              <h3 className="font-semibold text-foreground mb-2">Play & Pause</h3>
-              <p className="text-sm text-foreground/70">
-                Click the play button to start listening. Use pause to take a break.
-              </p>
-            </div>
-
-            <div className="bg-card p-6 rounded-lg border border-border">
-              <div className="text-3xl mb-3">⏭️</div>
-              <h3 className="font-semibold text-foreground mb-2">Skip Tracks</h3>
-              <p className="text-sm text-foreground/70">
-                Use the next and previous buttons to navigate through the playlist.
-              </p>
-            </div>
-
-            <div className="bg-card p-6 rounded-lg border border-border">
-              <div className="text-3xl mb-3">🔊</div>
-              <h3 className="font-semibold text-foreground mb-2">Volume Control</h3>
-              <p className="text-sm text-foreground/70">
-                Adjust the volume slider or mute the audio completely.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Book Commercials */}
-      <RadioCommercials />
-
-      {/* Live Call-In */}
-      <section className="py-8 md:py-12 bg-background">
-        <div className="container max-w-4xl">
-          <LiveCallIn context="radio" showName="RRB Radio Station" isLive={true} />
-        </div>
-      </section>
-
-      {/* Seasonal Campaigns */}
-      <SeasonalCampaigns />
-
-      {/* Explore More */}
-      <section className="py-12 md:py-16 bg-card">
-        <div className="container max-w-4xl">
-          <h2 className="text-3xl font-bold text-foreground mb-6">Explore More</h2>
-          
-          <div className="grid md:grid-cols-2 gap-6">
-            <a
-              href="/rrb/the-music"
-              className="group p-6 bg-background rounded-lg border border-border hover:border-accent transition-colors"
-            >
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
-                🎵 Complete Discography
-              </h3>
-              <p className="text-sm text-foreground/70">
-                View the full discography with verified credits and documentation
-              </p>
-            </a>
-
-            <a
-              href="/rrb/grandma-helen"
-              className="group p-6 bg-background rounded-lg border border-border hover:border-accent transition-colors"
-            >
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
-                👵 Grandma Helen's Legacy
-              </h3>
-              <p className="text-sm text-foreground/70">
-                Discover the family roots and Helen's influence on the musical legacy
-              </p>
-            </a>
-
-            <a
-              href="/rrb/proof-vault"
-              className="group p-6 bg-background rounded-lg border border-border hover:border-accent transition-colors"
-            >
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
-                📜 Proof Vault
-              </h3>
-              <p className="text-sm text-foreground/70">
-                Explore verified documentation and evidence supporting the legacy
-              </p>
-            </a>
-
-            <a
-              href="/rrb/testimonials-and-stories"
-              className="group p-6 bg-background rounded-lg border border-border hover:border-accent transition-colors"
-            >
-              <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors mb-2">
-                🎤 Testimonials
-              </h3>
-              <p className="text-sm text-foreground/70">
-                Read first-hand accounts from collaborators and family members
-              </p>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* User Audio Upload Section */}
-      <section className="py-12 bg-card/30">
-        <div className="container max-w-2xl">
-          <h2 className="text-2xl font-bold text-center mb-2">Upload Your Music</h2>
-          <p className="text-sm text-muted-foreground text-center mb-6">
-            Replace placeholder tracks with your own recordings. Uploaded tracks appear in the global player.
-          </p>
+        {/* Audio Upload Manager */}
+        <div className="container mx-auto px-4 py-8">
           <AudioUploadManager />
         </div>
-      </section>
+
+        {/* Live Call In */}
+        <div className="container mx-auto px-4 py-8">
+          <LiveCallIn />
+        </div>
       </div>
     </>
   );
