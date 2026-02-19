@@ -355,6 +355,7 @@ export default function Navigation() {
 
         {/* Mobile Actions */}
         <div className="lg:hidden flex items-center gap-2">
+          <FrequencyToggle />
           <button
             onClick={() => navigate('/emergency')}
             className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full transition-colors flex items-center justify-center w-8 h-8"
