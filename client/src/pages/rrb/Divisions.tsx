@@ -199,7 +199,7 @@ export default function Divisions() {
                 className="w-full h-auto rounded-lg mb-3"
               />
               <h3 className="text-lg font-bold text-amber-500">Canryn Production Inc.</h3>
-              <p className="text-sm text-foreground/60">Parent Company — Est. by LaShanna Hunter</p>
+              <p className="text-sm text-foreground/60">Parent Company — Founded by Seabrun Candy Hunter</p>
               <p className="text-xs text-amber-500/60 mt-1 italic">Logo designed by Seabrun Candy Hunter</p>
             </div>
           </div>
@@ -210,42 +210,42 @@ export default function Divisions() {
               {
                 name: 'Canryn Publishing Co.',
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/mTiGfPFFlpHcvZTm.jpeg',
-                desc: 'Music Publishing & Rights Administration',
+                desc: 'Music Publishing & Rights Administration — Founded by Seabrun Candy Hunter',
               },
               {
                 name: 'Canryn Promo',
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/giQvuyIzYStoLwtj.jpeg',
-                desc: 'Promotion & Marketing',
+                desc: 'Promotion & Marketing — Founded by Seabrun Candy Hunter',
               },
               {
                 name: 'Little C',
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jAGbowmiNIBjqruW.jpeg',
-                desc: 'Youth & Education Initiatives',
+                desc: 'Youth & Education Initiatives — Founded by Seabrun Candy Hunter, Operated by Little C',
               },
               {
                 name: "Anna's Promotion Co.",
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/NOXrVGzekgvevsQT.jpeg',
-                desc: 'Artist Promotion & Events',
+                desc: 'Artist Promotion & Events — Founded by Seabrun Candy Hunter, Operated by Anna Hunter',
               },
               {
                 name: 'Candy Worldwide',
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/vGJdwZhZCGKBYxZs.jpeg',
-                desc: 'Global Distribution & Licensing',
+                desc: 'Global Distribution & Licensing — Founded by Seabrun Candy Hunter',
               },
               {
                 name: 'Jaelon Enterprises',
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jcgFmBvwKebLhriU.jpeg',
-                desc: 'Business Development & Ventures',
+                desc: 'Business Development & Ventures — Founded by Seabrun Candy Hunter, Operated by Jaelon Hunter',
               },
               {
-                name: 'Sean Music',
+                name: "Sean's Music",
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/pFmKZSoKEyjfghpL.jpeg',
-                desc: 'Music Production & Recording',
+                desc: 'Music Production & Recording — Founded by Seabrun Candy Hunter, Operated by Sean Hunter',
               },
               {
                 name: 'Seasha Distribution Co.',
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xdhjNQYMyvMBSdks.jpeg',
-                desc: 'Physical & Digital Distribution',
+                desc: 'Physical & Digital Distribution — Founded by Seabrun Candy Hunter',
               },
             ].map((sub) => (
               <Card key={sub.name} className="bg-card border-border hover:border-amber-500/30 transition-colors group overflow-hidden">

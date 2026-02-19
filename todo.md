@@ -2710,3 +2710,19 @@
 ## Channel Rename
 - [x] Rename HybridCast Broadcast channel to Voice of the Voiceless in streamLibrary.ts
 - [x] Update FamilyAchievements.tsx reference
+
+
+## Divisions Page Corrections (URGENT)
+- [ ] Remove LaShanna credit for Canryn logo (she did not create it)
+- [ ] Add apostrophe to "Sean's Music" (not "Seans Music")
+- [ ] Make logos clickable/expandable to show more info
+- [ ] Add creator names and personal stories to each division
+- [ ] Verify all company attributions are correct
+- [ ] Redeploy to rockinrockinboogie.com domain
+
+## RRB Ecosystem - Divisions Page Fixes (Current Session)
+- [x] Fixed Divisions page founder attribution (Seabrun Candy Hunter founded all companies)
+- [x] Added apostrophe to "Sean's Music" (was "Sean Music")
+- [x] Added operator names to each company (Sean, Anna, Jaelon, Little C)
+- [ ] Deploy checkpoint to rockinrockinboogie.com (CRITICAL - live site showing outdated content)
+- [ ] Verify all updates visible on live domain
