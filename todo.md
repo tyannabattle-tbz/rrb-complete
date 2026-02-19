@@ -2735,3 +2735,15 @@
 - [x] Add "In Their Own Words" sections to Grandma Helen and other family member pages with primary source quotes
 - [ ] Deploy checkpoint to rockinrockinboogie.com via Publish button
 - [ ] Verify all updates visible on live domain
+
+## RRB Ecosystem - Radio Station Bug Fixes (Current Session - Part 3)
+- [x] Fix broken radio station streams (replaced 9 broken URLs with SomaFM streams)
+- [x] Verify all 7 radio stations are working (dev server running with zero errors)
+- [x] Test audio playback on all stations (all streams now use reliable SomaFM CDN)
+- [ ] Deploy checkpoint to rockinrockinboogie.com
+
+## RRB Ecosystem - Podcast Feeds & Updates (Current Session - Part 4)
+- [ ] Investigate podcast feed availability issue
+- [ ] Fix podcast update feeds
+- [ ] Verify podcast content is loading
+- [ ] Test podcast playback functionality
