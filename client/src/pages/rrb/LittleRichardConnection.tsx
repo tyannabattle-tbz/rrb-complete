@@ -55,7 +55,7 @@ const facebookEvidence = [
     postedBy: 'Candy Hunter',
     imageUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/NQROkUecZhHdPqsx.jpeg',
     caption: '"A rare picture I have of my cousin...LITTLE RICHARD! I LOVE HIM WITH ALL I\'VE GOT! ATTT!"',
-    significance: 'Candy Hunter publicly identifies Little Richard as her cousin and expresses deep personal love — confirming the family connection in her own words on social media.',
+    significance: 'Candy Hunter publicly identifies Little Richard as his cousin and expresses deep personal love — confirming the family connection in his own words on social media.',
   },
   {
     id: 'personal-announcement-2020',
@@ -74,7 +74,7 @@ const facebookEvidence = [
     platform: 'Facebook / Physical Record',
     postedBy: 'Candy Hunter',
     imageUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qEVEmYsfaDKfwLoL.jpeg',
-    caption: '"My daughter TyAnna, sent this to me and I thought I would share it with anybody. It\'s an amazing find for me to see something that Richard and I did so many years ago! Hope you enjoy it and will be printed in the book! ATTT!"',
+            caption: '"My daughter TyAnna, sent this to me and I thought I would share it with anybody. It\'s an amazing find for me to see something that Richard and I did so many years ago! Hope you enjoy it and will be printed in the book! ATTT!"',
     significance: 'The physical Reprise Records 45 RPM single (K 14343) shows: Track 1 — "ROCKIN\' ROCKIN\' BOOGIE" credited to (Penniman/Hunter) under PAYTEN MUSIC. Track 2 — "KING OF ROCK AND ROLL" credited to (Barnum/Craig). Released under LITTLE RICHARD on Reprise Records, Made in UK, 1971/1972. This is the definitive physical evidence that Seabrun Hunter co-wrote the song with Richard Penniman (Little Richard) and that it was published by Payten Music.',
   },
   {
