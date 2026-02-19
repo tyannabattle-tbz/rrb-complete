@@ -89,7 +89,7 @@ import RockinBoogieAdminDashboard from '@/pages/RockinBoogieAdminDashboard';
 import DocumentUpload from '@/pages/DocumentUpload';
 import AuditTrailViewer from '@/pages/AuditTrailViewer';
 import { AutonomousDashboardPage } from '@/pages/AutonomousDashboardPage';
-import { DonationCheckout } from '@/pages/DonationCheckout';
+// Removed duplicate - using RRB version instead
 import DonationSuccess from '@/pages/DonationSuccess';
 import { ProofVaultSearch } from '@/pages/ProofVaultSearch';
 import { ListenerDashboard } from '@/pages/ListenerDashboard';
@@ -143,6 +143,7 @@ import RRBAdminDashboard from '@/pages/rrb/AdminDashboard';
 import RealtimeCollaboration from '@/pages/rrb/RealtimeCollaboration';
 import MobileApp from '@/pages/rrb/MobileApp';
 import DonationCheckout from '@/pages/rrb/DonationCheckout';
+import { DonationCheckout as LegacyDonationCheckout } from '@/pages/DonationCheckout';
 import LivePodcastProduction from '@/pages/LivePodcastProduction';
 import RRBTheMusic from '@/pages/rrb/TheMusic';
 import RRBTheLegacyPage from '@/pages/rrb/TheLegacyPage';
@@ -305,7 +306,7 @@ function Router() {
       <Route path="/studio" component={Studio} />
       <Route path="/podcast" component={PodcastPlayer} />
       <Route path="/podcast-discovery" component={PodcastDiscovery} />
-      <Route path="/donate" component={DonationCheckout} />
+      <Route path="/donate" component={LegacyDonationCheckout} />
       <Route path="/donation-success" component={DonationSuccess} />
       <Route path="/proof-vault" component={ProofVaultSearch} />
       <Route path="/dashboard" component={ListenerDashboard} />
@@ -326,7 +327,7 @@ function Router() {
       <Route path="/user-preferences" component={UserPreferences} />
       <Route path="/webhooks" component={WebhookManagement} />
       <Route path="/meditation" component={MeditationHub} />
-      <Route path="/sweet-miracles" component={DonationCheckout} />
+      <Route path="/sweet-miracles" component={LegacyDonationCheckout} />
       <Route path="/solbones" component={Solbones} />
       <Route path="/solbones-classic" component={SolbonesClassic} />
       <Route path="/solbones-online" component={SolbonesOnline} />

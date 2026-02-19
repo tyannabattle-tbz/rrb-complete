@@ -350,6 +350,13 @@
 - [x] Added FrequencyToggle to mobile navigation (was only on desktop)
 - [x] Dev server running with zero TypeScript errors
 
+## DEFAULT FREQUENCY 432 HZ & FOLLOW-UPS (COMPLETED)
+- [x] Set 432 Hz as default frequency for all channels (changed from 440 Hz)
+- [x] Update frequency tuner UI to highlight 432 Hz by default
+- [x] Persist frequency selection in localStorage for user preferences
+- [x] Test default frequency with channel switching
+- [x] Apply all follow-ups and deploy
+
 ## Phase 10: Podcast Streaming Integration (COMPLETED)
 - [x] Integrate Spotify API for podcast streaming
 - [x] Integrate Apple Music API for podcast streaming
@@ -2952,3 +2959,12 @@
 - [x] All routes integrated into App.tsx
 - [x] Audio playback fully fixed and tested
 - [x] Production ready for deployment
+
+
+## POETRY STATION CHANNEL (COMPLETED)
+- [x] Add Poetry Station channel to CHANNELS array
+- [x] Create poetry episodes with audio URLs (3 episodes)
+- [x] Add Poetry Station to channel selector
+- [x] Test Poetry Station and deploy
+- [x] Add poetry content to radio station
+- [x] Integrate Poetry Station with all platforms
