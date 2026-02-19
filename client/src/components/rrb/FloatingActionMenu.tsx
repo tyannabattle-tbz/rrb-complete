@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Music, MessageSquare, Settings } from 'lucide-react';
+import { Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -36,7 +36,7 @@ export function FloatingActionMenu({
       {/* Menu Items - Appear above the main button when open */}
       {isOpen && (
         <div className="absolute bottom-16 right-0 flex flex-col gap-3 mb-2">
-          {items.map((item, index) => (
+          {items.map((item) => (
             <div key={item.id} className="flex items-center justify-end gap-2">
               <span className="text-xs text-foreground/70 bg-background/80 px-2 py-1 rounded whitespace-nowrap">
                 {item.label}
@@ -62,12 +62,12 @@ export function FloatingActionMenu({
         className={cn(
           'rounded-full w-14 h-14 p-0 text-white shadow-lg transition-all duration-200',
           isOpen
-            ? 'bg-red-500 hover:bg-red-600 rotate-45'
+            ? 'bg-red-500 hover:bg-red-600'
             : 'bg-orange-500 hover:bg-orange-600'
         )}
         title={primaryLabel}
       >
-        {isOpen ? <X className="w-6 h-6" /> : primaryIcon}
+        {primaryIcon}
       </Button>
     </div>
   );
