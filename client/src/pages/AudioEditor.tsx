@@ -8,7 +8,7 @@ const MUSIC_LIBRARY = [
   { title: "Rockin' Rockin' Boogie — Original", artist: 'Seabrun Candy Hunter', duration: '5:30', url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3' },
   { title: "California I'm Coming", artist: 'Seabrun Candy Hunter', duration: '6:12', url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zByVVlWeoYCaITZI.mp3' },
   { title: 'Ambient Relaxation', artist: 'Sound Design', duration: '4:00', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' },
-  { title: 'Cinematic Strings', artist: 'Orchestra', duration: '2:30', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+  { title: 'Cinematic Strings', artist: 'Orchestra', duration: '2:30', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
   { title: 'Electronic Groove', artist: 'Beat Lab', duration: '3:45', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
 ];
 

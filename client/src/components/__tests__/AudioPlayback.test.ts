@@ -72,7 +72,7 @@ describe('Audio/Visual Playback System', () => {
         {
           id: 'ep-001',
           title: 'Episode 1',
-          streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+          streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
         },
         {
           id: 'ep-002',

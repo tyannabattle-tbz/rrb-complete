@@ -2181,3 +2181,80 @@ export const royaltyStatements = mysqlTable("royalty_statements", {
 	status: mysqlEnum(['draft','issued','acknowledged']).default('draft').notNull(),
 	generatedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
+
+
+// ===== RRB Division & Campaign Management =====
+export const campaigns = mysqlTable("campaigns", {
+	id: int().autoincrement().notNull().primaryKey(),
+	divisionId: varchar({ length: 64 }).notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	description: text(),
+	type: mysqlEnum(['episode', 'frequency', 'broadcast', 'promotion']).notNull(),
+	status: mysqlEnum(['draft', 'scheduled', 'active', 'completed', 'archived']).default('draft'),
+	startDate: timestamp({ mode: 'string' }),
+	endDate: timestamp({ mode: 'string' }),
+	targetChannels: json(), // Array of channel IDs
+	metrics: json(), // views, clicks, conversions
+	createdBy: int().notNull().references(() => users.id),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+
+export const listenerData = mysqlTable("listener_data", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().references(() => users.id),
+	sessionId: varchar({ length: 255 }).notNull(),
+	favoriteChannels: json(), // Array of channel IDs
+	favoriteFrequencies: json(), // Array of frequency values
+	playHistory: json(), // Array of episode IDs with timestamps
+	totalListeningTime: int().default(0), // in seconds
+	lastListenedAt: timestamp({ mode: 'string' }),
+	deviceInfo: json(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const broadcastSessions = mysqlTable("broadcast_sessions", {
+	id: int().autoincrement().notNull().primaryKey(),
+	divisionId: varchar({ length: 64 }).notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	description: text(),
+	status: mysqlEnum(['scheduled', 'live', 'ended', 'cancelled']).default('scheduled'),
+	startTime: timestamp({ mode: 'string' }).notNull(),
+	endTime: timestamp({ mode: 'string' }),
+	youtubeUrl: varchar({ length: 255 }),
+	twitchUrl: varchar({ length: 255 }),
+	viewerCount: int().default(0),
+	duration: int(), // in seconds
+	recordingUrl: varchar({ length: 255 }),
+	createdBy: int().notNull().references(() => users.id),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const divisionMetrics = mysqlTable("division_metrics", {
+	id: int().autoincrement().notNull().primaryKey(),
+	divisionId: varchar({ length: 64 }).notNull(),
+	date: varchar({ length: 10 }).notNull(), // YYYY-MM-DD
+	totalListeners: int().default(0),
+	totalPlaytime: int().default(0), // in seconds
+	episodesPlayed: int().default(0),
+	frequencySelections: json(), // frequency -> count mapping
+	donationsReceived: decimal({ precision: 10, scale: 2 }).default('0'),
+	campaignImpressions: int().default(0),
+	campaignClicks: int().default(0),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const adminLogs = mysqlTable("admin_logs", {
+	id: int().autoincrement().notNull().primaryKey(),
+	adminId: int().notNull().references(() => users.id),
+	action: varchar({ length: 255 }).notNull(),
+	resourceType: varchar({ length: 64 }).notNull(),
+	resourceId: varchar({ length: 255 }),
+	details: json(),
+	ipAddress: varchar({ length: 45 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});

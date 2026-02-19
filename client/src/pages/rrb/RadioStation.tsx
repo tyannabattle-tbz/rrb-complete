@@ -40,7 +40,7 @@ export default function RadioStation() {
       id: '2',
       title: 'California I\'m Coming',
       artist: 'Seabrun Candy Hunter',
-      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
       description: 'Limited edition unreleased track from 1975',
       duration: 240,
     },

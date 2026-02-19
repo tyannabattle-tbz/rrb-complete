@@ -46,7 +46,7 @@ const CHANNELS: Channel[] = [
         id: 'rr-001',
         title: "Rockin' Rockin' Boogie - Original Recording",
         artist: 'Little Richard',
-        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Rockin+Boogie',
         channel: "Rockin' Rockin' Boogie",
         duration: 180,

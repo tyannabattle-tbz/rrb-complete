@@ -139,6 +139,7 @@ import ListenerAnalytics from '@/pages/rrb/ListenerAnalytics';
 import LiveStreamIntegration from '@/pages/rrb/LiveStreamIntegration';
 import ListenerNotifications from '@/pages/rrb/ListenerNotifications';
 import MerchandiseStore from '@/pages/rrb/MerchandiseStore';
+import RRBAdminDashboard from '@/pages/rrb/AdminDashboard';
 import LivePodcastProduction from '@/pages/LivePodcastProduction';
 import RRBTheMusic from '@/pages/rrb/TheMusic';
 import RRBTheLegacyPage from '@/pages/rrb/TheLegacyPage';
@@ -408,6 +409,7 @@ function Router() {
       <Route path="/rrb/live-stream" component={LiveStreamIntegration} />
       <Route path="/rrb/notifications" component={ListenerNotifications} />
       <Route path="/rrb/merchandise" component={MerchandiseStore} />
+      <Route path="/rrb/admin" component={RRBAdminDashboard} />
       <Route path="/live-podcast-production" component={LivePodcastProduction} />
       <Route path="/rrb/hybridcast" component={RRBHybridCastPage} />
       <Route path="/rrb/audiobooks" component={RRBAudiobooks} />

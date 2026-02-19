@@ -13,7 +13,7 @@ const EPISODES = [
     id: 'rr-001',
     title: "Rockin' Rockin' Boogie",
     artist: 'Little Richard',
-    streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     channel: 'Rockin\' Rockin\' Boogie',
   },
   {

@@ -56,7 +56,7 @@ export function RockinBoogiePlayerFinal() {
             title: "Rockin' Rockin' Boogie - Original Recording",
             artist: "Little Richard",
             duration: 180,
-            streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+            streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
             channel: "Rockin' Rockin' Boogie",
           },
           {
