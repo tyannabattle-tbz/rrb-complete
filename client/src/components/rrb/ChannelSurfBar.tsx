@@ -40,12 +40,12 @@ const DEFAULT_CHANNELS: Channel[] = [
     description: 'Music and sound publishing',
   },
   {
-    id: 'annas-company',
-    name: "Anna's Company",
+    id: 'annas-promotions',
+    name: "Anna's Promotions",
     color: 'from-pink-500 to-rose-500',
     listeners: 156,
     isLive: false,
-    description: 'Artist and model management',
+    description: 'Marketing and promotional campaigns',
   },
   {
     id: 'jaelon-enterprises',

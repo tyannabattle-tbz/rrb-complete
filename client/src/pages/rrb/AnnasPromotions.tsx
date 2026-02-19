@@ -98,7 +98,7 @@ export default function AnnasPromotions() {
   const [newCampaignName, setNewCampaignName] = useState('');
   const [selectedChannel, setSelectedChannel] = useState('RRB Main');
 
-  const channels = ['RRB Main', "Sean's Music", "Anna's Company", 'Jaelon Enterprises', 'Little C Productions'];
+  const channels = ['RRB Main', "Sean's Music", "Anna's Promotions", 'Jaelon Enterprises', 'Little C Productions'];
 
   // Analytics data
   const performanceData = [
@@ -111,7 +111,7 @@ export default function AnnasPromotions() {
   const channelPerformance = [
     { name: 'RRB Main', value: 45, fill: '#f97316' },
     { name: "Sean's Music", value: 28, fill: '#3b82f6' },
-    { name: "Anna's Company", value: 15, fill: '#a855f7' },
+    { name: "Anna's Promotions", value: 15, fill: '#a855f7' },
     { name: 'Jaelon Enterprises', value: 8, fill: '#ec4899' },
     { name: 'Little C Productions', value: 4, fill: '#10b981' },
   ];

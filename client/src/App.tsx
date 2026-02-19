@@ -199,6 +199,9 @@ import RRBNavigation from '@/components/rrb/Navigation';
 import { LegalFooter as RRBLegalFooter } from '@/components/rrb/LegalFooter';
 import RRBFamilyLegacy from '@/pages/rrb/FamilyLegacy';
 import AnnasPromotions from '@/pages/rrb/AnnasPromotions';
+import CanrynPublishingDivision from '@/pages/rrb/CanrynPublishingDivision';
+import SeansMusicalWorld from '@/pages/rrb/SeansMusicalWorld';
+import LittleCRecordingCo from '@/pages/rrb/LittleCRecordingCo';
 import RRBSeansMusic from '@/pages/rrb/SeansMusic';
 import RRBAnnas from '@/pages/rrb/Annas';
 import RRBJaelonEnterprises from '@/pages/rrb/JaelonEnterprises';
@@ -428,6 +431,9 @@ function Router() {
       <Route path="/rrb/media-hub" component={RRBMediaHub} />
       <Route path="/rrb/faq" component={RRBFAQ} />
       <Route path="/rrb/annas-promotions" component={AnnasPromotions} />
+      <Route path="/rrb/canryn-publishing" component={CanrynPublishingDivision} />
+      <Route path="/rrb/seans-music-world" component={SeansMusicalWorld} />
+      <Route path="/rrb/little-c-recording" component={LittleCRecordingCo} />
 
       {/* ===== Business Operations (Offline-First) ===== */}
       <Route path="/rrb/bookkeeping" component={BusinessBookkeeping} />
