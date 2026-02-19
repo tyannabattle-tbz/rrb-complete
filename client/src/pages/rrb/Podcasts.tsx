@@ -47,14 +47,15 @@ interface Channel {
   isLive: boolean;
   color: string;
   logo?: string;
+  logoUrl?: string;
 }
 
 const CHANNELS: Channel[] = [
-  { id: 'rrb-main', name: 'RRB Main', listeners: 1240, isLive: true, color: 'orange', logo: '🎵' },
-  { id: 'sean-music', name: "Sean's Music", listeners: 342, isLive: true, color: 'blue', logo: '🎸' },
-  { id: 'anna-company', name: "Anna's Company", listeners: 156, isLive: true, color: 'purple', logo: '🎭' },
-  { id: 'jaelon-enterprises', name: 'Jaelon Enterprises', listeners: 89, isLive: true, color: 'pink', logo: '🚀' },
-  { id: 'little-c', name: 'Little C Productions', listeners: 203, isLive: true, color: 'green', logo: '⭐' },
+  { id: 'rrb-main', name: 'RRB Main', listeners: 1240, isLive: true, color: 'orange', logo: '🎵', logoUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/wafgVPVdlnvPQBXp1jPZAF/sandbox/4d24kIeZ3UYIemOIdhY4Iy-img-1_1771528533000_na1fn_cnJiLW1haW4tbG9nbw.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvd2FmZ1ZQVmRsbnZQUUJYcDFqUFpBRi9zYW5kYm94LzRkMjRrSWVaM1VZSWVtT0lkaFk0SXktaW1nLTFfMTc3MTUyODUzMzAwMF9uYTFmbl9jbkppTFcxaGFXNHRiRzluYncucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=fEntFIj69h7ZbJXk6fcTNOIj7fPT0EbmrxoaBuqrBkWuDNpm6cxT2c~Tgbyq6Lv0L2OPGC7Ii-ycKyno9i3ccf3LG7Oj5iqV8s2YhjERoENTtFrBKixMFjC29eeyqLgK3GTuwNzww4R2yd6JhaXxJCvpo80HcYvEK8OuHUI6m2XvAD~p6ydA6cHLlYHhes3HoJmDt7ztBolK4CLNN~KD3ij~IyY0Uy0oSGexCa-4GS3ypsTY3tiUxcAoC877QpC4jJW4~eWId2qInAG8ucPImmDfvogVSc3pkxMpAYtYbkqL-BvKB1gCD8wA2y-Wn7nIfnhqgbkysGo21Lfnqm6lNw__' },
+  { id: 'sean-music', name: "Sean's Music", listeners: 342, isLive: true, color: 'blue', logo: '🎸', logoUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/wafgVPVdlnvPQBXp1jPZAF/sandbox/4d24kIeZ3UYIemOIdhY4Iy-img-2_1771528536000_na1fn_c2VhbnMtbXVzaWMtbG9nbw.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvd2FmZ1ZQVmRsbnZQUUJYcDFqUFpBRi9zYW5kYm94LzRkMjRrSWVaM1VZSWVtT0lkaFk0SXktaW1nLTJfMTc3MTUyODUzNjAwMF9uYTFmbl9jMlZoYm5NdGJYVnphV010Ykc5bmJ3LnBuZz94LW9zcy1wcm9jZXNzPWltYWdlL3Jlc2l6ZSx3XzE5MjAsaF8xOTIwL2Zvcm1hdCx3ZWJwL3F1YWxpdHkscV84MCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=JusZcTit5KnRufnOyFtinqTWOED5vOkUOSk8MLVGwOMJKYrRPDCQya8VMx359a5xQHFTKsMKifLkiGz1ziO5UiT0UyLtSP7Z-gse2hVkiSRE7odDRU2X2EG2EPoiwCfAvnHxO9-LPu7zeNJZYM0en9kha4VV79Rld4l1sU9D6u4Nwz9u736WlXpkT4Gj3oqJWE2V5LRz~grZX3Hro6MAttXqQjukObts3~FionuL0DJG4nzGBw7mTWapnOeJ5~3g79FOnssfB6Uai7m1UtO4~uql-sCPx3VYPX6yKjDPrMFTQ1RgAY5-B35-SCk-3fNnk10qmJhljWTnoKVAqh30ig__' },
+  { id: 'anna-company', name: "Anna's Company", listeners: 156, isLive: true, color: 'purple', logo: '🎭', logoUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/wafgVPVdlnvPQBXp1jPZAF/sandbox/4d24kIeZ3UYIemOIdhY4Iy-img-3_1771528533000_na1fn_YW5uYXMtY29tcGFueS1sb2dv.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvd2FmZ1ZQVmRsbnZQUUJYcDFqUFpBRi9zYW5kYm94LzRkMjRrSWVaM1VZSWVtT0lkaFk0SXktaW1nLTNfMTc3MTUyODUzMzAwMF9uYTFmbl9ZVzV1WVhNdFkyOXRjR0Z1ZVMxc2IyZHYucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=r95yLvK~u4VyJ1N6apSaL3qu5EGr-FL6hp8VFwx7BBqCfKHuqJqrYiciEcrQrf9yXEjPwbtQPZgs4CFNyz12xxcXTb~anrn33r1AvXIEcgA-bpXFnZcXB6wEu55Jj1d4D9UGXJPoOmaYkhsne4GjpYreDG-OkaJmzjccfV0OVKndE6p0uG9~n8cm-ByEoEBGykzfF5~fco2JO41b0UB4BMvzEX0EpFWjcrSDY~9OuXnYfb300DBsvYBFZDwlLCKfG9f3Rdgx2VNoD1Sl2IaQOXY8f7rrMr5xrEGsEVDAQK98smqNfvMbqjsmVlSD5ou-B8riyLJmw0zN2HQfYg0mEQ__' },
+  { id: 'jaelon-enterprises', name: 'Jaelon Enterprises', listeners: 89, isLive: true, color: 'pink', logo: '🚀', logoUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/wafgVPVdlnvPQBXp1jPZAF/sandbox/4d24kIeZ3UYIemOIdhY4Iy-img-4_1771528560000_na1fn_amFlbG9uLWVudGVycHJpc2VzLWxvZ28.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvd2FmZ1ZQVmRsbnZQUUJYcDFqUFpBRi9zYW5kYm94LzRkMjRrSWVaM1VZSWVtT0lkaFk0SXktaW1nLTRfMTc3MTUyODU2MDAwMF9uYTFmbl9hbUZsYkc5dUxXVnVkR1Z5Y0hKcGMyVnpMV3h2WjI4LnBuZz94LW9zcy1wcm9jZXNzPWltYWdlL3Jlc2l6ZSx3XzE5MjAsaF8xOTIwL2Zvcm1hdCx3ZWJwL3F1YWxpdHkscV84MCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=iObz2AIaMohlYQ5g2LpT8FwW5978vXqWzuoA6vINKoA16wUDQ41WFPkwmwTOeDhJ4DqrDBj7SO3RD-OwmkJ3nXqgjeIQHSNuIVu-YnF27i3dkfcBmDTND72-41ViE2vNvpOIoNr9lh0olo9E1dirUSoulVrb0cfBKsM~sc3gOoSWlJ7YpbakYcm0RmIDuNHolNZhFxoSpeBvMacKVBt7V7pmrFGCTNJgheXeHgszJIxceof-P3NiIiy7~T2NtFB2Bro~X9wLXphjniUdAMtKxfLQhhuk7sEaQzJzcOaFa7akT3xZcM4GxL2DFKgCbPnnFNw7notNvZ4WPlmA2tnDqQ__' },
+  { id: 'little-c', name: 'Little C Productions', listeners: 203, isLive: true, color: 'green', logo: '⭐', logoUrl: 'https://private-us-east-1.manuscdn.com/sessionFile/wafgVPVdlnvPQBXp1jPZAF/sandbox/4d24kIeZ3UYIemOIdhY4Iy-img-5_1771528535000_na1fn_bGl0dGxlLWMtcHJvZHVjdGlvbnMtbG9nbw.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvd2FmZ1ZQVmRsbnZQUUJYcDFqUFpBRi9zYW5kYm94LzRkMjRrSWVaM1VZSWVtT0lkaFk0SXktaW1nLTVfMTc3MTUyODUzNTAwMF9uYTFmbl9iR2wwZEd4bExXTXRjSEp2WkhWamRHbHZibk10Ykc5bmJ3LnBuZz94LW9zcy1wcm9jZXNzPWltYWdlL3Jlc2l6ZSx3XzE5MjAsaF8xOTIwL2Zvcm1hdCx3ZWJwL3F1YWxpdHkscV84MCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=cJdR6RhPp9BWot~~AsilZweG0W-kbQtBnYzDWfFLjv8e2qzqcQ~RGxG5dONT2yAvvxiSjuGLb2Xqc8uyUrT2GHvOq~cxAOMZ~65Z~M8Ai~ICgb~n6HliWgIPk0hEOq6RD-AjBKQ41WVjBFoojiuuQ8iXCBHXJMym34FggSxv8SCqs8sVdzCku-ktZTwTlagw9slXUVt5GiS~ZHwe4BNs3UzBZzgqZbyqiu9TVvS5v78O9X1~IH5v9lTuslYEQ3Po7mMalItzPZPKJxtG6XN~0FnJZ4uf6H662LV5Z8vJWF~PucmRCLvjIkhN0DyFL34rTGou9SzZDCHuFpnU2RZo2Q__' },
 ];
 
 // Channel-specific episode data
@@ -396,7 +397,11 @@ export default function Podcasts() {
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <div className="text-3xl">{channel.logo}</div>
+              {channel.logoUrl ? (
+                <img src={channel.logoUrl} alt={channel.name} className="w-12 h-12 object-cover rounded" />
+              ) : (
+                <div className="text-3xl">{channel.logo}</div>
+              )}
               <div className="font-semibold text-sm text-center">{channel.name}</div>
               <div className="text-xs text-foreground/60 text-center">{channel.listeners.toLocaleString()} listeners</div>
             </button>
@@ -477,6 +482,18 @@ export default function Podcasts() {
                     ) : (
                       <Play className="w-6 h-6 ml-1" />
                     )}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (!isPlaying) {
+                        handlePlayPause();
+                      }
+                      toast.success(`🎵 Tuned to ${selectedFrequency} Hz`);
+                    }}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white gap-2"
+                  >
+                    <Music className="w-4 h-4" />
+                    Tune In @ {selectedFrequency} Hz
                   </Button>
 
                   <div className="flex items-center gap-2">
