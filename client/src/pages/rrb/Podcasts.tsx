@@ -11,6 +11,7 @@ import { VideoAutopilotPlayer } from '@/components/rrb/VideoAutopilotPlayer';
 import { ChannelSurfBar } from '@/components/rrb/ChannelSurfBar';
 import { FrequencyPresetButtons } from '@/components/rrb/FrequencyPresetButtons';
 import { FrequencyIndicatorBadge } from '@/components/rrb/FrequencyIndicatorBadge';
+import { FrequencyModal } from '@/components/rrb/FrequencyModal';
 import { FrequencyEQFilter } from '@/lib/frequencyEQFilter';
 
 interface PodcastEpisode {
@@ -133,6 +134,7 @@ export default function Podcasts() {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [selectedChannelId, setSelectedChannelId] = useState('rrb-main');
   const [selectedFrequency, setSelectedFrequency] = useState(440);
+  const [isFrequencyModalOpen, setIsFrequencyModalOpen] = useState(false);
   const eqFilterRef = useRef<FrequencyEQFilter | null>(null);
   // QUMUS AI Assistantt
   const { user } = useAuth();
@@ -723,7 +725,7 @@ export default function Podcasts() {
             className="sticky top-8"
           />
 
-          {/* Frequency Controls */}
+          {/* Frequency Controls - Desktop Only */}
           <div className="hidden lg:block space-y-4 sticky top-64">
             <Card className="p-4">
               <h3 className="text-sm font-semibold text-foreground mb-3">Frequency Tuning</h3>
@@ -735,6 +737,25 @@ export default function Podcasts() {
                   size="sm"
                 />
               </div>
+
+          {/* Mobile Frequency Button - Opens Modal */}
+          <div className="lg:hidden fixed bottom-24 right-4 z-40">
+            <Button
+              onClick={() => setIsFrequencyModalOpen(true)}
+              className="rounded-full w-14 h-14 p-0 bg-blue-500 hover:bg-blue-600 text-white shadow-lg"
+              title="Open Frequency Tuner"
+            >
+              <span className="text-lg">🎵</span>
+            </Button>
+          </div>
+
+          {/* Frequency Modal */}
+          <FrequencyModal
+            isOpen={isFrequencyModalOpen}
+            onClose={() => setIsFrequencyModalOpen(false)}
+            selectedFrequency={selectedFrequency}
+            onFrequencySelect={handleFrequencySelect}
+          />
             </Card>
           </div>
 
