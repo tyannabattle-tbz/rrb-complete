@@ -77,7 +77,7 @@ const CHANNEL_EPISODES: Record<string, PodcastEpisode[]> = {
       id: '2',
       title: 'Episode 2: The Music - Recordings & Performances',
       description: "Deep dive into the recordings, performances, and musical contributions of Seabrun Candy Hunter.",
-      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/zByVVlWeoYCaITZI.mp3',
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
       duration: 372,
       publishedAt: new Date('2024-01-22'),
       author: "Rockin' Rockin' Boogie",
@@ -328,7 +328,12 @@ export default function Podcasts() {
             ctx.resume().catch(err => console.error('Failed to resume audio context:', err));
           }
         }
-        audioRef.current.play().catch(err => console.error('Failed to play audio:', err));
+        console.log('Attempting to play:', selectedEpisode.audioUrl);
+        audioRef.current.play().catch(err => {
+          console.error('Failed to play audio:', err);
+          console.error('Audio source:', selectedEpisode.audioUrl);
+          toast.error('Cannot play audio - check console for details');
+        });
         setIsPlaying(true);
       }
     }
@@ -554,12 +559,17 @@ export default function Podcasts() {
               onLoadedMetadata={handleLoadedMetadata}
               onEnded={() => setIsPlaying(false)}
               crossOrigin="anonymous"
-              onError={(e) => {
-                console.error('Audio error:', e);
-                toast.error('Failed to load audio. Check CORS settings or URL.');
+              onError={(e: any) => {
+                console.error('Audio error for URL:', selectedEpisode.audioUrl);
+                console.error('Error code:', e?.target?.error?.code);
+                console.error('Error message:', e?.target?.error?.message);
+                toast.error(`Failed to load audio: ${selectedEpisode.audioUrl}`);
               }}
               onCanPlay={() => {
-                console.log('Audio ready to play');
+                console.log('Audio ready to play:', selectedEpisode.audioUrl);
+              }}
+              onLoadStart={() => {
+                console.log('Loading audio:', selectedEpisode.audioUrl);
               }}
             />
           </Card>
