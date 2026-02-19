@@ -65,7 +65,7 @@ export default function RadioStation() {
       title: 'Can-Ryn Production Inc. - A Corporation with the Right Stuff',
       artist: 'Seabrun Candy Hunter',
       url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-      description: 'Overview of Can-Ryn Production and its six specialized subsidiaries: Can-Ryn Publishing, Seasha Distribution, Annas Promotion, Jaelon Enterprises, Little G Recording, and Sean\'s Music World',
+      description: 'Overview of Can-Ryn Production and its six specialized subsidiaries: Can-Ryn Publishing, Seasha Distribution, Anna Promotion, Jaelon Enterprises, Little G Recording, and Sean\'s Music World',
       duration: 180,
     },
     {

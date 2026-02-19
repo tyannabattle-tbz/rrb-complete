@@ -40,12 +40,12 @@ const DEFAULT_CHANNELS: Channel[] = [
     description: 'Music and sound publishing',
   },
   {
-    id: 'annas-promotions',
-    name: "Anna's Promotions",
+    id: 'anna-promotion',
+    name: 'Anna Promotion Co.',
     color: 'from-pink-500 to-rose-500',
     listeners: 156,
     isLive: false,
-    description: 'Marketing and promotional campaigns',
+    description: 'Artist & Model Management',
   },
   {
     id: 'jaelon-enterprises',
@@ -56,12 +56,12 @@ const DEFAULT_CHANNELS: Channel[] = [
     description: 'Investment and bookkeeping',
   },
   {
-    id: 'little-c',
-    name: 'Little C Productions',
+    id: 'little-c-recording',
+    name: 'Little C Recording Co.',
     color: 'from-green-500 to-emerald-500',
     listeners: 203,
     isLive: true,
-    description: 'Video and sound recording',
+    description: 'Video & Sound Recording',
   },
 ];
 

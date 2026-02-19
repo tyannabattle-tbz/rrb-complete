@@ -39,7 +39,7 @@ export function CanrynDashboard() {
         return <BookOpen className="w-5 h-5" />;
       case 'Seasha Distribution Co.':
         return <Truck className="w-5 h-5" />;
-      case 'Annas Promotion Co.':
+      case 'Anna Promotion Co.':
         return <Users className="w-5 h-5" />;
       case 'Jaelon Enterprises':
         return <DollarSign className="w-5 h-5" />;
