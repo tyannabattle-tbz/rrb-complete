@@ -316,26 +316,25 @@ export default function Podcasts() {
     }
   }, [selectedChannelId]);
 
-  const handlePlayPause = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        // Resume audio context if needed
+  const handlePlayPause = async () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      try {
         if (eqFilterRef.current && eqFilterRef.current['audioContext']) {
           const ctx = eqFilterRef.current['audioContext'] as AudioContext;
           if (ctx.state === 'suspended') {
-            ctx.resume().catch(err => console.error('Failed to resume audio context:', err));
+            await ctx.resume();
           }
         }
-        console.log('Attempting to play:', selectedEpisode.audioUrl);
-        audioRef.current.play().catch(err => {
-          console.error('Failed to play audio:', err);
-          console.error('Audio source:', selectedEpisode.audioUrl);
-          toast.error('Cannot play audio - check console for details');
-        });
+        audioRef.current.crossOrigin = 'anonymous';
+        await audioRef.current.play();
         setIsPlaying(true);
+      } catch (err: any) {
+        console.error('Play error:', err?.name, err?.message);
+        setIsPlaying(false);
       }
     }
   };
@@ -492,7 +491,7 @@ export default function Podcasts() {
                   <Button
                     onClick={() => {
                       if (!isPlaying) {
-                        handlePlayPause();
+                        handlePlayPause().catch(console.error);
                       }
                       toast.success(`🎵 Tuned to ${selectedFrequency} Hz`);
                     }}

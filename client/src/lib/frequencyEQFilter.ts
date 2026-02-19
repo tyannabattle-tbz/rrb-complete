@@ -96,10 +96,23 @@ export class FrequencyEQFilter {
   }
 
   async initialize(): Promise<void> {
-    if (this.isInitialized || this.audioContext) return;
+    if (this.isInitialized) return;
+    if (this.audioContext) {
+      // Resume existing context if suspended
+      if (this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
+      return;
+    }
 
     try {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      // Set crossOrigin before creating source
+      if (this.audioElement.crossOrigin !== 'anonymous') {
+        this.audioElement.crossOrigin = 'anonymous';
+      }
+      
       this.source = this.audioContext.createMediaElementAudioSource(this.audioElement);
 
     this.bassFilter = this.audioContext.createBiquadFilter();
@@ -156,6 +169,15 @@ export class FrequencyEQFilter {
     if (!this.audioContext) {
       console.warn('AudioContext not initialized');
       return;
+    }
+    
+    // Resume context if suspended
+    if (this.audioContext.state === 'suspended') {
+      try {
+        await this.audioContext.resume();
+      } catch (err) {
+        console.error('Failed to resume AudioContext:', err);
+      }
     }
 
     const now = this.audioContext.currentTime;
