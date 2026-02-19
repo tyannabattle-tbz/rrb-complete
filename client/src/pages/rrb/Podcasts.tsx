@@ -8,6 +8,10 @@ import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { LiveCallIn } from '@/components/rrb/LiveCallIn';
 import { VideoAutopilotPlayer } from '@/components/rrb/VideoAutopilotPlayer';
+import { ChannelSurfBar } from '@/components/rrb/ChannelSurfBar';
+import { FrequencyPresetButtons } from '@/components/rrb/FrequencyPresetButtons';
+import { FrequencyIndicatorBadge } from '@/components/rrb/FrequencyIndicatorBadge';
+import { FrequencyEQFilter } from '@/lib/frequencyEQFilter';
 
 interface PodcastEpisode {
   id: string;
@@ -127,8 +131,10 @@ export default function Podcasts() {
   const [showVideo, setShowVideo] = useState(true);
   const [isVideoFullscreen, setIsVideoFullscreen] = useState(false);
   const videoContainerRef = useRef<HTMLDivElement>(null);
-
-  // QUMUS AI Assistant
+  const [selectedChannelId, setSelectedChannelId] = useState('rrb-main');
+  const [selectedFrequency, setSelectedFrequency] = useState(440);
+  const eqFilterRef = useRef<FrequencyEQFilter | null>(null);
+  // QUMUS AI Assistantt
   const { user } = useAuth();
   const [showAI, setShowAI] = useState(true);
   const [aiMessages, setAiMessages] = useState<{role: 'user' | 'assistant'; content: string}[]>([
@@ -269,6 +275,23 @@ export default function Podcasts() {
     };
   }, []);
 
+  // Initialize frequency EQ filter
+  useEffect(() => {
+    if (!audioRef.current) return;
+    const filter = new FrequencyEQFilter(audioRef.current);
+    eqFilterRef.current = filter;
+    return () => {
+      filter.destroy();
+    };
+  }, []);
+
+  // Apply frequency EQ when frequency changes
+  useEffect(() => {
+    if (eqFilterRef.current) {
+      eqFilterRef.current.applyFrequency(selectedFrequency);
+    }
+  }, [selectedFrequency]);
+
   const formatTime = (seconds: number): string => {
     if (!seconds || !isFinite(seconds)) return '0:00';
     const hours = Math.floor(seconds / 3600);
@@ -365,6 +388,17 @@ export default function Podcasts() {
       audio.play().catch(() => {});
     }
   };
+
+  const handleChannelSelect = (channelId: string) => {
+    setSelectedChannelId(channelId);
+    toast.success(`Switched to channel: ${channelId}`);
+  };
+
+  const handleFrequencySelect = (frequency: number) => {
+    setSelectedFrequency(frequency);
+    toast.success(`Frequency tuned to ${frequency}Hz`);
+  };
+
 
   const displayDuration = audioDuration > 0 ? audioDuration : (selectedEpisode?.duration || 0);
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
@@ -582,6 +616,23 @@ export default function Podcasts() {
                       <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">Active</Badge>
                       {showAI ? <ChevronUp className="w-4 h-4 text-foreground/60" /> : <ChevronDown className="w-4 h-4 text-foreground/60" />}
                     </div>
+
+                    {/* Frequency Indicator and Presets */}
+                    <div className="flex flex-col gap-3 py-4 border-t border-border">
+                      <FrequencyIndicatorBadge 
+                        frequency={selectedFrequency} 
+                        showHealingProperty={false}
+                        className="mx-auto"
+                      />
+                      <div className="hidden sm:block">
+                        <FrequencyPresetButtons
+                          selectedFrequency={selectedFrequency}
+                          onFrequencySelect={handleFrequencySelect}
+                          size="sm"
+                          className="justify-center"
+                        />
+                      </div>
+                    </div>
                   </button>
                   {showAI && (
                     <div className="border-t border-border">
@@ -663,6 +714,28 @@ export default function Podcasts() {
                 )}
               </>
             )}
+          </div>
+
+                    {/* Channel Surf Bar - Desktop */}
+          <ChannelSurfBar
+            selectedChannelId={selectedChannelId}
+            onChannelSelect={handleChannelSelect}
+            className="sticky top-8"
+          />
+
+          {/* Frequency Controls */}
+          <div className="hidden lg:block space-y-4 sticky top-64">
+            <Card className="p-4">
+              <h3 className="text-sm font-semibold text-foreground mb-3">Frequency Tuning</h3>
+              <FrequencyIndicatorBadge frequency={selectedFrequency} showHealingProperty={true} />
+              <div className="mt-4">
+                <FrequencyPresetButtons
+                  selectedFrequency={selectedFrequency}
+                  onFrequencySelect={handleFrequencySelect}
+                  size="sm"
+                />
+              </div>
+            </Card>
           </div>
 
           {/* Sidebar: Series & Episodes */}
