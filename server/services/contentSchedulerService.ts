@@ -198,6 +198,29 @@ export class ContentSchedulerService {
       { id: 'slot-045', channelId: 'ch-006', startTime: '09:00', endTime: '12:00', contentType: 'radio', title: 'Parliament-Funkadelic Hour', priority: 7, daysOfWeek: [1,2,3,4,5], isActive: true, createdAt: Date.now() },
       { id: 'slot-046', channelId: 'ch-006', startTime: '12:00', endTime: '15:00', contentType: 'radio', title: 'Boogie Afternoon — Dance Floor Classics', priority: 7, daysOfWeek: [1,2,3,4,5], isActive: true, createdAt: Date.now() },
       { id: 'slot-047', channelId: 'ch-006', startTime: '15:00', endTime: '18:00', contentType: 'radio', title: 'Funk Bass Masters', priority: 6, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+
+      // ═══════════════════════════════════════════════════════════
+      // EMERGENCY BROADCAST TESTS — Scheduled Across All Channels
+      // ═══════════════════════════════════════════════════════════
+      // Daily emergency broadcast tests at 10:30 AM (all channels)
+      { id: 'emergency-test-001', channelId: 'ch-001', startTime: '10:30', endTime: '10:35', contentType: 'emergency', title: 'Daily Emergency Broadcast Test — RRB Main', priority: 9, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-test-002', channelId: 'ch-002', startTime: '10:30', endTime: '10:35', contentType: 'emergency', title: 'Daily Emergency Broadcast Test — Blues Channel', priority: 9, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-test-003', channelId: 'ch-003', startTime: '10:30', endTime: '10:35', contentType: 'emergency', title: 'Daily Emergency Broadcast Test — Jazz Channel', priority: 9, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-test-004', channelId: 'ch-004', startTime: '10:30', endTime: '10:35', contentType: 'emergency', title: 'Daily Emergency Broadcast Test — Soul Channel', priority: 9, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-test-005', channelId: 'ch-005', startTime: '10:30', endTime: '10:35', contentType: 'emergency', title: 'Daily Emergency Broadcast Test — Gospel Channel', priority: 9, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-test-006', channelId: 'ch-006', startTime: '10:30', endTime: '10:35', contentType: 'emergency', title: 'Daily Emergency Broadcast Test — Funk Channel', priority: 9, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-test-007', channelId: 'ch-007', startTime: '10:30', endTime: '10:35', contentType: 'emergency', title: 'Daily Emergency Broadcast Test — 70s Rock', priority: 9, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-test-008', channelId: 'ch-008', startTime: '10:30', endTime: '10:35', contentType: 'emergency', title: 'Daily Emergency Broadcast Test — Poetry Hour', priority: 9, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
+
+      // Weekly extended emergency drill — Wednesdays at 2:00 PM (10 minutes)
+      { id: 'emergency-drill-001', channelId: 'ch-001', startTime: '14:00', endTime: '14:10', contentType: 'emergency', title: 'Weekly Emergency Drill — Full System Test', priority: 10, daysOfWeek: [3], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-drill-002', channelId: 'ch-002', startTime: '14:00', endTime: '14:10', contentType: 'emergency', title: 'Weekly Emergency Drill — Full System Test', priority: 10, daysOfWeek: [3], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-drill-003', channelId: 'ch-003', startTime: '14:00', endTime: '14:10', contentType: 'emergency', title: 'Weekly Emergency Drill — Full System Test', priority: 10, daysOfWeek: [3], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-drill-004', channelId: 'ch-004', startTime: '14:00', endTime: '14:10', contentType: 'emergency', title: 'Weekly Emergency Drill — Full System Test', priority: 10, daysOfWeek: [3], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-drill-005', channelId: 'ch-005', startTime: '14:00', endTime: '14:10', contentType: 'emergency', title: 'Weekly Emergency Drill — Full System Test', priority: 10, daysOfWeek: [3], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-drill-006', channelId: 'ch-006', startTime: '14:00', endTime: '14:10', contentType: 'emergency', title: 'Weekly Emergency Drill — Full System Test', priority: 10, daysOfWeek: [3], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-drill-007', channelId: 'ch-007', startTime: '14:00', endTime: '14:10', contentType: 'emergency', title: 'Weekly Emergency Drill — Full System Test', priority: 10, daysOfWeek: [3], isActive: true, createdAt: Date.now() },
+      { id: 'emergency-drill-008', channelId: 'ch-008', startTime: '14:00', endTime: '14:10', contentType: 'emergency', title: 'Weekly Emergency Drill — Full System Test', priority: 10, daysOfWeek: [3], isActive: true, createdAt: Date.now() },
       { id: 'slot-048', channelId: 'ch-006', startTime: '18:00', endTime: '21:00', contentType: 'radio', title: 'Funky Grooves Mix', priority: 8, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
       { id: 'slot-049', channelId: 'ch-006', startTime: '21:00', endTime: '23:59', contentType: 'radio', title: 'Late Night Boogie Party', priority: 6, daysOfWeek: [0,1,2,3,4,5,6], isActive: true, createdAt: Date.now() },
       { id: 'slot-050', channelId: 'ch-006', startTime: '20:00', endTime: '02:00', contentType: 'radio', title: 'Friday Night Funk Party', priority: 10, daysOfWeek: [5], isActive: true, createdAt: Date.now() },
