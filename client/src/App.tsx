@@ -195,6 +195,11 @@ import RRBAffiliateProgram from '@/pages/rrb/AffiliateProgram';
 import RRBVideoTestimonials from '@/pages/rrb/VideoTestimonials';
 import RRBNavigation from '@/components/rrb/Navigation';
 import { LegalFooter as RRBLegalFooter } from '@/components/rrb/LegalFooter';
+import RRBFamilyLegacy from '@/pages/rrb/FamilyLegacy';
+import RRBSeansMusic from '@/pages/rrb/SeansMusic';
+import RRBAnnas from '@/pages/rrb/Annas';
+import RRBJaelonEnterprises from '@/pages/rrb/JaelonEnterprises';
+import RRBLittleC from '@/pages/rrb/LittleC';
 
 // Business Operations Pages
 import BusinessBookkeeping from '@/pages/rrb/BusinessBookkeeping';
@@ -362,6 +367,11 @@ function Router() {
       <Route path="/rrb/the-music" component={RRBTheMusic} />
       <Route path="/rrb/little-richard-connection" component={RRBLittleRichardConnection} />
       <Route path="/rrb/family-achievements" component={RRBFamilyAchievements} />
+      <Route path="/rrb/family-legacy" component={RRBFamilyLegacy} />
+      <Route path="/rrb/seans-music" component={RRBSeansMusic} />
+      <Route path="/rrb/annas" component={RRBAnnas} />
+      <Route path="/rrb/jaelon-enterprises" component={RRBJaelonEnterprises} />
+      <Route path="/rrb/little-c" component={RRBLittleC} />
       <Route path="/rrb/grandma-helen" component={RRBGrandmaHelen} />
       <Route path="/rrb/verified-sources" component={RRBVerifiedSources} />
       
