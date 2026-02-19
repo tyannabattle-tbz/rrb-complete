@@ -73,31 +73,35 @@ export function ChannelSurfBar({
   compactMode = false,
 }: ChannelSurfBarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const selectedChannel = channels.find(c => c.id === selectedChannelId);
 
   // Desktop: Fixed right sidebar
   const desktopBar = (
     <div className={cn(
-      'hidden lg:flex flex-col gap-3 p-4 bg-card border border-border rounded-lg',
+      'hidden lg:flex flex-col gap-3 p-4 bg-card border border-border rounded-lg z-40',
       className
     )}>
-      <h3 className="text-sm font-semibold text-foreground">Channels</h3>
+      <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+        <Radio className="w-4 h-4" />
+        Channels
+      </h3>
       <div className="space-y-2">
         {channels.map((channel) => (
           <button
             key={channel.id}
             onClick={() => onChannelSelect(channel.id)}
             className={cn(
-              'w-full p-3 rounded-lg text-left transition-all duration-200 group',
+              'w-full p-3 rounded-lg text-left transition-all duration-200 group hover:bg-accent/20',
               selectedChannelId === channel.id
-                ? 'ring-2 ring-offset-2 ring-offset-background bg-amber-500/10'
-                : 'hover:bg-accent/10'
+                ? 'ring-2 ring-offset-2 ring-offset-background bg-amber-500/20 border-l-4 border-amber-500'
+                : ''
             )}
             title={channel.description}
           >
             <div className="flex items-center gap-2">
               <div className={cn(
                 'w-3 h-3 rounded-full transition-all',
-                channel.isLive ? 'animate-pulse bg-red-500' : 'bg-gray-500'
+                channel.isLive ? 'animate-pulse bg-red-500 shadow-sm shadow-red-500' : 'bg-gray-500'
               )} />
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold text-foreground truncate">
@@ -105,7 +109,7 @@ export function ChannelSurfBar({
                 </p>
                 {channel.listeners && (
                   <p className="text-xs text-foreground/60">
-                    {channel.listeners.toLocaleString()} listeners
+                    👥 {channel.listeners.toLocaleString()}
                   </p>
                 )}
               </div>
@@ -118,14 +122,17 @@ export function ChannelSurfBar({
 
   // Mobile: Floating button + dropdown
   const mobileBar = (
-    <div className="lg:hidden fixed bottom-20 right-4 z-40">
+    <div className="lg:hidden fixed bottom-20 right-4 z-50">
       {isOpen && (
-        <div className="absolute bottom-16 right-0 bg-card border border-border rounded-lg shadow-lg p-3 w-48 max-h-64 overflow-y-auto">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-foreground">Channels</h3>
+        <div className="absolute bottom-16 right-0 bg-card border border-border rounded-lg shadow-2xl p-4 w-64 max-h-80 overflow-y-auto z-50">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-border">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Radio className="w-4 h-4" />
+              Channels
+            </h3>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1 hover:bg-accent/10 rounded"
+              className="p-1 hover:bg-accent/10 rounded transition-colors"
             >
               <X className="w-4 h-4 text-foreground/60" />
             </button>
@@ -139,22 +146,22 @@ export function ChannelSurfBar({
                   setIsOpen(false);
                 }}
                 className={cn(
-                  'w-full p-2 rounded-lg text-left text-xs transition-colors',
+                  'w-full p-3 rounded-lg text-left text-sm transition-colors hover:bg-accent/20',
                   selectedChannelId === channel.id
-                    ? 'bg-amber-500/20 border border-amber-500'
-                    : 'hover:bg-accent/10'
+                    ? 'bg-amber-500/20 border-l-4 border-amber-500'
+                    : ''
                 )}
               >
                 <div className="flex items-center gap-2">
                   <div className={cn(
-                    'w-2 h-2 rounded-full',
-                    channel.isLive ? 'animate-pulse bg-red-500' : 'bg-gray-500'
+                    'w-2 h-2 rounded-full transition-all flex-shrink-0',
+                    channel.isLive ? 'animate-pulse bg-red-500 shadow-sm shadow-red-500' : 'bg-gray-500'
                   )} />
-                  <span className="font-semibold text-foreground">{channel.name}</span>
+                  <span className="font-semibold text-foreground flex-1 truncate">{channel.name}</span>
                 </div>
                 {channel.listeners && (
-                  <p className="text-xs text-foreground/60 ml-4">
-                    {channel.listeners.toLocaleString()} listeners
+                  <p className="text-xs text-foreground/60 ml-4 mt-1">
+                    👥 {channel.listeners.toLocaleString()}
                   </p>
                 )}
               </button>
@@ -164,7 +171,7 @@ export function ChannelSurfBar({
       )}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="rounded-full w-14 h-14 p-0 bg-amber-500 hover:bg-amber-600 text-black shadow-lg"
+        className="rounded-full w-14 h-14 p-0 bg-amber-500 hover:bg-amber-600 text-black shadow-lg z-50 relative"
         title="Channel Surf"
       >
         <Radio className="w-6 h-6" />

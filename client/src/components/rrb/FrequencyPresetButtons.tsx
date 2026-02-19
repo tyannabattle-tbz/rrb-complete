@@ -21,7 +21,14 @@ export function FrequencyPresetButtons({
   size = 'sm',
 }: FrequencyPresetButtonsProps) {
   return (
-    <div className={cn('flex flex-wrap gap-2', className)}>
+    <div className={cn(
+      'flex gap-2',
+      // Desktop: wrap normally
+      'lg:flex-wrap',
+      // Mobile: horizontal scroll
+      'overflow-x-auto overflow-y-hidden pb-2 -mb-2 snap-x snap-mandatory',
+      className
+    )}>
       {PRESET_FREQUENCIES.map((freq) => {
         const config = SOLFEGGIO_FREQUENCIES[freq];
         if (!config) return null;
@@ -31,7 +38,7 @@ export function FrequencyPresetButtons({
             key={freq}
             onClick={() => onFrequencySelect(freq)}
             className={cn(
-              'transition-all duration-200 rounded-lg font-semibold',
+              'transition-all duration-200 rounded-lg font-semibold flex-shrink-0 snap-start',
               size === 'sm' && 'px-3 py-1 text-xs',
               size === 'md' && 'px-4 py-2 text-sm',
               size === 'lg' && 'px-5 py-3 text-base',
