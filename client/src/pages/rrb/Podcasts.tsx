@@ -46,14 +46,15 @@ interface Channel {
   listeners: number;
   isLive: boolean;
   color: string;
+  logo?: string;
 }
 
 const CHANNELS: Channel[] = [
-  { id: 'rrb-main', name: 'RRB Main', listeners: 1240, isLive: true, color: 'orange' },
-  { id: 'sean-music', name: "Sean's Music", listeners: 342, isLive: true, color: 'blue' },
-  { id: 'anna-company', name: "Anna's Company", listeners: 156, isLive: true, color: 'purple' },
-  { id: 'jaelon-enterprises', name: 'Jaelon Enterprises', listeners: 89, isLive: true, color: 'pink' },
-  { id: 'little-c', name: 'Little C Productions', listeners: 203, isLive: true, color: 'green' },
+  { id: 'rrb-main', name: 'RRB Main', listeners: 1240, isLive: true, color: 'orange', logo: '🎵' },
+  { id: 'sean-music', name: "Sean's Music", listeners: 342, isLive: true, color: 'blue', logo: '🎸' },
+  { id: 'anna-company', name: "Anna's Company", listeners: 156, isLive: true, color: 'purple', logo: '🎭' },
+  { id: 'jaelon-enterprises', name: 'Jaelon Enterprises', listeners: 89, isLive: true, color: 'pink', logo: '🚀' },
+  { id: 'little-c', name: 'Little C Productions', listeners: 203, isLive: true, color: 'green', logo: '⭐' },
 ];
 
 // Channel-specific episode data
@@ -389,14 +390,15 @@ export default function Podcasts() {
             <button
               key={channel.id}
               onClick={() => setSelectedChannelId(channel.id)}
-              className={`p-3 rounded-lg border-2 transition-all text-left ${
+              className={`p-3 rounded-lg border-2 transition-all text-left flex flex-col items-center gap-2 ${
                 selectedChannelId === channel.id
                   ? `border-${channel.color}-500 bg-${channel.color}-500/10`
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <div className="font-semibold text-sm">{channel.name}</div>
-              <div className="text-xs text-foreground/60">{channel.listeners.toLocaleString()} listeners</div>
+              <div className="text-3xl">{channel.logo}</div>
+              <div className="font-semibold text-sm text-center">{channel.name}</div>
+              <div className="text-xs text-foreground/60 text-center">{channel.listeners.toLocaleString()} listeners</div>
             </button>
           ))}
         </div>
@@ -586,7 +588,7 @@ export default function Podcasts() {
               <Card className="p-4 bg-gradient-to-br from-blue-500/5 to-purple-500/5 border-blue-500/20">
                 <FrequencyPresetButtons
                   selectedFrequency={selectedFrequency}
-                  onSelectFrequency={setSelectedFrequency}
+                  onFrequencySelect={setSelectedFrequency}
                 />
               </Card>
             )}

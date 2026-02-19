@@ -2833,3 +2833,9 @@
 - [ ] Update stock video URL to: https://youtu.be/Gsbw8XkT5z0?si=ZGmF6D-4fW6Nn9dV
 - [ ] Implement channel-specific episode loading - each channel should show different episodes
 - [ ] Test all fixes and verify production readiness
+
+## URGENT FIXES - FREQUENCY TUNER & CHANNEL LOGOS (COMPLETED)
+- [x] Fix frequency tuner callback error - onFrequencySelect is not a function in FrequencyPresetButtons
+- [x] Add channel logos to channel selector buttons (RRB image for RRB Main, create placeholders for others)
+- [x] Test frequency tuner functionality after fix - frequency buttons now highlight and update badge
+- [x] Verify channel logos display correctly - all 5 channels now show emoji logos
