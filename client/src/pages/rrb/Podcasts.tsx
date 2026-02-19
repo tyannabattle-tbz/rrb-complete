@@ -737,6 +737,8 @@ export default function Podcasts() {
                   size="sm"
                 />
               </div>
+            </Card>
+          </div>
 
           {/* Mobile Frequency Button - Opens Modal */}
           <div className="lg:hidden fixed bottom-24 right-4 z-40">
@@ -756,8 +758,6 @@ export default function Podcasts() {
             selectedFrequency={selectedFrequency}
             onFrequencySelect={handleFrequencySelect}
           />
-            </Card>
-          </div>
 
           {/* Sidebar: Series & Episodes */}
           <div className="space-y-6">
