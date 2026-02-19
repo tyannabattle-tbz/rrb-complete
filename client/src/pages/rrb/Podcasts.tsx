@@ -525,8 +525,18 @@ export default function Podcasts() {
                   <Button 
                     className="bg-red-500 hover:bg-red-600 text-white gap-2"
                     onClick={() => {
+                      if (audioRef.current) {
+                        if (eqFilterRef.current && eqFilterRef.current['audioContext']) {
+                          const ctx = eqFilterRef.current['audioContext'] as AudioContext;
+                          if (ctx.state === 'suspended') {
+                            ctx.resume().catch(err => console.error('Failed to resume audio context:', err));
+                          }
+                        }
+                        audioRef.current.play().catch(err => console.error('Failed to play audio:', err));
+                        setIsPlaying(true);
+                      }
                       toast.success('🔴 LIVE: Broadcasting started! You are now on air.');
-                      setIsPlaying(true);
+                      window.location.href = '/rrb/broadcast';
                     }}
                   >
                     <Zap className="w-4 h-4" />
@@ -544,6 +554,13 @@ export default function Podcasts() {
               onLoadedMetadata={handleLoadedMetadata}
               onEnded={() => setIsPlaying(false)}
               crossOrigin="anonymous"
+              onError={(e) => {
+                console.error('Audio error:', e);
+                toast.error('Failed to load audio. Check CORS settings or URL.');
+              }}
+              onCanPlay={() => {
+                console.log('Audio ready to play');
+              }}
             />
           </Card>
         </div>
