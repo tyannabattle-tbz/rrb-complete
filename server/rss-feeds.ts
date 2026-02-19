@@ -57,7 +57,7 @@ const podcastEpisodes = [
   {
     id: "3", title: "Episode 3: The Archive — Proof & Documentation",
     description: "Exploring the archival evidence, documentation, and verification of Seabrun's contributions to music history.",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    audioUrl: "https://ice1.somafm.com/groovesalad-128-mp3",
     duration: 600, publishedAt: new Date("2024-01-29T12:00:00Z"), episodeNumber: 3, season: 1, fileSize: 9600000, mimeType: "audio/mpeg",
   },
   {

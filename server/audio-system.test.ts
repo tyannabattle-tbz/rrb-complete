@@ -77,14 +77,14 @@ describe('Stream Library Data Integrity', () => {
 
 describe('Sample Track URLs', () => {
   const SAMPLE_TRACK_URLS = [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
   ];
 
   it('should have valid SoundHelix URLs', () => {
@@ -212,15 +212,15 @@ describe('RRB RadioStation Fallback Tracks', () => {
   // These are the fallback tracks used in rrb/RadioStation.tsx
   const fallbackTrackUrls = [
     'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
+    'https://ice1.somafm.com/groovesalad-128-mp3',
   ];
 
   it('should have 10 fallback tracks', () => {
