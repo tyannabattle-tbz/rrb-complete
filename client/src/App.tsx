@@ -123,7 +123,7 @@ import DroneVideoCapture from '@/components/DroneVideoCapture';
 import MapArsenal from '@/components/MapArsenal';
 import { Toaster } from 'sonner';
 import ContentScheduler from '@/pages/ContentScheduler';
-import ListenerAnalytics from '@/pages/ListenerAnalytics';
+
 
 // ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
 import RRBHome from '@/pages/rrb/Home';
@@ -136,6 +136,9 @@ import RRBRSSFeedGenerator from '@/pages/rrb/RSSFeedGenerator';
 import CallInFeature from '@/pages/rrb/CallInFeature';
 import EpisodeTranscripts from '@/pages/rrb/EpisodeTranscripts';
 import ListenerAnalytics from '@/pages/rrb/ListenerAnalytics';
+import LiveStreamIntegration from '@/pages/rrb/LiveStreamIntegration';
+import ListenerNotifications from '@/pages/rrb/ListenerNotifications';
+import MerchandiseStore from '@/pages/rrb/MerchandiseStore';
 import LivePodcastProduction from '@/pages/LivePodcastProduction';
 import RRBTheMusic from '@/pages/rrb/TheMusic';
 import RRBTheLegacyPage from '@/pages/rrb/TheLegacyPage';
@@ -402,6 +405,9 @@ function Router() {
       <Route path="/rrb/call-in" component={CallInFeature} />
       <Route path="/rrb/transcripts" component={EpisodeTranscripts} />
       <Route path="/rrb/analytics" component={ListenerAnalytics} />
+      <Route path="/rrb/live-stream" component={LiveStreamIntegration} />
+      <Route path="/rrb/notifications" component={ListenerNotifications} />
+      <Route path="/rrb/merchandise" component={MerchandiseStore} />
       <Route path="/live-podcast-production" component={LivePodcastProduction} />
       <Route path="/rrb/hybridcast" component={RRBHybridCastPage} />
       <Route path="/rrb/audiobooks" component={RRBAudiobooks} />
