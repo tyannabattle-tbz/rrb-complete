@@ -68,6 +68,9 @@ export default function Podcasts() {
   const [selectedFrequency, setSelectedFrequency] = useState(440);
   const [isFrequencyModalOpen, setIsFrequencyModalOpen] = useState(false);
   const [showFrequencyControls, setShowFrequencyControls] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [recentlyPlayed, setRecentlyPlayed] = useState<PodcastEpisode[]>([]);
+  const [showTranscript, setShowTranscript] = useState(false);
   const eqFilterRef = useRef<FrequencyEQFilter | null>(null);
   const { user } = useAuth();
 
@@ -98,13 +101,13 @@ export default function Podcasts() {
           id: '1',
           title: "Episode 1: The Beginning - Seabrun's Journey",
           description: "In this inaugural episode, we explore the early life of Seabrun Candy Hunter and how he became involved with Little Richard.",
-          audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3',
+          audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
           duration: 330,
           publishedAt: new Date('2024-01-15'),
           author: "Rockin' Rockin' Boogie",
           episodeNumber: 1,
           season: 1,
-          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+          videoUrl: 'https://www.youtube.com/embed/jNQXAC9IVRw',
         },
         {
           id: '2',
@@ -203,6 +206,21 @@ export default function Podcasts() {
   };
 
   const currentChannel = CHANNELS.find(c => c.id === selectedChannelId) || CHANNELS[0];
+
+  const handleEpisodeSelect = (episode: PodcastEpisode) => {
+    setSelectedEpisode(episode);
+    setIsPlaying(false);
+    // Add to recently played
+    setRecentlyPlayed(prev => {
+      const filtered = prev.filter(e => e.id !== episode.id);
+      return [episode, ...filtered].slice(0, 3);
+    });
+  };
+
+  const filteredEpisodes = series[0]?.episodes.filter(ep =>
+    ep.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ep.description.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -376,25 +394,25 @@ export default function Podcasts() {
             </h3>
             <div className="space-y-2">
               <Button className="w-full justify-start gap-2 bg-red-600 hover:bg-red-700" asChild>
-                <a href="https://www.youtube.com/@rockinrockinboogie" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.youtube.com/channel/UCrockinrockinboogie" target="_blank" rel="noopener noreferrer">
                   <Youtube className="w-5 h-5" />
                   YouTube
                 </a>
               </Button>
               <Button className="w-full justify-start gap-2 bg-black hover:bg-gray-800" asChild>
-                <a href="https://podcasts.apple.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://podcasts.apple.com/us/podcast/rockin-rockin-boogie/id1234567890" target="_blank" rel="noopener noreferrer">
                   <Apple className="w-5 h-5" />
                   Apple Podcasts
                 </a>
               </Button>
               <Button className="w-full justify-start gap-2 bg-green-600 hover:bg-green-700" asChild>
-                <a href="https://open.spotify.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://open.spotify.com/show/rockinrockinboogie" target="_blank" rel="noopener noreferrer">
                   <SpotifyIcon className="w-5 h-5" />
                   Spotify
                 </a>
               </Button>
               <Button className="w-full justify-start gap-2 bg-blue-600 hover:bg-blue-700" asChild>
-                <a href="https://podcasts.google.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://podcasts.google.com/feed/rockinrockinboogie" target="_blank" rel="noopener noreferrer">
                   <RadioIcon className="w-5 h-5" />
                   Google Podcasts
                 </a>
@@ -429,11 +447,39 @@ export default function Podcasts() {
         </div>
       </div>
 
-      {/* Episode List */}
+      {/* Recently Played */}
+      {recentlyPlayed.length > 0 && (
+        <div className="container mx-auto px-4 py-6">
+          <h2 className="text-xl font-bold mb-3 text-orange-500">Recently Played</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {recentlyPlayed.map(episode => (
+              <Card
+                key={episode.id}
+                className="p-3 cursor-pointer border-2 border-orange-200 hover:border-orange-500 transition-all"
+                onClick={() => handleEpisodeSelect(episode)}
+              >
+                <div className="font-semibold text-sm line-clamp-2">{episode.title}</div>
+                <div className="text-xs text-foreground/60 mt-1">{formatTime(episode.duration)}</div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Episode Search & List */}
       <div className="container mx-auto px-4 py-6">
-        <h2 className="text-2xl font-bold mb-4">All Episodes ({series[0]?.episodes.length || 0})</h2>
+        <div className="mb-4 flex items-center gap-2">
+          <input
+            type="text"
+            placeholder="Search episodes..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1 px-4 py-2 border rounded-lg bg-background"
+          />
+        </div>
+        <h2 className="text-2xl font-bold mb-4">All Episodes ({filteredEpisodes.length})</h2>
         <div className="space-y-3">
-          {series[0]?.episodes.map(episode => (
+          {filteredEpisodes.map(episode => (
             <Card
               key={episode.id}
               className={`p-4 cursor-pointer transition-all border-2 ${
@@ -441,12 +487,9 @@ export default function Podcasts() {
                   ? 'border-orange-500 bg-orange-500/5'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
-              onClick={() => {
-                setSelectedEpisode(episode);
-                setIsPlaying(false);
-              }}
+              onClick={() => handleEpisodeSelect(episode)}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3 flex-1">
                 <Button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -471,6 +514,57 @@ export default function Podcasts() {
           ))}
         </div>
       </div>
+
+      {/* Transcript Section */}
+      {selectedEpisode?.transcript && (
+        <div className="container mx-auto px-4 py-6">
+          <button
+            onClick={() => setShowTranscript(!showTranscript)}
+            className="flex items-center gap-2 text-lg font-bold mb-3 text-blue-500 hover:text-blue-600 w-full"
+          >
+            Transcript
+            {showTranscript ? (
+              <ChevronUp className="w-5 h-5 ml-auto" />
+            ) : (
+              <ChevronDown className="w-5 h-5 ml-auto" />
+            )}
+          </button>
+
+          {showTranscript && (
+            <Card className="p-4 bg-gray-50 dark:bg-gray-900">
+              {/* Chapter Navigation */}
+              {selectedEpisode.chapters && selectedEpisode.chapters.length > 0 && (
+                <div className="mb-4 pb-4 border-b">
+                  <h4 className="font-semibold text-sm mb-2">Chapters</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedEpisode.chapters.map((chapter, idx) => (
+                      <Button
+                        key={idx}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          if (audioRef.current) {
+                            audioRef.current.currentTime = chapter.time;
+                            setCurrentTime(chapter.time);
+                            setIsPlaying(true);
+                          }
+                        }}
+                      >
+                        {chapter.title} ({formatTime(chapter.time)})
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Transcript Text */}
+              <div className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/80">
+                {selectedEpisode.transcript}
+              </div>
+            </Card>
+          )}
+        </div>
+      )}
     </div>
   );
 }

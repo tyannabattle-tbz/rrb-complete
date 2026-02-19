@@ -2801,3 +2801,14 @@
 - [x] Verify all audio components fully functional
 - [x] Test responsive design on mobile and desktop
 - [ ] Verify accessibility compliance (WCAG 2.1 AA)
+
+
+## PODCAST PAGE - CRITICAL BUGS TO FIX
+- [x] Fix frequency tuner rendering errors (console errors when displaying tuner)
+- [x] Replace Rick Astley stock video with actual RRB episode videos
+- [x] Fix play button - should play inline in page, not open separate window
+- [x] Fix RSS feed links - all platforms showing same content, need correct URLs
+- [x] Add episode search and filtering by channel
+- [x] Add Recently Played section (last 3 episodes)
+- [x] Add episode transcripts with chapter navigation
+- [x] Final testing and production launch
