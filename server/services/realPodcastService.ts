@@ -31,12 +31,21 @@ export interface PodcastChannel {
 }
 
 // Real public podcast channels with verified working streams
+// Company logos from RRB ecosystem
+const COMPANY_LOGOS = {
+  seansMusic: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/seansmusic-logo.png",
+  annasCompany: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/annas-company-logo.png",
+  jaelonEnterprises: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jaelon-enterprises-logo.png",
+  littleC: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/littlec-logo.png",
+  rrb: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/rrb-logo.png",
+};
+
 const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
   7: {
     id: 7,
     name: "Rockin' Rockin' Boogie",
-    description: "Classic rock and roll hits",
-    imageUrl: "https://via.placeholder.com/300x300?text=Rockin+Boogie",
+    description: "Classic rock and roll hits — Original recordings and legacy content",
+    imageUrl: COMPANY_LOGOS.rrb,
     episodes: [
       {
         id: "rr-001",
@@ -46,7 +55,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
         duration: 180,
         // Using direct MP3 URL that works with CORS
         streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        imageUrl: "https://via.placeholder.com/300x300?text=Rockin+Boogie",
+        imageUrl: COMPANY_LOGOS.rrb,
         publishedAt: new Date(),
         channel: 7,
       },
@@ -57,7 +66,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
         description: "Rock and roll anthem",
         duration: 160,
         streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-        imageUrl: "https://via.placeholder.com/300x300?text=Tutti+Frutti",
+        imageUrl: COMPANY_LOGOS.rrb,
         publishedAt: new Date(),
         channel: 7,
       },
@@ -68,9 +77,85 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
         description: "Rock and roll classic",
         duration: 165,
         streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-        imageUrl: "https://via.placeholder.com/300x300?text=Johnny+B",
+        imageUrl: COMPANY_LOGOS.rrb,
         publishedAt: new Date(),
         channel: 7,
+      },
+    ],
+  },
+  1: {
+    id: 1,
+    name: "Sean's Music",
+    description: "Music and entertainment from Sean Hunter's production company",
+    imageUrl: COMPANY_LOGOS.seansMusic,
+    episodes: [
+      {
+        id: "sean-001",
+        title: "Sean's Music Showcase",
+        artist: "Sean Hunter",
+        description: "Latest releases and productions from Sean's Music",
+        duration: 240,
+        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        imageUrl: COMPANY_LOGOS.seansMusic,
+        publishedAt: new Date(),
+        channel: 1,
+      },
+    ],
+  },
+  2: {
+    id: 2,
+    name: "Anna's Company",
+    description: "Creative content and productions from Anna Hunter's ventures",
+    imageUrl: COMPANY_LOGOS.annasCompany,
+    episodes: [
+      {
+        id: "anna-001",
+        title: "Anna's Creative Corner",
+        artist: "Anna Hunter",
+        description: "Exclusive content from Anna's Company",
+        duration: 220,
+        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        imageUrl: COMPANY_LOGOS.annasCompany,
+        publishedAt: new Date(),
+        channel: 2,
+      },
+    ],
+  },
+  3: {
+    id: 3,
+    name: "Jaelon Enterprises",
+    description: "Business and entertainment from Jaelon Hunter's enterprises",
+    imageUrl: COMPANY_LOGOS.jaelonEnterprises,
+    episodes: [
+      {
+        id: "jaelon-001",
+        title: "Jaelon's Business Podcast",
+        artist: "Jaelon Hunter",
+        description: "Insights and updates from Jaelon Enterprises",
+        duration: 300,
+        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+        imageUrl: COMPANY_LOGOS.jaelonEnterprises,
+        publishedAt: new Date(),
+        channel: 3,
+      },
+    ],
+  },
+  4: {
+    id: 4,
+    name: "Little C Productions",
+    description: "Entertainment and media from Little C's production company",
+    imageUrl: COMPANY_LOGOS.littleC,
+    episodes: [
+      {
+        id: "littlec-001",
+        title: "Little C's Show",
+        artist: "Little C",
+        description: "Entertainment and exclusive content from Little C Productions",
+        duration: 280,
+        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+        imageUrl: COMPANY_LOGOS.littleC,
+        publishedAt: new Date(),
+        channel: 4,
       },
     ],
   },
@@ -78,7 +163,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
     id: 13,
     name: "Jazz Essentials",
     description: "Smooth jazz and bebop classics",
-    imageUrl: "https://via.placeholder.com/300x300?text=Jazz",
+    imageUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jazz-logo.png",
     episodes: [
       {
         id: "jazz-001",
@@ -87,7 +172,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
         description: "Jazz classic",
         duration: 300,
         streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-        imageUrl: "https://via.placeholder.com/300x300?text=Jazz",
+        imageUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jazz-logo.png",
         publishedAt: new Date(),
         channel: 13,
       },
@@ -98,7 +183,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
         description: "Jazz standard",
         duration: 280,
         streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        imageUrl: "https://via.placeholder.com/300x300?text=Autumn",
+        imageUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jazz-logo.png",
         publishedAt: new Date(),
         channel: 13,
       },
@@ -109,7 +194,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
         description: "Modal jazz",
         duration: 350,
         streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-        imageUrl: "https://via.placeholder.com/300x300?text=Blues",
+        imageUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jazz-logo.png",
         publishedAt: new Date(),
         channel: 13,
       },
@@ -119,7 +204,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
     id: 9,
     name: "Blues Hour",
     description: "Classic blues and soul",
-    imageUrl: "https://via.placeholder.com/300x300?text=Blues",
+    imageUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/blues-logo.png",
     episodes: [
       {
         id: "blues-001",
@@ -128,7 +213,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
         description: "Blues classic",
         duration: 240,
         streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-        imageUrl: "https://via.placeholder.com/300x300?text=Blues",
+        imageUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/blues-logo.png",
         publishedAt: new Date(),
         channel: 9,
       },
@@ -139,7 +224,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
         description: "Blues standard",
         duration: 270,
         streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-        imageUrl: "https://via.placeholder.com/300x300?text=Thrill",
+        imageUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/blues-logo.png",
         publishedAt: new Date(),
         channel: 9,
       },
@@ -150,7 +235,7 @@ const LOCAL_CHANNELS: Record<number, PodcastChannel> = {
         description: "Electric blues",
         duration: 200,
         streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        imageUrl: "https://via.placeholder.com/300x300?text=Hoochie",
+        imageUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/blues-logo.png",
         publishedAt: new Date(),
         channel: 9,
       },
