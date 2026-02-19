@@ -2728,3 +2728,10 @@
 - [x] Create Seabrun Whitney Hunter Sr. family tribute page (with primary source documents from Ancestry.com)
 - [ ] Deploy checkpoint to rockinrockinboogie.com via Publish button
 - [ ] Verify all updates visible on live domain
+
+### RRB Ecosystem - Family Legacy Features (Current Session - Part 2)
+- [x] Add navigation link to Seabrun Whitney Hunter Sr. page in The Legacy menu dropdown
+- [x] Create family tree visualization showing Seabrun Sr. → Candy → children with company affiliations
+- [x] Add "In Their Own Words" sections to Grandma Helen and other family member pages with primary source quotes
+- [ ] Deploy checkpoint to rockinrockinboogie.com via Publish button
+- [ ] Verify all updates visible on live domain

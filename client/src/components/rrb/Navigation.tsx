@@ -73,6 +73,7 @@ export default function Navigation() {
     { label: 'Little Richard Connection', href: '/rrb/little-richard-connection' },
     { label: 'Family Achievement', href: '/rrb/family-achievements' },
     { label: 'Grandma Helen', href: '/rrb/grandma-helen' },
+    { label: 'Seabrun Whitney Hunter Sr.', href: '/rrb/seabrun-whitney-hunter-sr' },
     { label: 'Verified Sources', href: '/rrb/verified-sources' },
   ];
 

@@ -528,6 +528,58 @@ export default function GrandmaHelen() {
         </div>
       </section>
 
+      {/* In Their Own Words - Helen's Quotes */}
+      <section className="py-16 px-4 bg-stone-900/50 border-t border-rose-900/30">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-rose-100 mb-12 text-center flex items-center justify-center gap-3">
+            <Quote className="w-8 h-8 text-rose-500" />
+            In Their Own Words
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-stone-800/40 border-rose-900/30">
+              <CardContent className="pt-6">
+                <Quote className="w-5 h-5 text-rose-400/60 mb-3" />
+                <p className="text-rose-100/90 italic mb-4 leading-relaxed">
+                  "The hardest thing was to find a way to rear my children the way I wanted to. I had to work two jobs to pay for church school and to take care of everything that you have to take care of to live in this world."
+                </p>
+                <p className="text-stone-400 text-sm">— Helen Hunter, on raising her children after divorce</p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-stone-800/40 border-rose-900/30">
+              <CardContent className="pt-6">
+                <Quote className="w-5 h-5 text-rose-400/60 mb-3" />
+                <p className="text-rose-100/90 italic mb-4 leading-relaxed">
+                  "I came into a white world, and it was a little bit difficult there. I had a lot of obstacles to overcome."
+                </p>
+                <p className="text-stone-400 text-sm">— Helen Hunter, on joining Mary Kay Cosmetics</p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-stone-800/40 border-rose-900/30">
+              <CardContent className="pt-6">
+                <Quote className="w-5 h-5 text-rose-400/60 mb-3" />
+                <p className="text-rose-100/90 italic mb-4 leading-relaxed">
+                  "She was just like the girl next door. She was like a mom to me... giving me a pink Cadillac, mink coat and lots of diamonds along the way."
+                </p>
+                <p className="text-stone-400 text-sm">— Helen Hunter, on Mary Kay Ash</p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-stone-800/40 border-rose-900/30">
+              <CardContent className="pt-6">
+                <Quote className="w-5 h-5 text-rose-400/60 mb-3" />
+                <p className="text-rose-100/90 italic mb-4 leading-relaxed">
+                  "I knew I would be [successful] because Mary Kay told me I would! That there's nowhere I can't go, and being black had nothing to do with it. And she was right."
+                </p>
+                <p className="text-stone-400 text-sm">— Helen Hunter</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Magazine Gallery */}
       <section className="py-12 px-4">
         <div className="max-w-5xl mx-auto">
