@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar, Radio, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Pause, Download, Share2, Volume2, Clock, User, Calendar, Radio, ChevronDown, ChevronUp, Youtube, Apple, Music as SpotifyIcon, Radio as RadioIcon, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -104,6 +104,7 @@ export default function Podcasts() {
           author: "Rockin' Rockin' Boogie",
           episodeNumber: 1,
           season: 1,
+          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
         },
         {
           id: '2',
@@ -115,6 +116,7 @@ export default function Podcasts() {
           author: "Rockin' Rockin' Boogie",
           episodeNumber: 2,
           season: 1,
+          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
         },
         {
           id: '3',
@@ -126,6 +128,43 @@ export default function Podcasts() {
           author: "Rockin' Rockin' Boogie",
           episodeNumber: 3,
           season: 1,
+          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+        },
+        {
+          id: '4',
+          title: 'Episode 4: The Legacy - Impact & Influence',
+          description: "Examining how Seabrun's work continues to influence modern music and culture.",
+          audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+          duration: 420,
+          publishedAt: new Date('2024-02-05'),
+          author: "Rockin' Rockin' Boogie",
+          episodeNumber: 4,
+          season: 1,
+          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+        },
+        {
+          id: '5',
+          title: 'Episode 5: The Collaborations - Working with Legends',
+          description: "Exploring Seabrun's collaborations with other legendary musicians and artists.",
+          audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+          duration: 480,
+          publishedAt: new Date('2024-02-12'),
+          author: "Rockin' Rockin' Boogie",
+          episodeNumber: 5,
+          season: 1,
+          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+        },
+        {
+          id: '6',
+          title: 'Episode 6: The Performances - Live Recordings',
+          description: "A collection of live performances and concert recordings from Seabrun's career.",
+          audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+          duration: 540,
+          publishedAt: new Date('2024-02-19'),
+          author: "Rockin' Rockin' Boogie",
+          episodeNumber: 6,
+          season: 1,
+          videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
         },
       ],
     };
@@ -203,6 +242,22 @@ export default function Podcasts() {
       {selectedEpisode && (
         <div className="container mx-auto px-4 py-6">
           <Card className="p-6 bg-gradient-to-br from-amber-500/5 to-purple-500/5 border-amber-500/20">
+            {/* Video Player */}
+            {selectedEpisode.videoUrl && (
+              <div className="mb-6 rounded-lg overflow-hidden bg-black aspect-video">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={selectedEpisode.videoUrl}
+                  title={selectedEpisode.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
+              </div>
+            )}
+
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h2 className="text-xl font-bold mb-1">{selectedEpisode.title}</h2>
@@ -278,11 +333,21 @@ export default function Podcasts() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" onClick={() => toast.success('Download started')}>
                     <Download className="w-5 h-5" />
                   </Button>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" onClick={() => toast.success('Copied to clipboard')}>
                     <Share2 className="w-5 h-5" />
+                  </Button>
+                  <Button 
+                    className="bg-red-500 hover:bg-red-600 text-white gap-2"
+                    onClick={() => {
+                      toast.success('🔴 LIVE: Broadcasting started! You are now on air.');
+                      setIsPlaying(true);
+                    }}
+                  >
+                    <Zap className="w-4 h-4" />
+                    Go Live
                   </Button>
                 </div>
               </div>
@@ -300,34 +365,73 @@ export default function Podcasts() {
         </div>
       )}
 
-      {/* Frequency Controls */}
-      <div className="container mx-auto px-4 py-4">
-        <button
-          onClick={() => setShowFrequencyControls(!showFrequencyControls)}
-          className="flex items-center gap-2 text-sm font-semibold mb-3 text-orange-500 hover:text-orange-600"
-        >
-          <Music className="w-4 h-4" />
-          Frequency Tuning
-          {showFrequencyControls ? (
-            <ChevronUp className="w-4 h-4" />
-          ) : (
-            <ChevronDown className="w-4 h-4" />
-          )}
-        </button>
+      {/* RSS Feeds & Frequency Controls */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* RSS Feeds */}
+          <div>
+            <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
+              <RadioIcon className="w-5 h-5" />
+              Subscribe on Your Platform
+            </h3>
+            <div className="space-y-2">
+              <Button className="w-full justify-start gap-2 bg-red-600 hover:bg-red-700" asChild>
+                <a href="https://www.youtube.com/@rockinrockinboogie" target="_blank" rel="noopener noreferrer">
+                  <Youtube className="w-5 h-5" />
+                  YouTube
+                </a>
+              </Button>
+              <Button className="w-full justify-start gap-2 bg-black hover:bg-gray-800" asChild>
+                <a href="https://podcasts.apple.com" target="_blank" rel="noopener noreferrer">
+                  <Apple className="w-5 h-5" />
+                  Apple Podcasts
+                </a>
+              </Button>
+              <Button className="w-full justify-start gap-2 bg-green-600 hover:bg-green-700" asChild>
+                <a href="https://open.spotify.com" target="_blank" rel="noopener noreferrer">
+                  <SpotifyIcon className="w-5 h-5" />
+                  Spotify
+                </a>
+              </Button>
+              <Button className="w-full justify-start gap-2 bg-blue-600 hover:bg-blue-700" asChild>
+                <a href="https://podcasts.google.com" target="_blank" rel="noopener noreferrer">
+                  <RadioIcon className="w-5 h-5" />
+                  Google Podcasts
+                </a>
+              </Button>
+            </div>
+          </div>
 
-        {showFrequencyControls && (
-          <Card className="p-4 bg-gradient-to-br from-blue-500/5 to-purple-500/5 border-blue-500/20">
-            <FrequencyPresetButtons
-              selectedFrequency={selectedFrequency}
-              onSelectFrequency={setSelectedFrequency}
-            />
-          </Card>
-        )}
+          {/* Frequency Controls */}
+          <div>
+            <button
+              onClick={() => setShowFrequencyControls(!showFrequencyControls)}
+              className="flex items-center gap-2 text-lg font-bold mb-3 text-orange-500 hover:text-orange-600 w-full"
+            >
+              <Music className="w-5 h-5" />
+              Frequency Tuning
+              {showFrequencyControls ? (
+                <ChevronUp className="w-5 h-5 ml-auto" />
+              ) : (
+                <ChevronDown className="w-5 h-5 ml-auto" />
+              )}
+            </button>
+
+            {showFrequencyControls && (
+              <Card className="p-4 bg-gradient-to-br from-blue-500/5 to-purple-500/5 border-blue-500/20">
+                <FrequencyPresetButtons
+                  selectedFrequency={selectedFrequency}
+                  onSelectFrequency={setSelectedFrequency}
+                />
+              </Card>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Episode List */}
       <div className="container mx-auto px-4 py-6">
-        <h2 className="text-2xl font-bold mb-4">Episodes</h2>
+        <h2 className="text-2xl font-bold mb-4">All Episodes ({series[0]?.episodes.length || 0})</h2>
         <div className="space-y-3">
           {series[0]?.episodes.map(episode => (
             <Card

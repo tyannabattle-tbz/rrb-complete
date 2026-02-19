@@ -89,14 +89,18 @@ export class FrequencyEQFilter {
   private trebleFilter: BiquadFilterNode | null = null;
   private gainNode: GainNode | null = null;
   private currentFrequency: number = 440;
+  private isInitialized: boolean = false;
 
-  constructor(private audioElement: HTMLAudioElement) {}
+  constructor(private audioElement: HTMLAudioElement) {
+    this.initialize().catch(err => console.error('Failed to initialize FrequencyEQFilter:', err));
+  }
 
   async initialize(): Promise<void> {
-    if (this.audioContext) return;
+    if (this.isInitialized || this.audioContext) return;
 
-    this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    this.source = this.audioContext.createMediaElementAudioSource(this.audioElement);
+    try {
+      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      this.source = this.audioContext.createMediaElementAudioSource(this.audioElement);
 
     this.bassFilter = this.audioContext.createBiquadFilter();
     this.bassFilter.type = 'lowshelf';
@@ -124,13 +128,18 @@ export class FrequencyEQFilter {
     this.gainNode = this.audioContext.createGain();
     this.gainNode.gain.value = 1;
 
-    this.source.connect(this.bassFilter);
-    this.bassFilter.connect(this.lowMidFilter);
-    this.lowMidFilter.connect(this.midFilter);
-    this.midFilter.connect(this.highMidFilter);
-    this.highMidFilter.connect(this.trebleFilter);
-    this.trebleFilter.connect(this.gainNode);
-    this.gainNode.connect(this.audioContext.destination);
+      this.source.connect(this.bassFilter);
+      this.bassFilter.connect(this.lowMidFilter);
+      this.lowMidFilter.connect(this.midFilter);
+      this.midFilter.connect(this.highMidFilter);
+      this.highMidFilter.connect(this.trebleFilter);
+      this.trebleFilter.connect(this.gainNode);
+      this.gainNode.connect(this.audioContext.destination);
+      this.isInitialized = true;
+    } catch (error) {
+      console.error('Error initializing FrequencyEQFilter:', error);
+      this.isInitialized = false;
+    }
   }
 
   async applyFrequency(frequency: number): Promise<void> {
@@ -144,21 +153,31 @@ export class FrequencyEQFilter {
 
     this.currentFrequency = frequency;
 
+    if (!this.audioContext) {
+      console.warn('AudioContext not initialized');
+      return;
+    }
+
+    const now = this.audioContext.currentTime;
+    const smoothTime = 0.1; // 100ms smooth transition
+
     if (this.bassFilter) {
-      this.bassFilter.gain.setValueAtTime(config.eqPreset.bass, this.audioContext!.currentTime);
+      this.bassFilter.gain.linearRampToValueAtTime(config.eqPreset.bass, now + smoothTime);
     }
     if (this.lowMidFilter) {
-      this.lowMidFilter.gain.setValueAtTime(config.eqPreset.lowMid, this.audioContext!.currentTime);
+      this.lowMidFilter.gain.linearRampToValueAtTime(config.eqPreset.lowMid, now + smoothTime);
     }
     if (this.midFilter) {
-      this.midFilter.gain.setValueAtTime(config.eqPreset.mid, this.audioContext!.currentTime);
+      this.midFilter.gain.linearRampToValueAtTime(config.eqPreset.mid, now + smoothTime);
     }
     if (this.highMidFilter) {
-      this.highMidFilter.gain.setValueAtTime(config.eqPreset.highMid, this.audioContext!.currentTime);
+      this.highMidFilter.gain.linearRampToValueAtTime(config.eqPreset.highMid, now + smoothTime);
     }
     if (this.trebleFilter) {
-      this.trebleFilter.gain.setValueAtTime(config.eqPreset.treble, this.audioContext!.currentTime);
+      this.trebleFilter.gain.linearRampToValueAtTime(config.eqPreset.treble, now + smoothTime);
     }
+
+    console.log(`Applied frequency: ${frequency} Hz (${config.healingProperty})`);
   }
 
   async reset(): Promise<void> {
@@ -169,11 +188,20 @@ export class FrequencyEQFilter {
     return this.currentFrequency;
   }
 
+  setFrequency(frequency: number): void {
+    this.applyFrequency(frequency).catch(err => console.error('Error applying frequency:', err));
+  }
+
   destroy(): void {
-    if (this.audioContext) {
-      this.audioContext.close();
-      this.audioContext = null;
+    try {
+      if (this.audioContext && this.audioContext.state !== 'closed') {
+        this.audioContext.close();
+      }
+    } catch (error) {
+      console.error('Error closing AudioContext:', error);
     }
+    this.audioContext = null;
+    this.isInitialized = false;
   }
 }
 
