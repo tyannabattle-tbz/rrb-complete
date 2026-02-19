@@ -27,6 +27,36 @@ export default function JaelonEnterprises() {
       {/* Content */}
       <section className="py-16">
         <div className="container max-w-5xl">
+          {/* Brand Identity */}
+          <div className="bg-stone-800/60 rounded-xl p-8 border border-amber-900/30 mb-12">
+            <h2 className="text-2xl font-bold text-amber-50 mb-6">Brand Identity</h2>
+            <div className="flex flex-col md:flex-row gap-8 items-center">
+              <div className="flex-shrink-0">
+                <img 
+                  src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/pGLKqPjLKzLwxLvQ.jpeg"
+                  alt="Jaelon Enterprises Logo"
+                  className="w-48 h-48 object-contain rounded-lg shadow-lg"
+                />
+              </div>
+              <div className="flex-1">
+                <p className="text-amber-200/80 leading-relaxed mb-4">
+                  Jaelon Enterprises represents the innovation and forward-thinking vision of Seabrun Hunter, operated by Jaelon Hunter. 
+                  The brand embodies market expansion, strategic partnerships, and business excellence.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-amber-300/60 text-sm">Connect With Us</p>
+                    <div className="flex gap-2 mt-2">
+                      <a href="#" className="text-amber-400 hover:text-amber-300">Website</a>
+                      <span className="text-amber-900/40">•</span>
+                      <a href="#" className="text-amber-400 hover:text-amber-300">LinkedIn</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Overview */}
           <div className="bg-stone-800/40 rounded-xl p-8 border border-amber-900/30 mb-12">
             <h2 className="text-2xl font-bold text-amber-50 mb-4">Company Overview</h2>
