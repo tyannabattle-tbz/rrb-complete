@@ -158,6 +158,7 @@ import RRBSweetMiraclesFundraising from '@/pages/rrb/SweetMiraclesFundraising';
 import RRBContact from '@/pages/rrb/Contact';
 import RRBComingSoon from '@/pages/rrb/ComingSoon';
 import RRBGrandmaHelen from '@/pages/rrb/GrandmaHelen';
+import SeabrunWhitneyHunterSr from '@/pages/rrb/SeabrunWhitneyHunterSr';
 import RRBProofVault from '@/pages/rrb/ProofVault';
 import RRBSystematicOmission from '@/pages/rrb/SystematicOmission';
 import RRBFamilyTree from '@/pages/rrb/FamilyTree';
@@ -373,6 +374,7 @@ function Router() {
       <Route path="/rrb/jaelon-enterprises" component={RRBJaelonEnterprises} />
       <Route path="/rrb/little-c" component={RRBLittleC} />
       <Route path="/rrb/grandma-helen" component={RRBGrandmaHelen} />
+      <Route path="/rrb/seabrun-whitney-hunter-sr" component={SeabrunWhitneyHunterSr} />
       <Route path="/rrb/verified-sources" component={RRBVerifiedSources} />
       
       {/* RRB Legacy Restored Pages */}

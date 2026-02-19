@@ -325,6 +325,90 @@ export default function RadioCommercials() {
       bookLink: '/',
       playCount: 0,
       clickCount: 0
+    },
+    {
+      id: 25,
+      title: "Sean's Music",
+      bookTitle: "Sean's Music - Music Production & Recording",
+      duration: 30,
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/IamuJPuONwVFErdS.wav',
+      script: "Sean's Music - founded by Seabrun Candy Hunter, operated by Sean Hunter. Professional music production and recording services. From composition to mastering, we bring your vision to life. Contact Sean's Music at rockinrockinboogie.com. A Canryn Production.",
+      description: "Music Production & Recording - Founded by Seabrun Candy Hunter, Operated by Sean Hunter",
+      bookLink: '/rrb/seans-music',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 26,
+      title: 'Jaelon Enterprises',
+      bookTitle: 'Jaelon Enterprises - Business Development & Ventures',
+      duration: 30,
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/dHgmXrfyaEkQvkkn.wav',
+      script: "Jaelon Enterprises - founded by Seabrun Candy Hunter, operated by Jaelon Hunter. Strategic business development and venture partnerships. Growing the Canryn Production ecosystem. Learn more at rockinrockinboogie.com. A Canryn Production.",
+      description: 'Business Development & Ventures - Founded by Seabrun Candy Hunter, Operated by Jaelon Hunter',
+      bookLink: '/rrb/jaelon-enterprises',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 27,
+      title: 'Little C Recording',
+      bookTitle: 'Little C Recording - Youth & Education Initiatives',
+      duration: 30,
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/SpdPIWKgjUAuIIBv.wav',
+      script: "Little C Recording - founded by Seabrun Candy Hunter. Youth and education initiatives bringing music and creativity to the next generation. Mentorship, workshops, and recording opportunities. Join us at rockinrockinboogie.com. A Canryn Production.",
+      description: 'Youth & Education Initiatives - Founded by Seabrun Candy Hunter',
+      bookLink: '/rrb/little-c',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 28,
+      title: 'Canryn Publishing Co.',
+      bookTitle: 'Canryn Publishing Co. - Music Publishing & Rights Administration',
+      duration: 30,
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/YTfWkRcDokGRCvGE.wav',
+      script: "Canryn Publishing Company - founded by Seabrun Candy Hunter. Music publishing and rights administration for the modern era. Protecting artists. Maximizing royalties. Ensuring fair compensation. Learn more at rockinrockinboogie.com. A Canryn Production.",
+      description: 'Music Publishing & Rights Administration - Founded by Seabrun Candy Hunter',
+      bookLink: '/rrb/divisions',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 29,
+      title: 'Seasha Distribution Co.',
+      bookTitle: 'Seasha Distribution Co. - Physical & Digital Distribution',
+      duration: 30,
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/CwvOeGLIrPEFwCLc.wav',
+      script: "Seasha Distribution Company - founded by Seabrun Candy Hunter. Physical and digital distribution solutions for music and media. Getting your content to listeners worldwide. Partner with us at rockinrockinboogie.com. A Canryn Production.",
+      description: 'Physical & Digital Distribution - Founded by Seabrun Candy Hunter',
+      bookLink: '/rrb/divisions',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 30,
+      title: 'Honest Promotion',
+      bookTitle: 'Honest Promotion - Promotion & Marketing',
+      duration: 30,
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/irDHZkZATjneTQXg.wav',
+      script: "Honest Promotion - founded by Seabrun Candy Hunter. Strategic promotion and marketing for artists and brands. Authentic storytelling. Real results. Reach your audience. Contact us at rockinrockinboogie.com. A Canryn Production.",
+      description: 'Promotion & Marketing - Founded by Seabrun Candy Hunter',
+      bookLink: '/rrb/divisions',
+      playCount: 0,
+      clickCount: 0
+    },
+    {
+      id: 31,
+      title: 'Canryn Production Inc.',
+      bookTitle: 'Canryn Production Inc. - The Parent Company',
+      duration: 30,
+      audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/YzalNImCfBbqgokl.wav',
+      script: "Canryn Production Inc. - founded by Seabrun Candy Hunter. The unified ecosystem of platforms, services, and autonomous intelligence. Seven subsidiaries. One vision. The future of independent media. Learn more at rockinrockinboogie.com. A Canryn Production.",
+      description: 'The Parent Company - Founded by Seabrun Candy Hunter',
+      bookLink: '/rrb/divisions',
+      playCount: 0,
+      clickCount: 0
     }
   ];
 

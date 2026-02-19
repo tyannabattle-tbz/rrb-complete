@@ -2724,5 +2724,7 @@
 - [x] Fixed Divisions page founder attribution (Seabrun Candy Hunter founded all companies)
 - [x] Added apostrophe to "Sean's Music" (was "Sean Music")
 - [x] Added operator names to each company (Sean, Anna, Jaelon, Little C)
-- [ ] Deploy checkpoint to rockinrockinboogie.com (CRITICAL - live site showing outdated content)
+- [x] Schedule 7 commercials into broadcast content system (added to RadioCommercials with S3 CDN URLs)
+- [x] Create Seabrun Whitney Hunter Sr. family tribute page (with primary source documents from Ancestry.com)
+- [ ] Deploy checkpoint to rockinrockinboogie.com via Publish button
 - [ ] Verify all updates visible on live domain
