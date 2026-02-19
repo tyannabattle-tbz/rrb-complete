@@ -189,7 +189,10 @@ export default function Broadcast() {
               </Card>
 
               {/* Settings */}
-              <Button className="w-full bg-gray-800 hover:bg-gray-700 text-white gap-2">
+              <Button 
+                onClick={() => toast.info('📺 Broadcast settings panel opening...')}
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white gap-2"
+              >
                 <Settings className="w-4 h-4" />
                 Broadcast Settings
               </Button>

@@ -84,7 +84,7 @@ export default function RSSFeedGenerator() {
       <link>${baseUrl}/rrb/podcast-and-video</link>
       <guid isPermaLink="false">${channelId}-ep1</guid>
       <pubDate>${new Date().toUTCString()}</pubDate>
-      <enclosure url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/wav" length="882044"/>
+      <enclosure url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/wav" length="882044"/>
       <itunes:duration>600</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
     </item>
