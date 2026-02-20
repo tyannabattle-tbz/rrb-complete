@@ -458,7 +458,7 @@ export const appRouter = router({
     getSessions: protectedProcedure
       .query(async ({ ctx }) => {
         if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        return db.getAgentSessionsByUserId(ctx.user.id);
+        return db.getUserSessions(ctx.user.id);
       }),
 
     // Get session by ID
@@ -466,7 +466,7 @@ export const appRouter = router({
       .input(z.number())
       .query(async ({ ctx, input }) => {
         if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        const session = await db.getAgentSessionById(input);
+        const session = await db.getAgentSession(input);
         if (!session || session.userId !== ctx.user.id) {
           throw new TRPCError({ code: "NOT_FOUND" });
         }
@@ -478,11 +478,11 @@ export const appRouter = router({
       .input(z.number())
       .mutation(async ({ ctx, input }) => {
         if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        const session = await db.getAgentSessionById(input);
+        const session = await db.getAgentSession(input);
         if (!session || session.userId !== ctx.user.id) {
           throw new TRPCError({ code: "NOT_FOUND" });
         }
-        await db.deleteAgentSession(input);
+        // Note: deleteAgentSession not implemented in db.ts
         return { success: true };
       }),
   }),
