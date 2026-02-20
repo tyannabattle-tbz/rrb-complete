@@ -147,14 +147,6 @@ export function AppHeaderEnhanced() {
         { label: 'Candy Through the Years', path: '/rrb/candy-through-the-years' },
         { label: 'Setlist Archive', path: '/rrb/setlist-archive' },
         { label: 'RSS Feeds', path: '/rss' },
-      ],
-    },
-    {
-      id: 'listen',
-      label: 'Listen Live',
-      icon: Radio,
-      items: [
-        { label: 'RRB Radio Station', path: '/rrb/radio-station' },
         { label: 'Meditation Guides', path: '/rrb/meditation-guides' },
         { label: 'Frequency Guides', path: '/rrb/frequency-guides' },
         { label: 'Custom Meditation', path: '/rrb/custom-meditation-builder' },
