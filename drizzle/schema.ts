@@ -1448,8 +1448,8 @@ export const broadcastSchedules = mysqlTable('broadcast_schedules', {
   channels: json('channels').notNull(), // ['youtube', 'twitch', 'facebook', 'instagram', 'website']
   createdBy: int('created_by').references(() => users.id, { onDelete: 'set null' }),
   autonomousScheduling: boolean('autonomous_scheduling').default(true).notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const musicTracks = mysqlTable('music_tracks', {
@@ -1478,8 +1478,8 @@ export const musicPlaylists = mysqlTable('music_playlists', {
   isPublic: boolean('is_public').default(false).notNull(),
   trackCount: int('track_count').default(0).notNull(),
   totalDuration: int('total_duration').default(0).notNull(), // seconds
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const playlistTracks = mysqlTable("playlist_tracks", {
@@ -1499,8 +1499,8 @@ export const commercialBreaks = mysqlTable('commercial_breaks', {
   commercialCount: int('commercial_count').default(0).notNull(),
   totalValue: decimal('total_value', { precision: 10, scale: 2 }).default('0').notNull(),
   status: mysqlEnum('status', ['scheduled', 'running', 'completed', 'skipped']).default('scheduled').notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const commercials = mysqlTable('commercials', {
@@ -1514,8 +1514,8 @@ export const commercials = mysqlTable('commercials', {
   rate: decimal('rate', { precision: 10, scale: 2 }).notNull(), // Cost per broadcast
   category: varchar('category', { length: 100 }),
   isActive: boolean('is_active').default(true).notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const broadcastAuditLog = mysqlTable('broadcast_audit_log', {
@@ -1559,7 +1559,7 @@ export const viewerMetrics = mysqlTable('viewer_metrics', {
   bounceRate: decimal('bounce_rate', { precision: 5, scale: 2 }).default('0').notNull(), // 0-100%
   geolocation: json('geolocation'), // {country, region, city, coordinates}
   deviceTypes: json('device_types'), // {mobile, desktop, tablet, tv}
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const generatedContent = mysqlTable('generated_content', {
@@ -1574,7 +1574,7 @@ export const generatedContent = mysqlTable('generated_content', {
   approved: boolean('approved').default(false).notNull(),
   approvedBy: int('approved_by').references(() => users.id, { onDelete: 'set null' }),
   approvedAt: timestamp('approved_at'),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const broadcastChatCommands = mysqlTable('broadcast_chat_commands', {
@@ -1590,7 +1590,7 @@ export const broadcastChatCommands = mysqlTable('broadcast_chat_commands', {
   result: json('result'), // Command execution result
   errorMessage: text('error_message'),
   executionTime: int('execution_time'), // milliseconds
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
   completedAt: timestamp('completed_at'),
 });
 
@@ -1606,7 +1606,7 @@ export const aiRecommendations = mysqlTable('ai_recommendations', {
   reason: text('reason'), // Why this was recommended
   clicked: boolean('clicked').default(false).notNull(),
   engaged: boolean('engaged').default(false).notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const audioPlaybackHistory = mysqlTable('audio_playback_history', {
@@ -1619,8 +1619,8 @@ export const audioPlaybackHistory = mysqlTable('audio_playback_history', {
   lastPlayedAt: timestamp('last_played_at'),
   isFavorited: boolean('is_favorited').default(false).notNull(),
   rating: decimal('rating', { precision: 3, scale: 2 }),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const audioContent = mysqlTable('audio_content', {
@@ -1639,8 +1639,8 @@ export const audioContent = mysqlTable('audio_content', {
   favorites: int('favorites').default(0).notNull(),
   rating: decimal('rating', { precision: 3, scale: 2 }).default(0),
   isPublished: boolean('is_published').default(true).notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const entertainmentUserPreferences = mysqlTable('entertainment_user_preferences', {
@@ -1654,8 +1654,8 @@ export const entertainmentUserPreferences = mysqlTable('entertainment_user_prefe
   autoPlayEnabled: boolean('auto_play_enabled').default(true).notNull(),
   qualityPreference: mysqlEnum('quality_preference', ['low', 'medium', 'high', 'auto']).default('auto').notNull(),
   languagePreference: varchar('language_preference', { length: 10 }).default('en').notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const entertainmentPlaylists = mysqlTable('entertainment_playlists', {
@@ -1669,8 +1669,8 @@ export const entertainmentPlaylists = mysqlTable('entertainment_playlists', {
   itemCount: int('item_count').default(0).notNull(),
   plays: int('plays').default(0).notNull(),
   followers: int('followers').default(0).notNull(),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const entertainmentPlaylistItems = mysqlTable('entertainment_playlist_items', {
@@ -1701,9 +1701,9 @@ export const mediaProjects = mysqlTable('media_projects', {
   comments: int('comments').default(0).notNull(),
   engagementRate: decimal('engagement_rate', { precision: 5, scale: 2 }).default(0),
   revenue: decimal('revenue', { precision: 10, scale: 2 }).default(0),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
   publishedAt: timestamp('published_at'),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const mediaDistribution = mysqlTable('media_distribution', {
@@ -1717,7 +1717,7 @@ export const mediaDistribution = mysqlTable('media_distribution', {
   platformEngagement: int('platform_engagement').default(0),
   platformRevenue: decimal('platform_revenue', { precision: 10, scale: 2 }).default(0),
   publishedAt: timestamp('published_at'),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const monetizationEvents = mysqlTable('monetization_events', {
@@ -1731,7 +1731,7 @@ export const monetizationEvents = mysqlTable('monetization_events', {
   revenue: decimal('revenue', { precision: 10, scale: 2 }).notNull(),
   currency: varchar('currency', { length: 3 }).default('USD').notNull(),
   metadata: json('metadata'), // Additional event details
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const entertainmentMetrics = mysqlTable('entertainment_metrics', {
@@ -1746,7 +1746,7 @@ export const entertainmentMetrics = mysqlTable('entertainment_metrics', {
   growthRate: decimal('growth_rate', { precision: 5, scale: 2 }).default(0).notNull(),
   activeProjects: int('active_projects').default(0).notNull(),
   topContent: json('top_content'), // Array of top performing content
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const qumusCorePolicies = mysqlTable('qumus_core_policies', {
@@ -1772,8 +1772,8 @@ export const qumusCorePolicies = mysqlTable('qumus_core_policies', {
   actions: json('actions'), // Policy actions
   escalationRules: json('escalation_rules'), // When to escalate
   metadata: json('metadata'), // Custom config
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('updatedAt').defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 
 export const qumusAutonomousActions = mysqlTable('qumus_autonomous_actions', {
@@ -1861,7 +1861,7 @@ export const qumusPolicyRecommendations = mysqlTable('qumus_policy_recommendatio
   impact: varchar('impact', { length: 50 }).notNull(), // 'high', 'medium', 'low'
   implemented: boolean('implemented').default(false).notNull(),
   implementedAt: timestamp('implemented_at'),
-  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const playlists = mysqlTable("playlists", {
