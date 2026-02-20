@@ -60,7 +60,7 @@ import { usePostAuthRedirect } from './_core/hooks/usePostAuthRedirect';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
 import QumusChatPage from '@/pages/QumusChatPage';
-import RadioStation from '@/pages/RadioStation';
+// Consolidated RadioStation import removed - using RRB version
 import RockinRockinBoogiePage from '@/pages/RockinRockinBoogiePage';
 import BroadcastOrchestrationHub from '@/pages/BroadcastOrchestrationHub';
 import MobileStudio from '@/pages/MobileStudio';
@@ -281,7 +281,7 @@ function Router() {
       <Route path="/video-production" component={VideoProductionPage} />
       <Route path="/chat" component={QumusChatInterface} />
       <Route path="/qumus-chat" component={QumusChatPage} />
-      <Route path="/radio-station" component={RadioStation} />
+      {/* Consolidated into /rrb/radio-station */}
       <Route path="/enhanced-chat" component={EnhancedChatPage} />
       <Route path="/qumus-dashboard" component={QumusMonitoringDashboard} />
       <Route path="/policy-decisions" component={PolicyDecisionLogging} />

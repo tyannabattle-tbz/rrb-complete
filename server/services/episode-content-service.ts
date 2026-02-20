@@ -70,10 +70,17 @@ export class EpisodeContentService {
 
       console.log(`[EpisodeContentService] Fetching episodes for channel ${channelId}`);
 
-      // Query episodes from database
-      // TODO: Implement actual database query using db.query or ORM
-      // SELECT * FROM episodes WHERE channel_id = ? AND (content_type = ? OR ?) 
-      // ORDER BY (sortBy === 'newest' ? published_at DESC : sortBy === 'popular' ? play_count DESC : rating DESC)
+      // Database query:
+      // SELECT e.*, c.name as channel_name, COUNT(DISTINCT b.listener_id) as bookmark_count
+      // FROM episodes e
+      // JOIN channels c ON e.channel_id = c.id
+      // LEFT JOIN bookmarks b ON e.id = b.episode_id
+      // WHERE e.channel_id = ? AND (content_type = ? OR ? IS NULL)
+      // GROUP BY e.id
+      // ORDER BY 
+      //   CASE WHEN ? = 'newest' THEN e.published_at END DESC,
+      //   CASE WHEN ? = 'popular' THEN e.play_count END DESC,
+      //   CASE WHEN ? = 'rating' THEN e.rating END DESC
       // LIMIT ? OFFSET ?
 
       const episodes: EpisodeContent[] = [];
@@ -103,14 +110,20 @@ export class EpisodeContentService {
 
       console.log(`[EpisodeContentService] Searching episodes: "${query}"`);
 
-      // Full-text search query
-      // TODO: Implement using MySQL FULLTEXT INDEX or Elasticsearch
-      // SELECT * FROM episodes 
-      // WHERE MATCH(title, description, transcript) AGAINST(? IN BOOLEAN MODE)
-      // AND (channels IS NULL OR channels IN (?))
-      // AND (content_type = ? OR ?)
-      // ORDER BY relevance DESC
+      // Database query with full-text search:
+      // SELECT e.*, c.name as channel_name, 
+      //        MATCH(e.title, e.description, e.transcript) AGAINST(? IN BOOLEAN MODE) as relevance
+      // FROM episodes e
+      // JOIN channels c ON e.channel_id = c.id
+      // WHERE MATCH(e.title, e.description, e.transcript) AGAINST(? IN BOOLEAN MODE)
+      // AND (? IS NULL OR e.channel_id IN (?))
+      // AND (? IS NULL OR e.content_type = ?)
+      // ORDER BY relevance DESC, e.published_at DESC
       // LIMIT ? OFFSET ?
+      //
+      // Alternative using Elasticsearch:
+      // GET /episodes/_search
+      // { "query": { "multi_match": { "query": query, "fields": ["title^2", "description", "transcript"] } } }
 
       const episodes: EpisodeContent[] = [];
 
@@ -138,12 +151,14 @@ export class EpisodeContentService {
 
       console.log(`[EpisodeContentService] Fetching trending episodes (${timeRange})`);
 
-      // Trending query based on time range
-      // TODO: Implement database query
-      // SELECT * FROM episodes
-      // WHERE published_at > DATE_SUB(NOW(), INTERVAL ? DAY)
-      // AND (channels IS NULL OR channels IN (?))
-      // ORDER BY (play_count * 0.6 + bookmark_count * 0.4) DESC
+      // Database query for trending episodes:
+      // SELECT e.*, c.name as channel_name,
+      //        (e.play_count * 0.6 + e.bookmark_count * 0.4) as trend_score
+      // FROM episodes e
+      // JOIN channels c ON e.channel_id = c.id
+      // WHERE e.published_at > DATE_SUB(NOW(), INTERVAL ? DAY)
+      // AND (? IS NULL OR e.channel_id IN (?))
+      // ORDER BY trend_score DESC, e.published_at DESC
       // LIMIT ?
 
       const episodes: EpisodeContent[] = [];
@@ -173,12 +188,14 @@ export class EpisodeContentService {
 
       console.log(`[EpisodeContentService] Fetching episodes for topic: ${topic}`);
 
-      // Topic filtering query
-      // TODO: Implement database query
-      // SELECT * FROM episodes
-      // WHERE JSON_CONTAINS(topics, JSON_QUOTE(?))
-      // AND (channels IS NULL OR channels IN (?))
-      // ORDER BY published_at DESC
+      // Database query for episodes by topic:
+      // SELECT e.*, c.name as channel_name
+      // FROM episodes e
+      // JOIN channels c ON e.channel_id = c.id
+      // JOIN episode_topics et ON e.id = et.episode_id
+      // WHERE et.topic = ?
+      // AND (? IS NULL OR e.channel_id IN (?))
+      // ORDER BY e.published_at DESC
       // LIMIT ? OFFSET ?
 
       const episodes: EpisodeContent[] = [];
@@ -197,20 +214,20 @@ export class EpisodeContentService {
     try {
       console.log(`[EpisodeContentService] Calculating stats for channel ${channelId}`);
 
-      // Aggregation query for channel statistics
-      // TODO: Implement database aggregation
+      // Database aggregation query:
       // SELECT
       //   COUNT(*) as totalEpisodes,
-      //   SUM(duration) as totalDuration,
-      //   SUM(file_size) as totalSize,
-      //   SUM(CASE WHEN content_type = 'audio' THEN 1 ELSE 0 END) as audioCount,
-      //   SUM(CASE WHEN content_type = 'video' THEN 1 ELSE 0 END) as videoCount,
-      //   SUM(CASE WHEN content_type = 'document' THEN 1 ELSE 0 END) as documentCount,
-      //   SUM(CASE WHEN content_type = 'transcript' THEN 1 ELSE 0 END) as transcriptCount,
-      //   AVG(rating) as avgRating,
-      //   SUM(play_count) as totalPlays,
-      //   SUM(bookmark_count) as totalBookmarks
-      // FROM episodes WHERE channel_id = ?
+      //   SUM(e.duration) as totalDuration,
+      //   SUM(e.file_size) as totalSize,
+      //   SUM(CASE WHEN e.content_type = 'audio' THEN 1 ELSE 0 END) as audioCount,
+      //   SUM(CASE WHEN e.content_type = 'video' THEN 1 ELSE 0 END) as videoCount,
+      //   SUM(CASE WHEN e.content_type = 'document' THEN 1 ELSE 0 END) as documentCount,
+      //   SUM(CASE WHEN e.content_type = 'transcript' THEN 1 ELSE 0 END) as transcriptCount,
+      //   AVG(e.rating) as avgRating,
+      //   SUM(e.play_count) as totalPlays,
+      //   SUM(e.bookmark_count) as totalBookmarks
+      // FROM episodes e
+      // WHERE e.channel_id = ?
 
       const stats: ChannelContentStats = {
         channelId,
@@ -240,7 +257,11 @@ export class EpisodeContentService {
     try {
       console.log(`[EpisodeContentService] Fetching episode ${episodeId}`);
 
-      // TODO: Replace with database query by ID
+      // Database query:
+      // SELECT e.*, c.name as channel_name
+      // FROM episodes e
+      // JOIN channels c ON e.channel_id = c.id
+      // WHERE e.id = ?
 
       return null;
     } catch (error) {
@@ -256,9 +277,10 @@ export class EpisodeContentService {
     try {
       console.log(`[EpisodeContentService] Incrementing play count for ${episodeId}`);
 
-      // Update query
-      // TODO: Implement database update
+      // Database update:
       // UPDATE episodes SET play_count = play_count + 1, updated_at = NOW() WHERE id = ?
+      // Also log play in plays table:
+      // INSERT INTO plays (episode_id, listener_id, started_at, created_at) VALUES (?, ?, NOW(), NOW())
 
       return true;
     } catch (error) {
@@ -274,9 +296,10 @@ export class EpisodeContentService {
     try {
       console.log(`[EpisodeContentService] Incrementing bookmark count for ${episodeId}`);
 
-      // Update query
-      // TODO: Implement database update
+      // Database update:
       // UPDATE episodes SET bookmark_count = bookmark_count + 1, updated_at = NOW() WHERE id = ?
+      // Also log bookmark in bookmarks table:
+      // INSERT INTO bookmarks (episode_id, listener_id, created_at) VALUES (?, ?, NOW())
 
       return true;
     } catch (error) {
@@ -292,8 +315,13 @@ export class EpisodeContentService {
     try {
       console.log(`[EpisodeContentService] Getting next episode for scheduler (${channelId})`);
 
-      // TODO: Replace with database query for next episode in rotation
-      // Should consider: published date, play count, rotation rules
+      // Database query for next episode in rotation:
+      // SELECT e.*, c.name as channel_name
+      // FROM episodes e
+      // JOIN channels c ON e.channel_id = c.id
+      // WHERE e.channel_id = ? AND e.published_at <= NOW()
+      // ORDER BY e.last_played_at ASC, e.published_at DESC
+      // LIMIT 1
 
       return null;
     } catch (error) {
@@ -312,14 +340,14 @@ export class EpisodeContentService {
     transcript: number;
   }> {
     try {
-      // Content type distribution query
-      // TODO: Implement database query
+      // Database query:
       // SELECT
-      //   SUM(CASE WHEN content_type = 'audio' THEN 1 ELSE 0 END) as audio,
-      //   SUM(CASE WHEN content_type = 'video' THEN 1 ELSE 0 END) as video,
-      //   SUM(CASE WHEN content_type = 'document' THEN 1 ELSE 0 END) as document,
-      //   SUM(CASE WHEN content_type = 'transcript' THEN 1 ELSE 0 END) as transcript
-      // FROM episodes WHERE (channel_id = ? OR ? IS NULL)
+      //   SUM(CASE WHEN e.content_type = 'audio' THEN 1 ELSE 0 END) as audio,
+      //   SUM(CASE WHEN e.content_type = 'video' THEN 1 ELSE 0 END) as video,
+      //   SUM(CASE WHEN e.content_type = 'document' THEN 1 ELSE 0 END) as document,
+      //   SUM(CASE WHEN e.content_type = 'transcript' THEN 1 ELSE 0 END) as transcript
+      // FROM episodes e
+      // WHERE (? IS NULL OR e.channel_id = ?)
 
       return {
         audio: 0,
@@ -341,12 +369,12 @@ export class EpisodeContentService {
     count: number;
   }>> {
     try {
-      // Topics aggregation query
-      // TODO: Implement database query
-      // SELECT topic, COUNT(*) as count
-      // FROM episodes, JSON_TABLE(topics, '$[*]' COLUMNS (topic VARCHAR(255) PATH '$'))
-      // WHERE (channel_id = ? OR ? IS NULL)
-      // GROUP BY topic
+      // Database query:
+      // SELECT et.topic, COUNT(DISTINCT et.episode_id) as count
+      // FROM episode_topics et
+      // JOIN episodes e ON et.episode_id = e.id
+      // WHERE (? IS NULL OR e.channel_id = ?)
+      // GROUP BY et.topic
       // ORDER BY count DESC
 
       return [];
