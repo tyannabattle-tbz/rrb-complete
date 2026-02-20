@@ -337,14 +337,16 @@ export default function RadioStation() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'radio-station' ? radioContent : rrbRadioContent}
+        <div key={activeTab}>
+          {activeTab === 'radio-station' ? radioContent : rrbRadioContent}
+        </div>
         {/* Commercials */}
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8" key="commercials">
           <RadioCommercials />
         </div>
 
         {/* Seasonal Campaigns */}
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8" key="campaigns">
           <SeasonalCampaigns />
         </div>
       </div>
