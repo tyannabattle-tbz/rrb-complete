@@ -523,7 +523,10 @@ export default function RadioCommercials() {
   const handleEnded = () => {
     setIsPlaying(false);
     trackCommercialPlay(currentCommercial.id);
-    if (autoRotate) handleNext();
+    if (autoRotate) {
+      setCurrentCommercialIndex((prev) => (prev + 1) % commercials.length);
+      setCurrentTime(0);
+    }
   };
 
   const trackCommercialPlay = (commercialId: number) => {
@@ -550,7 +553,9 @@ export default function RadioCommercials() {
   useEffect(() => {
     if (autoRotate && !isPlaying) {
       rotationIntervalRef.current = setInterval(() => {
-        handleNext();
+        setCurrentCommercialIndex((prev) => (prev + 1) % commercials.length);
+        setCurrentTime(0);
+        setIsPlaying(false);
       }, 300000); // 5 minutes
     }
 
@@ -559,7 +564,7 @@ export default function RadioCommercials() {
         clearInterval(rotationIntervalRef.current);
       }
     };
-  }, [autoRotate, isPlaying, currentCommercialIndex, handleNext]);
+  }, [autoRotate, isPlaying, commercials.length]);
 
   // Cleanup TTS on unmount
   useEffect(() => {
