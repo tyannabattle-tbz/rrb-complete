@@ -139,6 +139,7 @@ export function AppHeaderEnhanced() {
         { label: 'The Music', path: '/rrb/the-music' },
         { label: 'Radio Station', path: '/rrb/radio-station' },
         { label: 'Podcast Feeds', path: '/rrb/podcast-feeds' },
+        { label: 'Realtime Analytics', path: '/rrb/realtime-analytics' },
         { label: 'Podcast & Video', path: '/rrb/podcast-and-video' },
         { label: 'AI Assistants', path: '/rrb/ai-assistants' },
         { label: 'Healing Frequencies', path: '/rrb/healing-music-frequencies' },
@@ -154,7 +155,6 @@ export function AppHeaderEnhanced() {
       icon: Radio,
       items: [
         { label: 'RRB Radio Station', path: '/rrb/radio-station' },
-        { label: 'Podcast Feeds', path: '/rrb/podcast-feeds' },
         { label: 'Meditation Guides', path: '/rrb/meditation-guides' },
         { label: 'Frequency Guides', path: '/rrb/frequency-guides' },
         { label: 'Custom Meditation', path: '/rrb/custom-meditation-builder' },
