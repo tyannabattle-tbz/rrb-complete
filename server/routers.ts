@@ -29,6 +29,7 @@ import { itunesPodcastsRouter } from "./routers/itunesPodcasts";
 import { chatStreamingRouter } from "./routers/chatStreamingRouter";
 import { locationSharingRouter } from "./routers/locationSharingRouter";
 import { sitemapRouter } from "./routers/sitemapRouter";
+import { integrationCredentialsRouter } from "./routers/integrationCredentialsRouter";
 import { fileAnalysisRouter } from "./routers/fileAnalysisRouter";
 import { dashboardRouter } from "./routers/dashboardRouter";
 import { broadcastRouter } from "./routers/broadcastRouter";
@@ -134,6 +135,9 @@ export const appRouter = router({
 
   // Sitemap router for SEO
   sitemap: sitemapRouter,
+
+  // Integration Credentials Manager
+  integrationCredentials: integrationCredentialsRouter,
 
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter,
