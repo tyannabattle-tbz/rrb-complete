@@ -143,6 +143,7 @@ import RRBAdminDashboard from '@/pages/rrb/AdminDashboard';
 import RealtimeCollaboration from '@/pages/rrb/RealtimeCollaboration';
 import MobileApp from '@/pages/rrb/MobileApp';
 import DonationCheckout from '@/pages/rrb/DonationCheckout';
+import { PodcastFeeds } from '@/pages/rrb/PodcastFeeds';
 import { DonationCheckout as LegacyDonationCheckout } from '@/pages/DonationCheckout';
 import LivePodcastProduction from '@/pages/LivePodcastProduction';
 import RRBTheMusic from '@/pages/rrb/TheMusic';
@@ -403,6 +404,7 @@ function Router() {
       <Route path="/rrb/rss" component={RSSSubscribe} />
       <Route path="/rss" component={RSSSubscribe} />
       <Route path="/rrb/radio-station" component={RRBRadioStation} />
+      <Route path="/rrb/podcast-feeds" component={PodcastFeeds} />
       <Route path="/rrb/poetry-hour" component={RRBPoetryHour} />
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
       <Route path="/rrb/broadcast" component={RRBBroadcast} />

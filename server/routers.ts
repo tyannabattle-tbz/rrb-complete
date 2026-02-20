@@ -101,6 +101,7 @@ import { radioDirectoryRouter as phase4RadioDirectoryRouter } from "./routers/ra
 import { contentCalendarRouter } from "./routers/contentCalendarRouter";
 import { analyticsRouter } from "./routers/analyticsRouter";
 import { communityRouter } from "./routers/communityRouter";
+import { podcastFeedsRouter } from "./routers/podcastFeedsRouter";
 
 // AI Business Assistants (5 autonomous bots)
 import { aiBusinessAssistantsRouter } from "./routers/aiBusinessAssistants";
@@ -381,6 +382,9 @@ export const appRouter = router({
 
   // Phase 7: Community & Engagement (Discord, Telegram, VIP Tiers, Referrals)
   community: communityRouter,
+
+  // Podcast Feeds & Multi-Platform Distribution (Spotify, Apple, YouTube, TuneIn, Amazon, iHeartRadio)
+  podcastFeeds: podcastFeedsRouter,
 
   // Agent Session Management
   agent: router({
