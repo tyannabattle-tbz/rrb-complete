@@ -96,6 +96,12 @@ import { legalRouter } from "./routers/businessLegal";
 // Radio Directory Listing
 import { radioDirectoryRouter } from "./routers/radioDirectory";
 
+// Phase 4-7: Visibility & Engagement Strategy Routers
+import { radioDirectoryRouter as phase4RadioDirectoryRouter } from "./routers/radioDirectoryRouter";
+import { contentCalendarRouter } from "./routers/contentCalendarRouter";
+import { analyticsRouter } from "./routers/analyticsRouter";
+import { communityRouter } from "./routers/communityRouter";
+
 // AI Business Assistants (5 autonomous bots)
 import { aiBusinessAssistantsRouter } from "./routers/aiBusinessAssistants";
 
@@ -362,6 +368,19 @@ export const appRouter = router({
   royaltyAudit: royaltyAuditRouter,
   communityEngagement: communityEngagementRouter,
   aiContentGeneration: aiContentGenerationRouter,
+
+  // ===== Phase 4-7: Radio Platform Visibility & Engagement Strategy =====
+  // Phase 4: Radio Directory Listings (TuneIn, Radio Garden, iHeartRadio, Audacy, Shoutcast, Icecast)
+  radioDirectoryPhase4: phase4RadioDirectoryRouter,
+
+  // Phase 5: Content Calendar & Promotion (Google Calendar, SendGrid)
+  contentCalendar: contentCalendarRouter,
+
+  // Phase 6: Listener Analytics Dashboard (Google Analytics 4, Mixpanel)
+  analytics: analyticsRouter,
+
+  // Phase 7: Community & Engagement (Discord, Telegram, VIP Tiers, Referrals)
+  community: communityRouter,
 
   // Agent Session Management
   agent: router({
