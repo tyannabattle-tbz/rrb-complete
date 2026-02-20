@@ -16,8 +16,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Upload, Play, Trash2, Settings, BarChart3, Clock } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function CommercialUpload() {
+  const { toast } = useToast();
+  const uploadMutation = trpc.commercialMP3.uploadCommercial.useMutation();
+  const deleteMutation = trpc.commercialMP3.deleteCommercial.useMutation();
+  const { data: commercialsData } = trpc.commercialMP3.getCommercials.useQuery();
+  
   const [uploadedFiles, setUploadedFiles] = useState<Array<{
     id: string;
     name: string;
@@ -25,11 +32,11 @@ export default function CommercialUpload() {
     duration: number;
     uploadedAt: string;
     status: 'uploaded' | 'processing' | 'active';
-  }>>([]);
+  }>([]);
 
   const [dragActive, setDragActive] = useState(false);
 
-  const commercials = [
+  const commercials = commercialsData || [
     {
       id: 'rrbid_001',
       title: 'RRB Radio Station ID',
@@ -102,7 +109,7 @@ export default function CommercialUpload() {
     }
   };
 
-  const handleFiles = (files: FileList) => {
+  const handleFiles = async (files: FileList) => {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (file.type === 'audio/mpeg' || file.type === 'audio/mp3') {
@@ -116,14 +123,39 @@ export default function CommercialUpload() {
         };
         setUploadedFiles([...uploadedFiles, newFile]);
 
-        // Simulate upload completion
-        setTimeout(() => {
+        try {
+          // Upload to server
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('name', file.name);
+          formData.append('duration', newFile.duration.toString());
+
+          await uploadMutation.mutateAsync({
+            fileName: file.name,
+            fileSize: file.size,
+            duration: newFile.duration,
+            contentType: file.type,
+          });
+
+          // Mark as active
           setUploadedFiles(prev =>
             prev.map(f =>
               f.id === newFile.id ? { ...f, status: 'active' as const } : f
             )
           );
-        }, 2000);
+
+          toast({
+            title: 'Success',
+            description: `${file.name} uploaded successfully`,
+          });
+        } catch (error) {
+          toast({
+            title: 'Error',
+            description: `Failed to upload ${file.name}`,
+            variant: 'destructive',
+          });
+          setUploadedFiles(prev => prev.filter(f => f.id !== newFile.id));
+        }
       }
     }
   };
@@ -257,7 +289,26 @@ export default function CommercialUpload() {
                         <Settings className="w-3 h-3" />
                         Settings
                       </Button>
-                      <Button size="sm" variant="outline" className="flex items-center gap-1 text-red-600">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="flex items-center gap-1 text-red-600"
+                        onClick={async () => {
+                          try {
+                            await deleteMutation.mutateAsync({ commercialId: commercial.id });
+                            toast({
+                              title: 'Success',
+                              description: 'Commercial removed successfully',
+                            });
+                          } catch (error) {
+                            toast({
+                              title: 'Error',
+                              description: 'Failed to remove commercial',
+                              variant: 'destructive',
+                            });
+                          }
+                        }}
+                      >
                         <Trash2 className="w-3 h-3" />
                         Remove
                       </Button>

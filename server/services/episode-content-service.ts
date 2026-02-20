@@ -83,6 +83,17 @@ export class EpisodeContentService {
       //   CASE WHEN ? = 'rating' THEN e.rating END DESC
       // LIMIT ? OFFSET ?
 
+      // TODO: Replace with actual database query
+      // const result = await db.query(`
+      //   SELECT e.*, COUNT(DISTINCT b.listener_id) as bookmark_count
+      //   FROM episodes e
+      //   LEFT JOIN bookmarks b ON e.id = b.episode_id
+      //   WHERE e.channel_id = ? ${contentType ? 'AND e.content_type = ?' : ''}
+      //   GROUP BY e.id
+      //   ORDER BY ${sortBy === 'newest' ? 'e.published_at DESC' : sortBy === 'popular' ? 'e.play_count DESC' : 'e.rating DESC'}
+      //   LIMIT ? OFFSET ?
+      // `, [channelId, ...(contentType ? [contentType] : []), limit, offset]);
+
       const episodes: EpisodeContent[] = [];
 
       return episodes;
@@ -125,6 +136,18 @@ export class EpisodeContentService {
       // GET /episodes/_search
       // { "query": { "multi_match": { "query": query, "fields": ["title^2", "description", "transcript"] } } }
 
+      // TODO: Replace with actual database query
+      // const searchQuery = `%${query}%`;
+      // const result = await db.query(`
+      //   SELECT e.*, MATCH(e.title, e.description) AGAINST(? IN BOOLEAN MODE) as relevance
+      //   FROM episodes e
+      //   WHERE MATCH(e.title, e.description) AGAINST(? IN BOOLEAN MODE)
+      //   ${options?.channels?.length ? 'AND e.channel_id IN (?)' : ''}
+      //   ${options?.contentType ? 'AND e.content_type = ?' : ''}
+      //   ORDER BY relevance DESC, e.published_at DESC
+      //   LIMIT ? OFFSET ?
+      // `, [query, query, ...(options?.channels?.length ? [options.channels] : []), ...(options?.contentType ? [options.contentType] : []), limit, offset]);
+
       const episodes: EpisodeContent[] = [];
 
       return episodes;
@@ -160,6 +183,17 @@ export class EpisodeContentService {
       // AND (? IS NULL OR e.channel_id IN (?))
       // ORDER BY trend_score DESC, e.published_at DESC
       // LIMIT ?
+
+      // TODO: Replace with actual database query
+      // const dayRange = timeRange === 'day' ? 1 : timeRange === 'week' ? 7 : timeRange === 'month' ? 30 : 365;
+      // const result = await db.query(`
+      //   SELECT e.*, (e.play_count * 0.6 + e.bookmark_count * 0.4) as trend_score
+      //   FROM episodes e
+      //   WHERE e.published_at > DATE_SUB(NOW(), INTERVAL ? DAY)
+      //   ${channels.length ? 'AND e.channel_id IN (?)' : ''}
+      //   ORDER BY trend_score DESC, e.published_at DESC
+      //   LIMIT ?
+      // `, [dayRange, ...(channels.length ? [channels] : []), limit]);
 
       const episodes: EpisodeContent[] = [];
 
@@ -228,6 +262,23 @@ export class EpisodeContentService {
       //   SUM(e.bookmark_count) as totalBookmarks
       // FROM episodes e
       // WHERE e.channel_id = ?
+
+      // TODO: Replace with actual database query
+      // const result = await db.query(`
+      //   SELECT
+      //     COUNT(*) as totalEpisodes,
+      //     SUM(e.duration) as totalDuration,
+      //     SUM(e.file_size) as totalSize,
+      //     SUM(CASE WHEN e.content_type = 'audio' THEN 1 ELSE 0 END) as audioCount,
+      //     SUM(CASE WHEN e.content_type = 'video' THEN 1 ELSE 0 END) as videoCount,
+      //     SUM(CASE WHEN e.content_type = 'document' THEN 1 ELSE 0 END) as documentCount,
+      //     SUM(CASE WHEN e.content_type = 'transcript' THEN 1 ELSE 0 END) as transcriptCount,
+      //     AVG(e.rating) as avgRating,
+      //     SUM(e.play_count) as totalPlays,
+      //     SUM(e.bookmark_count) as totalBookmarks
+      //   FROM episodes e
+      //   WHERE e.channel_id = ?
+      // `, [channelId]);
 
       const stats: ChannelContentStats = {
         channelId,
