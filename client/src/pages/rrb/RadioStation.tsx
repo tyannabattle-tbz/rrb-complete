@@ -5,8 +5,8 @@ import { HybridCastWidgetContainer } from '@/components/rrb/HybridCastWidgetCont
 import RadioCommercials from '@/components/rrb/RadioCommercials';
 import SeasonalCampaigns from '@/components/rrb/SeasonalCampaigns';
 import { trpc } from '@/lib/trpc';
-import { AudioUploadManager } from '@/components/AudioUploadManager';
-import { LiveCallIn } from '@/components/rrb/LiveCallIn';
+// import { AudioUploadManager } from '@/components/AudioUploadManager';
+// import { LiveCallIn } from '@/components/rrb/LiveCallIn';
 
 function formatPlayCount(count: number): string {
   if (count >= 1000) return `${(count / 1000).toFixed(1).replace(/\.0$/, '')}k`;
@@ -288,14 +288,14 @@ export default function RadioStation() {
         </div>
 
         {/* Audio Upload Manager */}
-        <div className="container mx-auto px-4 py-8">
+        {/* <div className="container mx-auto px-4 py-8">
           <AudioUploadManager />
-        </div>
+        </div> */}
 
         {/* Live Call In */}
-        <div className="container mx-auto px-4 py-8">
+        {/* <div className="container mx-auto px-4 py-8">
           <LiveCallIn />
-        </div>
+        </div> */}
       </div>
     </>
   );
