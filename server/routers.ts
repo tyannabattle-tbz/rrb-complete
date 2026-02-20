@@ -102,6 +102,7 @@ import { contentCalendarRouter } from "./routers/contentCalendarRouter";
 import { analyticsRouter } from "./routers/analyticsRouter";
 import { communityRouter } from "./routers/communityRouter";
 import { podcastFeedsRouter } from "./routers/podcastFeedsRouter";
+import { realtimeAnalyticsRouter } from "./routers/realtimeAnalyticsRouter";
 
 // AI Business Assistants (5 autonomous bots)
 import { aiBusinessAssistantsRouter } from "./routers/aiBusinessAssistants";
@@ -385,6 +386,9 @@ export const appRouter = router({
 
   // Podcast Feeds & Multi-Platform Distribution (Spotify, Apple, YouTube, TuneIn, Amazon, iHeartRadio)
   podcastFeeds: podcastFeedsRouter,
+
+  // Phase 5: Real-Time Analytics with Live Listener Data (Spotify, Apple, YouTube, TuneIn, Amazon, iHeartRadio)
+  realtimeAnalytics: realtimeAnalyticsRouter,
 
   // Agent Session Management
   agent: router({
