@@ -1,13 +1,20 @@
 /**
  * Channel Discovery Page
- * Phase 8: Comprehensive content discovery interface
+ * Phase 8+: Multi-format content discovery interface
+ * 
+ * Supports:
+ * - Audio (podcasts, music, broadcasts)
+ * - Documents (PDFs, articles, evidence)
+ * - Videos (recordings, tutorials, testimonials)
+ * - Transcripts (searchable text with timestamps)
  * 
  * Features:
- * - Full-text search across all channels
+ * - Full-text search across all channels and content types
  * - Browse by topic/category
+ * - Filter by content type
  * - View trending content
  * - Get personalized recommendations
- * - Bookmark episodes
+ * - Bookmark content
  * - Subscribe to channels
  */
 
@@ -18,33 +25,63 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Share2, Play, Clock, Zap, TrendingUp, Search as SearchIcon } from "lucide-react";
+import { Heart, Share2, Play, Clock, Zap, TrendingUp, Search as SearchIcon, FileText, Video, BookOpen } from "lucide-react";
 
-export function ChannelDiscovery() {
+type ContentType = "audio" | "document" | "video" | "transcript";
+
+const CONTENT_TYPE_ICONS: Record<ContentType, React.ReactNode> = {
+  audio: <Play className="w-4 h-4" />,
+  document: <FileText className="w-4 h-4" />,
+  video: <Video className="w-4 h-4" />,
+  transcript: <BookOpen className="w-4 h-4" />,
+};
+
+const CONTENT_TYPE_LABELS: Record<ContentType, string> = {
+  audio: "Audio",
+  document: "Document",
+  video: "Video",
+  transcript: "Transcript",
+};
+
+const CONTENT_TYPE_COLORS: Record<ContentType, string> = {
+  audio: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  document: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  video: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  transcript: "bg-green-500/10 text-green-400 border-green-500/20",
+};
+
+export default function ChannelDiscovery() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [selectedContentType, setSelectedContentType] = useState<ContentType | null>(null);
   const [activeTab, setActiveTab] = useState("search");
-  const [bookmarkedEpisodes, setBookmarkedEpisodes] = useState<Set<string>>(new Set());
+  const [bookmarkedContent, setBookmarkedContent] = useState<Set<string>>(new Set());
 
   // Fetch data from backend
   const { data: searchResults, isLoading: searchLoading } = trpc.channelDiscovery.search.useQuery(
     {
       query: searchQuery,
       limit: 20,
-      filters: selectedTopic ? { topic: selectedTopic } : undefined,
+      filters: {
+        topic: selectedTopic || undefined,
+        contentType: selectedContentType || undefined,
+      },
     },
     { enabled: searchQuery.length > 0 }
   );
 
   const { data: topics } = trpc.channelDiscovery.getTopics.useQuery();
   const { data: trendingTopics } = trpc.channelDiscovery.getTrendingTopics.useQuery();
-  const { data: popularEpisodes } = trpc.channelDiscovery.getPopularEpisodes.useQuery({
+  const { data: popularContent } = trpc.channelDiscovery.getPopularContent.useQuery({
     timeRange: "week",
     limit: 10,
+    contentType: selectedContentType || undefined,
   });
 
+  const { data: contentStats } = trpc.channelDiscovery.getContentStats.useQuery();
+
   const { data: userRecommendations } = trpc.channelDiscovery.getRecommendations.useQuery(
-    { limit: 10 },
+    { limit: 10, contentType: selectedContentType || undefined },
     { enabled: activeTab === "recommendations" }
   );
 
@@ -53,16 +90,18 @@ export function ChannelDiscovery() {
     { enabled: activeTab === "bookmarks" }
   );
 
-  const bookmarkMutation = trpc.channelDiscovery.bookmarkEpisode.useMutation();
+  const { data: searchFilters } = trpc.channelDiscovery.getSearchFilters.useQuery();
 
-  const handleBookmark = (episodeId: string) => {
-    bookmarkMutation.mutate({ episodeId });
-    setBookmarkedEpisodes(prev => {
+  const bookmarkMutation = trpc.channelDiscovery.bookmarkContent.useMutation();
+
+  const handleBookmark = (contentId: string) => {
+    bookmarkMutation.mutate({ contentId });
+    setBookmarkedContent(prev => {
       const next = new Set(prev);
-      if (next.has(episodeId)) {
-        next.delete(episodeId);
+      if (next.has(contentId)) {
+        next.delete(contentId);
       } else {
-        next.add(episodeId);
+        next.add(contentId);
       }
       return next;
     });
@@ -70,7 +109,47 @@ export function ChannelDiscovery() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Search is triggered by query state change
+  };
+
+  const formatDuration = (seconds?: number) => {
+    if (!seconds) return null;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  };
+
+  const renderContentMetadata = (item: any) => {
+    return (
+      <div className="flex flex-wrap gap-2 text-sm text-slate-400">
+        {item.type === "audio" && item.duration && (
+          <span className="flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            {formatDuration(item.duration)}
+          </span>
+        )}
+        {item.type === "document" && item.pages && (
+          <span className="flex items-center gap-1">
+            <FileText className="w-3 h-3" />
+            {item.pages} pages
+          </span>
+        )}
+        {item.type === "video" && item.duration && (
+          <span className="flex items-center gap-1">
+            <Video className="w-3 h-3" />
+            {formatDuration(item.duration)}
+          </span>
+        )}
+        {item.type === "transcript" && item.words && (
+          <span className="flex items-center gap-1">
+            <BookOpen className="w-3 h-3" />
+            {item.words.toLocaleString()} words
+          </span>
+        )}
+        <span>{item.plays?.toLocaleString() || 0} views</span>
+        <span>⭐ {item.rating?.toFixed(1) || "N/A"}</span>
+      </div>
+    );
   };
 
   return (
@@ -78,8 +157,8 @@ export function ChannelDiscovery() {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-700/50">
         <div className="container mx-auto px-4 py-6">
-          <h1 className="text-4xl font-bold text-white mb-2">Discover Content</h1>
-          <p className="text-slate-400">Search across all RRB channels, explore topics, and find your next favorite episode</p>
+          <h1 className="text-4xl font-bold text-white mb-2">🔍 Discover Content</h1>
+          <p className="text-slate-400">Search across all RRB channels, explore topics, and find your next favorite content in any format</p>
         </div>
       </div>
 
@@ -98,115 +177,175 @@ export function ChannelDiscovery() {
             {/* Search Bar */}
             <form onSubmit={handleSearch} className="space-y-4">
               <div className="relative">
-                <SearchIcon className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
+                <SearchIcon className="absolute left-3 top-3 w-5 h-5 text-slate-500" />
                 <Input
                   type="text"
-                  placeholder="Search episodes, channels, topics..."
+                  placeholder="Search episodes, documents, videos, transcripts..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-12 text-base"
+                  className="pl-10 py-6 text-lg bg-slate-800 border-slate-700 text-white placeholder-slate-500"
                 />
+              </div>
+
+              {/* Content Type Filter */}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={selectedContentType === null ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedContentType(null)}
+                  className="rounded-full"
+                >
+                  All Content
+                </Button>
+                {["audio", "document", "video", "transcript"].map((type) => (
+                  <Button
+                    key={type}
+                    variant={selectedContentType === type ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedContentType(type as ContentType)}
+                    className="rounded-full flex items-center gap-2"
+                  >
+                    {CONTENT_TYPE_ICONS[type as ContentType]}
+                    {CONTENT_TYPE_LABELS[type as ContentType]}
+                  </Button>
+                ))}
               </div>
             </form>
 
             {/* Search Results */}
-            {searchQuery && (
+            {searchLoading && (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+                <p className="text-slate-400 mt-4">Searching across all channels...</p>
+              </div>
+            )}
+
+            {searchResults && searchResults.results.length > 0 && (
               <div className="space-y-4">
-                {searchLoading ? (
-                  <div className="grid gap-4">
-                    {[...Array(5)].map((_, i) => (
-                      <div key={i} className="h-24 bg-slate-700/50 rounded-lg animate-pulse" />
-                    ))}
-                  </div>
-                ) : searchResults && searchResults.results.length > 0 ? (
-                  <div className="space-y-4">
-                    <p className="text-sm text-slate-400">
-                      Found {searchResults.total} results for "{searchResults.query}"
-                    </p>
-                    {searchResults.results.map((episode) => (
-                      <EpisodeCard
-                        key={episode.id}
-                        episode={episode}
-                        isBookmarked={bookmarkedEpisodes.has(episode.id)}
-                        onBookmark={() => handleBookmark(episode.id)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <p className="text-slate-400">No episodes found. Try a different search.</p>
-                  </div>
-                )}
+                <p className="text-slate-400">Found {searchResults.total} results</p>
+                {searchResults.results.map((item) => (
+                  <Card key={item.id} className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-colors">
+                    <CardContent className="pt-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge className={`${CONTENT_TYPE_COLORS[item.type as ContentType]} border`}>
+                              {CONTENT_TYPE_ICONS[item.type as ContentType]}
+                              <span className="ml-1">{CONTENT_TYPE_LABELS[item.type as ContentType]}</span>
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">{item.channel}</Badge>
+                          </div>
+                          <h3 className="text-lg font-semibold text-white mb-1 truncate">{item.name}</h3>
+                          {renderContentMetadata(item)}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleBookmark(item.id)}
+                            className={bookmarkedContent.has(item.id) ? "text-red-400" : "text-slate-400"}
+                          >
+                            <Heart className={`w-4 h-4 ${bookmarkedContent.has(item.id) ? "fill-current" : ""}`} />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-slate-400">
+                            <Share2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {searchQuery && searchResults && searchResults.results.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-slate-400">No results found for "{searchQuery}"</p>
               </div>
             )}
 
             {!searchQuery && (
               <div className="text-center py-12">
-                <SearchIcon className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-                <p className="text-slate-400">Enter a search term to discover content</p>
+                <p className="text-slate-400">Start typing to search across all RRB channels</p>
               </div>
             )}
           </TabsContent>
 
           {/* Topics Tab */}
           <TabsContent value="topics" className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {topics?.map((topic) => (
-                <TopicCard
+                <Card
                   key={topic.id}
-                  topic={topic}
-                  isSelected={selectedTopic === topic.id}
-                  onSelect={() => {
+                  className="bg-slate-800 border-slate-700 hover:border-accent cursor-pointer transition-colors"
+                  onClick={() => {
                     setSelectedTopic(topic.id);
-                    setSearchQuery("");
                     setActiveTab("search");
+                    setSearchQuery(topic.name);
                   }}
-                />
+                >
+                  <CardContent className="pt-6">
+                    <div className="text-4xl mb-3">{topic.icon}</div>
+                    <h3 className="text-lg font-semibold text-white mb-2">{topic.name}</h3>
+                    <p className="text-slate-400 text-sm">{topic.episodeCount} items</p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </TabsContent>
 
           {/* Trending Tab */}
           <TabsContent value="trending" className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              {trendingTopics?.map((item, idx) => (
-                <Card key={idx} className="bg-slate-800/50 border-slate-700">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg">{item.topic}</CardTitle>
-                        <CardDescription className="text-sm mt-1">
-                          {item.mentions.toLocaleString()} mentions
-                        </CardDescription>
+            {/* Trending Topics */}
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-4">Trending Topics</h2>
+              <div className="space-y-3">
+                {trendingTopics?.map((item, idx) => (
+                  <Card key={idx} className="bg-slate-800 border-slate-700">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-lg font-semibold text-white">{item.topic}</p>
+                          <p className="text-slate-400 text-sm">{item.mentions} mentions</p>
+                        </div>
+                        <div className="text-right">
+                          <p className={`text-2xl font-bold ${item.trend === "↑" ? "text-green-400" : "text-red-400"}`}>
+                            {item.trend}
+                          </p>
+                          <p className="text-slate-400 text-sm">{item.growth}% growth</p>
+                        </div>
                       </div>
-                      <div className={`text-2xl font-bold ${item.trend === "↑" ? "text-green-500" : "text-red-500"}`}>
-                        {item.trend}
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-slate-400" />
-                      <span className={`text-sm font-semibold ${item.growth > 0 ? "text-green-500" : "text-red-500"}`}>
-                        {item.growth > 0 ? "+" : ""}{item.growth}% growth
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
 
-            {/* Popular Episodes */}
-            <div className="mt-8">
+            {/* Popular Content */}
+            <div>
               <h2 className="text-2xl font-bold text-white mb-4">Popular This Week</h2>
               <div className="space-y-4">
-                {popularEpisodes?.map((episode) => (
-                  <EpisodeCard
-                    key={episode.id}
-                    episode={episode}
-                    isBookmarked={bookmarkedEpisodes.has(episode.id)}
-                    onBookmark={() => handleBookmark(episode.id)}
-                  />
+                {popularContent?.map((item) => (
+                  <Card key={item.id} className="bg-slate-800 border-slate-700">
+                    <CardContent className="pt-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge className={`${CONTENT_TYPE_COLORS[item.type as ContentType]} border`}>
+                              {CONTENT_TYPE_ICONS[item.type as ContentType]}
+                              <span className="ml-1">{CONTENT_TYPE_LABELS[item.type as ContentType]}</span>
+                            </Badge>
+                          </div>
+                          <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
+                          <p className="text-slate-400 text-sm">{item.channel}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-accent font-semibold">{item.plays?.toLocaleString()} views</p>
+                          <p className="text-slate-400 text-sm">⭐ {item.rating?.toFixed(1)}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </div>
@@ -216,19 +355,31 @@ export function ChannelDiscovery() {
           <TabsContent value="recommendations" className="space-y-6">
             {userRecommendations && userRecommendations.length > 0 ? (
               <div className="space-y-4">
-                <p className="text-sm text-slate-400">Personalized for you based on your listening history</p>
-                {userRecommendations.map((rec) => (
-                  <RecommendationCard
-                    key={rec.id}
-                    recommendation={rec}
-                    isBookmarked={bookmarkedEpisodes.has(rec.id)}
-                    onBookmark={() => handleBookmark(rec.id)}
-                  />
+                {userRecommendations.map((item) => (
+                  <Card key={item.id} className="bg-slate-800 border-slate-700">
+                    <CardContent className="pt-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge className="bg-accent/10 text-accent border-accent/20">
+                              {Math.round(item.match * 100)}% match
+                            </Badge>
+                          </div>
+                          <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
+                          <p className="text-slate-400 text-sm">{item.channel}</p>
+                          <p className="text-slate-500 text-xs mt-2">{item.reason}</p>
+                        </div>
+                        <Button variant="ghost" size="sm" className="text-slate-400">
+                          <Play className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-slate-400">Start listening to get personalized recommendations</p>
+                <p className="text-slate-400">Listen to more content to get personalized recommendations</p>
               </div>
             )}
           </TabsContent>
@@ -237,30 +388,20 @@ export function ChannelDiscovery() {
           <TabsContent value="bookmarks" className="space-y-6">
             {userBookmarks && userBookmarks.length > 0 ? (
               <div className="space-y-4">
-                {userBookmarks.map((bookmark) => (
-                  <Card key={bookmark.episodeId} className="bg-slate-800/50 border-slate-700">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="text-lg">{bookmark.title}</CardTitle>
-                          <CardDescription>{bookmark.channel}</CardDescription>
+                {userBookmarks.map((item) => (
+                  <Card key={item.contentId} className="bg-slate-800 border-slate-700">
+                    <CardContent className="pt-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
+                          <p className="text-slate-400 text-sm">{item.channel}</p>
+                          {item.timestamp && (
+                            <p className="text-slate-500 text-xs mt-2">Bookmarked at {Math.floor(item.timestamp / 60)}:{String(item.timestamp % 60).padStart(2, "0")}</p>
+                          )}
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleBookmark(bookmark.episodeId)}
-                          className="text-red-500 hover:text-red-600"
-                        >
-                          <Heart className="h-4 w-4 fill-current" />
+                        <Button variant="ghost" size="sm" className="text-red-400">
+                          <Heart className="w-4 h-4 fill-current" />
                         </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
-                        <span>Bookmarked {new Date(bookmark.bookmarkedAt).toLocaleDateString()}</span>
-                        {bookmark.timestamp && (
-                          <span>Resume at {Math.floor(bookmark.timestamp / 60)}:{String(bookmark.timestamp % 60).padStart(2, "0")}</span>
-                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -268,161 +409,50 @@ export function ChannelDiscovery() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <Heart className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-                <p className="text-slate-400">No bookmarked episodes yet</p>
+                <p className="text-slate-400">Bookmark your favorite content to access it later</p>
               </div>
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Content Statistics */}
+        {contentStats && (
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="bg-slate-800 border-slate-700">
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-blue-400">{contentStats.audio}</p>
+                  <p className="text-slate-400 text-sm mt-2">Audio Episodes</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-slate-800 border-slate-700">
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-amber-400">{contentStats.document}</p>
+                  <p className="text-slate-400 text-sm mt-2">Documents</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-slate-800 border-slate-700">
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-purple-400">{contentStats.video}</p>
+                  <p className="text-slate-400 text-sm mt-2">Videos</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-slate-800 border-slate-700">
+              <CardContent className="pt-6">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-green-400">{contentStats.transcript}</p>
+                  <p className="text-slate-400 text-sm mt-2">Transcripts</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-/**
- * Episode Card Component
- */
-function EpisodeCard({
-  episode,
-  isBookmarked,
-  onBookmark,
-}: {
-  episode: any;
-  isBookmarked: boolean;
-  onBookmark: () => void;
-}) {
-  return (
-    <Card className="bg-slate-800/50 border-slate-700 hover:bg-slate-800/70 transition">
-      <CardHeader>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg truncate">{episode.title}</CardTitle>
-            <CardDescription className="text-sm mt-1">{episode.channel}</CardDescription>
-          </div>
-          <div className="flex gap-2 flex-shrink-0">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onBookmark}
-              className={isBookmarked ? "text-red-500" : "text-slate-400"}
-            >
-              <Heart className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
-            </Button>
-            <Button variant="ghost" size="sm" className="text-slate-400">
-              <Share2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
-          <div className="flex items-center gap-1">
-            <Play className="h-4 w-4" />
-            <span>{episode.plays?.toLocaleString() || 0} plays</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            <span>{Math.floor((episode.duration || 0) / 60)}m</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Zap className="h-4 w-4" />
-            <span>{episode.rating || 0} rating</span>
-          </div>
-          {episode.relevance && (
-            <Badge variant="secondary" className="ml-auto">
-              {Math.round((episode.relevance || 0) * 100)}% match
-            </Badge>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-/**
- * Topic Card Component
- */
-function TopicCard({
-  topic,
-  isSelected,
-  onSelect,
-}: {
-  topic: any;
-  isSelected: boolean;
-  onSelect: () => void;
-}) {
-  return (
-    <Card
-      onClick={onSelect}
-      className={`cursor-pointer transition ${
-        isSelected
-          ? "bg-blue-600 border-blue-500"
-          : "bg-slate-800/50 border-slate-700 hover:bg-slate-800/70"
-      }`}
-    >
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">{topic.icon}</span>
-          <div className="flex-1">
-            <CardTitle className={isSelected ? "text-white" : ""}>{topic.name}</CardTitle>
-            <CardDescription className={isSelected ? "text-blue-100" : ""}>
-              {topic.episodeCount} episodes
-            </CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-    </Card>
-  );
-}
-
-/**
- * Recommendation Card Component
- */
-function RecommendationCard({
-  recommendation,
-  isBookmarked,
-  onBookmark,
-}: {
-  recommendation: any;
-  isBookmarked: boolean;
-  onBookmark: () => void;
-}) {
-  return (
-    <Card className="bg-slate-800/50 border-slate-700 hover:bg-slate-800/70 transition">
-      <CardHeader>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg truncate">{recommendation.title}</CardTitle>
-            <CardDescription className="text-sm mt-1">{recommendation.channel}</CardDescription>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onBookmark}
-            className={isBookmarked ? "text-red-500" : "text-slate-400"}
-          >
-            <Heart className={`h-4 w-4 ${isBookmarked ? "fill-current" : ""}`} />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <p className="text-sm text-slate-400">{recommendation.reason}</p>
-          <div className="flex items-center gap-2">
-            <div className="flex-1 bg-slate-700 rounded-full h-2">
-              <div
-                className="bg-blue-500 h-2 rounded-full"
-                style={{ width: `${(recommendation.match || 0) * 100}%` }}
-              />
-            </div>
-            <span className="text-sm font-semibold text-blue-400">
-              {Math.round((recommendation.match || 0) * 100)}%
-            </span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-export default ChannelDiscovery;

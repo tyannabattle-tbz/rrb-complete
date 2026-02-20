@@ -1,14 +1,21 @@
 /**
  * Channel Discovery & Content Search Router
- * Phase 8: Comprehensive content discovery system for RRB platform
+ * Phase 8+: Comprehensive multi-format content discovery system for RRB platform
+ * 
+ * Supports multiple content types:
+ * - Audio (broadcasts, podcasts, music, frequencies)
+ * - Documents (PDFs, evidence, articles, transcripts)
+ * - Videos (recordings, tutorials, testimonials)
+ * - Transcripts (searchable text with timestamps)
  * 
  * Enables listeners to:
  * - Search across all 7 channels by keywords/topics
+ * - Filter by content type (audio, document, video, transcript)
  * - Browse by category/topic
  * - Discover trending content
- * - Find episodes by metadata
+ * - Find content by metadata
  * - Get personalized recommendations
- * - Bookmark favorite episodes
+ * - Bookmark favorite content
  * - Subscribe to channels
  * - Compare channel metrics
  */
@@ -17,15 +24,68 @@ import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
-// RRB Platform Channels (7 channels)
+// Content type enum
+export const CONTENT_TYPES = ["audio", "document", "video", "transcript"] as const;
+export type ContentType = typeof CONTENT_TYPES[number];
+
+// RRB Platform Channels (7 channels) with content type support
 const RRB_CHANNELS = [
-  { id: "ch-legacy", name: "Legacy Restored", description: "Original RRB broadcasts and archives", icon: "🎙️", listeners: 45230 },
-  { id: "ch-healing", name: "Healing Frequencies", description: "Solfeggio frequencies and wellness", icon: "🧘", listeners: 38900 },
-  { id: "ch-proof", name: "Proof Vault", description: "Evidence and documentation archive", icon: "📁", listeners: 28450 },
-  { id: "ch-qmunity", name: "QMunity", description: "Community discussions and interviews", icon: "👥", listeners: 35670 },
-  { id: "ch-miracles", name: "Sweet Miracles", description: "Inspirational stories and testimonies", icon: "✨", listeners: 42100 },
-  { id: "ch-music", name: "Music & Radio", description: "Curated music and radio broadcasts", icon: "🎵", listeners: 52340 },
-  { id: "ch-studio", name: "Studio Sessions", description: "Live studio recordings and production", icon: "🎬", listeners: 31200 },
+  { 
+    id: "ch-legacy", 
+    name: "Legacy Restored", 
+    description: "Original RRB broadcasts and archives", 
+    icon: "🎙️", 
+    listeners: 45230,
+    contentTypes: ["audio", "document", "transcript"] as ContentType[],
+  },
+  { 
+    id: "ch-healing", 
+    name: "Healing Frequencies", 
+    description: "Solfeggio frequencies and wellness", 
+    icon: "🧘", 
+    listeners: 38900,
+    contentTypes: ["audio", "video", "transcript"] as ContentType[],
+  },
+  { 
+    id: "ch-proof", 
+    name: "Proof Vault", 
+    description: "Evidence and documentation archive", 
+    icon: "📁", 
+    listeners: 28450,
+    contentTypes: ["document", "transcript", "video"] as ContentType[],
+  },
+  { 
+    id: "ch-qmunity", 
+    name: "QMunity", 
+    description: "Community discussions and interviews", 
+    icon: "👥", 
+    listeners: 35670,
+    contentTypes: ["audio", "video", "transcript"] as ContentType[],
+  },
+  { 
+    id: "ch-miracles", 
+    name: "Sweet Miracles", 
+    description: "Inspirational stories and testimonies", 
+    icon: "✨", 
+    listeners: 42100,
+    contentTypes: ["audio", "video", "transcript"] as ContentType[],
+  },
+  { 
+    id: "ch-music", 
+    name: "Music & Radio", 
+    description: "Curated music and radio broadcasts", 
+    icon: "🎵", 
+    listeners: 52340,
+    contentTypes: ["audio", "transcript"] as ContentType[],
+  },
+  { 
+    id: "ch-studio", 
+    name: "Studio Sessions", 
+    description: "Live studio recordings and production", 
+    icon: "🎬", 
+    listeners: 31200,
+    contentTypes: ["audio", "video", "transcript"] as ContentType[],
+  },
 ];
 
 // Topics/Categories
@@ -40,22 +100,146 @@ const TOPICS = [
   { id: "live", name: "Live Events", icon: "🔴", episodeCount: 267 },
 ];
 
-// Sample episodes for search
-const SAMPLE_EPISODES = [
-  { id: "ep-001", title: "The Beginning: RRB Legacy Restored", channel: "ch-legacy", topic: "history", duration: 3240, plays: 12450, rating: 4.8, date: new Date("2024-01-15") },
-  { id: "ep-002", title: "Healing with Solfeggio Frequencies", channel: "ch-healing", topic: "wellness", duration: 2100, plays: 8900, rating: 4.9, date: new Date("2024-01-16") },
-  { id: "ep-003", title: "Community Voices: Stories of Impact", channel: "ch-qmunity", topic: "community", duration: 2850, plays: 6700, rating: 4.7, date: new Date("2024-01-17") },
-  { id: "ep-004", title: "Music Monday: Greatest Hits", channel: "ch-music", topic: "music", duration: 3600, plays: 15230, rating: 4.6, date: new Date("2024-01-18") },
-  { id: "ep-005", title: "Sweet Miracles: Transformation Stories", channel: "ch-miracles", topic: "inspiration", duration: 2400, plays: 9800, rating: 4.9, date: new Date("2024-01-19") },
-  { id: "ep-006", title: "Live from the Studio", channel: "ch-studio", topic: "live", duration: 4200, plays: 5600, rating: 4.5, date: new Date("2024-01-20") },
-  { id: "ep-007", title: "Evidence Archive: Deep Dive", channel: "ch-proof", topic: "history", duration: 3900, plays: 4200, rating: 4.8, date: new Date("2024-01-21") },
-  { id: "ep-008", title: "Interview with Industry Leaders", channel: "ch-qmunity", topic: "interviews", duration: 3300, plays: 7400, rating: 4.7, date: new Date("2024-01-22") },
+// Sample multi-format content for search
+const SAMPLE_CONTENT = [
+  { 
+    id: "ep-001", 
+    title: "The Beginning: RRB Legacy Restored", 
+    channel: "ch-legacy", 
+    topic: "history", 
+    type: "audio" as ContentType,
+    duration: 3240, 
+    plays: 12450, 
+    rating: 4.8, 
+    date: new Date("2024-01-15"),
+    fileSize: "45 MB",
+    format: "MP3",
+  },
+  { 
+    id: "ep-002", 
+    title: "Healing with Solfeggio Frequencies", 
+    channel: "ch-healing", 
+    topic: "wellness", 
+    type: "audio" as ContentType,
+    duration: 2100, 
+    plays: 8900, 
+    rating: 4.9, 
+    date: new Date("2024-01-16"),
+    fileSize: "32 MB",
+    format: "MP3",
+  },
+  { 
+    id: "doc-001", 
+    title: "Proof Vault: Historical Evidence Document", 
+    channel: "ch-proof", 
+    topic: "history", 
+    type: "document" as ContentType,
+    pages: 45,
+    plays: 3200, 
+    rating: 4.7, 
+    date: new Date("2024-01-17"),
+    fileSize: "2.3 MB",
+    format: "PDF",
+  },
+  { 
+    id: "ep-003", 
+    title: "Community Voices: Stories of Impact", 
+    channel: "ch-qmunity", 
+    topic: "community", 
+    type: "video" as ContentType,
+    duration: 2850, 
+    plays: 6700, 
+    rating: 4.7, 
+    date: new Date("2024-01-17"),
+    fileSize: "180 MB",
+    format: "MP4",
+    resolution: "1080p",
+  },
+  { 
+    id: "ep-004", 
+    title: "Music Monday: Greatest Hits", 
+    channel: "ch-music", 
+    topic: "music", 
+    type: "audio" as ContentType,
+    duration: 3600, 
+    plays: 15230, 
+    rating: 4.6, 
+    date: new Date("2024-01-18"),
+    fileSize: "52 MB",
+    format: "MP3",
+  },
+  { 
+    id: "tr-001", 
+    title: "Episode 5 Transcript: Sweet Miracles Transformation Stories", 
+    channel: "ch-miracles", 
+    topic: "inspiration", 
+    type: "transcript" as ContentType,
+    words: 4250,
+    plays: 2100, 
+    rating: 4.8, 
+    date: new Date("2024-01-19"),
+    fileSize: "0.3 MB",
+    format: "TXT",
+  },
+  { 
+    id: "ep-005", 
+    title: "Sweet Miracles: Transformation Stories", 
+    channel: "ch-miracles", 
+    topic: "inspiration", 
+    type: "audio" as ContentType,
+    duration: 2400, 
+    plays: 9800, 
+    rating: 4.9, 
+    date: new Date("2024-01-19"),
+    fileSize: "35 MB",
+    format: "MP3",
+  },
+  { 
+    id: "ep-006", 
+    title: "Live from the Studio", 
+    channel: "ch-studio", 
+    topic: "live", 
+    type: "video" as ContentType,
+    duration: 4200, 
+    plays: 5600, 
+    rating: 4.5, 
+    date: new Date("2024-01-20"),
+    fileSize: "220 MB",
+    format: "MP4",
+    resolution: "4K",
+  },
+  { 
+    id: "doc-002", 
+    title: "Evidence Archive: Deep Dive Analysis", 
+    channel: "ch-proof", 
+    topic: "history", 
+    type: "document" as ContentType,
+    pages: 78,
+    plays: 4200, 
+    rating: 4.8, 
+    date: new Date("2024-01-21"),
+    fileSize: "5.1 MB",
+    format: "PDF",
+  },
+  { 
+    id: "ep-007", 
+    title: "Interview with Industry Leaders", 
+    channel: "ch-qmunity", 
+    topic: "interviews", 
+    type: "audio" as ContentType,
+    duration: 3300, 
+    plays: 7400, 
+    rating: 4.7, 
+    date: new Date("2024-01-22"),
+    fileSize: "48 MB",
+    format: "MP3",
+  },
 ];
 
 export const channelDiscoveryRouter = router({
   /**
-   * Full-text search across all channels
-   * Searches episode titles, descriptions, transcripts, and metadata
+   * Full-text search across all channels with multi-format support
+   * Searches content titles, descriptions, and metadata
    */
   search: publicProcedure
     .input(z.object({
@@ -65,43 +249,50 @@ export const channelDiscoveryRouter = router({
       filters: z.object({
         channel: z.string().optional(),
         topic: z.string().optional(),
+        contentType: z.enum(CONTENT_TYPES).optional(),
         dateFrom: z.date().optional(),
         dateTo: z.date().optional(),
         minRating: z.number().min(0).max(5).optional(),
       }).optional(),
     }))
     .query(async ({ input }) => {
-      // Simulate search across all channels
       const query = input.query.toLowerCase();
-      const results = SAMPLE_EPISODES.filter(ep => {
-        const matchesQuery = ep.title.toLowerCase().includes(query) || ep.topic.includes(query);
-        const matchesChannel = !input.filters?.channel || ep.channel === input.filters.channel;
-        const matchesTopic = !input.filters?.topic || ep.topic === input.filters.topic;
-        const matchesDateRange = (!input.filters?.dateFrom || ep.date >= input.filters.dateFrom) &&
-          (!input.filters?.dateTo || ep.date <= input.filters.dateTo);
-        const matchesRating = !input.filters?.minRating || ep.rating >= input.filters.minRating;
+      const results = SAMPLE_CONTENT.filter(content => {
+        const matchesQuery = content.title.toLowerCase().includes(query) || content.topic.includes(query);
+        const matchesChannel = !input.filters?.channel || content.channel === input.filters.channel;
+        const matchesTopic = !input.filters?.topic || content.topic === input.filters.topic;
+        const matchesContentType = !input.filters?.contentType || content.type === input.filters.contentType;
+        const matchesDateRange = (!input.filters?.dateFrom || content.date >= input.filters.dateFrom) &&
+          (!input.filters?.dateTo || content.date <= input.filters.dateTo);
+        const matchesRating = !input.filters?.minRating || content.rating >= input.filters.minRating;
         
-        return matchesQuery && matchesChannel && matchesTopic && matchesDateRange && matchesRating;
+        return matchesQuery && matchesChannel && matchesTopic && matchesContentType && matchesDateRange && matchesRating;
       })
       .sort((a, b) => b.plays - a.plays)
       .slice(input.offset, input.offset + input.limit);
 
       return {
         query: input.query,
-        results: results.map(ep => ({
-          id: ep.id,
-          name: ep.title,
-          channel: RRB_CHANNELS.find(c => c.id === ep.channel)?.name || "Unknown",
-          topic: ep.topic,
-          duration: ep.duration,
-          plays: ep.plays,
-          relevance: Math.random() * 0.3 + 0.7, // 0.7-1.0 relevance score
-          rating: ep.rating,
-          date: ep.date,
+        results: results.map(content => ({
+          id: content.id,
+          name: content.title,
+          channel: RRB_CHANNELS.find(c => c.id === content.channel)?.name || "Unknown",
+          topic: content.topic,
+          type: content.type,
+          duration: "duration" in content ? content.duration : undefined,
+          pages: "pages" in content ? content.pages : undefined,
+          words: "words" in content ? content.words : undefined,
+          plays: content.plays,
+          relevance: Math.random() * 0.3 + 0.7,
+          rating: content.rating,
+          date: content.date,
+          fileSize: content.fileSize,
+          format: content.format,
         })),
-        total: SAMPLE_EPISODES.filter(ep => 
-          ep.title.toLowerCase().includes(query) && 
-          (!input.filters?.channel || ep.channel === input.filters.channel)
+        total: SAMPLE_CONTENT.filter(content => 
+          content.title.toLowerCase().includes(query) && 
+          (!input.filters?.channel || content.channel === input.filters.channel) &&
+          (!input.filters?.contentType || content.type === input.filters.contentType)
         ).length,
       };
     }),
@@ -115,7 +306,7 @@ export const channelDiscoveryRouter = router({
     }),
 
   /**
-   * Get channels filtered by topic
+   * Get channels filtered by topic with content type breakdown
    */
   getChannelsByTopic: publicProcedure
     .input(z.object({
@@ -123,21 +314,32 @@ export const channelDiscoveryRouter = router({
       limit: z.number().min(1).max(50).default(10),
     }))
     .query(async ({ input }) => {
-      // Filter channels that have content in this topic
-      const topicEpisodes = SAMPLE_EPISODES.filter(ep => ep.topic === input.topicId);
-      const channelIds = new Set(topicEpisodes.map(ep => ep.channel));
+      const topicContent = SAMPLE_CONTENT.filter(c => c.topic === input.topicId);
+      const channelIds = new Set(topicContent.map(c => c.channel));
       
       return RRB_CHANNELS
         .filter(ch => channelIds.has(ch.id))
         .slice(0, input.limit)
-        .map(ch => ({
-          id: ch.id,
-          name: ch.name,
-          description: ch.description,
-          icon: ch.icon,
-          listeners: ch.listeners,
-          episodeCount: SAMPLE_EPISODES.filter(ep => ep.channel === ch.id).length,
-        }));
+        .map(ch => {
+          const channelContent = SAMPLE_CONTENT.filter(c => c.channel === ch.id);
+          const contentTypeBreakdown = {
+            audio: channelContent.filter(c => c.type === "audio").length,
+            document: channelContent.filter(c => c.type === "document").length,
+            video: channelContent.filter(c => c.type === "video").length,
+            transcript: channelContent.filter(c => c.type === "transcript").length,
+          };
+          
+          return {
+            id: ch.id,
+            name: ch.name,
+            description: ch.description,
+            icon: ch.icon,
+            listeners: ch.listeners,
+            contentCount: channelContent.length,
+            contentTypes: ch.contentTypes,
+            contentTypeBreakdown,
+          };
+        });
     }),
 
   /**
@@ -155,18 +357,18 @@ export const channelDiscoveryRouter = router({
     }),
 
   /**
-   * Get popular episodes for a time range
+   * Get popular content for a time range with content type filtering
    */
-  getPopularEpisodes: publicProcedure
+  getPopularContent: publicProcedure
     .input(z.object({
       timeRange: z.enum(["day", "week", "month", "all"]).default("week"),
+      contentType: z.enum(CONTENT_TYPES).optional(),
       limit: z.number().min(1).max(50).default(10),
     }))
     .query(async ({ input }) => {
-      // Filter by time range
       const now = new Date();
       const dayMs = 24 * 60 * 60 * 1000;
-      let cutoffDate = new Date(now.getTime() - 7 * dayMs); // Default: week
+      let cutoffDate = new Date(now.getTime() - 7 * dayMs);
 
       if (input.timeRange === "day") {
         cutoffDate = new Date(now.getTime() - dayMs);
@@ -176,23 +378,26 @@ export const channelDiscoveryRouter = router({
         cutoffDate = new Date(0);
       }
 
-      return SAMPLE_EPISODES
-        .filter(ep => ep.date >= cutoffDate)
+      return SAMPLE_CONTENT
+        .filter(c => c.date >= cutoffDate && (!input.contentType || c.type === input.contentType))
         .sort((a, b) => b.plays - a.plays)
         .slice(0, input.limit)
-        .map(ep => ({
-          id: ep.id,
-          title: ep.title,
-          channel: RRB_CHANNELS.find(c => c.id === ep.channel)?.name || "Unknown",
-          plays: ep.plays,
-          rating: ep.rating,
-          duration: ep.duration,
-          date: ep.date,
+        .map(c => ({
+          id: c.id,
+          title: c.title,
+          channel: RRB_CHANNELS.find(ch => ch.id === c.channel)?.name || "Unknown",
+          type: c.type,
+          plays: c.plays,
+          rating: c.rating,
+          duration: "duration" in c ? c.duration : undefined,
+          pages: "pages" in c ? c.pages : undefined,
+          date: c.date,
+          format: c.format,
         }));
     }),
 
   /**
-   * Get detailed information about a channel
+   * Get detailed information about a channel including content type breakdown
    */
   getChannelDetails: publicProcedure
     .input(z.object({
@@ -202,10 +407,17 @@ export const channelDiscoveryRouter = router({
       const channel = RRB_CHANNELS.find(c => c.id === input.channelId);
       if (!channel) throw new TRPCError({ code: "NOT_FOUND", message: "Channel not found" });
 
-      const channelEpisodes = SAMPLE_EPISODES.filter(ep => ep.channel === input.channelId);
-      const avgRating = channelEpisodes.length > 0 
-        ? channelEpisodes.reduce((sum, ep) => sum + ep.rating, 0) / channelEpisodes.length 
+      const channelContent = SAMPLE_CONTENT.filter(c => c.channel === input.channelId);
+      const avgRating = channelContent.length > 0 
+        ? channelContent.reduce((sum, c) => sum + c.rating, 0) / channelContent.length 
         : 0;
+
+      const contentTypeBreakdown = {
+        audio: channelContent.filter(c => c.type === "audio").length,
+        document: channelContent.filter(c => c.type === "document").length,
+        video: channelContent.filter(c => c.type === "video").length,
+        transcript: channelContent.filter(c => c.type === "transcript").length,
+      };
 
       return {
         id: channel.id,
@@ -214,90 +426,103 @@ export const channelDiscoveryRouter = router({
         icon: channel.icon,
         listeners: channel.listeners,
         rating: Math.round(avgRating * 10) / 10,
-        episodeCount: channelEpisodes.length,
+        contentCount: channelContent.length,
+        contentTypes: channel.contentTypes,
+        contentTypeBreakdown,
         platforms: ["Spotify", "Apple Podcasts", "YouTube", "TuneIn", "Amazon Music", "iHeartRadio"],
-        totalPlays: channelEpisodes.reduce((sum, ep) => sum + ep.plays, 0),
-        lastEpisode: channelEpisodes.length > 0 ? channelEpisodes[0].title : "No episodes",
+        totalPlays: channelContent.reduce((sum, c) => sum + c.plays, 0),
       };
     }),
 
   /**
-   * Get episodes for a specific channel
+   * Get content for a specific channel with sorting and filtering
    */
-  getChannelEpisodes: publicProcedure
+  getChannelContent: publicProcedure
     .input(z.object({
       channelId: z.string(),
       sortBy: z.enum(["newest", "popular", "rating"]).default("newest"),
+      contentType: z.enum(CONTENT_TYPES).optional(),
       limit: z.number().min(1).max(100).default(20),
       offset: z.number().min(0).default(0),
     }))
     .query(async ({ input }) => {
-      let episodes = SAMPLE_EPISODES.filter(ep => ep.channel === input.channelId);
+      let content = SAMPLE_CONTENT.filter(c => 
+        c.channel === input.channelId && 
+        (!input.contentType || c.type === input.contentType)
+      );
 
-      // Sort by criteria
       if (input.sortBy === "popular") {
-        episodes.sort((a, b) => b.plays - a.plays);
+        content.sort((a, b) => b.plays - a.plays);
       } else if (input.sortBy === "rating") {
-        episodes.sort((a, b) => b.rating - a.rating);
+        content.sort((a, b) => b.rating - a.rating);
       } else {
-        episodes.sort((a, b) => b.date.getTime() - a.date.getTime());
+        content.sort((a, b) => b.date.getTime() - a.date.getTime());
       }
 
-      const paginated = episodes.slice(input.offset, input.offset + input.limit);
+      const paginated = content.slice(input.offset, input.offset + input.limit);
 
       return {
-        episodes: paginated.map(ep => ({
-          id: ep.id,
-          title: ep.title,
-          duration: ep.duration,
-          plays: ep.plays,
-          rating: ep.rating,
-          date: ep.date,
-          topic: ep.topic,
+        content: paginated.map(c => ({
+          id: c.id,
+          title: c.title,
+          type: c.type,
+          duration: "duration" in c ? c.duration : undefined,
+          pages: "pages" in c ? c.pages : undefined,
+          plays: c.plays,
+          rating: c.rating,
+          date: c.date,
+          topic: c.topic,
+          format: c.format,
+          fileSize: c.fileSize,
         })),
-        total: episodes.length,
-        hasMore: input.offset + input.limit < episodes.length,
+        total: content.length,
+        hasMore: input.offset + input.limit < content.length,
       };
     }),
 
   /**
-   * Get episode transcript with optional search
+   * Get content by type across all channels
    */
-  getEpisodeTranscript: publicProcedure
+  getContentByType: publicProcedure
     .input(z.object({
-      episodeId: z.string(),
-      searchTerm: z.string().optional(),
+      contentType: z.enum(CONTENT_TYPES),
+      limit: z.number().min(1).max(50).default(20),
     }))
     .query(async ({ input }) => {
-      const episode = SAMPLE_EPISODES.find(ep => ep.id === input.episodeId);
-      if (!episode) throw new TRPCError({ code: "NOT_FOUND", message: "Episode not found" });
+      return SAMPLE_CONTENT
+        .filter(c => c.type === input.contentType)
+        .sort((a, b) => b.plays - a.plays)
+        .slice(0, input.limit)
+        .map(c => ({
+          id: c.id,
+          title: c.title,
+          channel: RRB_CHANNELS.find(ch => ch.id === c.channel)?.name || "Unknown",
+          type: c.type,
+          plays: c.plays,
+          rating: c.rating,
+          date: c.date,
+          format: c.format,
+          duration: "duration" in c ? c.duration : undefined,
+          pages: "pages" in c ? c.pages : undefined,
+          fileSize: c.fileSize,
+        }));
+    }),
 
-      const transcript = `This is a sample transcript for ${episode.title}. 
-        It contains the full text of the episode with timestamps for easy navigation.
-        Listeners can search within transcripts to find specific moments and quotes.
-        This feature enables better content discovery and accessibility.`;
-
-      const timestamps = [
-        { time: 0, text: "Introduction" },
-        { time: 245, text: "Main topic begins" },
-        { time: 890, text: "Key discussion point" },
-        { time: 1450, text: "Conclusion" },
-      ];
-
-      let searchResults = [];
-      if (input.searchTerm) {
-        searchResults = timestamps.filter(ts => 
-          ts.text.toLowerCase().includes(input.searchTerm!.toLowerCase())
-        );
-      }
-
-      return {
-        episodeId: input.episodeId,
-        title: episode.title,
-        transcript,
-        timestamps,
-        searchResults: input.searchTerm ? searchResults : undefined,
+  /**
+   * Get content statistics by type
+   */
+  getContentStats: publicProcedure
+    .query(async () => {
+      const stats = {
+        audio: SAMPLE_CONTENT.filter(c => c.type === "audio").length,
+        document: SAMPLE_CONTENT.filter(c => c.type === "document").length,
+        video: SAMPLE_CONTENT.filter(c => c.type === "video").length,
+        transcript: SAMPLE_CONTENT.filter(c => c.type === "transcript").length,
+        total: SAMPLE_CONTENT.length,
+        totalPlays: SAMPLE_CONTENT.reduce((sum, c) => sum + c.plays, 0),
+        avgRating: Math.round((SAMPLE_CONTENT.reduce((sum, c) => sum + c.rating, 0) / SAMPLE_CONTENT.length) * 10) / 10,
       };
+      return stats;
     }),
 
   /**
@@ -306,51 +531,52 @@ export const channelDiscoveryRouter = router({
   getRecommendations: protectedProcedure
     .input(z.object({
       limit: z.number().min(1).max(50).default(10),
+      contentType: z.enum(CONTENT_TYPES).optional(),
     }))
     .query(async ({ ctx, input }) => {
-      // Simulate personalized recommendations based on user history
-      return SAMPLE_EPISODES
+      return SAMPLE_CONTENT
+        .filter(c => !input.contentType || c.type === input.contentType)
         .sort(() => Math.random() - 0.5)
         .slice(0, input.limit)
-        .map(ep => ({
-          id: ep.id,
-          title: ep.title,
-          channel: RRB_CHANNELS.find(c => c.id === ep.channel)?.name || "Unknown",
+        .map(c => ({
+          id: c.id,
+          title: c.title,
+          channel: RRB_CHANNELS.find(ch => ch.id === c.channel)?.name || "Unknown",
+          type: c.type,
           reason: "Based on your listening history",
-          match: Math.random() * 0.3 + 0.7, // 0.7-1.0 match score
-          rating: ep.rating,
+          match: Math.random() * 0.3 + 0.7,
+          rating: c.rating,
         }));
     }),
 
   /**
-   * Bookmark an episode for later
+   * Bookmark content for later
    */
-  bookmarkEpisode: protectedProcedure
+  bookmarkContent: protectedProcedure
     .input(z.object({
-      episodeId: z.string(),
+      contentId: z.string(),
       timestamp: z.number().optional(),
       note: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      // In production, save to database
       return {
         success: true,
-        episodeId: input.episodeId,
+        contentId: input.contentId,
         timestamp: input.timestamp,
         bookmarkedAt: new Date(),
       };
     }),
 
   /**
-   * Get user's bookmarked episodes
+   * Get user's bookmarked content
    */
   getBookmarks: protectedProcedure
     .query(async ({ ctx }) => {
-      // In production, fetch from database
-      return SAMPLE_EPISODES.slice(0, 3).map(ep => ({
-        episodeId: ep.id,
-        title: ep.title,
-        channel: RRB_CHANNELS.find(c => c.id === ep.channel)?.name || "Unknown",
+      return SAMPLE_CONTENT.slice(0, 3).map(c => ({
+        contentId: c.id,
+        title: c.title,
+        type: c.type,
+        channel: RRB_CHANNELS.find(ch => ch.id === c.channel)?.name || "Unknown",
         bookmarkedAt: new Date(),
         timestamp: 245,
       }));
@@ -367,7 +593,6 @@ export const channelDiscoveryRouter = router({
       const channel = RRB_CHANNELS.find(c => c.id === input.channelId);
       if (!channel) throw new TRPCError({ code: "NOT_FOUND", message: "Channel not found" });
 
-      // In production, save subscription to database
       return {
         success: true,
         channelId: input.channelId,
@@ -381,7 +606,6 @@ export const channelDiscoveryRouter = router({
    */
   getSubscriptions: protectedProcedure
     .query(async ({ ctx }) => {
-      // In production, fetch from database
       return RRB_CHANNELS.slice(0, 3).map(ch => ({
         id: ch.id,
         name: ch.name,
@@ -405,33 +629,43 @@ export const channelDiscoveryRouter = router({
 
       return {
         channels: channels.map(ch => {
-          const episodes = SAMPLE_EPISODES.filter(ep => ep.channel === ch.id);
+          const channelContent = SAMPLE_CONTENT.filter(c => c.channel === ch.id);
           return {
             id: ch.id,
             name: ch.name,
             listeners: ch.listeners,
-            episodeCount: episodes.length,
-            avgRating: episodes.length > 0 
-              ? Math.round((episodes.reduce((sum, ep) => sum + ep.rating, 0) / episodes.length) * 10) / 10
+            contentCount: channelContent.length,
+            avgRating: channelContent.length > 0 
+              ? Math.round((channelContent.reduce((sum, c) => sum + c.rating, 0) / channelContent.length) * 10) / 10
               : 0,
-            totalPlays: episodes.reduce((sum, ep) => sum + ep.plays, 0),
-            spotify: Math.round(ch.listeners * 0.35),
-            apple: Math.round(ch.listeners * 0.25),
-            youtube: Math.round(ch.listeners * 0.20),
-            tuneIn: Math.round(ch.listeners * 0.10),
-            amazon: Math.round(ch.listeners * 0.05),
-            iheartradio: Math.round(ch.listeners * 0.05),
+            totalPlays: channelContent.reduce((sum, c) => sum + c.plays, 0),
+            contentTypes: ch.contentTypes,
+            contentTypeBreakdown: {
+              audio: channelContent.filter(c => c.type === "audio").length,
+              document: channelContent.filter(c => c.type === "document").length,
+              video: channelContent.filter(c => c.type === "video").length,
+              transcript: channelContent.filter(c => c.type === "transcript").length,
+            },
           };
         }),
       };
     }),
 
   /**
-   * Get available search filters
+   * Get available search filters including content type options
    */
   getSearchFilters: publicProcedure
     .query(async () => {
       return {
+        contentType: {
+          label: "Content Type",
+          options: [
+            { value: "audio", label: "Audio (Podcasts, Music, Broadcasts)" },
+            { value: "document", label: "Documents (PDFs, Articles)" },
+            { value: "video", label: "Videos (Recordings, Tutorials)" },
+            { value: "transcript", label: "Transcripts (Searchable Text)" },
+          ],
+        },
         dateRange: {
           label: "Date Range",
           options: ["Last 24 hours", "Last 7 days", "Last 30 days", "Last year", "All time"],
