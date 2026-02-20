@@ -142,6 +142,7 @@ import { broadcastRouter as rrbBroadcastRouter } from "./routers/rrb/broadcast";
 import { entertainmentRouter as rrbEntertainmentRouter } from "./routers/rrb/entertainment";
 import { adminDashboardRouter as rrbEcosystemRouter } from "./ecosystem/admin-dashboard";
 import { contentRecommendationRouter, rrbRadioRouter } from "./routers/missingRouterStubs";
+import { qumusBulkOperationsRouter } from './qumusBulkOperationsRouter';
 import { listenerNotificationsRouter } from './routers/listenerNotificationsRouter';
 
 export const appRouter = router({
@@ -160,6 +161,7 @@ export const appRouter = router({
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter,
   listenerNotifications: listenerNotificationsRouter,
+  qumusBulkOperations: qumusBulkOperationsRouter,
 
   // Auth procedures
   auth: router({
