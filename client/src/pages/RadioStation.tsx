@@ -252,9 +252,9 @@ export default function RadioStation() {
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-white mb-4">Available Streams</h3>
           <div className="grid grid-cols-1 gap-3">
-            {sampleStreams.map((stream, index) => (
+            {sampleStreams.map((stream) => (
               <Card
-                key={index}
+                key={stream.url}
                 onClick={() => selectStream(stream)}
                 className={`p-4 cursor-pointer transition-all ${
                   currentStream?.url === stream.url
