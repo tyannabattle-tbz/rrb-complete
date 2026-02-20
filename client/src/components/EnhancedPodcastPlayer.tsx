@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Download, Share2, Radio, Zap } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Download, Share2, Radio, Zap, Search, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
+import { getAllStreams, getAllPodcasts, searchStreams, searchPodcasts, CHANNEL_CATEGORIES } from '@/lib/comprehensiveStreamLibrary';
+import type { StreamChannel, PodcastFeed } from '@/lib/comprehensiveStreamLibrary';
 
 interface Episode {
   id: string;
@@ -14,7 +16,7 @@ interface Episode {
 }
 
 interface EnhancedPodcastPlayerProps {
-  podcast: {
+  podcast?: {
     id: string;
     collectionName: string;
     artistName: string;
@@ -23,6 +25,7 @@ interface EnhancedPodcastPlayerProps {
   };
   episodes?: Episode[];
   onClose?: () => void;
+  defaultStream?: StreamChannel;
 }
 
 export default function EnhancedPodcastPlayer({
@@ -42,6 +45,23 @@ export default function EnhancedPodcastPlayer({
   const [playlistMode, setPlaylistMode] = useState(false);
 
   const currentEpisode = episodes[currentEpisodeIndex];
+  const [allStreams, setAllStreams] = useState<StreamChannel[]>([]);
+  const [allPodcasts, setAllPodcasts] = useState<PodcastFeed[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [showStreamSelector, setShowStreamSelector] = useState(false);
+  const [selectedStream, setSelectedStream] = useState<StreamChannel | null>(null);
+
+  // Initialize streams and podcasts
+  useEffect(() => {
+    setAllStreams(getAllStreams());
+    setAllPodcasts(getAllPodcasts());
+    const savedFavorites = localStorage.getItem('podcastFavorites');
+    if (savedFavorites) {
+      setFavorites(JSON.parse(savedFavorites));
+    }
+  }, []);
 
   // Format time for display
   const formatTime = (time: number) => {
@@ -181,6 +201,20 @@ export default function EnhancedPodcastPlayer({
     audio.addEventListener('ended', handleEnded);
     return () => audio.removeEventListener('ended', handleEnded);
   }, [playlistMode, episodes.length, currentEpisodeIndex]);
+
+  const toggleFavorite = (id: string) => {
+    const newFavorites = favorites.includes(id)
+      ? favorites.filter((fav) => fav !== id)
+      : [...favorites, id];
+    setFavorites(newFavorites);
+    localStorage.setItem('podcastFavorites', JSON.stringify(newFavorites));
+  };
+
+  const displayStreams = selectedCategory
+    ? allStreams.filter((s) => s.category === selectedCategory)
+    : searchQuery
+      ? searchStreams(searchQuery)
+      : allStreams.slice(0, 15);
 
   if (!currentEpisode && episodes.length === 0) {
     return (
@@ -341,23 +375,89 @@ export default function EnhancedPodcastPlayer({
         </Button>
         <Button
           size="sm"
-          variant="outline"
-          className="flex-1 text-xs"
-          onClick={() => window.open('/rss', '_blank')}
-          title="Subscribe via RSS"
+          variant={showStreamSelector ? 'default' : 'outline'}
+          onClick={() => setShowStreamSelector(!showStreamSelector)}
+          className="flex-1"
         >
-          Spotify
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="flex-1 text-xs"
-          onClick={() => window.open('/rss', '_blank')}
-          title="Subscribe via RSS"
-        >
-          Apple
+          <Radio className="w-4 h-4 mr-1" />
+          Streams ({allStreams.length})
         </Button>
       </div>
+
+      {/* Stream Selector */}
+      {showStreamSelector && (
+        <div className="bg-slate-700 rounded-lg p-3 space-y-3">
+          <div className="flex gap-2">
+            <Search className="w-4 h-4 text-gray-400 mt-1" />
+            <input
+              type="text"
+              placeholder="Search streams..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-slate-600 text-white text-sm px-2 py-1 rounded border border-slate-500"
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={`px-2 py-1 text-xs rounded transition-colors ${
+                selectedCategory === null
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-600 text-gray-300 hover:bg-slate-500'
+              }`}
+            >
+              All
+            </button>
+            {Object.entries(CHANNEL_CATEGORIES).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setSelectedCategory(key)}
+                className={`px-2 py-1 text-xs rounded transition-colors ${
+                  selectedCategory === key
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-slate-600 text-gray-300 hover:bg-slate-500'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="max-h-40 overflow-y-auto space-y-1">
+            {displayStreams.map((stream) => (
+              <button
+                key={stream.id}
+                onClick={() => {
+                  setSelectedStream(stream);
+                  if (audioRef.current) {
+                    audioRef.current.src = stream.streamUrl;
+                    audioRef.current.play().catch((err) => console.error('Play error:', err));
+                    setIsPlaying(true);
+                  }
+                }}
+                className={`w-full text-left p-2 rounded text-xs transition-colors flex justify-between items-center ${
+                  selectedStream?.id === stream.id
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-slate-600 text-gray-300 hover:bg-slate-500'
+                }`}
+              >
+                <span className="truncate">{stream.name}</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite(stream.id);
+                  }}
+                  className="ml-2"
+                >
+                  <Heart
+                    size={14}
+                    fill={favorites.includes(stream.id) ? 'currentColor' : 'none'}
+                  />
+                </button>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Action Buttons */}
       <div className="flex gap-2">
@@ -413,6 +513,16 @@ export default function EnhancedPodcastPlayer({
               </button>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Selected Stream Info */}
+      {selectedStream && (
+        <div className="bg-slate-700 rounded-lg p-2 text-xs">
+          <p className="text-gray-400">Streaming from: <span className="text-white font-semibold">{selectedStream.name}</span></p>
+          {selectedStream.frequency && (
+            <p className="text-gray-400">Frequency: <span className="text-white font-semibold">{selectedStream.frequency} Hz</span></p>
+          )}
         </div>
       )}
 
