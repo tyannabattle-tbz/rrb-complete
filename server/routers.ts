@@ -115,6 +115,7 @@ import { commercialsRouter } from "./routers/commercials";
 import { broadcastSchedulerRouter } from "./routers/broadcastSchedulerRouter";
 import { streamingRouter } from "./routers/streamingRouter";
 import { emergencyBroadcastRouter } from "./routers/emergencyBroadcastRouter";
+import { commercialMP3Router } from "./routers/commercialMP3Router";
 
 // Radio Content API (serves tracks/playlists from database)
 import { radioContentRouter } from "./routers/radioContentRouter";
@@ -411,6 +412,9 @@ export const appRouter = router({
 
   // Phase 9+: Emergency Broadcast Scheduling
   emergencyBroadcast: emergencyBroadcastRouter,
+
+  // Phase 9+: Commercial MP3 Upload & Management
+  commercialMP3: commercialMP3Router,
 
   // Agent Session Management
   agent: router({
