@@ -18,6 +18,15 @@ export function useAuth(options?: UseAuthOptions) {
     refetchOnWindowFocus: false,
   });
 
+  // Store the current URL before redirecting to login
+  const getReturnToUrl = useCallback(() => {
+    if (typeof window === 'undefined') return '/';
+    const current = window.location.pathname + window.location.search + window.location.hash;
+    // Don't return to login page or oauth callback
+    if (current.includes('/oauth') || current.includes('/legal') || current === '/') return '/';
+    return current;
+  }, []);
+
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => {
       utils.auth.me.setData(undefined, null);
@@ -67,6 +76,12 @@ export function useAuth(options?: UseAuthOptions) {
     if (typeof window === "undefined") return;
     if (window.location.pathname === redirectPath) return;
 
+    // Store the return-to URL in localStorage before redirecting to login
+    const returnTo = getReturnToUrl();
+    if (returnTo !== '/') {
+      localStorage.setItem('auth-return-to', returnTo);
+    }
+    
     window.location.href = redirectPath
   }, [
     redirectOnUnauthenticated,
@@ -74,6 +89,7 @@ export function useAuth(options?: UseAuthOptions) {
     logoutMutation.isPending,
     meQuery.isLoading,
     state.user,
+    getReturnToUrl,
   ]);
 
   return {

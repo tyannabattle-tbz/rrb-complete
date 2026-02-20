@@ -56,6 +56,7 @@ import { VideoProductionPage } from './pages/VideoProductionPage';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { UnifiedMobileSidebar } from './components/UnifiedMobileSidebar';
 import { useSwipeGesture } from './hooks/useSwipeGesture';
+import { usePostAuthRedirect } from './_core/hooks/usePostAuthRedirect';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
 import QumusChatPage from '@/pages/QumusChatPage';
@@ -505,6 +506,12 @@ function SwipeHandler() {
   return null;
 }
 
+function PostAuthRedirectHandler() {
+  // Handle redirect to intended destination after OAuth login
+  usePostAuthRedirect();
+  return null;
+}
+
 function App() {
   return (
     <ErrorBoundary>
@@ -518,6 +525,7 @@ function App() {
               <Toaster />
               <KeyboardShortcutsGuide />
               <SwipeHandler />
+              <PostAuthRedirectHandler />
               
               {/* Full-height flex layout for mobile */}
               <div className="flex flex-col h-screen md:h-auto md:min-h-screen">
