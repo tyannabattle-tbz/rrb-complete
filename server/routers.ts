@@ -144,6 +144,8 @@ import { adminDashboardRouter as rrbEcosystemRouter } from "./ecosystem/admin-da
 import { contentRecommendationRouter, rrbRadioRouter } from "./routers/missingRouterStubs";
 
 import { listenerNotificationsRouter } from './routers/listenerNotificationsRouter';
+import { webrtcCallInRouter } from './routers/webrtcCallInRouter';
+import { videoPodcastRouter } from './routers/videoPodcastRouter';
 
 export const appRouter = router({
   // System router
@@ -418,6 +420,8 @@ export const appRouter = router({
 
   // Phase 9+: Commercial MP3 Upload & Management
   commercialMP3: commercialMP3Router,
+  webrtcCallIn: webrtcCallInRouter,
+  videoPodcast: videoPodcastRouter,
 
   // Agent Session Management
   agent: router({
