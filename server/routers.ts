@@ -18,6 +18,9 @@ import { chunk2Router } from "./routerChunks/chunk2";
 import { chunk3Router } from "./routerChunks/chunk3";
 import { chunk4Router } from "./routerChunks/chunk4";
 import { chunk5Router } from "./routerChunks/chunk5";
+import { emailDigestRouter } from './routers/emailDigestRouter';
+import { searchRouter } from './routers/searchRouter';
+import { referralRouter } from './routers/referralRouter';
 
 // Import QUMUS router
 import { qumusRouter } from "./routers/qumus";
@@ -487,6 +490,9 @@ export const appRouter = router({
   }),
   moderation: moderationRouter,
   notificationPreferences: notificationPreferencesRouter,
+  emailDigest: emailDigestRouter,
+  search: searchRouter,
+  referral: referralRouter,
 });
 
 export type AppRouter = typeof appRouter;

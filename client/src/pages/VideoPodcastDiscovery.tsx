@@ -109,9 +109,9 @@ export function VideoPodcastDiscovery() {
                       </div>
 
                       <div className="flex gap-2 pt-2">
-                        {video.tags?.slice(0, 2).map((tag: string) => (
+                        {video.tags?.slice(0, 2).map((tag: string, idx: number) => (
                           <span
-                            key={tag}
+                            key={`${video.id}:${tag}:${idx}`}
                             className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded"
                           >
                             {tag}

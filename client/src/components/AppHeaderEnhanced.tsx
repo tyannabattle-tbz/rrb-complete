@@ -52,9 +52,9 @@ function NavDropdownMenu({ dropdown, isOpen, onToggle, onNavigate }: {
       </Button>
       {isOpen && (
         <div className="absolute top-full left-0 mt-1 w-56 bg-popover text-popover-foreground border border-border rounded-lg shadow-lg py-1 z-50">
-          {dropdown.items.map((item) => (
+          {dropdown.items.map((item, idx) => (
             <button
-              key={item.path}
+              key={`${dropdown.id}:${item.label}:${idx}`}
               onClick={() => {
                 onNavigate(item.path, item.external);
                 onToggle();
