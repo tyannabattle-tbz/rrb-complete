@@ -1,13 +1,12 @@
-import React, { useMemo, useState } from 'react';
+'use client';
+
+import { useState } from 'react';
 import { PageMeta } from '@/components/rrb/PageMeta';
 import { RadioPlayer, Track } from '@/components/rrb/RadioPlayer';
 import { HybridCastWidgetContainer } from '@/components/rrb/HybridCastWidgetContainer';
 import RadioCommercials from '@/components/rrb/RadioCommercials';
 import SeasonalCampaigns from '@/components/rrb/SeasonalCampaigns';
 import { trpc } from '@/lib/trpc';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-// import { AudioUploadManager } from '@/components/AudioUploadManager';
-// import { LiveCallIn } from '@/components/rrb/LiveCallIn';
 
 function formatPlayCount(count: number): string {
   if (count >= 1000) return `${(count / 1000).toFixed(1).replace(/\.0$/, '')}k`;
@@ -19,7 +18,7 @@ const RANK_LABELS = ['#1 Most Played', '#2 Most Played', '#3 Most Played', 'Tren
 const BAR_WIDTHS = ['92%', '78%', '65%', '58%'] as const;
 
 export default function RadioStation() {
-  const [activeTab, setActiveTab] = useState('radio-station');
+  const [activeTab, setActiveTab] = useState<'radio-station' | 'rrb-radio'>('radio-station');
 
   // Fetch tracks from database
   const { data: dbTracks } = trpc.radioContent.getTracks.useQuery();
@@ -98,105 +97,19 @@ export default function RadioStation() {
     {
       id: '9',
       title: 'Poetry Reading 1: Voices of the Heart',
-      artist: 'Poetry Station',
+      artist: 'Helen Seabrun Hunter',
       url: 'https://ice1.somafm.com/sonicuniverse-128-mp3',
-      description: 'Beautiful poetry readings exploring themes of love, loss, and transformation.',
+      description: 'Helen Seabrun Hunter\'s poetry reading collection',
       duration: 420,
-    },
-    {
-      id: '10',
-      title: 'Poetry Reading 2: Nature & Reflection',
-      artist: 'Poetry Station',
-      url: 'https://ice1.somafm.com/sonicuniverse-128-mp3',
-      description: 'Contemplative poetry celebrating the beauty of nature and inner peace.',
-      duration: 380,
-    },
-    {
-      id: '11',
-      title: 'Poetry Reading 3: Stories & Dreams',
-      artist: 'Poetry Station',
-      url: 'https://ice1.somafm.com/sonicuniverse-128-mp3',
-      description: 'Narrative poetry and spoken word exploring imagination and possibilities.',
-      duration: 450,
-    },
-    {
-      id: '12',
-      title: 'Memorial Reflection on Little Richard',
-      artist: 'Seabrun Candy Hunter',
-      url: 'https://ice1.somafm.com/sonicuniverse-128-mp3',
-      description: 'Candy shares a heartfelt memorial reflection on Little Richard',
-      duration: 52,
-    },
-    {
-      id: '13',
-      title: 'Concert Stage Management',
-      artist: 'Seabrun Candy Hunter',
-      url: 'https://ice1.somafm.com/sonicuniverse-128-mp3',
-      description: 'Candy reflects on her role managing concert stages and logistics',
-      duration: 67,
-    },
-    {
-      id: '14',
-      title: 'Rockin\' Rockin\' Boogie - The Documentary',
-      artist: 'Seabrun Candy Hunter',
-      url: 'https://ice1.somafm.com/sonicuniverse-128-mp3',
-      description: 'Candy announces the upcoming documentary about her life and legacy',
-      duration: 91,
-    },
-    {
-      id: '15',
-      title: 'Thank You & Gratitude',
-      artist: 'Seabrun Candy Hunter',
-      url: 'https://ice1.somafm.com/sonicuniverse-128-mp3',
-      description: 'Candy expresses gratitude to all her supporters and collaborators',
-      duration: 72,
-    },
-    {
-      id: '16',
-      title: 'The Rockin\' Rockin\' Boogie Jingle',
-      artist: 'Seabrun Candy Hunter',
-      url: 'https://ice1.somafm.com/sonicuniverse-128-mp3',
-      description: 'The iconic jingle that introduces the Rockin\' Rockin\' Boogie brand',
-      duration: 30,
     },
   ];
 
-  // Merge database tracks with fallback - prefer DB tracks when available
-  const tracks: Track[] = useMemo(() => {
-    if (dbTracks && dbTracks.length > 0) {
-      return dbTracks.map(t => ({
-        id: t.id,
-        title: t.title,
-        artist: t.artist,
-        url: t.url,
-        duration: t.duration,
-        description: t.description || '',
-      }));
-    }
-    return fallbackTracks;
-  }, [dbTracks]);
-
-  // Get play count for a track
-  const getPlayCount = (trackId: string): number => {
-    if (!playCountData) return 0;
-    const track = playCountData.find(t => t.trackId === trackId);
-    return track?.playCount || 0;
-  };
-
-  // Get top 4 tracks by play count
-  const topTracks = useMemo(() => {
-    return tracks
-      .map(track => ({
-        ...track,
-        playCount: getPlayCount(track.id),
-      }))
-      .sort((a, b) => b.playCount - a.playCount)
-      .slice(0, 4);
-  }, [tracks, playCountData]);
+  const tracks = dbTracks || fallbackTracks;
+  const topTracks = tracks.slice(0, 4);
 
   const radioContent = (
     <>
-      {/* Main Radio Player */}
+      {/* Radio Player */}
       <div className="container mx-auto px-4 py-8">
         <RadioPlayer tracks={tracks} />
       </div>
@@ -217,7 +130,7 @@ export default function RadioStation() {
                       <p className="font-semibold text-white">{track.title}</p>
                       <p className="text-sm text-slate-300">{track.artist}</p>
                     </div>
-                    <p className="text-purple-300 font-bold">{formatPlayCount(track.playCount)} plays</p>
+                    <p className="text-purple-300 font-bold">{formatPlayCount(track.playCount || 0)} plays</p>
                   </div>
                   <div className="w-full bg-slate-700 rounded-full h-2">
                     <div
@@ -288,7 +201,7 @@ export default function RadioStation() {
               { name: 'Sweet Miracles', listeners: '42.1K' },
               { name: 'Proof Vault', listeners: '28.5K' },
             ].map((channel) => (
-              <div key={channel.name} className="bg-slate-700/50 rounded p-4 border border-slate-600">
+              <div key={`channel-${channel.name}`} className="bg-slate-700/50 rounded p-4 border border-slate-600">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                   <h3 className="font-semibold text-white text-sm">{channel.name}</h3>
@@ -320,33 +233,46 @@ export default function RadioStation() {
       />
       
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        {/* Header with Tabs */}
+        {/* Header with Custom Tabs */}
         <div className="border-b border-slate-700/50 bg-slate-900/50 backdrop-blur sticky top-0 z-40">
           <div className="container mx-auto px-4">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-transparent border-b border-slate-700">
-                <TabsTrigger value="radio-station" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-500 rounded-none">
-                  📻 Radio Station
-                </TabsTrigger>
-                <TabsTrigger value="rrb-radio" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-500 rounded-none">
-                  🎙️ RRB Radio (All Channels)
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <div className="flex gap-0 border-b border-slate-700">
+              <button
+                onClick={() => setActiveTab('radio-station')}
+                className={`px-6 py-4 font-medium transition-all border-b-2 ${
+                  activeTab === 'radio-station'
+                    ? 'text-purple-400 border-purple-500'
+                    : 'text-slate-400 border-transparent hover:text-slate-300'
+                }`}
+              >
+                📻 Radio Station
+              </button>
+              <button
+                onClick={() => setActiveTab('rrb-radio')}
+                className={`px-6 py-4 font-medium transition-all border-b-2 ${
+                  activeTab === 'rrb-radio'
+                    ? 'text-purple-400 border-purple-500'
+                    : 'text-slate-400 border-transparent hover:text-slate-300'
+                }`}
+              >
+                🎙️ RRB Radio (All Channels)
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Tab Content */}
-        <div key={activeTab}>
+        {/* Tab Content - Wrapped with stable key */}
+        <div>
           {activeTab === 'radio-station' ? radioContent : rrbRadioContent}
         </div>
+
         {/* Commercials */}
-        <div className="container mx-auto px-4 py-8" key="commercials">
+        <div className="container mx-auto px-4 py-8">
           <RadioCommercials />
         </div>
 
         {/* Seasonal Campaigns */}
-        <div className="container mx-auto px-4 py-8" key="campaigns">
+        <div className="container mx-auto px-4 py-8">
           <SeasonalCampaigns />
         </div>
       </div>
