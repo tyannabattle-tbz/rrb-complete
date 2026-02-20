@@ -1,7 +1,4 @@
 /**
-import { videoChatRouter } from './routers/videoChatRouter';
-import { playlistRouter } from './routers/playlistRouter';
-import { aiRecommendationsRouter } from './routers/aiRecommendationsRouter';
  * Chunked Main Router
  * Splits router imports into 5 chunks to reduce TypeScript compilation load
  * Each chunk is independently compiled, then combined at the top level
@@ -458,7 +455,7 @@ export const appRouter = router({
     getSessions: protectedProcedure
       .query(async ({ ctx }) => {
         if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        return db.getUserSessions(ctx.user.id);
+        return db.getAgentSessionsByUserId(ctx.user.id);
       }),
 
     // Get session by ID
@@ -466,7 +463,7 @@ export const appRouter = router({
       .input(z.number())
       .query(async ({ ctx, input }) => {
         if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        const session = await db.getAgentSession(input);
+        const session = await db.getAgentSessionById(input);
         if (!session || session.userId !== ctx.user.id) {
           throw new TRPCError({ code: "NOT_FOUND" });
         }
@@ -478,16 +475,14 @@ export const appRouter = router({
       .input(z.number())
       .mutation(async ({ ctx, input }) => {
         if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        const session = await db.getAgentSession(input);
+        const session = await db.getAgentSessionById(input);
         if (!session || session.userId !== ctx.user.id) {
           throw new TRPCError({ code: "NOT_FOUND" });
         }
-        // Note: deleteAgentSession not implemented in db.ts
+        await db.deleteAgentSession(input);
         return { success: true };
       }),
   }),
-  videoChat: videoChatRouter,
-  playlist: playlistRouter,
-  aiRecommendations: aiRecommendationsRouter,
 });
+
 export type AppRouter = typeof appRouter;

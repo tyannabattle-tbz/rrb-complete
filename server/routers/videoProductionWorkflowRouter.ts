@@ -1,6 +1,6 @@
 import { protectedProcedure, router } from '../_core/trpc';
 import { z } from 'zod';
-import { TRPCError } from '@trpc/server';
+import * as db from '../db';
 
 /**
  * Video Production Workflow Router
@@ -28,33 +28,32 @@ const broadcastScheduleSchema = z.object({
   repeatInterval: z.string().optional(), // cron expression
 });
 
-// In-memory storage for demo purposes
-// In production, these would be persisted to database
-const videoRegistry = new Map<string, any>();
-const broadcastSchedules = new Map<string, any>();
-const broadcasts = new Map<string, any>();
-
 export const videoProductionWorkflowRouter = router({
   // Register generated video for production workflow
   registerGeneratedVideo: protectedProcedure
     .input(videoProductionSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        // Store video metadata
-        const videoRecord = {
-          id: input.videoId,
-          userId: String(ctx.user.id),
-          title: input.title,
-          description: input.description || '',
-          duration: input.duration,
-          videoUrl: input.videoUrl,
-          thumbnailUrl: input.thumbnailUrl || '',
-          status: 'generated',
-          createdAt: new Date(),
-          metadata: input.metadata || {},
-        };
+        // Store video metadata in database
+        const videoRecord = await db.query.videos.findFirst({
+          where: (videos, { eq }) => eq(videos.id, input.videoId),
+        });
 
-        videoRegistry.set(input.videoId, videoRecord);
+        if (!videoRecord) {
+          // Create new video record
+          await db.insert(db.videos).values({
+            id: input.videoId,
+            userId: String(ctx.user.id),
+            title: input.title,
+            description: input.description || '',
+            duration: input.duration,
+            videoUrl: input.videoUrl,
+            thumbnailUrl: input.thumbnailUrl || '',
+            status: 'generated',
+            createdAt: new Date(),
+            metadata: JSON.stringify(input.metadata || {}),
+          });
+        }
 
         // Trigger production workflow
         return {
@@ -65,10 +64,7 @@ export const videoProductionWorkflowRouter = router({
         };
       } catch (error) {
         console.error('Error registering video:', error);
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to register video for production',
-        });
+        throw new Error('Failed to register video for production');
       }
     }),
 
@@ -77,13 +73,12 @@ export const videoProductionWorkflowRouter = router({
     .input(z.object({ videoId: z.string() }))
     .query(async ({ input }) => {
       try {
-        const video = videoRegistry.get(input.videoId);
+        const video = await db.query.videos.findFirst({
+          where: (videos, { eq }) => eq(videos.id, input.videoId),
+        });
 
         if (!video) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Video not found',
-          });
+          throw new Error('Video not found');
         }
 
         return {
@@ -96,10 +91,7 @@ export const videoProductionWorkflowRouter = router({
         };
       } catch (error) {
         console.error('Error getting video status:', error);
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to get video status',
-        });
+        throw new Error('Failed to get video status');
       }
     }),
 
@@ -109,19 +101,18 @@ export const videoProductionWorkflowRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         // Get video details
-        const video = videoRegistry.get(input.videoId);
+        const video = await db.query.videos.findFirst({
+          where: (videos, { eq }) => eq(videos.id, input.videoId),
+        });
 
         if (!video) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Video not found',
-          });
+          throw new Error('Video not found');
         }
 
         // Create broadcast schedule record
         const scheduleId = `schedule-${input.videoId}-${Date.now()}`;
-
-        const schedule = {
+        
+        await db.insert(db.broadcastSchedules).values({
           id: scheduleId,
           videoId: input.videoId,
           stationId: input.rrbRadioStationId,
@@ -132,13 +123,12 @@ export const videoProductionWorkflowRouter = router({
           status: 'scheduled',
           createdAt: new Date(),
           createdBy: String(ctx.user.id),
-        };
-
-        broadcastSchedules.set(scheduleId, schedule);
+        });
 
         // Update video status
-        video.status = 'scheduled_for_broadcast';
-        videoRegistry.set(input.videoId, video);
+        await db.update(db.videos)
+          .set({ status: 'scheduled_for_broadcast' })
+          .where((videos) => videos.id === input.videoId);
 
         return {
           success: true,
@@ -150,10 +140,7 @@ export const videoProductionWorkflowRouter = router({
         };
       } catch (error) {
         console.error('Error scheduling for RRB Radio:', error);
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to schedule video for broadcast',
-        });
+        throw new Error('Failed to schedule video for broadcast');
       }
     }),
 
@@ -162,11 +149,17 @@ export const videoProductionWorkflowRouter = router({
     .input(z.object({ stationId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
       try {
-        const userSchedules = Array.from(broadcastSchedules.values()).filter(
-          (s) => s.createdBy === String(ctx.user.id) && (!input.stationId || s.stationId === input.stationId)
-        );
+        const broadcasts = await db.query.broadcastSchedules.findMany({
+          where: (schedules, { eq, and }) =>
+            input.stationId
+              ? and(
+                  eq(schedules.createdBy, String(ctx.user.id)),
+                  eq(schedules.stationId, input.stationId)
+                )
+              : eq(schedules.createdBy, String(ctx.user.id)),
+        });
 
-        return userSchedules.map((broadcast) => ({
+        return broadcasts.map((broadcast) => ({
           scheduleId: broadcast.id,
           videoId: broadcast.videoId,
           stationId: broadcast.stationId,
@@ -177,10 +170,7 @@ export const videoProductionWorkflowRouter = router({
         }));
       } catch (error) {
         console.error('Error getting scheduled broadcasts:', error);
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to get scheduled broadcasts',
-        });
+        throw new Error('Failed to get scheduled broadcasts');
       }
     }),
 
@@ -194,34 +184,30 @@ export const videoProductionWorkflowRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const video = videoRegistry.get(input.videoId);
+        const video = await db.query.videos.findFirst({
+          where: (videos, { eq }) => eq(videos.id, input.videoId),
+        });
 
         if (!video) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Video not found',
-          });
+          throw new Error('Video not found');
         }
 
         // Create immediate broadcast record
         const broadcastId = `broadcast-${input.videoId}-${Date.now()}`;
 
-        const broadcast = {
+        await db.insert(db.broadcasts).values({
           id: broadcastId,
           videoId: input.videoId,
           stationId: input.rrbRadioStationId,
           startTime: new Date(),
-          endTime: null,
           status: 'live',
-          viewerCount: 0,
           createdBy: String(ctx.user.id),
-        };
-
-        broadcasts.set(broadcastId, broadcast);
+        });
 
         // Update video status
-        video.status = 'broadcasting';
-        videoRegistry.set(input.videoId, video);
+        await db.update(db.videos)
+          .set({ status: 'broadcasting' })
+          .where((videos) => videos.id === input.videoId);
 
         return {
           success: true,
@@ -233,10 +219,7 @@ export const videoProductionWorkflowRouter = router({
         };
       } catch (error) {
         console.error('Error broadcasting video:', error);
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to broadcast video',
-        });
+        throw new Error('Failed to broadcast video');
       }
     }),
 
@@ -245,11 +228,17 @@ export const videoProductionWorkflowRouter = router({
     .input(z.object({ videoId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
       try {
-        const userBroadcasts = Array.from(broadcasts.values()).filter(
-          (b) => b.createdBy === String(ctx.user.id) && (!input.videoId || b.videoId === input.videoId)
-        );
+        const broadcasts = await db.query.broadcasts.findMany({
+          where: (broadcasts, { eq, and }) =>
+            input.videoId
+              ? and(
+                  eq(broadcasts.createdBy, String(ctx.user.id)),
+                  eq(broadcasts.videoId, input.videoId)
+                )
+              : eq(broadcasts.createdBy, String(ctx.user.id)),
+        });
 
-        return userBroadcasts.map((broadcast) => ({
+        return broadcasts.map((broadcast) => ({
           broadcastId: broadcast.id,
           videoId: broadcast.videoId,
           stationId: broadcast.stationId,
@@ -260,48 +249,42 @@ export const videoProductionWorkflowRouter = router({
         }));
       } catch (error) {
         console.error('Error getting broadcast history:', error);
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to get broadcast history',
-        });
+        throw new Error('Failed to get broadcast history');
       }
     }),
 
   // Get production workflow statistics
   getWorkflowStats: protectedProcedure.query(async ({ ctx }) => {
     try {
-      const userVideos = Array.from(videoRegistry.values()).filter(
-        (v) => v.userId === String(ctx.user.id)
-      );
+      const videos = await db.query.videos.findMany({
+        where: (videos, { eq }) => eq(videos.userId, String(ctx.user.id)),
+      });
 
-      const userBroadcasts = Array.from(broadcasts.values()).filter(
-        (b) => b.createdBy === String(ctx.user.id)
-      );
+      const broadcasts = await db.query.broadcasts.findMany({
+        where: (broadcasts, { eq }) => eq(broadcasts.createdBy, String(ctx.user.id)),
+      });
 
       const statusCounts = {
-        generated: userVideos.filter((v) => v.status === 'generated').length,
-        processing: userVideos.filter((v) => v.status === 'processing').length,
-        scheduled: userVideos.filter((v) => v.status === 'scheduled_for_broadcast').length,
-        broadcasting: userVideos.filter((v) => v.status === 'broadcasting').length,
-        completed: userVideos.filter((v) => v.status === 'completed').length,
+        generated: videos.filter((v) => v.status === 'generated').length,
+        processing: videos.filter((v) => v.status === 'processing').length,
+        scheduled: videos.filter((v) => v.status === 'scheduled_for_broadcast').length,
+        broadcasting: videos.filter((v) => v.status === 'broadcasting').length,
+        completed: videos.filter((v) => v.status === 'completed').length,
       };
 
-      const totalViewers = userBroadcasts.reduce((sum, b) => sum + (b.viewerCount || 0), 0);
+      const totalViewers = broadcasts.reduce((sum, b) => sum + (b.viewerCount || 0), 0);
 
       return {
-        totalVideos: userVideos.length,
-        totalBroadcasts: userBroadcasts.length,
+        totalVideos: videos.length,
+        totalBroadcasts: broadcasts.length,
         statusCounts,
         totalViewers,
         averageViewersPerBroadcast:
-          userBroadcasts.length > 0 ? Math.round(totalViewers / userBroadcasts.length) : 0,
+          broadcasts.length > 0 ? Math.round(totalViewers / broadcasts.length) : 0,
       };
     } catch (error) {
       console.error('Error getting workflow stats:', error);
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Failed to get workflow statistics',
-      });
+      throw new Error('Failed to get workflow statistics');
     }
   }),
 });
