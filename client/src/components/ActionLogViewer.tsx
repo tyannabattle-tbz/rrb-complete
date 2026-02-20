@@ -171,7 +171,7 @@ export default function ActionLogViewer({ logs, isLoading = false }: ActionLogVi
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Tools</SelectItem>
-            {tools.map((tool) => (
+            {tools.map((tool, idx) => (
               <SelectItem key={tool} value={tool}>
                 {tool}
               </SelectItem>
@@ -202,7 +202,7 @@ export default function ActionLogViewer({ logs, isLoading = false }: ActionLogVi
         ) : (
           filteredLogs.map((log) => (
             <Card
-              key={log.id}
+              key={`log-${idx}-${log.id}`}
               className="p-4 cursor-pointer hover:bg-muted/50 transition-colors"
               onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
             >

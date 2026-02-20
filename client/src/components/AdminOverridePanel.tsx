@@ -143,9 +143,9 @@ export default function AdminOverridePanel() {
               </div>
             </div>
           ) : (
-            decisions.filter(d => d.status === 'pending').map(decision => (
+            decisions.filter(d => d.status === 'pending').map((decision, idx) => (
               <Card
-                key={decision.id}
+                key={`decision-${idx}-${decision.id}`}
                 className={`bg-slate-800 border-slate-700 cursor-pointer hover:border-blue-500/50 transition-all ${
                   selectedDecision?.id === decision.id ? 'border-blue-500 ring-2 ring-blue-500/20' : ''
                 }`}
@@ -188,8 +188,8 @@ export default function AdminOverridePanel() {
               <p>No decision history yet</p>
             </div>
           ) : (
-            decisions.filter(d => d.status !== 'pending').map(decision => (
-              <Card key={decision.id} className="bg-slate-800 border-slate-700">
+            decisions.filter(d => d.status !== 'pending').map((decision, idx) => (
+              <Card key={`decision-${idx}-${decision.id}`} className="bg-slate-800 border-slate-700">
                 <CardContent className="p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

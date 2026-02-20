@@ -6,8 +6,12 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <meta name="theme-color" content="#F59E0B" />
+    <meta name="theme-color" content="#3b82f6" />
     <meta name="description" content="Rockin Rockin Boogie — Preserving the legacy of Seabrun Candy Hunter through music, broadcasting, and community. Powered by Canryn Production." />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="RRB Radio" />
     <meta name="keywords" content="Rockin Rockin Boogie, Seabrun Candy Hunter, Canryn Production, Sweet Miracles, HybridCast, legacy music, RRB Radio, QUMUS" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/CwlfSiQnAwcddGLi.png" />
@@ -167,6 +171,15 @@
       <p>Preserving the legacy of Seabrun Candy Hunter through verified documentation, live radio broadcasting, healing music frequencies, and community empowerment. Powered by Canryn Production and Sweet Miracles — A Voice for the Voiceless.</p>
     </div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.log('SW registration failed:', err);
+          });
+        });
+      }
+    </script>
     <script
       defer
       src="%VITE_ANALYTICS_ENDPOINT%/umami"
