@@ -48,6 +48,8 @@ import { commandExecutionRouter } from "./routers/commandExecutionRouter";
 import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 import { audioRouter } from "./routers/audioRouter";
 import { qumusAutonomousEntityRouter } from "./routers/qumusAutonomousEntityRouter";
+import { rssFeedRouter } from "./routers/rssFeedRouter";
+import { socialMediaRouter } from "./routers/socialMediaRouter";
 import { qumusAutonomousScalingRouter } from "./routers/qumusAutonomousScalingRouter";
 import { qumusChatRouter } from "./routers/qumusChatRouter";
 import { qumusIdentityRouter } from "./routers/qumusIdentityRouter";
@@ -232,6 +234,12 @@ export const appRouter = router({
     qumusChat: qumusChatRouter,
     qumusIdentity: qumusIdentityRouter,
   }),
+
+  // RSS Feed Distribution
+  rssFeed: rssFeedRouter,
+
+  // Social Media Integration
+  socialMedia: socialMediaRouter,
 
   // Social Sharing Features
   socialSharing: socialSharingRouter,
