@@ -87,7 +87,7 @@ export function BatchVideoProcessorComponent({
           <p className="text-sm font-semibold mb-2">Preset Details:</p>
           <ul className="text-sm text-gray-600 space-y-1">
             {preset.jobs.map((job, idx) => (
-              <li key={idx}>
+              <li key={`item-${idx}`}>
                 • {job.preset} - {job.format.toUpperCase()} @ {job.quality} ({job.duration}s)
               </li>
             ))}

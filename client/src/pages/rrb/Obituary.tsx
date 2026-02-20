@@ -103,7 +103,7 @@ export default function Obituary() {
           <h3 className="text-2xl font-bold text-foreground mb-6 text-center">A Life of Achievement</h3>
           <div className="space-y-3">
             {legacyHighlights.map((highlight, idx) => (
-              <div key={idx} className="flex items-start gap-3 p-4 rounded-lg bg-background/50">
+              <div key={`item-${idx}`} className="flex items-start gap-3 p-4 rounded-lg bg-background/50">
                 <Star className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                 <p className="text-foreground/70">{highlight}</p>
               </div>
@@ -118,7 +118,7 @@ export default function Obituary() {
           <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Words of Remembrance</h3>
           <div className="space-y-6">
             {tributes.map((tribute, idx) => (
-              <Card key={idx} className="border-foreground/10">
+              <Card key={`item-${idx}`} className="border-foreground/10">
                 <CardContent className="pt-6">
                   <blockquote className="text-foreground/70 leading-relaxed italic text-lg mb-3">
                     "{tribute.text}"

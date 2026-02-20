@@ -128,7 +128,7 @@ export default function FamilyTree() {
               };
 
               return (
-                <Card key={idx} className={`transition-colors ${colorMap[member.color] || ''}`}>
+                <Card key={`item-${idx}`} className={`transition-colors ${colorMap[member.color] || ''}`}>
                   <CardHeader>
                     <div className="flex items-start gap-4">
                       <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 ${iconColorMap[member.color] || ''}`}>
@@ -157,7 +157,7 @@ export default function FamilyTree() {
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">The Thread That Connects</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {familyLegacyPoints.map((point, idx) => (
-              <Card key={idx}>
+              <Card key={`item-${idx}`}>
                 <CardContent className="pt-6">
                   <h3 className="text-lg font-bold text-foreground mb-2">{point.title}</h3>
                   <p className="text-foreground/70 leading-relaxed text-sm">{point.description}</p>

@@ -237,7 +237,7 @@ export function ScheduleManager() {
             const Icon = contentType.icon;
 
             return (
-              <div key={idx} className={`p-4 rounded-lg ${contentType.color}`}>
+              <div key={`item-${idx}`} className={`p-4 rounded-lg ${contentType.color}`}>
                 <div className="flex items-center gap-2 mb-2">
                   <Icon className="w-5 h-5" />
                   <span className="font-semibold">{content.title}</span>

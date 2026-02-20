@@ -147,7 +147,7 @@ export default function Sponsorships() {
                 <CardContent>
                   <ul className="space-y-2">
                     {tier.benefits.map((benefit, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-foreground/70">
+                      <li key={`item-${idx}`} className="flex items-start gap-2 text-sm text-foreground/70">
                         <CheckCircle className={`w-4 h-4 ${tier.textColor} flex-shrink-0 mt-0.5`} />
                         {benefit}
                       </li>

@@ -156,7 +156,7 @@ export default function AutomatedRemediationWorkflows() {
                   <div className="flex flex-wrap gap-2">
                     {workflow.actions.map((action, idx) => (
                       <span
-                        key={idx}
+                        key={`item-${idx}`}
                         className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs text-slate-700 dark:text-slate-300"
                       >
                         {action}
@@ -247,7 +247,7 @@ export default function AutomatedRemediationWorkflows() {
                     </div>
                     <div className="space-y-1">
                       {execution.actions.map((action, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-xs">
+                        <div key={`item-${idx}`} className="flex items-center gap-2 text-xs">
                           {action.status === 'completed' && (
                             <CheckCircle className="w-3 h-3 text-green-600 dark:text-green-400" />
                           )}

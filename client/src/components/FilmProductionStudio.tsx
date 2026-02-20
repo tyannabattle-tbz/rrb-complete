@@ -223,7 +223,7 @@ export function FilmProductionStudio({
                   <p className="text-sm font-semibold mb-2">Effects</p>
                   <div className="space-y-2">
                     {selectedScene.animations.map((anim, idx) => (
-                      <div key={idx} className="p-2 bg-gray-100 rounded text-sm">
+                      <div key={`item-${idx}`} className="p-2 bg-gray-100 rounded text-sm">
                         <p className="font-medium capitalize">{anim.effect}</p>
                         <p className="text-gray-600">
                           Duration: {anim.duration}s | Intensity: {anim.intensity}
@@ -251,7 +251,7 @@ export function FilmProductionStudio({
                   <p className="text-sm font-semibold mb-2">Sound Effects</p>
                   <div className="space-y-2">
                     {selectedScene.soundEffects.map((sfx, idx) => (
-                      <div key={idx} className="p-2 bg-orange-50 rounded border border-orange-200 text-sm">
+                      <div key={`item-${idx}`} className="p-2 bg-orange-50 rounded border border-orange-200 text-sm">
                         <p className="font-medium">{sfx.name}</p>
                         <p className="text-gray-600">
                           {sfx.startTime}s - {sfx.startTime + sfx.duration}s (Volume: {sfx.volume})

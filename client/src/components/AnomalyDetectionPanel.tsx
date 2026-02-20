@@ -185,7 +185,7 @@ export function AnomalyDetectionPanel() {
                     <p className="text-xs font-semibold text-gray-600 mb-2">Recommended Actions:</p>
                     <ul className="text-xs space-y-1">
                       {insight.actionItems.map((item: string, idx: number) => (
-                        <li key={idx} className="flex items-start gap-2">
+                        <li key={`item-${idx}`} className="flex items-start gap-2">
                           <span className="text-blue-600 mt-0.5">•</span>
                           <span>{item}</span>
                         </li>

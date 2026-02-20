@@ -134,7 +134,7 @@ export function RealtimeAnalyticsDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {metrics.map((metric, idx) => (
             <Card
-              key={idx}
+              key={`item-${idx}`}
               className="bg-gray-800 border-gray-700 p-6 hover:bg-gray-750 transition cursor-pointer"
               onClick={() => setSelectedMetric(metric.label)}
             >
@@ -170,7 +170,7 @@ export function RealtimeAnalyticsDashboard() {
           {/* Mini Chart */}
           <div className="h-64 bg-gray-700 rounded border border-gray-600 p-4 flex items-end justify-between gap-2">
             {streamData.map((data, idx) => (
-              <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+              <div key={`item-${idx}`} className="flex-1 flex flex-col items-center gap-2">
                 <div
                   className="w-full bg-gradient-to-t from-blue-500 to-blue-300 rounded"
                   style={{
@@ -196,7 +196,7 @@ export function RealtimeAnalyticsDashboard() {
               </thead>
               <tbody>
                 {streamData.map((data, idx) => (
-                  <tr key={idx} className="border-b border-gray-700 hover:bg-gray-700">
+                  <tr key={`item-${idx}`} className="border-b border-gray-700 hover:bg-gray-700">
                     <td className="py-2 px-3 text-white">{data.timestamp}</td>
                     <td className="py-2 px-3 text-blue-400">{data.viewers.toLocaleString()}</td>
                     <td className="py-2 px-3 text-green-400">{data.engagement.toFixed(1)}%</td>
@@ -216,7 +216,7 @@ export function RealtimeAnalyticsDashboard() {
             { label: 'Likes', value: 8920, icon: Heart, color: 'text-red-500' },
             { label: 'Shares', value: 1240, icon: Share2, color: 'text-green-500' },
           ].map((item, idx) => (
-            <Card key={idx} className="bg-gray-800 border-gray-700 p-6">
+            <Card key={`item-${idx}`} className="bg-gray-800 border-gray-700 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">{item.label}</p>
@@ -240,7 +240,7 @@ export function RealtimeAnalyticsDashboard() {
               { title: 'Gaming Stream', viewers: 3200, duration: '45m', quality: '1080p' },
               { title: 'Music Session', viewers: 4950, duration: '1h 20m', quality: '4K' },
             ].map((stream, idx) => (
-              <div key={idx} className="p-4 bg-gray-700 rounded border border-gray-600 flex items-center justify-between">
+              <div key={`item-${idx}`} className="p-4 bg-gray-700 rounded border border-gray-600 flex items-center justify-between">
                 <div>
                   <p className="text-white font-semibold">{stream.title}</p>
                   <p className="text-gray-400 text-sm">{stream.viewers.toLocaleString()} viewers • {stream.duration}</p>

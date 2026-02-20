@@ -121,7 +121,7 @@ export default function FamilyLegacy() {
             <h2 className="text-3xl font-bold text-amber-50 mb-8">Timeline</h2>
             <div className="space-y-6">
               {timelineEvents.map((event, idx) => (
-                <div key={idx} className="flex gap-6">
+                <div key={`item-${idx}`} className="flex gap-6">
                   <div className="flex flex-col items-center">
                     <div className="w-4 h-4 rounded-full bg-amber-500 border-2 border-amber-300"></div>
                     {idx < timelineEvents.length - 1 && (

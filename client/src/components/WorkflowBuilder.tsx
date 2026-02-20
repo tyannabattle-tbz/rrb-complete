@@ -197,7 +197,7 @@ export function WorkflowBuilder({ compact = false }: WorkflowBuilderProps) {
           {!validation.valid && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg space-y-1">
               {validation.errors.map((error, idx) => (
-                <div key={idx} className="text-sm text-red-700">
+                <div key={`item-${idx}`} className="text-sm text-red-700">
                   • {error}
                 </div>
               ))}

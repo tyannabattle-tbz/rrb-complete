@@ -296,7 +296,7 @@ export function CreatorCollaboration() {
                           timestamp: '1 hour ago',
                         },
                       ].map((comment, idx) => (
-                        <div key={idx} className="p-3 bg-gray-700 rounded border border-gray-600">
+                        <div key={`item-${idx}`} className="p-3 bg-gray-700 rounded border border-gray-600">
                           <div className="flex items-center justify-between mb-2">
                             <p className="text-white font-semibold text-sm">{comment.author}</p>
                             <span className="text-gray-400 text-xs">{comment.timestamp}</span>
@@ -372,7 +372,7 @@ export function CreatorCollaboration() {
                   { icon: CheckCircle, title: 'Approval Workflow', desc: 'Multi-stage review and approval' },
                   { icon: Zap, title: 'Real-time Sync', desc: 'Instant updates across all collaborators' },
                 ].map((feature, idx) => (
-                  <div key={idx} className="p-4 bg-gray-700 rounded border border-gray-600 flex items-start gap-3">
+                  <div key={`item-${idx}`} className="p-4 bg-gray-700 rounded border border-gray-600 flex items-start gap-3">
                     <feature.icon className="w-5 h-5 text-purple-400 mt-1 flex-shrink-0" />
                     <div>
                       <p className="text-white font-semibold">{feature.title}</p>

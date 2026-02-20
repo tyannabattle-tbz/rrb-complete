@@ -270,7 +270,7 @@ export default function DecisionPolicyEditor() {
                 { name: 'Emergency Broadcast', condition: 'type = "broadcast" AND urgent = true', action: 'broadcast' },
                 { name: 'Large Donation', condition: 'amount > 1000', action: 'request-approval' },
               ].map((template, idx) => (
-                <Card key={idx} className="bg-slate-800 border-slate-700">
+                <Card key={`item-${idx}`} className="bg-slate-800 border-slate-700">
                   <CardContent className="p-4">
                     <h3 className="font-semibold text-white mb-2">{template.name}</h3>
                     <p className="text-xs text-slate-400 mb-2">Condition: {template.condition}</p>

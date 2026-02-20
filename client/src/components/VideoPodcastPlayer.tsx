@@ -201,7 +201,7 @@ export function VideoPodcastPlayer({ videoId, title, duration, autoplay = false 
                 <div className="space-y-2">
                   {['2020', '2021', '2022', '2023'].map((option, idx) => (
                     <Button
-                      key={idx}
+                      key={`item-${idx}`}
                       variant="outline"
                       className="w-full justify-start"
                       onClick={() => toast.success(idx === 2 ? 'Correct!' : 'Try again!')}
@@ -219,7 +219,7 @@ export function VideoPodcastPlayer({ videoId, title, duration, autoplay = false 
                 <div className="space-y-2">
                   {['Amazing (234)', 'Good (156)', 'Okay (45)', 'Not great (12)'].map((option, idx) => (
                     <Button
-                      key={idx}
+                      key={`item-${idx}`}
                       variant="outline"
                       className="w-full justify-between"
                       onClick={() => toast.success('Vote recorded!')}

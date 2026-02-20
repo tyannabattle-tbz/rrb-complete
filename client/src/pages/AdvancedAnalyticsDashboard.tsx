@@ -203,7 +203,7 @@ export default function AdvancedAnalyticsDashboard() {
               </thead>
               <tbody>
                 {servicePerformance.map((service, idx) => (
-                  <tr key={idx} className="border-b border-slate-700 hover:bg-slate-700/50">
+                  <tr key={`item-${idx}`} className="border-b border-slate-700 hover:bg-slate-700/50">
                     <td className="py-3 px-4 text-white">{service.name}</td>
                     <td className="py-3 px-4 text-green-400">{service.uptime}%</td>
                     <td className="py-3 px-4 text-slate-300">{service.latency}</td>

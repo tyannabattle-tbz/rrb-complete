@@ -193,7 +193,7 @@ export function QumusChatCommandCenter() {
           <div className="flex flex-wrap gap-2">
             {suggestions.map((suggestion, idx) => (
               <Button
-                key={idx}
+                key={`item-${idx}`}
                 size="sm"
                 variant="outline"
                 onClick={() => handleSuggestion(suggestion)}

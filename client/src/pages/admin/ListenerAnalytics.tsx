@@ -184,7 +184,7 @@ export default function ListenerAnalytics() {
                 const percentage = (channel.listeners / maxListeners) * 100;
 
                 return (
-                  <div key={idx} className="space-y-2">
+                  <div key={`item-${idx}`} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-sm">{channel.name}</span>
                       <div className="flex items-center gap-2">
@@ -214,7 +214,7 @@ export default function ListenerAnalytics() {
             </CardHeader>
             <CardContent className="space-y-4">
               {frequencyPreferences.map((freq, idx) => (
-                <div key={idx} className="space-y-2">
+                <div key={`item-${idx}`} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-sm">{freq.hz} Hz</span>
                     <div className="flex items-center gap-2">
@@ -244,7 +244,7 @@ export default function ListenerAnalytics() {
             <CardContent>
               <div className="space-y-4">
                 {commercialMetrics.map((commercial, idx) => (
-                  <div key={idx} className="border rounded-lg p-4">
+                  <div key={`item-${idx}`} className="border rounded-lg p-4">
                     <div className="flex items-start justify-between mb-3">
                       <h4 className="font-semibold">{commercial.title}</h4>
                       <Badge variant="secondary">{commercial.plays} plays</Badge>
@@ -280,7 +280,7 @@ export default function ListenerAnalytics() {
             <CardContent>
               <div className="space-y-3">
                 {topContent.map((content, idx) => (
-                  <div key={idx} className="flex items-center justify-between pb-3 border-b last:border-0">
+                  <div key={`item-${idx}`} className="flex items-center justify-between pb-3 border-b last:border-0">
                     <div className="flex-1">
                       <p className="font-semibold">#{idx + 1} {content.title}</p>
                       <p className="text-sm text-muted-foreground">{content.channel}</p>

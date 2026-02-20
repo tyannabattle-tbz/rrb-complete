@@ -131,7 +131,7 @@ export function AudioErrorDisplay({ error, onRetry, onDismiss }: AudioErrorDispl
               </div>
               <div className="bg-black bg-opacity-50 rounded p-3 max-h-40 overflow-y-auto space-y-1">
                 {errorLogs.slice(-5).map((log, idx) => (
-                  <div key={idx} className="text-xs text-gray-400 border-b border-gray-800 pb-1 last:border-0">
+                  <div key={`item-${idx}`} className="text-xs text-gray-400 border-b border-gray-800 pb-1 last:border-0">
                     <p className="text-gray-500">{log.timestamp}</p>
                     <p className="text-yellow-400">{log.type}</p>
                     <p className="text-gray-300">{log.message}</p>

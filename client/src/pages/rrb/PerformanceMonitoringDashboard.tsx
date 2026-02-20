@@ -308,7 +308,7 @@ export default function PerformanceMonitoringDashboard() {
               const catConfig = categoryConfig[metric.category];
               const CatIcon = catConfig?.icon ?? Activity;
               return (
-                <Card key={idx} className={`bg-stone-900/60 border-stone-800/50 ${metric.severity !== 'normal' ? 'border-amber-800/40' : ''}`}>
+                <Card key={`item-${idx}`} className={`bg-stone-900/60 border-stone-800/50 ${metric.severity !== 'normal' ? 'border-amber-800/40' : ''}`}>
                   <CardContent className="pt-5 pb-5">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
@@ -369,7 +369,7 @@ export default function PerformanceMonitoringDashboard() {
             <CardContent>
               <div className="space-y-3">
                 {snapshot.recommendations.map((rec: string, idx: number) => (
-                  <div key={idx} className="flex items-start gap-3 p-3 bg-stone-800/50 rounded-lg">
+                  <div key={`item-${idx}`} className="flex items-start gap-3 p-3 bg-stone-800/50 rounded-lg">
                     <CheckCircle2 className="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" />
                     <p className="text-sm text-stone-300">{rec}</p>
                   </div>

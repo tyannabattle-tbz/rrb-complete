@@ -122,7 +122,7 @@ export default function SweetMiraclesCompanyPage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {statistics.map((stat, idx) => (
-              <div key={idx} className="text-center">
+              <div key={`item-${idx}`} className="text-center">
                 <div className="flex justify-center mb-3 text-accent">{stat.icon}</div>
                 <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
                 <div className="text-foreground/70">{stat.label}</div>
@@ -199,7 +199,7 @@ export default function SweetMiraclesCompanyPage() {
             <TabsContent value="divisions" className="mt-8">
               <div className="space-y-4">
                 {divisions.map((division, idx) => (
-                  <Card key={idx}>
+                  <Card key={`item-${idx}`}>
                     <CardHeader>
                       <CardTitle>{division.name}</CardTitle>
                       <CardDescription>{division.description}</CardDescription>
@@ -223,7 +223,7 @@ export default function SweetMiraclesCompanyPage() {
             <TabsContent value="achievements" className="mt-8">
               <div className="space-y-4">
                 {achievements.map((achievement, idx) => (
-                  <Card key={idx}>
+                  <Card key={`item-${idx}`}>
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">

@@ -151,7 +151,7 @@ export default function LittleC() {
                 { label: 'YouTube', placeholder: '@LittleCCompany' },
                 { label: 'LinkedIn', placeholder: 'littlec-company' },
               ].map((social, idx) => (
-                <div key={idx} className="bg-stone-900/40 rounded-lg p-4">
+                <div key={`item-${idx}`} className="bg-stone-900/40 rounded-lg p-4">
                   <p className="text-amber-300 font-semibold text-sm">{social.label}</p>
                   <p className="text-amber-200/40 text-xs mt-1">{social.placeholder}</p>
                 </div>
@@ -169,7 +169,7 @@ export default function LittleC() {
                 { title: 'Community Involvement', desc: 'Active participation in community initiatives' },
                 { title: 'Legacy Continuation', desc: 'Carrying forward Seabrun Hunter\'s vision' },
               ].map((achievement, idx) => (
-                <div key={idx} className="bg-stone-800/40 rounded-lg p-6 border border-amber-900/30">
+                <div key={`item-${idx}`} className="bg-stone-800/40 rounded-lg p-6 border border-amber-900/30">
                   <h3 className="text-lg font-semibold text-amber-300 mb-2">{achievement.title}</h3>
                   <p className="text-amber-200/60">{achievement.desc}</p>
                 </div>

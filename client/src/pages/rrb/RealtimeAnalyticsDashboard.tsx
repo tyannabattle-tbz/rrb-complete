@@ -206,7 +206,7 @@ export default function RealtimeAnalyticsDashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {geoData?.topCountries.map((country: any, idx: number) => (
-                    <div key={idx} className="flex items-center justify-between">
+                    <div key={`item-${idx}`} className="flex items-center justify-between">
                       <div className="flex-1">
                         <p className="text-white font-medium">{country.country}</p>
                         <div className="w-full bg-slate-700 rounded-full h-2 mt-1">

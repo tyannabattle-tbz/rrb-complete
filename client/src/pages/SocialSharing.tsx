@@ -279,7 +279,7 @@ export function SocialSharing() {
                 { label: 'Shares', value: selectedContent.metrics.shares, icon: Share2 },
                 { label: 'Engagement', value: `${selectedContent.metrics.engagement}%`, icon: Heart },
               ].map((stat, idx) => (
-                <div key={idx} className="p-3 bg-gray-700 rounded border border-gray-600">
+                <div key={`item-${idx}`} className="p-3 bg-gray-700 rounded border border-gray-600">
                   <div className="flex items-center gap-2 mb-2">
                     <stat.icon className="w-4 h-4 text-blue-400" />
                     <p className="text-gray-400 text-sm">{stat.label}</p>

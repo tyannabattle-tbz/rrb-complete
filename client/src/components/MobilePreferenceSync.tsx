@@ -157,7 +157,7 @@ export default function MobilePreferenceSync({ deviceId, onSync }: MobilePrefere
           </div>
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {playbackPositions.slice(0, 3).map((pos, idx) => (
-              <div key={idx} className="bg-slate-700 p-3 rounded-lg">
+              <div key={`item-${idx}`} className="bg-slate-700 p-3 rounded-lg">
                 <p className="text-white text-sm font-semibold truncate">
                   Content {pos.contentId.slice(0, 8)}...
                 </p>

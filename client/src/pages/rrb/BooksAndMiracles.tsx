@@ -83,7 +83,7 @@ export default function BooksAndMiracles() {
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Written Works</h2>
           <div className="space-y-6">
             {writtenWorks.map((work, idx) => (
-              <Card key={idx} className="hover:border-fuchsia-500/30 transition-colors">
+              <Card key={`item-${idx}`} className="hover:border-fuchsia-500/30 transition-colors">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
@@ -118,7 +118,7 @@ export default function BooksAndMiracles() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {sweetMiraclesPrograms.map((program, idx) => (
-              <Card key={idx}>
+              <Card key={`item-${idx}`}>
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-fuchsia-500/20 flex items-center justify-center">

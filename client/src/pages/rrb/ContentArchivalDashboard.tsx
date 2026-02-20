@@ -427,7 +427,7 @@ export default function ContentArchivalDashboard() {
                     {scan.recommendations.length > 0 && (
                       <div className="bg-muted/50 rounded-lg p-3">
                         {scan.recommendations.map((rec: string, idx: number) => (
-                          <p key={idx} className="text-xs text-foreground/60">{rec}</p>
+                          <p key={`item-${idx}`} className="text-xs text-foreground/60">{rec}</p>
                         ))}
                       </div>
                     )}

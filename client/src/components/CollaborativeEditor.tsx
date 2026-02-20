@@ -223,7 +223,7 @@ export function CollaborativeEditor({ sessionId }: { sessionId: number }) {
           <CardContent>
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {operations.slice(-10).map((op, idx) => (
-                <div key={idx} className="text-xs p-2 bg-gray-50 rounded flex justify-between">
+                <div key={`item-${idx}`} className="text-xs p-2 bg-gray-50 rounded flex justify-between">
                   <span>
                     {op.type === "insert" ? "➕" : "➖"} {op.type === "insert" ? `Inserted "${op.content}"` : `Deleted ${op.length} chars`} at position {op.position}
                   </span>

@@ -131,7 +131,7 @@ export default function EditingPresets({
                     <div className="flex flex-wrap gap-1">
                       {preset.effects.map((effect, idx) => (
                         <Badge
-                          key={idx}
+                          key={`item-${idx}`}
                           variant="outline"
                           className="text-xs border-slate-500"
                         >
@@ -147,7 +147,7 @@ export default function EditingPresets({
                     <div className="flex flex-wrap gap-1">
                       {preset.transitions.map((transition, idx) => (
                         <Badge
-                          key={idx}
+                          key={`item-${idx}`}
                           variant="outline"
                           className="text-xs border-slate-500"
                         >

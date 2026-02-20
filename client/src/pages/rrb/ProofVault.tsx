@@ -634,7 +634,7 @@ export default function ProofVault() {
                       <h4 className="text-sm font-semibold text-foreground mb-2">Key Evidence Points</h4>
                       <ul className="space-y-2">
                         {item.details.map((detail, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-sm text-foreground/70">
+                          <li key={`item-${idx}`} className="flex items-start gap-2 text-sm text-foreground/70">
                             <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
                             {detail}
                           </li>
@@ -693,7 +693,7 @@ export default function ProofVault() {
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 p-3">
                           {item.screenshotGallery.map((img, idx) => (
                             <a
-                              key={idx}
+                              key={`item-${idx}`}
                               href={img.url}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -725,7 +725,7 @@ export default function ProofVault() {
                         <div className="flex flex-wrap gap-2">
                           {item.externalLinks.map((link, idx) => (
                             <a
-                              key={idx}
+                              key={`item-${idx}`}
                               href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"

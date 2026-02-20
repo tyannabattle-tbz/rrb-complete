@@ -199,7 +199,7 @@ export function MegaControlStationDashboard() {
             <CardContent>
               <div className="space-y-3">
                 {controlDashboard.getActivityFeed().map((activity, idx) => (
-                  <div key={idx} className="flex items-center justify-between border-b pb-2">
+                  <div key={`item-${idx}`} className="flex items-center justify-between border-b pb-2">
                     <div>
                       <p className="font-medium text-sm">{activity.action}</p>
                       <p className="text-xs text-gray-500">{activity.details}</p>

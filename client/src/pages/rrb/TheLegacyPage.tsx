@@ -211,7 +211,7 @@ export default function TheLegacyPage() {
                       <CardContent className="pt-0">
                         <ul className="space-y-2 ml-4">
                           {event.details.map((detail, idx) => (
-                            <li key={idx} className="flex items-start gap-3">
+                            <li key={`item-${idx}`} className="flex items-start gap-3">
                               <span className="text-accent mt-1">•</span>
                               <span className="text-foreground/80">{detail}</span>
                             </li>
@@ -234,7 +234,7 @@ export default function TheLegacyPage() {
                 <CardContent>
                   <div className="prose prose-invert max-w-none">
                     {biographyContent.split('\n\n').map((paragraph, idx) => (
-                      <p key={idx} className="text-foreground/80 leading-relaxed mb-4">
+                      <p key={`item-${idx}`} className="text-foreground/80 leading-relaxed mb-4">
                         {paragraph}
                       </p>
                     ))}
@@ -255,7 +255,7 @@ export default function TheLegacyPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {verifiedSources.map((source, idx) => (
-                    <Card key={idx}>
+                    <Card key={`item-${idx}`}>
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div>

@@ -145,7 +145,7 @@ export function EnhancedChatWithStreaming() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
         {messages.map((msg, idx) => (
-          <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div key={`item-${idx}`} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
               className={`max-w-2xl px-4 py-3 rounded-lg ${
                 msg.role === 'user'
@@ -187,7 +187,7 @@ export function EnhancedChatWithStreaming() {
         <div className="border-t border-slate-200 bg-blue-50 p-3">
           <div className="space-y-2">
             {uploadedFiles.map((file, idx) => (
-              <div key={idx} className="flex items-center justify-between">
+              <div key={`item-${idx}`} className="flex items-center justify-between">
                 <div className="flex items-center gap-2 flex-1">
                   <FileIcon className="w-4 h-4" />
                   <div className="flex-1 min-w-0">

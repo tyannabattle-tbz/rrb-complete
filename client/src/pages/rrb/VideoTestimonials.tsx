@@ -134,7 +134,7 @@ export default function VideoTestimonials() {
       <section className="py-8 px-4">
         <div className="max-w-5xl mx-auto grid gap-6 md:grid-cols-2">
           {filtered.map((testimonial, idx) => (
-            <Card key={idx} className="hover:border-red-500/20 transition-colors">
+            <Card key={`item-${idx}`} className="hover:border-red-500/20 transition-colors">
               <CardHeader>
                 <div className="flex items-center gap-3">
                   {/* Video placeholder */}

@@ -247,7 +247,7 @@ export default function LittleRichardConnection() {
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Points of Connection</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {connectionPoints.map((point, idx) => (
-              <Card key={idx} className="hover:border-purple-500/30 transition-colors">
+              <Card key={`item-${idx}`} className="hover:border-purple-500/30 transition-colors">
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
@@ -271,7 +271,7 @@ export default function LittleRichardConnection() {
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">A Shared Musical Heritage</h2>
           <div className="space-y-6">
             {musicalInfluences.map((influence, idx) => (
-              <Card key={idx} className="border-l-4 border-l-purple-500">
+              <Card key={`item-${idx}`} className="border-l-4 border-l-purple-500">
                 <CardContent className="pt-6">
                   <h3 className="text-lg font-bold text-foreground mb-2">{influence.era}</h3>
                   <p className="text-foreground/70 leading-relaxed">{influence.description}</p>

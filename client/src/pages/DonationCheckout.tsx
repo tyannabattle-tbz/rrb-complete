@@ -245,7 +245,7 @@ export function DonationCheckout() {
                 </div>
                 <ul className="space-y-1.5 mb-4">
                   {tier.benefits.slice(0, 3).map((benefit, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
+                    <li key={`item-${idx}`} className="flex items-start gap-2">
                       <Check className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
                       <span className="text-xs text-slate-300">{benefit}</span>
                     </li>

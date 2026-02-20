@@ -111,7 +111,7 @@ export default function FamilyAchievements() {
               };
 
               return (
-                <Card key={idx} className="hover:shadow-md transition-shadow">
+                <Card key={`item-${idx}`} className="hover:shadow-md transition-shadow">
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${colorMap[achievement.color] || ''}`}>

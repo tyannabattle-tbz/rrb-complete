@@ -412,7 +412,7 @@ export default function CommercialUpload() {
                     { name: 'Sweet Miracles PSA', plays: 856, engagement: 82 },
                     { name: "Anna's Promotions", plays: 342, engagement: 76 },
                   ].map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between text-sm">
+                    <div key={`item-${idx}`} className="flex items-center justify-between text-sm">
                       <span>{item.name}</span>
                       <div className="flex items-center gap-4">
                         <span className="text-muted-foreground">{item.plays} plays</span>

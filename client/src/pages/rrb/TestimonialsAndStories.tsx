@@ -122,7 +122,7 @@ export default function TestimonialsAndStories() {
 
               return (
                 <Card
-                  key={idx}
+                  key={`item-${idx}`}
                   className={`break-inside-avoid border-l-4 ${colorMap[catInfo.color] || ''}`}
                 >
                   <CardContent className="pt-6">

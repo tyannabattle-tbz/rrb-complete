@@ -113,7 +113,7 @@ export default function SeansMusic() {
                 { title: 'Distribution', desc: 'Getting music to audiences worldwide' },
                 { title: 'Collaboration', desc: 'Working with creators and producers' },
               ].map((service, idx) => (
-                <div key={idx} className="bg-stone-800/40 rounded-lg p-6 border border-amber-900/30">
+                <div key={`item-${idx}`} className="bg-stone-800/40 rounded-lg p-6 border border-amber-900/30">
                   <h3 className="text-lg font-semibold text-amber-300 mb-2">{service.title}</h3>
                   <p className="text-amber-200/60">{service.desc}</p>
                 </div>

@@ -190,7 +190,7 @@ export default function BatchTemplateManager() {
                   <p className="text-sm font-medium text-slate-700 mb-2">Processing Steps:</p>
                   <div className="space-y-1">
                     {template.processingSteps.map((step: any, idx: number) => (
-                      <div key={idx} className="text-xs text-slate-600 bg-slate-50 p-2 rounded">
+                      <div key={`item-${idx}`} className="text-xs text-slate-600 bg-slate-50 p-2 rounded">
                         {idx + 1}. {step.name}
                       </div>
                     ))}

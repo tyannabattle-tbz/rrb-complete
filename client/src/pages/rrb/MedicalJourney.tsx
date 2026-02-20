@@ -287,7 +287,7 @@ export default function MedicalJourney() {
           </h2>
           <div className="space-y-6">
             {journeyChapters.map((chapter, idx) => (
-              <Card key={idx} className="hover:border-teal-500/20 transition-colors">
+              <Card key={`item-${idx}`} className="hover:border-teal-500/20 transition-colors">
                 <CardContent className="pt-6">
                   <h3 className="text-xl font-bold text-foreground mb-3">{chapter.title}</h3>
                   <p className="text-foreground/70 leading-relaxed">{chapter.text}</p>

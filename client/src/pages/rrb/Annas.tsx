@@ -123,7 +123,7 @@ export default function Annas() {
                 { label: 'YouTube', placeholder: '@AnnasCompany' },
                 { label: 'LinkedIn', placeholder: 'annas-company' },
               ].map((social, idx) => (
-                <div key={idx} className="bg-stone-900/40 rounded-lg p-4">
+                <div key={`item-${idx}`} className="bg-stone-900/40 rounded-lg p-4">
                   <p className="text-amber-300 font-semibold text-sm">{social.label}</p>
                   <p className="text-amber-200/40 text-xs mt-1">{social.placeholder}</p>
                 </div>
@@ -141,7 +141,7 @@ export default function Annas() {
                 { title: 'Family Values', desc: 'Embodying Seabrun Hunter\'s vision of family enterprise' },
                 { title: 'Social Impact', desc: 'Creating positive change in communities served' },
               ].map((achievement, idx) => (
-                <div key={idx} className="bg-stone-800/40 rounded-lg p-6 border border-amber-900/30">
+                <div key={`item-${idx}`} className="bg-stone-800/40 rounded-lg p-6 border border-amber-900/30">
                   <h3 className="text-lg font-semibold text-amber-300 mb-2">{achievement.title}</h3>
                   <p className="text-amber-200/60">{achievement.desc}</p>
                 </div>

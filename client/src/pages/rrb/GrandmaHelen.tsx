@@ -591,7 +591,7 @@ export default function GrandmaHelen() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {magazineGallery.map((img, idx) => (
               <div
-                key={idx}
+                key={`item-${idx}`}
                 className="group cursor-pointer relative aspect-[3/4] overflow-hidden rounded-lg bg-stone-800"
                 onClick={() => openLightbox(idx)}
               >
@@ -703,7 +703,7 @@ export default function GrandmaHelen() {
           <h2 className="text-3xl font-bold text-rose-100 mb-8 text-center">Values She Instilled</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {familyValues.map((value, idx) => (
-              <Card key={idx} className="bg-stone-900/60 border-stone-800/50 hover:border-rose-700/30 transition-colors">
+              <Card key={`item-${idx}`} className="bg-stone-900/60 border-stone-800/50 hover:border-rose-700/30 transition-colors">
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center">

@@ -245,7 +245,7 @@ export default function MeditationGuides() {
                     <h4 className="text-sm font-semibold text-foreground mb-3">Step-by-Step Guide</h4>
                     <ol className="space-y-2">
                       {guide.steps.map((step, idx) => (
-                        <li key={idx} className="flex gap-3 text-sm text-foreground/70">
+                        <li key={`item-${idx}`} className="flex gap-3 text-sm text-foreground/70">
                           <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500/20 text-teal-500 flex items-center justify-center text-xs font-bold">
                             {idx + 1}
                           </span>
@@ -258,7 +258,7 @@ export default function MeditationGuides() {
                     <h4 className="text-sm font-semibold text-foreground mb-2">Benefits</h4>
                     <div className="grid grid-cols-2 gap-2">
                       {guide.benefits.map((benefit, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-sm text-foreground/70">
+                        <div key={`item-${idx}`} className="flex items-center gap-2 text-sm text-foreground/70">
                           <Heart className="w-3.5 h-3.5 text-teal-500 flex-shrink-0" />
                           {benefit}
                         </div>

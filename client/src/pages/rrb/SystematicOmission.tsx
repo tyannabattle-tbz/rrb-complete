@@ -202,7 +202,7 @@ export default function SystematicOmission() {
                       <h4 className="text-sm font-semibold text-foreground mb-2">Supporting Evidence</h4>
                       <ul className="space-y-2">
                         {pattern.evidence.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-sm text-foreground/70">
+                          <li key={`item-${idx}`} className="flex items-start gap-2 text-sm text-foreground/70">
                             <Eye className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
                             {item}
                           </li>
@@ -228,7 +228,7 @@ export default function SystematicOmission() {
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">The Path to Restoration</h2>
           <div className="space-y-4">
             {timelineOfRestoration.map((item, idx) => (
-              <div key={idx} className="flex gap-4">
+              <div key={`item-${idx}`} className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
                     <CheckCircle className="w-5 h-5 text-green-500" />

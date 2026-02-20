@@ -88,7 +88,7 @@ export default function MobileResponsiveAdminPanel() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {stats.map((stat, idx) => (
-                <Card key={idx} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4">
+                <Card key={`item-${idx}`} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">{stat.label}</p>
                   <div className="flex items-end justify-between">
                     <div>

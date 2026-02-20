@@ -721,7 +721,7 @@ export function RockinBoogiePlayerEnhanced() {
                 );
                 return (
                   <div
-                    key={idx}
+                    key={`item-${idx}`}
                     onClick={() => resumeEpisode(history)}
                     className="p-3 bg-slate-700 hover:bg-slate-600 rounded-lg cursor-pointer transition"
                   >

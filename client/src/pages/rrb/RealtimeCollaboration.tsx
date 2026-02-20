@@ -159,7 +159,7 @@ export default function RealtimeCollaboration() {
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {activeSession.participants.map((participant, idx) => (
-                        <span key={idx} className="px-3 py-1 bg-blue-600/20 border border-blue-500/50 rounded-full text-sm text-blue-300">
+                        <span key={`item-${idx}`} className="px-3 py-1 bg-blue-600/20 border border-blue-500/50 rounded-full text-sm text-blue-300">
                           {participant}
                         </span>
                       ))}
@@ -183,7 +183,7 @@ export default function RealtimeCollaboration() {
                         <p className="text-slate-500 text-sm text-center py-8">No messages yet</p>
                       ) : (
                         messages.map((msg, idx) => (
-                          <div key={idx} className="text-sm">
+                          <div key={`item-${idx}`} className="text-sm">
                             <span className="font-semibold text-blue-400">{msg.user}:</span>
                             <span className="text-slate-300 ml-2">{msg.text}</span>
                             <span className="text-slate-600 text-xs ml-2">{msg.time.toLocaleTimeString()}</span>

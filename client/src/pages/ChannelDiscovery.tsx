@@ -301,7 +301,7 @@ export default function ChannelDiscovery() {
               <h2 className="text-2xl font-bold text-white mb-4">Trending Topics</h2>
               <div className="space-y-3">
                 {trendingTopics?.map((item, idx) => (
-                  <Card key={idx} className="bg-slate-800 border-slate-700">
+                  <Card key={`item-${idx}`} className="bg-slate-800 border-slate-700">
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>

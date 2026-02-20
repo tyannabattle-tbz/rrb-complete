@@ -211,7 +211,7 @@ export function ViewerInteraction() {
                 const isSelected = userVote === idx;
                 return (
                   <div
-                    key={idx}
+                    key={`item-${idx}`}
                     onClick={() => handleVote(idx)}
                     className={`p-4 rounded border-2 transition cursor-pointer ${
                       isSelected

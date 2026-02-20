@@ -188,7 +188,7 @@ export function QumusChatWithCommands() {
           <div className="flex flex-wrap gap-2">
             {suggestionQuery.data.suggestions.slice(0, 3).map((suggestion, idx) => (
               <Button
-                key={idx}
+                key={`item-${idx}`}
                 size="sm"
                 variant="outline"
                 onClick={() => {

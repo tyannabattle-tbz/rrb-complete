@@ -280,7 +280,7 @@ export default function QumusPolicyAnalyticsDashboard() {
               </div>
               <div className="p-6 space-y-4">
                 {recommendations.map((rec: any, idx: number) => (
-                  <div key={idx} className="p-4 bg-background rounded border border-border">
+                  <div key={`item-${idx}`} className="p-4 bg-background rounded border border-border">
                     <p className="font-semibold text-foreground mb-2">{rec.policyId}</p>
                     <p className="text-sm text-foreground/70">{rec.recommendation}</p>
                     <div className="flex gap-4 mt-2 text-xs text-foreground/50">

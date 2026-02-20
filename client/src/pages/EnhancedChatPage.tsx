@@ -85,7 +85,7 @@ export default function EnhancedChatPage() {
     <div className="flex flex-col h-screen bg-background">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, idx) => (
-          <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div key={`item-${idx}`} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-md px-4 py-2 rounded-lg ${
               msg.role === 'user' 
                 ? 'bg-primary text-primary-foreground' 

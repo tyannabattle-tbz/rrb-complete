@@ -232,7 +232,7 @@ export default function PodcastDiscovery() {
                     <div className="flex flex-wrap gap-1">
                       {podcast.genres.slice(0, 2).map((genre, idx) => (
                         <span
-                          key={idx}
+                          key={`item-${idx}`}
                           className="text-xs bg-orange-600/50 text-orange-100 px-2 py-1 rounded"
                         >
                           {genre}

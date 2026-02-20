@@ -97,7 +97,7 @@ export default function BusinessPartnerships() {
                   <p className="text-sm text-foreground/70 mb-4">{type.description}</p>
                   <ul className="space-y-1">
                     {type.opportunities.map((opp, idx) => (
-                      <li key={idx} className="flex items-center gap-2 text-sm text-foreground/60">
+                      <li key={`item-${idx}`} className="flex items-center gap-2 text-sm text-foreground/60">
                         <ArrowRight className="w-3 h-3 text-blue-500 flex-shrink-0" />
                         {opp}
                       </li>
@@ -123,7 +123,7 @@ export default function BusinessPartnerships() {
                 <CardContent>
                   <ul className="space-y-2">
                     {tier.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center gap-2 text-sm text-foreground/70">
+                      <li key={`item-${idx}`} className="flex items-center gap-2 text-sm text-foreground/70">
                         <div className={`w-1.5 h-1.5 rounded-full ${tier.badge.replace('text-', 'bg-')}`} />
                         {feature}
                       </li>

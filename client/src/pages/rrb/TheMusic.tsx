@@ -329,7 +329,7 @@ export default function TheMusic() {
 
           <div className="space-y-8">
             {songs.map((song, idx) => (
-              <div key={idx} className="proof-vault-tile">
+              <div key={`item-${idx}`} className="proof-vault-tile">
                 <div className="mb-4">
                   <h3 className="text-2xl font-bold text-foreground mb-2">
                     {song.title}
@@ -413,7 +413,7 @@ export default function TheMusic() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {interviews.map((interview, idx) => (
-              <div key={idx} className="bg-background border border-border rounded-lg p-6 hover:border-accent/50 transition-colors">
+              <div key={`item-${idx}`} className="bg-background border border-border rounded-lg p-6 hover:border-accent/50 transition-colors">
                 <div className="text-3xl mb-3">{interview.icon}</div>
                 <h3 className="text-xl font-bold text-foreground mb-2">{interview.title}</h3>
                 <p className="text-sm text-accent font-semibold mb-3">{interview.type}</p>
@@ -437,7 +437,7 @@ export default function TheMusic() {
           <h2 className="text-4xl font-bold mb-12 text-foreground">Key Collaborators</h2>
 
           {collaborators.map((collab, idx) => (
-            <div key={idx} className="bg-card border border-border rounded-lg p-8 mb-8">
+            <div key={`item-${idx}`} className="bg-card border border-border rounded-lg p-8 mb-8">
               <div className="flex items-start gap-4 mb-6">
                 <div className="text-5xl">{collab.icon}</div>
                 <div className="flex-1">

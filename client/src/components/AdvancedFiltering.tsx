@@ -245,7 +245,7 @@ export function AdvancedFiltering() {
           ) : (
             <div className="space-y-2">
               {savedFilters.map((filter, idx) => (
-                <Card key={idx}>
+                <Card key={`item-${idx}`}>
                   <CardContent className="pt-6 flex items-center justify-between">
                     <div>
                       <p className="font-medium">{filter.name}</p>

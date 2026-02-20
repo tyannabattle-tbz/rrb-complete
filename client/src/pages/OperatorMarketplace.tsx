@@ -268,7 +268,7 @@ export function OperatorMarketplace() {
                     <div className="flex flex-wrap gap-2">
                       {item.features.slice(0, 2).map((feature, idx) => (
                         <span
-                          key={idx}
+                          key={`item-${idx}`}
                           className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded"
                         >
                           {feature}

@@ -89,7 +89,7 @@ export default function AdvancedSearch() {
                   <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md mt-1 shadow-lg z-10">
                     {suggestionQuery.data.map((suggestion, idx) => (
                       <div
-                        key={idx}
+                        key={`item-${idx}`}
                         className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                         onClick={() => setQuery(suggestion)}
                       >

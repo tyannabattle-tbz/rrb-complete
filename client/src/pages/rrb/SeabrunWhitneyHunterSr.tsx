@@ -173,7 +173,7 @@ export default function SeabrunWhitneyHunterSr() {
             {familyValues.map((value, idx) => {
               const Icon = value.icon;
               return (
-                <Card key={idx} className="bg-stone-900/60 border-stone-800/50 hover:border-amber-700/50 transition-colors">
+                <Card key={`item-${idx}`} className="bg-stone-900/60 border-stone-800/50 hover:border-amber-700/50 transition-colors">
                   <CardContent className="pt-6">
                     <div className="flex gap-4">
                       <Icon className="w-8 h-8 text-amber-400 flex-shrink-0 mt-1" />
@@ -276,7 +276,7 @@ export default function SeabrunWhitneyHunterSr() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {documentGallery.map((doc, idx) => (
               <Card 
-                key={idx}
+                key={`item-${idx}`}
                 className="bg-stone-900/60 border-stone-800/50 hover:border-amber-700/50 transition-all cursor-pointer group"
                 onClick={() => openLightbox(idx)}
               >

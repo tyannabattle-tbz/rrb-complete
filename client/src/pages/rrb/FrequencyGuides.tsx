@@ -140,7 +140,7 @@ export default function FrequencyGuides() {
                       <h4 className="text-sm font-semibold text-foreground mb-2">Benefits</h4>
                       <div className="grid grid-cols-2 gap-2">
                         {guide.benefits.map((benefit, idx) => (
-                          <div key={idx} className="flex items-center gap-2 text-sm text-foreground/70">
+                          <div key={`item-${idx}`} className="flex items-center gap-2 text-sm text-foreground/70">
                             <Zap className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
                             {benefit}
                           </div>

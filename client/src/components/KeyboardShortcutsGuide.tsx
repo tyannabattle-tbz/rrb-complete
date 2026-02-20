@@ -82,7 +82,7 @@ export function KeyboardShortcutsGuide({ open = false, onOpenChange }: KeyboardS
   const KeyDisplay = ({ keys }: { keys: string[] }) => (
     <div className="flex gap-1">
       {keys.map((key, idx) => (
-        <div key={idx}>
+        <div key={`item-${idx}`}>
           <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">
             {key}
           </kbd>
@@ -119,7 +119,7 @@ export function KeyboardShortcutsGuide({ open = false, onOpenChange }: KeyboardS
               {shortcuts
                 .filter((s) => s.category === category)
                 .map((shortcut, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900">
+                  <div key={`item-${idx}`} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900">
                     <span className="text-sm text-muted-foreground">{shortcut.description}</span>
                     <KeyDisplay keys={shortcut.keys} />
                   </div>
