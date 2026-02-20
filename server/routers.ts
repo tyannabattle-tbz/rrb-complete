@@ -104,6 +104,7 @@ import { communityRouter } from "./routers/communityRouter";
 import { podcastFeedsRouter } from "./routers/podcastFeedsRouter";
 import { realtimeAnalyticsRouter } from "./routers/realtimeAnalyticsRouter";
 import { emailCampaignRouter } from "./routers/emailCampaignRouter";
+import { channelDiscoveryRouter } from "./routers/channelDiscoveryRouter";
 
 // AI Business Assistants (5 autonomous bots)
 import { aiBusinessAssistantsRouter } from "./routers/aiBusinessAssistants";
@@ -393,6 +394,9 @@ export const appRouter = router({
 
   // Phase 6: Email Campaign Automation & Promotion (SendGrid integration)
   emailCampaign: emailCampaignRouter,
+
+  // Phase 8: Channel Discovery & Content Search System
+  channelDiscovery: channelDiscoveryRouter,
 
   // Agent Session Management
   agent: router({

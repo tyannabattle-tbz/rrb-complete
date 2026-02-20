@@ -212,6 +212,17 @@ export default function Navigation() {
             </a>
           </Link>
 
+          {/* Discover Content */}
+          <Link href="/rrb/discover">
+            <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
+              isActive('/rrb/discover')
+                ? 'bg-accent text-accent-foreground'
+                : 'text-foreground hover:bg-accent/10'
+            }`}>
+              🔍 Discover
+            </a>
+          </Link>
+
           {/* Podcast & Video */}
           <Link href="/rrb/podcast-and-video">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${

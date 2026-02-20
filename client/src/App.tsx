@@ -144,6 +144,7 @@ import RealtimeCollaboration from '@/pages/rrb/RealtimeCollaboration';
 import MobileApp from '@/pages/rrb/MobileApp';
 import DonationCheckout from '@/pages/rrb/DonationCheckout';
 import { PodcastFeeds } from '@/pages/rrb/PodcastFeeds';
+import ChannelDiscovery from '@/pages/ChannelDiscovery';
 import RealtimeAnalyticsDashboard from '@/pages/rrb/RealtimeAnalyticsDashboard';
 import { DonationCheckout as LegacyDonationCheckout } from '@/pages/DonationCheckout';
 import LivePodcastProduction from '@/pages/LivePodcastProduction';
@@ -407,6 +408,8 @@ function Router() {
       <Route path="/rrb/radio-station" component={RRBRadioStation} />
       <Route path="/rrb/podcast-feeds" component={PodcastFeeds} />
       <Route path="/rrb/realtime-analytics" component={RealtimeAnalyticsDashboard} />
+      <Route path="/rrb/discover" component={ChannelDiscovery} />
+      <Route path="/discover" component={ChannelDiscovery} />
       <Route path="/rrb/poetry-hour" component={RRBPoetryHour} />
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
       <Route path="/rrb/broadcast" component={RRBBroadcast} />
