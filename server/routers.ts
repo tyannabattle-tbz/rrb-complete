@@ -112,6 +112,8 @@ import { aiBusinessAssistantsRouter } from "./routers/aiBusinessAssistants";
 
 // AI Commercial Generation & Radio Integration
 import { commercialsRouter } from "./routers/commercials";
+import { broadcastSchedulerRouter } from "./routers/broadcastSchedulerRouter";
+import { streamingRouter } from "./routers/streamingRouter";
 
 // Radio Content API (serves tracks/playlists from database)
 import { radioContentRouter } from "./routers/radioContentRouter";
@@ -398,9 +400,13 @@ export const appRouter = router({
 
   // Phase 8: Channel Discovery & Content Search System
   channelDiscovery: channelDiscoveryRouter,
+  broadcastScheduler: broadcastSchedulerRouter,
 
   // Phase 8+: Transcript Search with Timestamp Jumping
   transcriptSearch: transcriptSearchRouter,
+
+  // Phase 9: Streaming Infrastructure for 24/7 Playback
+  streaming: streamingRouter,
 
   // Agent Session Management
   agent: router({

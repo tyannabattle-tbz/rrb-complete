@@ -14,6 +14,7 @@
  */
 
 import { invokeLLM } from "../_core/llm";
+import { generateRealisticAudio, getRecommendedVoiceStyle, type VoiceStyle } from "./realistic-tts";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -30,6 +31,8 @@ export type CommercialCategory =
 
 export type CommercialStatus = 'draft' | 'approved' | 'active' | 'archived' | 'scheduled';
 
+export type DivisionBrand = 'annas_promotions' | 'little_c' | 'seans_music' | 'jaelon_enterprises' | 'canryn_publishing' | 'seasha_distribution';
+
 export interface CommercialScript {
   id: string;
   title: string;
@@ -45,7 +48,8 @@ export interface CommercialScript {
   scheduledSlots: ScheduleSlot[];
   playCount: number;
   audioUrl?: string;       // S3 URL if audio has been generated and uploaded
-  generatedBy: 'ai' | 'human';
+  voiceModel?: string;      // Which TTS voice model was used for realistic audio
+  generatedBy: 'ai' | 'human' | 'realistic_tts';
   // Advertiser fields (for client_ad category)
   advertiserName?: string;       // Business/person who purchased the ad
   advertiserContact?: string;    // Contact email/phone
@@ -686,7 +690,117 @@ RULES:
       generatedBy: 'ai',
     });
 
-    console.log(`[Commercial Engine] Seeded ${this.commercials.length} default commercials (full platform lineup)`);
+    // ─── DIVISION COMMERCIALS ────────────────────────────────────────────────
+
+    // Anna's Promotions (operated by Tyanna Battle & LaShanna Russell)
+    this.commercials.push({
+      id: 'commercial_annas_promotions',
+      title: "Anna's Promotions — Amplify Your Event",
+      category: 'promo',
+      brand: 'annas_promotions',
+      script: "Anna's Promotions brings your vision to life. From intimate gatherings to large-scale events, our team — led by Tyanna Battle and LaShanna Russell — handles every detail with precision and creativity. Promotion, coordination, and execution. We make your event unforgettable. Anna's Promotions — where every moment matters. Contact us through Canryn Production.",
+      duration: 25,
+      voiceDirection: 'professional, energetic, event-focused',
+      musicDirection: 'Upbeat event energy, celebration vibes',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Little C Recording Co. (operated by Carlos Kembrel)
+    this.commercials.push({
+      id: 'commercial_little_c',
+      title: "Little C Recording Co. — Professional Production",
+      category: 'promo',
+      brand: 'little_c',
+      script: "Little C Recording Co. brings studio-quality production to your project. Led by Carlos Kembrel, our team specializes in audio engineering, mixing, mastering, and full production services. From solo artists to full orchestras, we capture your sound with precision and artistry. Little C Recording Co. — where your music comes to life. Book your session today.",
+      duration: 25,
+      voiceDirection: 'professional, warm, music-focused',
+      musicDirection: 'Studio ambiance, professional production feel',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Sean's Music World (operated by Sean Hunter)
+    this.commercials.push({
+      id: 'commercial_seans_music',
+      title: "Sean's Music World — Your Music Destination",
+      category: 'promo',
+      brand: 'seans_music',
+      script: "Sean's Music World is your destination for all things music. Curated collections, rare recordings, live performances, and exclusive content. Sean Hunter brings decades of music expertise to every selection. Whether you're discovering new artists or exploring classics, Sean's Music World has something for everyone. Visit Sean's Music World on the Rockin' Rockin' Boogie platform.",
+      duration: 25,
+      voiceDirection: 'knowledgeable, passionate, music-enthusiast',
+      musicDirection: 'Diverse music samples, eclectic energy',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Jaelon Enterprises (operated by Jaelon Hunter)
+    this.commercials.push({
+      id: 'commercial_jaelon_enterprises',
+      title: "Jaelon Enterprises — Innovation & Excellence",
+      category: 'promo',
+      brand: 'jaelon_enterprises',
+      script: "Jaelon Enterprises represents innovation, excellence, and forward-thinking solutions. Under the leadership of Jaelon Hunter, we're building the future of media and technology. From strategic partnerships to cutting-edge development, Jaelon Enterprises drives progress across the Canryn Production ecosystem. Jaelon Enterprises — building tomorrow, today.",
+      duration: 25,
+      voiceDirection: 'visionary, confident, business-forward',
+      musicDirection: 'Modern, innovative, forward-thinking',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Canryn Publishing Division
+    this.commercials.push({
+      id: 'commercial_canryn_publishing',
+      title: "Canryn Publishing — Stories Worth Telling",
+      category: 'promo',
+      brand: 'canryn_publishing',
+      script: "Canryn Publishing brings stories to life. From biographies to documentaries, from legacy narratives to cultural histories, we publish content that matters. Our mission: preserve and amplify voices that deserve to be heard. Canryn Publishing — where legacy becomes literature. Explore our catalog at rockinrockinboogie.com.",
+      duration: 25,
+      voiceDirection: 'literary, thoughtful, narrative-driven',
+      musicDirection: 'Bookish ambiance, thoughtful strings',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    // Seasha Distribution
+    this.commercials.push({
+      id: 'commercial_seasha_distribution',
+      title: "Seasha Distribution — Reaching Every Listener",
+      category: 'promo',
+      brand: 'seasha_distribution',
+      script: "Seasha Distribution ensures your content reaches listeners everywhere. With partnerships across streaming platforms, radio networks, and digital channels, we handle the logistics so you focus on creation. Seasha Distribution — connecting creators with audiences. Partner with us today.",
+      duration: 25,
+      voiceDirection: 'professional, logistics-focused, partnership-oriented',
+      musicDirection: 'Network connectivity, distribution energy',
+      status: 'active',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      scheduledSlots: this.getDefaultSchedule('promo'),
+      playCount: 0,
+      generatedBy: 'ai',
+    });
+
+    console.log(`[Commercial Engine] Seeded ${this.commercials.length} default commercials (full platform lineup + 6 divisions)`);
   }
 
   // ─── Client Advertising ─────────────────────────────────────────────────
