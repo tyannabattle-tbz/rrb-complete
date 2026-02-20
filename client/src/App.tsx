@@ -18,6 +18,9 @@ import { APIDocumentation } from "./pages/APIDocumentation";
 import { TeamManagement } from "./pages/TeamManagement";
 import { KeyboardShortcutsGuide } from "./components/KeyboardShortcutsGuide";
 import WebhookMarketplace from "./pages/WebhookMarketplace";
+import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
+import { ModerationQueue } from '@/components/ModerationQueue';
+import { NotificationPreferences } from '@/components/NotificationPreferences';
 import ModelFineTuning from "./pages/ModelFineTuning";
 import ProductionDashboard from "./pages/ProductionDashboard";
 import ChatManagement from "./pages/ChatManagement";
@@ -492,6 +495,9 @@ function Router() {
       <Route path="/legal" component={BusinessLegal} />
       <Route path="/radio-directory" component={RadioDirectory} />
 
+      <Route path="/analytics" component={AnalyticsDashboard} />
+      <Route path="/moderation" component={ModerationQueue} />
+      <Route path="/notification-preferences" component={NotificationPreferences} />
       <Route component={NotFound} />
     </Switch>
     </>

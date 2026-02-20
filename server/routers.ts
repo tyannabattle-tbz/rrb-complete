@@ -146,6 +146,8 @@ import { contentRecommendationRouter, rrbRadioRouter } from "./routers/missingRo
 import { listenerNotificationsRouter } from './routers/listenerNotificationsRouter';
 import { webrtcCallInRouter } from './routers/webrtcCallInRouter';
 import { videoPodcastRouter } from './routers/videoPodcastRouter';
+import { moderationRouter } from './routers/moderationRouter';
+import { notificationPreferencesRouter } from './routers/notificationPreferencesRouter';
 
 export const appRouter = router({
   // System router
@@ -483,6 +485,8 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+  moderation: moderationRouter,
+  notificationPreferences: notificationPreferencesRouter,
 });
 
 export type AppRouter = typeof appRouter;
