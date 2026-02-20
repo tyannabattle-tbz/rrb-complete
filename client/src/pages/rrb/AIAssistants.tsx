@@ -249,7 +249,7 @@ function AssistantChat({ assistant, onBack }: { assistant: GPTAssistant; onBack:
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-md mx-auto">
               {assistant.samplePrompts.map((prompt, i) => (
                 <button
-                  key={i}
+                  key={`msg-${i}`}
                   onClick={() => { setInput(prompt); }}
                   className="text-left text-xs bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 rounded-lg p-3 text-slate-300 hover:text-white transition-colors"
                 >
@@ -260,7 +260,7 @@ function AssistantChat({ assistant, onBack }: { assistant: GPTAssistant; onBack:
           </div>
         )}
         {messages.map((msg, i) => (
-          <ChatMessage key={i} role={msg.role} content={msg.content} />
+          <ChatMessage key={`msg-${i}`} role={msg.role} content={msg.content} />
         ))}
         {isLoading && (
           <div className="flex justify-start mb-3">
@@ -284,7 +284,7 @@ function AssistantChat({ assistant, onBack }: { assistant: GPTAssistant; onBack:
         {showOfflineGuide && (
           <div className="px-4 pb-3 space-y-2 max-h-48 overflow-y-auto">
             {assistant.offlineGuide.map((guide, i) => (
-              <div key={i} className="border border-slate-700/50 rounded-lg overflow-hidden">
+              <div key={`msg-${i}`} className="border border-slate-700/50 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setExpandedGuide(expandedGuide === i ? null : i)}
                   className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-slate-300 hover:text-white bg-slate-800/40"
@@ -407,7 +407,7 @@ export default function AIAssistants() {
                   {/* Sample prompts preview */}
                   <div className="flex flex-wrap gap-1.5">
                     {assistant.samplePrompts.slice(0, 2).map((prompt, i) => (
-                      <span key={i} className="text-[10px] bg-slate-800/40 text-slate-400 px-2 py-1 rounded-md truncate max-w-[200px]">
+                      <span key={`msg-${i}`} className="text-[10px] bg-slate-800/40 text-slate-400 px-2 py-1 rounded-md truncate max-w-[200px]">
                         "{prompt}"
                       </span>
                     ))}

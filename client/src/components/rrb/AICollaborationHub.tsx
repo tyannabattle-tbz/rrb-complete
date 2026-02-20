@@ -310,7 +310,7 @@ export default function AICollaborationHub() {
                     <p className="text-[9px] text-foreground/60 mb-1">{sys.specialization}</p>
                     <div className="flex flex-wrap gap-1 mb-1.5">
                       {sys.strengths.map((s, i) => (
-                        <span key={i} className="text-[8px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary/80">{s}</span>
+                        <span key={`item-${i}`} className="text-[8px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary/80">{s}</span>
                       ))}
                     </div>
                     <div className="flex items-center gap-1 text-[9px] text-foreground/40">
@@ -379,7 +379,7 @@ export default function AICollaborationHub() {
                   <div className="flex flex-wrap gap-0.5">
                     {COMPARE_SCENARIOS.slice(0, 3).map((scenario, i) => (
                       <button
-                        key={i}
+                        key={`item-${i}`}
                         onClick={() => setComparePrompt(scenario)}
                         className="text-[8px] px-1.5 py-0.5 rounded bg-card border border-border/30 text-foreground/50 hover:border-primary/20 hover:text-foreground/70 transition-colors truncate max-w-[200px]"
                       >
@@ -509,7 +509,7 @@ export default function AICollaborationHub() {
               <p className="text-[10px] text-foreground/50 uppercase tracking-wider mb-1">Recent Activity</p>
               <div className="space-y-0.5">
                 {engagementLog.slice(0, 4).map((entry, i) => (
-                  <div key={i} className="flex items-center justify-between text-[9px] px-1.5 py-0.5 rounded bg-card/50">
+                  <div key={`item-${i}`} className="flex items-center justify-between text-[9px] px-1.5 py-0.5 rounded bg-card/50">
                     <span className="text-foreground/70">
                       <Zap className="w-2.5 h-2.5 inline mr-0.5 text-amber-500" />
                       {entry.system} → {entry.mode}

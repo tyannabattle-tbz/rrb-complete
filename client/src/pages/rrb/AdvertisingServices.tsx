@@ -132,7 +132,7 @@ export default function AdvertisingServices() {
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {AUDIENCE_STATS.map((stat, i) => (
-              <div key={i} className="text-center p-4">
+              <div key={`item-${i}`} className="text-center p-4">
                 <stat.icon className="w-8 h-8 text-amber-500 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-foreground">{stat.value}</div>
                 <div className="text-sm font-medium text-foreground/70">{stat.label}</div>
@@ -154,7 +154,7 @@ export default function AdvertisingServices() {
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {WHY_ADVERTISE.map((item, i) => (
-              <Card key={i} className="border-border/50 hover:border-amber-500/30 transition-colors">
+              <Card key={`item-${i}`} className="border-border/50 hover:border-amber-500/30 transition-colors">
                 <CardContent className="p-6">
                   <div className="w-12 h-12 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
                     <item.icon className="w-6 h-6 text-amber-500" />
@@ -204,7 +204,7 @@ export default function AdvertisingServices() {
                 <CardContent>
                   <ul className="space-y-2 mb-4">
                     {pkg.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-foreground/70">
+                      <li key={`item-${i}`} className="flex items-start gap-2 text-sm text-foreground/70">
                         <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                         {feature}
                       </li>

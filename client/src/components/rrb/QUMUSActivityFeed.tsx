@@ -67,7 +67,7 @@ export function QUMUSActivityFeed() {
           <div className="h-6 bg-muted rounded w-48" />
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-16 bg-muted rounded" />
+              <div key={`skeleton-${i}`} className="h-16 bg-muted rounded" />
             ))}
           </div>
         </div>

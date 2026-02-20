@@ -239,7 +239,7 @@ export default function AdminDashboard() {
                     { amount: 100, purpose: 'Education', time: '1 day ago' },
                     { amount: 1000, purpose: 'General Support', time: '2 days ago' },
                   ].map((donation, i) => (
-                    <div key={i} className="flex justify-between items-center p-3 border border-border rounded-lg">
+                    <div key={`row-${i}`} className="flex justify-between items-center p-3 border border-border rounded-lg">
                       <div>
                         <p className="font-semibold">${donation.amount}</p>
                         <p className="text-xs text-foreground/60">{donation.purpose}</p>

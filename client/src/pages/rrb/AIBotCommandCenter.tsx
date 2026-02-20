@@ -243,7 +243,7 @@ export default function AIBotCommandCenter() {
                 insights.map((insight, i) => {
                   const meta = BOT_META[insight.botId] || { icon: "🤖" };
                   return (
-                    <div key={i} className="p-3 hover:bg-muted/10 transition-colors">
+                    <div key={`cmd-${i}`} className="p-3 hover:bg-muted/10 transition-colors">
                       <div className="flex items-start gap-2">
                         <span className="text-sm mt-0.5">{meta.icon}</span>
                         <div className="flex-1 min-w-0">

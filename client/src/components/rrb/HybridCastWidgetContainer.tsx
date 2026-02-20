@@ -220,7 +220,7 @@ export function HybridCastWidgetContainer() {
               {activeChannel.id === ch.id && isPlaying && (
                 <div className="flex gap-0.5">
                   {[1,2,3].map(i => (
-                    <div key={i} className="w-1 bg-red-500 rounded-full animate-pulse" style={{ height: `${8 + i * 4}px`, animationDelay: `${i * 0.15}s` }} />
+                    <div key={`pulse-${i}`} className="w-1 bg-red-500 rounded-full animate-pulse" style={{ height: `${8 + i * 4}px`, animationDelay: `${i * 0.15}s` }} />
                   ))}
                 </div>
               )}

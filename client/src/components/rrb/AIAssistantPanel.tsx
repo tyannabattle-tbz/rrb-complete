@@ -142,7 +142,7 @@ export function AIAssistantPanel({ botId, title, compact = false }: AIAssistantP
               <p className="text-xs font-medium text-muted-foreground mb-1">Capabilities:</p>
               <div className="flex flex-wrap gap-1">
                 {(bot.capabilities || []).slice(0, 3).map((cap, i) => (
-                  <span key={i} className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                  <span key={`tag-${i}`} className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                     {cap.length > 40 ? cap.substring(0, 40) + '...' : cap}
                   </span>
                 ))}
