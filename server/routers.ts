@@ -110,6 +110,10 @@ import { pushNotificationRouter } from "./routers/pushNotificationRouter";
 // Listener Analytics (real-time channel metrics)
 import { listenerAnalyticsRouter } from "./routers/listenerAnalyticsRouter";
 
+// Payment Integrations
+import { stripeIntegrationRouter } from "./routers/stripeIntegration";
+import { paypalIntegrationRouter } from "./routers/paypalIntegration";
+
 // RRB (Rockin Rockin Boogie) integrated routers
 import { stripePaymentsRouter as rrbStripePaymentsRouter } from "./routers/rrb/stripePayments";
 import { emergencyBroadcastRouter as rrbEmergencyBroadcastRouter } from "./routers/rrb/emergencyBroadcast";
@@ -259,6 +263,13 @@ export const appRouter = router({
 
   // Radio Content API (public tracks, playlists, schedules)
   radioContent: radioContentRouter,
+
+  // ===== Payment Integrations =====
+  // Stripe Integration (donations for Sweet Miracles Foundation)
+  stripe: stripeIntegrationRouter,
+
+  // PayPal Integration (merchandise, services for 501c3 nonprofit)
+  paypal: paypalIntegrationRouter,
 
   // ===== RRB (Rockin Rockin Boogie) Integrated Routers =====
   // RRB Stripe Payments (donations, subscriptions)

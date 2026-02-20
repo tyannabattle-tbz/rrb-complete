@@ -45,7 +45,7 @@ export async function getProofVaultByUserId(userId: number): Promise<ProofVault[
  */
 export async function getProofVaultByCategory(
   userId: number,
-  category: 'discogs' | 'usco' | 'bmi_mlc' | 'soundexchange'
+  category: 'discogs' | 'usco' | 'bmi_mlc' | 'soundexchange' | 'archival'
 ): Promise<ProofVault[]> {
   const db = await getDb();
   if (!db) return [];

@@ -14,7 +14,7 @@ export const proofVaultRouter = router({
   create: protectedProcedure
     .input(
       z.object({
-        category: z.enum(['discogs', 'usco', 'bmi_mlc', 'soundexchange']),
+        category: z.enum(['discogs', 'usco', 'bmi_mlc', 'soundexchange', 'archival']),
         title: z.string().min(1).max(255),
         description: z.string().optional(),
         documentUrl: z.string().url().optional(),
@@ -46,7 +46,7 @@ export const proofVaultRouter = router({
    * Get proof vault entries by category
    */
   getByCategory: protectedProcedure
-    .input(z.enum(['discogs', 'usco', 'bmi_mlc', 'soundexchange']))
+    .input(z.enum(['discogs', 'usco', 'bmi_mlc', 'soundexchange', 'archival']))
     .query(async ({ ctx, input }) => {
       return proofVaultDb.getProofVaultByCategory(ctx.user.id, input);
     }),
@@ -58,7 +58,7 @@ export const proofVaultRouter = router({
     .input(
       z.object({
         query: z.string(),
-        category: z.enum(['discogs', 'usco', 'bmi_mlc', 'soundexchange']).optional(),
+        category: z.enum(['discogs', 'usco', 'bmi_mlc', 'soundexchange', 'archival']).optional(),
       })
     )
     .query(async ({ ctx, input }) => {

@@ -102,14 +102,14 @@ export const audioRouter = router({
       const { getDb } = await import('../db');
       const { sql } = await import('drizzle-orm');
       const db = await getDb();
-      if (!db) return { tracks: [] };
+      if (!db) return [];
       const result = await db.execute(sql`
         SELECT track_id, title, artist, play_count, last_played_at
         FROM audio_play_counts
         ORDER BY play_count DESC
         LIMIT 20
       `);
-      return { tracks: result[0] || [] };
+      return result[0] || [];
     }),
 
   // Get play count for a specific track
