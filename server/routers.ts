@@ -28,6 +28,7 @@ import { itunesPodcastsRouter } from "./routers/itunesPodcasts";
 // Import new routers
 import { chatStreamingRouter } from "./routers/chatStreamingRouter";
 import { locationSharingRouter } from "./routers/locationSharingRouter";
+import { sitemapRouter } from "./routers/sitemapRouter";
 import { fileAnalysisRouter } from "./routers/fileAnalysisRouter";
 import { dashboardRouter } from "./routers/dashboardRouter";
 import { broadcastRouter } from "./routers/broadcastRouter";
@@ -130,6 +131,9 @@ export const appRouter = router({
 
   // Audio router
   audio: audioRouter,
+
+  // Sitemap router for SEO
+  sitemap: sitemapRouter,
 
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter,

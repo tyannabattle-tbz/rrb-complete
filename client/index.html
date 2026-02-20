@@ -32,6 +32,8 @@
     <meta name="twitter:title" content="Rockin Rockin Boogie — Seabrun Candy Hunter Legacy" />
     <meta name="twitter:description" content="Preserving the legacy of Seabrun Candy Hunter through music, broadcasting, and community. Powered by Canryn Production." />
     <meta name="twitter:image" content="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/XzOIAIMHDAedoUwy.png" />
+    <meta name="twitter:creator" content="@CanrynProduction" />
+    <meta name="twitter:site" content="@CanrynProduction" />
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -84,10 +86,75 @@
     }
     </script>
 
+    <!-- Additional SEO Meta Tags -->
+    <meta name="author" content="Canryn Production" />
+    <meta name="copyright" content="© 2024 Canryn Production Inc. All rights reserved." />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="language" content="English" />
+    <meta name="distribution" content="global" />
+    <meta name="rating" content="general" />
+    
+    <!-- Broadcast & Audio Schema -->
+    <meta property="og:type" content="music.radio_station" />
+    <meta property="music:creator" content="Seabrun Candy Hunter" />
+    <meta property="music:musician" content="Seabrun Candy Hunter" />
+    
     <!-- RSS Feed Auto-Discovery -->
-    <link rel="alternate" type="application/rss+xml" title="Rockin Rockin Boogie Podcast" href="/api/rss/podcast" />
-    <link rel="alternate" type="application/rss+xml" title="Rockin Rockin Boogie News" href="/api/rss/news" />
-    <link rel="alternate" type="application/rss+xml" title="Rockin Rockin Boogie Radio" href="/api/rss/radio" />
+    <link rel="alternate" type="application/rss+xml" title="Rockin Rockin Boogie Broadcasts" href="/api/rss/broadcasts" />
+    <link rel="alternate" type="application/rss+xml" title="Rockin Rockin Boogie Top Tracks" href="/api/rss/top-tracks" />
+    <link rel="alternate" type="application/rss+xml" title="Poetry Station" href="/api/rss/poetry" />
+    <link rel="alternate" type="application/rss+xml" title="Healing Frequencies" href="/api/rss/frequencies" />
+    
+    <!-- Search Engine Verification -->
+    <meta name="google-site-verification" content="" />
+    <meta name="msvalidate.01" content="" />
+    
+    <!-- Additional Structured Data for Broadcasts -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BroadcastEvent",
+      "name": "Rockin Rockin Boogie Legacy Radio",
+      "description": "24/7 live radio broadcasting with Seabrun Candy Hunter's legacy music, healing frequencies, and community content",
+      "url": "https://www.rockinrockinboogie.com/rrb/radio-station",
+      "isLiveNow": true,
+      "startDate": "2024-01-01T00:00:00Z",
+      "endDate": "2099-12-31T23:59:59Z",
+      "broadcastOfEvent": {
+        "@type": "Event",
+        "name": "Rockin Rockin Boogie 24/7 Broadcast",
+        "url": "https://www.rockinrockinboogie.com/rrb/radio-station"
+      },
+      "broadcaster": {
+        "@type": "Organization",
+        "name": "Canryn Production Inc.",
+        "url": "https://www.rockinrockinboogie.com"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AudioObject",
+      "name": "Rockin Rockin Boogie Radio Stream",
+      "description": "Legacy music and community content from Canryn Production",
+      "url": "https://www.rockinrockinboogie.com/rrb/radio-station",
+      "contentUrl": "https://www.rockinrockinboogie.com/api/stream",
+      "encodingFormat": "audio/mpeg",
+      "creator": {
+        "@type": "Person",
+        "name": "Seabrun Candy Hunter"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Canryn Production Inc."
+      }
+    }
+    </script>
 
     <!-- HybridCast integrated via native iframe component at /hybridcast route -->
   </head>
