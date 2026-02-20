@@ -9,7 +9,13 @@ import { getLoginUrl } from "./const";
 import { ToastProvider, useGlobalToast } from "./contexts/ToastContext";
 import { NotificationContainer } from "./components/NotificationToast";
 import { AccessibilityPanel } from "./components/AccessibilityPanel";
+import { initKeyErrorDebugger } from "./debug-keys";
 import "./index.css";
+
+// Initialize key error debugger in development
+if (process.env.NODE_ENV === 'development') {
+  initKeyErrorDebugger();
+}
 
 const queryClient = new QueryClient();
 
@@ -84,4 +90,5 @@ if (typeof window !== 'undefined') {
   }
 }
 
-
+// Log when we're ready for debugging
+console.log('🔍 Key error debugger initialized - watch console for duplicate key errors');
