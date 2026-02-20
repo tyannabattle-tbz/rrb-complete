@@ -1,4 +1,7 @@
 /**
+import { videoChatRouter } from './routers/videoChatRouter';
+import { playlistRouter } from './routers/playlistRouter';
+import { aiRecommendationsRouter } from './routers/aiRecommendationsRouter';
  * Chunked Main Router
  * Splits router imports into 5 chunks to reduce TypeScript compilation load
  * Each chunk is independently compiled, then combined at the top level
@@ -483,6 +486,8 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+  videoChat: videoChatRouter,
+  playlist: playlistRouter,
+  aiRecommendations: aiRecommendationsRouter,
 });
-
 export type AppRouter = typeof appRouter;
