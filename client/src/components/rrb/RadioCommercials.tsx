@@ -388,13 +388,13 @@ export default function RadioCommercials() {
     },
     {
       id: 30,
-      title: 'Honest Promotion',
-      bookTitle: 'Honest Promotion - Promotion & Marketing',
+      title: "Anna's Promotion",
+      bookTitle: "Anna's Promotion - Promotion & Marketing",
       duration: 30,
       audioUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/irDHZkZATjneTQXg.wav',
-      script: "Honest Promotion - founded by Seabrun Candy Hunter. Strategic promotion and marketing for artists and brands. Authentic storytelling. Real results. Reach your audience. Contact us at rockinrockinboogie.com. A Canryn Production.",
-      description: 'Promotion & Marketing - Founded by Seabrun Candy Hunter',
-      bookLink: '/rrb/divisions',
+      script: "Anna's Promotion - founded by Anna Battle. Strategic promotion and marketing for artists and brands. Authentic storytelling. Real results. Reach your audience. Contact us at rockinrockinboogie.com. A Canryn Production.",
+      description: 'Promotion & Marketing - Founded by Anna Battle',
+      bookLink: '/rrb/anna-promotion',
       playCount: 0,
       clickCount: 0
     },

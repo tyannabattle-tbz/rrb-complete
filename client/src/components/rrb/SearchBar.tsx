@@ -98,7 +98,7 @@ export function SearchBar() {
           {results.length > 0 ? (
             <div className="divide-y divide-border">
               {results.map((result, idx) => (
-                <Link key={idx} href={result.url}>
+                <Link key={`${result.url}-${idx}`} href={result.url}>
                   <div className="p-3 hover:bg-accent/10 cursor-pointer transition-colors">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
