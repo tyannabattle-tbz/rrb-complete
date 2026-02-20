@@ -175,7 +175,7 @@ export function ListenerDashboard() {
           <h2 className="text-lg md:text-xl font-bold text-white mb-4">Your Favorite Podcasts</h2>
           <div className="space-y-2 md:space-y-4">
             {FAVORITE_PODCASTS.map((podcast, index) => (
-              <div key={index} className="flex items-center justify-between pb-2 md:pb-4 border-b border-slate-700 last:border-b-0">
+              <div key={`listener-${index}`} className="flex items-center justify-between pb-2 md:pb-4 border-b border-slate-700 last:border-b-0">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm md:text-base font-medium text-white truncate">{podcast.name}</p>
                   <p className="text-xs md:text-sm text-slate-400">{podcast.episodes} episodes • {podcast.hours} hours</p>

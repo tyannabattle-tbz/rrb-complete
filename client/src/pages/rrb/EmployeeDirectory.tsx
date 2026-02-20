@@ -114,7 +114,7 @@ const EmployeeDirectory = () => {
                 <CardContent>
                   <div className="space-y-6">
                     {dept.roles.map((role, index) => (
-                      <div key={index} className="border-t border-border pt-4">
+                      <div key={`employee-${index}`} className="border-t border-border pt-4">
                         <h4 className="font-semibold text-lg">{role.title}</h4>
                         <p className="text-muted-foreground mt-1">{role.description}</p>
                       </div>

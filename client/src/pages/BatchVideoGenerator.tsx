@@ -205,7 +205,7 @@ export function BatchVideoGenerator() {
         </CardHeader>
         <CardContent className="space-y-4">
           {tasks.map((task, index) => (
-            <div key={index} className="border rounded-lg p-4 space-y-3">
+            <div key={`batch-${index}`} className="border rounded-lg p-4 space-y-3">
               <div className="flex justify-between items-center">
                 <h4 className="font-medium">Task {index + 1}</h4>
                 <Button

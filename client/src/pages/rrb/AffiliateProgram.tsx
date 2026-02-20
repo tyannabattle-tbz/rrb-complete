@@ -163,7 +163,7 @@ export default function AffiliateProgram() {
           <h2 className="text-3xl font-bold text-center mb-8 flex items-center justify-center"><HelpCircle className="mr-2 h-8 w-8 text-amber-500" />Frequently Asked Questions</h2>
           <div className="max-w-4xl mx-auto space-y-4">
             {faqs.map((faq, index) => (
-              <Card key={index} className="bg-card border-border overflow-hidden">
+              <Card key={`affiliate-${index}`} className="bg-card border-border overflow-hidden">
                 <CardHeader className="cursor-pointer p-6 flex justify-between items-center" onClick={() => setOpenFaq(openFaq === index ? null : index)}>
                   <CardTitle className="text-lg font-semibold">{faq.question}</CardTitle>
                   <span className={`transform transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`}>▼</span>

@@ -338,7 +338,7 @@ export default function TimelineEditor({
                 <div className="flex flex-wrap gap-2 mb-2">
                   {selectedClip.effects.map((effect, index) => (
                     <Badge
-                      key={index}
+                      key={`event-${index}`}
                       className="bg-yellow-600 hover:bg-yellow-700 cursor-pointer"
                       onClick={() => handleRemoveEffect(index)}
                     >

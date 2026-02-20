@@ -258,7 +258,7 @@ export function VideoGenerator() {
 
         <div className="space-y-3">
           {animations.map((animation, index) => (
-            <div key={index} className="flex items-center gap-4 p-3 bg-muted rounded-lg">
+            <div key={`item-${index}`} className="flex items-center gap-4 p-3 bg-muted rounded-lg">
               <span className="text-2xl">{getAnimationIcon(animation.effect)}</span>
               
               <Select
@@ -337,7 +337,7 @@ export function VideoGenerator() {
           <h3 className="text-lg font-semibold mb-4">Generated Videos</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {generatedVideos.map((video, index) => (
-              <div key={index} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+              <div key={`item-${index}`} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="aspect-video bg-muted relative">
                   <img src={video.url} alt={video.name} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">

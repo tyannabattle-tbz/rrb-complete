@@ -181,7 +181,7 @@ export function NetworkStatusDashboard() {
             <div className="flex items-end gap-1 h-12 bg-slate-800 p-2 rounded-lg">
               {history.map((value, index) => (
                 <div
-                  key={index}
+                  key={`status-${index}`}
                   className="flex-1 bg-gradient-to-t from-cyan-500 to-cyan-400 rounded-t transition-all"
                   style={{
                     height: `${Math.max(5, (value / 150) * 100)}%`,

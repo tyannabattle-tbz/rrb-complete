@@ -306,7 +306,7 @@ export default function BooksPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredBooks.map((book, index) => (
             <Card
-              key={index}
+              key={`book-${index}`}
               className={`group border overflow-hidden transition-all duration-300 hover:shadow-2xl ${
                 hoveredBook === index ? 'scale-[1.03]' : ''
               } ${

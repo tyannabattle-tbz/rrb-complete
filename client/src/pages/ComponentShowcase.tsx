@@ -1192,7 +1192,7 @@ export default function ComponentsShowcase() {
                 <Carousel className="w-full max-w-xs mx-auto">
                   <CarouselContent>
                     {Array.from({ length: 5 }).map((_, index) => (
-                      <CarouselItem key={index}>
+                      <CarouselItem key={`carousel-${index}`}>
                         <div className="p-1">
                           <Card>
                             <CardContent className="flex aspect-square items-center justify-center p-6">

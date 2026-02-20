@@ -149,7 +149,7 @@ mutation.mutate({ ... });`}</code>
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Endpoints</h2>
         {endpoints.map((endpoint, index) => (
-          <Card key={index}>
+          <Card key={`api-${index}`}>
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
