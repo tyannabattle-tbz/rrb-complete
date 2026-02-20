@@ -142,6 +142,7 @@ import { broadcastRouter as rrbBroadcastRouter } from "./routers/rrb/broadcast";
 import { entertainmentRouter as rrbEntertainmentRouter } from "./routers/rrb/entertainment";
 import { adminDashboardRouter as rrbEcosystemRouter } from "./ecosystem/admin-dashboard";
 import { contentRecommendationRouter, rrbRadioRouter } from "./routers/missingRouterStubs";
+import { listenerNotificationsRouter } from './routers/listenerNotificationsRouter';
 
 export const appRouter = router({
   // System router
@@ -158,6 +159,7 @@ export const appRouter = router({
 
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter,
+  listenerNotifications: listenerNotificationsRouter,
 
   // Auth procedures
   auth: router({
