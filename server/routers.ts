@@ -105,6 +105,7 @@ import { podcastFeedsRouter } from "./routers/podcastFeedsRouter";
 import { realtimeAnalyticsRouter } from "./routers/realtimeAnalyticsRouter";
 import { emailCampaignRouter } from "./routers/emailCampaignRouter";
 import { channelDiscoveryRouter } from "./routers/channelDiscoveryRouter";
+import { transcriptSearchRouter } from "./routers/transcriptSearchRouter";
 
 // AI Business Assistants (5 autonomous bots)
 import { aiBusinessAssistantsRouter } from "./routers/aiBusinessAssistants";
@@ -397,6 +398,9 @@ export const appRouter = router({
 
   // Phase 8: Channel Discovery & Content Search System
   channelDiscovery: channelDiscoveryRouter,
+
+  // Phase 8+: Transcript Search with Timestamp Jumping
+  transcriptSearch: transcriptSearchRouter,
 
   // Agent Session Management
   agent: router({

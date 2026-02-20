@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { PageMeta } from '@/components/rrb/PageMeta';
 import { RadioPlayer, Track } from '@/components/rrb/RadioPlayer';
 import { HybridCastWidgetContainer } from '@/components/rrb/HybridCastWidgetContainer';
 import RadioCommercials from '@/components/rrb/RadioCommercials';
 import SeasonalCampaigns from '@/components/rrb/SeasonalCampaigns';
 import { trpc } from '@/lib/trpc';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 // import { AudioUploadManager } from '@/components/AudioUploadManager';
 // import { LiveCallIn } from '@/components/rrb/LiveCallIn';
 
@@ -18,6 +19,8 @@ const RANK_LABELS = ['#1 Most Played', '#2 Most Played', '#3 Most Played', 'Tren
 const BAR_WIDTHS = ['92%', '78%', '65%', '58%'] as const;
 
 export default function RadioStation() {
+  const [activeTab, setActiveTab] = useState('radio-station');
+
   // Fetch tracks from database
   const { data: dbTracks } = trpc.radioContent.getTracks.useQuery();
   const { data: streamingChannels } = trpc.radioContent.getStreamingStatus.useQuery();
@@ -191,6 +194,124 @@ export default function RadioStation() {
       .slice(0, 4);
   }, [tracks, playCountData]);
 
+  const radioContent = (
+    <>
+      {/* Main Radio Player */}
+      <div className="container mx-auto px-4 py-8">
+        <RadioPlayer tracks={tracks} />
+      </div>
+
+      {/* Top Tracks Chart */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-slate-800/50 rounded-lg p-6 backdrop-blur">
+          <h2 className="text-2xl font-bold text-white mb-6">📊 Top Tracks</h2>
+          <div className="space-y-4">
+            {topTracks.map((track, index) => (
+              <div key={track.id} className="flex items-center gap-4">
+                <div className="text-3xl font-bold text-purple-400 w-12">
+                  {RANK_BADGES[index]}
+                </div>
+                <div className="flex-1">
+                  <div className="flex justify-between mb-2">
+                    <div>
+                      <p className="font-semibold text-white">{track.title}</p>
+                      <p className="text-sm text-slate-300">{track.artist}</p>
+                    </div>
+                    <p className="text-purple-300 font-bold">{formatPlayCount(track.playCount)} plays</p>
+                  </div>
+                  <div className="w-full bg-slate-700 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full"
+                      style={{ width: BAR_WIDTHS[index] }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Streaming Channels */}
+      {streamingChannels && streamingChannels.length > 0 && (
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-slate-800/50 rounded-lg p-6 backdrop-blur">
+            <h2 className="text-2xl font-bold text-white mb-6">🔴 Live Channels</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {streamingChannels.map(channel => (
+                <div key={channel.id} className="bg-slate-700/50 rounded p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+                    <h3 className="font-semibold text-white">{channel.name}</h3>
+                  </div>
+                  <p className="text-sm text-slate-300">{channel.listeners} listeners</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Playlists */}
+      {playlists && playlists.length > 0 && (
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-slate-800/50 rounded-lg p-6 backdrop-blur">
+            <h2 className="text-2xl font-bold text-white mb-6">🎵 Playlists</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {playlists.map(playlist => (
+                <div key={playlist.id} className="bg-slate-700/50 rounded p-4">
+                  <h3 className="font-semibold text-white mb-2">{playlist.name}</h3>
+                  <p className="text-sm text-slate-300">{playlist.trackCount} tracks</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+
+  const rrbRadioContent = (
+    <>
+      {/* RRB Radio - Unified Broadcast */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-gradient-to-r from-red-900/20 to-purple-900/20 rounded-lg p-8 border border-red-500/30">
+          <h2 className="text-3xl font-bold text-white mb-4">🎙️ RRB Radio - Unified Broadcast</h2>
+          <p className="text-slate-300 mb-6">All 7 RRB channels streaming 24/7 with autonomous QUMUS orchestration</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { name: 'Legacy Restored', listeners: '45.2K' },
+              { name: 'Healing Frequencies', listeners: '38.9K' },
+              { name: 'Music & Radio', listeners: '52.3K' },
+              { name: 'Studio Sessions', listeners: '31.2K' },
+              { name: 'QMunity', listeners: '35.7K' },
+              { name: 'Sweet Miracles', listeners: '42.1K' },
+              { name: 'Proof Vault', listeners: '28.5K' },
+            ].map((channel) => (
+              <div key={channel.name} className="bg-slate-700/50 rounded p-4 border border-slate-600">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <h3 className="font-semibold text-white text-sm">{channel.name}</h3>
+                </div>
+                <p className="text-xs text-slate-400">{channel.listeners} listeners</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Radio Player */}
+      <div className="container mx-auto px-4 py-8">
+        <RadioPlayer tracks={tracks} />
+      </div>
+
+      {/* Widgets & Features */}
+      <div className="container mx-auto px-4 py-8">
+        <HybridCastWidgetContainer />
+      </div>
+    </>
+  );
+
   return (
     <>
       <PageMeta 
@@ -199,84 +320,24 @@ export default function RadioStation() {
       />
       
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        {/* Main Radio Player */}
-        <div className="container mx-auto px-4 py-8">
-          <RadioPlayer tracks={tracks} />
-        </div>
-
-        {/* Top Tracks Chart */}
-        <div className="container mx-auto px-4 py-8">
-          <div className="bg-slate-800/50 rounded-lg p-6 backdrop-blur">
-            <h2 className="text-2xl font-bold text-white mb-6">📊 Top Tracks</h2>
-            <div className="space-y-4">
-              {topTracks.map((track, index) => (
-                <div key={track.id} className="flex items-center gap-4">
-                  <div className="text-3xl font-bold text-purple-400 w-12">
-                    {RANK_BADGES[index]}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between mb-2">
-                      <div>
-                        <p className="font-semibold text-white">{track.title}</p>
-                        <p className="text-sm text-slate-300">{track.artist}</p>
-                      </div>
-                      <p className="text-purple-300 font-bold">{formatPlayCount(track.playCount)} plays</p>
-                    </div>
-                    <div className="w-full bg-slate-700 rounded-full h-2">
-                      <div
-                        className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full"
-                        style={{ width: BAR_WIDTHS[index] }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Header with Tabs */}
+        <div className="border-b border-slate-700/50 bg-slate-900/50 backdrop-blur sticky top-0 z-40">
+          <div className="container mx-auto px-4">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-transparent border-b border-slate-700">
+                <TabsTrigger value="radio-station" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-500 rounded-none">
+                  📻 Radio Station
+                </TabsTrigger>
+                <TabsTrigger value="rrb-radio" className="data-[state=active]:border-b-2 data-[state=active]:border-purple-500 rounded-none">
+                  🎙️ RRB Radio (All Channels)
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
         </div>
 
-        {/* Streaming Channels */}
-        {streamingChannels && streamingChannels.length > 0 && (
-          <div className="container mx-auto px-4 py-8">
-            <div className="bg-slate-800/50 rounded-lg p-6 backdrop-blur">
-              <h2 className="text-2xl font-bold text-white mb-6">🔴 Live Channels</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {streamingChannels.map(channel => (
-                  <div key={channel.id} className="bg-slate-700/50 rounded p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                      <h3 className="font-semibold text-white">{channel.name}</h3>
-                    </div>
-                    <p className="text-sm text-slate-300">{channel.listeners} listeners</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Playlists */}
-        {playlists && playlists.length > 0 && (
-          <div className="container mx-auto px-4 py-8">
-            <div className="bg-slate-800/50 rounded-lg p-6 backdrop-blur">
-              <h2 className="text-2xl font-bold text-white mb-6">🎵 Playlists</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {playlists.map(playlist => (
-                  <div key={playlist.id} className="bg-slate-700/50 rounded p-4">
-                    <h3 className="font-semibold text-white mb-2">{playlist.name}</h3>
-                    <p className="text-sm text-slate-300">{playlist.trackCount} tracks</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Widgets */}
-        <div className="container mx-auto px-4 py-8">
-          <HybridCastWidgetContainer />
-        </div>
-
+        {/* Tab Content */}
+        {activeTab === 'radio-station' ? radioContent : rrbRadioContent}
         {/* Commercials */}
         <div className="container mx-auto px-4 py-8">
           <RadioCommercials />
@@ -286,16 +347,6 @@ export default function RadioStation() {
         <div className="container mx-auto px-4 py-8">
           <SeasonalCampaigns />
         </div>
-
-        {/* Audio Upload Manager */}
-        {/* <div className="container mx-auto px-4 py-8">
-          <AudioUploadManager />
-        </div> */}
-
-        {/* Live Call In */}
-        {/* <div className="container mx-auto px-4 py-8">
-          <LiveCallIn />
-        </div> */}
       </div>
     </>
   );

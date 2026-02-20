@@ -220,12 +220,12 @@ export default function Divisions() {
               {
                 name: 'Little C',
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/jAGbowmiNIBjqruW.jpeg',
-                desc: 'Youth & Education Initiatives — Founded by Seabrun Candy Hunter, Operated by Little C',
+                desc: 'Youth & Education Initiatives — Founded by Seabrun Candy Hunter, Operated by Carlos Kembrel',
               },
               {
                 name: "Anna's Promotion Co.",
                 logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/NOXrVGzekgvevsQT.jpeg',
-                desc: 'Artist Promotion & Events — Founded by Seabrun Candy Hunter, Operated by Anna Hunter',
+                desc: 'Artist Promotion & Events — Founded by Seabrun Candy Hunter, Operated by Tyanna Battle & LaShanna Russell',
               },
               {
                 name: 'Candy Worldwide',
