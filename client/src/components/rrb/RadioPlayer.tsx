@@ -21,7 +21,7 @@ interface RadioPlayerProps {
   description?: string;
 }
 
-export function RadioPlayer({ tracks, title = "Legacy Radio", description }: RadioPlayerProps) {
+export const RadioPlayer = React.memo(function RadioPlayer({ tracks, title = "Legacy Radio", description }: RadioPlayerProps) {
   const audio = useAudio();
   const [showLiveStreams, setShowLiveStreams] = useState(false);
 
@@ -283,4 +283,4 @@ export function RadioPlayer({ tracks, title = "Legacy Radio", description }: Rad
       </div>
     </div>
   );
-}
+});
