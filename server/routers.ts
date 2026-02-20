@@ -103,6 +103,7 @@ import { analyticsRouter } from "./routers/analyticsRouter";
 import { communityRouter } from "./routers/communityRouter";
 import { podcastFeedsRouter } from "./routers/podcastFeedsRouter";
 import { realtimeAnalyticsRouter } from "./routers/realtimeAnalyticsRouter";
+import { emailCampaignRouter } from "./routers/emailCampaignRouter";
 
 // AI Business Assistants (5 autonomous bots)
 import { aiBusinessAssistantsRouter } from "./routers/aiBusinessAssistants";
@@ -389,6 +390,9 @@ export const appRouter = router({
 
   // Phase 5: Real-Time Analytics with Live Listener Data (Spotify, Apple, YouTube, TuneIn, Amazon, iHeartRadio)
   realtimeAnalytics: realtimeAnalyticsRouter,
+
+  // Phase 6: Email Campaign Automation & Promotion (SendGrid integration)
+  emailCampaign: emailCampaignRouter,
 
   // Agent Session Management
   agent: router({
