@@ -7,6 +7,9 @@ import { PresetProvider } from "./contexts/PresetContext";
 import { AudioProvider } from "./contexts/AudioContext";
 import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer";
 import Home from "./pages/Home";
+import { VideoPodcastDiscovery } from './pages/VideoPodcastDiscovery';
+import { VideoPodcastPlayer } from './components/VideoPodcastPlayer';
+import { WebRTCCallIn } from './components/WebRTCCallIn';
 import AgentDashboard from "./pages/AgentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import { AdminAnalyticsDashboard } from "./pages/AdminAnalyticsDashboard";
@@ -246,6 +249,9 @@ function Router() {
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
+      <Route path="/video-podcasts" component={VideoPodcastDiscovery} />
+      <Route path="/videos/:id" component={() => <VideoPodcastPlayer videoId="test" title="Episode" duration={3600} />} />
+      <Route path="/call-in" component={() => <WebRTCCallIn channelId="ch-001" />} />
       <Route path="/canryn" component={CanrynDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
