@@ -1,9 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Play, Pause, Volume2, Radio, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc';
+import { NotificationCenter } from '@/components/rrb/NotificationCenter';
+import { RecordingPanel } from '@/components/rrb/RecordingPanel';
+import { AnalyticsDashboard } from '@/components/rrb/AnalyticsDashboard';
+import { initializeNotifications } from '@/lib/notificationService';
 
 interface StreamConfig {
   url: string;
@@ -21,6 +25,12 @@ export default function RadioStation() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [streamStatus, setStreamStatus] = useState('Ready');
   const [listeners, setListeners] = useState(0);
+  const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false);
+
+  // Initialize notifications on mount
+  useEffect(() => {
+    initializeNotifications();
+  }, []);
 
   // Real audio streams with working URLs
   const sampleStreams: StreamConfig[] = [
@@ -163,15 +173,16 @@ export default function RadioStation() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header with Notification Center */}
+        <div className="text-center mb-8 flex items-center justify-between">
+          <div className="flex items-center justify-center gap-3 flex-1">
             <Radio className="w-8 h-8 text-purple-400" />
             <h1 className="text-4xl font-bold text-white">RockinRockinBoogie</h1>
           </div>
-          <p className="text-purple-200">Live Audio Streaming Station</p>
+          <NotificationCenter />
         </div>
+        <p className="text-purple-200 text-center mb-8">Live Audio Streaming Station</p>
 
         {/* Main Player Card */}
         <Card className="bg-slate-800 border-purple-500 border-2 p-8 mb-6">
@@ -280,7 +291,7 @@ export default function RadioStation() {
 
         {/* Settings */}
         {showSettings && (
-          <Card className="bg-slate-800 border-slate-700 p-6">
+          <Card className="bg-slate-800 border-slate-700 p-6 mb-6">
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <Settings className="w-5 h-5" />
               Stream Settings
@@ -306,17 +317,45 @@ export default function RadioStation() {
           </Card>
         )}
 
-        {/* Settings Toggle */}
-        <div className="mt-6 text-center">
-          <Button
-            onClick={() => setShowSettings(!showSettings)}
-            variant="outline"
-            className="border-purple-500 text-purple-400 hover:bg-purple-500/10"
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            {showSettings ? 'Hide Settings' : 'Show Settings'}
-          </Button>
+        {/* Settings and Advanced Features Toggle */}
+        <div className="mt-6 text-center space-y-4 mb-8">
+          <div className="flex gap-2 justify-center flex-wrap">
+            <Button
+              onClick={() => setShowSettings(!showSettings)}
+              variant="outline"
+              className="border-purple-500 text-purple-400 hover:bg-purple-500/10"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              {showSettings ? 'Hide Settings' : 'Show Settings'}
+            </Button>
+            <Button
+              onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
+              variant="outline"
+              className="border-blue-500 text-blue-400 hover:bg-blue-500/10"
+            >
+              {showAdvancedFeatures ? 'Hide Advanced' : 'Show Advanced'}
+            </Button>
+          </div>
         </div>
+
+        {/* Advanced Features Section */}
+        {showAdvancedFeatures && currentStream && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white">Advanced Features</h2>
+            
+            {/* Recording Panel */}
+            <RecordingPanel channelId={currentStream.url} channelName={currentStream.name} />
+
+            {/* Analytics Dashboard */}
+            <AnalyticsDashboard channelId={currentStream.url} channelName={currentStream.name} />
+          </div>
+        )}
+
+        {showAdvancedFeatures && !currentStream && (
+          <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 text-center">
+            <p className="text-gray-400">Select a stream to access advanced features like recording and analytics.</p>
+          </div>
+        )}
       </div>
     </div>
   );
