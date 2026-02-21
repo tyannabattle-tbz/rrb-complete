@@ -150,6 +150,7 @@ import LiveStreamIntegration from '@/pages/rrb/LiveStreamIntegration';
 import ListenerNotifications from '@/pages/rrb/ListenerNotifications';
 import MerchandiseStore from '@/pages/rrb/MerchandiseStore';
 import UnWcsEvent from '@/pages/UnWcsEvent';
+import VirtualPanelModerator from '@/pages/VirtualPanelModerator';
 import RRBAdminDashboard from '@/pages/rrb/AdminDashboard';
 import RealtimeCollaboration from '@/pages/rrb/RealtimeCollaboration';
 import MobileApp from '@/pages/rrb/MobileApp';
@@ -440,6 +441,7 @@ function Router() {
       <Route path="/rrb/merchandise" component={MerchandiseStore} />
       <Route path="/un-wcs-event" component={UnWcsEvent} />
       <Route path="/broadcast-control" component={BroadcastControlDashboard} />
+      <Route path="/virtual-panel" component={VirtualPanelModerator} />
       <Route path="/rrb/admin" component={RRBAdminDashboard} />
       <Route path="/rrb/collaboration" component={RealtimeCollaboration} />
       <Route path="/rrb/mobile" component={MobileApp} />
