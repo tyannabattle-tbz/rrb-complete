@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
@@ -99,15 +99,15 @@ const PLATFORMS = [
   {
     id: 'canryn',
     title: 'Canryn Production',
-    description: 'Media production company subsidiary with studio management and content creation',
+    description: 'Entertainment production and content creation division',
     icon: Building2,
-    href: '/rrb/canryn',
+    href: '/rrb/canryn-production',
     color: 'from-indigo-500/20 to-indigo-600/20',
-    badge: '🎬 STUDIO'
+    badge: '🎬 PRODUCTION'
   },
   {
-    id: 'sweet-miracles',
-    title: 'Sweet Miracles NPO',
+    id: 'sweet',
+    title: 'Sweet Miracles',
     description: 'Non-profit organization for community support and charitable giving',
     icon: Heart,
     href: '/rrb/sweet-miracles',
@@ -141,11 +141,11 @@ function QuickListenSection() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-zinc-900 to-zinc-800 text-white">
+    <section className="py-16 md:py-24 bg-gradient-to-br from-slate-50 to-slate-100 text-slate-900">
       <div className="container">
         <div className="text-center mb-10">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">🎧 Listen Now</h2>
-          <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">🎧 Listen Now</h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Tap any channel to start streaming instantly. Audio plays across all pages.
           </p>
         </div>
@@ -168,8 +168,8 @@ function QuickListenSection() {
                 key={stream.id}
                 className={`p-4 rounded-xl transition-all group relative ${
                   isActive
-                    ? 'bg-amber-500/20 ring-2 ring-amber-500 scale-105'
-                    : 'bg-white/5 hover:bg-white/10 hover:scale-105'
+                    ? 'bg-amber-100 ring-2 ring-amber-500 scale-105 shadow-lg'
+                    : 'bg-white hover:bg-slate-50 hover:scale-105 shadow-md hover:shadow-lg'
                 }`}
               >
                 <div className="flex items-start justify-between mb-2">
@@ -190,16 +190,16 @@ function QuickListenSection() {
                   }}
                   className="w-full"
                 >
-                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-amber-500/30 transition-colors">
+                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-amber-200 transition-colors">
                     {isPlaying ? (
-                      <Pause className="w-5 h-5 text-amber-400" />
+                      <Pause className="w-5 h-5 text-amber-600" />
                     ) : (
-                      <Play className="w-5 h-5 text-white ml-0.5" />
+                      <Play className="w-5 h-5 text-slate-700 ml-0.5" />
                     )}
                   </div>
                 </button>
-                <p className="text-sm font-medium truncate">{stream.label}</p>
-                <p className="text-xs text-zinc-500 truncate">{stream.artist}</p>
+                <p className="text-sm font-medium truncate text-slate-900">{stream.label}</p>
+                <p className="text-xs text-slate-500 truncate">{stream.artist}</p>
                 <div className="mt-2">
                   <ListenerStatsDisplay
                     channelId={stream.id}
@@ -209,8 +209,8 @@ function QuickListenSection() {
                 </div>
                 {isPlaying && (
                   <div className="flex items-center justify-center gap-1 mt-2">
-                    <div className="w-1 h-1 bg-red-400 rounded-full animate-pulse" />
-                    <span className="text-[10px] text-red-400 font-bold">LIVE</span>
+                    <div className="w-1 h-1 bg-red-500 rounded-full animate-pulse" />
+                    <span className="text-[10px] text-red-600 font-bold">LIVE</span>
                   </div>
                 )}
               </div>
@@ -222,7 +222,7 @@ function QuickListenSection() {
         <div className="flex justify-center mb-8">
           <button
             onClick={() => setShowQualitySelector(!showQualitySelector)}
-            className="px-6 py-2 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 font-medium transition-colors"
+            className="px-6 py-2 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-700 font-medium transition-colors shadow-md"
           >
             {showQualitySelector ? '✕ Hide Quality Settings' : '🔊 Audio Quality'}
           </button>
@@ -238,7 +238,7 @@ function QuickListenSection() {
         <div className="max-w-4xl mx-auto mb-8">
           <button
             onClick={() => setShowFavorites(!showFavorites)}
-            className="w-full px-6 py-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium transition-colors flex items-center justify-between"
+            className="w-full px-6 py-3 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-medium transition-colors flex items-center justify-between shadow-md"
           >
             <span className="flex items-center gap-2">
               <Heart className="w-5 h-5 fill-current" />
@@ -255,17 +255,20 @@ function QuickListenSection() {
         </div>
 
         {/* Channel Presets */}
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
-          {CHANNEL_PRESETS.map((channel) => (
-            <button
-              key={`channel-${channel.id || 'unnamed'}`}
-              onClick={() => audio.playQueue(channel.streams, 0)}
-              className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-sm font-medium transition-colors flex items-center gap-2"
-            >
-              <Radio className="w-3.5 h-3.5" style={{ color: channel.color }} />
-              {channel.name}
-            </button>
-          ))}
+        <div className="text-center">
+          <p className="text-sm font-medium text-slate-600 mb-4">Browse by Category</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {CHANNEL_PRESETS.map((channel) => (
+              <button
+                key={`channel-${channel.id || 'unnamed'}`}
+                onClick={() => audio.playQueue(channel.streams, 0)}
+                className="px-4 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-700 text-sm font-medium transition-colors flex items-center gap-2 shadow-sm hover:shadow-md border border-slate-200"
+              >
+                <Radio className="w-3.5 h-3.5" style={{ color: channel.color }} />
+                {channel.name}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -294,50 +297,60 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-zinc-900 to-zinc-800 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-amber-500 mx-auto mb-4" />
-          <p className="text-zinc-400">Loading RRB...</p>
+          <p className="text-slate-600">Loading RRB...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-900 to-zinc-800 text-white">
-      {/* Hero Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-b from-black/50 to-transparent">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900">
+      {/* Hero Section - Redesigned Layout */}
+      <section className="py-16 md:py-24 bg-gradient-to-b from-white to-slate-50 border-b border-slate-200">
         <div className="container">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          {/* Top Row: Title Left, Vinyl Right */}
+          <div className="grid md:grid-cols-2 gap-8 items-start mb-8">
+            {/* Left: Title and Description */}
+            <div className="flex flex-col justify-start">
+              <h1 className="text-5xl md:text-6xl font-bold mb-4 leading-tight text-slate-900">
                 Rockin' Rockin' Boogie
               </h1>
-              <p className="text-xl text-zinc-300 mb-4">
+              <p className="text-2xl font-semibold text-amber-600 mb-3">
                 Seabrun Candy Hunter
               </p>
-              <p className="text-lg text-zinc-400 mb-8 max-w-lg">
+              <p className="text-lg text-slate-700 mb-6 max-w-lg leading-relaxed">
                 A legacy restored — unified ecosystem of platforms, services, and autonomous intelligence
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black">
+                <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-white shadow-lg">
                   <Dice5 className="w-5 h-5 mr-2" />
                   Play Solbones 4+3+2
                 </Button>
-                <Button size="lg" variant="outline" className="border-amber-500 text-amber-400 hover:bg-amber-500/10">
+                <Button size="lg" variant="outline" className="border-amber-500 text-amber-600 hover:bg-amber-50 shadow-md">
                   <Zap className="w-5 h-5 mr-2" />
                   Explore the Proof Vault
                 </Button>
               </div>
             </div>
-            <div className="relative flex flex-col gap-6">
-              <img 
-                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/IoCsbVOpgUYLbYGC.jpeg"
-                alt="King Richard and Seabrun Candy Hunter - New Book Announcement"
-                className="w-full h-auto rounded-lg shadow-2xl object-cover"
-              />
-              <RotatingVinylRecord />
+
+            {/* Right: Vinyl Record */}
+            <div className="flex justify-center md:justify-end">
+              <div className="w-full max-w-sm">
+                <RotatingVinylRecord />
+              </div>
             </div>
+          </div>
+
+          {/* Bottom: King Richard Image Centered */}
+          <div className="flex justify-center mt-12">
+            <img 
+              src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/IoCsbVOpgUYLbYGC.jpeg"
+              alt="King Richard and Seabrun Candy Hunter - New Book Announcement"
+              className="w-full max-w-2xl h-auto rounded-xl shadow-2xl object-cover border-4 border-white"
+            />
           </div>
         </div>
       </section>
@@ -346,34 +359,38 @@ export default function Home() {
       <QuickListenSection />
 
       {/* Platform Showcase */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-white">
         <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">Explore the Ecosystem</h2>
-            <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
-              Discover all platforms, services, and autonomous systems powering the RRB legacy
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">Explore the Ecosystem</h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Access all platforms, services, and features of the RRB legacy
             </p>
           </div>
 
-          {/* Platform Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {PLATFORMS.map((platform, idx) => {
               const Icon = platform.icon;
               return (
                 <Link key={platform.id} href={platform.href}>
-                  <a className={`group p-6 rounded-xl bg-gradient-to-br ${platform.color} border border-white/10 hover:border-white/30 transition-all hover:scale-105 cursor-pointer h-full`}>
-                    <div className="flex items-start justify-between mb-4">
-                      <Icon className="w-8 h-8 text-amber-400" />
-                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/10 text-amber-400">
-                        {platform.badge}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-amber-400 transition-colors">
-                      {platform.title}
-                    </h3>
-                    <p className="text-sm text-zinc-400 mb-4">{platform.description}</p>
-                    <div className="flex items-center gap-2 text-amber-400 text-sm font-medium">
-                      Explore <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <a className="group block h-full">
+                    <div className={`h-full p-8 rounded-xl bg-gradient-to-br ${platform.color} border border-slate-200 hover:border-amber-500 hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
+                      <div className="flex items-start justify-between mb-4">
+                        <Icon className="w-8 h-8 text-slate-700" />
+                        <span className="text-xs font-bold px-3 py-1 rounded-full bg-white text-slate-700 shadow-sm">
+                          {platform.badge}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-bold mb-2 text-slate-900 group-hover:text-amber-600 transition-colors">
+                        {platform.title}
+                      </h3>
+                      <p className="text-slate-700 mb-4 leading-relaxed">
+                        {platform.description}
+                      </p>
+                      <div className="flex items-center gap-2 text-amber-600 font-semibold group-hover:gap-3 transition-all">
+                        <span>Explore</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
                     </div>
                   </a>
                 </Link>
@@ -384,12 +401,12 @@ export default function Home() {
       </section>
 
       {/* QUMUS Activity Feed */}
-      <section className="py-16 md:py-24 bg-black/30">
+      <section className="py-16 md:py-24 bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">🤖 QUMUS Activity</h2>
-            <p className="text-lg text-zinc-400">
-              Real-time autonomous orchestration and decision-making
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">System Activity</h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Real-time QUMUS orchestration and autonomous decision-making
             </p>
           </div>
           <QUMUSActivityFeed />
