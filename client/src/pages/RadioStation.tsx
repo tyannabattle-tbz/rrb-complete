@@ -7,6 +7,9 @@ import { trpc } from '@/lib/trpc';
 import { NotificationCenter } from '@/components/rrb/NotificationCenter';
 import { RecordingPanel } from '@/components/rrb/RecordingPanel';
 import { AnalyticsDashboard } from '@/components/rrb/AnalyticsDashboard';
+import { QualitySelectorWidget } from '@/components/rrb/QualitySelectorWidget';
+import { StreamHealthDashboard } from '@/components/rrb/StreamHealthDashboard';
+import { RatingPanel } from '@/components/rrb/RatingPanel';
 import { initializeNotifications } from '@/lib/notificationService';
 
 interface StreamConfig {
@@ -26,6 +29,10 @@ export default function RadioStation() {
   const [streamStatus, setStreamStatus] = useState('Ready');
   const [listeners, setListeners] = useState(0);
   const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false);
+  const [showQualitySelector, setShowQualitySelector] = useState(false);
+  const [showHealthDashboard, setShowHealthDashboard] = useState(false);
+  const [showRatingPanel, setShowRatingPanel] = useState(false);
+  const [selectedQuality, setSelectedQuality] = useState<'low' | 'medium' | 'high' | 'lossless'>('medium');
 
   // Initialize notifications on mount
   useEffect(() => {
@@ -345,6 +352,27 @@ export default function RadioStation() {
               {showSettings ? 'Hide Settings' : 'Show Settings'}
             </Button>
             <Button
+              onClick={() => setShowQualitySelector(!showQualitySelector)}
+              variant="outline"
+              className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/10"
+            >
+              Audio Quality
+            </Button>
+            <Button
+              onClick={() => setShowHealthDashboard(!showHealthDashboard)}
+              variant="outline"
+              className="border-green-500 text-green-400 hover:bg-green-500/10"
+            >
+              Stream Health
+            </Button>
+            <Button
+              onClick={() => setShowRatingPanel(!showRatingPanel)}
+              variant="outline"
+              className="border-amber-500 text-amber-400 hover:bg-amber-500/10"
+            >
+              Rate Stream
+            </Button>
+            <Button
               onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
               variant="outline"
               className="border-blue-500 text-blue-400 hover:bg-blue-500/10"
@@ -353,6 +381,38 @@ export default function RadioStation() {
             </Button>
           </div>
         </div>
+
+        {/* Quality Selector */}
+        {showQualitySelector && (
+          <Card className="bg-slate-800 border-cyan-500 border-2 p-6 mb-6">
+            <QualitySelectorWidget
+              onQualityChange={setSelectedQuality}
+              compact={false}
+            />
+          </Card>
+        )}
+
+        {/* Stream Health Dashboard */}
+        {showHealthDashboard && (
+          <Card className="bg-slate-800 border-green-500 border-2 p-6 mb-6">
+            <StreamHealthDashboard
+              compact={false}
+              autoMonitor={true}
+            />
+          </Card>
+        )}
+
+        {/* Rating Panel */}
+        {showRatingPanel && currentStream && (
+          <Card className="bg-slate-800 border-amber-500 border-2 p-6 mb-6">
+            <RatingPanel
+              targetId={currentStream.url}
+              targetType="stream"
+              targetLabel={currentStream.name}
+              compact={false}
+            />
+          </Card>
+        )}
 
         {/* Advanced Features Section */}
         {showAdvancedFeatures && currentStream && (
