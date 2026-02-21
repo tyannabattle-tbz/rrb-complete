@@ -431,7 +431,7 @@ export default function Podcasts() {
           <span className="text-sm font-semibold">Current Channel:</span>
         </div>
         <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
-          {CHANNELS.map(channel => (
+          {CHANNELS.map((channel, idx) => (
             <button
               key={`channel-${idx}-${channel.id || 'unnamed'}`}
               onClick={() => setSelectedChannelId(channel.id)}
