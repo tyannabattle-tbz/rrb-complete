@@ -172,7 +172,7 @@ export function GlobalAudioPlayer() {
 
           {showChannels ? (
             <div className="space-y-2">
-              {CHANNEL_PRESETS.map(channel => (
+              {CHANNEL_PRESETS.map((channel, idx) => (
                 <button
                   key={`channel-${idx}-${channel.id || 'unnamed'}`}
                   onClick={() => {
@@ -275,7 +275,7 @@ function QuickPlayButton() {
               </button>
             </div>
             <div className="max-h-52 overflow-y-auto p-1.5 space-y-0.5">
-              {CHANNEL_PRESETS.map(channel => (
+              {CHANNEL_PRESETS.map((channel, idx) => (
                 <button
                   key={`channel-${idx}-${channel.id || 'unnamed'}`}
                   onClick={() => {
