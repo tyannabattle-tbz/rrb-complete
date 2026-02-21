@@ -8,6 +8,10 @@ import { CHANNEL_PRESETS, LIVE_STREAMS, RRB_LEGACY_TRACKS } from '@/lib/streamLi
 import RotatingVinylRecord from "@/components/rrb/RotatingVinylRecord";
 import { QUMUSActivityFeed } from "@/components/rrb/QUMUSActivityFeed";
 import { FrequencyTuner } from '@/components/rrb/FrequencyTuner';
+import { ListenerStatsDisplay } from '@/components/rrb/ListenerStatsDisplay';
+import { ChannelFavoritesButton } from '@/components/rrb/ChannelFavoritesButton';
+import { AudioQualitySelector } from '@/components/rrb/AudioQualitySelector';
+import { FavoriteChannels } from '@/components/rrb/FavoriteChannels';
 
 // Platform showcase items
 const PLATFORMS = [
@@ -84,46 +88,48 @@ const PLATFORMS = [
     badge: '👵 FAMILY'
   },
   {
-    id: 'hybridcast',
-    title: 'HybridCast',
-    description: 'Emergency broadcast system with offline mesh networking',
-    icon: Signal,
-    href: '/hybridcast',
+    id: 'qumus',
+    title: 'QUMUS Orchestration',
+    description: 'AI-powered autonomous decision engine with 12+ policies and real-time monitoring',
+    icon: Brain,
+    href: '/rrb/qumus',
     color: 'from-cyan-500/20 to-cyan-600/20',
-    badge: '📡 BROADCAST'
+    badge: '🤖 AI BRAIN'
   },
   {
-    id: 'qumus',
-    title: 'QUMUS Brain',
-    description: 'Autonomous orchestration engine controlling all platforms',
-    icon: Brain,
-    href: '/rrb/qumus/admin',
+    id: 'canryn',
+    title: 'Canryn Production',
+    description: 'Media production company subsidiary with studio management and content creation',
+    icon: Building2,
+    href: '/rrb/canryn',
     color: 'from-indigo-500/20 to-indigo-600/20',
-    badge: '🤖 AI'
+    badge: '🎬 STUDIO'
   },
   {
     id: 'sweet-miracles',
-    title: 'Sweet Miracles',
-    description: 'Community support, grants, and social impact initiatives',
+    title: 'Sweet Miracles NPO',
+    description: 'Non-profit organization for community support and charitable giving',
     icon: Heart,
-    href: '/rrb/canryn-production',
-    color: 'from-fuchsia-500/20 to-fuchsia-600/20',
-    badge: '💝 COMMUNITY'
+    href: '/rrb/sweet-miracles',
+    color: 'from-pink-500/20 to-pink-600/20',
+    badge: '❤️ CHARITY'
   },
   {
-    id: 'ecosystem',
-    title: 'Unified Dashboard',
-    description: 'Central control center for all ecosystem services and monitoring',
-    icon: Zap,
-    href: '/rrb/divisions',
-    color: 'from-violet-500/20 to-violet-600/20',
-    badge: '⚙️ CONTROL'
+    id: 'hybridcast',
+    title: 'HybridCast Emergency',
+    description: 'Emergency broadcast system with offline capabilities and mesh networking',
+    icon: Signal,
+    href: '/rrb/hybridcast',
+    color: 'from-red-500/20 to-red-600/20',
+    badge: '⚠️ CONTROL'
   },
 ];
 
 function QuickListenSection() {
   const audio = useAudio();
   const [selectedFrequency, setSelectedFrequency] = useState(432);
+  const [showQualitySelector, setShowQualitySelector] = useState(false);
+  const [showFavorites, setShowFavorites] = useState(false);
 
   const quickStreams = [
     { ...LIVE_STREAMS.funkyRadio, label: 'Soul & Funk', emoji: '🎷' },
@@ -152,45 +158,100 @@ function QuickListenSection() {
           />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {/* Quick Stream Cards with Stats and Favorites */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           {quickStreams.map((stream) => {
             const isActive = audio.currentTrack?.id === stream.id;
             const isPlaying = isActive && audio.isPlaying;
             return (
-              <button
+              <div
                 key={stream.id}
-                onClick={() => {
-                  if (isActive) {
-                    audio.togglePlayPause();
-                  } else {
-                    audio.play(stream);
-                  }
-                }}
-                className={`p-5 rounded-xl text-center transition-all group ${
+                className={`p-4 rounded-xl transition-all group relative ${
                   isActive
                     ? 'bg-amber-500/20 ring-2 ring-amber-500 scale-105'
                     : 'bg-white/5 hover:bg-white/10 hover:scale-105'
                 }`}
               >
-                <div className="text-3xl mb-2">{stream.emoji}</div>
-                <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-amber-500/30 transition-colors">
-                  {isPlaying ? (
-                    <Pause className="w-5 h-5 text-amber-400" />
-                  ) : (
-                    <Play className="w-5 h-5 text-white ml-0.5" />
-                  )}
+                <div className="flex items-start justify-between mb-2">
+                  <div className="text-2xl">{stream.emoji}</div>
+                  <ChannelFavoritesButton
+                    channelId={stream.id}
+                    channelLabel={stream.label}
+                    compact
+                  />
                 </div>
+                <button
+                  onClick={() => {
+                    if (isActive) {
+                      audio.togglePlayPause();
+                    } else {
+                      audio.play(stream);
+                    }
+                  }}
+                  className="w-full"
+                >
+                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-amber-500/30 transition-colors">
+                    {isPlaying ? (
+                      <Pause className="w-5 h-5 text-amber-400" />
+                    ) : (
+                      <Play className="w-5 h-5 text-white ml-0.5" />
+                    )}
+                  </div>
+                </button>
                 <p className="text-sm font-medium truncate">{stream.label}</p>
                 <p className="text-xs text-zinc-500 truncate">{stream.artist}</p>
+                <div className="mt-2">
+                  <ListenerStatsDisplay
+                    channelId={stream.id}
+                    compact
+                    showTrend={false}
+                  />
+                </div>
                 {isPlaying && (
                   <div className="flex items-center justify-center gap-1 mt-2">
                     <div className="w-1 h-1 bg-red-400 rounded-full animate-pulse" />
                     <span className="text-[10px] text-red-400 font-bold">LIVE</span>
                   </div>
                 )}
-              </button>
+              </div>
             );
           })}
+        </div>
+
+        {/* Audio Quality Selector Toggle */}
+        <div className="flex justify-center mb-8">
+          <button
+            onClick={() => setShowQualitySelector(!showQualitySelector)}
+            className="px-6 py-2 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 font-medium transition-colors"
+          >
+            {showQualitySelector ? '✕ Hide Quality Settings' : '🔊 Audio Quality'}
+          </button>
+        </div>
+
+        {showQualitySelector && (
+          <div className="max-w-2xl mx-auto mb-8">
+            <AudioQualitySelector compact={false} showRecommendation={true} />
+          </div>
+        )}
+
+        {/* Favorite Channels Section */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <button
+            onClick={() => setShowFavorites(!showFavorites)}
+            className="w-full px-6 py-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium transition-colors flex items-center justify-between"
+          >
+            <span className="flex items-center gap-2">
+              <Heart className="w-5 h-5 fill-current" />
+              My Favorite Channels
+            </span>
+            <span className="text-sm">{showFavorites ? '▼' : '▶'}</span>
+          </button>
+          
+          {showFavorites && (
+            <div className="mt-4">
+              <FavoriteChannels />
+            </div>
+          )}
         </div>
 
         {/* Channel Presets */}
@@ -228,437 +289,107 @@ export default function Home() {
 
     // Set low volume first, then play
     audio.setVolume(0.15);
-    
-    // Use a click listener to start playback (browsers require user gesture)
-    const startAutoplay = () => {
-      if (!audio.currentTrack) {
-        audio.play(rrb);
-      }
-      document.removeEventListener('click', startAutoplay);
-      document.removeEventListener('touchstart', startAutoplay);
-      document.removeEventListener('scroll', startAutoplay);
-      document.removeEventListener('keydown', startAutoplay);
-    };
+    audio.play(rrb);
+  }, [audio]);
 
-    // Try immediate play first (may work if user has interacted before)
-    const tryAutoplay = async () => {
-      try {
-        audio.setVolume(0.15);
-        audio.play(rrb);
-      } catch {
-        // If autoplay blocked, wait for first user interaction
-        document.addEventListener('click', startAutoplay, { once: true });
-        document.addEventListener('touchstart', startAutoplay, { once: true });
-        document.addEventListener('scroll', startAutoplay, { once: true });
-        document.addEventListener('keydown', startAutoplay, { once: true });
-      }
-    };
-
-    // Small delay to let the page render first
-    const timer = setTimeout(tryAutoplay, 500);
-
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener('click', startAutoplay);
-      document.removeEventListener('touchstart', startAutoplay);
-      document.removeEventListener('scroll', startAutoplay);
-      document.removeEventListener('keydown', startAutoplay);
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-zinc-900 to-zinc-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-amber-500 mx-auto mb-4" />
+          <p className="text-zinc-400">Loading RRB...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <main className="min-h-screen">
-        {/* Disclaimer */}
-        <section className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800">
-          <div className="container py-4 px-4">
-            <div className="flex gap-3 items-start">
-              <span className="text-2xl">⚠️</span>
-              <div>
-                <p className="font-bold text-yellow-900 dark:text-yellow-100">
-                  This is an archival documentation site
-                </p>
-                <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  All content is for historical preservation and educational purposes.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Hero Section */}
-        <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary/20 to-background">
-          {/* Spinning vinyl record — prominent visual, no text labels */}
-          <style>{`@keyframes vinylSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-          <div className="absolute left-[-30px] md:left-[3%] top-[15%] md:top-[20%] opacity-50 md:opacity-60 pointer-events-none">
-            <div className="w-[120px] h-[120px] md:w-[180px] md:h-[180px] rounded-full overflow-hidden" style={{ animation: 'vinylSpin 6s linear infinite', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
-              <img
-                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/dvidjRisUJpNxgGn.jpg"
-                  alt="Rockin Rockin Boogie vinyl record"
-                  className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          
-          <div className="relative z-10 container flex flex-col items-center justify-center text-center gap-6 py-20">
-            <h1 className="text-5xl md:text-7xl font-bold text-foreground drop-shadow-lg">
-              Rockin' Rockin' Boogie
-            </h1>
-            <p className="text-lg md:text-xl text-foreground/80 drop-shadow-md">
-              <span className="font-semibold">Seabrun Candy Hunter</span>
-            </p>
-            <p className="text-xl md:text-2xl text-foreground/90 drop-shadow-md max-w-2xl">
-              A legacy restored — unified ecosystem of platforms, services, and autonomous intelligence
-            </p>
-            <div className="flex gap-4 flex-wrap justify-center">
-              <Link href="/solbones">
-                <Button size="lg" className="bg-amber-500 hover:bg-amber-400 text-black font-bold">
-                  <Dice5 className="mr-2 w-5 h-5" />
+    <div className="min-h-screen bg-gradient-to-br from-zinc-900 to-zinc-800 text-white">
+      {/* Hero Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-b from-black/50 to-transparent">
+        <div className="container">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                Rockin' Rockin' Boogie
+              </h1>
+              <p className="text-xl text-zinc-300 mb-4">
+                Seabrun Candy Hunter
+              </p>
+              <p className="text-lg text-zinc-400 mb-8 max-w-lg">
+                A legacy restored — unified ecosystem of platforms, services, and autonomous intelligence
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black">
+                  <Dice5 className="w-5 h-5 mr-2" />
                   Play Solbones 4+3+2
                 </Button>
-              </Link>
-              <Link href="/rrb/proof-vault">
-                <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                <Button size="lg" variant="outline" className="border-amber-500 text-amber-400 hover:bg-amber-500/10">
+                  <Zap className="w-5 h-5 mr-2" />
                   Explore the Proof Vault
-                  <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
-              </Link>
-              <Link href="/rrb/ecosystem/dashboard">
-                <Button size="lg" variant="outline">
-                  View Ecosystem Dashboard
-                  <Zap className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* King Richard and I — Featured Photo */}
-        <section className="py-16 md:py-24 bg-gradient-to-b from-background to-card">
-          <div className="container max-w-4xl">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border">
-              <img
-                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/eciPCZbjkGWvgSVs.jpeg"
-                alt="King Richard and I — Canryn Production Inc. announcement documenting 50 years of being R&R stars on and off stage, featuring Little Richard"
-                className="w-full h-auto object-contain"
-                loading="eager"
-              />
-            </div>
-            <div className="mt-6 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-                &ldquo;King Richard and I&rdquo;
-              </h2>
-              <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-                The book documenting 50 years of being Rock &amp; Roll stars on and off stage. A Canryn Production.
-              </p>
-              <Link href="/rrb/the-legacy">
-                <Button variant="outline" className="mt-4">
-                  Read the Full Legacy <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* 🎲 PLAY SOLBONES — Featured Game Section */}
-        <section className="py-12 md:py-16 bg-gradient-to-br from-amber-900/30 via-orange-900/20 to-red-900/30 border-y-2 border-amber-500/30">
-          <div className="container max-w-4xl">
-            <div className="relative p-8 md:p-12 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 border-2 border-amber-500/40 hover:border-amber-400 transition-all cursor-pointer group shadow-2xl hover:shadow-amber-500/20 hover:scale-[1.01]">
-                {/* Animated dice background */}
-                <div className="absolute top-4 right-4 text-6xl md:text-8xl opacity-20 group-hover:opacity-40 transition-opacity select-none">
-                  🎲
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="px-3 py-1 rounded-full bg-amber-500 text-black text-xs font-bold uppercase tracking-wider animate-pulse">
-                      Play Now
-                    </span>
-                    <span className="px-3 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-bold">
-                      Up to 9 Players
-                    </span>
-                  </div>
-                  <h2 className="text-3xl md:text-5xl font-bold text-amber-100 mb-3 group-hover:text-amber-50 transition">
-                    🎲 Solbones 4+3+2
-                  </h2>
-                  <p className="text-lg md:text-xl text-amber-200/80 mb-6 max-w-xl">
-                    The sacred math dice game — 4+3+2=9 Solfeggio frequencies. Play solo, with friends, or challenge QUMUS AI opponents.
-                  </p>
-                  <div className="flex flex-wrap gap-3">
-                    <Link href="/solbones">
-                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-black font-bold text-sm group-hover:bg-amber-400 transition">
-                        <Dice5 className="w-4 h-4" />
-                        Play Dice Game
-                        <ArrowRight className="w-4 h-4" />
-                      </span>
-                    </Link>
-                    <Link href="/solbones-online">
-                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 text-amber-200 font-medium text-sm hover:bg-white/20 transition">
-                        <Globe className="w-4 h-4" />
-                        Online Multiplayer
-                      </span>
-                    </Link>
-                    <Link href="/solbones-tournament">
-                      <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 text-amber-200 font-medium text-sm hover:bg-white/20 transition">
-                        <Trophy className="w-4 h-4" />
-                        Tournament
-                      </span>
-                    </Link>
-                  </div>
-                </div>
               </div>
-          </div>
-        </section>
-
-        {/* Mission Section */}
-        <section className="py-16 md:py-24 bg-card">
-          <div className="container max-w-3xl">
-            <div className="mb-8 pb-8 border-b border-border">
-              <h3 className="text-2xl font-bold text-accent mb-2">The Artist</h3>
-              <p className="text-lg text-foreground/70">
-                <strong>Seabrun Candy Hunter</strong> — Songwriter, vocalist, lyricist, and creative visionary who shaped the sound of an era and built a lasting musical legacy.
-              </p>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
-              Our Mission
-            </h2>
-            <p className="text-lg text-foreground/80 leading-relaxed mb-8">
-              RockinRockinBoogie.com is a unified ecosystem designed to preserve, document, and protect a 1970s-era musical legacy through verified credits, touring records, testimony, and archival proof — all organized in one intelligent, autonomous platform.
-            </p>
-            <p className="text-lg text-foreground/80 leading-relaxed mb-8">
-              Every claim, credit, and historical point is supported by public records, archival documents, witness testimony, or licensing evidence. This is not speculation—this is documentation.
-            </p>
-            <p className="text-lg text-foreground/80 leading-relaxed">
-              Powered by QUMUS autonomous orchestration, this ecosystem provides 90% autonomous decision-making with 10% human oversight, ensuring continuous operation and community access to essential tools and media.
+            <div className="relative">
+              <RotatingVinylRecord />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Listen Section */}
+      <QuickListenSection />
+
+      {/* Platform Showcase */}
+      <section className="py-16 md:py-24">
+        <div className="container">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">Explore the Ecosystem</h2>
+            <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+              Discover all platforms, services, and autonomous systems powering the RRB legacy
             </p>
           </div>
-        </section>
 
-        {/* Unified Ecosystem Showcase */}
-        <section className="py-16 md:py-24 bg-background">
-          <div className="container">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                Unified Ecosystem
-              </h2>
-              <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-                12 integrated platforms working together through autonomous orchestration
-              </p>
-            </div>
-
-            {/* Platform Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {PLATFORMS.map((platform, idx) => {
-                const Icon = platform.icon;
-                return (
-                  <Link key={platform.id} href={platform.href}>
-                    <div className={`p-6 rounded-lg border border-border hover:border-accent transition cursor-pointer group bg-gradient-to-br ${platform.color}`}>
-                      <div className="flex items-start justify-between mb-4">
-                        <Icon className="w-8 h-8 text-accent group-hover:scale-110 transition" />
-                        <span className="text-xs font-bold px-2 py-1 rounded bg-accent/20 text-accent">
-                          {platform.badge}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-accent transition">
-                        {platform.title}
-                      </h3>
-                      <p className="text-sm text-foreground/70 mb-4">
-                        {platform.description}
-                      </p>
-                      <div className="flex items-center text-accent font-semibold text-sm">
-                        Access <ArrowRight className="ml-2 w-4 h-4" />
-                      </div>
+          {/* Platform Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {PLATFORMS.map((platform, idx) => {
+              const Icon = platform.icon;
+              return (
+                <Link key={platform.id} href={platform.href}>
+                  <a className={`group p-6 rounded-xl bg-gradient-to-br ${platform.color} border border-white/10 hover:border-white/30 transition-all hover:scale-105 cursor-pointer h-full`}>
+                    <div className="flex items-start justify-between mb-4">
+                      <Icon className="w-8 h-8 text-amber-400" />
+                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/10 text-amber-400">
+                        {platform.badge}
+                      </span>
                     </div>
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* Ecosystem Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-card p-8 rounded-lg border border-border">
-              <div className="text-center">
-                <p className="text-3xl font-bold text-accent">12</p>
-                <p className="text-sm text-foreground/60 mt-2">Integrated Platforms</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-accent">90%</p>
-                <p className="text-sm text-foreground/60 mt-2">Autonomous Control</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-accent">24/7</p>
-                <p className="text-sm text-foreground/60 mt-2">Live Broadcasting</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-accent">∞</p>
-                <p className="text-sm text-foreground/60 mt-2">Community Access</p>
-              </div>
-            </div>
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-amber-400 transition-colors">
+                      {platform.title}
+                    </h3>
+                    <p className="text-sm text-zinc-400 mb-4">{platform.description}</p>
+                    <div className="flex items-center gap-2 text-amber-400 text-sm font-medium">
+                      Explore <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </a>
+                </Link>
+              );
+            })}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Platform Categories */}
-        <section className="py-16 md:py-24 bg-card">
-          <div className="container">
-            <h2 className="text-4xl md:text-5xl font-bold mb-12 text-foreground text-center">
-              Platform Categories
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Legacy Restored */}
-              <div className="p-8 rounded-lg border border-border bg-gradient-to-br from-blue-500/10 to-blue-600/10">
-                <h3 className="text-2xl font-bold mb-4 text-foreground">📖 Legacy Restored</h3>
-                <p className="text-foreground/70 mb-6">
-                  Historical content and archival materials documenting the original legacy
-                </p>
-                <ul className="space-y-2 text-sm text-foreground/70">
-                  <li>✓ The Legacy (Biography & Timeline)</li>
-                  <li>✓ The Music (Recordings & Credits)</li>
-                  <li>✓ Proof Vault (Verified Evidence)</li>
-                  <li>✓ Grandma Helen (Family History)</li>
-                  <li>✓ Solbones 4+3+2 Dice Game</li>
-                </ul>
-              </div>
-
-              {/* Live Services */}
-              <div className="p-8 rounded-lg border border-border bg-gradient-to-br from-purple-500/10 to-purple-600/10">
-                <h3 className="text-2xl font-bold mb-4 text-foreground">🎙️ Live Services</h3>
-                <p className="text-foreground/70 mb-6">
-                  Real-time broadcasting and streaming platforms
-                </p>
-                <ul className="space-y-2 text-sm text-foreground/70">
-                  <li>✓ Radio Station (24/7 Streaming)</li>
-                  <li>✓ Podcast Network (Multi-channel)</li>
-                  <li>✓ Media Studio (Production Suite)</li>
-                  <li>✓ HybridCast (Emergency Broadcast)</li>
-                  <li>✓ Meditation & Healing</li>
-                </ul>
-              </div>
-
-              {/* Autonomous Control */}
-              <div className="p-8 rounded-lg border border-border bg-gradient-to-br from-indigo-500/10 to-indigo-600/10">
-                <h3 className="text-2xl font-bold mb-4 text-foreground">🤖 Autonomous Control</h3>
-                <p className="text-foreground/70 mb-6">
-                  Intelligent orchestration and community support systems
-                </p>
-                <ul className="space-y-2 text-sm text-foreground/70">
-                  <li>✓ QUMUS Brain (AI Orchestration)</li>
-                  <li>✓ Unified Dashboard (Central Control)</li>
-                  <li>✓ Sweet Miracles (Community Support)</li>
-                  <li>✓ Autonomous Decision Making</li>
-                  <li>✓ Human Review & Oversight</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Featured Content */}
-        <section className="py-16 md:py-24 bg-background">
-          <div className="container">
-            <h2 className="text-4xl md:text-5xl font-bold mb-12 text-foreground text-center">
-              Featured Content
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Play Solbones Dice Game */}
-              <Link href="/solbones">
-                <div className="p-8 rounded-lg border-2 border-amber-500/40 hover:border-amber-400 transition cursor-pointer group bg-gradient-to-br from-amber-500/10 to-orange-600/10 relative overflow-hidden">
-                  <div className="absolute top-2 right-2 text-5xl opacity-15 select-none">🎲</div>
-                  <div className="text-4xl mb-4">🎲</div>
-                  <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-amber-400 transition">
-                    Play Solbones 4+3+2
-                  </h3>
-                  <p className="text-foreground/70 mb-4">
-                    Sacred math dice game with up to 9 players, QUMUS AI opponents, and Solfeggio frequency scoring.
-                  </p>
-                  <div className="flex items-center text-amber-400 font-semibold">
-                    Play Now <ArrowRight className="ml-2 w-4 h-4" />
-                  </div>
-                </div>
-              </Link>
-
-              {/* Listen to the Music */}
-              <Link href="/rrb/the-music">
-                <div className="p-8 rounded-lg border border-border hover:border-accent transition cursor-pointer group bg-gradient-to-br from-orange-500/10 to-orange-600/10">
-                  <div className="text-4xl mb-4">🎵</div>
-                  <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition">
-                    Listen to the Music
-                  </h3>
-                  <p className="text-foreground/70 mb-4">
-                    Explore the complete discography, recordings, and musical legacy with verified credits and production details.
-                  </p>
-                  <div className="flex items-center text-accent font-semibold">
-                    Explore Music <ArrowRight className="ml-2 w-4 h-4" />
-                  </div>
-                </div>
-              </Link>
-
-              {/* Explore the Proof Vault */}
-              <Link href="/rrb/proof-vault">
-                <div className="p-8 rounded-lg border border-border hover:border-accent transition cursor-pointer group bg-gradient-to-br from-red-500/10 to-red-600/10">
-                  <div className="text-4xl mb-4">✓</div>
-                  <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition">
-                    Explore the Proof Vault
-                  </h3>
-                  <p className="text-foreground/70 mb-4">
-                    Dive into our comprehensive archive of verified documentation, organized by category. Every claim is backed by evidence.
-                  </p>
-                  <div className="flex items-center text-accent font-semibold">
-                    Enter Vault <ArrowRight className="ml-2 w-4 h-4" />
-                  </div>
-                </div>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Quick Listen Section */}
-        <QuickListenSection />
-
-        {/* QUMUS AI Activity Feed */}
-        <section className="py-12 md:py-16 bg-gradient-to-b from-background to-muted/30">
-          <div className="container">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold">AI Operations Center</h2>
-                <p className="text-muted-foreground text-sm mt-1">10 autonomous AI assistants monitoring all business operations in real-time</p>
-              </div>
-              <Link href="/rrb/ai-command-center">
-                <Button variant="outline" size="sm">
-                  <Brain className="w-4 h-4 mr-2" />
-                  Full Command Center
-                </Button>
-              </Link>
-            </div>
-            <QUMUSActivityFeed />
-          </div>
-        </section>
-
-        {/* Call to Action */}
-        <section className="py-16 md:py-24 bg-primary text-primary-foreground">
-          <div className="container text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Explore the Complete Ecosystem
-            </h2>
-            <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
-              Navigate through 12 integrated platforms powered by autonomous QUMUS orchestration. Everything from archival documentation to live broadcasting, all working together seamlessly.
+      {/* QUMUS Activity Feed */}
+      <section className="py-16 md:py-24 bg-black/30">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">🤖 QUMUS Activity</h2>
+            <p className="text-lg text-zinc-400">
+              Real-time autonomous orchestration and decision-making
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/rrb/ecosystem/dashboard">
-                <Button size="lg" variant="secondary">
-                  View Dashboard
-                  <Zap className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link href="/rrb/proof-vault">
-                <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                  Proof Vault
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-            </div>
           </div>
-        </section>
-      </main>
-    </>
+          <QUMUSActivityFeed />
+        </div>
+      </section>
+    </div>
   );
 }
