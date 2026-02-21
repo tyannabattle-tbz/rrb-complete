@@ -134,7 +134,7 @@ export default function RSSFeedGenerator() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {CHANNELS.map(channel => (
             <Card
-              key={channel.id}
+              key={`channel-${idx}-${channel.id || 'unnamed'}`}
               className={`p-6 cursor-pointer transition-all ${
                 selectedChannel === channel.id
                   ? 'ring-2 ring-orange-500 bg-orange-50 dark:bg-orange-900/20'

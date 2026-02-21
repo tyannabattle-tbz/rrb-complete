@@ -454,7 +454,7 @@ export function RockinBoogiePlayerEnhanced() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {CHANNELS.map(channel => (
             <Button
-              key={channel.id}
+              key={`channel-${idx}-${channel.id || 'unnamed'}`}
               onClick={() => {
                 setCurrentChannelId(channel.id);
                 setCurrentEpisodeIndex(0);

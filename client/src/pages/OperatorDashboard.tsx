@@ -310,7 +310,7 @@ export function OperatorDashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredChannels.map((channel) => (
-                <Card key={channel.id} className="bg-gray-800 border-gray-700 p-6 space-y-4">
+                <Card key={`channel-${idx}-${channel.id || 'unnamed'}`} className="bg-gray-800 border-gray-700 p-6 space-y-4">
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-lg font-semibold text-white">{channel.channelName}</h3>

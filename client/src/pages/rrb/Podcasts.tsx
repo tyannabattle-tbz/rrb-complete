@@ -433,7 +433,7 @@ export default function Podcasts() {
         <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
           {CHANNELS.map(channel => (
             <button
-              key={channel.id}
+              key={`channel-${idx}-${channel.id || 'unnamed'}`}
               onClick={() => setSelectedChannelId(channel.id)}
               className={`p-3 rounded-lg border-2 transition-all text-left flex flex-col items-center gap-2 ${
                 selectedChannelId === channel.id

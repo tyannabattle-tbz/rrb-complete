@@ -174,7 +174,7 @@ export function GlobalAudioPlayer() {
             <div className="space-y-2">
               {CHANNEL_PRESETS.map(channel => (
                 <button
-                  key={channel.id}
+                  key={`channel-${idx}-${channel.id || 'unnamed'}`}
                   onClick={() => {
                     const firstStream = channel.streams[0];
                     if (firstStream) {
@@ -277,7 +277,7 @@ function QuickPlayButton() {
             <div className="max-h-52 overflow-y-auto p-1.5 space-y-0.5">
               {CHANNEL_PRESETS.map(channel => (
                 <button
-                  key={channel.id}
+                  key={`channel-${idx}-${channel.id || 'unnamed'}`}
                   onClick={() => {
                     audio.playQueue(channel.streams, 0);
                     setShowPicker(false);

@@ -146,7 +146,7 @@ export function PodcastPlayer() {
           <div className="grid grid-cols-3 gap-3">
             {CHANNELS.map((channel) => (
               <Button
-                key={channel.id}
+                key={`channel-${idx}-${channel.id || 'unnamed'}`}
                 onClick={() => handleSwitchChannel(channel.id)}
                 variant={currentChannel === channel.id ? 'default' : 'outline'}
                 className={`text-sm h-auto py-2 ${

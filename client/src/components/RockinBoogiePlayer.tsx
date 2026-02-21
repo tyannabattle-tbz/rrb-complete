@@ -320,7 +320,7 @@ export function RockinBoogiePlayer() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {CHANNELS.map((channel) => (
               <Button
-                key={channel.id}
+                key={`channel-${idx}-${channel.id || 'unnamed'}`}
                 onClick={() => handleChannelSwitch(channel.id)}
                 variant={currentChannelId === channel.id ? 'default' : 'outline'}
                 className={`h-16 text-base font-bold ${
@@ -451,7 +451,7 @@ export function RockinBoogiePlayer() {
           {searchQuery && (
             <div className="space-y-4">
               {filteredChannels.map((channel) => (
-                <div key={channel.id} className="border-t border-slate-700 pt-4">
+                <div key={`channel-${idx}-${channel.id || 'unnamed'}`} className="border-t border-slate-700 pt-4">
                   <h4 className="font-bold text-white mb-3">{channel.name}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {channel.episodes.map((ep) => (

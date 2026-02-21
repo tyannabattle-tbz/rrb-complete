@@ -151,6 +151,7 @@ import { webrtcCallInRouter } from './routers/webrtcCallInRouter';
 import { videoPodcastRouter } from './routers/videoPodcastRouter';
 import { moderationRouter } from './routers/moderationRouter';
 import { notificationPreferencesRouter } from './routers/notificationPreferencesRouter';
+import { userPlaylistRouter } from './routers/userPlaylistRouter';
 
 export const appRouter = router({
   // System router
@@ -180,6 +181,9 @@ export const appRouter = router({
       } as const;
     }),
   }),
+
+  // User Playlist Management
+  userPlaylist: userPlaylistRouter,
 
   // Merge all router chunks
   ...chunk1Router._def.procedures,

@@ -2258,3 +2258,5 @@ export const adminLogs = mysqlTable("admin_logs", {
 	ipAddress: varchar({ length: 45 }),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
+
+
