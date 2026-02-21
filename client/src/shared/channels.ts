@@ -31,7 +31,7 @@ export const CHANNELS: Channel[] = [
     color: '#DC2626',
     listeners: 2847,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/rock-legends'],
+    streams: ['https://ice1.somafm.com/metal-128-mp3'],
   },
   {
     id: 'music-jazz',
@@ -43,7 +43,7 @@ export const CHANNELS: Channel[] = [
     color: '#2563EB',
     listeners: 1923,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/jazz-nights'],
+    streams: ['https://ice1.somafm.com/jazzsteps-128-mp3'],
   },
   {
     id: 'music-soul',
@@ -55,7 +55,7 @@ export const CHANNELS: Channel[] = [
     color: '#7C3AED',
     listeners: 2156,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/soul-rb'],
+    streams: ['https://ice1.somafm.com/sonicuniverse-128-mp3'],
   },
   {
     id: 'music-classical',
@@ -67,7 +67,7 @@ export const CHANNELS: Channel[] = [
     color: '#059669',
     listeners: 1245,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/classical'],
+    streams: ['https://ice1.somafm.com/classicpop-128-mp3'],
   },
   {
     id: 'music-electronic',
@@ -79,7 +79,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 3421,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/electronic'],
+    streams: ['https://ice1.somafm.com/deepspace-128-mp3'],
   },
   {
     id: 'music-hiphop',
@@ -91,7 +91,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 3892,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/hiphop'],
+    streams: ['https://ice1.somafm.com/illstreet-128-mp3'],
   },
   {
     id: 'music-pop',
@@ -103,7 +103,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 4156,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/pop'],
+    streams: ['https://ice1.somafm.com/indiepop-128-mp3'],
   },
   {
     id: 'music-country',
@@ -115,7 +115,7 @@ export const CHANNELS: Channel[] = [
     color: '#B45309',
     listeners: 1834,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/country'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3country'],
   },
   {
     id: 'music-blues',
@@ -127,7 +127,7 @@ export const CHANNELS: Channel[] = [
     color: '#1F2937',
     listeners: 987,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/blues'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3blues'],
   },
   {
     id: 'music-reggae',
@@ -139,7 +139,7 @@ export const CHANNELS: Channel[] = [
     color: '#16A34A',
     listeners: 1456,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/reggae'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3reggae'],
   },
   {
     id: 'music-latin',
@@ -151,7 +151,7 @@ export const CHANNELS: Channel[] = [
     color: '#EF4444',
     listeners: 2234,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/latin'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3latin'],
   },
   {
     id: 'music-world',
@@ -163,7 +163,7 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 1123,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/world'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3world'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -179,7 +179,7 @@ export const CHANNELS: Channel[] = [
     color: '#1F2937',
     listeners: 2567,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/news'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3news'],
   },
   {
     id: 'talk-interviews',
@@ -191,7 +191,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 1834,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/interviews'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3interviews'],
   },
   {
     id: 'talk-local',
@@ -203,7 +203,7 @@ export const CHANNELS: Channel[] = [
     color: '#10B981',
     listeners: 1245,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/local'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3local'],
   },
   {
     id: 'talk-podcast',
@@ -215,7 +215,7 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 3456,
     isLive: false,
-    streams: ['https://stream.rockinrockinboogie.com/podcasts'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3podcasts'],
   },
   {
     id: 'talk-storytelling',
@@ -227,7 +227,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 2123,
     isLive: false,
-    streams: ['https://stream.rockinrockinboogie.com/stories'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3stories'],
   },
   {
     id: 'talk-education',
@@ -239,7 +239,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 1567,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/education'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3education'],
   },
   {
     id: 'talk-wellness',
@@ -251,7 +251,7 @@ export const CHANNELS: Channel[] = [
     color: '#059669',
     listeners: 1923,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/wellness'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3wellness'],
   },
   {
     id: 'talk-spirituality',
@@ -263,7 +263,7 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 1456,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/spirituality'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3spirituality'],
   },
   {
     id: 'talk-arts',
@@ -275,7 +275,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 1234,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/arts'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3arts'],
   },
   {
     id: 'talk-business',
@@ -287,7 +287,7 @@ export const CHANNELS: Channel[] = [
     color: '#1F2937',
     listeners: 1678,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/business'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3business'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -303,7 +303,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 5234,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/healing-432hz'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3healing-432hz'],
   },
   {
     id: 'stream-meditation',
@@ -315,7 +315,7 @@ export const CHANNELS: Channel[] = [
     color: '#10B981',
     listeners: 4123,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/meditation'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3meditation'],
   },
   {
     id: 'stream-ambient',
@@ -327,7 +327,7 @@ export const CHANNELS: Channel[] = [
     color: '#059669',
     listeners: 3456,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/ambient'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3ambient'],
   },
   {
     id: 'stream-sleep',
@@ -339,7 +339,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 2987,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/sleep'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3sleep'],
   },
   {
     id: 'stream-focus',
@@ -351,7 +351,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 2145,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/focus'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3focus'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -367,7 +367,7 @@ export const CHANNELS: Channel[] = [
     color: '#DC2626',
     listeners: 3421,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/canryn'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3canryn'],
   },
   {
     id: 'operator-sweet-miracles',
@@ -379,7 +379,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 2156,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/sweet-miracles'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3sweet-miracles'],
   },
   {
     id: 'operator-legacy',
@@ -391,7 +391,7 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 1834,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/legacy'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3legacy'],
   },
   {
     id: 'operator-studio',
@@ -403,7 +403,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 2567,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/studio'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3studio'],
   },
   {
     id: 'operator-qmunity',
@@ -415,7 +415,7 @@ export const CHANNELS: Channel[] = [
     color: '#10B981',
     listeners: 1923,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/qmunity'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3qmunity'],
   },
 
   {
@@ -428,7 +428,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 3892,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/music-radio'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3music-radio'],
   },
   {
     id: 'operator-community',
@@ -440,7 +440,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 2234,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/community'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3community'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -456,7 +456,7 @@ export const CHANNELS: Channel[] = [
     color: '#DC2626',
     listeners: 4567,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/live-events'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3live-events'],
   },
   {
     id: 'events-conferences',
@@ -468,7 +468,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 1834,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/conferences'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3conferences'],
   },
   {
     id: 'events-broadcast',
@@ -480,7 +480,7 @@ export const CHANNELS: Channel[] = [
     color: '#EF4444',
     listeners: 5123,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/emergency'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3emergency'],
   },
   {
     id: 'events-festivals',
@@ -492,7 +492,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 2345,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/festivals'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3festivals'],
   },
   {
     id: 'events-workshops',
@@ -504,7 +504,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 1567,
     isLive: true,
-    streams: ['https://stream.rockinrockinboogie.com/workshops'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3workshops'],
   },
   {
     id: 'events-archive',
@@ -516,7 +516,7 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 987,
     isLive: false,
-    streams: ['https://stream.rockinrockinboogie.com/archives'],
+    streams: ['https://ice1.somafm.com/secretagent-128-mp3archives'],
   },
 ];
 
