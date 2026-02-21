@@ -118,13 +118,25 @@ export default function RadioStation() {
       setStreamStatus('Paused');
     } else if (audioRef.current) {
       try {
+        // Validate URL before setting
+        if (!url || url.trim() === '') {
+          setStreamStatus('Invalid stream URL');
+          return;
+        }
+
+        // Reset audio element state
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        
+        // Set source and properties
         audioRef.current.src = url;
         audioRef.current.volume = volume / 100;
         audioRef.current.crossOrigin = 'anonymous';
+        audioRef.current.preload = 'auto';
         
         // Add comprehensive error handling
-        audioRef.current.onerror = () => {
-          console.error('Audio playback error for URL:', url);
+        audioRef.current.onerror = (e) => {
+          console.error('Audio playback error for URL:', url, e);
           setStreamStatus('Stream unavailable - check network');
           setIsPlaying(false);
         };
@@ -137,6 +149,10 @@ export default function RadioStation() {
           setStreamStatus('Stream loaded');
         };
         
+        // Load the source
+        audioRef.current.load();
+        
+        // Attempt to play
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           await playPromise;
