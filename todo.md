@@ -137,3 +137,22 @@
 - [ ] Deploy expanded channel system to production
 - [ ] Monitor for performance issues
 - [ ] Gather user feedback on channel selection
+
+
+## Phase 18: Channel Descriptions & Featured Shows
+- [ ] Create channel descriptions database with featured shows
+- [ ] Add listener count tracking per channel
+- [ ] Implement channel detail view with show information
+- [ ] Add featured shows carousel per channel
+- [ ] Create show metadata (title, artist, duration, description)
+- [ ] Display current playing show on channel selector
+
+## Phase 19: Channel Scheduling System
+- [ ] Create scheduling database schema
+- [ ] Build schedule management UI for operators
+- [ ] Implement time-based programming logic
+- [ ] Add 24/7 auto-rotating content system
+- [ ] Create schedule visualization (calendar view)
+- [ ] Implement show reminders and notifications
+- [ ] Add recurring schedule templates
+- [ ] Test scheduling with multiple channels
