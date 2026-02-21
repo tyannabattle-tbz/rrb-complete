@@ -219,3 +219,22 @@
 - [ ] Test all features on iOS Safari
 - [ ] Test all features on Android Chrome
 - [ ] Create final checkpoint with all features
+
+
+## Phase 24: Apply All Features + Restore Picture
+- [x] Restore King Richard announcement image to home screen (S3 uploaded, full display)
+- [x] Implement SomaFM API service with caching
+- [x] Create tRPC router for listener stats (getAllListeners, getChannelListeners)
+- [x] Create useSomaFMListeners hook for real-time data
+- [x] Update ListenerStatsDisplay to use SomaFM API
+- [x] Create channel discovery page with search and filters
+- [x] Add genre filtering by category
+- [x] Add sort by name or listeners
+- [x] Add search functionality with clear button
+- [x] Create comprehensive tests for SomaFM API
+- [x] Create comprehensive tests for ChannelDiscovery
+- [x] All components compile with zero TypeScript errors
+- [ ] Test audio playback on iOS Safari
+- [ ] Test audio playback on Android Chrome
+- [ ] Verify all features working end-to-end
+- [ ] Create final checkpoint

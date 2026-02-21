@@ -1,11 +1,11 @@
 /**
  * Listener Stats Display Component
- * Shows real-time listener counts for channels
+ * Shows real-time listener counts from SomaFM API
  */
 
 import React, { useState, useEffect } from 'react';
 import { Users, TrendingUp } from 'lucide-react';
-import { getChannelStats, formatListenerCount } from '@/lib/listenerStats';
+import { useChannelListeners } from '@/hooks/useSomaFMListeners';
 
 interface ListenerStatsDisplayProps {
   channelId: string;
@@ -13,39 +13,39 @@ interface ListenerStatsDisplayProps {
   compact?: boolean;
 }
 
+function formatListenerCount(count: number): string {
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}K`;
+  }
+  return count.toString();
+}
+
 export function ListenerStatsDisplay({
   channelId,
   showTrend = true,
   compact = false,
 }: ListenerStatsDisplayProps) {
-  const [stats, setStats] = useState(() => getChannelStats(channelId));
+  const { listeners, isLoading } = useChannelListeners(channelId);
   const [trend, setTrend] = useState<'up' | 'down' | 'stable'>('stable');
+  const [prevListeners, setPrevListeners] = useState(listeners);
 
-  // Update stats every 30 seconds to simulate real-time updates
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newStats = getChannelStats(channelId);
-      setStats(prevStats => {
-        if (newStats.listenerCount > prevStats.listenerCount) {
-          setTrend('up');
-        } else if (newStats.listenerCount < prevStats.listenerCount) {
-          setTrend('down');
-        } else {
-          setTrend('stable');
-        }
-        return newStats;
-      });
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [channelId]);
+    if (listeners > prevListeners) {
+      setTrend('up');
+    } else if (listeners < prevListeners) {
+      setTrend('down');
+    } else {
+      setTrend('stable');
+    }
+    setPrevListeners(listeners);
+  }, [listeners, prevListeners]);
 
   if (compact) {
     return (
       <div className="flex items-center gap-1.5 text-xs">
         <Users className="w-3 h-3 text-amber-400" />
         <span className="font-semibold text-amber-400">
-          {formatListenerCount(stats.listenerCount)}
+          {isLoading ? '...' : formatListenerCount(listeners)}
         </span>
       </div>
     );
@@ -58,7 +58,7 @@ export function ListenerStatsDisplay({
         <div>
           <div className="text-xs text-zinc-400">Listeners</div>
           <div className="text-sm font-bold text-white">
-            {formatListenerCount(stats.listenerCount)}
+            {isLoading ? 'Loading...' : formatListenerCount(listeners)}
           </div>
         </div>
       </div>

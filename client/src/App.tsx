@@ -153,7 +153,7 @@ import RealtimeCollaboration from '@/pages/rrb/RealtimeCollaboration';
 import MobileApp from '@/pages/rrb/MobileApp';
 import DonationCheckout from '@/pages/rrb/DonationCheckout';
 import { PodcastFeeds } from '@/pages/rrb/PodcastFeeds';
-import ChannelDiscovery from '@/pages/ChannelDiscovery';
+import { ChannelDiscovery } from '@/pages/rrb/ChannelDiscovery';
 import RealtimeAnalyticsDashboard from '@/pages/rrb/RealtimeAnalyticsDashboard';
 import { DonationCheckout as LegacyDonationCheckout } from '@/pages/DonationCheckout';
 import LivePodcastProduction from '@/pages/LivePodcastProduction';
@@ -232,6 +232,7 @@ import RRBSeansMusic from '@/pages/rrb/SeansMusic';
 import RRBAnnas from '@/pages/rrb/Annas';
 import RRBJaelonEnterprises from '@/pages/rrb/JaelonEnterprises';
 import RRBLittleC from '@/pages/rrb/LittleC';
+import { ChannelDiscovery as RRBChannelDiscovery } from '@/pages/rrb/ChannelDiscovery';
 
 // Business Operations Pages
 import BusinessBookkeeping from '@/pages/rrb/BusinessBookkeeping';

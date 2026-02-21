@@ -330,7 +330,12 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="relative">
+            <div className="relative flex flex-col gap-6">
+              <img 
+                src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/IoCsbVOpgUYLbYGC.jpeg"
+                alt="King Richard and Seabrun Candy Hunter - New Book Announcement"
+                className="w-full h-auto rounded-lg shadow-2xl object-cover"
+              />
               <RotatingVinylRecord />
             </div>
           </div>

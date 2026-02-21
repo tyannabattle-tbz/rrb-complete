@@ -48,6 +48,7 @@ import { podcastPlaybackRouter } from "./routers/podcastPlayback";
 import { radioStationsRouter } from "./routers/radioStations";
 import { studioStreamingRouter } from "./routers/studioStreaming";
 import { commandExecutionRouter } from "./routers/commandExecutionRouter";
+import { somaFmRouter } from "./routers/somaFm";
 import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 import { audioRouter } from "./routers/audioRouter";
 import { qumusAutonomousEntityRouter } from "./routers/qumusAutonomousEntityRouter";
@@ -250,6 +251,9 @@ export const appRouter = router({
 
   // Radio Stations
   radioStations: radioStationsRouter,
+
+  // SomaFM API Integration
+  somaFm: somaFmRouter,
 
   // Studio Streaming
   studioStreaming: studioStreamingRouter,
