@@ -1,47 +1,50 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-export default function RotatingVinylRecord() {
+const RotatingVinylRecord = memo(function RotatingVinylRecord() {
+  // Memoized styles to prevent recreation on every render
+  const styles = React.useMemo(() => `
+    @keyframes spin {
+      from {
+        transform: rotateY(0deg);
+      }
+      to {
+        transform: rotateY(360deg);
+      }
+    }
+
+    .vinyl-container {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 400px;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .vinyl-record {
+      width: 100%;
+      height: 100%;
+      animation: spin 8s linear infinite;
+      transform-style: preserve-3d;
+    }
+
+    .vinyl-record img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .vinyl-record:hover {
+      animation-play-state: paused;
+    }
+  `, []);
+
   return (
     <div className="flex flex-col items-center justify-center py-8">
-      <style>{`
-        @keyframes spin {
-          from {
-            transform: rotateY(0deg);
-          }
-          to {
-            transform: rotateY(360deg);
-          }
-        }
-
-        .vinyl-container {
-          perspective: 1000px;
-          width: 100%;
-          max-width: 400px;
-          height: 400px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .vinyl-record {
-          width: 100%;
-          height: 100%;
-          animation: spin 8s linear infinite;
-          transform-style: preserve-3d;
-        }
-
-        .vinyl-record img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          border-radius: 12px;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .vinyl-record:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
+      <style>{styles}</style>
 
       <div className="vinyl-container">
         <div className="vinyl-record">
@@ -49,6 +52,7 @@ export default function RotatingVinylRecord() {
             src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/dvidjRisUJpNxgGn.jpg"
             alt="Rockin Rockin Boogie - Music and Vocal by Little Richard, Story lyrics and vocal melody by Seabrun Candy Hunter"
             className="w-full h-full"
+            loading="lazy"
           />
         </div>
       </div>
@@ -73,4 +77,8 @@ export default function RotatingVinylRecord() {
       </div>
     </div>
   );
-}
+});
+
+RotatingVinylRecord.displayName = 'RotatingVinylRecord';
+
+export default RotatingVinylRecord;
