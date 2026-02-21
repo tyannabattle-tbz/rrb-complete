@@ -417,18 +417,7 @@ export const CHANNELS: Channel[] = [
     isLive: true,
     streams: ['https://stream.rockinrockinboogie.com/qmunity'],
   },
-  {
-    id: 'operator-proof-vault',
-    name: 'Proof Vault',
-    category: 'Operator',
-    subcategory: 'Operator',
-    description: 'Evidence and documentation archive',
-    icon: '🔐',
-    color: '#1F2937',
-    listeners: 1245,
-    isLive: false,
-    streams: ['https://stream.rockinrockinboogie.com/proof-vault'],
-  },
+
   {
     id: 'operator-music-radio',
     name: 'Music & Radio',
