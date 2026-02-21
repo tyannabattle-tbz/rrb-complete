@@ -49,14 +49,18 @@ export default function RadioStationFixed() {
   // Get top channels
   const topChannels = listenerCountService.getTopChannels(5);
 
-  const handlePlayPause = () => {
-    audio.togglePlayPause(selectedChannel.streams[0]);
+  const handlePlayPause = async () => {
+    if (selectedChannel.streams[0]) {
+      audio.togglePlayPause(selectedChannel.streams[0]);
+    }
   };
 
   const handleChannelSelect = (channel: typeof CHANNELS[0]) => {
     setSelectedChannel(channel);
     // Auto-play when channel is selected
-    audio.play(channel.streams[0]);
+    if (channel.streams[0]) {
+      audio.play(channel.streams[0]);
+    }
   };
 
   const handleToggleFavorite = (channelId: string) => {

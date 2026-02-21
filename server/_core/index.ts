@@ -6,6 +6,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerRSSRoutes } from "../rss-feeds";
 import { handleStripeWebhook } from "../webhooks/stripeWebhook";
+import streamProxyRouter from "../routes/streamProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -48,6 +49,8 @@ async function startServer() {
   registerOAuthRoutes(app);
   // RSS feeds for podcast directories, news aggregators, and radio listings
   registerRSSRoutes(app);
+  // Stream proxy routes for CORS-free audio streaming
+  app.use('/api/stream', streamProxyRouter);
   // tRPC API
   app.use(
     "/api/trpc",
