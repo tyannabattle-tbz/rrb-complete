@@ -189,7 +189,7 @@ export default function RadioStation() {
                   <h2 className="text-2xl font-bold text-white mb-6">🔴 Live Channels</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {streamingChannels.map((channel, idx) => (
-                      <div key={`channel-${channel.id || idx}`} className="bg-slate-700/50 rounded p-4">
+                      <div key={`channel-${idx}-${channel.name || 'unnamed'}`} className="bg-slate-700/50 rounded p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
                           <h3 className="font-semibold text-white">{channel.name}</h3>
@@ -209,7 +209,7 @@ export default function RadioStation() {
                   <h2 className="text-2xl font-bold text-white mb-6">🎵 Playlists</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {playlists.map((playlist, idx) => (
-                      <div key={`playlist-${playlist.id || idx}`} className="bg-slate-700/50 rounded p-4">
+                      <div key={`playlist-${idx}-${playlist.name || 'unnamed'}`} className="bg-slate-700/50 rounded p-4">
                         <h3 className="font-semibold text-white mb-2">{playlist.name}</h3>
                         <p className="text-sm text-slate-300">{playlist.trackCount} tracks</p>
                       </div>
