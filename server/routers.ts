@@ -152,6 +152,7 @@ import { videoPodcastRouter } from './routers/videoPodcastRouter';
 import { moderationRouter } from './routers/moderationRouter';
 import { notificationPreferencesRouter } from './routers/notificationPreferencesRouter';
 import { userPlaylistRouter } from './routers/userPlaylistRouter';
+import { streamsRouter } from './routers/streams';
 
 export const appRouter = router({
   // System router
@@ -184,6 +185,9 @@ export const appRouter = router({
 
   // User Playlist Management
   userPlaylist: userPlaylistRouter,
+
+  // Stream Management
+  streams: streamsRouter,
 
   // Merge all router chunks
   ...chunk1Router._def.procedures,
