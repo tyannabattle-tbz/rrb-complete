@@ -326,20 +326,16 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/solbones">
-                  <a>
-                    <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-white shadow-lg">
-                      <Dice5 className="w-5 h-5 mr-2" />
-                      Play Solbones 4+3+2
-                    </Button>
-                  </a>
+                  <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-white shadow-lg">
+                    <Dice5 className="w-5 h-5 mr-2" />
+                    Play Solbones 4+3+2
+                  </Button>
                 </Link>
                 <Link href="/rrb/proof-vault">
-                  <a>
-                    <Button size="lg" variant="outline" className="border-amber-500 text-amber-600 hover:bg-amber-50 shadow-md">
-                      <Zap className="w-5 h-5 mr-2" />
-                      Explore the Proof Vault
-                    </Button>
-                  </a>
+                  <Button size="lg" variant="outline" className="border-amber-500 text-amber-600 hover:bg-amber-50 shadow-md">
+                    <Zap className="w-5 h-5 mr-2" />
+                    Explore the Proof Vault
+                  </Button>
                 </Link>
               </div>
             </div>

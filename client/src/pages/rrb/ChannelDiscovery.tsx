@@ -23,12 +23,12 @@ export function ChannelDiscovery() {
 
   // Get all unique genres from presets
   const genres = useMemo(() => {
-    return Array.from(new Set(CHANNEL_PRESETS.map((p) => p.label)));
+    return Array.from(new Set(Object.values(LIVE_STREAMS).map((c) => c.category)));
   }, []);
 
   // Filter and search channels
   const filteredChannels = useMemo(() => {
-    let filtered = LIVE_STREAMS;
+    let filtered = Object.values(LIVE_STREAMS);
 
     // Filter by search query
     if (searchQuery) {
@@ -67,7 +67,7 @@ export function ChannelDiscovery() {
         <div className="mb-12">
           <h1 className="text-5xl font-bold mb-4">Channel Discovery</h1>
           <p className="text-xl text-zinc-400">
-            Explore {LIVE_STREAMS.length}+ channels across all genres
+            Explore {Object.keys(LIVE_STREAMS).length}+ channels across all genres
           </p>
         </div>
 
@@ -147,7 +147,7 @@ export function ChannelDiscovery() {
 
         {/* Results Count */}
         <div className="mb-6 text-sm text-zinc-400">
-          Showing {filteredChannels.length} of {LIVE_STREAMS.length} channels
+          Showing {filteredChannels.length} of {Object.keys(LIVE_STREAMS).length} channels
         </div>
 
         {/* Channels Grid */}

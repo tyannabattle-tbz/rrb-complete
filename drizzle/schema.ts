@@ -2260,3 +2260,64 @@ export const adminLogs = mysqlTable("admin_logs", {
 });
 
 
+
+
+export const listenerPreferences = mysqlTable("listener_preferences", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	preferredQuality: mysqlEnum(['low','medium','high','lossless']).default('medium').notNull(),
+	autoAdjustQuality: int().default(1).notNull(),
+	notificationFrequency: mysqlEnum(['instant','daily','weekly','never']).default('daily').notNull(),
+	enableEmailNotifications: int().default(1).notNull(),
+	enableBrowserNotifications: int().default(1).notNull(),
+	darkMode: int().default(1).notNull(),
+	volume: int().default(70).notNull(),
+	autoPlay: int().default(0).notNull(),
+	rememberLastStream: int().default(1).notNull(),
+	lastStreamUrl: varchar({ length: 2048 }),
+	lastStreamName: varchar({ length: 255 }),
+	favoriteChannels: text(), // JSON array stored as text
+	blockedChannels: text(), // JSON array stored as text
+	language: varchar({ length: 10 }).default('en').notNull(),
+	timezone: varchar({ length: 64 }).default('UTC').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("listener_preferences_userId").on(table.userId),
+]);
+
+export const listenerRecommendationHistory = mysqlTable("listener_recommendation_history", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	channelUrl: varchar({ length: 2048 }).notNull(),
+	channelName: varchar({ length: 255 }).notNull(),
+	genre: varchar({ length: 100 }).notNull(),
+	confidenceScore: int().notNull(), // 0-100
+	reason: text().notNull(),
+	clicked: int().default(0).notNull(),
+	played: int().default(0).notNull(),
+	rated: int().default(0).notNull(),
+	rating: int(), // 1-5 stars
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+},
+(table) => [
+	index("listener_recommendation_history_userId").on(table.userId),
+	index("listener_recommendation_history_channelUrl").on(table.channelUrl),
+]);
+
+export const listenerRatings = mysqlTable("listener_ratings", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	channelUrl: varchar({ length: 2048 }).notNull(),
+	channelName: varchar({ length: 255 }).notNull(),
+	rating: int().notNull(), // 1-5 stars
+	sentiment: mysqlEnum(['negative','neutral','positive']).notNull(),
+	comment: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("listener_ratings_userId").on(table.userId),
+	index("listener_ratings_channelUrl").on(table.channelUrl),
+]);

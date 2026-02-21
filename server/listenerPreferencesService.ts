@@ -34,6 +34,30 @@ export interface ListenerPreferences {
 
 class ListenerPreferencesService {
   /**
+   * Safe JSON parse with fallback
+   */
+  private safeJsonParse(json: string | null, defaultValue: any = []) {
+    if (!json) return defaultValue;
+    try {
+      return JSON.parse(json);
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      return defaultValue;
+    }
+  }
+
+  /**
+   * Safe JSON stringify
+   */
+  private safeJsonStringify(value: any) {
+    try {
+      return JSON.stringify(value);
+    } catch (e) {
+      console.error('JSON stringify error:', e);
+      return '[]';
+    }
+  }
+  /**
    * Get user preferences from database
    */
   async getPreferences(userId: string): Promise<ListenerPreferences | null> {
@@ -62,8 +86,8 @@ class ListenerPreferencesService {
         rememberLastStream: prefs.rememberLastStream ?? true,
         lastStreamUrl: prefs.lastStreamUrl || undefined,
         lastStreamName: prefs.lastStreamName || undefined,
-        favoriteChannels: prefs.favoriteChannels ? JSON.parse(prefs.favoriteChannels as string) : [],
-        blockedChannels: prefs.blockedChannels ? JSON.parse(prefs.blockedChannels as string) : [],
+        favoriteChannels: this.safeJsonParse(prefs.favoriteChannels as string | null, []),
+        blockedChannels: this.safeJsonParse(prefs.blockedChannels as string | null, []),
         language: prefs.language || 'en',
         timezone: prefs.timezone || 'UTC',
         createdAt: new Date(prefs.createdAt),
