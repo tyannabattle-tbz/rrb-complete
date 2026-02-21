@@ -1,77 +1,119 @@
 /**
  * Stream Proxy Service
- * Bypasses CORS restrictions by proxying external streams through our server
- * Uses Node.js built-in fetch (Node 18+)
+ * Properly streams external audio without buffering entire stream
+ * Supports live streams and on-demand audio
  */
 
-// Use built-in Node.js fetch (available in Node 18+)
-
-interface StreamProxyOptions {
-  url: string;
-  headers?: Record<string, string>;
-}
+import { Readable } from 'stream';
 
 export class StreamProxyService {
-  private static readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-  private static readonly cache = new Map<string, { data: Buffer; timestamp: number }>();
-
   /**
-   * Proxy a stream URL and return the audio data
+   * Proxy a stream URL and pipe it to response
+   * Supports live streams by forwarding chunks instead of buffering
    */
-  static async proxyStream(options: StreamProxyOptions) {
-    const { url, headers = {} } = options;
-
-    // Check cache
-    const cached = this.cache.get(url);
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
-    }
-
+  static async proxyStreamToResponse(
+    url: string,
+    response: any
+  ): Promise<void> {
     try {
-      const response = await fetch(url, {
+      // Fetch the stream with proper timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+      const streamResponse = await fetch(url, {
+        signal: controller.signal,
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          ...headers,
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`Stream request failed: ${response.statusText}`);
+      clearTimeout(timeoutId);
+
+      if (!streamResponse.ok) {
+        throw new Error(`Stream request failed: ${streamResponse.statusText}`);
       }
 
-      const buffer = await response.buffer();
+      // Set response headers for audio streaming
+      response.setHeader('Content-Type', streamResponse.headers.get('content-type') || 'audio/mpeg');
+      response.setHeader('Accept-Ranges', 'bytes');
+      response.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      response.setHeader('Pragma', 'no-cache');
+      response.setHeader('Expires', '0');
+      response.setHeader('Connection', 'keep-alive');
+      response.setHeader('Access-Control-Allow-Origin', '*');
+      response.setHeader('Access-Control-Allow-Headers', '*');
+      response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
 
-      // Cache the stream data
-      this.cache.set(url, { data: buffer, timestamp: Date.now() });
+      // Forward Icecast/Shoutcast headers if present
+      const icyMetaint = streamResponse.headers.get('icy-metaint');
+      if (icyMetaint) {
+        response.setHeader('icy-metaint', icyMetaint);
+      }
 
-      return buffer;
+      const icyName = streamResponse.headers.get('icy-name');
+      if (icyName) {
+        response.setHeader('icy-name', icyName);
+      }
+
+      const icyGenre = streamResponse.headers.get('icy-genre');
+      if (icyGenre) {
+        response.setHeader('icy-genre', icyGenre);
+      }
+
+      // Pipe the stream to response (streams chunks, doesn't buffer entire file)
+      if (streamResponse.body) {
+        // Convert Web ReadableStream to Node.js stream
+        const nodeStream = Readable.fromWeb(streamResponse.body as any);
+        
+        nodeStream.pipe(response);
+
+        // Handle errors
+        nodeStream.on('error', (error: any) => {
+          console.error('Stream read error:', error);
+          if (!response.headersSent) {
+            response.status(500).json({ error: 'Stream error' });
+          } else {
+            response.end();
+          }
+        });
+
+        response.on('error', (error: any) => {
+          console.error('Response write error:', error);
+          nodeStream.destroy();
+        });
+      } else {
+        response.end();
+      }
     } catch (error) {
       console.error('Stream proxy error:', error);
-      throw error;
+      if (!response.headersSent) {
+        response.status(500).json({ error: 'Failed to proxy stream' });
+      } else {
+        response.end();
+      }
     }
   }
 
   /**
-   * Get a proxy URL for a stream
+   * Validate if a stream URL is accessible
    */
-  static getProxyUrl(streamId: string): string {
-    return `/api/stream/proxy/${streamId}`;
-  }
+  static async validateStream(url: string): Promise<boolean> {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-  /**
-   * Clear cache
-   */
-  static clearCache() {
-    this.cache.clear();
-  }
+      const response = await fetch(url, {
+        method: 'HEAD',
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
+      });
 
-  /**
-   * Get cache stats
-   */
-  static getCacheStats() {
-    return {
-      size: this.cache.size,
-      entries: Array.from(this.cache.keys()),
-    };
+      clearTimeout(timeoutId);
+      return response.ok;
+    } catch {
+      return false;
+    }
   }
 }

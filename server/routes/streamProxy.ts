@@ -1,6 +1,6 @@
 /**
  * Stream Proxy Routes
- * Handles proxying of external audio streams
+ * Handles proxying of external audio streams with proper streaming
  */
 
 import { Router, Request, Response } from 'express';
@@ -10,57 +10,55 @@ const router = Router();
 
 /**
  * Proxy a stream by URL
- * POST /api/stream/proxy
+ * GET /api/stream/proxy?url=<encoded_url>
  */
-router.post('/proxy', async (req: Request, res: Response) => {
+router.get('/proxy', async (req: Request, res: Response) => {
   try {
-    const { streamUrl } = req.body;
+    const { url } = req.query;
 
-    if (!streamUrl) {
+    if (!url || typeof url !== 'string') {
       return res.status(400).json({ error: 'Stream URL is required' });
     }
 
-    // Set response headers for audio streaming
-    res.setHeader('Content-Type', 'audio/mpeg');
-    res.setHeader('Accept-Ranges', 'bytes');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Decode the URL
+    const decodedUrl = decodeURIComponent(url);
+
+    // Validate it's a valid URL
+    try {
+      new URL(decodedUrl);
+    } catch {
+      return res.status(400).json({ error: 'Invalid URL format' });
+    }
 
     // Proxy the stream
-    const buffer = await StreamProxyService.proxyStream({ url: streamUrl });
-    res.send(buffer);
+    await StreamProxyService.proxyStreamToResponse(decodedUrl, res);
   } catch (error) {
     console.error('Stream proxy error:', error);
-    res.status(500).json({ error: 'Failed to proxy stream' });
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Failed to proxy stream' });
+    }
   }
 });
 
 /**
- * Get cache stats
- * GET /api/stream/cache-stats
+ * Validate if a stream is accessible
+ * GET /api/stream/validate?url=<encoded_url>
  */
-router.get('/cache-stats', (req: Request, res: Response) => {
+router.get('/validate', async (req: Request, res: Response) => {
   try {
-    const stats = StreamProxyService.getCacheStats();
-    res.json(stats);
-  } catch (error) {
-    console.error('Error getting cache stats:', error);
-    res.status(500).json({ error: 'Failed to get cache stats' });
-  }
-});
+    const { url } = req.query;
 
-/**
- * Clear cache
- * POST /api/stream/clear-cache
- */
-router.post('/clear-cache', (req: Request, res: Response) => {
-  try {
-    StreamProxyService.clearCache();
-    res.json({ message: 'Cache cleared' });
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json({ error: 'Stream URL is required' });
+    }
+
+    const decodedUrl = decodeURIComponent(url);
+    const isValid = await StreamProxyService.validateStream(decodedUrl);
+
+    res.json({ valid: isValid, url: decodedUrl });
   } catch (error) {
-    console.error('Error clearing cache:', error);
-    res.status(500).json({ error: 'Failed to clear cache' });
+    console.error('Stream validation error:', error);
+    res.status(500).json({ error: 'Failed to validate stream' });
   }
 });
 

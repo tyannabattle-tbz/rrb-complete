@@ -1,6 +1,6 @@
 /**
  * Audio Playback Hook
- * Manages HTML5 audio element and playback state
+ * Manages HTML5 audio element with proxy streaming and mobile support
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
@@ -22,12 +22,14 @@ export function useAudioPlayback() {
     volume: 70,
     error: null,
   });
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
 
   // Initialize audio element
   useEffect(() => {
     if (!audioRef.current) {
       const audio = new Audio();
       audio.crossOrigin = 'anonymous';
+      audio.preload = 'none';
       audio.volume = 0.7;
       audioRef.current = audio;
 
@@ -54,7 +56,7 @@ export function useAudioPlayback() {
       const handleError = () => {
         const errorMessage = audio.error?.message || 'Failed to load audio';
         setState(prev => ({ ...prev, error: errorMessage, isPlaying: false }));
-        console.error('Audio error:', errorMessage);
+        console.error('Audio error:', errorMessage, audio.error);
       };
 
       // Handle ended
@@ -62,11 +64,17 @@ export function useAudioPlayback() {
         setState(prev => ({ ...prev, isPlaying: false }));
       };
 
+      // Handle loadedmetadata
+      const handleLoadedMetadata = () => {
+        setState(prev => ({ ...prev, duration: audio.duration }));
+      };
+
       audio.addEventListener('timeupdate', handleTimeUpdate);
       audio.addEventListener('play', handlePlay);
       audio.addEventListener('pause', handlePause);
       audio.addEventListener('error', handleError);
       audio.addEventListener('ended', handleEnded);
+      audio.addEventListener('loadedmetadata', handleLoadedMetadata);
 
       return () => {
         audio.removeEventListener('timeupdate', handleTimeUpdate);
@@ -74,20 +82,37 @@ export function useAudioPlayback() {
         audio.removeEventListener('pause', handlePause);
         audio.removeEventListener('error', handleError);
         audio.removeEventListener('ended', handleEnded);
+        audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       };
     }
   }, []);
 
-  // Play stream
+  // Play stream - use direct URL with CORS support
   const play = useCallback((streamUrl: string) => {
     if (!audioRef.current) return;
 
     try {
-      audioRef.current.src = streamUrl;
-      audioRef.current.play().catch(error => {
-        console.error('Play error:', error);
-        setState(prev => ({ ...prev, error: error.message, isPlaying: false }));
-      });
+      // Only update source if URL changed
+      if (currentUrl !== streamUrl) {
+        // SomaFM and most modern streaming services support CORS
+        // Use the URL directly without proxying
+        audioRef.current.src = streamUrl;
+        audioRef.current.load();
+        setCurrentUrl(streamUrl);
+      }
+
+      // Play with error handling
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error('Play error:', error);
+          if (error.name === 'NotAllowedError') {
+            setState(prev => ({ ...prev, error: 'Please tap to play audio', isPlaying: false }));
+          } else {
+            setState(prev => ({ ...prev, error: error.message, isPlaying: false }));
+          }
+        });
+      }
     } catch (error) {
       console.error('Error playing stream:', error);
       setState(prev => ({ 
@@ -96,7 +121,7 @@ export function useAudioPlayback() {
         isPlaying: false 
       }));
     }
-  }, []);
+  }, [currentUrl]);
 
   // Pause
   const pause = useCallback(() => {
@@ -115,10 +140,13 @@ export function useAudioPlayback() {
       if (streamUrl) {
         play(streamUrl);
       } else if (audioRef.current.src) {
-        audioRef.current.play().catch(error => {
-          console.error('Play error:', error);
-          setState(prev => ({ ...prev, error: error.message }));
-        });
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error('Play error:', error);
+            setState(prev => ({ ...prev, error: error.message }));
+          });
+        }
       }
     }
   }, [state.isPlaying, play, pause]);
@@ -126,8 +154,9 @@ export function useAudioPlayback() {
   // Set volume
   const setVolume = useCallback((volume: number) => {
     if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
-      setState(prev => ({ ...prev, volume }));
+      const clamped = Math.max(0, Math.min(100, volume));
+      audioRef.current.volume = clamped / 100;
+      setState(prev => ({ ...prev, volume: clamped }));
     }
   }, []);
 
