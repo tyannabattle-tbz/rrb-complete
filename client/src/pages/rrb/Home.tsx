@@ -256,9 +256,9 @@ function QuickListenSection() {
 
         {/* Channel Presets */}
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          {CHANNEL_PRESETS.map((channel, idx) => (
+          {CHANNEL_PRESETS.map((channel) => (
             <button
-              key={`channel-${idx}-${channel.id || 'unnamed'}`}
+              key={`channel-${channel.id || 'unnamed'}`}
               onClick={() => audio.playQueue(channel.streams, 0)}
               className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-sm font-medium transition-colors flex items-center gap-2"
             >
