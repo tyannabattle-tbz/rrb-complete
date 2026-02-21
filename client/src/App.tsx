@@ -133,6 +133,7 @@ import BroadcastControlDashboard from '@/pages/BroadcastControlDashboard';
 import ContentScheduler from '@/pages/ContentScheduler';
 import ModeratorTraining from '@/pages/ModeratorTraining';
 import HealthMonitoringDashboard from '@/pages/HealthMonitoringDashboard';
+import ScenarioPlanner from '@/pages/ScenarioPlanner';
 
 
 // ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
@@ -449,6 +450,7 @@ function Router() {
       <Route path="/broadcast-control" component={BroadcastControlDashboard} />
       <Route path="/moderator-training" component={ModeratorTraining} />
       <Route path="/health-monitoring" component={HealthMonitoringDashboard} />
+      <Route path="/scenario-planner" component={ScenarioPlanner} />
       <Route path="/virtual-panel" component={VirtualPanelModerator} />
       <Route path="/rrb/admin" component={RRBAdminDashboard} />
       <Route path="/rrb/collaboration" component={RealtimeCollaboration} />
