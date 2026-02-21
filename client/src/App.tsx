@@ -135,7 +135,7 @@ import ContentScheduler from '@/pages/ContentScheduler';
 // ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
 import RRBHome from '@/pages/rrb/Home';
 import RRBRadioStation from '@/pages/rrb/RadioStation';
-import DJControlPanel from '@/pages/rrb/DJControlPanel';
+import DJControlPanelEnhanced from '@/pages/rrb/DJControlPanelEnhanced';
 import AIAssistants from '@/pages/rrb/AIAssistants';
 import RSSSubscribe from '@/pages/rrb/RSSSubscribe';
 import RRBPodcasts from '@/pages/rrb/Podcasts';
@@ -417,7 +417,7 @@ function Router() {
       <Route path="/rrb/rss" component={RSSSubscribe} />
       <Route path="/rss" component={RSSSubscribe} />
       <Route path="/rrb/radio-station" component={RRBRadioStation} />
-      <Route path="/rrb/dj-control" component={DJControlPanel} />
+      <Route path="/rrb/dj-control" component={DJControlPanelEnhanced} />
       <Route path="/rrb/podcast-feeds" component={PodcastFeeds} />
       <Route path="/rrb/realtime-analytics" component={RealtimeAnalyticsDashboard} />
       <Route path="/rrb/discover" component={ChannelDiscovery} />

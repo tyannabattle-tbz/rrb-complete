@@ -153,6 +153,7 @@ import { moderationRouter } from './routers/moderationRouter';
 import { notificationPreferencesRouter } from './routers/notificationPreferencesRouter';
 import { userPlaylistRouter } from './routers/userPlaylistRouter';
 import { streamsRouter } from './routers/streams';
+import { liveShowFeaturesRouter } from './routers/liveShowFeatures';
 
 export const appRouter = router({
   // System router
@@ -188,6 +189,9 @@ export const appRouter = router({
 
   // Stream Management
   streams: streamsRouter,
+
+  // Live Show Features (Call-in, Archive, Donations)
+  liveShowFeatures: liveShowFeaturesRouter,
 
   // Merge all router chunks
   ...chunk1Router._def.procedures,
