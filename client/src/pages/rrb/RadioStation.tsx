@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { PageMeta } from '@/components/rrb/PageMeta';
 import { RadioPlayer, Track } from '@/components/rrb/RadioPlayer';
 import { HybridCastWidgetContainer } from '@/components/rrb/HybridCastWidgetContainer';
 import RadioCommercials from '@/components/rrb/RadioCommercials';
 import SeasonalCampaigns from '@/components/rrb/SeasonalCampaigns';
-import { ChevronDown, Search } from 'lucide-react';
+import { ChevronDown, Search, Radio, Play, Pause } from 'lucide-react';
+import { CHANNEL_STREAMS, getChannelStream } from '@/lib/channelStreams';
+import { getCurrentTrack, getNextTrack, getPlaylistProgress, initializePlaylist } from '@/lib/playlistRotation';
 
-// 50+ Professional Channels
+// Channel definitions (same as before)
 const ALL_CHANNELS = [
   // Music Channels (12)
   { id: 'rock', name: 'Rock Legends', category: 'Music', description: 'Classic and modern rock' },
@@ -63,17 +65,16 @@ const ALL_CHANNELS = [
 ];
 
 const CATEGORIES = ['All', 'Music', 'Talk', '24/7', 'Operators', 'Events'];
-
 const RANK_BADGES = ['🥇', '🥈', '🥉', '⭐'] as const;
 
-// Fallback tracks for when API is unavailable
+// Fallback tracks
 const FALLBACK_TRACKS: Track[] = [
   {
     id: '1',
     title: 'Rockin\' Rockin\' Boogie',
     artist: 'Seabrun Candy Hunter & Little Richard',
     url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3',
-    description: 'The iconic track that defined an era - 1970s soul and funk (Official Audio)',
+    description: 'The iconic track that defined an era',
     duration: 112,
   },
   {
@@ -108,8 +109,46 @@ export default function RadioStation() {
   const [showChannelSelector, setShowChannelSelector] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState<string | undefined>(undefined);
+  const [playlistProgress, setPlaylistProgress] = useState(0);
 
-  // Filter channels based on category and search
+  // Get channel stream data
+  const channelStream = useMemo(() => {
+    return getChannelStream(selectedChannel.id);
+  }, [selectedChannel.id]);
+
+  // Initialize playlist when channel changes
+  useEffect(() => {
+    if (channelStream && channelStream.playlist.length > 0) {
+      initializePlaylist(selectedChannel.id, channelStream.playlist);
+      const track = getCurrentTrack(selectedChannel.id, channelStream.playlist);
+      setCurrentTrack(track);
+      setPlaylistProgress(getPlaylistProgress(selectedChannel.id, channelStream.playlist.length));
+    }
+  }, [selectedChannel.id, channelStream]);
+
+  // Simulate playback progression
+  useEffect(() => {
+    if (!isPlaying || !channelStream) return;
+
+    const interval = setInterval(() => {
+      setPlaylistProgress(prev => {
+        const newProgress = prev + 0.001; // Simulate playback
+        if (newProgress >= 1) {
+          // Move to next track
+          const nextTrack = getNextTrack(selectedChannel.id, channelStream.playlist);
+          setCurrentTrack(nextTrack);
+          return 0;
+        }
+        return newProgress;
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [isPlaying, selectedChannel.id, channelStream]);
+
+  // Filter channels
   const filteredChannels = useMemo(() => {
     return ALL_CHANNELS.filter(channel => {
       const matchesCategory = selectedCategory === 'All' || channel.category === selectedCategory;
@@ -119,9 +158,13 @@ export default function RadioStation() {
     });
   }, [selectedCategory, searchQuery]);
 
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
   return (
     <>
-      <PageMeta title="Radio Station" description="RRB Radio with 50+ professional channels" />
+      <PageMeta title="Radio Station" description="RRB Radio with 50+ professional channels and 24/7 streaming" />
       
       <div className="min-h-screen bg-gradient-to-b from-slate-900 via-purple-900 to-slate-900">
         {/* Tab Navigation */}
@@ -145,7 +188,7 @@ export default function RadioStation() {
                   : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
               }`}
             >
-              🎙️ All Channels
+              🎙️ All Channels ({ALL_CHANNELS.length})
             </button>
           </div>
         </div>
@@ -205,6 +248,7 @@ export default function RadioStation() {
                           onClick={() => {
                             setSelectedChannel(channel);
                             setShowChannelSelector(false);
+                            setIsPlaying(false);
                           }}
                           className="w-full text-left px-4 py-3 hover:bg-purple-600/20 border-b border-purple-500/10 transition-colors"
                         >
@@ -216,6 +260,74 @@ export default function RadioStation() {
                   </div>
                 )}
               </div>
+
+              {/* Now Playing Display */}
+              {channelStream && (
+                <div className="mb-8 bg-gradient-to-r from-slate-800 to-slate-700 border border-purple-500/30 rounded-lg p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                      isPlaying ? 'bg-red-500 animate-pulse' : 'bg-slate-600'
+                    }`}>
+                      {isPlaying ? (
+                        <div className="flex gap-1">
+                          <div className="w-1 h-3 bg-white animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <div className="w-1 h-3 bg-white animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <div className="w-1 h-3 bg-white animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
+                      ) : (
+                        <Radio className="w-6 h-6 text-white" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm text-slate-400">Now Playing</div>
+                      <div className="text-lg font-semibold text-white">{selectedChannel.name}</div>
+                      <div className="text-sm text-slate-300">{selectedChannel.category} • {channelStream.isLive ? '🔴 Live' : '🔄 Rotating Playlist'}</div>
+                    </div>
+                    <button
+                      onClick={handlePlayPause}
+                      className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                        isPlaying
+                          ? 'bg-red-500 hover:bg-red-600 text-white'
+                          : 'bg-orange-500 hover:bg-orange-600 text-white'
+                      }`}
+                    >
+                      {isPlaying ? (
+                        <div className="flex items-center gap-2">
+                          <Pause className="w-4 h-4" />
+                          Pause
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Play className="w-4 h-4" />
+                          Play
+                        </div>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Playback Progress */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs text-slate-400">
+                      <span>Track Progress</span>
+                      <span>{Math.round(playlistProgress * 100)}%</span>
+                    </div>
+                    <div className="w-full bg-slate-600 rounded-full h-2">
+                      <div
+                        className="bg-gradient-to-r from-orange-400 to-orange-500 h-2 rounded-full transition-all"
+                        style={{ width: `${playlistProgress * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Current Track Info */}
+                  {currentTrack && (
+                    <div className="mt-4 pt-4 border-t border-slate-600">
+                      <div className="text-sm text-slate-400">Current Stream</div>
+                      <div className="text-white font-mono text-xs truncate mt-1">{currentTrack}</div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Radio Player */}
               <div className="mb-8">
@@ -258,7 +370,7 @@ export default function RadioStation() {
           ) : (
             <>
               {/* All Channels Tab */}
-              <h2 className="text-3xl font-bold text-white mb-8">🎙️ All Channels</h2>
+              <h2 className="text-3xl font-bold text-white mb-8">🎙️ All Channels ({ALL_CHANNELS.length})</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {ALL_CHANNELS.map((channel, idx) => (
                   <button
@@ -266,10 +378,14 @@ export default function RadioStation() {
                     onClick={() => {
                       setSelectedChannel(channel);
                       setActiveTab('radio-station');
+                      setIsPlaying(false);
                     }}
-                    className="bg-gradient-to-br from-purple-600/20 to-orange-600/20 hover:from-purple-600/40 hover:to-orange-600/40 border border-purple-500/30 p-6 rounded-lg transition-all text-left"
+                    className="bg-gradient-to-br from-purple-600/20 to-orange-600/20 hover:from-purple-600/40 hover:to-orange-600/40 border border-purple-500/30 p-6 rounded-lg transition-all text-left group"
                   >
-                    <div className="font-semibold text-white text-lg mb-2">{channel.name}</div>
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="font-semibold text-white text-lg group-hover:text-orange-400 transition-colors">{channel.name}</div>
+                      <Radio className="w-4 h-4 text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
                     <div className="text-sm text-slate-400 mb-3">{channel.description}</div>
                     <div className="text-xs text-purple-400 font-semibold">{channel.category}</div>
                   </button>
