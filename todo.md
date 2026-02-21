@@ -322,3 +322,48 @@
 - Play button now properly validates stream URLs
 - Audio element properly resets between stream changes
 - Better error messages for debugging stream issues
+
+## Phase 29: Critical Bug Fixes - Stream URLs and Podcast Page
+
+### Stream URL Issues - FIXED ✅
+- [x] Identified broken SomaFM URLs causing "same song across channels"
+- [x] Created Radio Garden API integration service
+- [x] Implemented genre-specific station discovery
+- [x] Added caching to reduce API calls
+- [x] Fallback to local channels when API unavailable
+- [x] 14 integration tests - all passing
+
+### Radio Garden API Implementation ✅
+- [x] Service: `client/src/lib/radioGardenService.ts`
+- [x] Supports 8 genre categories (R&B/Soul, Jazz, Blues, Rock, Country, 90s Hip-Hop, Talk, Meditation)
+- [x] Direct MP3 stream URLs from Radio Garden
+- [x] Station metadata (location, country, city)
+- [x] Search functionality by keyword
+- [x] Automatic caching (1-hour duration)
+- [x] Error handling with fallback channels
+
+### RadioStation Page Updates ✅
+- [x] Integrated Radio Garden API for dynamic station loading
+- [x] Genre tabs load real stations from Radio Garden
+- [x] Search bar for finding stations by keyword
+- [x] Loading indicators while fetching
+- [x] Station display with metadata
+- [x] Favorites system
+- [x] Fallback to RRB channels if API unavailable
+
+### Podcast Page Fixes ✅
+- [x] All platform buttons now functional (YouTube, Apple Podcasts, Spotify, Google Podcasts)
+- [x] Buttons open platforms in new window
+- [x] No more "only YouTube button works" issue
+
+### Testing & Verification ✅
+- [x] 14 integration tests created and passing
+- [x] Zero TypeScript compilation errors
+- [x] Dev server running cleanly
+- [x] All features verified working
+
+### Status: COMPLETE ✅
+- Broken stream URLs fixed with Radio Garden API
+- No more same-song-across-channels issue
+- All podcast buttons functional
+- Production-ready implementation
