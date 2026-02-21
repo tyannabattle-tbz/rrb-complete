@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Radio, Podcast, Music, Zap, Heart, Signal, Sparkles, Users, BookOpen, Brain, Building2, Headphones, Play, Pause, Dice5, Globe, Trophy } from 'lucide-react';
 import { useAudio } from '@/contexts/AudioContext';
@@ -325,18 +325,23 @@ export default function Home() {
                 A legacy restored — unified ecosystem of platforms, services, and autonomous intelligence
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/solbones">
-                  <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-white shadow-lg">
-                    <Dice5 className="w-5 h-5 mr-2" />
-                    Play Solbones 4+3+2
-                  </Button>
-                </Link>
-                <Link href="/rrb/proof-vault">
-                  <Button size="lg" variant="outline" className="border-amber-500 text-amber-600 hover:bg-amber-50 shadow-md">
-                    <Zap className="w-5 h-5 mr-2" />
-                    Explore the Proof Vault
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="bg-amber-500 hover:bg-amber-600 text-white shadow-lg cursor-pointer"
+                  onClick={() => window.location.href = '/solbones'}
+                >
+                  <Dice5 className="w-5 h-5 mr-2" />
+                  Play Solbones 4+3+2
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-amber-500 text-amber-600 hover:bg-amber-50 shadow-md cursor-pointer"
+                  onClick={() => window.location.href = '/rrb/proof-vault'}
+                >
+                  <Zap className="w-5 h-5 mr-2" />
+                  Explore the Proof Vault
+                </Button>
               </div>
             </div>
 
