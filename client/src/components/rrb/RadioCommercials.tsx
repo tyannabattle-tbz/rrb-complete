@@ -795,7 +795,7 @@ export default function RadioCommercials() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {commercials.map((commercial, index) => (
               <button
-                key={commercial.id}
+                key={`commercial-${index}-${commercial.id}`}
                 onClick={() => {
                   stopTTS();
                   if (audioRef.current) audioRef.current.pause();

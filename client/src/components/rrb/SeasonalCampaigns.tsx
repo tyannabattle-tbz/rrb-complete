@@ -140,7 +140,7 @@ export default function SeasonalCampaigns({ onSelectCampaign }: SeasonalCampaign
                     <p className="text-xs text-foreground/60 mb-2">Featured Commercials</p>
                     <div className="flex flex-wrap gap-2">
                       {campaign.commercials.map((commercial, idx) => (
-                        <span key={`${campaign.id}-commercial-${idx}`} className="inline-block bg-accent/20 text-accent px-2 py-1 rounded text-xs font-semibold">
+                        <span key={`active-campaign-${campaign.id}-commercial-${idx}`} className="inline-block bg-accent/20 text-accent px-2 py-1 rounded text-xs font-semibold">
                           {commercial}
                         </span>
                       ))}
@@ -198,7 +198,7 @@ export default function SeasonalCampaigns({ onSelectCampaign }: SeasonalCampaign
 
                   <div className="flex flex-wrap gap-1 mb-4">
                     {campaign.commercials.slice(0, 2).map((commercial, idx) => (
-                      <span key={`${campaign.id}-upcoming-commercial-${idx}`} className="inline-block bg-background text-foreground/70 px-2 py-0.5 rounded text-xs">
+                      <span key={`upcoming-campaign-${campaign.id}-commercial-${idx}`} className="inline-block bg-background text-foreground/70 px-2 py-0.5 rounded text-xs">
                         {commercial}
                       </span>
                     ))}
