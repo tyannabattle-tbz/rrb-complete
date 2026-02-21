@@ -136,6 +136,7 @@ import ContentScheduler from '@/pages/ContentScheduler';
 import RRBHome from '@/pages/rrb/Home';
 import RadioStationEnhanced from '@/pages/rrb/RadioStationEnhanced';
 import DJControlPanelEnhanced from '@/pages/rrb/DJControlPanelEnhanced';
+import ShowScheduleCalendar from '@/pages/rrb/ShowScheduleCalendar';
 import AIAssistants from '@/pages/rrb/AIAssistants';
 import RSSSubscribe from '@/pages/rrb/RSSSubscribe';
 import RRBPodcasts from '@/pages/rrb/Podcasts';
@@ -418,6 +419,7 @@ function Router() {
       <Route path="/rss" component={RSSSubscribe} />
       <Route path="/rrb/radio-station" component={RadioStationEnhanced} />
       <Route path="/rrb/dj-control" component={DJControlPanelEnhanced} />
+      <Route path="/rrb/schedule" component={ShowScheduleCalendar} />
       <Route path="/rrb/podcast-feeds" component={PodcastFeeds} />
       <Route path="/rrb/realtime-analytics" component={RealtimeAnalyticsDashboard} />
       <Route path="/rrb/discover" component={ChannelDiscovery} />
