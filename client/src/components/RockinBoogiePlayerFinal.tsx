@@ -464,8 +464,8 @@ export function RockinBoogiePlayerFinal() {
         <div className="mt-8">
           <h3 className="text-orange-400 font-bold mb-4 uppercase text-sm">Your Playlists</h3>
           <div className="grid grid-cols-2 gap-4">
-            {playlists.map((playlist) => (
-              <div key={playlist.id} className="bg-slate-700/50 p-4 rounded-lg">
+            {playlists.map((playlist, idx) => (
+              <div key={`playlist-${idx}-${playlist.id || 'unnamed'}`} className="bg-slate-700/50 p-4 rounded-lg">
                 <p className="font-semibold">{playlist.name}</p>
                 <p className="text-sm text-slate-400">{playlist.episodes.length} episodes</p>
               </div>

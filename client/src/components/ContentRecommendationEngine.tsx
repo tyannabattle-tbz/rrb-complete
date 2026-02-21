@@ -197,8 +197,8 @@ export const ContentRecommendationEngine: React.FC = () => {
       <Card className="p-6 shadow-md">
         <h2 className="mb-4 text-xl font-bold text-gray-800">Recommended Playlists</h2>
         <div className="space-y-4">
-          {playlists.map((playlist) => (
-            <div key={playlist.id} className="rounded-lg border border-gray-200 p-4">
+          {playlists.map((playlist, idx) => (
+            <div key={`playlist-${idx}-${playlist.id || 'unnamed'}`} className="rounded-lg border border-gray-200 p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-800">{playlist.name}</h3>
