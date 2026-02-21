@@ -156,6 +156,7 @@ import UnWcsEvent from '@/pages/UnWcsEvent';
 import VirtualPanelModerator from '@/pages/VirtualPanelModerator';
 import ModeratorDashboard from '@/pages/ModeratorDashboard';
 import BroadcastViewer from '@/pages/BroadcastViewer';
+import UnWcsStatusDashboard from '@/pages/UnWcsStatusDashboard';
 import RRBAdminDashboard from '@/pages/rrb/AdminDashboard';
 import RealtimeCollaboration from '@/pages/rrb/RealtimeCollaboration';
 import MobileApp from '@/pages/rrb/MobileApp';
@@ -445,6 +446,7 @@ function Router() {
       <Route path="/rrb/notifications" component={ListenerNotifications} />
       <Route path="/rrb/merchandise" component={MerchandiseStore} />
       <Route path="/un-wcs-event" component={UnWcsEvent} />
+      <Route path="/un-wcs-status" component={UnWcsStatusDashboard} />
       <Route path="/moderator-dashboard" component={ModeratorDashboard} />
       <Route path="/broadcast-viewer" component={BroadcastViewer} />
       <Route path="/broadcast-control" component={BroadcastControlDashboard} />

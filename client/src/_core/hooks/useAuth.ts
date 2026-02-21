@@ -74,7 +74,11 @@ export function useAuth(options?: UseAuthOptions) {
     if (meQuery.isLoading || logoutMutation.isPending) return;
     if (state.user) return;
     if (typeof window === "undefined") return;
-    if (window.location.pathname === redirectPath) return;
+    
+    const currentPath = window.location.pathname;
+    
+    // Don't redirect if already on login page or oauth callback
+    if (currentPath === redirectPath || currentPath.includes('/oauth') || currentPath.includes('/legal')) return;
 
     // Store the return-to URL in localStorage before redirecting to login
     const returnTo = getReturnToUrl();
@@ -82,7 +86,7 @@ export function useAuth(options?: UseAuthOptions) {
       localStorage.setItem('auth-return-to', returnTo);
     }
     
-    window.location.href = redirectPath
+    window.location.href = redirectPath;
   }, [
     redirectOnUnauthenticated,
     redirectPath,
