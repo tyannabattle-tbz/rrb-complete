@@ -97,3 +97,43 @@
 - [x] All components properly typed
 
 ## Status: Phase 16 In Progress 🚀
+
+
+## Phase 17: Channel Expansion & Professional Selector
+
+### Comprehensive Channel Database
+- [ ] Create 50+ professional channels across all categories
+- [ ] Organize channels by: Genre, Operator/Entity, Content Type, Time-based
+- [ ] Add channel metadata (description, category, icon, color, listener count)
+- [ ] Create channel categories table in database
+- [ ] Implement channel discovery and search
+
+### Professional Channel Selector UI
+- [ ] Create `ChannelSelector.tsx` component with category tabs
+- [ ] Implement search functionality across channels
+- [ ] Add channel cards with metadata display
+- [ ] Create favorites/bookmarks feature
+- [ ] Implement one-click channel switching
+- [ ] Add listener count display per channel
+- [ ] Create responsive mobile-friendly selector
+
+### Channel Categories
+- [ ] Music Channels (Rock, Jazz, Soul, Classical, Electronic, Hip-Hop, Pop, Country, Blues, Reggae, Latin, World)
+- [ ] Talk & Community (News, Interviews, Local, Community, Podcasts, Storytelling)
+- [ ] 24/7 Streams (Healing Frequencies, Meditation, Background, Ambient, Sleep)
+- [ ] Operator Channels (Canryn, Sweet Miracles, Studio Sessions, QMunity, Legacy Restored)
+- [ ] Special Events (Live Events, Conferences, Broadcasts, Festivals, Workshops)
+
+### Integration & Testing
+- [ ] Update RadioStation.tsx to use new channel selector
+- [ ] Update RRB Home page with expanded channels
+- [ ] Test channel switching and persistence
+- [ ] Verify all channels load and stream correctly
+- [ ] Mobile responsiveness testing
+- [ ] Performance testing with 50+ channels
+
+### Production Deployment
+- [ ] Fix production error (idx undefined)
+- [ ] Deploy expanded channel system to production
+- [ ] Monitor for performance issues
+- [ ] Gather user feedback on channel selection
