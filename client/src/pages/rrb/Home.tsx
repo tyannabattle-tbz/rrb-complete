@@ -7,6 +7,7 @@ import { useAudio } from '@/contexts/AudioContext';
 import { CHANNEL_PRESETS, LIVE_STREAMS, RRB_LEGACY_TRACKS } from '@/lib/streamLibrary';
 import RotatingVinylRecord from "@/components/rrb/RotatingVinylRecord";
 import { QUMUSActivityFeed } from "@/components/rrb/QUMUSActivityFeed";
+import { FrequencyTuner } from '@/components/rrb/FrequencyTuner';
 
 // Platform showcase items
 const PLATFORMS = [
@@ -122,6 +123,7 @@ const PLATFORMS = [
 
 function QuickListenSection() {
   const audio = useAudio();
+  const [selectedFrequency, setSelectedFrequency] = useState(432);
 
   const quickStreams = [
     { ...LIVE_STREAMS.funkyRadio, label: 'Soul & Funk', emoji: '🎷' },
@@ -140,6 +142,14 @@ function QuickListenSection() {
           <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
             Tap any channel to start streaming instantly. Audio plays across all pages.
           </p>
+        </div>
+
+        {/* Frequency Tuner */}
+        <div className="mb-8 max-w-2xl mx-auto">
+          <FrequencyTuner 
+            currentFrequency={selectedFrequency}
+            onFrequencyChange={setSelectedFrequency}
+          />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

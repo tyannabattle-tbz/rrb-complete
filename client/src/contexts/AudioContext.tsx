@@ -17,6 +17,7 @@ export interface AudioTrack {
   channel?: string;
   duration?: number;
   isLiveStream?: boolean;
+  frequency?: number;
 }
 
 export interface AudioState {
@@ -143,20 +144,29 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.src = track.url;
-    audio.volume = state.isMuted ? 0 : state.volume;
-    setState(prev => ({
-      ...prev,
-      currentTrack: track,
-      isLoading: true,
-      error: null,
-      currentTime: 0,
-      queue: [track],
-      queueIndex: 0,
-    }));
-    audio.play().catch(err => {
-      setState(prev => ({ ...prev, error: err.message, isLoading: false }));
-    });
+    // Completely stop and reset audio to prevent buffering issues
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = '';
+    
+    // Small delay to ensure clean state before loading new track
+    setTimeout(() => {
+      audio.src = track.url;
+      audio.volume = state.isMuted ? 0 : state.volume;
+      setState(prev => ({
+        ...prev,
+        currentTrack: track,
+        isLoading: true,
+        error: null,
+        currentTime: 0,
+        queue: [track],
+        queueIndex: 0,
+      }));
+      audio.play().catch(err => {
+        setState(prev => ({ ...prev, error: err.message, isLoading: false }));
+      });
+    }, 50);
+    
     // Record play count in database
     recordPlayMutation.mutate({
       trackId: track.id,
@@ -171,20 +181,29 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     if (!audio || tracks.length === 0) return;
 
     const track = tracks[startIndex] || tracks[0];
-    audio.src = track.url;
-    audio.volume = state.isMuted ? 0 : state.volume;
-    setState(prev => ({
-      ...prev,
-      currentTrack: track,
-      isLoading: true,
-      error: null,
-      currentTime: 0,
-      queue: tracks,
-      queueIndex: startIndex,
-    }));
-    audio.play().catch(err => {
-      setState(prev => ({ ...prev, error: err.message, isLoading: false }));
-    });
+    
+    // Completely stop and reset audio to prevent buffering issues
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = '';
+    
+    // Small delay to ensure clean state before loading new track
+    setTimeout(() => {
+      audio.src = track.url;
+      audio.volume = state.isMuted ? 0 : state.volume;
+      setState(prev => ({
+        ...prev,
+        currentTrack: track,
+        isLoading: true,
+        error: null,
+        currentTime: 0,
+        queue: tracks,
+        queueIndex: startIndex,
+      }));
+      audio.play().catch(err => {
+        setState(prev => ({ ...prev, error: err.message, isLoading: false }));
+      });
+    }, 50);
   }, [state.volume, state.isMuted]);
 
   const pause = useCallback(() => {

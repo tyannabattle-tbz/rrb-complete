@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import { useAudio } from '@/contexts/AudioContext';
 import type { AudioTrack } from '@/contexts/AudioContext';
-import { LIVE_STREAMS, SAMPLE_TRACKS } from '@/lib/streamLibrary';
+import { LIVE_STREAMS } from '@/lib/streamLibrary';
 
 interface MeditationSession {
   id: string;
@@ -65,9 +65,10 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
       id: 'med-track-001',
       title: 'Top of the Sol Awakening',
       artist: 'Meditation Hub · Sarah Chen',
-      url: SAMPLE_TRACKS[0].url,
+      url: LIVE_STREAMS.droneZone.url,
       channel: 'Meditation',
       duration: 360,
+      frequency: 432,
     },
   },
   {
@@ -83,9 +84,10 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
       id: 'med-track-002',
       title: 'Deep Relaxation',
       artist: 'Meditation Hub · Marcus Johnson',
-      url: SAMPLE_TRACKS[1].url,
+      url: LIVE_STREAMS.deepSpaceOne.url,
       channel: 'Meditation',
       duration: 420,
+      frequency: 528,
     },
   },
   {
@@ -100,9 +102,10 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
       id: 'med-track-003',
       title: 'Loving Kindness',
       artist: 'Meditation Hub · Emma Wilson',
-      url: SAMPLE_TRACKS[2].url,
+      url: LIVE_STREAMS.grooveSalad.url,
       channel: 'Meditation',
       duration: 380,
+      frequency: 528,
     },
   },
   {
@@ -118,9 +121,10 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
       id: 'med-track-004',
       title: 'Sleep Meditation',
       artist: 'Meditation Hub · Dr. Lisa Park',
-      url: SAMPLE_TRACKS[3].url,
+      url: LIVE_STREAMS.lush.url,
       channel: 'Meditation',
-      duration: 350,
+      duration: 600,
+      frequency: 432,
     },
   },
   {
@@ -136,9 +140,10 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
       id: 'med-track-005',
       title: 'Visualization Journey',
       artist: 'Meditation Hub · James Mitchell',
-      url: SAMPLE_TRACKS[4].url,
+      url: LIVE_STREAMS.deepSpaceOne.url,
       channel: 'Meditation',
       duration: 390,
+      frequency: 432,
     },
   },
 ];
