@@ -110,11 +110,11 @@ export const RadioPlayer = React.memo(function RadioPlayer({ tracks, title = "Le
         <div className="bg-background rounded-lg p-4 border border-accent/30 space-y-2">
           <h4 className="text-sm font-semibold text-foreground mb-2">🔴 Live Radio Streams</h4>
           <p className="text-xs text-foreground/60 mb-3">24/7 continuous streams — soul, funk, R&B, and more</p>
-          {rrbLiveStreams.map(stream => {
+          {rrbLiveStreams.map((stream, idx) => {
             const isActive = audio.currentTrack?.id === stream.id;
             return (
               <button
-                key={stream.id}
+                key={`live-stream-${idx}-${stream.id}`}
                 onClick={() => handlePlayLiveStream(stream)}
                 className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${
                   isActive ? 'bg-accent/20 border border-accent/40' : 'hover:bg-accent/10 border border-transparent'
@@ -248,7 +248,7 @@ export const RadioPlayer = React.memo(function RadioPlayer({ tracks, title = "Le
                 const isActive = currentTrackIndex === index;
                 return (
                   <button
-                    key={track.id}
+                    key={`track-${index}-${track.id}`}
                     onClick={() => handlePlayTrack(index)}
                     className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
                       isActive
