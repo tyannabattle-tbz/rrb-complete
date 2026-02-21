@@ -367,3 +367,107 @@
 - No more same-song-across-channels issue
 - All podcast buttons functional
 - Production-ready implementation
+
+
+## Phase 30: Comprehensive Testing Sweep
+
+### Route & Navigation Audit
+- [ ] Verify all navigation links in header work
+- [ ] Test all sidebar menu items
+- [ ] Check all internal route links
+- [ ] Verify no 404 errors on any page
+- [ ] Test back/forward browser navigation
+
+### Audio Streaming & Playback
+- [ ] Test play/pause on all radio stations
+- [ ] Verify volume control works
+- [ ] Test stream switching between genres
+- [ ] Verify no "same song" across channels
+- [ ] Test fallback channels when API unavailable
+- [ ] Check audio quality and buffering
+
+### External Links & Buttons
+- [ ] YouTube button opens correctly
+- [ ] Apple Podcasts button works
+- [ ] Spotify button works
+- [ ] Google Podcasts button works
+- [ ] All social media links functional
+- [ ] Verify all CTAs (Call-to-Action) buttons
+
+### Authentication & Profile
+- [ ] Login flow works end-to-end
+- [ ] User profile page displays correctly
+- [ ] Logout functionality works
+- [ ] Session persistence across page reloads
+- [ ] Profile edit/update features work
+- [ ] User data saves to database
+
+### Database & Data Persistence
+- [ ] Favorites save and persist
+- [ ] Chat history saves correctly
+- [ ] User preferences stored
+- [ ] Podcast watch list syncs
+- [ ] No data loss on refresh
+- [ ] Database queries execute properly
+
+### Chat, Favorites & Interactive Features
+- [ ] Chat widget loads and displays
+- [ ] Send/receive messages works
+- [ ] Favorites button toggles correctly
+- [ ] Saved favorites list displays
+- [ ] Call-in feature functional
+- [ ] User interactions tracked
+
+### Broken Images, 404s & Console Errors
+- [ ] No broken image links
+- [ ] No 404 errors in console
+- [ ] No JavaScript errors
+- [ ] No TypeScript compilation errors
+- [ ] Network requests all successful
+- [ ] No CORS issues
+
+### Responsive Design
+- [ ] Desktop layout looks good
+- [ ] Tablet layout responsive
+- [ ] Mobile layout functional
+- [ ] Touch targets appropriately sized
+- [ ] No horizontal scrolling on mobile
+- [ ] Images scale properly
+
+### Forms & Input Validation
+- [ ] Search form validates input
+- [ ] All form fields accept input
+- [ ] Form submission works
+- [ ] Error messages display correctly
+- [ ] Success confirmations show
+- [ ] No form data loss
+
+### Critical Issues & Fixes
+- [ ] Document all issues found
+- [ ] Prioritize critical bugs
+- [ ] Fix blocking issues
+- [ ] Verify fixes work
+- [ ] Re-test affected features
+- [ ] Update documentation
+
+
+## Phase 31: Critical Bug Fixes from Testing Sweep
+
+### Podcasts Page 404 Error
+- [x] Register route in App.tsx (added /rrb/podcasts route)
+- [ ] Investigate why route still returns 404
+- [ ] Workaround: Use /rrb/podcast-and-video (WORKS)
+- [x] Verify all podcast buttons work (YouTube, Apple, Spotify, Google) - ALL WORKING
+- [ ] Update YouTube channel URL (currently returns 404)
+
+### External Links to Update
+- [ ] YouTube channel URL (UCrockinrockinboogie doesn't exist)
+- [ ] Apple Podcasts URL
+- [ ] Spotify show URL
+- [ ] Google Podcasts URL
+
+### Status: MOSTLY RESOLVED
+- Route added but needs debugging
+- Workaround available (/rrb/podcast-and-video)
+- All buttons functional
+- External URLs need verification

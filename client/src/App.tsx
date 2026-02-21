@@ -427,6 +427,7 @@ function Router() {
       <Route path="/discover" component={ChannelDiscovery} />
       <Route path="/rrb/poetry-hour" component={RRBPoetryHour} />
       <Route path="/rrb/podcast-and-video" component={RRBPodcasts} />
+      <Route path="/rrb/podcasts" component={RRBPodcasts} />
       <Route path="/rrb/broadcast" component={RRBBroadcast} />
       <Route path="/rrb/rss-feeds" component={RRBRSSFeedGenerator} />
       <Route path="/rrb/call-in" component={CallInFeature} />
