@@ -131,6 +131,8 @@ import MapArsenal from '@/components/MapArsenal';
 import { Toaster } from 'sonner';
 import BroadcastControlDashboard from '@/pages/BroadcastControlDashboard';
 import ContentScheduler from '@/pages/ContentScheduler';
+import ModeratorTraining from '@/pages/ModeratorTraining';
+import HealthMonitoringDashboard from '@/pages/HealthMonitoringDashboard';
 
 
 // ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
@@ -445,6 +447,8 @@ function Router() {
       <Route path="/moderator-dashboard" component={ModeratorDashboard} />
       <Route path="/broadcast-viewer" component={BroadcastViewer} />
       <Route path="/broadcast-control" component={BroadcastControlDashboard} />
+      <Route path="/moderator-training" component={ModeratorTraining} />
+      <Route path="/health-monitoring" component={HealthMonitoringDashboard} />
       <Route path="/virtual-panel" component={VirtualPanelModerator} />
       <Route path="/rrb/admin" component={RRBAdminDashboard} />
       <Route path="/rrb/collaboration" component={RealtimeCollaboration} />
