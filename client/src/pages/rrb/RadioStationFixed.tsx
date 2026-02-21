@@ -108,17 +108,20 @@ export default function RadioStationFixed() {
             </Button>
 
             <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <Volume2 className="w-5 h-5" />
+              <div className="flex items-center gap-3">
+                <Volume2 className="w-5 h-5 text-white flex-shrink-0" />
                 <input
                   type="range"
                   min="0"
                   max="100"
                   value={audio.volume}
                   onChange={(e) => audio.setVolume(parseInt(e.target.value))}
-                  className="flex-1 h-2 bg-purple-300 rounded-lg appearance-none cursor-pointer"
+                  className="flex-1 h-3 bg-purple-300 rounded-lg appearance-none cursor-pointer accent-white"
+                  style={{
+                    WebkitAppearance: 'slider-horizontal',
+                  }}
                 />
-                <span className="text-sm w-8">{audio.volume}%</span>
+                <span className="text-sm w-10 text-right text-white font-semibold">{audio.volume}%</span>
               </div>
             </div>
 

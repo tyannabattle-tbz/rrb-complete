@@ -1,6 +1,6 @@
 /**
  * Audio Playback Hook
- * Manages HTML5 audio element with proxy streaming and mobile support
+ * Manages HTML5 audio element with iOS/Android device detection
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
@@ -87,16 +87,31 @@ export function useAudioPlayback() {
     }
   }, []);
 
-  // Play stream - use direct URL with CORS support
+  // Detect if running on iOS
+  const isIOS = useCallback((): boolean => {
+    return /iPhone|iPad|iPod/.test(navigator.userAgent);
+  }, []);
+
+  // Get optimal stream URL based on device
+  const getOptimalStreamUrl = useCallback((streamUrl: string): string => {
+    // For iOS, use iOS-optimized endpoint
+    if (isIOS()) {
+      return `/api/stream/ios?url=${encodeURIComponent(streamUrl)}`;
+    }
+    // For desktop/Android, use direct URL
+    return streamUrl;
+  }, [isIOS]);
+
+  // Play stream - use device-optimized URL
   const play = useCallback((streamUrl: string) => {
     if (!audioRef.current) return;
 
     try {
       // Only update source if URL changed
       if (currentUrl !== streamUrl) {
-        // SomaFM and most modern streaming services support CORS
-        // Use the URL directly without proxying
-        audioRef.current.src = streamUrl;
+        // Get optimal URL based on device
+        const optimalUrl = getOptimalStreamUrl(streamUrl);
+        audioRef.current.src = optimalUrl;
         audioRef.current.load();
         setCurrentUrl(streamUrl);
       }
@@ -121,7 +136,7 @@ export function useAudioPlayback() {
         isPlaying: false 
       }));
     }
-  }, [currentUrl]);
+  }, [currentUrl, getOptimalStreamUrl]);
 
   // Pause
   const pause = useCallback(() => {

@@ -168,3 +168,14 @@
 - [ ] Implement show reminders and notifications
 - [ ] Add recurring schedule templates
 - [ ] Test scheduling with multiple channels
+
+
+## Phase 20: iOS Audio Playback Fixes
+- [x] Implement HLS streaming proxy for iOS compatibility
+- [x] Create stream converter service (MP3 to HLS)
+- [x] Update audio playback hook to detect iOS and use HLS URLs
+- [x] Fix volume slider visibility on mobile
+- [ ] Test audio playback on iOS Safari
+- [ ] Test audio playback on Android Chrome
+- [x] Verify pause button state changes correctly
+- [x] Add fallback streaming for unsupported formats

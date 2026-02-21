@@ -7,6 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { registerRSSRoutes } from "../rss-feeds";
 import { handleStripeWebhook } from "../webhooks/stripeWebhook";
 import streamProxyRouter from "../routes/streamProxy";
+import hlsStreamRouter from "../routes/hlsStream";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -51,6 +52,8 @@ async function startServer() {
   registerRSSRoutes(app);
   // Stream proxy routes for CORS-free audio streaming
   app.use('/api/stream', streamProxyRouter);
+  // HLS stream routes for iOS compatibility
+  app.use('/api/stream', hlsStreamRouter);
   // tRPC API
   app.use(
     "/api/trpc",
