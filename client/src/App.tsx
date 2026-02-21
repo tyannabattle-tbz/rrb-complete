@@ -129,6 +129,7 @@ import DroneLogisticsTracker from '@/components/DroneLogisticsTracker';
 import DroneVideoCapture from '@/components/DroneVideoCapture';
 import MapArsenal from '@/components/MapArsenal';
 import { Toaster } from 'sonner';
+import BroadcastControlDashboard from '@/pages/BroadcastControlDashboard';
 import ContentScheduler from '@/pages/ContentScheduler';
 
 
@@ -148,6 +149,7 @@ import ListenerAnalytics from '@/pages/rrb/ListenerAnalytics';
 import LiveStreamIntegration from '@/pages/rrb/LiveStreamIntegration';
 import ListenerNotifications from '@/pages/rrb/ListenerNotifications';
 import MerchandiseStore from '@/pages/rrb/MerchandiseStore';
+import UnWcsEvent from '@/pages/UnWcsEvent';
 import RRBAdminDashboard from '@/pages/rrb/AdminDashboard';
 import RealtimeCollaboration from '@/pages/rrb/RealtimeCollaboration';
 import MobileApp from '@/pages/rrb/MobileApp';
@@ -436,6 +438,8 @@ function Router() {
       <Route path="/rrb/live-stream" component={LiveStreamIntegration} />
       <Route path="/rrb/notifications" component={ListenerNotifications} />
       <Route path="/rrb/merchandise" component={MerchandiseStore} />
+      <Route path="/un-wcs-event" component={UnWcsEvent} />
+      <Route path="/broadcast-control" component={BroadcastControlDashboard} />
       <Route path="/rrb/admin" component={RRBAdminDashboard} />
       <Route path="/rrb/collaboration" component={RealtimeCollaboration} />
       <Route path="/rrb/mobile" component={MobileApp} />
