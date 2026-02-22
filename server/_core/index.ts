@@ -6,6 +6,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerRSSRoutes } from "../rss-feeds";
 import { handleStripeWebhook } from "../webhooks/stripeWebhook";
+import { domainRoutingMiddleware } from "../middleware/domainRouting";
 import streamProxyRouter from "../routes/streamProxy";
 import hlsStreamRouter from "../routes/hlsStream";
 import { appRouter } from "../routers";
@@ -46,6 +47,11 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  
+  // Domain routing middleware - must be before other routes
+  app.use(domainRoutingMiddleware);
+  console.log("[Domain Routing] Middleware initialized");
+  
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   // RSS feeds for podcast directories, news aggregators, and radio listings

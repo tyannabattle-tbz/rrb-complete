@@ -234,10 +234,11 @@ export default function Navigation() {
             </a>
           </Link>
 
-          {/* UN WCS Event - LIVE */}
+          {/* UN WCS Event - LIVE with SQUADD */}
           <Link href="/simple-broadcast">
-            <a className={`px-3 py-2 rounded text-sm font-medium transition-colors bg-red-500 text-white hover:bg-red-600 animate-pulse`}>
-              🔴 LIVE: UN WCS Event
+            <a className={`px-3 py-2 rounded text-sm font-medium transition-colors bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 animate-pulse shadow-lg`}
+              title="From Civil Rights on Selma Soil to Crossing Bridges Across Waters through UN and Ghana Borders">
+              🔴 LIVE: UN WCS + SQUADD
             </a>
           </Link>
 
@@ -442,10 +443,10 @@ export default function Navigation() {
         <div className="lg:hidden bg-background border-t border-border max-h-[80vh] overflow-y-auto">
           <div className="container mx-auto px-4 py-4">
             {/* UN WCS Event - LIVE - Mobile */}
-            <div className="mb-6 p-3 bg-red-500 text-white rounded-lg text-center font-bold animate-pulse">
+            <div className="mb-6 p-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg text-center font-bold animate-pulse shadow-lg" title="From Civil Rights on Selma Soil to Crossing Bridges Across Waters through UN and Ghana Borders">
               <Link href="/simple-broadcast">
                 <a onClick={() => setIsOpen(false)}>
-                  LIVE: UN WCS Event
+                  🔴 LIVE: UN WCS + SQUADD
                 </a>
               </Link>
             </div>

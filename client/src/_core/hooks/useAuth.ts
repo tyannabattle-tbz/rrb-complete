@@ -14,8 +14,11 @@ export function useAuth(options?: UseAuthOptions) {
   const utils = trpc.useUtils();
 
   const meQuery = trpc.auth.me.useQuery(undefined, {
-    retry: false,
-    refetchOnWindowFocus: false,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchInterval: 300000,
   });
 
   // Store the current URL before redirecting to login

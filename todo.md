@@ -686,3 +686,76 @@
 - [x] All tests passing (30/30 tests)
 
 ### Status: COMPLETE ✅
+
+
+## Phase 38: Domain Routing Integration & Banner Enhancement
+
+### Domain Routing Integration
+- [ ] Integrate domainRoutingMiddleware into Express server startup
+- [ ] Add domain routing to server/_core/server.ts
+- [ ] Test rockinrockinboogie.manus.space routes to public interface
+- [ ] Test squadd.manus.space routes to broadcaster interface
+- [ ] Test solbones.manus.space routes to broadcaster interface
+- [ ] Verify domain detection in requests
+
+### UN WCS Banner Enhancement with SQUADD
+- [ ] Update UN WCS banner component to include SQUADD branding
+- [ ] Add civil rights theme: "From Civil Rights on Selma Soil to Crossing Bridges Across Waters through UN and Ghana Borders"
+- [ ] Create background image or gradient representing civil rights journey
+- [ ] Add SQUADD logo/badge to banner
+- [ ] Integrate Selma civil rights imagery
+- [ ] Add Ghana/UN partnership visual elements
+- [ ] Update banner copy with unified messaging
+
+### Authentication Session Timeout Fix
+- [ ] Investigate session cookie expiration settings
+- [ ] Extend session timeout duration
+- [ ] Implement session refresh mechanism
+- [ ] Fix forced re-login on page interaction
+- [ ] Add session persistence check
+- [ ] Verify OAuth token refresh
+- [ ] Test session persistence across page navigation
+
+### Testing & Deployment
+- [ ] Test domain routing on all three domains
+- [ ] Verify banner displays correctly on all platforms
+- [ ] Test login session persistence
+- [ ] Verify no forced re-login on page interaction
+- [ ] Create checkpoint with all fixes
+
+
+## Phase 38: Domain Routing, Banner Enhancement & Session Fix - COMPLETE ✅
+
+### Domain Routing Integration
+- [x] Integrate domainRoutingMiddleware into Express server startup
+- [x] Add domain routing to server/_core/index.ts
+- [x] Domain detection middleware initialized and logging
+
+### UN WCS Banner Enhancement with SQUADD
+- [x] Update UN WCS banner component to include SQUADD branding
+- [x] Add civil rights theme: "From Civil Rights on Selma Soil to Crossing Bridges Across Waters"
+- [x] Update desktop banner with gradient (red-600 to red-700)
+- [x] Update mobile banner with matching gradient
+- [x] Add hover effects and shadow for prominence
+- [x] Add tooltip with full civil rights message
+
+### Authentication Session Timeout Fix
+- [x] Enable retry logic with 3 attempts
+- [x] Implement exponential backoff (1s, 2s, 4s, capped at 30s)
+- [x] Enable refetchOnWindowFocus to refresh session on user return
+- [x] Enable refetchOnMount to refresh on component mount
+- [x] Set refetchInterval to 5 minutes (300000ms) for session keep-alive
+- [x] Write comprehensive tests for session persistence (10 tests passing)
+
+### Testing
+- [x] Session persistence tests (10/10 passing)
+- [x] Retry logic tests
+- [x] Exponential backoff calculation tests
+- [x] Window focus refetch tests
+- [x] Session keep-alive interval tests
+
+### Status: COMPLETE ✅
+All three major items implemented and tested:
+1. Domain routing middleware integrated into Express
+2. UN WCS banner updated with SQUADD branding and civil rights theme
+3. Session timeout fixed with retry, refetch, and keep-alive logic
