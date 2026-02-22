@@ -2,15 +2,19 @@
  * One-Click Go-Live Component
  * Simple, user-friendly broadcast start interface
  * Works across all platforms (SQUADD, Solbones, Custom)
+ * Role-based access: Only broadcasters and admins can go live
  */
 
 import React, { useState } from 'react';
-import { Play, Square, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { Play, Square, AlertCircle, CheckCircle, Loader, Lock } from 'lucide-react';
+import { RestrictedFeature } from './RoleBasedAccess';
+import type { PlatformRole } from './RoleBasedAccess';
 
 interface OneClickGoLiveProps {
   platformId: string;
   platformName: string;
   primaryColor: string;
+  userRole?: PlatformRole | null;
   onGoLive?: (broadcastId: string) => void;
   onStop?: () => void;
 }
@@ -19,6 +23,7 @@ export const OneClickGoLive: React.FC<OneClickGoLiveProps> = ({
   platformId,
   platformName,
   primaryColor,
+  userRole,
   onGoLive,
   onStop,
 }) => {
@@ -28,6 +33,9 @@ export const OneClickGoLive: React.FC<OneClickGoLiveProps> = ({
   const [broadcastTitle, setBroadcastTitle] = useState('');
   const [showTitleInput, setShowTitleInput] = useState(false);
   const [viewerCount, setViewerCount] = useState(0);
+
+  // Check if user has broadcaster role
+  const canBroadcast = userRole === 'broadcaster' || userRole === 'admin';
 
   const handleGoLive = async () => {
     if (!broadcastTitle.trim()) {
@@ -69,6 +77,20 @@ export const OneClickGoLive: React.FC<OneClickGoLiveProps> = ({
       setIsLoading(false);
     }
   };
+
+  // Show restricted feature if user doesn't have broadcaster role
+  if (!canBroadcast && userRole) {
+    return (
+      <RestrictedFeature
+        userRole={userRole}
+        requiredRole="broadcaster"
+        featureName="Go Live"
+        platformId={platformId}
+      >
+        <div>This should not render</div>
+      </RestrictedFeature>
+    );
+  }
 
   if (isLive) {
     return (
@@ -198,6 +220,11 @@ export const OneClickGoLive: React.FC<OneClickGoLiveProps> = ({
               Click "Go Live" to start streaming. Your broadcast will be available to all viewers
               on {platformName}.
             </p>
+            {userRole && (
+              <p className="text-xs text-blue-600 mt-2 font-medium">
+                Role: {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
+              </p>
+            )}
           </div>
         </div>
       </div>

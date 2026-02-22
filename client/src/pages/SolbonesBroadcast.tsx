@@ -6,12 +6,15 @@
 import React, { useState } from 'react';
 import { OneClickGoLive } from '../components/OneClickGoLive';
 import { Podcast, BarChart3, Settings, Headphones } from 'lucide-react';
+import type { PlatformRole } from '../components/RoleBasedAccess';
 
 export const SolbonesBroadcast: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'broadcast' | 'episodes' | 'settings'>(
     'broadcast'
   );
   const [isLive, setIsLive] = useState(false);
+  // TODO: Get actual user role from auth context
+  const userRole: PlatformRole = 'broadcaster';
 
   const platformConfig = {
     id: 'platform-solbones',
@@ -97,13 +100,14 @@ export const SolbonesBroadcast: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Go Live Section */}
             <div className="lg:col-span-1">
-              <OneClickGoLive
-                platformId={platformConfig.id}
-                platformName={platformConfig.name}
-                primaryColor={platformConfig.primaryColor}
-                onGoLive={() => setIsLive(true)}
-                onStop={() => setIsLive(false)}
-              />
+            <OneClickGoLive
+              platformId={platformConfig.id}
+              platformName={platformConfig.name}
+              primaryColor={platformConfig.primaryColor}
+              userRole={userRole}
+              onGoLive={() => setIsLive(true)}
+              onStop={() => setIsLive(false)}
+            />
             </div>
 
             {/* Broadcast Info */}
