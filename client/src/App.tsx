@@ -140,6 +140,7 @@ import SolbonesBroadcast from '@/pages/SolbonesBroadcast';
 import { AdminRoleManagement } from '@/pages/AdminRoleManagement';
 import BroadcasterOnboarding from '@/pages/BroadcasterOnboarding';
 import { SquaddStrategySession } from '@/components/SquaddStrategySession';
+import BroadcasterAnalytics from '@/pages/BroadcasterAnalytics';
 
 
 // ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
@@ -470,6 +471,7 @@ function Router() {
       <Route path="/squadd" component={SquaddBroadcast} />
       <Route path="/solbones" component={SolbonesBroadcast} />
       <Route path="/broadcaster/onboarding" component={BroadcasterOnboarding} />
+      <Route path="/broadcaster/analytics" component={BroadcasterAnalytics} />
       <Route path="/squadd/strategy-session" component={SquaddStrategySession} />
       <Route path="/admin/roles" component={AdminRoleManagement} />
       <Route path="/rrb/admin" component={RRBAdminDashboard} />

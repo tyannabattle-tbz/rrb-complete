@@ -8,6 +8,7 @@ import { CHANNEL_PRESETS, LIVE_STREAMS, RRB_LEGACY_TRACKS } from '@/lib/streamLi
 import RotatingVinylRecord from "@/components/rrb/RotatingVinylRecord";
 import { QUMUSActivityFeed } from "@/components/rrb/QUMUSActivityFeed";
 import { FrequencyTuner } from '@/components/rrb/FrequencyTuner';
+import { SquaddStrategySession } from '@/components/SquaddStrategySession';
 import { ListenerStatsDisplay } from '@/components/rrb/ListenerStatsDisplay';
 import { ChannelFavoritesButton } from '@/components/rrb/ChannelFavoritesButton';
 import { AudioQualitySelector } from '@/components/rrb/AudioQualitySelector';
@@ -150,15 +151,28 @@ function QuickListenSection() {
           </p>
         </div>
 
-        {/* UN WCS Event - LIVE BANNER */}
-        <div className="mb-8 p-6 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl shadow-2xl text-center animate-pulse">
-          <h2 className="text-3xl font-bold mb-2">🔴 LIVE: UN WCS Parallel Event</h2>
-          <p className="text-lg mb-4">March 17th - Worldwide Broadcast with Ghana Partners</p>
-          <Link href="/simple-broadcast">
-            <a className="inline-block px-8 py-3 bg-white text-red-600 font-bold rounded-lg hover:bg-gray-100 transition-colors">
-              Join the Broadcast Now
-            </a>
-          </Link>
+        {/* UN WCS + SQUADD Event - LIVE BANNER */}
+        <div className="mb-8 p-6 bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white rounded-2xl shadow-2xl text-center animate-pulse border-2 border-yellow-400">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="text-3xl animate-bounce">🔴</span>
+            <h2 className="text-3xl font-bold">LIVE: UN WCS + SQUADD</h2>
+            <span className="text-3xl animate-bounce">🔴</span>
+          </div>
+          <p className="text-sm italic mb-2 text-yellow-200">From Civil Rights on Selma Soil to Crossing Bridges Across Waters</p>
+          <p className="text-lg font-semibold mb-2">Sisters Questing Unapologetically After Divine Destiny</p>
+          <p className="text-base mb-4">March 17th - UN NGO CSW70 Parallel Event - Worldwide Broadcast</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/simple-broadcast">
+              <a className="inline-block px-6 py-2 bg-white text-red-700 font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                Join Broadcast Now
+              </a>
+            </Link>
+            <Link href="/squadd/strategy-session">
+              <a className="inline-block px-6 py-2 bg-yellow-400 text-red-700 font-bold rounded-lg hover:bg-yellow-300 transition-colors">
+                Strategy Session
+              </a>
+            </Link>
+          </div>
         </div>
 
         {/* Frequency Tuner */}
@@ -263,6 +277,11 @@ function QuickListenSection() {
               <FavoriteChannels />
             </div>
           )}
+        </div>
+
+        {/* SQUADD Strategy Session Widget */}
+        <div className="mb-12 max-w-2xl mx-auto">
+          <SquaddStrategySession />
         </div>
 
         {/* Channel Presets */}

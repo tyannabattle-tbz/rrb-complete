@@ -759,3 +759,38 @@ All three major items implemented and tested:
 1. Domain routing middleware integrated into Express
 2. UN WCS banner updated with SQUADD branding and civil rights theme
 3. Session timeout fixed with retry, refetch, and keep-alive logic
+
+
+## Phase 40: Restore Banner, Analytics Dashboard & Streaming Integration
+
+### Restore UN WCS + SQUADD Banner
+- [ ] Check Navigation component for banner code
+- [ ] Restore UN WCS banner with SQUADD branding
+- [ ] Add civil rights theme: "From Civil Rights on Selma Soil to Crossing Bridges"
+- [ ] Display on home screen prominently
+- [ ] Add red circle emoji trigger for cache refresh
+
+### Embed SQUADD Strategy Session Widget
+- [ ] Add SquaddStrategySession component to home dashboard
+- [ ] Display countdown timer prominently
+- [ ] Show Zoom meeting details
+- [ ] Add "Join Meeting" button
+- [ ] Update every second in real-time
+
+### Build Broadcaster Analytics Dashboard
+- [ ] Create /broadcaster/analytics route
+- [ ] Add live viewer count widget
+- [ ] Add chat engagement metrics
+- [ ] Add revenue/donation tracking
+- [ ] Add recording status indicator
+- [ ] Create charts for viewer trends
+- [ ] Add moderator activity log
+
+### Connect Onboarding to Streaming
+- [ ] Create RTMP server provisioning service
+- [ ] Link onboarding completion to streaming key generation
+- [ ] Auto-configure streaming endpoints
+- [ ] Send credentials to broadcaster email
+- [ ] Create streaming status verification
+
+### Status: IN PROGRESS
