@@ -152,7 +152,7 @@ function QuickListenSection() {
 
         {/* UN WCS Event - LIVE BANNER */}
         <div className="mb-8 p-6 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl shadow-2xl text-center animate-pulse">
-          <h2 className="text-3xl font-bold mb-2">LIVE: UN WCS Parallel Event</h2>
+          <h2 className="text-3xl font-bold mb-2">🔴 LIVE: UN WCS Parallel Event</h2>
           <p className="text-lg mb-4">March 17th - Worldwide Broadcast with Ghana Partners</p>
           <Link href="/simple-broadcast">
             <a className="inline-block px-8 py-3 bg-white text-red-600 font-bold rounded-lg hover:bg-gray-100 transition-colors">
