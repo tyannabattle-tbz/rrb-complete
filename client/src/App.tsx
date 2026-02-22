@@ -157,6 +157,9 @@ import VirtualPanelModerator from '@/pages/VirtualPanelModerator';
 import ModeratorDashboard from '@/pages/ModeratorDashboard';
 import BroadcastViewer from '@/pages/BroadcastViewer';
 import UnWcsStatusDashboard from '@/pages/UnWcsStatusDashboard';
+import SimpleBroadcastViewer from '@/pages/SimpleBroadcastViewer';
+import SimpleModeratorPanel from '@/pages/SimpleModeratorPanel';
+import SimpleSetupWizard from '@/pages/SimpleSetupWizard';
 import RRBAdminDashboard from '@/pages/rrb/AdminDashboard';
 import RealtimeCollaboration from '@/pages/rrb/RealtimeCollaboration';
 import MobileApp from '@/pages/rrb/MobileApp';
@@ -454,6 +457,9 @@ function Router() {
       <Route path="/health-monitoring" component={HealthMonitoringDashboard} />
       <Route path="/scenario-planner" component={ScenarioPlanner} />
       <Route path="/virtual-panel" component={VirtualPanelModerator} />
+      <Route path="/simple-broadcast" component={SimpleBroadcastViewer} />
+      <Route path="/simple-moderator" component={SimpleModeratorPanel} />
+      <Route path="/setup-wizard" component={SimpleSetupWizard} />
       <Route path="/rrb/admin" component={RRBAdminDashboard} />
       <Route path="/rrb/collaboration" component={RealtimeCollaboration} />
       <Route path="/rrb/mobile" component={MobileApp} />
