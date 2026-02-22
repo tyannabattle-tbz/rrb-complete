@@ -10,7 +10,6 @@ import { FrequencyPresetButtons } from '@/components/rrb/FrequencyPresetButtons'
 import { FrequencyIndicatorBadge } from '@/components/rrb/FrequencyIndicatorBadge';
 import { FrequencyModal } from '@/components/rrb/FrequencyModal';
 import { FrequencyEQFilter } from '@/lib/frequencyEQFilter';
-
 import { useState, useRef, useEffect } from 'react';
 
 interface PodcastEpisode {
@@ -306,7 +305,7 @@ export default function Podcasts() {
   const [audioQuality, setAudioQuality] = useState<'128' | '192' | '320'>('192');
   const [searchQuery, setSearchQuery] = useState('');
   const [recentlyPlayed, setRecentlyPlayed] = useState<PodcastEpisode[]>([]);
-  const [showTranscript, setShowTranscript] = useState(false);
+
 
   const eqFilterRef = useRef<FrequencyEQFilter | null>(null);
   const { user } = useAuth();
@@ -785,6 +784,10 @@ export default function Podcasts() {
           ))}
         </div>
       </div>
+
+
+
+
     </div>
   );
 }
