@@ -4,8 +4,9 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Check, X, Clock, Download, Copy, Eye, EyeOff } from 'lucide-react';
+import { Check, X, Clock, Download, Copy, Eye, EyeOff, CheckSquare } from 'lucide-react';
 import { CalendarDownloadButtons } from '@/components/CalendarDownloadButtons';
+import { PanelistPreEventChecklist } from '@/components/PanelistPreEventChecklist';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { trpc } from '@/lib/trpc';
@@ -27,6 +28,8 @@ interface PanelistInvitation {
 export const PanelistDashboard: React.FC = () => {
   const [invitation, setInvitation] = useState<PanelistInvitation | null>(null);
   const [showPasscode, setShowPasscode] = useState(false);
+  const [activeTab, setActiveTab] = useState<'details' | 'checklist'>('details');
+  const [completedChecklistItems, setCompletedChecklistItems] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
