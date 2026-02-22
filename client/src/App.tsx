@@ -137,6 +137,7 @@ import ScenarioPlanner from '@/pages/ScenarioPlanner';
 import { BroadcastHub } from '@/pages/BroadcastHub';
 import SquaddBroadcast from '@/pages/SquaddBroadcast';
 import SolbonesBroadcast from '@/pages/SolbonesBroadcast';
+import { AdminRoleManagement } from '@/pages/AdminRoleManagement';
 
 
 // ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
@@ -466,6 +467,7 @@ function Router() {
       <Route path="/broadcast-hub" component={BroadcastHub} />
       <Route path="/squadd" component={SquaddBroadcast} />
       <Route path="/solbones" component={SolbonesBroadcast} />
+      <Route path="/admin/roles" component={AdminRoleManagement} />
       <Route path="/rrb/admin" component={RRBAdminDashboard} />
       <Route path="/rrb/collaboration" component={RealtimeCollaboration} />
       <Route path="/rrb/mobile" component={MobileApp} />

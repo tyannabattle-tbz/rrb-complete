@@ -66,6 +66,7 @@ import { videoProductionWorkflowRouter } from "./routers/videoProductionWorkflow
 import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
+import { adminRolesRouter } from "./routers/admin.roles";
 
 // QUMUS Advanced Intelligence (cross-policy correlation, anomaly detection, self-assessment)
 import { qumusIntelligenceRouter } from "./routers/qumusIntelligenceRouter";
@@ -317,6 +318,11 @@ export const appRouter = router({
 
   // Royalty Payouts (Stripe Connect transfers to artists)
   royaltyPayouts: royaltyPayoutsRouter,
+
+  // Admin Role Management (platform broadcaster/moderator assignments)
+  admin: router({
+    roles: adminRolesRouter,
+  }),
 
   // Radio Content API (public tracks, playlists, schedules)
   radioContent: radioContentRouter,

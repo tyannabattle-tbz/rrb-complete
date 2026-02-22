@@ -1027,6 +1027,36 @@ export const users = mysqlTable("users", {
 	index("users_openId_unique").on(table.openId),
 ]);
 
+export const platformRoles = mysqlTable("platform_roles", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	platformId: varchar({ length: 64 }).notNull(),
+	role: mysqlEnum(['viewer','moderator','broadcaster','admin']).default('viewer').notNull(),
+	grantedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	grantedBy: int().references(() => users.id, { onDelete: "set null" } ),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("platform_roles_userId_platformId").on(table.userId, table.platformId),
+	index("platform_roles_platformId").on(table.platformId),
+]);
+
+export const roleAuditLogs = mysqlTable("role_audit_logs", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	platformId: varchar({ length: 64 }).notNull(),
+	oldRole: mysqlEnum(['viewer','moderator','broadcaster','admin']),
+	newRole: mysqlEnum(['viewer','moderator','broadcaster','admin']).notNull(),
+	changedBy: int().notNull().references(() => users.id, { onDelete: "restrict" } ),
+	reason: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+},
+(table) => [
+	index("role_audit_logs_userId").on(table.userId),
+	index("role_audit_logs_platformId").on(table.platformId),
+	index("role_audit_logs_changedBy").on(table.changedBy),
+]);
+
 export const webhookEndpoints = mysqlTable("webhook_endpoints", {
 	id: int().autoincrement().notNull(),
 	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
