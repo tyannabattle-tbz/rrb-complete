@@ -48,6 +48,7 @@ import { podcastPlaybackRouter } from "./routers/podcastPlayback";
 import { radioStationsRouter } from "./routers/radioStations";
 import { studioStreamingRouter } from "./routers/studioStreaming";
 import { commandExecutionRouter } from "./routers/commandExecutionRouter";
+import { broadcasterOnboardingRouter } from "./routers/broadcaster.onboarding";
 import { somaFmRouter } from "./routers/somaFm";
 import { qumusCommandRouter } from "./routers/qumusCommandRouter";
 import { audioRouter } from "./routers/audioRouter";
@@ -261,6 +262,11 @@ export const appRouter = router({
 
   // Command Execution
   commands: commandExecutionRouter,
+
+  // Broadcaster Onboarding
+  broadcaster: router({
+    onboarding: broadcasterOnboardingRouter,
+  }),
 
   // QUMUS Command Router
   qumusCommand: qumusCommandRouter,
