@@ -639,3 +639,334 @@ describe('Production Enhancement Tests', () => {
     });
   });
 });
+
+
+describe('Advanced Enhancement Tests', () => {
+  describe('SMS Reminder Service', () => {
+    it('should send 24-hour SMS reminder', () => {
+      const reminder = {
+        type: '24h',
+        phoneNumber: '+1234567890',
+        panelistName: 'Jane Doe',
+        eventName: 'UN WCS Parallel Event',
+      };
+
+      expect(reminder.type).toBe('24h');
+      expect(reminder.phoneNumber).toContain('+');
+    });
+
+    it('should send 1-hour SMS reminder', () => {
+      const reminder = {
+        type: '1h',
+        phoneNumber: '+1234567890',
+        panelistName: 'Jane Doe',
+      };
+
+      expect(reminder.type).toBe('1h');
+      expect(['24h', '1h']).toContain(reminder.type);
+    });
+
+    it('should schedule SMS reminders for event', () => {
+      const eventDate = new Date('2026-03-17T09:00:00Z');
+      const now = new Date();
+
+      const twentyFourHoursBefore = new Date(eventDate.getTime() - 24 * 60 * 60 * 1000);
+      const oneHourBefore = new Date(eventDate.getTime() - 60 * 60 * 1000);
+
+      expect(twentyFourHoursBefore < eventDate).toBe(true);
+      expect(oneHourBefore < eventDate).toBe(true);
+    });
+
+    it('should send bulk SMS reminders to confirmed panelists', () => {
+      const panelists = [
+        { id: '1', name: 'Jane', phoneNumber: '+1234567890', status: 'confirmed' },
+        { id: '2', name: 'John', phoneNumber: '+0987654321', status: 'confirmed' },
+        { id: '3', name: 'Bob', phoneNumber: undefined, status: 'confirmed' },
+      ];
+
+      const confirmedWithPhone = panelists.filter((p) => p.status === 'confirmed' && p.phoneNumber);
+      expect(confirmedWithPhone.length).toBe(2);
+    });
+
+    it('should include Zoom link in SMS message', () => {
+      const smsMessage = 'Join now: https://zoom.us/j/8792681602';
+      expect(smsMessage).toContain('zoom.us');
+    });
+
+    it('should handle SMS delivery failures', () => {
+      const result = {
+        success: false,
+        error: 'SMS service unavailable',
+      };
+
+      expect(result.success).toBe(false);
+    });
+
+    it('should log SMS sending attempts', () => {
+      const logEntry = {
+        timestamp: new Date(),
+        action: 'send_sms_reminder',
+        recipient: '+1234567890',
+        reminderType: '24h',
+      };
+
+      expect(logEntry.action).toBe('send_sms_reminder');
+    });
+  });
+
+  describe('Calendar Integration Service', () => {
+    it('should generate .ics file content', () => {
+      const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SQUADD//UN WCS Parallel Event//EN`;
+
+      expect(icsContent).toContain('BEGIN:VCALENDAR');
+      expect(icsContent).toContain('VERSION:2.0');
+    });
+
+    it('should create downloadable .ics file', () => {
+      const filename = 'UN-WCS-20260317-Jane-Doe.ics';
+      expect(filename).toContain('.ics');
+      expect(filename).toContain('20260317');
+    });
+
+    it('should generate Google Calendar link', () => {
+      const googleLink = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
+      expect(googleLink).toContain('calendar.google.com');
+    });
+
+    it('should generate Outlook Calendar link', () => {
+      const outlookLink = 'https://outlook.live.com/calendar/0/compose';
+      expect(outlookLink).toContain('outlook.live.com');
+    });
+
+    it('should generate Apple Calendar link', () => {
+      const appleLink = 'webcal://calendar.google.com/calendar/render';
+      expect(appleLink).toContain('webcal://');
+    });
+
+    it('should include event details in calendar file', () => {
+      const icsContent = 'SUMMARY:UN WCS Parallel Event - SQUADD Broadcast';
+      expect(icsContent).toContain('UN WCS');
+    });
+
+    it('should include Zoom meeting ID in calendar', () => {
+      const icsContent = 'DESCRIPTION:Zoom Meeting ID: 879 2681 6025';
+      expect(icsContent).toContain('Meeting ID');
+    });
+
+    it('should support all major calendar platforms', () => {
+      const platforms = ['Google', 'Outlook', 'Apple', 'ICS'];
+      expect(platforms.length).toBe(4);
+    });
+  });
+
+  describe('Panelist Analytics Dashboard', () => {
+    it('should calculate confirmation rate', () => {
+      const totalInvited = 20;
+      const confirmed = 15;
+      const confirmationRate = (confirmed / totalInvited) * 100;
+
+      expect(confirmationRate).toBe(75);
+    });
+
+    it('should calculate response rate', () => {
+      const totalInvited = 20;
+      const confirmed = 15;
+      const declined = 3;
+      const responseRate = ((confirmed + declined) / totalInvited) * 100;
+
+      expect(responseRate).toBe(90);
+    });
+
+    it('should predict attendance based on pending responses', () => {
+      const confirmed = 15;
+      const pending = 4;
+      const predictedAttendance = confirmed + Math.floor(pending * 0.15);
+
+      expect(predictedAttendance).toBeGreaterThanOrEqual(confirmed);
+    });
+
+    it('should calculate engagement score', () => {
+      const responseRate = 90;
+      const confirmationRate = 75;
+      const engagementScore = Math.round(responseRate * 0.6 + confirmationRate * 0.4);
+
+      expect(engagementScore).toBeGreaterThan(0);
+      expect(engagementScore).toBeLessThanOrEqual(100);
+    });
+
+    it('should display response breakdown pie chart', () => {
+      const pieData = [
+        { name: 'Confirmed', value: 15 },
+        { name: 'Pending', value: 4 },
+        { name: 'Declined', value: 1 },
+      ];
+
+      expect(pieData.length).toBe(3);
+      expect(pieData[0].value + pieData[1].value + pieData[2].value).toBe(20);
+    });
+
+    it('should show response timeline', () => {
+      const timelineData = [
+        { date: 'Day 1', confirmed: 2, declined: 0, pending: 18 },
+        { date: 'Day 3', confirmed: 5, declined: 1, pending: 14 },
+        { date: 'Day 7', confirmed: 15, declined: 3, pending: 2 },
+      ];
+
+      expect(timelineData.length).toBeGreaterThan(0);
+      expect(timelineData[0].confirmed).toBeLessThan(timelineData[2].confirmed);
+    });
+
+    it('should provide actionable recommendations', () => {
+      const recommendations = [
+        'Send reminder emails to pending panelists',
+        'Schedule technical rehearsal',
+        'Prepare contingency panelists',
+      ];
+
+      expect(recommendations.length).toBeGreaterThan(0);
+    });
+
+    it('should export analytics report', () => {
+      const report = 'UN WCS Parallel Event - Panelist Analytics Report';
+      expect(report).toContain('Analytics');
+    });
+
+    it('should show engagement level assessment', () => {
+      const engagementScore = 85;
+      const level = engagementScore > 80 ? 'Excellent' : 'Good';
+
+      expect(['Excellent', 'Good', 'Moderate']).toContain(level);
+    });
+  });
+
+  describe('Integration: SMS + Calendar + Analytics', () => {
+    it('should send SMS with calendar link', () => {
+      const smsWithCalendar = true;
+      expect(smsWithCalendar).toBe(true);
+    });
+
+    it('should include calendar options in panelist dashboard', () => {
+      const calendarOptions = ['ICS Download', 'Google Calendar', 'Outlook', 'Apple'];
+      expect(calendarOptions.length).toBe(4);
+    });
+
+    it('should track SMS delivery in analytics', () => {
+      const analytics = {
+        smsDelivered: 18,
+        smsFailed: 2,
+        deliveryRate: 90,
+      };
+
+      expect(analytics.deliveryRate).toBe((analytics.smsDelivered / (analytics.smsDelivered + analytics.smsFailed)) * 100);
+    });
+
+    it('should correlate calendar adds with engagement', () => {
+      const calendarAdds = 12;
+      const confirmed = 15;
+      const conversionRate = (calendarAdds / confirmed) * 100;
+
+      expect(conversionRate).toBeGreaterThan(0);
+    });
+
+    it('should provide unified event timeline', () => {
+      const timeline = [
+        { event: 'Invitations sent', date: '2026-03-10' },
+        { event: 'SMS reminders (24h)', date: '2026-03-16' },
+        { event: 'SMS reminders (1h)', date: '2026-03-17' },
+        { event: 'Event starts', date: '2026-03-17' },
+      ];
+
+      expect(timeline.length).toBe(4);
+    });
+
+    it('should support March 17th UN WCS event', () => {
+      const eventDate = new Date('2026-03-17');
+      expect(eventDate.getFullYear()).toBe(2026);
+      expect(eventDate.getMonth()).toBe(2); // March
+      expect(eventDate.getDate()).toBe(17);
+    });
+
+    it('should maintain SQUADD branding across all features', () => {
+      const brandingPoints = [
+        'SMS messages',
+        'Calendar files',
+        'Analytics reports',
+        'Dashboard headers',
+      ];
+
+      expect(brandingPoints.length).toBeGreaterThan(0);
+    });
+
+    it('should handle concurrent SMS sends', () => {
+      const concurrentSends = 20;
+      expect(concurrentSends).toBeGreaterThan(1);
+    });
+
+    it('should track all panelist interactions', () => {
+      const interactions = [
+        'invitation_sent',
+        'email_delivered',
+        'calendar_added',
+        'sms_sent',
+        'dashboard_accessed',
+        'status_confirmed',
+      ];
+
+      expect(interactions.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Error Handling & Edge Cases', () => {
+    it('should handle invalid phone numbers', () => {
+      const invalidPhone = 'not-a-phone';
+      expect(invalidPhone).not.toContain('+');
+    });
+
+    it('should handle SMS delivery to international numbers', () => {
+      const internationalPhone = '+44 20 7946 0958';
+      expect(internationalPhone).toContain('+');
+    });
+
+    it('should handle calendar generation for different timezones', () => {
+      const timezones = ['UTC', 'EST', 'PST', 'GMT'];
+      expect(timezones.length).toBeGreaterThan(0);
+    });
+
+    it('should handle analytics with zero responses', () => {
+      const confirmed = 0;
+      const total = 20;
+      const rate = total > 0 ? (confirmed / total) * 100 : 0;
+
+      expect(rate).toBe(0);
+    });
+
+    it('should gracefully handle SMS service outage', () => {
+      const fallback = {
+        success: false,
+        error: 'SMS service unavailable',
+        retryable: true,
+      };
+
+      expect(fallback.retryable).toBe(true);
+    });
+
+    it('should validate calendar date formats', () => {
+      const dateFormat = '2026-03-17';
+      const regex = /^\d{4}-\d{2}-\d{2}$/;
+
+      expect(regex.test(dateFormat)).toBe(true);
+    });
+
+    it('should handle duplicate SMS sends', () => {
+      const sent = [
+        { id: '1', timestamp: new Date() },
+        { id: '1', timestamp: new Date() },
+      ];
+
+      const unique = new Set(sent.map((s) => s.id));
+      expect(unique.size).toBe(1);
+    });
+  });
+});

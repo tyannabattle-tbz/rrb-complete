@@ -140,6 +140,7 @@ import SolbonesBroadcast from '@/pages/SolbonesBroadcast';
 import { AdminRoleManagement } from '@/pages/AdminRoleManagement';
 import { PanelistManagement } from '@/pages/admin/PanelistManagement';
 import { PanelistDashboard } from '@/pages/PanelistDashboard';
+import { PanelistAnalytics } from '@/pages/admin/PanelistAnalytics';
 import BroadcasterOnboarding from '@/pages/BroadcasterOnboarding';
 import { SquaddStrategySession } from '@/components/SquaddStrategySession';
 import BroadcasterAnalytics from '@/pages/BroadcasterAnalytics';
@@ -477,6 +478,7 @@ function Router() {
       <Route path="/squadd/strategy-session" component={SquaddStrategySession} />
       <Route path="/admin/roles" component={AdminRoleManagement} />
       <Route path="/admin/panelists" component={PanelistManagement} />
+      <Route path="/admin/panelists/analytics" component={PanelistAnalytics} />
       <Route path="/panelist/confirm/:id" component={PanelistDashboard} />
       <Route path="/panelist/dashboard" component={PanelistDashboard} />
       <Route path="/rrb/admin" component={RRBAdminDashboard} />

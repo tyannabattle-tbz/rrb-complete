@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Check, X, Clock, Download, Copy, Eye, EyeOff } from 'lucide-react';
+import { CalendarDownloadButtons } from '@/components/CalendarDownloadButtons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { trpc } from '@/lib/trpc';
@@ -333,6 +334,16 @@ export const PanelistDashboard: React.FC = () => {
                 </p>
               </div>
             )}
+
+            {/* Calendar Integration */}
+            <CalendarDownloadButtons
+              eventName={invitation.eventName}
+              eventDate={invitation.eventDate}
+              eventTime={invitation.eventTime}
+              zoomLink={invitation.zoomLink}
+              meetingId={invitation.meetingId}
+              panelistName={invitation.name}
+            />
 
             {/* Download Button */}
             <Button
