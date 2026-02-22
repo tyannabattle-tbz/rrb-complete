@@ -134,6 +134,9 @@ import ContentScheduler from '@/pages/ContentScheduler';
 import ModeratorTraining from '@/pages/ModeratorTraining';
 import HealthMonitoringDashboard from '@/pages/HealthMonitoringDashboard';
 import ScenarioPlanner from '@/pages/ScenarioPlanner';
+import { BroadcastHub } from '@/pages/BroadcastHub';
+import SquaddBroadcast from '@/pages/SquaddBroadcast';
+import SolbonesBroadcast from '@/pages/SolbonesBroadcast';
 
 
 // ===== RRB (Rockin Rockin Boogie) Integrated Pages =====
@@ -460,6 +463,9 @@ function Router() {
       <Route path="/simple-broadcast" component={SimpleBroadcastViewer} />
       <Route path="/simple-moderator" component={SimpleModeratorPanel} />
       <Route path="/setup-wizard" component={SimpleSetupWizard} />
+      <Route path="/broadcast-hub" component={BroadcastHub} />
+      <Route path="/squadd" component={SquaddBroadcast} />
+      <Route path="/solbones" component={SolbonesBroadcast} />
       <Route path="/rrb/admin" component={RRBAdminDashboard} />
       <Route path="/rrb/collaboration" component={RealtimeCollaboration} />
       <Route path="/rrb/mobile" component={MobileApp} />
