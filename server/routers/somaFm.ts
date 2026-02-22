@@ -33,10 +33,20 @@ export const somaFmRouter = router({
    */
   getChannelListeners: publicProcedure
     .input((val: unknown) => {
-      if (typeof val === "string") return val;
-      throw new Error("Channel ID must be a string");
+      // Return empty string if input is invalid to prevent cascading errors
+      if (typeof val === "string" && val.length > 0) return val;
+      return "";
     })
     .query(async ({ input: channelId }) => {
+      if (!channelId) {
+        return {
+          success: false,
+          channelId: "",
+          listeners: 0,
+          error: "Invalid channel ID",
+          timestamp: Date.now(),
+        };
+      }
       try {
         const listeners = await getChannelListeners(channelId);
         return {
