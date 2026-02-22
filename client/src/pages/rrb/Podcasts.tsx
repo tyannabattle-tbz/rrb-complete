@@ -10,7 +10,8 @@ import { FrequencyPresetButtons } from '@/components/rrb/FrequencyPresetButtons'
 import { FrequencyIndicatorBadge } from '@/components/rrb/FrequencyIndicatorBadge';
 import { FrequencyModal } from '@/components/rrb/FrequencyModal';
 import { FrequencyEQFilter } from '@/lib/frequencyEQFilter';
-import { Music } from 'lucide-react';
+
+import { useState, useRef, useEffect } from 'react';
 
 interface PodcastEpisode {
   id: string;
@@ -306,6 +307,7 @@ export default function Podcasts() {
   const [searchQuery, setSearchQuery] = useState('');
   const [recentlyPlayed, setRecentlyPlayed] = useState<PodcastEpisode[]>([]);
   const [showTranscript, setShowTranscript] = useState(false);
+
   const eqFilterRef = useRef<FrequencyEQFilter | null>(null);
   const { user } = useAuth();
 
@@ -413,6 +415,8 @@ export default function Podcasts() {
     ep.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     ep.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -737,6 +741,8 @@ export default function Podcasts() {
           className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
         />
       </div>
+
+
 
       {/* All Episodes */}
       <div className="container mx-auto px-4 py-6">
