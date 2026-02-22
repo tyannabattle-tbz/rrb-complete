@@ -234,6 +234,13 @@ export default function Navigation() {
             </a>
           </Link>
 
+          {/* UN WCS Event - LIVE */}
+          <Link href="/simple-broadcast">
+            <a className={`px-3 py-2 rounded text-sm font-medium transition-colors bg-red-500 text-white hover:bg-red-600 animate-pulse`}>
+              🔴 LIVE: UN WCS Event
+            </a>
+          </Link>
+
           {/* HybridCast */}
           <Link href="/hybridcast">
             <a className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
@@ -434,6 +441,15 @@ export default function Navigation() {
       {isOpen && (
         <div className="lg:hidden bg-background border-t border-border max-h-[80vh] overflow-y-auto">
           <div className="container mx-auto px-4 py-4">
+            {/* UN WCS Event - LIVE - Mobile */}
+            <div className="mb-6 p-3 bg-red-500 text-white rounded-lg text-center font-bold animate-pulse">
+              <Link href="/simple-broadcast">
+                <a onClick={() => setIsOpen(false)}>
+                  LIVE: UN WCS Event
+                </a>
+              </Link>
+            </div>
+
             {/* Legacy Foundation Section */}
             <div className="mb-6">
               <h3 className="font-bold text-accent mb-3 text-sm uppercase tracking-wide">
