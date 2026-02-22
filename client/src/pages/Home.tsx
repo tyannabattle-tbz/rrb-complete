@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import QumusChatPage from "./QumusChatPage";
+import { UnWcsCountdownTimer } from "@/components/UnWcsCountdownTimer";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -53,6 +54,11 @@ export default function Home() {
     );
   }
 
-  // Authenticated user - show QUMUS Chat Interface
-  return <QumusChatPage />;
+  // Authenticated user - show UN WCS countdown and QUMUS Chat Interface
+  return (
+    <div className="space-y-6 p-4 md:p-6">
+      <UnWcsCountdownTimer showLabel={true} />
+      <QumusChatPage />
+    </div>
+  );
 }

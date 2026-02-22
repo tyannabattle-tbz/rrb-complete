@@ -113,7 +113,7 @@ export const SquaddBroadcast: React.FC = () => {
             {/* Broadcast Info */}
             <div className="lg:col-span-2 space-y-6">
               {/* SQUADD Strategy Session - Panelist Only */}
-              <SquaddStrategySession />
+              <SquaddStrategySession userRole={userRole} />
               {/* Recent Broadcasts */}
               <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
                 <h2 className="text-xl font-bold text-white mb-4">Recent Broadcasts</h2>

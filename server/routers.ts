@@ -68,6 +68,7 @@ import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
 import { adminRolesRouter } from "./routers/admin.roles";
+import { adminPanelistsRouter } from "./routers/admin.panelists";
 
 // QUMUS Advanced Intelligence (cross-policy correlation, anomaly detection, self-assessment)
 import { qumusIntelligenceRouter } from "./routers/qumusIntelligenceRouter";
@@ -328,6 +329,7 @@ export const appRouter = router({
   // Admin Role Management (platform broadcaster/moderator assignments)
   admin: router({
     roles: adminRolesRouter,
+    panelists: adminPanelistsRouter,
   }),
 
   // Radio Content API (public tracks, playlists, schedules)

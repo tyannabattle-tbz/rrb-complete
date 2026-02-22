@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Clock, MapPin, Users, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Clock, MapPin, Users, CheckCircle2, AlertCircle, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import type { PlatformRole } from './RoleBasedAccess';
 
 interface CountdownState {
   days: number;
@@ -10,7 +11,11 @@ interface CountdownState {
   isLive: boolean;
 }
 
-export function SquaddStrategySession() {
+interface SquaddStrategySessionProps {
+  userRole?: PlatformRole | null;
+}
+
+export function SquaddStrategySession({ userRole = 'viewer' }: SquaddStrategySessionProps) {
   const [countdown, setCountdown] = useState<CountdownState>({
     days: 0,
     hours: 0,
@@ -66,6 +71,29 @@ export function SquaddStrategySession() {
     { item: 'Dress Code: Red, Black, Green, Gold or White Shirts', completed: false },
     { item: '3-Minute Power Pitch for "Pillars Relay"', completed: false },
   ];
+
+  // Check if user has access to see sensitive Zoom details
+  const hasAccess = userRole && (userRole === 'broadcaster' || userRole === 'moderator' || userRole === 'admin');
+
+  if (!hasAccess) {
+    return (
+      <div className="w-full">
+        <div className="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg p-6 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">🔴 SQUADD Strategy Session</h2>
+              <p className="text-red-100">From Civil Rights on Selma Soil to Crossing Bridges Across Waters</p>
+            </div>
+            <Lock className="w-8 h-8 text-yellow-300" />
+          </div>
+          <div className="mt-6 p-4 bg-red-800 bg-opacity-50 rounded-lg text-center">
+            <p className="text-red-100 mb-2">This content is restricted to panelists and broadcasters.</p>
+            <p className="text-sm text-red-200">Meeting details and Zoom credentials are only visible to authorized participants.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
