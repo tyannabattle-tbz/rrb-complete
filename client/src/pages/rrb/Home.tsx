@@ -8,7 +8,7 @@ import { CHANNEL_PRESETS, LIVE_STREAMS, RRB_LEGACY_TRACKS } from '@/lib/streamLi
 import RotatingVinylRecord from "@/components/rrb/RotatingVinylRecord";
 import { QUMUSActivityFeed } from "@/components/rrb/QUMUSActivityFeed";
 import { FrequencyTuner } from '@/components/rrb/FrequencyTuner';
-import { SquaddStrategySession } from '@/components/SquaddStrategySession';
+
 import { ListenerStatsDisplay } from '@/components/rrb/ListenerStatsDisplay';
 import { ChannelFavoritesButton } from '@/components/rrb/ChannelFavoritesButton';
 import { AudioQualitySelector } from '@/components/rrb/AudioQualitySelector';
@@ -144,6 +144,30 @@ function QuickListenSection() {
   return (
     <section className="py-16 md:py-24 bg-gradient-to-br from-slate-50 to-slate-100 text-slate-900">
       <div className="container">
+        {/* UN WCS + SQUADD Event - LIVE BANNER - TOP PRIORITY */}
+        <div className="mb-12 p-8 bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white rounded-2xl shadow-2xl text-center border-4 border-yellow-400" style={{animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'}}>
+          <div className="flex items-center justify-center gap-3 mb-3 flex-wrap">
+            <span className="text-4xl" style={{animation: 'bounce 1s infinite'}}>🔴</span>
+            <h2 className="text-4xl md:text-5xl font-black">LIVE: UN WCS + SQUADD</h2>
+            <span className="text-4xl" style={{animation: 'bounce 1s infinite'}}>🔴</span>
+          </div>
+          <p className="text-base italic mb-3 text-yellow-200 font-semibold">From Civil Rights on Selma Soil to Crossing Bridges Across Waters</p>
+          <p className="text-xl font-bold mb-3">Sisters Questing Unapologetically After Divine Destiny</p>
+          <p className="text-lg mb-6 font-semibold">March 17th - UN NGO CSW70 Parallel Event - Worldwide Broadcast</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/simple-broadcast">
+              <a className="inline-block px-8 py-3 bg-white text-red-700 font-bold rounded-lg hover:bg-yellow-300 transition-all transform hover:scale-105 text-lg">
+                Join Broadcast Now
+              </a>
+            </Link>
+            <Link href="/squadd/strategy-session">
+              <a className="inline-block px-8 py-3 bg-yellow-400 text-red-700 font-bold rounded-lg hover:bg-yellow-300 transition-all transform hover:scale-105 text-lg">
+                Strategy Session
+              </a>
+            </Link>
+          </div>
+        </div>
+
         <div className="text-center mb-10">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">🎧 Listen Now</h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -151,29 +175,7 @@ function QuickListenSection() {
           </p>
         </div>
 
-        {/* UN WCS + SQUADD Event - LIVE BANNER */}
-        <div className="mb-8 p-6 bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white rounded-2xl shadow-2xl text-center animate-pulse border-2 border-yellow-400">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="text-3xl animate-bounce">🔴</span>
-            <h2 className="text-3xl font-bold">LIVE: UN WCS + SQUADD</h2>
-            <span className="text-3xl animate-bounce">🔴</span>
-          </div>
-          <p className="text-sm italic mb-2 text-yellow-200">From Civil Rights on Selma Soil to Crossing Bridges Across Waters</p>
-          <p className="text-lg font-semibold mb-2">Sisters Questing Unapologetically After Divine Destiny</p>
-          <p className="text-base mb-4">March 17th - UN NGO CSW70 Parallel Event - Worldwide Broadcast</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/simple-broadcast">
-              <a className="inline-block px-6 py-2 bg-white text-red-700 font-bold rounded-lg hover:bg-yellow-300 transition-colors">
-                Join Broadcast Now
-              </a>
-            </Link>
-            <Link href="/squadd/strategy-session">
-              <a className="inline-block px-6 py-2 bg-yellow-400 text-red-700 font-bold rounded-lg hover:bg-yellow-300 transition-colors">
-                Strategy Session
-              </a>
-            </Link>
-          </div>
-        </div>
+
 
         {/* Frequency Tuner */}
         <div className="mb-8 max-w-2xl mx-auto">
@@ -279,11 +281,6 @@ function QuickListenSection() {
           )}
         </div>
 
-        {/* SQUADD Strategy Session Widget */}
-        <div className="mb-12 max-w-2xl mx-auto">
-          <SquaddStrategySession />
-        </div>
-
         {/* Channel Presets */}
         <div className="text-center">
           <p className="text-sm font-medium text-slate-600 mb-4">Browse by Category</p>
@@ -305,6 +302,7 @@ function QuickListenSection() {
   );
 }
 
+// Cache buster: 1771736787
 export default function Home() {
   const { user, loading, error, isAuthenticated, logout } = useAuth();
   const [selectedPlatform, setSelectedPlatform] = useState(0);

@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { OneClickGoLive } from '../components/OneClickGoLive';
+import { SquaddStrategySession } from '../components/SquaddStrategySession';
 import { Users, BarChart3, Settings, Share2 } from 'lucide-react';
 import type { PlatformRole } from '../components/RoleBasedAccess';
 
@@ -111,6 +112,8 @@ export const SquaddBroadcast: React.FC = () => {
 
             {/* Broadcast Info */}
             <div className="lg:col-span-2 space-y-6">
+              {/* SQUADD Strategy Session - Panelist Only */}
+              <SquaddStrategySession />
               {/* Recent Broadcasts */}
               <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
                 <h2 className="text-xl font-bold text-white mb-4">Recent Broadcasts</h2>
