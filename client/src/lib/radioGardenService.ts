@@ -47,14 +47,15 @@ export async function searchRadioGardenByGenre(genre: string): Promise<RadioStat
         
         if (data.hits && Array.isArray(data.hits)) {
           for (const hit of data.hits) {
-            if (hit.id && !seenIds.has(hit.id)) {
-              seenIds.add(hit.id);
+            if (hit.id && !seenIds.has(String(hit.id))) {
+              const id = String(hit.id);
+              seenIds.add(id);
               
               // Get stream URL for this station
-              const streamUrl = await getStationStreamUrl(hit.id);
+              const streamUrl = await getStationStreamUrl(id);
               if (streamUrl) {
                 results.push({
-                  id: hit.id,
+                  id: id,
                   title: hit.title || 'Unknown Station',
                   subtitle: hit.subtitle,
                   url: streamUrl,
@@ -82,10 +83,16 @@ export async function searchRadioGardenByGenre(genre: string): Promise<RadioStat
 /**
  * Get direct stream URL for a radio station
  */
-export async function getStationStreamUrl(channelId: string): Promise<string | null> {
+export async function getStationStreamUrl(channelId: string | number): Promise<string | null> {
   try {
+    // Ensure channelId is a string
+    const id = String(channelId);
+    if (!id || id.trim() === '') {
+      console.error('Invalid channel ID:', channelId);
+      return null;
+    }
     // Direct stream URL format from Radio Garden
-    return `${RADIO_GARDEN_API}/ara/content/listen/${channelId}/channel.mp3`;
+    return `${RADIO_GARDEN_API}/ara/content/listen/${id}/channel.mp3`;
   } catch (err) {
     console.error('Failed to get stream URL:', err);
     return null;
@@ -95,9 +102,15 @@ export async function getStationStreamUrl(channelId: string): Promise<string | n
 /**
  * Get station details
  */
-export async function getStationDetails(channelId: string): Promise<any> {
+export async function getStationDetails(channelId: string | number): Promise<any> {
   try {
-    const response = await fetch(`${RADIO_GARDEN_API}/ara/content/channel/${channelId}`);
+    // Ensure channelId is a string
+    const id = String(channelId);
+    if (!id || id.trim() === '') {
+      console.error('Invalid channel ID:', channelId);
+      return null;
+    }
+    const response = await fetch(`${RADIO_GARDEN_API}/ara/content/channel/${id}`);
     if (!response.ok) return null;
     return await response.json();
   } catch (err) {
@@ -120,10 +133,11 @@ export async function searchRadioStations(query: string): Promise<RadioStation[]
     if (data.hits && Array.isArray(data.hits)) {
       for (const hit of data.hits) {
         if (hit.id) {
-          const streamUrl = await getStationStreamUrl(hit.id);
+          const id = String(hit.id);
+          const streamUrl = await getStationStreamUrl(id);
           if (streamUrl) {
             results.push({
-              id: hit.id,
+              id: id,
               title: hit.title || 'Unknown Station',
               subtitle: hit.subtitle,
               url: streamUrl,
