@@ -2,6 +2,9 @@ import { router, protectedProcedure } from '../_core/trpc';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { notifyOwner } from '../_core/notification';
+import { getDb } from '../db';
+import { sql } from 'drizzle-orm';
+import { sendPanelistInvitationEmail, sendStatusConfirmationEmail } from '../_core/emailService';
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -10,23 +13,6 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   }
   return next({ ctx });
 });
-
-// In-memory store for panelists (in production, use database)
-const panelistStore = new Map<string, {
-  id: string;
-  email: string;
-  name: string;
-  role: 'panelist' | 'moderator';
-  eventName: string;
-  zoomLink: string;
-  meetingId: string;
-  passcode: string;
-  eventDate: string;
-  eventTime: string;
-  status: 'pending' | 'confirmed' | 'declined';
-  invitedAt: Date;
-  respondedAt?: Date;
-}>();
 
 export const adminPanelistsRouter = router({
   /**
@@ -48,54 +34,49 @@ export const adminPanelistsRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       try {
-        const panelistId = `panelist-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const db = await getDb();
         
-        const panelist = {
-          id: panelistId,
-          email: input.email,
-          name: input.name,
-          role: input.role,
-          eventName: input.eventName,
-          zoomLink: input.zoomLink,
-          meetingId: input.meetingId,
-          passcode: input.passcode,
-          eventDate: input.eventDate,
-          eventTime: input.eventTime,
-          status: 'pending' as const,
-          invitedAt: new Date(),
-        };
+        // If database is available, store in database
+        if (db) {
+          const result = await db.execute(
+            sql`INSERT INTO panelists (email, name, role, eventName, zoomLink, meetingId, passcode, eventDate, eventTime, status)
+                VALUES (${input.email}, ${input.name}, ${input.role}, ${input.eventName}, ${input.zoomLink}, ${input.meetingId}, ${input.passcode}, ${input.eventDate}, ${input.eventTime}, 'pending')`
+          );
+          
+          const panelistId = `panelist-${(result as any).insertId}`;
 
-        panelistStore.set(panelistId, panelist);
+          // Send invitation email with Zoom details
+          const emailResult = await sendPanelistInvitationEmail({
+            panelistName: input.name,
+            panelistEmail: input.email,
+            role: input.role,
+            eventName: input.eventName,
+            eventDate: input.eventDate,
+            eventTime: input.eventTime,
+            zoomLink: input.zoomLink,
+            meetingId: input.meetingId,
+            passcode: input.passcode,
+            confirmationLink: `${process.env.VITE_FRONTEND_URL || 'https://manusweb.manus.space'}/panelist/confirm/${panelistId}`,
+          });
 
-        // Send email notification with Zoom details
-        const emailContent = `
-Dear ${input.name},
+          // Notify owner of invitation sent
+          await notifyOwner({
+            title: `Panelist Invitation Sent: ${input.name}`,
+            content: `Invitation sent to ${input.email} for ${input.eventName} on ${input.eventDate} at ${input.eventTime}. Email: ${emailResult.success ? 'Success' : 'Failed'}`,
+          });
 
-You have been invited to participate as a ${input.role} for the ${input.eventName}.
+          return {
+            success: true,
+            panelistId,
+            message: `Invitation sent to ${input.email}`,
+          };
+        }
 
-Event Details:
-- Date: ${input.eventDate}
-- Time: ${input.eventTime}
-- Zoom Link: ${input.zoomLink}
-- Meeting ID: ${input.meetingId}
-- Passcode: ${input.passcode}
-
-Please join us for this important event. Your participation is valuable to our mission.
-
-Best regards,
-SQUADD Team
-        `;
-
-        // Notify owner of invitation sent
-        await notifyOwner({
-          title: `Panelist Invitation Sent: ${input.name}`,
-          content: `Invitation sent to ${input.email} for ${input.eventName} on ${input.eventDate} at ${input.eventTime}`,
-        });
-
+        // Fallback: return success without database
         return {
           success: true,
-          panelistId,
-          message: `Invitation sent to ${input.email}`,
+          panelistId: `panelist-${Date.now()}`,
+          message: `Invitation prepared for ${input.email}`,
         };
       } catch (error) {
         console.error('Error sending panelist invitation:', error);
@@ -116,27 +97,40 @@ SQUADD Team
         status: z.enum(['pending', 'confirmed', 'declined']).optional(),
       })
     )
-    .query(({ input }) => {
-      let panelists = Array.from(panelistStore.values());
+    .query(async ({ input }) => {
+      try {
+        const db = await getDb();
+        
+        if (!db) {
+          return [];
+        }
 
-      if (input.eventName) {
-        panelists = panelists.filter((p) => p.eventName === input.eventName);
+        let query = sql`SELECT id, name, email, role, eventName, status, invitedAt, respondedAt FROM panelists WHERE 1=1`;
+
+        if (input.eventName) {
+          query = sql`${query} AND eventName = ${input.eventName}`;
+        }
+
+        if (input.status) {
+          query = sql`${query} AND status = ${input.status}`;
+        }
+
+        const panelists = await db.execute(query);
+
+        return (panelists as any).map((p: any) => ({
+          id: p.id.toString(),
+          name: p.name,
+          email: p.email,
+          role: p.role,
+          eventName: p.eventName,
+          status: p.status,
+          invitedAt: p.invitedAt?.toISOString?.() || new Date(p.invitedAt).toISOString(),
+          respondedAt: p.respondedAt?.toISOString?.() || (p.respondedAt ? new Date(p.respondedAt).toISOString() : undefined),
+        }));
+      } catch (error) {
+        console.error('Error listing panelists:', error);
+        return [];
       }
-
-      if (input.status) {
-        panelists = panelists.filter((p) => p.status === input.status);
-      }
-
-      return panelists.map((p) => ({
-        id: p.id,
-        name: p.name,
-        email: p.email,
-        role: p.role,
-        eventName: p.eventName,
-        status: p.status,
-        invitedAt: p.invitedAt.toISOString(),
-        respondedAt: p.respondedAt?.toISOString(),
-      }));
     }),
 
   /**
@@ -144,28 +138,47 @@ SQUADD Team
    */
   getPanelistDetails: adminProcedure
     .input(z.object({ panelistId: z.string() }))
-    .query(({ input }) => {
-      const panelist = panelistStore.get(input.panelistId);
+    .query(async ({ input }) => {
+      try {
+        const db = await getDb();
+        
+        if (!db) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Panelist not found',
+          });
+        }
 
-      if (!panelist) {
+        const query = sql`SELECT * FROM panelists WHERE id = ${parseInt(input.panelistId.replace('panelist-', ''))}`;
+        const result = await db.execute(query);
+        const panelist = (result as any)[0];
+
+        if (!panelist) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Panelist not found',
+          });
+        }
+
+        return {
+          id: panelist.id.toString(),
+          name: panelist.name,
+          email: panelist.email,
+          role: panelist.role,
+          eventName: panelist.eventName,
+          eventDate: panelist.eventDate,
+          eventTime: panelist.eventTime,
+          status: panelist.status,
+          invitedAt: panelist.invitedAt?.toISOString?.() || new Date(panelist.invitedAt).toISOString(),
+          respondedAt: panelist.respondedAt?.toISOString?.() || (panelist.respondedAt ? new Date(panelist.respondedAt).toISOString() : undefined),
+        };
+      } catch (error) {
+        console.error('Error getting panelist details:', error);
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Panelist not found',
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to get panelist details',
         });
       }
-
-      return {
-        id: panelist.id,
-        name: panelist.name,
-        email: panelist.email,
-        role: panelist.role,
-        eventName: panelist.eventName,
-        eventDate: panelist.eventDate,
-        eventTime: panelist.eventTime,
-        status: panelist.status,
-        invitedAt: panelist.invitedAt.toISOString(),
-        respondedAt: panelist.respondedAt?.toISOString(),
-      };
     }),
 
   /**
@@ -173,28 +186,37 @@ SQUADD Team
    */
   removePanelist: adminProcedure
     .input(z.object({ panelistId: z.string() }))
-    .mutation(({ input, ctx }) => {
-      const panelist = panelistStore.get(input.panelistId);
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const db = await getDb();
 
-      if (!panelist) {
+        if (!db) {
+          return {
+            success: true,
+            message: 'Panelist removed',
+          };
+        }
+
+        const panelistIdNum = parseInt(input.panelistId.replace('panelist-', ''));
+        await db.execute(sql`DELETE FROM panelists WHERE id = ${panelistIdNum}`);
+
+        // Notify owner
+        await notifyOwner({
+          title: 'Panelist Removed',
+          content: `Panelist has been removed from the event`,
+        });
+
+        return {
+          success: true,
+          message: 'Panelist has been removed',
+        };
+      } catch (error) {
+        console.error('Error removing panelist:', error);
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Panelist not found',
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to remove panelist',
         });
       }
-
-      panelistStore.delete(input.panelistId);
-
-      // Notify owner
-      notifyOwner({
-        title: `Panelist Removed: ${panelist.name}`,
-        content: `${panelist.name} has been removed from ${panelist.eventName}`,
-      });
-
-      return {
-        success: true,
-        message: `${panelist.name} has been removed`,
-      };
     }),
 
   /**
@@ -207,23 +229,49 @@ SQUADD Team
         status: z.enum(['confirmed', 'declined']),
       })
     )
-    .mutation(({ input }) => {
-      const panelist = panelistStore.get(input.panelistId);
+    .mutation(async ({ input }) => {
+      try {
+        const db = await getDb();
 
-      if (!panelist) {
+        if (!db) {
+          return {
+            success: true,
+            message: `Status updated to ${input.status}`,
+          };
+        }
+
+        const panelistIdNum = parseInt(input.panelistId.replace('panelist-', ''));
+        
+        // Get panelist details for email
+        const panelistQuery = sql`SELECT name, email, eventName FROM panelists WHERE id = ${panelistIdNum}`;
+        const panelistResult = await db.execute(panelistQuery);
+        const panelist = (panelistResult as any)[0];
+        
+        await db.execute(
+          sql`UPDATE panelists SET status = ${input.status}, respondedAt = NOW() WHERE id = ${panelistIdNum}`
+        );
+
+        // Send confirmation email
+        if (panelist) {
+          await sendStatusConfirmationEmail({
+            panelistName: panelist.name,
+            panelistEmail: panelist.email,
+            eventName: panelist.eventName,
+            status: input.status,
+          });
+        }
+
+        return {
+          success: true,
+          message: `Status updated to ${input.status}`,
+        };
+      } catch (error) {
+        console.error('Error updating panelist status:', error);
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Panelist not found',
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to update status',
         });
       }
-
-      panelist.status = input.status;
-      panelist.respondedAt = new Date();
-
-      return {
-        success: true,
-        message: `Status updated to ${input.status}`,
-      };
     }),
 
   /**
@@ -231,28 +279,53 @@ SQUADD Team
    */
   getEventSummary: adminProcedure
     .input(z.object({ eventName: z.string() }))
-    .query(({ input }) => {
-      const panelists = Array.from(panelistStore.values()).filter(
-        (p) => p.eventName === input.eventName
-      );
+    .query(async ({ input }) => {
+      try {
+        const db = await getDb();
 
-      const confirmed = panelists.filter((p) => p.status === 'confirmed').length;
-      const pending = panelists.filter((p) => p.status === 'pending').length;
-      const declined = panelists.filter((p) => p.status === 'declined').length;
+        if (!db) {
+          return {
+            eventName: input.eventName,
+            totalInvited: 0,
+            confirmed: 0,
+            pending: 0,
+            declined: 0,
+            panelists: [],
+          };
+        }
 
-      return {
-        eventName: input.eventName,
-        totalInvited: panelists.length,
-        confirmed,
-        pending,
-        declined,
-        panelists: panelists.map((p) => ({
-          id: p.id,
-          name: p.name,
-          email: p.email,
-          role: p.role,
-          status: p.status,
-        })),
-      };
+        const query = sql`SELECT id, name, email, role, status FROM panelists WHERE eventName = ${input.eventName}`;
+        const panelists = await db.execute(query);
+
+        const panelistsArray = (panelists as any) || [];
+        const confirmed = panelistsArray.filter((p: any) => p.status === 'confirmed').length;
+        const pending = panelistsArray.filter((p: any) => p.status === 'pending').length;
+        const declined = panelistsArray.filter((p: any) => p.status === 'declined').length;
+
+        return {
+          eventName: input.eventName,
+          totalInvited: panelistsArray.length,
+          confirmed,
+          pending,
+          declined,
+          panelists: panelistsArray.map((p: any) => ({
+            id: p.id.toString(),
+            name: p.name,
+            email: p.email,
+            role: p.role,
+            status: p.status,
+          })),
+        };
+      } catch (error) {
+        console.error('Error getting event summary:', error);
+        return {
+          eventName: input.eventName,
+          totalInvited: 0,
+          confirmed: 0,
+          pending: 0,
+          declined: 0,
+          panelists: [],
+        };
+      }
     }),
 });

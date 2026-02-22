@@ -2351,3 +2351,26 @@ export const listenerRatings = mysqlTable("listener_ratings", {
 	index("listener_ratings_userId").on(table.userId),
 	index("listener_ratings_channelUrl").on(table.channelUrl),
 ]);
+
+export const panelists = mysqlTable("panelists", {
+	id: int().autoincrement().notNull().primaryKey(),
+	email: varchar({ length: 255 }).notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	role: mysqlEnum(['panelist', 'moderator']).notNull(),
+	eventName: varchar({ length: 255 }).notNull(),
+	zoomLink: varchar({ length: 2048 }).notNull(),
+	meetingId: varchar({ length: 100 }).notNull(),
+	passcode: varchar({ length: 100 }).notNull(),
+	eventDate: varchar({ length: 50 }).notNull(),
+	eventTime: varchar({ length: 100 }).notNull(),
+	status: mysqlEnum(['pending', 'confirmed', 'declined']).default('pending').notNull(),
+	invitedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	respondedAt: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("panelists_email").on(table.email),
+	index("panelists_eventName").on(table.eventName),
+	index("panelists_status").on(table.status),
+]);
