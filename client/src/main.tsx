@@ -58,6 +58,11 @@ const trpcClient = trpc.createClient({
   ],
 });
 
+function ToastNotificationContainer() {
+  const { toasts, removeToast } = useGlobalToast();
+  return <NotificationContainer toasts={toasts} onDismiss={removeToast} />;
+}
+
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
@@ -69,11 +74,6 @@ createRoot(document.getElementById("root")!).render(
     </QueryClientProvider>
   </trpc.Provider>
 );
-
-function ToastNotificationContainer() {
-  const { toasts, removeToast } = useGlobalToast();
-  return <NotificationContainer toasts={toasts} onDismiss={removeToast} />;
-}
 
 // Apply accessibility settings on page load
 if (typeof window !== 'undefined') {
