@@ -1,18 +1,17 @@
-// Mobile-responsive design optimized for iPhone (375px viewport)
-// Using mobile-first approach with md: breakpoint for larger screens
 import { useLocation } from "wouter";
 import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Heart, Radio, Users, Zap, Shield, Sparkles } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import QumusChatPage from "./QumusChatPage";
 import { UnWcsCountdownTimer } from "@/components/UnWcsCountdownTimer";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
 
-  // Set SEO-optimized document title (30-60 characters)
   useEffect(() => {
     document.title = "Rockin' Rockin' Boogie — Canryn Production";
   }, []);
@@ -27,28 +26,90 @@ export default function Home() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-6 max-w-lg px-4">
-          <div>
-            <h1 className="text-4xl font-bold text-primary mb-2">
-              QUMUS Autonomous Orchestration Engine
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Powering Canryn Production's Broadcast Ecosystem
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950/20 to-gray-950 text-gray-100">
+        <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-12">
+          {/* Header Section */}
+          <div className="text-center space-y-4 py-8">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Radio className="w-10 h-10 text-orange-400" />
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                Rockin' Rockin' Boogie
+              </h1>
+            </div>
+            <p className="text-xl text-gray-300 font-semibold">
+              A Voice for the Voiceless
+            </p>
+            <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+              A legacy restored — unified ecosystem of platforms, services, and autonomous intelligence. Broadcasting, emergency response, community empowerment, and generational wealth through Canryn Production and Sweet Miracles.
             </p>
           </div>
-          <h2 className="text-xl font-semibold text-foreground">
-            Intelligent Control for RRB Radio, HybridCast &amp; Sweet Miracles
-          </h2>
-          <p className="text-muted-foreground">
-            The intelligent control center managing HybridCast, Rockin Rockin Boogie, Sweet Miracles, and all subsidiary platforms with 90%+ autonomy. Content scheduling, listener analytics, emergency broadcasts, and revenue tracking — all orchestrated by QUMUS.
-          </p>
-          <a
-            href={getLoginUrl()}
-            className="inline-block px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:shadow-lg transition-all"
-          >
-            Sign In to QUMUS
-          </a>
+
+          {/* Feature Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="bg-gradient-to-br from-orange-500/20 to-red-500/20 border-orange-500/30 p-6 hover:border-orange-500/60 transition-all">
+              <Radio className="w-8 h-8 text-orange-400 mb-3" />
+              <h3 className="text-lg font-semibold text-white mb-2">24/7 Radio Broadcasting</h3>
+              <p className="text-gray-400 text-sm">Live streaming with 10 Solfeggio frequencies, vintage tuner interface, and real-time listener engagement.</p>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-red-500/20 to-pink-500/20 border-red-500/30 p-6 hover:border-red-500/60 transition-all">
+              <Shield className="w-8 h-8 text-red-400 mb-3" />
+              <h3 className="text-lg font-semibold text-white mb-2">Emergency Response</h3>
+              <p className="text-gray-400 text-sm">SOS alerts, I'm OK wellness checks, multi-channel notifications, and responder network management.</p>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-pink-500/20 to-purple-500/20 border-pink-500/30 p-6 hover:border-pink-500/60 transition-all">
+              <Heart className="w-8 h-8 text-pink-400 mb-3" />
+              <h3 className="text-lg font-semibold text-white mb-2">Sweet Miracles Giving</h3>
+              <p className="text-gray-400 text-sm">Support legacy recovery, community empowerment, and generational wealth creation through donations.</p>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 border-purple-500/30 p-6 hover:border-purple-500/60 transition-all">
+              <Zap className="w-8 h-8 text-purple-400 mb-3" />
+              <h3 className="text-lg font-semibold text-white mb-2">QUMUS Orchestration</h3>
+              <p className="text-gray-400 text-sm">90% autonomous decision-making for content scheduling, listener analytics, and platform control.</p>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-blue-500/30 p-6 hover:border-blue-500/60 transition-all">
+              <Users className="w-8 h-8 text-blue-400 mb-3" />
+              <h3 className="text-lg font-semibold text-white mb-2">Community Platform</h3>
+              <p className="text-gray-400 text-sm">Connect with listeners, share stories, access tools, and participate in the RRB ecosystem.</p>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-cyan-500/20 to-green-500/20 border-cyan-500/30 p-6 hover:border-cyan-500/60 transition-all">
+              <Sparkles className="w-8 h-8 text-cyan-400 mb-3" />
+              <h3 className="text-lg font-semibold text-white mb-2">Production Suite</h3>
+              <p className="text-gray-400 text-sm">Canryn Production tools for media creation, broadcast management, and content distribution.</p>
+            </Card>
+          </div>
+
+          {/* CTA Section */}
+          <div className="bg-gradient-to-r from-orange-600/30 to-pink-600/30 border border-orange-500/50 rounded-lg p-8 md:p-12 text-center space-y-6">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                Join the RRB Legacy
+              </h2>
+              <p className="text-gray-300 max-w-2xl mx-auto">
+                Sign in to access the full RRB ecosystem, manage broadcasts, respond to emergencies, and support the mission of generational wealth and community empowerment.
+              </p>
+            </div>
+            <a
+              href={getLoginUrl()}
+              className="inline-block px-8 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg font-semibold hover:from-orange-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
+            >
+              Sign In to RRB
+            </a>
+          </div>
+
+          {/* Footer Info */}
+          <div className="text-center text-gray-500 text-sm space-y-2 border-t border-gray-800 pt-8">
+            <p>
+              Sweet Miracles Foundation 501(c)(3) / 508(c) — Supporting Legacy Recovery & Community Empowerment
+            </p>
+            <p>
+              Powered by QUMUS Autonomous Orchestration Engine | Canryn Production Subsidiary
+            </p>
+          </div>
         </div>
       </div>
     );
