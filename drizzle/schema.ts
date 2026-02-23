@@ -2374,3 +2374,181 @@ export const panelists = mysqlTable("panelists", {
 	index("panelists_eventName").on(table.eventName),
 	index("panelists_status").on(table.status),
 ]);
+
+
+// ============================================================================
+// RESPONDER MANAGEMENT & EMERGENCY RESPONSE SYSTEM TABLES
+// ============================================================================
+
+export const responders = mysqlTable("responders", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	name: varchar({ length: 255 }).notNull(),
+	role: mysqlEnum(['coordinator', 'operator', 'medical', 'security', 'volunteer']).notNull(),
+	phoneNumber: varchar({ length: 20 }).notNull(),
+	email: varchar({ length: 255 }).notNull(),
+	status: mysqlEnum(['active', 'inactive', 'on-duty', 'off-duty']).default('inactive').notNull(),
+	certifications: json(), // Array of certification strings
+	languages: json().default(JSON.stringify(['en'])), // Array of language codes
+	maxConcurrentCalls: int().default(3).notNull(),
+	currentCallCount: int().default(0).notNull(),
+	responseTime: int().default(60).notNull(), // seconds
+	successRate: int().default(0).notNull(), // 0-100
+	specializations: json(), // Array of specialization strings
+	location: json(), // { latitude, longitude }
+	lastAssignmentTime: timestamp({ mode: 'string' }),
+	totalCallsHandled: int().default(0).notNull(),
+	totalSOSHandled: int().default(0).notNull(),
+	averageCallDuration: int().default(0).notNull(), // seconds
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("responders_userId").on(table.userId),
+	index("responders_role").on(table.role),
+	index("responders_status").on(table.status),
+]);
+
+export const sosAlerts = mysqlTable("sos_alerts", {
+	id: int().autoincrement().notNull().primaryKey(),
+	callerId: varchar({ length: 255 }).notNull(),
+	callerName: varchar({ length: 255 }).notNull(),
+	callerPhone: varchar({ length: 20 }).notNull(),
+	alertType: mysqlEnum(['medical', 'security', 'mental-health', 'other']).notNull(),
+	severity: mysqlEnum(['low', 'medium', 'high', 'critical']).notNull(),
+	description: text().notNull(),
+	location: json(), // { latitude, longitude, address }
+	status: mysqlEnum(['active', 'assigned', 'acknowledged', 'resolved', 'escalated']).default('active').notNull(),
+	assignedResponderId: int().references(() => responders.id, { onDelete: "set null" } ),
+	escalationCount: int().default(0).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+	resolvedAt: timestamp({ mode: 'string' }),
+},
+(table) => [
+	index("sos_alerts_callerId").on(table.callerId),
+	index("sos_alerts_status").on(table.status),
+	index("sos_alerts_severity").on(table.severity),
+	index("sos_alerts_assignedResponderId").on(table.assignedResponderId),
+]);
+
+export const callTransfers = mysqlTable("call_transfers", {
+	id: int().autoincrement().notNull().primaryKey(),
+	callId: varchar({ length: 255 }).notNull(),
+	fromResponderId: int().notNull().references(() => responders.id, { onDelete: "cascade" } ),
+	toResponderId: int().notNull().references(() => responders.id, { onDelete: "cascade" } ),
+	reason: varchar({ length: 255 }).notNull(),
+	contextPreserved: int().default(1).notNull(),
+	transferNotes: text(),
+	status: mysqlEnum(['initiated', 'in-progress', 'completed', 'cancelled']).default('initiated').notNull(),
+	transferTime: int(), // milliseconds
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	completedAt: timestamp({ mode: 'string' }),
+},
+(table) => [
+	index("call_transfers_callId").on(table.callId),
+	index("call_transfers_fromResponderId").on(table.fromResponderId),
+	index("call_transfers_toResponderId").on(table.toResponderId),
+]);
+
+export const smsDeliveryLogs = mysqlTable("sms_delivery_logs", {
+	id: int().autoincrement().notNull().primaryKey(),
+	phoneNumber: varchar({ length: 20 }).notNull(),
+	message: text().notNull(),
+	messageType: mysqlEnum(['otp', 'alert', 'notification', 'reminder']).notNull(),
+	language: varchar({ length: 10 }).default('en').notNull(),
+	priority: mysqlEnum(['low', 'normal', 'high', 'critical']).default('normal').notNull(),
+	status: mysqlEnum(['pending', 'sent', 'delivered', 'failed']).default('pending').notNull(),
+	deliveryAttempts: int().default(0).notNull(),
+	maxRetries: int().default(3).notNull(),
+	errorMessage: text(),
+	sentAt: timestamp({ mode: 'string' }),
+	deliveredAt: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+},
+(table) => [
+	index("sms_delivery_logs_phoneNumber").on(table.phoneNumber),
+	index("sms_delivery_logs_status").on(table.status),
+	index("sms_delivery_logs_messageType").on(table.messageType),
+]);
+
+export const callRecordings = mysqlTable("call_recordings", {
+	id: int().autoincrement().notNull().primaryKey(),
+	callId: varchar({ length: 255 }).notNull(),
+	callerId: varchar({ length: 255 }).notNull(),
+	responderId: int().notNull().references(() => responders.id, { onDelete: "set null" } ),
+	recordingUrl: varchar({ length: 2048 }).notNull(),
+	recordingKey: varchar({ length: 255 }).notNull(),
+	duration: int().notNull(), // seconds
+	fileSize: int().notNull(), // bytes
+	transcription: text(),
+	sentiment: mysqlEnum(['positive', 'neutral', 'negative']).default('neutral'),
+	highlights: json(), // Array of highlight timestamps
+	status: mysqlEnum(['recording', 'processing', 'completed', 'archived']).default('recording').notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	completedAt: timestamp({ mode: 'string' }),
+},
+(table) => [
+	index("call_recordings_callId").on(table.callId),
+	index("call_recordings_responderId").on(table.responderId),
+	index("call_recordings_status").on(table.status),
+]);
+
+export const responderSchedules = mysqlTable("responder_schedules", {
+	id: int().autoincrement().notNull().primaryKey(),
+	responderId: int().notNull().references(() => responders.id, { onDelete: "cascade" } ),
+	dayOfWeek: mysqlEnum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']).notNull(),
+	startTime: varchar({ length: 5 }).notNull(), // HH:MM format
+	endTime: varchar({ length: 5 }).notNull(), // HH:MM format
+	isAvailable: int().default(1).notNull(),
+	maxCallsForDay: int().default(10).notNull(),
+	notes: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("responder_schedules_responderId").on(table.responderId),
+	index("responder_schedules_dayOfWeek").on(table.dayOfWeek),
+]);
+
+export const emergencyBroadcasts = mysqlTable("emergency_broadcasts", {
+	id: int().autoincrement().notNull().primaryKey(),
+	title: varchar({ length: 255 }).notNull(),
+	message: text().notNull(),
+	alertType: mysqlEnum(['weather', 'public-safety', 'health', 'critical']).notNull(),
+	severity: mysqlEnum(['low', 'medium', 'high', 'critical']).notNull(),
+	regions: json(), // Array of region strings
+	recipientCount: int().default(0).notNull(),
+	deliveryRate: int().default(0).notNull(), // 0-100
+	status: mysqlEnum(['draft', 'scheduled', 'active', 'completed']).default('draft').notNull(),
+	languages: json().default(JSON.stringify(['en'])), // Array of language codes
+	createdBy: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	publishedAt: timestamp({ mode: 'string' }),
+	completedAt: timestamp({ mode: 'string' }),
+},
+(table) => [
+	index("emergency_broadcasts_status").on(table.status),
+	index("emergency_broadcasts_alertType").on(table.alertType),
+	index("emergency_broadcasts_createdBy").on(table.createdBy),
+]);
+
+export const qumusDecisions = mysqlTable("qumus_decisions", {
+	id: int().autoincrement().notNull().primaryKey(),
+	decisionId: varchar({ length: 255 }).notNull().unique(),
+	policyName: varchar({ length: 255 }).notNull(),
+	context: json().notNull(),
+	decision: json().notNull(),
+	confidence: int().notNull(), // 0-100
+	reasoning: text(),
+	autoExecuted: int().default(0).notNull(),
+	requiresApproval: int().default(0).notNull(),
+	approvedBy: int().references(() => users.id, { onDelete: "set null" } ),
+	executedAt: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+},
+(table) => [
+	index("qumus_decisions_policyName").on(table.policyName),
+	index("qumus_decisions_decisionId").on(table.decisionId),
+	index("qumus_decisions_autoExecuted").on(table.autoExecuted),
+]);
