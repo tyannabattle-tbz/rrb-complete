@@ -6,6 +6,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { PresetProvider } from "./contexts/PresetContext";
 import { AudioProvider } from "./contexts/AudioContext";
 import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer";
+import { OfflineStatusIndicator } from "./components/OfflineStatusIndicator";
 import Home from "./pages/Home";
 import { VideoPodcastDiscovery } from './pages/VideoPodcastDiscovery';
 import { VideoPodcastPlayer } from './components/VideoPodcastPlayer';
@@ -587,6 +588,7 @@ function App() {
         <PresetProvider>
           <AudioProvider>
             <TooltipProvider>
+              <OfflineStatusIndicator />
               <Toaster />
               <KeyboardShortcutsGuide />
               <SwipeHandler />
