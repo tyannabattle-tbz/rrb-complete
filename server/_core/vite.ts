@@ -72,12 +72,13 @@ export function serveStatic(app: Express) {
   // Cache control middleware for static assets
   app.use((_req, res, next) => {
     const path = _req.path;
-    // HTML files: no cache, always revalidate
+    // HTML files: aggressive no-cache with ETag for Opera compatibility
     if (path.endsWith('.html') || path === '/') {
       res.set({
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
         'Pragma': 'no-cache',
         'Expires': '0',
+        'ETag': `"${Date.now()}"`,
       });
     }
     // Versioned assets: aggressive cache
@@ -100,9 +101,10 @@ export function serveStatic(app: Express) {
   // fall through to index.html if the file doesn't exist
   app.use("*", (_req, res) => {
     res.set({
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
       'Pragma': 'no-cache',
       'Expires': '0',
+      'ETag': `"${Date.now()}"`,
     });
     res.sendFile(path.resolve(distPath, "index.html"));
   });
