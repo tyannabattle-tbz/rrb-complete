@@ -8,65 +8,17 @@ type UseAuthOptions = {
   redirectPath?: string;
 };
 
-// Session persistence key
-const SESSION_CACHE_KEY = 'manus-session-cache';
-const SESSION_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
-
-function getSessionCache() {
-  try {
-    const cached = localStorage.getItem(SESSION_CACHE_KEY);
-    if (!cached) return null;
-    const { data, timestamp } = JSON.parse(cached);
-    // Return cached session if still valid (within TTL)
-    if (Date.now() - timestamp < SESSION_CACHE_TTL) {
-      return data;
-    }
-    localStorage.removeItem(SESSION_CACHE_KEY);
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function setSessionCache(data: any) {
-  try {
-    localStorage.setItem(SESSION_CACHE_KEY, JSON.stringify({
-      data,
-      timestamp: Date.now(),
-    }));
-  } catch {
-    // Silently fail if localStorage is unavailable
-  }
-}
-
-function clearSessionCache() {
-  try {
-    localStorage.removeItem(SESSION_CACHE_KEY);
-  } catch {
-    // Silently fail
-  }
-}
-
 export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false, redirectPath = getLoginUrl() } =
     options ?? {};
   const utils = trpc.useUtils();
 
   const meQuery = trpc.auth.me.useQuery(undefined, {
-    // Increased retry attempts with exponential backoff
-    retry: (failureCount, error: any) => {
-      // Don't retry on 401 Unauthorized (real auth failure)
-      if (error?.data?.code === 'UNAUTHORIZED') return false;
-      // Retry up to 5 times for network/server errors
-      return failureCount < 5;
-    },
-    retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 60000),
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    // Only refetch every 15 minutes (not 5), reduces forced logouts
-    refetchInterval: 15 * 60 * 1000,
-    // Use stale data while refetching in background
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchInterval: 300000,
   });
 
   // Store the current URL before redirecting to login
@@ -80,13 +32,11 @@ export function useAuth(options?: UseAuthOptions) {
 
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => {
-      clearSessionCache();
       utils.auth.me.setData(undefined, null);
     },
   });
 
   const logout = useCallback(async () => {
-    clearSessionCache();
     try {
       await logoutMutation.mutateAsync();
     } catch (error: unknown) {
@@ -104,23 +54,15 @@ export function useAuth(options?: UseAuthOptions) {
   }, [logoutMutation, utils]);
 
   const state = useMemo(() => {
-    // Prefer fresh data, fall back to cache if query fails
-    const userData = meQuery.data ?? getSessionCache();
-    
-    // Cache successful auth data
-    if (meQuery.data) {
-      setSessionCache(meQuery.data);
-      localStorage.setItem(
-        "manus-runtime-user-info",
-        JSON.stringify(meQuery.data)
-      );
-    }
-    
+    localStorage.setItem(
+      "manus-runtime-user-info",
+      JSON.stringify(meQuery.data)
+    );
     return {
-      user: userData ?? null,
+      user: meQuery.data ?? null,
       loading: meQuery.isLoading || logoutMutation.isPending,
       error: meQuery.error ?? logoutMutation.error ?? null,
-      isAuthenticated: Boolean(userData), // Use cached data for auth state
+      isAuthenticated: Boolean(meQuery.data),
     };
   }, [
     meQuery.data,
@@ -132,10 +74,8 @@ export function useAuth(options?: UseAuthOptions) {
 
   useEffect(() => {
     if (!redirectOnUnauthenticated) return;
-    // Only redirect if we're sure the user is not authenticated
-    // Don't redirect while loading or if we have cached session data
     if (meQuery.isLoading || logoutMutation.isPending) return;
-    if (state.user) return; // User is authenticated (either fresh or cached)
+    if (state.user) return;
     if (typeof window === "undefined") return;
     
     const currentPath = window.location.pathname;
@@ -163,7 +103,5 @@ export function useAuth(options?: UseAuthOptions) {
     ...state,
     refresh: () => meQuery.refetch(),
     logout,
-    // Expose cache management for advanced use cases
-    clearCache: clearSessionCache,
   };
 }
