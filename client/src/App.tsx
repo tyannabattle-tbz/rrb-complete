@@ -48,6 +48,7 @@ import Community from "./pages/Community";
 import CreatorOnboarding from "./pages/CreatorOnboarding";
 import VideoAnalytics from "./pages/VideoAnalytics";
 import VideoSearch from "./pages/VideoSearch";
+import { AnimalCommunication } from "./components/AnimalCommunication";
 import CollaborativeEditor from "./pages/CollaborativeEditor";
 import { HybridCastConfig } from "./pages/HybridCastConfig";
 import { VideoWatermarkEditor } from "./pages/VideoWatermarkEditor";
@@ -368,6 +369,7 @@ function Router() {
       <Route path="/user-preferences" component={UserPreferences} />
       <Route path="/webhooks" component={WebhookManagement} />
       <Route path="/meditation" component={MeditationHub} />
+      <Route path="/animal-communication" component={AnimalCommunication} />
       <Route path="/sweet-miracles" component={LegacyDonationCheckout} />
       <Route path="/solbones" component={Solbones} />
       <Route path="/solbones-classic" component={SolbonesClassic} />
