@@ -171,6 +171,7 @@ import SimpleBroadcastViewer from '@/pages/SimpleBroadcastViewer';
 import SimpleModeratorPanel from '@/pages/SimpleModeratorPanel';
 import SimpleSetupWizard from '@/pages/SimpleSetupWizard';
 import RRBAdminDashboard from '@/pages/rrb/AdminDashboard';
+import { AdminDashboardEnhanced } from '@/components/AdminDashboardEnhanced';
 import RealtimeCollaboration from '@/pages/rrb/RealtimeCollaboration';
 import MobileApp from '@/pages/rrb/MobileApp';
 import DonationCheckout from '@/pages/rrb/DonationCheckout';
@@ -276,6 +277,7 @@ function Router() {
       <Route path="/qumus" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/dashboard" component={AdminDashboardEnhanced} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
       <Route path="/video-podcasts" component={VideoPodcastDiscovery} />
       <Route path="/videos/:id" component={() => <VideoPodcastPlayer videoId="test" title="Episode" duration={3600} />} />

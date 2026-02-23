@@ -427,6 +427,13 @@ export default function Navigation() {
           >
             <CheckCircle size={20} />
           </button>
+          {user?.role === 'admin' && (
+            <Link href="/admin/dashboard">
+              <a className="p-2 hover:bg-accent/10 rounded transition-colors" title="Admin Dashboard">
+                <Settings size={20} />
+              </a>
+            </Link>
+          )}
           <Button
             size="sm"
             variant="outline"

@@ -1,6 +1,7 @@
 import { router, protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { AdminService } from "../services/adminService";
+import { adminDatabaseService } from "../services/adminDatabaseService";
 import { TRPCError } from "@trpc/server";
 
 export const adminRouter = router({
