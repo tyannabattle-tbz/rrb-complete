@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, Heart, Radio, Users, Zap, Shield, Sparkles } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -7,14 +7,37 @@ import QumusChatPage from "./QumusChatPage";
 import { UnWcsCountdownTimer } from "@/components/UnWcsCountdownTimer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { TestimonialsSection } from "@/components/TestimonialsSection";
+import { QuickStartGuide } from "@/components/QuickStartGuide";
+import { useAnalytics } from "@/services/analyticsService";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
+  const analytics = useAnalytics();
+  const [scrollDepth, setScrollDepth] = useState(0);
 
   useEffect(() => {
     document.title = "Rockin' Rockin' Boogie — Canryn Production";
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+      const percentage = Math.round(
+        ((scrollTop + windowHeight) / documentHeight) * 100
+      );
+      if (percentage > scrollDepth) {
+        setScrollDepth(percentage);
+        analytics.trackScrollDepth(percentage);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [scrollDepth, analytics]);
 
   if (loading) {
     return (
@@ -46,37 +69,37 @@ export default function Home() {
 
           {/* Feature Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-br from-orange-500/20 to-red-500/20 border-orange-500/30 p-6 hover:border-orange-500/60 transition-all">
+            <Card className="bg-gradient-to-br from-orange-500/20 to-red-500/20 border-orange-500/30 p-6 hover:border-orange-500/60 transition-all cursor-pointer" onClick={() => analytics.trackFeatureCardClick('radio')}>
               <Radio className="w-8 h-8 text-orange-400 mb-3" />
               <h3 className="text-lg font-semibold text-white mb-2">24/7 Radio Broadcasting</h3>
               <p className="text-gray-400 text-sm">Live streaming with 10 Solfeggio frequencies, vintage tuner interface, and real-time listener engagement.</p>
             </Card>
 
-            <Card className="bg-gradient-to-br from-red-500/20 to-pink-500/20 border-red-500/30 p-6 hover:border-red-500/60 transition-all">
+            <Card className="bg-gradient-to-br from-red-500/20 to-pink-500/20 border-red-500/30 p-6 hover:border-red-500/60 transition-all cursor-pointer" onClick={() => analytics.trackFeatureCardClick('emergency')}>
               <Shield className="w-8 h-8 text-red-400 mb-3" />
               <h3 className="text-lg font-semibold text-white mb-2">Emergency Response</h3>
               <p className="text-gray-400 text-sm">SOS alerts, I'm OK wellness checks, multi-channel notifications, and responder network management.</p>
             </Card>
 
-            <Card className="bg-gradient-to-br from-pink-500/20 to-purple-500/20 border-pink-500/30 p-6 hover:border-pink-500/60 transition-all">
+            <Card className="bg-gradient-to-br from-pink-500/20 to-purple-500/20 border-pink-500/30 p-6 hover:border-pink-500/60 transition-all cursor-pointer" onClick={() => analytics.trackFeatureCardClick('sweet-miracles')}>
               <Heart className="w-8 h-8 text-pink-400 mb-3" />
               <h3 className="text-lg font-semibold text-white mb-2">Sweet Miracles Giving</h3>
               <p className="text-gray-400 text-sm">Support legacy recovery, community empowerment, and generational wealth creation through donations.</p>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 border-purple-500/30 p-6 hover:border-purple-500/60 transition-all">
+            <Card className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 border-purple-500/30 p-6 hover:border-purple-500/60 transition-all cursor-pointer" onClick={() => analytics.trackFeatureCardClick('qumus')}>
               <Zap className="w-8 h-8 text-purple-400 mb-3" />
               <h3 className="text-lg font-semibold text-white mb-2">QUMUS Orchestration</h3>
               <p className="text-gray-400 text-sm">90% autonomous decision-making for content scheduling, listener analytics, and platform control.</p>
             </Card>
 
-            <Card className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-blue-500/30 p-6 hover:border-blue-500/60 transition-all">
+            <Card className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border-blue-500/30 p-6 hover:border-blue-500/60 transition-all cursor-pointer" onClick={() => analytics.trackFeatureCardClick('community')}>
               <Users className="w-8 h-8 text-blue-400 mb-3" />
               <h3 className="text-lg font-semibold text-white mb-2">Community Platform</h3>
               <p className="text-gray-400 text-sm">Connect with listeners, share stories, access tools, and participate in the RRB ecosystem.</p>
             </Card>
 
-            <Card className="bg-gradient-to-br from-cyan-500/20 to-green-500/20 border-cyan-500/30 p-6 hover:border-cyan-500/60 transition-all">
+            <Card className="bg-gradient-to-br from-cyan-500/20 to-green-500/20 border-cyan-500/30 p-6 hover:border-cyan-500/60 transition-all cursor-pointer" onClick={() => analytics.trackFeatureCardClick('production')}>
               <Sparkles className="w-8 h-8 text-cyan-400 mb-3" />
               <h3 className="text-lg font-semibold text-white mb-2">Production Suite</h3>
               <p className="text-gray-400 text-sm">Canryn Production tools for media creation, broadcast management, and content distribution.</p>
@@ -95,10 +118,21 @@ export default function Home() {
             </div>
             <a
               href={getLoginUrl()}
+              onClick={() => analytics.trackCtaClick('sign-in-main')}
               className="inline-block px-8 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg font-semibold hover:from-orange-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
             >
               Sign In to RRB
             </a>
+          </div>
+
+          {/* Quick Start Guide */}
+          <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/30 rounded-lg p-8 md:p-12">
+            <QuickStartGuide />
+          </div>
+
+          {/* Testimonials Section */}
+          <div className="space-y-8">
+            <TestimonialsSection />
           </div>
 
           {/* Footer Info */}
