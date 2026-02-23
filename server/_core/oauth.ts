@@ -10,6 +10,14 @@ function getQueryParam(req: Request, key: string): string | undefined {
 }
 
 export function registerOAuthRoutes(app: Express) {
+  // Add middleware to prevent caching of auth endpoints
+  app.use('/api/oauth', (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+  });
+
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
@@ -22,6 +30,7 @@ export function registerOAuthRoutes(app: Express) {
 
     if (!code || !state) {
       console.error("[OAuth] Missing code or state");
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.status(400).json({ error: "code and state are required" });
       return;
     }
@@ -55,7 +64,14 @@ export function registerOAuthRoutes(app: Express) {
 
       const cookieOptions = getSessionCookieOptions(req);
       console.log("[OAuth] Setting session cookie with options", cookieOptions);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      
+      // Set session cookie with extended maxAge for persistence
+      res.cookie(COOKIE_NAME, sessionToken, { 
+        ...cookieOptions, 
+        maxAge: ONE_YEAR_MS,
+        // Ensure cookie is sent with all requests
+        path: '/',
+      });
 
       // Set a cookie to signal frontend to check localStorage for return-to URL
       res.cookie('auth-complete', 'true', { 
@@ -63,12 +79,20 @@ export function registerOAuthRoutes(app: Express) {
         httpOnly: false,
         secure: cookieOptions.secure,
         sameSite: cookieOptions.sameSite,
+        path: '/',
       });
+
+      // Also set a header to prevent caching of auth state
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
 
       console.log("[OAuth] Callback successful, redirecting to /");
       res.redirect(302, "/");
     } catch (error) {
       console.error("[OAuth] Callback failed", error);
+      // Set cache prevention headers on error too
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.status(500).json({ error: "OAuth callback failed" });
     }
   });

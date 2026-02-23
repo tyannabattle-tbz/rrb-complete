@@ -4,7 +4,7 @@
  * Each chunk is independently compiled, then combined at the top level
  */
 
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
@@ -157,9 +157,53 @@ import { moderationRouter } from './routers/moderationRouter';
 import { notificationPreferencesRouter } from './routers/notificationPreferencesRouter';
 import { userPlaylistRouter } from './routers/userPlaylistRouter';
 import { streamsRouter } from './routers/streams';
-import { liveShowFeaturesRouter } from './routers/liveShowFeatures';
+import { liveShowFeaturesRouter } from './routers/liveShowFeatures';// Add auth cache prevention middleware
+const authCacheMiddleware = (opts: any) => {
+  opts.ctx.res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  opts.ctx.res.setHeader('Pragma', 'no-cache');
+  opts.ctx.res.setHeader('Expires', '0');
+};
 
-export const appRouter = router({
+// Auth router with cache prevention
+const authRouter = router({
+  me: publicProcedure.query(opts => {
+    // Add cache prevention headers for auth queries
+    opts.ctx.res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    opts.ctx.res.setHeader('Pragma', 'no-cache');
+    opts.ctx.res.setHeader('Expires', '0');
+    
+    // Return user data (null if not authenticated)
+    // This allows frontend to distinguish between "loading" and "not authenticated"
+    return opts.ctx.user;
+  }),
+  logout: publicProcedure.mutation(({ ctx }) => {
+    const cookieOptions = getSessionCookieOptions(ctx.req);
+    
+    // Clear the session cookie
+    ctx.res.clearCookie(COOKIE_NAME, { 
+      ...cookieOptions, 
+      maxAge: -1,
+      path: '/',
+    });
+    
+    // Also clear auth-complete cookie
+    ctx.res.clearCookie('auth-complete', {
+      maxAge: -1,
+      path: '/',
+    });
+    
+    // Add cache prevention headers
+    ctx.res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    ctx.res.setHeader('Pragma', 'no-cache');
+    ctx.res.setHeader('Expires', '0');
+    
+    return {
+      success: true,
+    } as const;
+  }),
+});
+
+export const chunk1Router = router({
   // System router
   system: systemRouter,
 
@@ -177,16 +221,7 @@ export const appRouter = router({
   listenerNotifications: listenerNotificationsRouter,
 
   // Auth procedures
-  auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
-    logout: publicProcedure.mutation(({ ctx }) => {
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
-      return {
-        success: true,
-      } as const;
-    }),
-  }),
+  auth: authRouter,
 
   // User Playlist Management
   userPlaylist: userPlaylistRouter,
@@ -197,12 +232,11 @@ export const appRouter = router({
   // Live Show Features (Call-in, Archive, Donations)
   liveShowFeatures: liveShowFeaturesRouter,
 
-  // Merge all router chunks
-  ...chunk1Router._def.procedures,
+  // Merge other router chunks
   ...chunk2Router._def.procedures,
   ...chunk3Router._def.procedures,
   ...chunk4Router._def.procedures,
-  ...chunk5Router._def.procedures,
+  ...chunk5Router._def.procedures,s,
 
   // iTunes Podcasts
   itunesPodcasts: itunesPodcastsRouter,
@@ -523,6 +557,14 @@ export const appRouter = router({
   emailDigest: emailDigestRouter,
   search: searchRouter,
   referral: referralRouter,
+});
+
+export const appRouter = router({
+  ...chunk1Router._def.procedures,
+  itunesPodcasts: itunesPodcastsRouter,
+  chatStreaming: chatStreamingRouter,
+  locationSharing: locationSharingRouter,
+  fileAnalysis: fileAnalysisRouter,
 });
 
 export type AppRouter = typeof appRouter;
