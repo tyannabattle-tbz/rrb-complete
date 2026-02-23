@@ -538,7 +538,7 @@ export default function Podcasts() {
                     }}
                     className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white gap-2"
                   >
-                    <Music className="w-4 h-4" />
+                    <SpotifyIcon className="w-4 h-4" />
                     Tune In @ {selectedFrequency} Hz
                   </Button>
 
@@ -678,7 +678,7 @@ export default function Podcasts() {
               onClick={() => setShowFrequencyControls(!showFrequencyControls)}
               className="flex items-center gap-2 text-lg font-bold mb-3 text-orange-500 hover:text-orange-600 w-full"
             >
-              <Music className="w-5 h-5" />
+              <SpotifyIcon className="w-5 h-5" />
               Frequency Tuning
               {showFrequencyControls ? (
                 <ChevronUp className="w-5 h-5 ml-auto" />
