@@ -9,6 +9,7 @@ import { getLoginUrl } from "./const";
 import { ToastProvider, useGlobalToast } from "./contexts/ToastContext";
 import { NotificationContainer } from "./components/NotificationToast";
 import { AccessibilityPanel } from "./components/AccessibilityPanel";
+import { registerServiceWorker, requestNotificationPermission } from "./lib/swRegister";
 
 import "./index.css";
 
@@ -85,6 +86,16 @@ if (typeof window !== 'undefined') {
     root.style.letterSpacing = `${settings.textSpacing * 0.05}em`;
     root.style.lineHeight = `${1.5 * settings.textSpacing}`;
   }
+
+  // Register service worker for cache invalidation and offline support
+  registerServiceWorker().catch((err) => {
+    console.error('[App] Failed to register service worker:', err);
+  });
+
+  // Request notification permission for cache update alerts
+  requestNotificationPermission().catch((err) => {
+    console.error('[App] Failed to request notification permission:', err);
+  });
 }
 
 
