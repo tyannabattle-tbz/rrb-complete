@@ -21,6 +21,7 @@ import { chunk5Router } from "./routerChunks/chunk5";
 import { emailDigestRouter } from './routers/emailDigestRouter';
 import { searchRouter } from './routers/searchRouter';
 import { referralRouter } from './routers/referralRouter';
+import { sessionsRouter } from './routers/sessions';
 
 // Import QUMUS router
 import { qumusRouter } from "./routers/qumus";
@@ -245,6 +246,9 @@ export const appRouter = router({
 
   // Meditation Hub
   meditation: meditationRouter,
+
+  // Session Management
+  sessions: sessionsRouter,
 
   // Podcast Playback
   podcastPlayback: podcastPlaybackRouter,
