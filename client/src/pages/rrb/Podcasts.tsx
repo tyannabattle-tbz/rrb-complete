@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +10,6 @@ import { FrequencyPresetButtons } from '@/components/rrb/FrequencyPresetButtons'
 import { FrequencyIndicatorBadge } from '@/components/rrb/FrequencyIndicatorBadge';
 import { FrequencyModal } from '@/components/rrb/FrequencyModal';
 import { FrequencyEQFilter } from '@/lib/frequencyEQFilter';
-import { useState, useRef, useEffect } from 'react';
 
 interface PodcastEpisode {
   id: string;
