@@ -794,3 +794,50 @@ All three major items implemented and tested:
 - [ ] Create streaming status verification
 
 ### Status: IN PROGRESS
+
+## Phase 31: Advanced Broadcast Features - Radio Tuner Integration, Call-In System, Content Scheduler
+
+### Radio Tuner Integration into Music & Radio Page
+- [ ] Integrate VintageRadioTuner component into Music & Radio page
+- [ ] Add real audio streaming backend integration
+- [ ] Implement frequency-based channel switching
+- [ ] Add frequency display and information panel
+- [ ] Test all 10 Solfeggio frequencies with audio playback
+- [ ] Verify 432Hz default frequency works correctly
+- [ ] Mobile responsiveness testing for tuner UI
+
+### Call-In Feature for Live Interaction
+- [ ] Create `webrtcCallInService.ts` for WebRTC management
+- [ ] Create `webrtcCallInRouter.ts` with tRPC procedures
+- [ ] Create `CallInWidget.tsx` component with phone number display
+- [ ] Implement WebRTC signaling for peer connections
+- [ ] Add call status indicators (incoming, connected, ended)
+- [ ] Create call queue management system
+- [ ] Implement audio mixing for host + caller
+- [ ] Add caller authentication and verification
+- [ ] Create comprehensive test suite for call-in system
+- [ ] Integrate CallInWidget into broadcast pages
+
+### 24/7 Content Scheduler with QUMUS Orchestration
+- [ ] Create `contentScheduleService.ts` for schedule management
+- [ ] Create `contentScheduleRouter.ts` with tRPC procedures
+- [ ] Create `ContentScheduler.tsx` dashboard component
+- [ ] Implement schedule database schema (shows, timeslots, content)
+- [ ] Build QUMUS orchestration policy for autonomous scheduling
+- [ ] Add content rotation logic (podcasts, music, commercials)
+- [ ] Implement time-based programming automation
+- [ ] Create schedule visualization (calendar/timeline view)
+- [ ] Add operator override capabilities
+- [ ] Implement content queue management
+- [ ] Create comprehensive test suite for scheduler
+- [ ] Integrate scheduler into admin dashboard
+
+### Integration & Testing
+- [ ] Wire all three features into RadioStation page
+- [ ] Create integration tests for all features
+- [ ] Verify TypeScript compilation (0 errors)
+- [ ] Test on iOS Safari and Android Chrome
+- [ ] Performance testing with concurrent features
+- [ ] Create final checkpoint with all features
+
+### Status: IN PROGRESS 🚀

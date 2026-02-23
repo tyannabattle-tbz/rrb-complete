@@ -23,7 +23,13 @@ const SOLFEGGIO_FREQUENCIES: Frequency[] = [
   { name: 'Ascension', hz: 963, description: 'Pure Consciousness', color: 'from-pink-600 to-pink-400' },
 ];
 
-export function VintageRadioTuner() {
+interface VintageRadioTunerProps {
+  onFrequencyChange?: (frequency: number) => void;
+  onPlayToggle?: (isPlaying: boolean) => void;
+  onVolumeChange?: (volume: number) => void;
+}
+
+export function VintageRadioTuner({ onFrequencyChange, onPlayToggle, onVolumeChange }: VintageRadioTunerProps = {}) {
   const [currentFrequency, setCurrentFrequency] = useState<Frequency>(
     SOLFEGGIO_FREQUENCIES[4] // Default to 432Hz
   );
@@ -34,6 +40,7 @@ export function VintageRadioTuner() {
   const handleTune = (frequency: Frequency) => {
     setCurrentFrequency(frequency);
     setDisplayFrequency(frequency.hz);
+    onFrequencyChange?.(frequency.hz);
   };
 
   const handleFrequencySweep = (value: number[]) => {
@@ -46,6 +53,7 @@ export function VintageRadioTuner() {
     
     if (closest.hz === newHz) {
       setCurrentFrequency(closest);
+      onFrequencyChange?.(closest.hz);
     }
   };
 
@@ -113,7 +121,10 @@ export function VintageRadioTuner() {
             <Volume2 className="w-5 h-5 text-amber-300" />
             <Slider
               value={[volume]}
-              onValueChange={(value) => setVolume(value[0])}
+              onValueChange={(value) => {
+                setVolume(value[0]);
+                onVolumeChange?.(value[0]);
+              }}
               min={0}
               max={100}
               step={1}
@@ -124,7 +135,11 @@ export function VintageRadioTuner() {
         </div>
 
         <Button
-          onClick={() => setIsPlaying(!isPlaying)}
+          onClick={() => {
+            const newState = !isPlaying;
+            setIsPlaying(newState);
+            onPlayToggle?.(newState);
+          }}
           className={`w-full py-6 text-lg font-bold rounded-lg transition-all ${
             isPlaying
               ? 'bg-red-600 hover:bg-red-700 text-white'

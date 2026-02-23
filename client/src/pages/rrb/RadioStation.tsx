@@ -7,6 +7,7 @@ import RadioCommercials from '@/components/rrb/RadioCommercials';
 import SeasonalCampaigns from '@/components/rrb/SeasonalCampaigns';
 import { ChevronDown, Search, Radio, Play, Pause, Loader } from 'lucide-react';
 import { getCuratedStationsByGenre, searchRadioStations } from '@/lib/radioGardenService';
+import { VintageRadioTuner } from '@/components/VintageRadioTuner';
 
 // Genre categories for Radio Garden API
 const GENRE_CATEGORIES = {
@@ -68,6 +69,9 @@ export default function RadioStation() {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [currentFrequency, setCurrentFrequency] = useState(432);
+  const [tunerVolume, setTunerVolume] = useState(70);
+  const [showTuner, setShowTuner] = useState(false);
 
   // Load channels for selected genre
   useEffect(() => {
@@ -195,6 +199,29 @@ export default function RadioStation() {
             </div>
             <p className="text-gray-300">Powered by Radio Garden • Global stations • Live streaming</p>
           </div>
+
+          {/* Vintage Radio Tuner Toggle */}
+          <div className="mb-6 flex justify-center">
+            <button
+              onClick={() => setShowTuner(!showTuner)}
+              className="px-6 py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold rounded-lg transition-all shadow-lg"
+            >
+              {showTuner ? 'Hide Vintage Tuner' : 'Show Vintage Tuner'}
+            </button>
+          </div>
+
+          {/* Vintage Radio Tuner */}
+          {showTuner && (
+            <div className="mb-8 bg-slate-800 rounded-lg p-6">
+              <VintageRadioTuner
+                onFrequencyChange={(freq) => setCurrentFrequency(freq)}
+                onVolumeChange={(vol) => setTunerVolume(vol)}
+              />
+              <div className="mt-4 p-4 bg-slate-700 rounded-lg text-center">
+                <p className="text-amber-300 font-mono text-sm">Current Frequency: {currentFrequency} Hz - Volume: {tunerVolume}%</p>
+              </div>
+            </div>
+          )}
 
           {/* Search Bar */}
           <div className="mb-6">
