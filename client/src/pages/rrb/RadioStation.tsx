@@ -23,9 +23,12 @@ const GENRE_CATEGORIES = {
 
 // Fallback static channels (for when API is unavailable)
 const FALLBACK_CHANNELS = [
-  { id: 'rrb-main', name: 'RRB Main', category: 'Operators', description: 'Rockin\' Rockin\' Boogie Main Channel', streamUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3' },
-  { id: 'canryn-main', name: 'Canryn Productions', category: 'Operators', description: 'Canryn Production content', streamUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3' },
-  { id: 'sweet-miracles', name: 'Sweet Miracles', category: 'Operators', description: 'Sweet Miracles nonprofit', streamUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3' },
+  { id: 'radio-paradise', name: 'Radio Paradise', category: 'Rock', description: 'Premium rock and alternative music', streamUrl: 'https://stream.radioparadise.com/aac-128' },
+  { id: 'rrb-legacy', name: "Rockin' Rockin' Boogie", category: 'Soul & Funk', description: 'The iconic RRB legacy track', streamUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3' },
+  { id: 'bbc-radio-1', name: 'BBC Radio 1', category: 'Pop', description: 'BBC Radio 1 - Pop and contemporary', streamUrl: 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/llnw/bbc_radio_one.m3u8' },
+  { id: 'bbc-radio-3', name: 'BBC Radio 3', category: 'Jazz', description: 'BBC Radio 3 - Jazz and classical', streamUrl: 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/llnw/bbc_radio_three.m3u8' },
+  { id: 'france-inter', name: 'France Inter', category: 'Talk', description: 'France Inter - French talk radio', streamUrl: 'https://direct.franceinter.fr/live/franceinter-midfi.mp3' },
+  { id: 'deutschlandfunk', name: 'Deutschlandfunk', category: 'Talk', description: 'Deutschlandfunk - German news and talk', streamUrl: 'https://dradio-dlf-live.akamaized.net/hls/live/2043737/dlf/master.m3u8' },
 ];
 
 const CATEGORIES = ['All', 'R&B/Soul', 'Jazz', 'Blues', 'Rock', 'Country', '90s Hip-Hop', 'Talk', 'Meditation', 'Operators'];
