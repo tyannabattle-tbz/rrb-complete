@@ -158,6 +158,7 @@ import { notificationPreferencesRouter } from './routers/notificationPreferences
 import { userPlaylistRouter } from './routers/userPlaylistRouter';
 import { streamsRouter } from './routers/streams';
 import { liveShowFeaturesRouter } from './routers/liveShowFeatures';
+import { streamRouter } from './routers/streamRouter';
 
 export const appRouter = router({
   // System router
@@ -193,6 +194,9 @@ export const appRouter = router({
 
   // Stream Management
   streams: streamsRouter,
+
+  // Stream Proxy (CORS, iOS compatibility)
+  stream: streamRouter,
 
   // Live Show Features (Call-in, Archive, Donations)
   liveShowFeatures: liveShowFeaturesRouter,
