@@ -159,6 +159,7 @@ import { userPlaylistRouter } from './routers/userPlaylistRouter';
 import { streamsRouter } from './routers/streams';
 import { liveShowFeaturesRouter } from './routers/liveShowFeatures';
 import { streamRouter } from './routers/streamRouter';
+import { qumusAutonomousUpdatesRouter } from './routers/qumus-autonomous-updates';
 
 export const appRouter = router({
   // System router
@@ -197,6 +198,9 @@ export const appRouter = router({
 
   // Stream Proxy (CORS, iOS compatibility)
   stream: streamRouter,
+
+  // Qumus Autonomous Updates (handles all future updates from site and app)
+  qumusAutonomousUpdates: qumusAutonomousUpdatesRouter,
 
   // Live Show Features (Call-in, Archive, Donations)
   liveShowFeatures: liveShowFeaturesRouter,

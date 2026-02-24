@@ -18,25 +18,43 @@ export default function Home() {
   const [scrollDepth, setScrollDepth] = useState(0);
 
   useEffect(() => {
-    document.title = "Rockin' Rockin' Boogie - Radio, Emergency Response & Community Platform";
+    // SEO Title with Little Richard reference
+    document.title = "Rockin' Rockin' Boogie - Little Richard Legacy Radio & Emergency Response Platform";
     
-    // Set meta description
+    // Set meta description with Little Richard
     let metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
       metaDescription = document.createElement('meta');
       metaDescription.setAttribute('name', 'description');
       document.head.appendChild(metaDescription);
     }
-    metaDescription.setAttribute('content', 'RRB - A legacy restored. 24/7 radio broadcasting, emergency response, community empowerment, and autonomous orchestration powered by QUMUS.');
+    metaDescription.setAttribute('content', 'Rockin\' Rockin\' Boogie - A Little Richard legacy platform. 24/7 radio broadcasting, emergency response, community empowerment, and autonomous orchestration powered by QUMUS AI. Honoring the voice of rock and roll pioneer Little Richard.');
     
-    // Set meta keywords
+    // Set meta keywords with Little Richard
     let metaKeywords = document.querySelector('meta[name="keywords"]');
     if (!metaKeywords) {
       metaKeywords = document.createElement('meta');
       metaKeywords.setAttribute('name', 'keywords');
       document.head.appendChild(metaKeywords);
     }
-    metaKeywords.setAttribute('content', 'radio broadcasting, emergency response, community platform, QUMUS orchestration, Canryn Production, Sweet Miracles, autonomous AI, live streaming, podcast network, emergency broadcast');
+    metaKeywords.setAttribute('content', 'Little Richard, rock and roll, radio broadcasting, emergency response, community platform, QUMUS orchestration, Canryn Production, Sweet Miracles, autonomous AI, live streaming, podcast network, emergency broadcast, music legacy, heritage platform');
+    
+    // Set Open Graph tags for social sharing
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (!ogTitle) {
+      ogTitle = document.createElement('meta');
+      ogTitle.setAttribute('property', 'og:title');
+      document.head.appendChild(ogTitle);
+    }
+    ogTitle.setAttribute('content', "Rockin' Rockin' Boogie - Little Richard Legacy Radio");
+    
+    let ogDescription = document.querySelector('meta[property="og:description"]');
+    if (!ogDescription) {
+      ogDescription = document.createElement('meta');
+      ogDescription.setAttribute('property', 'og:description');
+      document.head.appendChild(ogDescription);
+    }
+    ogDescription.setAttribute('content', 'A Little Richard legacy platform honoring the pioneer of rock and roll with 24/7 radio broadcasting, emergency response, and community empowerment.');
   }, []);
 
   useEffect(() => {
@@ -78,15 +96,15 @@ export default function Home() {
               </h1>
             </div>
             <p className="text-xl text-gray-300 font-semibold">
-              A Voice for the Voiceless
+              Honoring Little Richard's Legacy — A Voice for the Voiceless
             </p>
             <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-              A legacy restored — unified ecosystem of platforms, services, and autonomous intelligence. Broadcasting, emergency response, community empowerment, and generational wealth through Canryn Production and Sweet Miracles.
+              A Little Richard legacy platform restored — unified ecosystem of platforms, services, and autonomous intelligence. Broadcasting, emergency response, community empowerment, and generational wealth through Canryn Production and Sweet Miracles. Celebrating the pioneer of rock and roll.
             </p>
           </div>
 
           {/* Feature Grid */}
-          <h2 className="text-3xl font-bold text-white mb-6">Core Features & Services</h2>
+          <h2 className="text-3xl font-bold text-white mb-6">Little Richard Legacy Platform - Core Features & Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="bg-gradient-to-br from-orange-500/20 to-red-500/20 border-orange-500/30 p-6 hover:border-orange-500/60 transition-all cursor-pointer" onClick={() => analytics.trackFeatureCardClick('radio')}>
               <Radio className="w-8 h-8 text-orange-400 mb-3" />
@@ -126,14 +144,14 @@ export default function Home() {
           </div>
 
           {/* CTA Section */}
-          <h2 className="text-3xl font-bold text-white mb-6">Get Started Today</h2>
+          <h2 className="text-3xl font-bold text-white mb-6">Join the Little Richard Legacy</h2>
           <div className="bg-gradient-to-r from-orange-600/30 to-pink-600/30 border border-orange-500/50 rounded-lg p-8 md:p-12 text-center space-y-6">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                Join the RRB Legacy
+                Become Part of the RRB Legacy
               </h2>
               <p className="text-gray-300 max-w-2xl mx-auto">
-                Sign in to access the full RRB ecosystem, manage broadcasts, respond to emergencies, and support the mission of generational wealth and community empowerment.
+                Sign in to access the full RRB ecosystem honoring Little Richard's pioneering spirit. Manage broadcasts, respond to emergencies, and support the mission of generational wealth and community empowerment.
               </p>
             </div>
             <a
@@ -159,6 +177,9 @@ export default function Home() {
 
           {/* Footer Info */}
           <div className="text-center text-gray-500 text-sm space-y-2 border-t border-gray-800 pt-8">
+            <p>
+              Rockin' Rockin' Boogie — Honoring the Legacy of Little Richard, Pioneer of Rock and Roll
+            </p>
             <p>
               Sweet Miracles Foundation 501(c)(3) / 508(c) — Supporting Legacy Recovery & Community Empowerment
             </p>

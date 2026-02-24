@@ -1,4 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useEffect } from 'react';
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -65,6 +66,7 @@ import { MobileBottomNav } from './components/MobileBottomNav';
 import { UnifiedMobileSidebar } from './components/UnifiedMobileSidebar';
 import { useSwipeGesture } from './hooks/useSwipeGesture';
 import { usePostAuthRedirect } from './_core/hooks/usePostAuthRedirect';
+
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
 import QumusChatPage from '@/pages/QumusChatPage';
@@ -581,6 +583,40 @@ function PostAuthRedirectHandler() {
 }
 
 function App() {
+  // Add schema.org structured data for SEO
+  useEffect(() => {
+    const schemaData = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Rockin' Rockin' Boogie",
+      "description": "A Little Richard legacy platform honoring the pioneer of rock and roll with 24/7 radio broadcasting, emergency response, and community empowerment.",
+      "url": "https://www.rockinrockinboogie.com",
+      "image": "https://www.rockinrockinboogie.com/logo.png",
+      "creator": {
+        "@type": "Organization",
+        "name": "Canryn Production",
+        "url": "https://www.rockinrockinboogie.com"
+      },
+      "mentions": {
+        "@type": "Person",
+        "name": "Little Richard",
+        "description": "Rock and roll pioneer and inspiration for Rockin' Rockin' Boogie"
+      },
+      "sameAs": [
+        "https://www.rockinrockinboogie.com",
+        "https://rockinrockinboogie.com"
+      ]
+    };
+    
+    let script = document.querySelector('script[type="application/ld+json"]');
+    if (!script) {
+      script = document.createElement('script');
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(schemaData);
+  }, []);
+
   return (
     <ErrorBoundary>
       <ThemeProvider

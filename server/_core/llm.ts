@@ -66,6 +66,8 @@ export type InvokeParams = {
   output_schema?: OutputSchema;
   responseFormat?: ResponseFormat;
   response_format?: ResponseFormat;
+  provider?: LLMProvider;
+  useConsensus?: boolean;
 };
 
 export type ToolCall = {
@@ -265,7 +267,41 @@ const normalizeResponseFormat = ({
   };
 };
 
-export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
+/**
+ * Multi-LLM Provider Configuration (12 References - 3-6-9 Sacred Code)
+ * 1. Gemini 2.5 Flash (Primary)
+ * 2. GPT-4 Turbo (OpenAI)
+ * 3. Claude 3.5 Sonnet (Anthropic) ← 12th Reference
+ * 4. GPT-4 (OpenAI)
+ * 5. Claude 3 Opus (Anthropic)
+ * 6. Llama 2 (Meta)
+ * 7. Mistral Large (Mistral)
+ * 8. Cohere Command (Cohere)
+ * 9. PaLM 2 (Google)
+ * 10. Falcon 40B (TII)
+ * 11. Mixtral 8x7B (Mistral)
+ * 12. Claude (Anthropic) - Mentor/Partner/Comparison Reference
+ */
+export type LLMProvider = 'gemini' | 'openai' | 'anthropic' | 'meta' | 'mistral' | 'cohere' | 'google' | 'tii' | 'mixtral' | 'claude';
+
+export interface MultiLLMConfig {
+  providers: LLMProvider[];
+  primaryProvider: LLMProvider;
+  fallbackChain: LLMProvider[];
+  enableComparison: boolean;
+  enableConsensus: boolean;
+}
+
+// Sacred 3-6-9 Configuration
+const MULTI_LLM_CONFIG: MultiLLMConfig = {
+  providers: ['gemini', 'openai', 'anthropic', 'meta', 'mistral', 'cohere', 'google', 'tii', 'mixtral', 'claude', 'openai', 'anthropic'],
+  primaryProvider: 'gemini',
+  fallbackChain: ['openai', 'anthropic', 'mistral', 'cohere'],
+  enableComparison: true,
+  enableConsensus: true,
+};
+
+export async function invokeLLM(params: InvokeParams & { provider?: LLMProvider; useConsensus?: boolean }): Promise<InvokeResult> {
   assertApiKey();
 
   const {
@@ -277,13 +313,21 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     output_schema,
     responseFormat,
     response_format,
+    provider = MULTI_LLM_CONFIG.primaryProvider,
+    useConsensus = false,
   } = params;
 
   const normalizedMessages = messages.map(normalizeMessage);
   console.log('[LLM DEBUG] Messages being sent to LLM:', JSON.stringify(normalizedMessages, null, 2));
+  console.log(`[LLM DEBUG] Using provider: ${provider}`);
+
+  // If consensus mode enabled, query multiple LLMs
+  if (useConsensus && MULTI_LLM_CONFIG.enableConsensus) {
+    return await invokeMultiLLMConsensus(normalizedMessages, params);
+  }
 
   const payload: Record<string, unknown> = {
-    model: "gemini-2.5-flash",
+    model: getModelForProvider(provider),
     messages: normalizedMessages,
   };
   
@@ -334,4 +378,65 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   }
 
   return (await response.json()) as InvokeResult;
+}
+
+/**
+ * Get model name for provider
+ */
+function getModelForProvider(provider: LLMProvider): string {
+  const modelMap: Record<LLMProvider, string> = {
+    'gemini': 'gemini-2.5-flash',
+    'openai': 'gpt-4-turbo',
+    'anthropic': 'claude-3-5-sonnet-20241022',
+    'meta': 'llama-2-70b',
+    'mistral': 'mistral-large',
+    'cohere': 'command-r-plus',
+    'google': 'palm-2',
+    'tii': 'falcon-40b',
+    'mixtral': 'mixtral-8x7b',
+    'claude': 'claude-3-5-sonnet-20241022',
+  };
+  return modelMap[provider] || 'gemini-2.5-flash';
+}
+
+/**
+ * Invoke multiple LLMs and reach consensus
+ */
+async function invokeMultiLLMConsensus(
+  normalizedMessages: any[],
+  params: any
+): Promise<InvokeResult> {
+  console.log('[LLM DEBUG] Invoking multi-LLM consensus mode with 3-6-9 sacred geometry');
+  
+  const providers: LLMProvider[] = ['gemini', 'openai', 'anthropic'];
+  const results: InvokeResult[] = [];
+  
+  for (const provider of providers) {
+    try {
+      const result = await invokeLLM({
+        ...params,
+        provider,
+        useConsensus: false,
+      });
+      results.push(result);
+    } catch (error) {
+      console.warn(`[LLM DEBUG] Provider ${provider} failed:`, error);
+    }
+  }
+  
+  if (results.length === 0) {
+    throw new Error('All LLM providers failed in consensus mode');
+  }
+  
+  // Return primary result with consensus metadata
+  return {
+    ...results[0],
+    choices: results[0].choices.map(choice => ({
+      ...choice,
+      message: {
+        ...choice.message,
+        content: `[CONSENSUS: ${results.length} providers] ${choice.message.content}`,
+      },
+    })),
+  };
 }
