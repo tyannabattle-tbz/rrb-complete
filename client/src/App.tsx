@@ -16,6 +16,7 @@ import AgentDashboard from "./pages/AgentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import { AdminAnalyticsDashboard } from "./pages/AdminAnalyticsDashboard";
 import QumusDashboard from "./pages/admin/QumusDashboard";
+import QumusPolicyControls from "./pages/admin/QumusPolicyControls";
 import { SettingsPanel } from "./pages/SettingsPanel";
 import { APIDocumentation } from "./pages/APIDocumentation";
 import { TeamManagement } from "./pages/TeamManagement";
@@ -332,6 +333,7 @@ function Router() {
       <Route path="/enhanced-chat" component={EnhancedChatPage} />
       <Route path="/qumus-dashboard" component={QumusMonitoringDashboard} />
       <Route path="/admin/qumus" component={QumusDashboard} />
+      <Route path="/admin/qumus/policies" component={QumusPolicyControls} />
       <Route path="/policy-decisions" component={PolicyDecisionLogging} />
       <Route path="/compliance-audit" component={ComplianceAuditViewer} />
       <Route path="/service-health" component={ServiceHealthAlerts} />
