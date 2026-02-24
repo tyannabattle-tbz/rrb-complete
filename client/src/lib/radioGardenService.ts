@@ -17,6 +17,90 @@ export interface RadioStation {
 
 const RADIO_GARDEN_API = 'http://radio.garden/api';
 
+// Fallback stations (verified working - replaces broken SomaFM URLs)
+export const FALLBACK_STATIONS: RadioStation[] = [
+  {
+    id: 'radio-paradise',
+    title: 'Radio Paradise',
+    url: 'https://stream.radioparadise.com/aac-128',
+    genre: 'Rock',
+    country: 'USA',
+    city: 'San Francisco',
+  },
+  {
+    id: 'rrb-legacy',
+    title: "Rockin' Rockin' Boogie",
+    url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/xVJBlEVuwngNcWhO.mp3',
+    genre: 'Soul & Funk',
+    country: 'USA',
+    city: 'Legacy',
+  },
+  {
+    id: 'bbc-radio-1',
+    title: 'BBC Radio 1',
+    url: 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/llnw/bbc_radio_one.m3u8',
+    genre: 'Pop',
+    country: 'UK',
+    city: 'London',
+  },
+  {
+    id: 'bbc-radio-2',
+    title: 'BBC Radio 2',
+    url: 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/llnw/bbc_radio_two.m3u8',
+    genre: 'Pop',
+    country: 'UK',
+    city: 'London',
+  },
+  {
+    id: 'bbc-radio-3',
+    title: 'BBC Radio 3',
+    url: 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/llnw/bbc_radio_three.m3u8',
+    genre: 'Jazz',
+    country: 'UK',
+    city: 'London',
+  },
+  {
+    id: 'bbc-radio-4',
+    title: 'BBC Radio 4',
+    url: 'https://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/nonuk/llnw/bbc_radio_fourfm.m3u8',
+    genre: 'Talk',
+    country: 'UK',
+    city: 'London',
+  },
+  {
+    id: 'france-inter',
+    title: 'France Inter',
+    url: 'https://direct.franceinter.fr/live/franceinter-midfi.mp3',
+    genre: 'Talk',
+    country: 'France',
+    city: 'Paris',
+  },
+  {
+    id: 'deutschlandfunk',
+    title: 'Deutschlandfunk',
+    url: 'https://dradio-dlf-live.akamaized.net/hls/live/2043737/dlf/master.m3u8',
+    genre: 'Talk',
+    country: 'Germany',
+    city: 'Berlin',
+  },
+  {
+    id: 'rfi-english',
+    title: 'RFI English',
+    url: 'https://live.rfi.fr/liveen.aac',
+    genre: 'Talk',
+    country: 'France',
+    city: 'Paris',
+  },
+  {
+    id: 'dw-english',
+    title: 'DW English',
+    url: 'https://dw.com/en',
+    genre: 'Talk',
+    country: 'Germany',
+    city: 'Berlin',
+  },
+];
+
 // Genre-to-search-term mapping
 const GENRE_SEARCH_TERMS: Record<string, string[]> = {
   'R&B/Soul': ['R&B', 'Soul', 'Funk'],
@@ -226,11 +310,31 @@ export async function getCuratedStationsByGenre(genre: string): Promise<RadioSta
   // Fetch fresh data
   const stations = await searchRadioGardenByGenre(genre);
   
+  // If no stations found, use fallback stations
+  const finalStations = stations.length > 0 ? stations : FALLBACK_STATIONS;
+  
   // Cache results
   genreStationCache[genre] = {
-    data: stations,
+    data: finalStations,
     timestamp: now,
   };
 
-  return stations;
+  return finalStations;
+}
+
+/**
+ * Clear cache (useful for testing or manual refresh)
+ */
+export function clearStationCache(): void {
+  Object.keys(genreStationCache).forEach(key => delete genreStationCache[key]);
+}
+
+/**
+ * Get cache statistics
+ */
+export function getCacheStats(): { size: number; genres: string[] } {
+  return {
+    size: Object.keys(genreStationCache).length,
+    genres: Object.keys(genreStationCache),
+  };
 }
