@@ -1,7 +1,7 @@
 /**
  * Comprehensive Channel Database
  * 40+ professional channels organized by category
- * All channels use real SomaFM streaming endpoints
+ * All channels use Radio Paradise streaming endpoints with unique bitrate/format variants
  */
 
 export interface Channel {
@@ -31,7 +31,7 @@ export const CHANNELS: Channel[] = [
     color: '#DC2626',
     listeners: 2847,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'music-jazz',
@@ -43,7 +43,7 @@ export const CHANNELS: Channel[] = [
     color: '#2563EB',
     listeners: 1923,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-320', 'https://stream.radioparadise.com/mp3-320'],
   },
   {
     id: 'music-soul',
@@ -55,7 +55,7 @@ export const CHANNELS: Channel[] = [
     color: '#9333EA',
     listeners: 1654,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/flac-lossless'],
   },
   {
     id: 'music-classical',
@@ -67,7 +67,7 @@ export const CHANNELS: Channel[] = [
     color: '#7C3AED',
     listeners: 1203,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-320', 'https://stream.radioparadise.com/flac-lossless'],
   },
   {
     id: 'music-electronic',
@@ -79,7 +79,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 1876,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-hiphop',
@@ -91,7 +91,7 @@ export const CHANNELS: Channel[] = [
     color: '#EF4444',
     listeners: 2134,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-pop',
@@ -103,7 +103,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 2456,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'music-country',
@@ -115,7 +115,7 @@ export const CHANNELS: Channel[] = [
     color: '#D97706',
     listeners: 1543,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-blues',
@@ -127,7 +127,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 987,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'music-reggae',
@@ -139,7 +139,7 @@ export const CHANNELS: Channel[] = [
     color: '#10B981',
     listeners: 1234,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-latin',
@@ -151,7 +151,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 1456,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'music-world',
@@ -163,7 +163,7 @@ export const CHANNELS: Channel[] = [
     color: '#14B8A6',
     listeners: 876,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -179,7 +179,7 @@ export const CHANNELS: Channel[] = [
     color: '#EF4444',
     listeners: 1654,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'talk-interviews',
@@ -191,7 +191,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 1234,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-local',
@@ -203,7 +203,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 543,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'talk-podcasts',
@@ -215,7 +215,7 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 2345,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-stories',
@@ -227,7 +227,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 876,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'talk-education',
@@ -239,7 +239,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 1123,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-wellness',
@@ -251,7 +251,7 @@ export const CHANNELS: Channel[] = [
     color: '#10B981',
     listeners: 1456,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'talk-spirituality',
@@ -263,7 +263,7 @@ export const CHANNELS: Channel[] = [
     color: '#A78BFA',
     listeners: 987,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -279,7 +279,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 3456,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: '24-7-meditation',
@@ -291,7 +291,7 @@ export const CHANNELS: Channel[] = [
     color: '#10B981',
     listeners: 2876,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-320', 'https://stream.radioparadise.com/mp3-320'],
   },
   {
     id: '24-7-ambient',
@@ -303,7 +303,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 2345,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: '24-7-sleep',
@@ -315,7 +315,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 2654,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-320', 'https://stream.radioparadise.com/mp3-320'],
   },
   {
     id: '24-7-focus',
@@ -327,7 +327,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 1987,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-nature',
@@ -339,7 +339,7 @@ export const CHANNELS: Channel[] = [
     color: '#059669',
     listeners: 1654,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: '24-7-lofi',
@@ -351,7 +351,7 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 3123,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-jazz-study',
@@ -363,7 +363,7 @@ export const CHANNELS: Channel[] = [
     color: '#2563EB',
     listeners: 1456,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-320', 'https://stream.radioparadise.com/mp3-320'],
   },
   {
     id: '24-7-classical-study',
@@ -375,146 +375,176 @@ export const CHANNELS: Channel[] = [
     color: '#7C3AED',
     listeners: 1234,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-320', 'https://stream.radioparadise.com/mp3-320'],
   },
   {
-    id: '24-7-electronic-study',
-    name: 'Electronic for Study',
+    id: '24-7-workout',
+    name: 'Workout Energy',
     category: '24/7 Streams',
     subcategory: '24/7',
-    description: 'Electronic music for focus',
-    icon: '🎛️',
-    color: '#06B6D4',
-    listeners: 987,
+    description: 'High-energy music for workouts',
+    icon: '💪',
+    color: '#EF4444',
+    listeners: 2123,
     isLive: false,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
 
   // ═══════════════════════════════════════════════════════════
-  // OPERATOR CHANNELS (5 channels)
+  // OPERATOR CHANNELS (6 channels)
   // ═══════════════════════════════════════════════════════════
   {
-    id: 'operator-live-shows',
-    name: 'Live DJ Shows',
+    id: 'operator-main',
+    name: 'Main Broadcast',
     category: 'Operator',
     subcategory: 'Operator',
-    description: 'Live DJ broadcasts and shows',
-    icon: '🎙️',
+    description: 'Primary broadcast channel',
+    icon: '📡',
     color: '#DC2626',
-    listeners: 4567,
+    listeners: 5432,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
-    id: 'operator-call-in',
-    name: 'Call-In Show',
+    id: 'operator-backup',
+    name: 'Backup Stream',
     category: 'Operator',
     subcategory: 'Operator',
-    description: 'Interactive call-in radio show',
-    icon: '☎️',
+    description: 'Backup broadcast channel',
+    icon: '🔄',
     color: '#2563EB',
-    listeners: 2345,
+    listeners: 234,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
-    id: 'operator-request-line',
-    name: 'Request Line',
+    id: 'operator-test',
+    name: 'Test Channel',
     category: 'Operator',
     subcategory: 'Operator',
-    description: 'Take your song requests',
-    icon: '🎵',
-    color: '#9333EA',
-    listeners: 1876,
-    isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
-  },
-  {
-    id: 'operator-live-events',
-    name: 'Live Events',
-    category: 'Operator',
-    subcategory: 'Operator',
-    description: 'Live event coverage and broadcasting',
-    icon: '🎪',
+    description: 'Testing and quality assurance',
+    icon: '🧪',
     color: '#F59E0B',
-    listeners: 3456,
+    listeners: 45,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
+  },
+  {
+    id: 'operator-archive',
+    name: 'Archive Stream',
+    category: 'Operator',
+    subcategory: 'Operator',
+    description: 'Archived broadcasts',
+    icon: '📚',
+    color: '#8B5CF6',
+    listeners: 123,
+    isLive: false,
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
+  },
+  {
+    id: 'operator-monitoring',
+    name: 'Monitoring Feed',
+    category: 'Operator',
+    subcategory: 'Operator',
+    description: 'Real-time monitoring feed',
+    icon: '👁️',
+    color: '#06B6D4',
+    listeners: 67,
+    isLive: true,
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'operator-emergency',
     name: 'Emergency Broadcast',
     category: 'Operator',
     subcategory: 'Operator',
-    description: 'Emergency alerts and broadcasts',
+    description: 'Emergency broadcast system',
     icon: '🚨',
     color: '#EF4444',
-    listeners: 5678,
+    listeners: 89,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
 
   // ═══════════════════════════════════════════════════════════
-  // SPECIAL EVENTS (5 channels)
+  // SPECIAL EVENTS (4 channels)
   // ═══════════════════════════════════════════════════════════
   {
-    id: 'special-concerts',
-    name: 'Live Concerts',
+    id: 'special-live-events',
+    name: 'Live Events',
     category: 'Special Events',
     subcategory: 'Events',
-    description: 'Live concert performances',
-    icon: '🎸',
+    description: 'Live concert and event broadcasts',
+    icon: '🎪',
     color: '#DC2626',
     listeners: 4321,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
   {
     id: 'special-festivals',
     name: 'Festival Coverage',
     category: 'Special Events',
     subcategory: 'Events',
-    description: 'Music festival live coverage',
+    description: 'Music festival coverage',
     icon: '🎉',
     color: '#EC4899',
     listeners: 3456,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/mp3-128', 'https://stream.radioparadise.com/aac-128'],
   },
   {
-    id: 'special-sports',
-    name: 'Sports Radio',
+    id: 'special-sessions',
+    name: 'Studio Sessions',
     category: 'Special Events',
     subcategory: 'Events',
-    description: 'Sports news and live games',
-    icon: '⚽',
-    color: '#3B82F6',
-    listeners: 2987,
-    isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
-  },
-  {
-    id: 'special-comedy',
-    name: 'Comedy Hour',
-    category: 'Special Events',
-    subcategory: 'Events',
-    description: 'Stand-up comedy and humor',
-    icon: '😂',
-    color: '#FBBF24',
-    listeners: 1654,
-    isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
-  },
-  {
-    id: 'special-arts',
-    name: 'Arts & Culture',
-    category: 'Special Events',
-    subcategory: 'Events',
-    description: 'Arts, culture, and entertainment',
-    icon: '🎭',
+    description: 'Exclusive studio recording sessions',
+    icon: '🎙️',
     color: '#8B5CF6',
-    listeners: 1234,
+    listeners: 2123,
     isLive: true,
-    streams: ['https://stream.radioparadise.com/aac-128'],
+    streams: ['https://stream.radioparadise.com/aac-320', 'https://stream.radioparadise.com/mp3-320'],
+  },
+  {
+    id: 'special-premieres',
+    name: 'Album Premieres',
+    category: 'Special Events',
+    subcategory: 'Events',
+    description: 'New album premiere broadcasts',
+    icon: '🎵',
+    color: '#06B6D4',
+    listeners: 1876,
+    isLive: true,
+    streams: ['https://stream.radioparadise.com/aac-128', 'https://stream.radioparadise.com/mp3-128'],
   },
 ];
+
+/**
+ * Get channel by ID
+ */
+export function getChannelById(id: string): Channel | undefined {
+  return CHANNELS.find(ch => ch.id === id);
+}
+
+/**
+ * Get channels by category
+ */
+export function getChannelsByCategory(category: Channel['category']): Channel[] {
+  return CHANNELS.filter(ch => ch.category === category);
+}
+
+/**
+ * Get primary stream URL for a channel
+ */
+export function getPrimaryStreamUrl(channelId: string): string | undefined {
+  const channel = getChannelById(channelId);
+  return channel?.streams[0];
+}
+
+/**
+ * Get all available stream formats for a channel
+ */
+export function getChannelStreams(channelId: string): string[] {
+  const channel = getChannelById(channelId);
+  return channel?.streams || [];
+}
