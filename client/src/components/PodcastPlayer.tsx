@@ -27,14 +27,14 @@ const EPISODES = [
     id: 'bh-001',
     title: 'The Thrill is Gone',
     artist: 'B.B. King',
-    streamUrl: 'https://stream.radioparadise.com/aac-128',
+    streamUrl: 'https://stream.radioparadise.com/mp3-128',
     channel: 'Blues Hour',
   },
   {
     id: 'je-001',
     title: 'Take Five',
     artist: 'Dave Brubeck',
-    streamUrl: 'https://stream.radioparadise.com/aac-128',
+    streamUrl: 'https://stream.radioparadise.com/aac-320',
     channel: 'Jazz Essentials',
   },
 ];
