@@ -50,16 +50,16 @@ export default function RadioStationFixed() {
   const topChannels = listenerCountService.getTopChannels(5);
 
   const handlePlayPause = async () => {
-    if (selectedChannel.streams[0]) {
-      audio.togglePlayPause(selectedChannel.streams[0]);
+    if (selectedChannel.streamUrl) {
+      audio.togglePlayPause(selectedChannel.streamUrl);
     }
   };
 
   const handleChannelSelect = (channel: typeof CHANNELS[0]) => {
     setSelectedChannel(channel);
     // Auto-play when channel is selected
-    if (channel.streams[0]) {
-      audio.play(channel.streams[0]);
+    if (channel.streamUrl) {
+      audio.play(channel.streamUrl);
     }
   };
 
@@ -84,7 +84,7 @@ export default function RadioStationFixed() {
             <div>
               <p className="text-sm text-purple-100">Now Playing</p>
               <h2 className="text-3xl font-bold">{selectedChannel.name}</h2>
-              <p className="text-purple-100">{selectedChannel.category} • {selectedChannel.subcategory}</p>
+              <p className="text-purple-100">{selectedChannel.genre} • {selectedChannel.format.toUpperCase()}</p>
             </div>
             <div className="text-right">
               <p className="text-sm text-purple-100">Listeners</p>
@@ -148,7 +148,7 @@ export default function RadioStationFixed() {
           {/* Stream Info */}
           <div className="bg-black/30 rounded-lg p-3">
             <p className="text-xs text-purple-100">Stream URL</p>
-            <p className="text-sm font-mono text-white break-all">{selectedChannel.streams[0]}</p>
+            <p className="text-sm font-mono text-white break-all">{selectedChannel.streamUrl}</p>
           </div>
         </Card>
 
@@ -233,7 +233,7 @@ export default function RadioStationFixed() {
             const currentListeners = listeners?.currentListeners || channel.listeners;
             const trend = listeners?.trend || 'stable';
             const isFavorite = favorites.has(channel.id);
-            const isSelected = selectedChannel.id === channel.id;
+            const isSelected = selectedChannel && selectedChannel.id === channel.id;
 
             return (
               <Card

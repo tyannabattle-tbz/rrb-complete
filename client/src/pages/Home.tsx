@@ -18,7 +18,25 @@ export default function Home() {
   const [scrollDepth, setScrollDepth] = useState(0);
 
   useEffect(() => {
-    document.title = "Rockin' Rockin' Boogie — Canryn Production";
+    document.title = "Rockin' Rockin' Boogie - Radio, Emergency Response & Community Platform";
+    
+    // Set meta description
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute('content', 'RRB - A legacy restored. 24/7 radio broadcasting, emergency response, community empowerment, and autonomous orchestration powered by QUMUS.');
+    
+    // Set meta keywords
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.setAttribute('name', 'keywords');
+      document.head.appendChild(metaKeywords);
+    }
+    metaKeywords.setAttribute('content', 'radio broadcasting, emergency response, community platform, QUMUS orchestration, Canryn Production, Sweet Miracles, autonomous AI, live streaming, podcast network, emergency broadcast');
   }, []);
 
   useEffect(() => {
@@ -68,6 +86,7 @@ export default function Home() {
           </div>
 
           {/* Feature Grid */}
+          <h2 className="text-3xl font-bold text-white mb-6">Core Features & Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="bg-gradient-to-br from-orange-500/20 to-red-500/20 border-orange-500/30 p-6 hover:border-orange-500/60 transition-all cursor-pointer" onClick={() => analytics.trackFeatureCardClick('radio')}>
               <Radio className="w-8 h-8 text-orange-400 mb-3" />
@@ -107,6 +126,7 @@ export default function Home() {
           </div>
 
           {/* CTA Section */}
+          <h2 className="text-3xl font-bold text-white mb-6">Get Started Today</h2>
           <div className="bg-gradient-to-r from-orange-600/30 to-pink-600/30 border border-orange-500/50 rounded-lg p-8 md:p-12 text-center space-y-6">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
@@ -126,11 +146,13 @@ export default function Home() {
           </div>
 
           {/* Quick Start Guide */}
+          <h2 className="text-3xl font-bold text-white mb-6">Quick Start Guide</h2>
           <div className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/30 rounded-lg p-8 md:p-12">
             <QuickStartGuide />
           </div>
 
           {/* Testimonials Section */}
+          <h2 className="text-3xl font-bold text-white mb-6">Community Voices</h2>
           <div className="space-y-8">
             <TestimonialsSection />
           </div>
