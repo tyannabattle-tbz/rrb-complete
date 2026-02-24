@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Music, Disc, Calendar, Award, Star, Play } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'wouter';
+import { VinylRecordGallery } from '@/components/VinylRecordGallery';
 
 interface Album {
   year: number;
@@ -374,6 +375,15 @@ export default function LittleRichardDiscography() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Vinyl Record Gallery */}
+        <section className="space-y-6">
+          <h2 className="text-4xl font-bold text-white">Vinyl Record Gallery - 1971-1980 Collaboration Era</h2>
+          <p className="text-gray-400 text-lg max-w-3xl">
+            Click on any album below to explore track listings, session musicians, and production credits. All recordings are documented with verified sources and credits.
+          </p>
+          <VinylRecordGallery era="collaboration" expandable={true} />
+        </section>
 
         {/* Collaboration Era - Featured */}
         <section className="space-y-6">

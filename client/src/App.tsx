@@ -71,7 +71,6 @@ import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
 import QumusChatPage from '@/pages/QumusChatPage';
 // Consolidated RadioStation import removed - using RRB version
-import RockinRockinBoogiePage from '@/pages/RockinRockinBoogiePage';
 import BroadcastOrchestrationHub from '@/pages/BroadcastOrchestrationHub';
 import MobileStudio from '@/pages/MobileStudio';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
@@ -228,6 +227,7 @@ import RRBBooksAndMiracles from '@/pages/rrb/BooksAndMiracles';
 import RRBBooks from '@/pages/rrb/Books';
 import RRBPhotoGallery from '@/pages/rrb/PhotoGallery';
 import RRBTestimonialsAndStories from '@/pages/rrb/TestimonialsAndStories';
+import TestimonialsAndReviewsPage from '@/pages/rrb/TestimonialsAndReviews';
 import RRBProducerMentor from '@/pages/rrb/ProducerMentor';
 import RRBMedicalJourney from '@/pages/rrb/MedicalJourney';
 import RRBFamilyAchievements from '@/pages/rrb/FamilyAchievements';
@@ -442,6 +442,7 @@ function Router() {
       <Route path="/little-richard-biography" component={LittleRichardBiography} />
       <Route path="/little-richard-faq" component={LittleRichardFAQ} />
       <Route path="/little-richard-discography" component={LittleRichardDiscography} />
+      <Route path="/testimonials-and-reviews" component={TestimonialsAndReviewsPage} />
       <Route path="/rockin-rockin-boogie" component={RockinRockinBoogiePage} />
       <Route path="/rrb/family-achievements" component={RRBFamilyAchievements} />
       <Route path="/rrb/family-legacy" component={RRBFamilyLegacy} />
