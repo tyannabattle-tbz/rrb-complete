@@ -228,6 +228,10 @@ function VinylCard({ record }: { record: VinylRecord }) {
           </div>
           <Disc className="w-6 h-6 text-orange-400 flex-shrink-0 mt-1" />
         </div>
+        <button className="px-3 py-2 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-lg font-semibold hover:from-orange-600 hover:to-pink-600 transition-all flex items-center gap-2 text-sm">
+          <Play className="w-4 h-4" />
+          Listen Now
+        </button>
       </CardHeader>
 
       {expanded && (

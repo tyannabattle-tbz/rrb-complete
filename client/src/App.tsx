@@ -228,6 +228,7 @@ import RRBBooks from '@/pages/rrb/Books';
 import RRBPhotoGallery from '@/pages/rrb/PhotoGallery';
 import RRBTestimonialsAndStories from '@/pages/rrb/TestimonialsAndStories';
 import TestimonialsAndReviewsPage from '@/pages/rrb/TestimonialsAndReviews';
+import BehindTheScenesPage from '@/pages/rrb/BehindTheScenes';
 import RRBProducerMentor from '@/pages/rrb/ProducerMentor';
 import RRBMedicalJourney from '@/pages/rrb/MedicalJourney';
 import RRBFamilyAchievements from '@/pages/rrb/FamilyAchievements';
@@ -443,6 +444,7 @@ function Router() {
       <Route path="/little-richard-faq" component={LittleRichardFAQ} />
       <Route path="/little-richard-discography" component={LittleRichardDiscography} />
       <Route path="/testimonials-and-reviews" component={TestimonialsAndReviewsPage} />
+      <Route path="/behind-the-scenes" component={BehindTheScenesPage} />
       <Route path="/rockin-rockin-boogie" component={RockinRockinBoogiePage} />
       <Route path="/rrb/family-achievements" component={RRBFamilyAchievements} />
       <Route path="/rrb/family-legacy" component={RRBFamilyLegacy} />
