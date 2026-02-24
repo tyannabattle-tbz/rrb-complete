@@ -31,7 +31,7 @@ export const CHANNELS: Channel[] = [
     color: '#DC2626',
     listeners: 2847,
     isLive: true,
-    streams: ['https://ice1.somafm.com/metal-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-jazz',
@@ -43,7 +43,7 @@ export const CHANNELS: Channel[] = [
     color: '#2563EB',
     listeners: 1923,
     isLive: true,
-    streams: ['https://ice1.somafm.com/jazzsteps-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-soul',
@@ -55,7 +55,7 @@ export const CHANNELS: Channel[] = [
     color: '#9333EA',
     listeners: 1654,
     isLive: true,
-    streams: ['https://ice1.somafm.com/soulpizza-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-classical',
@@ -67,7 +67,7 @@ export const CHANNELS: Channel[] = [
     color: '#7C3AED',
     listeners: 1203,
     isLive: true,
-    streams: ['https://ice1.somafm.com/classicvocalz-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-electronic',
@@ -79,7 +79,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 1876,
     isLive: true,
-    streams: ['https://ice1.somafm.com/synthpop-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-hiphop',
@@ -91,7 +91,7 @@ export const CHANNELS: Channel[] = [
     color: '#EF4444',
     listeners: 2134,
     isLive: true,
-    streams: ['https://ice1.somafm.com/bagel-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-pop',
@@ -103,7 +103,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 2456,
     isLive: true,
-    streams: ['https://ice1.somafm.com/poptron-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-country',
@@ -115,7 +115,7 @@ export const CHANNELS: Channel[] = [
     color: '#D97706',
     listeners: 1543,
     isLive: true,
-    streams: ['https://ice1.somafm.com/folkfwd-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-blues',
@@ -127,7 +127,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 987,
     isLive: true,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-reggae',
@@ -139,7 +139,7 @@ export const CHANNELS: Channel[] = [
     color: '#10B981',
     listeners: 1234,
     isLive: true,
-    streams: ['https://ice1.somafm.com/reggae-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-latin',
@@ -151,7 +151,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 1456,
     isLive: true,
-    streams: ['https://ice1.somafm.com/lush-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'music-world',
@@ -163,7 +163,7 @@ export const CHANNELS: Channel[] = [
     color: '#14B8A6',
     listeners: 876,
     isLive: true,
-    streams: ['https://ice1.somafm.com/worldzone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -179,7 +179,7 @@ export const CHANNELS: Channel[] = [
     color: '#EF4444',
     listeners: 1654,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-interviews',
@@ -191,7 +191,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 1234,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-local',
@@ -203,7 +203,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 543,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-podcasts',
@@ -215,7 +215,7 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 2345,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-stories',
@@ -227,7 +227,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 876,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-education',
@@ -239,7 +239,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 1123,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-wellness',
@@ -251,7 +251,7 @@ export const CHANNELS: Channel[] = [
     color: '#10B981',
     listeners: 1456,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'talk-spirituality',
@@ -263,7 +263,7 @@ export const CHANNELS: Channel[] = [
     color: '#A78BFA',
     listeners: 987,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -279,7 +279,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 3456,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-meditation',
@@ -291,7 +291,7 @@ export const CHANNELS: Channel[] = [
     color: '#10B981',
     listeners: 2876,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-ambient',
@@ -303,7 +303,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 2345,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-sleep',
@@ -315,7 +315,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 2654,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-focus',
@@ -327,7 +327,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 1987,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-nature',
@@ -339,7 +339,7 @@ export const CHANNELS: Channel[] = [
     color: '#059669',
     listeners: 1654,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-lofi',
@@ -351,7 +351,7 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 3123,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-jazz-study',
@@ -363,7 +363,7 @@ export const CHANNELS: Channel[] = [
     color: '#2563EB',
     listeners: 1456,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-classical-study',
@@ -375,7 +375,7 @@ export const CHANNELS: Channel[] = [
     color: '#7C3AED',
     listeners: 1234,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: '24-7-electronic-study',
@@ -387,7 +387,7 @@ export const CHANNELS: Channel[] = [
     color: '#06B6D4',
     listeners: 987,
     isLive: false,
-    streams: ['https://ice1.somafm.com/deepspaceone-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -403,7 +403,7 @@ export const CHANNELS: Channel[] = [
     color: '#DC2626',
     listeners: 4567,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'operator-call-in',
@@ -415,7 +415,7 @@ export const CHANNELS: Channel[] = [
     color: '#2563EB',
     listeners: 2345,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'operator-request-line',
@@ -427,7 +427,7 @@ export const CHANNELS: Channel[] = [
     color: '#9333EA',
     listeners: 1876,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'operator-live-events',
@@ -439,7 +439,7 @@ export const CHANNELS: Channel[] = [
     color: '#F59E0B',
     listeners: 3456,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'operator-emergency',
@@ -451,7 +451,7 @@ export const CHANNELS: Channel[] = [
     color: '#EF4444',
     listeners: 5678,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -467,7 +467,7 @@ export const CHANNELS: Channel[] = [
     color: '#DC2626',
     listeners: 4321,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'special-festivals',
@@ -479,7 +479,7 @@ export const CHANNELS: Channel[] = [
     color: '#EC4899',
     listeners: 3456,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'special-sports',
@@ -491,7 +491,7 @@ export const CHANNELS: Channel[] = [
     color: '#3B82F6',
     listeners: 2987,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'special-comedy',
@@ -503,7 +503,7 @@ export const CHANNELS: Channel[] = [
     color: '#FBBF24',
     listeners: 1654,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
   {
     id: 'special-arts',
@@ -515,6 +515,6 @@ export const CHANNELS: Channel[] = [
     color: '#8B5CF6',
     listeners: 1234,
     isLive: true,
-    streams: ['https://ice1.somafm.com/secretagent-128-mp3'],
+    streams: ['https://stream.radioparadise.com/aac-128'],
   },
 ];
