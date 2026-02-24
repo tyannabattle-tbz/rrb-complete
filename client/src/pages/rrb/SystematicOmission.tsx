@@ -173,7 +173,7 @@ export default function SystematicOmission() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Documented Patterns of Omission</h2>
           <div className="space-y-4">
-            {omissionPatterns.map((pattern) => (
+            {omissionPatterns.map((pattern, idx) => (
               <Card
                 key={pattern.id}
                 className={`cursor-pointer transition-all hover:border-orange-500/30 ${

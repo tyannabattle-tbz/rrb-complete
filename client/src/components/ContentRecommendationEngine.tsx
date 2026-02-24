@@ -145,7 +145,7 @@ export const ContentRecommendationEngine: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredRecommendations.slice(0, 6).map((rec) => (
+          {filteredRecommendations.slice(0, 6).map((rec, idx) => (
             <div key={rec.videoId} className="rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
               {rec.thumbnail && (
                 <img
@@ -206,7 +206,7 @@ export const ContentRecommendationEngine: React.FC = () => {
                     {playlist.videos.length} videos • {playlist.totalDuration.toFixed(1)} hours
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {playlist.videos.slice(0, 3).map((video) => (
+                    {playlist.videos.slice(0, 3).map((video, idx) => (
                       <span key={video.videoId} className="inline-block rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700">
                         {video.title.substring(0, 20)}...
                       </span>

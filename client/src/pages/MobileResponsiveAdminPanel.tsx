@@ -49,7 +49,7 @@ export default function MobileResponsiveAdminPanel() {
           </div>
 
           <nav className="space-y-2 p-4">
-            {menuItems.map((item) => {
+            {menuItems.map((item, idx) => {
               const Icon = item.icon;
               return (
                 <button
@@ -154,7 +154,7 @@ export default function MobileResponsiveAdminPanel() {
               <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4 md:p-6">
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Decision Policies</h2>
                 <div className="space-y-3">
-                  {['Content', 'User', 'Payment', 'Security', 'Compliance', 'Performance', 'Engagement', 'System'].map((policy) => (
+                  {['Content', 'User', 'Payment', 'Security', 'Compliance', 'Performance', 'Engagement', 'System'].map((policy, idx) => (
                     <div key={policy} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
                       <span className="font-medium text-slate-900 dark:text-white">{policy} Policy</span>
                       <Button variant="outline" size="sm">
@@ -170,7 +170,7 @@ export default function MobileResponsiveAdminPanel() {
               <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4 md:p-6">
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Integrated Services</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {['Stripe', 'Slack', 'Email', 'Analytics', 'Webhooks', 'Auth', 'Recommendations', 'WebSocket', 'Compliance', 'Notifications', 'LLM'].map((service) => (
+                  {['Stripe', 'Slack', 'Email', 'Analytics', 'Webhooks', 'Auth', 'Recommendations', 'WebSocket', 'Compliance', 'Notifications', 'LLM'].map((service, idx) => (
                     <div key={service} className="p-3 bg-slate-50 dark:bg-slate-700 rounded-lg flex items-center justify-between">
                       <span className="font-medium text-slate-900 dark:text-white">{service}</span>
                       <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>

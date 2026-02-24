@@ -111,7 +111,7 @@ export default function SeasonalCampaigns({ onSelectCampaign }: SeasonalCampaign
               <h3 className="text-2xl font-bold text-foreground">🔴 Active Now</h3>
             </div>
             <div className="space-y-4">
-              {activeCampaigns.map((campaign) => (
+              {activeCampaigns.map((campaign, idx) => (
                 <div key={campaign.id} className="bg-card border-2 border-accent rounded-lg p-6 hover:shadow-lg transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div>
@@ -176,7 +176,7 @@ export default function SeasonalCampaigns({ onSelectCampaign }: SeasonalCampaign
               <h3 className="text-2xl font-bold text-foreground">📅 Upcoming Campaigns</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {upcomingCampaigns.map((campaign) => (
+              {upcomingCampaigns.map((campaign, idx) => (
                 <div key={campaign.id} className="bg-card border border-border rounded-lg p-6 hover:border-accent/50 transition-colors">
                   <div className="mb-4">
                     <h4 className="text-lg font-bold text-foreground mb-1">{campaign.name}</h4>

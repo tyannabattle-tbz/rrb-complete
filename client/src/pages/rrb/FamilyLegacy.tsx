@@ -81,7 +81,7 @@ export default function FamilyLegacy() {
 
           {/* Children Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {children.map((child) => (
+            {children.map((child, idx) => (
               <div
                 key={child.id}
                 className="bg-stone-800/60 rounded-xl p-6 border border-amber-900/30 hover:border-amber-500/50 transition-all cursor-pointer"

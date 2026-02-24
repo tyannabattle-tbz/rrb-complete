@@ -197,7 +197,7 @@ export function DonationCheckout() {
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-white mb-4 text-center">Where should your donation go?</h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {DONATION_PURPOSES.map((purpose) => {
+            {DONATION_PURPOSES.map((purpose, idx) => {
               const Icon = purpose.icon;
               return (
                 <button
@@ -220,7 +220,7 @@ export function DonationCheckout() {
         {activeTab === 'monthly' ? (
           /* Monthly Donation Tiers */
           <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-            {DONATION_TIERS.map((tier) => (
+            {DONATION_TIERS.map((tier, idx) => (
               <Card
                 key={tier.id}
                 className={`relative p-5 transition-all cursor-pointer ${
@@ -280,7 +280,7 @@ export function DonationCheckout() {
 
               {/* Quick Amount Buttons */}
               <div className="grid grid-cols-4 gap-2 mb-4">
-                {QUICK_AMOUNTS.map((amt) => (
+                {QUICK_AMOUNTS.map((amt, idx) => (
                   <button
                     key={amt}
                     onClick={() => setCustomAmount(amt.toString())}

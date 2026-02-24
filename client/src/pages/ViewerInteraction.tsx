@@ -189,7 +189,7 @@ export function ViewerInteraction() {
             { id: 'qa', label: 'Q&A', icon: HelpCircle },
             { id: 'superchat', label: 'Super Chat', icon: Zap },
             { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
-          ].map((tab) => (
+          ].map((tab, idx) => (
             <Button
               key={tab.id}
               onClick={() => setSelectedTab(tab.id as any)}
@@ -260,7 +260,7 @@ export function ViewerInteraction() {
 
             {/* Questions List */}
             <div className="space-y-3">
-              {QA_ITEMS.map((item) => (
+              {QA_ITEMS.map((item, idx) => (
                 <Card key={item.id} className="bg-gray-800 border-gray-700 p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -325,7 +325,7 @@ export function ViewerInteraction() {
             {/* Super Chats Feed */}
             <div className="space-y-2">
               <h3 className="text-lg font-bold text-white">Live Super Chats</h3>
-              {superChats.map((chat) => (
+              {superChats.map((chat, idx) => (
                 <div
                   key={chat.id}
                   className={`p-3 rounded border-l-4 ${chat.color} ${
@@ -355,7 +355,7 @@ export function ViewerInteraction() {
               <Trophy className="w-6 h-6 text-yellow-500" /> Top Supporters
             </h2>
             <div className="space-y-2">
-              {LEADERBOARD.map((entry) => (
+              {LEADERBOARD.map((entry, idx) => (
                 <div key={entry.rank} className="p-4 bg-gray-700 rounded flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="text-2xl font-bold text-yellow-400 w-8 text-center">{entry.badge}</div>

@@ -603,7 +603,7 @@ export default function ProofVault() {
 
           {/* Evidence Items */}
           <div className="space-y-4">
-            {filteredItems.map((item) => (
+            {filteredItems.map((item, idx) => (
               <Card
                 key={item.id}
                 className={`cursor-pointer transition-all hover:border-red-500/30 ${

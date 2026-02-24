@@ -80,7 +80,7 @@ export default function QumusPolicyAnalyticsDashboard() {
             <p className="text-foreground/60 mt-2">Real-time performance metrics for all QUMUS policies</p>
           </div>
           <div className="flex gap-2">
-            {(['24h', '7d', '30d'] as const).map((range) => (
+            {(['24h', '7d', '30d'] as const).map((range, idx) => (
               <Button
                 key={range}
                 variant={timeRange === range ? 'default' : 'outline'}
@@ -137,7 +137,7 @@ export default function QumusPolicyAnalyticsDashboard() {
                   <div className="p-6 text-center text-foreground/60">Loading...</div>
                 ) : metrics && metrics.length > 0 ? (
                   <div className="divide-y divide-border">
-                    {metrics.map((metric: EngineMetric) => (
+                    {metrics.map((metric: EngineMetric, idx) => (
                       <button
                         key={metric.policyId}
                         onClick={() => setSelectedPolicy(metric.policyId)}

@@ -59,7 +59,7 @@ export default function AdvancedSearch() {
 
       {/* Tab Navigation */}
       <div className="flex gap-2">
-        {[{ id: "search", label: "Search Results" }, { id: "trending", label: "Trending" }, { id: "discover", label: "Discover" }].map((tab) => (
+        {[{ id: "search", label: "Search Results" }, { id: "trending", label: "Trending" }, { id: "discover", label: "Discover" }].map((tab, idx) => (
           <Button key={tab.id} variant={activeTab === tab.id ? "default" : "outline"} onClick={() => setActiveTab(tab.id as any)}>
             {tab.label}
           </Button>
@@ -105,7 +105,7 @@ export default function AdvancedSearch() {
             <div>
               <label className="block text-sm font-medium mb-2">Search Type</label>
               <div className="flex gap-2">
-                {(["all", "sessions", "messages", "tools"] as const).map((type) => (
+                {(["all", "sessions", "messages", "tools"] as const).map((type, idx) => (
                   <Button
                     key={type}
                     variant={searchType === type ? "default" : "outline"}
@@ -141,7 +141,7 @@ export default function AdvancedSearch() {
       {/* Trending Tab */}
       {activeTab === "trending" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {TRENDING_HASHTAGS.map((item) => (
+          {TRENDING_HASHTAGS.map((item, idx) => (
             <Card key={item.hashtag} className="cursor-pointer hover:shadow-lg transition">
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between mb-3">
@@ -157,7 +157,7 @@ export default function AdvancedSearch() {
                 <p className="text-gray-600 text-sm mb-3">{item.mentions.toLocaleString()} mentions</p>
                 <div className="space-y-1">
                   <p className="text-gray-700 text-xs font-semibold">Top Broadcasts:</p>
-                  {item.topBroadcasts.map((broadcast) => (
+                  {item.topBroadcasts.map((broadcast, idx) => (
                     <p key={broadcast} className="text-gray-600 text-sm">• {broadcast}</p>
                   ))}
                 </div>
@@ -171,7 +171,7 @@ export default function AdvancedSearch() {
       {activeTab === "discover" && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {DISCOVERY_CATEGORIES.map((category) => (
+            {DISCOVERY_CATEGORIES.map((category, idx) => (
               <Card key={category.name} className="cursor-pointer hover:shadow-lg transition">
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between mb-4">
@@ -205,7 +205,7 @@ export default function AdvancedSearch() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {results.sessions.map((session: any) => (
+                  {results.sessions.map((session: any, idx) => (
                     <div key={session.id} className="p-3 border rounded-lg hover:bg-gray-50">
                       <div className="flex items-start justify-between">
                         <div>
@@ -231,7 +231,7 @@ export default function AdvancedSearch() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {results.messages.map((message: any) => (
+                  {results.messages.map((message: any, idx) => (
                     <div key={message.id} className="p-3 border rounded-lg hover:bg-gray-50">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -259,7 +259,7 @@ export default function AdvancedSearch() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {results.tools.map((tool: any) => (
+                  {results.tools.map((tool: any, idx) => (
                     <div key={tool.id} className="p-3 border rounded-lg hover:bg-gray-50">
                       <div className="flex items-start justify-between">
                         <div>

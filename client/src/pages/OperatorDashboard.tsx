@@ -164,7 +164,7 @@ export function OperatorDashboard() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Navigation Tabs */}
         <div className="flex gap-4 border-b border-gray-700 mb-8">
-          {(['overview', 'channels', 'broadcasts', 'settings'] as const).map((tab) => (
+          {(['overview', 'channels', 'broadcasts', 'settings'] as const).map((tab, idx) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -258,7 +258,7 @@ export function OperatorDashboard() {
             <Card className="bg-gray-800 border-gray-700 p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Recent Broadcasts</h3>
               <div className="space-y-3">
-                {broadcasts.slice(0, 3).map((broadcast) => (
+                {broadcasts.slice(0, 3).map((broadcast, idx) => (
                   <div key={broadcast.id} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
                     <div className="flex-1">
                       <p className="text-white font-semibold">{broadcast.title}</p>
@@ -381,7 +381,7 @@ export function OperatorDashboard() {
             </div>
 
             <div className="space-y-3">
-              {filteredBroadcasts.map((broadcast) => (
+              {filteredBroadcasts.map((broadcast, idx) => (
                 <Card key={broadcast.id} className="bg-gray-800 border-gray-700 p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">

@@ -153,7 +153,7 @@ export function IncidentManagementDashboard() {
             ) : (
               mockIncidents
                 .filter((i) => i.status !== "resolved")
-                .map((incident) => (
+                .map((incident, idx) => (
                   <div
                     key={incident.id}
                     className={`p-4 border-2 rounded-lg cursor-pointer hover:shadow-md transition-shadow ${getStatusColor(incident.status)}`}

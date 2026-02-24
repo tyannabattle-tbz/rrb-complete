@@ -110,7 +110,7 @@ export default function EditingPresets({
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {presets.map((preset: Preset) => (
+              {presets.map((preset: Preset, idx) => (
                 <div
                   key={preset.id}
                   className="p-4 rounded-lg border border-slate-600 bg-slate-700/50 hover:bg-slate-700 transition-colors"

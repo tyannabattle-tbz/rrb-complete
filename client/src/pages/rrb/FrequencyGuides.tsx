@@ -111,7 +111,7 @@ export default function FrequencyGuides() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-foreground text-center mb-8">Complete Frequency Reference</h2>
           <div className="space-y-4">
-            {solfeggioGuides.map((guide) => (
+            {solfeggioGuides.map((guide, idx) => (
               <Card
                 key={guide.hz}
                 className={`cursor-pointer transition-all hover:border-indigo-500/30 ${

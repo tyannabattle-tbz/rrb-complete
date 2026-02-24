@@ -146,7 +146,7 @@ export function SocialSharing() {
                 { name: 'Twitter', icon: Twitter, color: 'bg-sky-500 hover:bg-sky-600' },
                 { name: 'LinkedIn', icon: Linkedin, color: 'bg-blue-700 hover:bg-blue-800' },
                 { name: 'Email', icon: Mail, color: 'bg-gray-600 hover:bg-gray-700' },
-              ].map((social) => (
+              ].map((social, idx) => (
                 <Button
                   key={social.name}
                   onClick={() => handleShare(social.name)}
@@ -171,7 +171,7 @@ export function SocialSharing() {
         <div>
           <h2 className="text-2xl font-bold text-white mb-4">Platform Performance</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {SHARE_METRICS.map((metric) => (
+            {SHARE_METRICS.map((metric, idx) => (
               <Card key={metric.platform} className="bg-gray-800 border-gray-700 p-4">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-lg font-bold text-white">{metric.platform}</h3>
@@ -201,7 +201,7 @@ export function SocialSharing() {
         <div>
           <h2 className="text-2xl font-bold text-white mb-4">Recent Shares</h2>
           <div className="space-y-3">
-            {SHARED_CONTENT.map((content) => (
+            {SHARED_CONTENT.map((content, idx) => (
               <Card
                 key={content.id}
                 className="bg-gray-800 border-gray-700 p-4 hover:bg-gray-750 transition cursor-pointer"
@@ -213,7 +213,7 @@ export function SocialSharing() {
                     <h3 className="text-lg font-bold text-white">{content.title}</h3>
                     <p className="text-gray-400 text-sm mt-1">{content.description}</p>
                     <div className="flex gap-2 mt-3 flex-wrap">
-                      {content.platforms.map((platform) => (
+                      {content.platforms.map((platform, idx) => (
                         <span key={platform} className="text-xs px-2 py-1 bg-gray-700 text-gray-300 rounded">
                           {platform}
                         </span>

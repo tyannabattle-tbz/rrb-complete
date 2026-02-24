@@ -168,7 +168,7 @@ export function ScheduleManager() {
               <p>No schedule slots for this day</p>
             </div>
           ) : (
-            schedule.map((slot) => {
+            schedule.map((slot, idx) => {
               const contentType = getContentTypeIcon(slot.contentType);
               const Icon = contentType.icon;
 

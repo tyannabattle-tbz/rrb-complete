@@ -90,7 +90,7 @@ export default function AdvancedAnalyticsDashboard() {
 
         {/* Time Range Selector */}
         <div className="flex gap-2 mb-8">
-          {['1h', '24h', '7d', '30d'].map((range) => (
+          {['1h', '24h', '7d', '30d'].map((range, idx) => (
             <Button
               key={range}
               variant={timeRange === range ? 'default' : 'outline'}

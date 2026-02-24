@@ -193,7 +193,7 @@ export function OperatorMarketplace() {
                 >
                   All Items
                 </Button>
-                {categories.map((cat) => (
+                {categories.map((cat, idx) => (
                   <Button
                     key={cat.id}
                     variant={selectedCategory === cat.id ? 'default' : 'outline'}
@@ -245,7 +245,7 @@ export function OperatorMarketplace() {
 
             {/* Items Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredItems.map((item) => (
+              {filteredItems.map((item, idx) => (
                 <Card
                   key={item.id}
                   className="bg-gray-800 border-gray-700 overflow-hidden hover:border-orange-500 transition-colors"
@@ -372,7 +372,7 @@ export function OperatorMarketplace() {
           </div>
 
           <div className="space-y-2 max-h-40 overflow-y-auto">
-            {cart.map((id) => {
+            {cart.map((id, idx) => {
               const item = MARKETPLACE_ITEMS.find((i) => i.id === id);
               return (
                 <div

@@ -111,7 +111,7 @@ export default function Sponsorships() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-foreground text-center mb-8">What You Can Sponsor</h2>
           <div className="grid gap-6 md:grid-cols-2">
-            {sponsorshipAreas.map((area) => (
+            {sponsorshipAreas.map((area, idx) => (
               <Card key={area.title} className="hover:border-amber-500/20 transition-colors">
                 <CardHeader>
                   <div className="flex items-center gap-3">
@@ -138,7 +138,7 @@ export default function Sponsorships() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-foreground text-center mb-8">Sponsorship Tiers</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {tiers.map((tier) => (
+            {tiers.map((tier, idx) => (
               <Card key={tier.name} className={`${tier.color}`}>
                 <CardHeader className="text-center">
                   <tier.icon className={`w-10 h-10 ${tier.textColor} mx-auto mb-2`} />

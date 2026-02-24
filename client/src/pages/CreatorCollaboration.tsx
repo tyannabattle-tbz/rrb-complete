@@ -130,7 +130,7 @@ export function CreatorCollaboration() {
               { id: 'projects', label: 'Projects' },
               { id: 'collaboration', label: 'Team Collaboration' },
               { id: 'workflow', label: 'Workflow' },
-            ].map((tab) => (
+            ].map((tab, idx) => (
               <Button
                 key={tab.id}
                 variant={activeTab === tab.id ? 'default' : 'outline'}
@@ -150,7 +150,7 @@ export function CreatorCollaboration() {
           <div className="space-y-6">
             {/* Project List */}
             <div className="space-y-3">
-              {SAMPLE_PROJECTS.map((project) => (
+              {SAMPLE_PROJECTS.map((project, idx) => (
                 <Card
                   key={project.id}
                   className="bg-gray-800 border-gray-700 p-4 hover:bg-gray-750 transition cursor-pointer"
@@ -209,7 +209,7 @@ export function CreatorCollaboration() {
 
                     {/* Collaborator Avatars */}
                     <div className="flex -space-x-2">
-                      {project.creators.slice(0, 3).map((creator) => (
+                      {project.creators.slice(0, 3).map((creator, idx) => (
                         <div
                           key={creator.id}
                           className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-gray-800 flex items-center justify-center text-xs font-bold text-gray-900"
@@ -248,7 +248,7 @@ export function CreatorCollaboration() {
                   <div>
                     <h3 className="text-lg font-bold text-white mb-3">Team Members</h3>
                     <div className="space-y-2">
-                      {selectedProject.creators.map((creator) => (
+                      {selectedProject.creators.map((creator, idx) => (
                         <div
                           key={creator.id}
                           className="p-3 bg-gray-700 rounded border border-gray-600 flex items-center justify-between"
@@ -428,7 +428,7 @@ export function CreatorCollaboration() {
                     desc: 'Release content to audience',
                     status: 'pending',
                   },
-                ].map((item) => (
+                ].map((item, idx) => (
                   <div key={item.step} className="flex gap-4">
                     <div className="flex flex-col items-center">
                       <div

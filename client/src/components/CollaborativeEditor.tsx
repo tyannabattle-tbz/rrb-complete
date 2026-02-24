@@ -161,7 +161,7 @@ export function CollaborativeEditor({ sessionId }: { sessionId: number }) {
         <Card>
           <CardContent className="pt-6">
             <div className="flex gap-2 flex-wrap">
-              {presence.map((p) => (
+              {presence.map((p, idx) => (
                 <Badge key={p.userId} variant="outline" className="flex items-center gap-1">
                   <div
                     className="w-2 h-2 rounded-full"

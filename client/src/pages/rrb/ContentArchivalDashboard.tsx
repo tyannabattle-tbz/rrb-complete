@@ -260,7 +260,7 @@ export default function ContentArchivalDashboard() {
               </Button>
             </div>
 
-            {links?.map((link: any) => (
+            {links?.map((link: any, idx) => (
               <Card key={link.id} className="bg-card border-border">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-4">
@@ -322,7 +322,7 @@ export default function ContentArchivalDashboard() {
                 </CardContent>
               </Card>
             ) : (
-              alerts.map((alert: any) => (
+              alerts.map((alert: any, idx) => (
                 <Card key={alert.id} className={`bg-card border-border ${alert.resolvedAt ? 'opacity-60' : ''}`}>
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between gap-4">
@@ -395,7 +395,7 @@ export default function ContentArchivalDashboard() {
                 </CardContent>
               </Card>
             ) : (
-              scans.map((scan: any) => (
+              scans.map((scan: any, idx) => (
                 <Card key={scan.scanId} className="bg-card border-border">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-3">

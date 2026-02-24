@@ -87,7 +87,7 @@ export default function BusinessPartnerships() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-foreground text-center mb-8">Partnership Opportunities</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {partnershipTypes.map((type) => (
+            {partnershipTypes.map((type, idx) => (
               <Card key={type.title} className="hover:border-blue-500/30 transition-colors">
                 <CardHeader>
                   <type.icon className="w-8 h-8 text-blue-500 mb-2" />
@@ -115,7 +115,7 @@ export default function BusinessPartnerships() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-foreground text-center mb-8">Partnership Tiers</h2>
           <div className="grid gap-6 md:grid-cols-3">
-            {tiers.map((tier) => (
+            {tiers.map((tier, idx) => (
               <Card key={tier.name} className={`${tier.color}`}>
                 <CardHeader>
                   <CardTitle className={`text-xl ${tier.badge}`}>{tier.name}</CardTitle>

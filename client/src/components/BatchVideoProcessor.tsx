@@ -160,7 +160,7 @@ export function BatchVideoProcessorComponent({
 
             {/* All Jobs */}
             <TabsContent value="all" className="space-y-3 mt-4">
-              {jobs.map((job) => (
+              {jobs.map((job, idx) => (
                 <JobCard key={job.id} job={job} onCancel={handleCancelJob} />
               ))}
             </TabsContent>
@@ -169,7 +169,7 @@ export function BatchVideoProcessorComponent({
             <TabsContent value="completed" className="space-y-3 mt-4">
               {jobs
                 .filter((j) => j.status === 'completed')
-                .map((job) => (
+                .map((job, idx) => (
                   <JobCard key={job.id} job={job} onCancel={handleCancelJob} />
                 ))}
             </TabsContent>
@@ -178,7 +178,7 @@ export function BatchVideoProcessorComponent({
             <TabsContent value="processing" className="space-y-3 mt-4">
               {jobs
                 .filter((j) => j.status === 'processing')
-                .map((job) => (
+                .map((job, idx) => (
                   <JobCard key={job.id} job={job} onCancel={handleCancelJob} />
                 ))}
             </TabsContent>
@@ -187,7 +187,7 @@ export function BatchVideoProcessorComponent({
             <TabsContent value="failed" className="space-y-3 mt-4">
               {jobs
                 .filter((j) => j.status === 'failed')
-                .map((job) => (
+                .map((job, idx) => (
                   <JobCard key={job.id} job={job} onCancel={handleCancelJob} />
                 ))}
             </TabsContent>

@@ -206,7 +206,7 @@ export default function MeditationGuides() {
       {/* Guides */}
       <section className="py-12 px-4">
         <div className="max-w-4xl mx-auto space-y-4">
-          {filtered.map((guide) => (
+          {filtered.map((guide, idx) => (
             <Card
               key={guide.id}
               className={`cursor-pointer transition-all hover:border-teal-500/30 ${

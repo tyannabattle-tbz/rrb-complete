@@ -62,7 +62,7 @@ export function RealtimeAnalyticsDashboard() {
     const interval = setInterval(() => {
       // Update metrics with random variations
       setMetrics((prev) =>
-        prev.map((m) => ({
+        prev.map((m, idx) => ({
           ...m,
           value:
             typeof m.value === 'number'

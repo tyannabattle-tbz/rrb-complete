@@ -80,7 +80,7 @@ export default function AutomatedRemediationWorkflows() {
 
   const toggleWorkflow = (id: string) => {
     setWorkflows(
-      workflows.map((w) =>
+      workflows.map((w, idx) =>
         w.id === id ? { ...w, status: w.status === 'active' ? 'paused' : 'active' } : w
       )
     );
@@ -88,7 +88,7 @@ export default function AutomatedRemediationWorkflows() {
 
   const approveWorkflow = (id: string) => {
     setWorkflows(
-      workflows.map((w) =>
+      workflows.map((w, idx) =>
         w.id === id ? { ...w, approvalStatus: 'approved' } : w
       )
     );
@@ -97,7 +97,7 @@ export default function AutomatedRemediationWorkflows() {
 
   const rejectWorkflow = (id: string) => {
     setWorkflows(
-      workflows.map((w) =>
+      workflows.map((w, idx) =>
         w.id === id ? { ...w, approvalStatus: 'rejected' } : w
       )
     );
@@ -134,7 +134,7 @@ export default function AutomatedRemediationWorkflows() {
           {/* Workflows List */}
           <div className="lg:col-span-2 space-y-4">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Active Workflows</h2>
-            {workflows.map((workflow) => (
+            {workflows.map((workflow, idx) => (
               <Card
                 key={workflow.id}
                 className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4 cursor-pointer hover:shadow-lg transition-shadow"
@@ -232,7 +232,7 @@ export default function AutomatedRemediationWorkflows() {
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Recent Executions</h2>
             <div className="space-y-3">
-              {executions.map((execution) => {
+              {executions.map((execution, idx) => {
                 const workflow = workflows.find((w) => w.id === execution.workflowId);
                 return (
                   <Card

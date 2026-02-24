@@ -222,7 +222,7 @@ export function AppHeaderEnhanced() {
               <span className="hidden lg:inline">Home</span>
             </Button>
 
-            {dropdowns.map((dropdown) => (
+            {dropdowns.map((dropdown, idx) => (
               <NavDropdownMenu
                 key={dropdown.id}
                 dropdown={dropdown}

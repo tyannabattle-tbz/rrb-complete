@@ -197,7 +197,7 @@ export default function ChannelDiscovery() {
                 >
                   All Content
                 </Button>
-                {["audio", "document", "video", "transcript"].map((type) => (
+                {["audio", "document", "video", "transcript"].map((type, idx) => (
                   <Button
                     key={type}
                     variant={selectedContentType === type ? "default" : "outline"}
@@ -223,7 +223,7 @@ export default function ChannelDiscovery() {
             {searchResults && searchResults.results.length > 0 && (
               <div className="space-y-4">
                 <p className="text-slate-400">Found {searchResults.total} results</p>
-                {searchResults.results.map((item) => (
+                {searchResults.results.map((item, idx) => (
                   <Card key={item.id} className="bg-slate-800 border-slate-700 hover:border-slate-600 transition-colors">
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between gap-4">
@@ -274,7 +274,7 @@ export default function ChannelDiscovery() {
           {/* Topics Tab */}
           <TabsContent value="topics" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {topics?.map((topic) => (
+              {topics?.map((topic, idx) => (
                 <Card
                   key={topic.id}
                   className="bg-slate-800 border-slate-700 hover:border-accent cursor-pointer transition-colors"
@@ -325,7 +325,7 @@ export default function ChannelDiscovery() {
             <div>
               <h2 className="text-2xl font-bold text-white mb-4">Popular This Week</h2>
               <div className="space-y-4">
-                {popularContent?.map((item) => (
+                {popularContent?.map((item, idx) => (
                   <Card key={item.id} className="bg-slate-800 border-slate-700">
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between gap-4">
@@ -355,7 +355,7 @@ export default function ChannelDiscovery() {
           <TabsContent value="recommendations" className="space-y-6">
             {userRecommendations && userRecommendations.length > 0 ? (
               <div className="space-y-4">
-                {userRecommendations.map((item) => (
+                {userRecommendations.map((item, idx) => (
                   <Card key={item.id} className="bg-slate-800 border-slate-700">
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between gap-4">
@@ -388,7 +388,7 @@ export default function ChannelDiscovery() {
           <TabsContent value="bookmarks" className="space-y-6">
             {userBookmarks && userBookmarks.length > 0 ? (
               <div className="space-y-4">
-                {userBookmarks.map((item) => (
+                {userBookmarks.map((item, idx) => (
                   <Card key={item.contentId} className="bg-slate-800 border-slate-700">
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between gap-4">

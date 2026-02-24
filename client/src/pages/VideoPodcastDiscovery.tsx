@@ -56,7 +56,7 @@ export function VideoPodcastDiscovery() {
         {/* Category Tabs */}
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
-            {categories.map((cat) => (
+            {categories.map((cat, idx) => (
               <TabsTrigger key={cat} value={cat.toLowerCase()}>
                 {cat}
               </TabsTrigger>
@@ -88,7 +88,7 @@ export function VideoPodcastDiscovery() {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {videos.map((video: any) => (
+              {videos.map((video: any, idx) => (
                 <Link key={video.id} href={`/videos/${video.id}`}>
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
                     <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video flex items-center justify-center">

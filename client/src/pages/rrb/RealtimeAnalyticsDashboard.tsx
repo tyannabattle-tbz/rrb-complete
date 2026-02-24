@@ -163,7 +163,7 @@ export default function RealtimeAnalyticsDashboard() {
           {/* Platforms Tab */}
           <TabsContent value="platforms" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {liveMetrics?.platformBreakdown.map((platform: any) => (
+              {liveMetrics?.platformBreakdown.map((platform: any, idx) => (
                 <Card key={platform.platform} className="bg-slate-800 border-slate-700">
                   <CardHeader>
                     <CardTitle className="text-white">{platform.platform}</CardTitle>
@@ -259,7 +259,7 @@ export default function RealtimeAnalyticsDashboard() {
                   <CardTitle className="text-white">Top Interests</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  {demographics?.interests.slice(0, 6).map((interest: any) => (
+                  {demographics?.interests.slice(0, 6).map((interest: any, idx) => (
                     <div key={interest.interest} className="flex justify-between items-center">
                       <span className="text-slate-400">{interest.interest}</span>
                       <Badge className="bg-slate-700 text-slate-200">{interest.percentage}%</Badge>
@@ -277,7 +277,7 @@ export default function RealtimeAnalyticsDashboard() {
                 <CardTitle className="text-white">Top 5 Tracks</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {topTracks?.topTracks.map((track: any) => (
+                {topTracks?.topTracks.map((track: any, idx) => (
                   <div key={track.rank} className="border-b border-slate-700 pb-4 last:border-0">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
@@ -348,7 +348,7 @@ export default function RealtimeAnalyticsDashboard() {
                 <CardTitle className="text-white">Top Commercials</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {commercialMetrics?.topCommercials.map((commercial: any) => (
+                {commercialMetrics?.topCommercials.map((commercial: any, idx) => (
                   <div key={commercial.id} className="border-b border-slate-700 pb-4 last:border-0">
                     <p className="text-white font-semibold mb-2">{commercial.name}</p>
                     <div className="grid grid-cols-4 gap-4 text-sm">

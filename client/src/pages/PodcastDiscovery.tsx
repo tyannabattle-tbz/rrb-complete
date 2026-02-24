@@ -180,7 +180,7 @@ export default function PodcastDiscovery() {
         {/* Podcasts Grid */}
         {!isLoading && podcasts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {podcasts.map((podcast) => (
+            {podcasts.map((podcast, idx) => (
               <Card
                 key={podcast.id}
                 className="bg-white/10 border-orange-400 backdrop-blur-sm hover:bg-white/20 transition-all overflow-hidden group"

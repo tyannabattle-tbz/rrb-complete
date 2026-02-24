@@ -274,7 +274,7 @@ export function MegaControlStationDashboard() {
                 <CardTitle>Optimization Recommendations</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {resourceSummary.recommendations.map((rec) => (
+                {resourceSummary.recommendations.map((rec, idx) => (
                   <div key={rec.id} className="p-3 border rounded-lg">
                     <div className="flex justify-between items-start">
                       <div>
@@ -302,7 +302,7 @@ export function MegaControlStationDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {projects.map((project) => (
+                {projects.map((project, idx) => (
                   <div key={project.id} className="p-3 border rounded-lg">
                     <div className="flex justify-between items-start mb-2">
                       <div>
@@ -336,7 +336,7 @@ export function MegaControlStationDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {tasks.map((task) => (
+                {tasks.map((task, idx) => (
                   <div key={task.id} className="flex items-center justify-between p-2 border rounded">
                     <div>
                       <p className="font-medium text-sm">{task.name}</p>
@@ -362,7 +362,7 @@ export function MegaControlStationDashboard() {
             <CardContent>
               <div className="space-y-2">
                 {resourceSummary?.alerts && resourceSummary.alerts.length > 0 ? (
-                  resourceSummary.alerts.map((alert) => (
+                  resourceSummary.alerts.map((alert, idx) => (
                     <div key={alert.id} className="p-3 border rounded-lg bg-red-50">
                       <div className="flex justify-between items-start">
                         <div>

@@ -47,7 +47,7 @@ export default function ActionLogViewer({ logs, isLoading = false }: ActionLogVi
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const tools = useMemo(() => {
-    const unique = new Set(logs.map((log) => log.toolName));
+    const unique = new Set(logs.map((log, idx) => log.toolName));
     return Array.from(unique).sort();
   }, [logs]);
 
@@ -103,7 +103,7 @@ export default function ActionLogViewer({ logs, isLoading = false }: ActionLogVi
   const exportLogs = () => {
     const csv = [
       ["Tool", "Status", "Duration (ms)", "Created At", "Parameters", "Result", "Error"].join(","),
-      ...filteredLogs.map((log) =>
+      ...filteredLogs.map((log, idx) =>
         [
           log.toolName,
           log.status,
@@ -200,7 +200,7 @@ export default function ActionLogViewer({ logs, isLoading = false }: ActionLogVi
             <p className="text-muted-foreground">No action logs found</p>
           </Card>
         ) : (
-          filteredLogs.map((log) => (
+          filteredLogs.map((log, idx) => (
             <Card
               key={`log-${idx}-${log.id}`}
               className="p-4 cursor-pointer hover:bg-muted/50 transition-colors"

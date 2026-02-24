@@ -107,14 +107,14 @@ export function KeyboardShortcutsGuide({ open = false, onOpenChange }: KeyboardS
 
         <Tabs defaultValue="navigation" className="w-full">
           <TabsList className="grid w-full grid-cols-5">
-            {categories.map((cat) => (
+            {categories.map((cat, idx) => (
               <TabsTrigger key={cat} value={cat} className="text-xs">
                 {categoryLabels[cat]}
               </TabsTrigger>
             ))}
           </TabsList>
 
-          {categories.map((category) => (
+          {categories.map((category, idx) => (
             <TabsContent key={category} value={category} className="space-y-3">
               {shortcuts
                 .filter((s) => s.category === category)

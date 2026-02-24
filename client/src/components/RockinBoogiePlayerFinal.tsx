@@ -105,7 +105,7 @@ export function RockinBoogiePlayerFinal() {
 
     // Load downloaded episodes
     const downloaded = await getAllDownloadedEpisodes();
-    setDownloadedEpisodes(new Set(downloaded.map((e) => e.id)));
+    setDownloadedEpisodes(new Set(downloaded.map((e, idx) => e.id)));
 
     // Load playlists from localStorage
     const savedPlaylists = localStorage.getItem("rockinBoogiePlaylists");
@@ -228,7 +228,7 @@ export function RockinBoogiePlayerFinal() {
   }
 
   function addToPlaylist(playlistId: string, episode: Episode) {
-    const updatedPlaylists = playlists.map((p) => {
+    const updatedPlaylists = playlists.map((p, idx) => {
       if (p.id === playlistId) {
         return {
           ...p,
@@ -299,7 +299,7 @@ export function RockinBoogiePlayerFinal() {
       <div className="mb-6">
         <h3 className="text-orange-400 font-bold mb-3 uppercase text-sm">Channels</h3>
         <div className="grid grid-cols-3 gap-3">
-          {channels.map((channel) => (
+          {channels.map((channel, idx) => (
             <button
               key={channel.id}
               onClick={() => switchChannel(channel)}
@@ -432,7 +432,7 @@ export function RockinBoogiePlayerFinal() {
       <div className="mt-8">
         <h3 className="text-orange-400 font-bold mb-4 uppercase text-sm">Episodes</h3>
         <div className="space-y-2">
-          {currentChannel?.episodes.map((episode) => (
+          {currentChannel?.episodes.map((episode, idx) => (
             <div
               key={episode.id}
               onClick={() => setCurrentEpisode(episode)}

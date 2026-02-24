@@ -144,7 +144,7 @@ export function PodcastPlayer() {
         <Card className="mb-6 p-6 border-2 border-orange-300">
           <h3 className="text-sm font-bold text-orange-600 mb-4">CHANNELS</h3>
           <div className="grid grid-cols-3 gap-3">
-            {CHANNELS.map((channel) => (
+            {CHANNELS.map((channel, idx) => (
               <Button
                 key={`channel-${idx}-${channel.id || 'unnamed'}`}
                 onClick={() => handleSwitchChannel(channel.id)}

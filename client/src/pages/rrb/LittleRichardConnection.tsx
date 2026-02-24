@@ -143,7 +143,7 @@ export default function LittleRichardConnection() {
           </p>
 
           <div className="space-y-10">
-            {facebookEvidence.map((evidence) => (
+            {facebookEvidence.map((evidence, idx) => (
               <Card key={evidence.id} className="border-amber-500/30 overflow-hidden">
                 <CardHeader className="bg-amber-500/10 border-b border-amber-500/20">
                   <div className="flex items-start justify-between flex-wrap gap-2">
