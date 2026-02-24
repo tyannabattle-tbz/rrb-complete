@@ -1,6 +1,6 @@
 {
-  "name": "manus-agent-web",
-  "version": "1.0.0",
+  "name": "qumus-operator-control-center",
+  "version": "1.0.0-qumus",
   "type": "module",
   "license": "MIT",
   "scripts": {

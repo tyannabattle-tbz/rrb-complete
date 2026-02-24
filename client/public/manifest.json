@@ -1,13 +1,13 @@
 {
   "name": "QUMUS - Autonomous Orchestration Engine",
   "short_name": "QUMUS",
-  "description": "The intelligent control center managing HybridCast, Rockin Rockin Boogie, Sweet Miracles, and all subsidiary platforms with 90%+ autonomy.",
+  "description": "QUMUS - Quantum Universal Management & Utility System. Autonomous orchestration engine with 12 intelligent decision policies, real-time monitoring, and 90% autonomy control.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#0f172a",
+  "theme_color": "#0369a1",
   "icons": [
     {
       "src": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/IjTuNOMFRPaOynnR.png",
@@ -54,7 +54,7 @@
       "name": "Dashboard",
       "short_name": "Dashboard",
       "description": "Open QUMUS Dashboard",
-      "url": "/dashboard",
+      "url": "/admin/qumus",
       "icons": [
         {
           "src": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/IjTuNOMFRPaOynnR.png",
