@@ -15,6 +15,7 @@ import { WebRTCCallIn } from './components/WebRTCCallIn';
 import AgentDashboard from "./pages/AgentDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import { AdminAnalyticsDashboard } from "./pages/AdminAnalyticsDashboard";
+import QumusDashboard from "./pages/admin/QumusDashboard";
 import { SettingsPanel } from "./pages/SettingsPanel";
 import { APIDocumentation } from "./pages/APIDocumentation";
 import { TeamManagement } from "./pages/TeamManagement";
@@ -330,6 +331,7 @@ function Router() {
       {/* Consolidated into /rrb/radio-station */}
       <Route path="/enhanced-chat" component={EnhancedChatPage} />
       <Route path="/qumus-dashboard" component={QumusMonitoringDashboard} />
+      <Route path="/admin/qumus" component={QumusDashboard} />
       <Route path="/policy-decisions" component={PolicyDecisionLogging} />
       <Route path="/compliance-audit" component={ComplianceAuditViewer} />
       <Route path="/service-health" component={ServiceHealthAlerts} />

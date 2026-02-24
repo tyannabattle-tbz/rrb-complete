@@ -122,6 +122,7 @@ import { commercialsRouter } from "./routers/commercials";
 import { broadcastSchedulerRouter } from "./routers/broadcastSchedulerRouter";
 import { streamingRouter } from "./routers/streamingRouter";
 import { emergencyBroadcastRouter } from "./routers/emergencyBroadcastRouter";
+import { radioFeaturesRouter } from "./routers/radioFeaturesRouter";
 import { commercialMP3Router } from "./routers/commercialMP3Router";
 
 // Radio Content API (serves tracks/playlists from database)
@@ -135,6 +136,9 @@ import { contentSchedulerRouter } from "./routers/contentSchedulerRouter";
 import { pushNotificationRouter } from "./routers/pushNotificationRouter";
 // Listener Analytics (real-time channel metrics)
 import { listenerAnalyticsRouter } from "./routers/listenerAnalyticsRouter";
+
+// Radio Features (listener sync, history, recommendations)
+import { radioFeaturesRouter } from "./routers/radioFeaturesRouter";
 
 // Payment Integrations
 import { stripeIntegrationRouter } from "./routers/stripeIntegration";
@@ -262,6 +266,9 @@ export const appRouter = router({
 
   // Radio Stations
   radioStations: radioStationsRouter,
+
+  // Radio Features (listener sync, history, recommendations)
+  radioFeatures: radioFeaturesRouter,
 
   // SomaFM API Integration
   somaFm: somaFmRouter,
