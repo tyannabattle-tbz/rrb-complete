@@ -221,6 +221,7 @@ import RRBLittleRichardConnection from '@/pages/rrb/LittleRichardConnection';
 import LittleRichardBiography from '@/pages/rrb/LittleRichardBiography';
 import LittleRichardFAQ from '@/pages/rrb/LittleRichardFAQ';
 import LittleRichardDiscography from '@/pages/rrb/LittleRichardDiscography';
+import RockinRockinBoogiePage from '@/pages/rrb/RockinRockinBoogiePage';
 import RRBPoetryHour from '@/pages/rrb/PoetryHour';
 import RRBVerifiedSources from '@/pages/rrb/VerifiedSources';
 import RRBBooksAndMiracles from '@/pages/rrb/BooksAndMiracles';
@@ -437,9 +438,11 @@ function Router() {
       <Route path="/rrb/little-richard-biography" component={LittleRichardBiography} />
       <Route path="/rrb/little-richard-faq" component={LittleRichardFAQ} />
       <Route path="/rrb/little-richard-discography" component={LittleRichardDiscography} />
+      <Route path="/rrb/rockin-rockin-boogie" component={RockinRockinBoogiePage} />
       <Route path="/little-richard-biography" component={LittleRichardBiography} />
       <Route path="/little-richard-faq" component={LittleRichardFAQ} />
       <Route path="/little-richard-discography" component={LittleRichardDiscography} />
+      <Route path="/rockin-rockin-boogie" component={RockinRockinBoogiePage} />
       <Route path="/rrb/family-achievements" component={RRBFamilyAchievements} />
       <Route path="/rrb/family-legacy" component={RRBFamilyLegacy} />
       <Route path="/rrb/seans-music" component={RRBSeansMusic} />
