@@ -6,6 +6,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerRSSRoutes } from "../rss-feeds";
 import { handleStripeWebhook } from "../webhooks/stripeWebhook";
+import { createSitemapRouter } from "../services/sitemapGenerator";
 import { domainRoutingMiddleware } from "../middleware/domainRouting";
 import streamProxyRouter from "../routes/streamProxy";
 import hlsStreamRouter from "../routes/hlsStream";
@@ -56,6 +57,8 @@ async function startServer() {
   registerOAuthRoutes(app);
   // RSS feeds for podcast directories, news aggregators, and radio listings
   registerRSSRoutes(app);
+  // SEO Sitemap routes
+  app.use('/', createSitemapRouter(process.env.VITE_APP_URL || 'https://www.rockinrockinboogie.com'));
   // Stream proxy routes for CORS-free audio streaming
   app.use('/api/stream', streamProxyRouter);
   // HLS stream routes for iOS compatibility
