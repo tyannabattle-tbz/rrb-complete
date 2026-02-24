@@ -1,0 +1,109 @@
+{
+  "app": {
+    "name": "Rockin' Rockin' Boogie",
+    "slug": "rrb-radio-station",
+    "version": "1.0.0",
+    "description": "Live radio station featuring 40+ channels, Little Richard legacy, and community engagement",
+    "type": "web-app",
+    "standalone": true
+  },
+  "deployment": {
+    "type": "manus-web",
+    "port": 3000,
+    "environment": "production",
+    "features": ["db", "server", "user", "qumus-integration"],
+    "integrations": {
+      "qumus": {
+        "enabled": true,
+        "url": "http://qumus-orchestration-engine:3001",
+        "fallbackUrl": "http://localhost:3001",
+        "reconnectInterval": 5000,
+        "timeout": 10000
+      },
+      "stripe": {
+        "enabled": true,
+        "publishableKey": "${VITE_STRIPE_PUBLISHABLE_KEY}",
+        "secretKey": "${STRIPE_SECRET_KEY}"
+      },
+      "oauth": {
+        "enabled": true,
+        "provider": "manus",
+        "url": "${OAUTH_SERVER_URL}"
+      }
+    }
+  },
+  "services": {
+    "database": {
+      "type": "mysql",
+      "connectionString": "${DATABASE_URL}",
+      "migrations": true
+    },
+    "storage": {
+      "type": "s3",
+      "bucket": "rockinrockinboogie-assets",
+      "region": "us-east-1"
+    },
+    "cache": {
+      "type": "redis",
+      "ttl": 3600
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "logging": {
+      "level": "info",
+      "format": "json",
+      "outputs": ["console", "file"]
+    },
+    "metrics": {
+      "enabled": true,
+      "interval": 60000
+    },
+    "healthCheck": {
+      "enabled": true,
+      "interval": 30000,
+      "path": "/health"
+    }
+  },
+  "security": {
+    "cors": {
+      "enabled": true,
+      "origins": ["https://rockinrockinboogie.com", "https://*.rockinrockinboogie.com"]
+    },
+    "rateLimit": {
+      "enabled": true,
+      "windowMs": 900000,
+      "maxRequests": 100
+    },
+    "https": {
+      "enabled": true,
+      "redirectHttp": true
+    }
+  },
+  "features": {
+    "radioStation": {
+      "enabled": true,
+      "channels": 40,
+      "streaming": true,
+      "analytics": true
+    },
+    "littleRichardLegacy": {
+      "enabled": true,
+      "biography": true,
+      "discography": true,
+      "timeline": true,
+      "vinyl": true
+    },
+    "community": {
+      "enabled": true,
+      "chat": true,
+      "forums": true,
+      "events": true
+    },
+    "donations": {
+      "enabled": true,
+      "platform": "sweet-miracles",
+      "integration": "qumus"
+    }
+  }
+}

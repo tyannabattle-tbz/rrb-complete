@@ -24,7 +24,7 @@ export const radioFeaturesRouter = router({
      * Get trending channels
      */
     getTrending: publicProcedure
-      .input(z.object({ limit: z.number().default(5).max(20) }))
+      .input(z.object({ limit: z.number().int().min(1).max(20).default(5) }))
       .query(async ({ input }) => {
         return listenerSyncService.getTrendingChannels(input.limit);
       }),
@@ -81,7 +81,7 @@ export const radioFeaturesRouter = router({
      * Get recently played channels
      */
     getRecent: protectedProcedure
-      .input(z.object({ limit: z.number().default(10).max(50) }))
+      .input(z.object({ limit: z.number().int().min(1).max(50).default(10) }))
       .query(async ({ input, ctx }) => {
         return channelHistoryService.getRecentlyPlayed(ctx.user.id, input.limit);
       }),
@@ -90,7 +90,7 @@ export const radioFeaturesRouter = router({
      * Get most played channels
      */
     getMostPlayed: protectedProcedure
-      .input(z.object({ limit: z.number().default(5).max(20) }))
+      .input(z.object({ limit: z.number().int().min(1).max(20).default(5) }))
       .query(async ({ input, ctx }) => {
         return channelHistoryService.getMostPlayed(ctx.user.id, input.limit);
       }),
@@ -99,7 +99,7 @@ export const radioFeaturesRouter = router({
      * Get favorite genres
      */
     getFavoriteGenres: protectedProcedure
-      .input(z.object({ limit: z.number().default(5).max(20) }))
+      .input(z.object({ limit: z.number().int().min(1).max(20).default(5) }))
       .query(async ({ input, ctx }) => {
         return channelHistoryService.getFavoriteGenres(ctx.user.id, input.limit);
       }),
@@ -138,7 +138,7 @@ export const radioFeaturesRouter = router({
     forChannel: publicProcedure
       .input(z.object({
         channelId: z.string(),
-        limit: z.number().default(5).max(20),
+        limit: z.number().int().min(1).max(20).default(5),
       }))
       .query(async ({ input }) => {
         return channelRecommendationService.getRecommendationsForChannel(
@@ -151,7 +151,7 @@ export const radioFeaturesRouter = router({
      * Get personalized recommendations for logged-in user
      */
     personalized: protectedProcedure
-      .input(z.object({ limit: z.number().default(5).max(20) }))
+      .input(z.object({ limit: z.number().int().min(1).max(20).default(5) }))
       .query(async ({ input, ctx }) => {
         return channelRecommendationService.getPersonalizedRecommendations(
           ctx.user.id,
@@ -163,7 +163,7 @@ export const radioFeaturesRouter = router({
      * Get trending recommendations
      */
     trending: publicProcedure
-      .input(z.object({ limit: z.number().default(5).max(20) }))
+      .input(z.object({ limit: z.number().int().min(1).max(20).default(5) }))
       .query(async ({ input }) => {
         return channelRecommendationService.getTrendingRecommendations(input.limit);
       }),
@@ -172,7 +172,7 @@ export const radioFeaturesRouter = router({
      * Get discovery recommendations (new genres)
      */
     discovery: protectedProcedure
-      .input(z.object({ limit: z.number().default(5).max(20) }))
+      .input(z.object({ limit: z.number().int().min(1).max(20).default(5) }))
       .query(async ({ input, ctx }) => {
         return channelRecommendationService.getDiscoveryRecommendations(
           ctx.user.id,
