@@ -9,16 +9,27 @@ function isIpAddress(host: string) {
 }
 
 function isSecureRequest(req: Request) {
+  // Check if the request is already HTTPS
   if (req.protocol === "https") return true;
 
+  // Check for x-forwarded-proto header (common in proxies)
   const forwardedProto = req.headers["x-forwarded-proto"];
-  if (!forwardedProto) return false;
+  if (forwardedProto) {
+    const protoList = Array.isArray(forwardedProto)
+      ? forwardedProto
+      : forwardedProto.split(",");
+    if (protoList.some(proto => proto.trim().toLowerCase() === "https")) {
+      return true;
+    }
+  }
 
-  const protoList = Array.isArray(forwardedProto)
-    ? forwardedProto
-    : forwardedProto.split(",");
+  // Check for x-forwarded-proto from Manus proxy
+  const manusProto = req.headers["x-e2bp-proto"] || req.headers["x-forwarded-proto"];
+  if (manusProto && typeof manusProto === "string") {
+    return manusProto.toLowerCase() === "https";
+  }
 
-  return protoList.some(proto => proto.trim().toLowerCase() === "https");
+  return false;
 }
 
 export function getSessionCookieOptions(
@@ -48,6 +59,14 @@ export function getSessionCookieOptions(
       domain = hostname;
     }
   }
+
+  console.log("[Cookie] Setting cookie options", {
+    hostname,
+    domain,
+    isLocalhost,
+    isSecure,
+    secure,
+  });
 
   return {
     domain,
