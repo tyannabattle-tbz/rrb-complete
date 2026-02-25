@@ -14,8 +14,11 @@ export function useAuth(options?: UseAuthOptions) {
   const utils = trpc.useUtils();
 
   const meQuery = trpc.auth.me.useQuery(undefined, {
-    retry: false,
-    refetchOnWindowFocus: false,
+    retry: true,
+    retryDelay: 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0,
   });
 
   const logoutMutation = trpc.auth.logout.useMutation({
@@ -59,6 +62,11 @@ export function useAuth(options?: UseAuthOptions) {
     logoutMutation.error,
     logoutMutation.isPending,
   ]);
+
+  useEffect(() => {
+    // Force refetch on mount to ensure fresh auth state
+    meQuery.refetch();
+  }, []);
 
   useEffect(() => {
     if (!redirectOnUnauthenticated) return;
