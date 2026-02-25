@@ -116,7 +116,7 @@ export default function MotionGenerationStudio() {
           <p className="text-slate-600 mt-2">Create professional videos, animations, and motion graphics</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2" onClick={() => toast.info('Studio settings — configure output format, resolution, and rendering preferences')}>
+          <Button variant="outline" className="gap-2">
             <Settings className="w-4 h-4" />
             Settings
           </Button>
@@ -302,7 +302,7 @@ export default function MotionGenerationStudio() {
                   </Badge>
                   <span className="text-xs text-slate-500">{template.duration}s</span>
                 </div>
-                <Button className="w-full mt-3 bg-blue-600 hover:bg-blue-700" size="sm" onClick={() => { setFormData({ ...formData, description: template.description, duration: template.duration }); setActiveTab('create'); toast.success(`Template "${template.name}" loaded — edit and generate!`); }}>
+                <Button className="w-full mt-3 bg-blue-600 hover:bg-blue-700" size="sm">
                   <Play className="w-3 h-3 mr-1" />
                   Use Template
                 </Button>
@@ -332,7 +332,7 @@ export default function MotionGenerationStudio() {
                   </div>
                   <div className="flex gap-2">
                     <Badge className="bg-green-100 text-green-700">{video.status}</Badge>
-                    <Button size="sm" variant="outline" className="gap-2" onClick={() => toast.info(`Download for "${video.title}" — video generation creates downloadable files when using real content.`)}>
+                    <Button size="sm" variant="outline" className="gap-2">
                       <Download className="w-4 h-4" />
                       Download
                     </Button>

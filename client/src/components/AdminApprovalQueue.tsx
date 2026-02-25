@@ -36,10 +36,10 @@ export const AdminApprovalQueue: React.FC<AdminApprovalQueueProps> = ({
   const [pendingContent, setPendingContent] = useState<PendingContent[]>([
     {
       contentId: "gen-1",
-      title: "Top of the Sol Tech News - Feb 4",
+      title: "Morning Tech News - Feb 4",
       type: "podcast",
       topic: "Technology News",
-      script: "Welcome to Top of the Sol Tech News...",
+      script: "Welcome to Morning Tech News...",
       summary: "Daily technology news briefing covering latest AI developments and tech industry updates.",
       duration: 12,
       status: "pending",
@@ -51,7 +51,7 @@ export const AdminApprovalQueue: React.FC<AdminApprovalQueueProps> = ({
       title: "Chapter 3: The Great Adventure",
       type: "audiobook",
       topic: "Classic Literature",
-      script: "The Top of the Sol sun rose over the distant hills...",
+      script: "The morning sun rose over the distant hills...",
       summary: "Audiobook chapter narration for classic literature series.",
       duration: 18,
       status: "pending",

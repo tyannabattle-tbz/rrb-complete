@@ -1,23 +1,9 @@
 /**
- * Canryn Production Inc. - Parent Company Structure
- * "A Corporation with the Right Stuff!"
- * 
- * LEGACY RESTORED (Original 6 Subsidiaries):
- *   Canryn Publishing Co. - Literary & Arts Publishing
- *   Seasha Distribution Co. - Shipping & Receiving Department
- *   Annas Promotion Co. - Artist & Model Management
- *   Jaelon Enterprises - Investment & Book Keeping Co. (Run by Jaelon)
- *   Little C Recording Co. - Video & Sound Recording Co.
- *   Sean's Music World - Video & Sound Publishing Co. (Run by Sean)
- * 
- * LEGACY CONTINUED (Digital Platform Products):
- *   Qumus - Autonomous Orchestration Engine
- *   RRB Radio - Emergency Broadcast & Community Radio
- *   HybridCast - Multi-platform Streaming & Broadcast
- *   Sweet Miracles - NPO for Community Support (Founded by Ty Battle, Seabrun's daughter)
- *   Rockin Rockin Boogie - Entertainment & Music Platform
- * 
- * Founder: Seabrun "Candy" Hunter Jr. | Operators: Jaelon, Sean
+ * Canryn Ecosystem - Parent Company Structure
+ * Manages all subsidiaries: Qumus, RRB Radio, HybridCast, Sweet Miracles
+ * Founder: Dad | Operators: Jaelon, Sean
+ * Mission: Create generational wealth through Canryn Production and Sweet Miracles
+ * Motto: "A Voice for the Voiceless"
  */
 
 export interface CanrynSubsidiary {
@@ -57,11 +43,11 @@ class CanrynEcosystem {
 
   constructor() {
     this.config = {
-      companyName: 'Canryn Production Inc.',
-      founder: 'Seabrun "Candy" Hunter Jr.',
+      companyName: 'Canryn Production',
+      founder: 'Dad',
       operators: ['Jaelon', 'Sean'],
-      mission: 'Create generational wealth through Canryn Production and Sweet Miracles grant and donation funding. Structured for legacy restored and legacy continued — perpetual operation. A Voice for the Voiceless.',
-      motto: 'A Corporation with the Right Stuff!',
+      mission: 'Create generational wealth through Canryn Production and Sweet Miracles grant and donation funding. Structured for legacy restored and continue perpetual operation.',
+      motto: 'A Voice for the Voiceless',
       subsidiaries: new Map(),
       autonomyTarget: 90,
       humanOversightLevel: 10,
@@ -83,74 +69,11 @@ class CanrynEcosystem {
    * Initialize all Canryn subsidiaries
    */
   private initializeSubsidiaries(): void {
-    // === LEGACY RESTORED: Original 6 Subsidiaries (The Foundation) ===
-    this.registerSubsidiary({
-      subsidiaryId: 'canryn-publishing',
-      name: 'Canryn Publishing Co.',
-      description: 'Literary & Arts Publishing — preserving and publishing the creative works of Seabrun Candy Hunter and the Canryn legacy',
-      status: 'active',
-      autonomyLevel: 80,
-      humanOversightRequired: true,
-      integrations: ['seasha-distribution', 'seans-music-world', 'little-c-recording'],
-      lastHealthCheck: new Date(),
-    });
-    this.registerSubsidiary({
-      subsidiaryId: 'seasha-distribution',
-      name: 'Seasha Distribution Co.',
-      description: 'Shipping & Receiving Department — handling all physical and digital distribution for Canryn Production',
-      status: 'active',
-      autonomyLevel: 85,
-      humanOversightRequired: true,
-      integrations: ['canryn-publishing', 'little-c-recording', 'seans-music-world'],
-      lastHealthCheck: new Date(),
-    });
-    this.registerSubsidiary({
-      subsidiaryId: 'annas-promotion',
-      name: 'Annas Promotion Co.',
-      description: 'Artist & Model Management — managing talent, promotions, and brand partnerships',
-      status: 'active',
-      autonomyLevel: 75,
-      humanOversightRequired: true,
-      integrations: ['canryn-publishing', 'little-c-recording'],
-      lastHealthCheck: new Date(),
-    });
-    this.registerSubsidiary({
-      subsidiaryId: 'jaelon-enterprises',
-      name: 'Jaelon Enterprises',
-      description: 'Investment & Book Keeping Co. — managing finances, investments, and corporate operations. Run by Jaelon.',
-      status: 'active',
-      autonomyLevel: 70,
-      humanOversightRequired: true,
-      integrations: ['canryn-publishing', 'seasha-distribution', 'annas-promotion', 'little-c-recording', 'seans-music-world'],
-      lastHealthCheck: new Date(),
-    });
-    this.registerSubsidiary({
-      subsidiaryId: 'little-c-recording',
-      name: 'Little C Recording Co.',
-      description: 'Video & Sound Recording Co. — the studio arm of Canryn Production for all audio and video recording',
-      status: 'active',
-      autonomyLevel: 85,
-      humanOversightRequired: true,
-      integrations: ['canryn-publishing', 'seasha-distribution', 'seans-music-world'],
-      lastHealthCheck: new Date(),
-    });
-    this.registerSubsidiary({
-      subsidiaryId: 'seans-music-world',
-      name: "Sean's Music World",
-      description: 'Video & Sound Publishing Co. — publishing and distributing music and video content worldwide. Run by Sean.',
-      status: 'active',
-      autonomyLevel: 85,
-      humanOversightRequired: true,
-      integrations: ['canryn-publishing', 'seasha-distribution', 'little-c-recording'],
-      lastHealthCheck: new Date(),
-    });
-
-    // === LEGACY CONTINUED: Digital Platform Products ===
     // Qumus - Central Brain
     this.registerSubsidiary({
       subsidiaryId: 'qumus-core',
       name: 'Qumus',
-      description: 'Autonomous orchestration engine — Central brain controlling all digital systems (Legacy Continued)',
+      description: 'Autonomous orchestration engine - Central brain controlling all systems',
       status: 'active',
       autonomyLevel: 95,
       humanOversightRequired: false,
@@ -182,11 +105,11 @@ class CanrynEcosystem {
       lastHealthCheck: new Date(),
     });
 
-    // Sweet Miracles - NPO & Fundraising (Founded by Ty Battle, Seabrun's daughter)
+    // Sweet Miracles - NPO & Fundraising
     this.registerSubsidiary({
       subsidiaryId: 'sweet-miracles',
       name: 'Sweet Miracles',
-      description: 'Non-profit organization for community support and fundraising. Founded by Ty Battle, Seabrun\'s daughter. A Voice for the Voiceless.',
+      description: 'Non-profit organization for community support and fundraising',
       status: 'active',
       autonomyLevel: 80,
       humanOversightRequired: true,
@@ -206,7 +129,7 @@ class CanrynEcosystem {
       lastHealthCheck: new Date(),
     });
 
-    console.log('[Canryn] Ecosystem initialized: 6 Legacy Restored + 5 Legacy Continued = 11 entities');
+    console.log('[Canryn] Ecosystem initialized with 5 subsidiaries');
     this.updateMetrics();
   }
 

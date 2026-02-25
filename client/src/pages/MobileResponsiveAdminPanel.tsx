@@ -49,7 +49,7 @@ export default function MobileResponsiveAdminPanel() {
           </div>
 
           <nav className="space-y-2 p-4">
-            {menuItems.map((item, idx) => {
+            {menuItems.map((item) => {
               const Icon = item.icon;
               return (
                 <button
@@ -88,7 +88,7 @@ export default function MobileResponsiveAdminPanel() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {stats.map((stat, idx) => (
-                <Card key={`item-${idx}`} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4">
+                <Card key={idx} className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4">
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">{stat.label}</p>
                   <div className="flex items-end justify-between">
                     <div>
@@ -154,7 +154,7 @@ export default function MobileResponsiveAdminPanel() {
               <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4 md:p-6">
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Decision Policies</h2>
                 <div className="space-y-3">
-                  {['Content', 'User', 'Payment', 'Security', 'Compliance', 'Performance', 'Engagement', 'System'].map((policy, idx) => (
+                  {['Content', 'User', 'Payment', 'Security', 'Compliance', 'Performance', 'Engagement', 'System'].map((policy) => (
                     <div key={policy} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
                       <span className="font-medium text-slate-900 dark:text-white">{policy} Policy</span>
                       <Button variant="outline" size="sm">
@@ -170,7 +170,7 @@ export default function MobileResponsiveAdminPanel() {
               <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4 md:p-6">
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Integrated Services</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {['Stripe', 'Slack', 'Email', 'Analytics', 'Webhooks', 'Auth', 'Recommendations', 'WebSocket', 'Compliance', 'Notifications', 'LLM'].map((service, idx) => (
+                  {['Stripe', 'Slack', 'Email', 'Analytics', 'Webhooks', 'Auth', 'Recommendations', 'WebSocket', 'Compliance', 'Notifications', 'LLM'].map((service) => (
                     <div key={service} className="p-3 bg-slate-50 dark:bg-slate-700 rounded-lg flex items-center justify-between">
                       <span className="font-medium text-slate-900 dark:text-white">{service}</span>
                       <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
@@ -185,7 +185,7 @@ export default function MobileResponsiveAdminPanel() {
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
                   {menuItems.find((m) => m.id === activeTab)?.label}
                 </h2>
-                <p className="text-slate-600 dark:text-slate-400">This admin section is available through the main QUMUS dashboard. Navigate to <a href="/rrb/qumus/admin" className="text-blue-500 hover:underline">QUMUS Admin</a> for full controls.</p>
+                <p className="text-slate-600 dark:text-slate-400">Content for this section coming soon...</p>
               </Card>
             )}
           </div>

@@ -46,7 +46,7 @@ const CHANNELS: Channel[] = [
         id: 'rr-001',
         title: "Rockin' Rockin' Boogie - Original Recording",
         artist: 'Little Richard',
-        streamUrl: 'https://stream.radioparadise.com/aac-128',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Rockin+Boogie',
         channel: "Rockin' Rockin' Boogie",
         duration: 180,
@@ -55,7 +55,7 @@ const CHANNELS: Channel[] = [
         id: 'rr-002',
         title: 'Rock Around the Clock',
         artist: 'Bill Haley',
-        streamUrl: 'https://stream.radioparadise.com/aac-128',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Rock+Around+Clock',
         channel: "Rockin' Rockin' Boogie",
         duration: 200,
@@ -317,7 +317,7 @@ export function RockinBoogiePlayerUpgraded() {
         </div>
       </Card>
 
-      {/* Analytics */}
+      {/* Analytics - Coming Soon */}
       <Card className="p-6">
         <h3 className="text-lg font-bold mb-4">📊 Analytics</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

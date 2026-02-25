@@ -15,7 +15,6 @@ export const proofVault = mysqlTable(
       'usco',
       'bmi_mlc',
       'soundexchange',
-      'archival',
     ]).notNull(),
     title: varchar('title', { length: 255 }).notNull(),
     description: text('description'),

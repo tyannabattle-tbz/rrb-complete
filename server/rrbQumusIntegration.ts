@@ -68,7 +68,7 @@ export class RRBQumusIntegration {
       actions: ['apply-template', 'queue-content'],
       conditions: {
         timeRanges: {
-          topOfTheSol: { start: 6, end: 12, template: 'top-of-the-sol' },
+          morning: { start: 6, end: 12, template: 'morning-drive' },
           afternoon: { start: 12, end: 18, template: 'afternoon-block' },
           evening: { start: 18, end: 24, template: 'evening-block' },
           overnight: { start: 0, end: 6, template: 'overnight-block' },
@@ -298,7 +298,7 @@ export class RRBQumusIntegration {
    */
   private static getCurrentTimeBlock(): string {
     const hour = new Date().getHours();
-    if (hour >= 6 && hour < 12) return 'topOfTheSol';
+    if (hour >= 6 && hour < 12) return 'morning';
     if (hour >= 12 && hour < 18) return 'afternoon';
     if (hour >= 18 && hour < 24) return 'evening';
     return 'overnight';

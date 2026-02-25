@@ -175,7 +175,7 @@ export const conversationSummariesRouter = router({
     .mutation(async ({ ctx, input }) => {
       return {
         success: true,
-        downloadUrl: `/api/trpc/conversationExport.exportSessionToPDF`,
+        downloadUrl: `https://api.manus.im/exports/summary-${input.sessionId}.${input.format}`,
         filename: `session-summary-${input.sessionId}.${input.format}`,
         format: input.format,
       };

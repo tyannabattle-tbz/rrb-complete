@@ -123,7 +123,7 @@ export function AdvancedFiltering() {
               <div>
                 <label className="text-sm font-medium">Date Range</label>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  {["all", "today", "week", "month"].map((range, idx) => (
+                  {["all", "today", "week", "month"].map((range) => (
                     <Button
                       key={range}
                       variant={filters.dateRange === range ? "default" : "outline"}
@@ -140,7 +140,7 @@ export function AdvancedFiltering() {
               <div>
                 <label className="text-sm font-medium">Status</label>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  {["all", "active", "completed", "failed"].map((status, idx) => (
+                  {["all", "active", "completed", "failed"].map((status) => (
                     <Button
                       key={status}
                       variant={filters.status === status ? "default" : "outline"}
@@ -157,7 +157,7 @@ export function AdvancedFiltering() {
               <div>
                 <label className="text-sm font-medium">Token Usage</label>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  {["all", "low", "medium", "high"].map((usage, idx) => (
+                  {["all", "low", "medium", "high"].map((usage) => (
                     <Button
                       key={usage}
                       variant={filters.tokenUsage === usage ? "default" : "outline"}
@@ -174,7 +174,7 @@ export function AdvancedFiltering() {
               <div>
                 <label className="text-sm font-medium">Sort By</label>
                 <div className="flex gap-2 mt-2 flex-wrap">
-                  {["recent", "oldest", "name", "tokens"].map((sort, idx) => (
+                  {["recent", "oldest", "name", "tokens"].map((sort) => (
                     <Button
                       key={sort}
                       variant={filters.sortBy === sort ? "default" : "outline"}
@@ -214,7 +214,7 @@ export function AdvancedFiltering() {
         {/* Smart Collections Tab */}
         <TabsContent value="collections" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {smartCollections.map((collection, idx) => (
+            {smartCollections.map((collection) => (
               <Card key={collection.id} className="hover:border-primary cursor-pointer transition-colors">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
@@ -245,7 +245,7 @@ export function AdvancedFiltering() {
           ) : (
             <div className="space-y-2">
               {savedFilters.map((filter, idx) => (
-                <Card key={`item-${idx}`}>
+                <Card key={idx}>
                   <CardContent className="pt-6 flex items-center justify-between">
                     <div>
                       <p className="font-medium">{filter.name}</p>

@@ -6,7 +6,6 @@ import { Send, Menu, X } from 'lucide-react';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { trpc } from '@/lib/trpc';
 import AdminOverridePanel from '@/components/AdminOverridePanel';
-import { NowPlayingWidget } from '@/components/NowPlayingWidget';
 import RealTimeDecisionVisualization from '@/components/RealTimeDecisionVisualization';
 import { QumusChatCommandCenter } from '@/components/QumusChatCommandCenter';
 import { VoiceToText } from '@/components/VoiceToText';
@@ -131,30 +130,34 @@ export default function QumusChatPage() {
   };
 
   return (
-    <div className="flex h-full md:h-screen bg-white">
+    <div className="flex h-screen bg-white">
       {/* Mobile Overlay Backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed top-16 bottom-16 left-0 right-0 bg-black/50 z-30 md:hidden"
-          onClick={() => {
-            setSidebarOpen(false);
-            window.dispatchEvent(new Event('closeMobileMenu'));
-          }}
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar - mobile overlay, desktop fixed */}
-      <div className={`${sidebarOpen ? 'fixed md:relative' : 'hidden md:flex'} ${sidebarOpen ? 'top-16 bottom-16 left-0' : 'inset-0'} md:inset-auto z-40 md:z-auto ${sidebarOpen ? 'w-64' : 'md:w-64'} bg-slate-900 border-r border-slate-700 transition-all overflow-hidden flex-col`}>
-        {/* Mobile Menu Title */}
-        <div className="md:hidden flex items-center p-4 border-b border-slate-700">
-          <h2 className="text-white font-bold text-lg">Menu</h2>
+      <div className={`${sidebarOpen ? 'fixed md:relative' : 'hidden md:flex'} inset-0 md:inset-auto z-40 md:z-auto ${sidebarOpen ? 'w-64' : 'md:w-64'} bg-slate-900 border-r border-slate-700 transition-all overflow-hidden flex-col`}>
+        {/* Mobile Close Button */}
+        <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-700">
+          <h2 className="text-white font-bold">Menu</h2>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="text-white hover:bg-slate-800 p-1 rounded"
+            aria-label="Close menu"
+          >
+            <X className="h-6 w-6" />
+          </button>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           <Button 
             onClick={() => {
               setMessages([{ id: '0', role: 'assistant', content: 'Starting a new chat...', timestamp: Date.now() }]);
               setInput('');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
@@ -164,7 +167,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('features');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
@@ -174,7 +177,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('features');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
@@ -184,7 +187,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('features');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
@@ -194,7 +197,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('features');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
@@ -204,7 +207,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('features');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
@@ -214,7 +217,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('monitoring');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800"
@@ -227,7 +230,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('chat');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800 text-sm"
@@ -237,7 +240,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('decisions');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800 text-sm"
@@ -247,7 +250,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('override');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800 text-sm"
@@ -257,7 +260,7 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('commands');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800 text-sm"
@@ -267,20 +270,13 @@ export default function QumusChatPage() {
           <Button 
             onClick={() => {
               setActiveTab('voice');
-              if (isMobile) { setSidebarOpen(false); window.dispatchEvent(new Event('closeMobileMenu')); }
+              if (isMobile) setSidebarOpen(false);
             }}
             variant="ghost" 
             className="w-full justify-start text-white hover:bg-slate-800 text-sm"
           >
             🎤 Voice to Text
           </Button>
-          
-          {/* Now Playing Widget */}
-          <div className="border-t border-slate-700 my-2 pt-2 px-1">
-            <div className="[&_*]:!text-slate-200 [&_button]:!text-slate-200 [&_.text-muted-foreground]:!text-slate-400 [&_.text-primary]:!text-blue-400 [&_.bg-card\/50]:!bg-slate-800/50 [&_.border-border\/50]:!border-slate-700/50 [&_.hover\:bg-accent\/50]:hover:!bg-slate-700/50">
-              <NowPlayingWidget />
-            </div>
-          </div>
         </div>
       </div>
 
@@ -309,9 +305,6 @@ export default function QumusChatPage() {
             </TabsTrigger>
             <TabsTrigger value="monitoring" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
               📊 Monitoring
-            </TabsTrigger>
-            <TabsTrigger value="activity" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500">
-              🔴 Activity Feed
             </TabsTrigger>
           </TabsList>
 

@@ -68,7 +68,7 @@ export function AppHeader() {
     { label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
     { label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
     { label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
-    { label: '⚡ Solbones 4+3+2', icon: null, path: '/solbones' },
+    { label: '⚡ Solbones', icon: null, path: '/solbones' },
     { label: '👥 Client Portal', icon: null, path: '/client-portal' },
     { label: '👤 Reviews', icon: null, path: '/review' },
   ];
@@ -78,7 +78,7 @@ export function AppHeader() {
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo/Brand */}
         <div className="flex items-center gap-2">
-          <div className="text-2xl font-bold text-primary">RRB</div>
+          <div className="text-2xl font-bold text-primary">Qumus</div>
         </div>
 
         {/* Desktop Navigation */}

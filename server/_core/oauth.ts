@@ -57,14 +57,6 @@ export function registerOAuthRoutes(app: Express) {
       console.log("[OAuth] Setting session cookie with options", cookieOptions);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
-      // Set a cookie to signal frontend to check localStorage for return-to URL
-      res.cookie('auth-complete', 'true', { 
-        maxAge: 5000, // 5 second cookie
-        httpOnly: false,
-        secure: cookieOptions.secure,
-        sameSite: cookieOptions.sameSite,
-      });
-
       console.log("[OAuth] Callback successful, redirecting to /");
       res.redirect(302, "/");
     } catch (error) {

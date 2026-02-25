@@ -498,7 +498,7 @@ export default function ChatInterface({
           <div className="flex flex-wrap gap-2">
             {uploadedFiles.map((file, index) => (
               <div
-                key={file.name}
+                key={index}
                 className="flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-sm"
               >
                 <Paperclip size={14} />

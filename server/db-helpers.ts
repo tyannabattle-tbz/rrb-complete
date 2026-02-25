@@ -2,7 +2,7 @@
  * Database helper functions for Solbones, Client Portal, and Review components
  */
 
-import { getDb } from "./db";
+import * as db from "./db";
 import {
   solbonesFrequencyRolls,
   solbonesLeaderboard,
@@ -14,6 +14,7 @@ import {
   reviewResponses,
 } from "drizzle/schema";
 import { eq, desc, and, sql } from "drizzle-orm";
+import { db as drizzleDb } from "./db";
 
 // ============================================================================
 // Solbones Helpers
@@ -23,23 +24,18 @@ export async function recordFrequencyRoll(
   userId: number,
   frequencyName: string,
   frequency: number,
-  notes?: string,
-  dice?: [number, number, number],
-  score?: number
+  notes?: string
 ) {
-  const db = await getDb(); return db.insert(solbonesFrequencyRolls).values({
+  return db.insert(solbonesFrequencyRolls).values({
     userId,
-    dice1: dice?.[0] ?? 1,
-    dice2: dice?.[1] ?? 1,
-    dice3: dice?.[2] ?? 1,
+    frequencyName,
     frequency,
-    score: score ?? 0,
-    notes: notes ? `${frequencyName}: ${notes}` : frequencyName,
+    notes,
   });
 }
 
 export async function getUserFrequencyHistory(userId: number, limit = 20) {
-  const db = await getDb(); return db
+  return db
     .select()
     .from(solbonesFrequencyRolls)
     .where(eq(solbonesFrequencyRolls.userId, userId))
@@ -48,7 +44,7 @@ export async function getUserFrequencyHistory(userId: number, limit = 20) {
 }
 
 export async function getOrCreateLeaderboardEntry(userId: number) {
-  const db = await getDb(); const existing = await db
+  const existing = await db
     .select()
     .from(solbonesLeaderboard)
     .where(eq(solbonesLeaderboard.userId, userId));
@@ -59,10 +55,9 @@ export async function getOrCreateLeaderboardEntry(userId: number) {
 
   await db.insert(solbonesLeaderboard).values({
     userId,
+    totalRolls: 0,
+    streak: 0,
     score: 0,
-    gamesPlayed: 1,
-    highestScore: 0,
-    totalTallies: 0,
   });
 
   return db
@@ -77,18 +72,19 @@ export async function updateLeaderboardStats(
   favoriteFrequency?: string,
   score?: number
 ) {
-  const db = await getDb(); return db
+  return db
     .update(solbonesLeaderboard)
     .set({
-      gamesPlayed: totalRolls,
-      score: score ?? 0,
-      highestScore: score ?? 0,
+      totalRolls,
+      favoriteFrequency,
+      score,
+      lastRollDate: new Date().toISOString(),
     })
     .where(eq(solbonesLeaderboard.userId, userId));
 }
 
 export async function getTopLeaderboard(limit = 10) {
-  const db = await getDb(); return db
+  return db
     .select()
     .from(solbonesLeaderboard)
     .orderBy(desc(solbonesLeaderboard.score))
@@ -100,7 +96,7 @@ export async function getTopLeaderboard(limit = 10) {
 // ============================================================================
 
 export async function getOrCreateClientProfile(userId: number, email: string) {
-  const db = await getDb(); const existing = await db
+  const existing = await db
     .select()
     .from(clientProfiles)
     .where(eq(clientProfiles.userId, userId));
@@ -122,14 +118,14 @@ export async function getOrCreateClientProfile(userId: number, email: string) {
 }
 
 export async function updateClientProfile(userId: number, updates: any) {
-  const db = await getDb(); return db
+  return db
     .update(clientProfiles)
     .set(updates)
     .where(eq(clientProfiles.userId, userId));
 }
 
 export async function getClientProfile(userId: number) {
-  const db = await getDb(); return db
+  return db
     .select()
     .from(clientProfiles)
     .where(eq(clientProfiles.userId, userId));
@@ -141,7 +137,7 @@ export async function recordDonation(
   purpose?: string,
   transactionId?: string
 ) {
-  const db = await getDb(); return db.insert(clientDonationHistory).values({
+  return db.insert(clientDonationHistory).values({
     userId,
     amount,
     purpose,
@@ -151,7 +147,7 @@ export async function recordDonation(
 }
 
 export async function getDonationHistory(userId: number) {
-  const db = await getDb(); return db
+  return db
     .select()
     .from(clientDonationHistory)
     .where(eq(clientDonationHistory.userId, userId))
@@ -166,7 +162,7 @@ export async function recordContentUpload(
   fileSize?: number,
   duration?: number
 ) {
-  const db = await getDb(); return db.insert(clientContentUploads).values({
+  return db.insert(clientContentUploads).values({
     userId,
     title,
     contentUrl,
@@ -178,7 +174,7 @@ export async function recordContentUpload(
 }
 
 export async function getClientContentUploads(userId: number) {
-  const db = await getDb(); return db
+  return db
     .select()
     .from(clientContentUploads)
     .where(eq(clientContentUploads.userId, userId))
@@ -196,7 +192,7 @@ export async function createReview(
   content: string,
   category: string = "general"
 ) {
-  const db = await getDb(); return db.insert(reviews).values({
+  return db.insert(reviews).values({
     userId,
     rating,
     title,
@@ -208,7 +204,7 @@ export async function createReview(
 }
 
 export async function getReviews(limit = 10, offset = 0) {
-  const db = await getDb(); return db
+  return db
     .select()
     .from(reviews)
     .where(eq(reviews.status, "approved"))
@@ -218,7 +214,7 @@ export async function getReviews(limit = 10, offset = 0) {
 }
 
 export async function getReviewsByCategory(category: string, limit = 10) {
-  const db = await getDb(); return db
+  return db
     .select()
     .from(reviews)
     .where(
@@ -232,7 +228,7 @@ export async function getReviewsByCategory(category: string, limit = 10) {
 }
 
 export async function getReviewById(reviewId: number) {
-  const db = await getDb(); return db.select().from(reviews).where(eq(reviews.id, reviewId));
+  return db.select().from(reviews).where(eq(reviews.id, reviewId));
 }
 
 export async function recordReviewHelpfulness(
@@ -240,7 +236,7 @@ export async function recordReviewHelpfulness(
   userId: number,
   isHelpful: boolean
 ) {
-  const db = await getDb(); const existing = await db
+  const existing = await db
     .select()
     .from(reviewHelpfulness)
     .where(
@@ -270,7 +266,7 @@ export async function recordReviewHelpfulness(
 }
 
 export async function getReviewHelpfulnessStats(reviewId: number) {
-  const db = await getDb(); const stats = await db
+  const stats = await db
     .select({
       helpful: sql<number>`SUM(CASE WHEN is_helpful = 1 THEN 1 ELSE 0 END)`,
       notHelpful: sql<number>`SUM(CASE WHEN is_helpful = 0 THEN 1 ELSE 0 END)`,
@@ -282,7 +278,7 @@ export async function getReviewHelpfulnessStats(reviewId: number) {
 }
 
 export async function getAverageRating() {
-  const db = await getDb(); const result = await db
+  const result = await db
     .select({
       average: sql<number>`AVG(rating)`,
       count: sql<number>`COUNT(*)`,
@@ -298,7 +294,7 @@ export async function addReviewResponse(
   responderId: number,
   response: string
 ) {
-  const db = await getDb(); return db.insert(reviewResponses).values({
+  return db.insert(reviewResponses).values({
     reviewId,
     responderId,
     response,
@@ -306,7 +302,7 @@ export async function addReviewResponse(
 }
 
 export async function getReviewResponses(reviewId: number) {
-  const db = await getDb(); return db
+  return db
     .select()
     .from(reviewResponses)
     .where(eq(reviewResponses.reviewId, reviewId))

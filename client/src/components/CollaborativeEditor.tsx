@@ -161,7 +161,7 @@ export function CollaborativeEditor({ sessionId }: { sessionId: number }) {
         <Card>
           <CardContent className="pt-6">
             <div className="flex gap-2 flex-wrap">
-              {presence.map((p, idx) => (
+              {presence.map((p) => (
                 <Badge key={p.userId} variant="outline" className="flex items-center gap-1">
                   <div
                     className="w-2 h-2 rounded-full"
@@ -223,7 +223,7 @@ export function CollaborativeEditor({ sessionId }: { sessionId: number }) {
           <CardContent>
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {operations.slice(-10).map((op, idx) => (
-                <div key={`item-${idx}`} className="text-xs p-2 bg-gray-50 rounded flex justify-between">
+                <div key={idx} className="text-xs p-2 bg-gray-50 rounded flex justify-between">
                   <span>
                     {op.type === "insert" ? "➕" : "➖"} {op.type === "insert" ? `Inserted "${op.content}"` : `Deleted ${op.length} chars`} at position {op.position}
                   </span>

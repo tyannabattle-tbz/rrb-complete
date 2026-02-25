@@ -128,7 +128,7 @@ export default function BatchTemplateManager() {
               >
                 All
               </Button>
-              {categories?.map((category: string, idx) => (
+              {categories?.map((category: string) => (
                 <Button
                   key={category}
                   variant={selectedCategory === category ? "default" : "outline"}
@@ -143,7 +143,7 @@ export default function BatchTemplateManager() {
 
         {/* Templates Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {templates?.map((template: any, idx) => (
+          {templates?.map((template: any) => (
             <Card key={template.id} className="shadow-lg hover:shadow-xl transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between mb-2">
@@ -190,7 +190,7 @@ export default function BatchTemplateManager() {
                   <p className="text-sm font-medium text-slate-700 mb-2">Processing Steps:</p>
                   <div className="space-y-1">
                     {template.processingSteps.map((step: any, idx: number) => (
-                      <div key={`item-${idx}`} className="text-xs text-slate-600 bg-slate-50 p-2 rounded">
+                      <div key={idx} className="text-xs text-slate-600 bg-slate-50 p-2 rounded">
                         {idx + 1}. {step.name}
                       </div>
                     ))}

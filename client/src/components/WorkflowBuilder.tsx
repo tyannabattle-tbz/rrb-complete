@@ -68,7 +68,7 @@ export function WorkflowBuilder({ compact = false }: WorkflowBuilderProps) {
           <span className="text-sm text-muted-foreground">{workflows.length} total</span>
         </div>
         <div className="space-y-2 max-h-48 overflow-y-auto">
-          {workflows.slice(0, 5).map((workflow, idx) => (
+          {workflows.slice(0, 5).map((workflow) => (
             <div
               key={workflow.id}
               className="flex items-center justify-between p-2 hover:bg-muted rounded"
@@ -109,7 +109,7 @@ export function WorkflowBuilder({ compact = false }: WorkflowBuilderProps) {
           </Card>
         ) : (
           <div className="grid gap-2">
-            {workflows.map((workflow, idx) => (
+            {workflows.map((workflow) => (
               <Card
                 key={workflow.id}
                 className={cn(
@@ -197,7 +197,7 @@ export function WorkflowBuilder({ compact = false }: WorkflowBuilderProps) {
           {!validation.valid && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg space-y-1">
               {validation.errors.map((error, idx) => (
-                <div key={`item-${idx}`} className="text-sm text-red-700">
+                <div key={idx} className="text-sm text-red-700">
                   • {error}
                 </div>
               ))}
@@ -229,7 +229,7 @@ export function WorkflowBuilder({ compact = false }: WorkflowBuilderProps) {
               </div>
             ) : (
               <div className="space-y-2">
-                {currentWorkflow.nodes.map((node, idx) => (
+                {currentWorkflow.nodes.map((node) => (
                   <div
                     key={node.id}
                     className={cn(

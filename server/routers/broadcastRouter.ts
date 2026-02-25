@@ -1,373 +1,210 @@
-import { router, publicProcedure, protectedProcedure } from '../_core/trpc';
+import { router, protectedProcedure } from '../_core/trpc';
 import { z } from 'zod';
-import { webrtcService } from '../services/webrtcService';
-import { streamEncoderService } from '../services/streamEncoderService';
-import { audienceQAService } from '../services/audienceQAService';
+
+// Mock data for broadcasts
+const BROADCASTS = [
+  {
+    id: '1',
+    title: 'Tech Conference 2026 - Opening Keynote',
+    broadcaster: 'Tech Summit',
+    viewers: 5234,
+    duration: '1:00:00',
+    status: 'archived' as const,
+    quality: '4K',
+    uploadedAt: '2026-02-04',
+  },
+  {
+    id: '2',
+    title: 'Live Coding Session - Building Accessible Apps',
+    broadcaster: 'Dev Academy',
+    viewers: 3421,
+    duration: '2:00:00',
+    status: 'archived' as const,
+    quality: '1080p',
+    uploadedAt: '2026-02-05',
+  },
+  {
+    id: '3',
+    title: 'Business Networking Event - London',
+    broadcaster: 'Business Network',
+    viewers: 2156,
+    duration: '1:30:00',
+    status: 'archived' as const,
+    quality: '720p',
+    uploadedAt: '2026-02-03',
+  },
+];
+
+const CHAT_ROOMS = [
+  {
+    id: 'ny',
+    location: 'New York',
+    members: 12,
+    messages: 234,
+    flaggedMessages: 2,
+    status: 'active' as const,
+  },
+  {
+    id: 'london',
+    location: 'London',
+    members: 8,
+    messages: 156,
+    flaggedMessages: 1,
+    status: 'active' as const,
+  },
+  {
+    id: 'tokyo',
+    location: 'Tokyo',
+    members: 15,
+    messages: 412,
+    flaggedMessages: 5,
+    status: 'active' as const,
+  },
+];
+
+const FLAGGED_CONTENT = [
+  {
+    id: '1',
+    type: 'message' as const,
+    content: 'Inappropriate language in New York chat',
+    reporter: 'Alice Johnson',
+    reason: 'Profanity',
+    status: 'pending' as const,
+    flaggedAt: '2026-02-06 10:30',
+  },
+  {
+    id: '2',
+    type: 'user' as const,
+    content: 'User spamming links',
+    reporter: 'Bob Smith',
+    reason: 'Spam',
+    status: 'reviewed' as const,
+    flaggedAt: '2026-02-05 14:15',
+  },
+];
 
 export const broadcastRouter = router({
-  // WebRTC Procedures
-  webrtc: router({
-    createSession: protectedProcedure
-      .input(z.object({ sessionId: z.string() }))
-      .mutation(async ({ input }) => {
-        const session = await webrtcService.createSession(input.sessionId);
-        return {
-          id: session.id,
-          sessionId: session.sessionId,
-          stunServers: session.stunServers,
-        };
-      }),
-
-    addPeer: protectedProcedure
-      .input(z.object({ webrtcSessionId: z.string(), panelistId: z.string() }))
-      .mutation(async ({ input }) => {
-        const peer = await webrtcService.addPeer(input.webrtcSessionId, input.panelistId);
-        return {
-          id: peer.id,
-          panelistId: peer.panelistId,
-          status: peer.status,
-          videoEnabled: peer.videoEnabled,
-          audioEnabled: peer.audioEnabled,
-        };
-      }),
-
-    createOffer: protectedProcedure
-      .input(z.object({ webrtcSessionId: z.string(), peerId: z.string() }))
-      .query(async ({ input }) => {
-        const offer = await webrtcService.createOffer(input.webrtcSessionId, input.peerId);
-        return { offer };
-      }),
-
-    handleAnswer: protectedProcedure
-      .input(z.object({ webrtcSessionId: z.string(), peerId: z.string(), answer: z.string() }))
-      .mutation(async ({ input }) => {
-        await webrtcService.handleAnswer(input.webrtcSessionId, input.peerId, input.answer);
-        return { success: true };
-      }),
-
-    addIceCandidate: protectedProcedure
-      .input(z.object({ webrtcSessionId: z.string(), peerId: z.string(), candidate: z.string() }))
-      .mutation(async ({ input }) => {
-        await webrtcService.addIceCandidate(input.webrtcSessionId, input.peerId, input.candidate);
-        return { success: true };
-      }),
-
-    updateStats: protectedProcedure
-      .input(z.object({
-        webrtcSessionId: z.string(),
-        peerId: z.string(),
-        bitrate: z.number(),
-        latency: z.number(),
-        packetLoss: z.number(),
-      }))
-      .mutation(async ({ input }) => {
-        await webrtcService.updateStats(input.webrtcSessionId, input.peerId, {
-          bitrate: input.bitrate,
-          latency: input.latency,
-          packetLoss: input.packetLoss,
-        });
-        return { success: true };
-      }),
-
-    toggleVideo: protectedProcedure
-      .input(z.object({ webrtcSessionId: z.string(), peerId: z.string() }))
-      .mutation(async ({ input }) => {
-        const enabled = await webrtcService.toggleVideo(input.webrtcSessionId, input.peerId);
-        return { videoEnabled: enabled };
-      }),
-
-    toggleAudio: protectedProcedure
-      .input(z.object({ webrtcSessionId: z.string(), peerId: z.string() }))
-      .mutation(async ({ input }) => {
-        const enabled = await webrtcService.toggleAudio(input.webrtcSessionId, input.peerId);
-        return { audioEnabled: enabled };
-      }),
-
-    getPeers: protectedProcedure
-      .input(z.object({ webrtcSessionId: z.string() }))
-      .query(async ({ input }) => {
-        const peers = await webrtcService.getPeers(input.webrtcSessionId);
-        return peers.map(p => ({
-          id: p.id,
-          panelistId: p.panelistId,
-          status: p.status,
-          videoEnabled: p.videoEnabled,
-          audioEnabled: p.audioEnabled,
-          bitrate: p.bitrate,
-          latency: p.latency,
-          packetLoss: p.packetLoss,
-        }));
-      }),
-
-    getPeerStats: protectedProcedure
-      .input(z.object({ webrtcSessionId: z.string(), peerId: z.string() }))
-      .query(async ({ input }) => {
-        return await webrtcService.getPeerStats(input.webrtcSessionId, input.peerId);
-      }),
-
-    closeSession: protectedProcedure
-      .input(z.object({ webrtcSessionId: z.string() }))
-      .mutation(async ({ input }) => {
-        await webrtcService.closeSession(input.webrtcSessionId);
-        return { success: true };
-      }),
+  // Get all broadcasts
+  getBroadcasts: protectedProcedure.query(async () => {
+    return {
+      success: true,
+      data: BROADCASTS,
+    };
   }),
 
-  // Stream Encoder Procedures
-  encoder: router({
-    createEncoder: protectedProcedure
-      .input(z.object({ sessionId: z.string() }))
-      .mutation(async ({ input }) => {
-        const encoder = await streamEncoderService.createEncoder(input.sessionId);
-        return {
-          id: encoder.id,
-          sessionId: encoder.sessionId,
-          status: encoder.status,
-          outputResolution: encoder.outputResolution,
-          outputBitrate: encoder.outputBitrate,
-        };
-      }),
+  // Get broadcast details
+  getBroadcast: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const broadcast = BROADCASTS.find((b) => b.id === input.id);
+      if (!broadcast) {
+        return { success: false, error: 'Broadcast not found' };
+      }
+      return { success: true, data: broadcast };
+    }),
 
-    addVideoStream: protectedProcedure
-      .input(z.object({
-        encoderId: z.string(),
-        panelistId: z.string(),
-        resolution: z.string().optional(),
-        bitrate: z.number().optional(),
-      }))
-      .mutation(async ({ input }) => {
-        const stream = await streamEncoderService.addVideoStream(
-          input.encoderId,
-          input.panelistId,
-          input.resolution,
-          input.bitrate
-        );
-        return {
-          id: stream.id,
-          panelistId: stream.panelistId,
-          resolution: stream.resolution,
-          bitrate: stream.bitrate,
-        };
-      }),
+  // Delete broadcast
+  deleteBroadcast: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      const index = BROADCASTS.findIndex((b) => b.id === input.id);
+      if (index === -1) {
+        return { success: false, error: 'Broadcast not found' };
+      }
+      BROADCASTS.splice(index, 1);
+      return { success: true, message: 'Broadcast deleted' };
+    }),
 
-    configureOutput: protectedProcedure
-      .input(z.object({
-        encoderId: z.string(),
-        resolution: z.string().optional(),
-        bitrate: z.number().optional(),
-        frameRate: z.number().optional(),
-      }))
-      .mutation(async ({ input }) => {
-        await streamEncoderService.configureOutput(input.encoderId, {
-          resolution: input.resolution,
-          bitrate: input.bitrate,
-          frameRate: input.frameRate,
-        });
-        return { success: true };
-      }),
-
-    startEncoding: protectedProcedure
-      .input(z.object({ encoderId: z.string() }))
-      .mutation(async ({ input }) => {
-        await streamEncoderService.startEncoding(input.encoderId);
-        return { success: true };
-      }),
-
-    startRTMPStream: protectedProcedure
-      .input(z.object({ encoderId: z.string(), rtmpUrl: z.string() }))
-      .mutation(async ({ input }) => {
-        const result = await streamEncoderService.startRTMPStream(input.encoderId, input.rtmpUrl);
-        return result;
-      }),
-
-    startHLSStream: protectedProcedure
-      .input(z.object({ encoderId: z.string() }))
-      .mutation(async ({ input }) => {
-        const result = await streamEncoderService.startHLSStream(input.encoderId);
-        return result;
-      }),
-
-    pauseEncoding: protectedProcedure
-      .input(z.object({ encoderId: z.string() }))
-      .mutation(async ({ input }) => {
-        await streamEncoderService.pauseEncoding(input.encoderId);
-        return { success: true };
-      }),
-
-    resumeEncoding: protectedProcedure
-      .input(z.object({ encoderId: z.string() }))
-      .mutation(async ({ input }) => {
-        await streamEncoderService.resumeEncoding(input.encoderId);
-        return { success: true };
-      }),
-
-    stopEncoding: protectedProcedure
-      .input(z.object({ encoderId: z.string() }))
-      .mutation(async ({ input }) => {
-        await streamEncoderService.stopEncoding(input.encoderId);
-        return { success: true };
-      }),
-
-    getStatus: protectedProcedure
-      .input(z.object({ encoderId: z.string() }))
-      .query(async ({ input }) => {
-        return await streamEncoderService.getStatus(input.encoderId);
-      }),
-
-    getMetrics: protectedProcedure
-      .input(z.object({ encoderId: z.string() }))
-      .query(async ({ input }) => {
-        return await streamEncoderService.getMetrics(input.encoderId);
-      }),
-
-    updateAdaptiveBitrate: protectedProcedure
-      .input(z.object({
-        encoderId: z.string(),
-        networkCondition: z.enum(['excellent', 'good', 'fair', 'poor']),
-      }))
-      .mutation(async ({ input }) => {
-        const bitrate = await streamEncoderService.updateAdaptiveBitrate(
-          input.encoderId,
-          input.networkCondition
-        );
-        return { bitrate };
-      }),
+  // Get chat rooms
+  getChatRooms: protectedProcedure.query(async () => {
+    return {
+      success: true,
+      data: CHAT_ROOMS,
+    };
   }),
 
-  // Audience Q&A Procedures
-  qa: router({
-    createQASession: protectedProcedure
-      .input(z.object({ sessionId: z.string() }))
-      .mutation(async ({ input }) => {
-        const session = await audienceQAService.createQASession(input.sessionId);
-        return {
-          id: session.id,
-          sessionId: session.sessionId,
-          status: session.status,
-        };
-      }),
+  // Get chat room details
+  getChatRoom: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const room = CHAT_ROOMS.find((r) => r.id === input.id);
+      if (!room) {
+        return { success: false, error: 'Chat room not found' };
+      }
+      return { success: true, data: room };
+    }),
 
-    submitQuestion: publicProcedure
-      .input(z.object({
-        qaSessionId: z.string(),
-        viewerId: z.string(),
-        viewerName: z.string(),
-        question: z.string(),
-      }))
-      .mutation(async ({ input }) => {
-        const question = await audienceQAService.submitQuestion(
-          input.qaSessionId,
-          input.viewerId,
-          input.viewerName,
-          input.question
-        );
-        return {
-          id: question.id,
-          viewerName: question.viewerName,
-          question: question.question,
-          votes: question.votes,
-          status: question.status,
-        };
-      }),
+  // Get flagged content
+  getFlaggedContent: protectedProcedure.query(async () => {
+    return {
+      success: true,
+      data: FLAGGED_CONTENT,
+    };
+  }),
 
-    upvoteQuestion: publicProcedure
-      .input(z.object({ qaSessionId: z.string(), questionId: z.string() }))
-      .mutation(async ({ input }) => {
-        const votes = await audienceQAService.upvoteQuestion(input.qaSessionId, input.questionId);
-        return { votes };
-      }),
+  // Resolve flagged content
+  resolveFlaggedContent: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      const content = FLAGGED_CONTENT.find((c) => c.id === input.id);
+      if (!content) {
+        return { success: false, error: 'Flagged content not found' };
+      }
+      content.status = 'resolved';
+      return { success: true, message: 'Content resolved' };
+    }),
 
-    approveQuestion: protectedProcedure
-      .input(z.object({ qaSessionId: z.string(), questionId: z.string() }))
-      .mutation(async ({ input }) => {
-        await audienceQAService.approveQuestion(input.qaSessionId, input.questionId);
-        return { success: true };
-      }),
+  // Get broadcast analytics
+  getBroadcastAnalytics: protectedProcedure.query(async () => {
+    return {
+      success: true,
+      data: {
+        totalBroadcasts: BROADCASTS.length,
+        totalViewers: BROADCASTS.reduce((sum, b) => sum + b.viewers, 0),
+        averageViewers: Math.round(
+          BROADCASTS.reduce((sum, b) => sum + b.viewers, 0) / BROADCASTS.length
+        ),
+        topBroadcast: BROADCASTS.reduce((prev, current) =>
+          prev.viewers > current.viewers ? prev : current
+        ),
+      },
+    };
+  }),
 
-    rejectQuestion: protectedProcedure
-      .input(z.object({ qaSessionId: z.string(), questionId: z.string() }))
-      .mutation(async ({ input }) => {
-        await audienceQAService.rejectQuestion(input.qaSessionId, input.questionId);
-        return { success: true };
-      }),
+  // Get moderation stats
+  getModerationStats: protectedProcedure.query(async () => {
+    const pending = FLAGGED_CONTENT.filter((c) => c.status === 'pending').length;
+    const reviewed = FLAGGED_CONTENT.filter((c) => c.status === 'reviewed').length;
+    const resolved = FLAGGED_CONTENT.filter((c) => c.status === 'resolved').length;
 
-    getNextQuestion: protectedProcedure
-      .input(z.object({ qaSessionId: z.string() }))
-      .query(async ({ input }) => {
-        const question = await audienceQAService.getNextQuestion(input.qaSessionId);
-        return question ? {
-          id: question.id,
-          viewerName: question.viewerName,
-          question: question.question,
-          votes: question.votes,
-        } : null;
-      }),
+    return {
+      success: true,
+      data: {
+        totalFlagged: FLAGGED_CONTENT.length,
+        pending,
+        reviewed,
+        resolved,
+        pendingPercentage: Math.round((pending / FLAGGED_CONTENT.length) * 100),
+      },
+    };
+  }),
 
-    answerQuestion: protectedProcedure
-      .input(z.object({
-        qaSessionId: z.string(),
-        questionId: z.string(),
-        answer: z.string(),
-        answeredBy: z.string(),
-      }))
-      .mutation(async ({ input }) => {
-        await audienceQAService.answerQuestion(
-          input.qaSessionId,
-          input.questionId,
-          input.answer,
-          input.answeredBy
-        );
-        return { success: true };
-      }),
+  // Get chat room analytics
+  getChatRoomAnalytics: protectedProcedure.query(async () => {
+    const totalMembers = CHAT_ROOMS.reduce((sum, r) => sum + r.members, 0);
+    const totalMessages = CHAT_ROOMS.reduce((sum, r) => sum + r.messages, 0);
+    const totalFlagged = CHAT_ROOMS.reduce((sum, r) => sum + r.flaggedMessages, 0);
 
-    getPendingQuestions: protectedProcedure
-      .input(z.object({ qaSessionId: z.string() }))
-      .query(async ({ input }) => {
-        const questions = await audienceQAService.getPendingQuestions(input.qaSessionId);
-        return questions.map(q => ({
-          id: q.id,
-          viewerName: q.viewerName,
-          question: q.question,
-          votes: q.votes,
-          priority: q.priority,
-        }));
-      }),
-
-    getApprovedQuestions: publicProcedure
-      .input(z.object({ qaSessionId: z.string() }))
-      .query(async ({ input }) => {
-        const questions = await audienceQAService.getApprovedQuestions(input.qaSessionId);
-        return questions.map(q => ({
-          id: q.id,
-          viewerName: q.viewerName,
-          question: q.question,
-        }));
-      }),
-
-    getAnsweredQuestions: publicProcedure
-      .input(z.object({ qaSessionId: z.string() }))
-      .query(async ({ input }) => {
-        const questions = await audienceQAService.getAnsweredQuestions(input.qaSessionId);
-        return questions.map(q => ({
-          id: q.id,
-          viewerName: q.viewerName,
-          question: q.question,
-          answer: q.answer,
-          answeredBy: q.answeredBy,
-        }));
-      }),
-
-    getStats: publicProcedure
-      .input(z.object({ qaSessionId: z.string() }))
-      .query(async ({ input }) => {
-        return await audienceQAService.getStats(input.qaSessionId);
-      }),
-
-    closeQASession: protectedProcedure
-      .input(z.object({ qaSessionId: z.string() }))
-      .mutation(async ({ input }) => {
-        await audienceQAService.closeQASession(input.qaSessionId);
-        return { success: true };
-      }),
+    return {
+      success: true,
+      data: {
+        totalRooms: CHAT_ROOMS.length,
+        totalMembers,
+        totalMessages,
+        totalFlagged,
+        averageMembersPerRoom: Math.round(totalMembers / CHAT_ROOMS.length),
+        averageMessagesPerRoom: Math.round(totalMessages / CHAT_ROOMS.length),
+      },
+    };
   }),
 });

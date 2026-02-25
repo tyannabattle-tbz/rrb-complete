@@ -5,10 +5,8 @@
 import { router } from '../_core/trpc';
 import { editingPresetsRouter } from '../routers/editingPresets';
 import { recordingManagementRouter } from '../routers/recordingManagement';
-import { livePodcastProductionRouter } from '../routers/livePodcastProduction';
 
 export const chunk3Router = router({
   editingPresets: editingPresetsRouter,
   recordingManagement: recordingManagementRouter,
-  livePodcastProduction: livePodcastProductionRouter,
 });

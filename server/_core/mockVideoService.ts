@@ -1,4 +1,6 @@
-import { storagePut, storageGet } from "../storage";
+import { createWriteStream, existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
+import { Readable } from 'stream';
 
 export interface VideoGenerationRequest {
   prompt: string;
@@ -17,11 +19,18 @@ export interface VideoGenerationResponse {
 }
 
 /**
- * Video generation service that stores output in S3
+ * Mock video generation service that creates actual video files
  * Simulates real video generation APIs (Synthesia, D-ID, Runway ML)
- * In production, replace createMinimalMP4 with actual API calls
  */
 export class MockVideoService {
+  private videoDir: string;
+
+  constructor() {
+    this.videoDir = join(process.cwd(), 'public', 'videos');
+    if (!existsSync(this.videoDir)) {
+      mkdirSync(this.videoDir, { recursive: true });
+    }
+  }
 
   /**
    * Generate a mock video file (MP4 format)
@@ -29,21 +38,22 @@ export class MockVideoService {
    */
   async generateVideo(request: VideoGenerationRequest): Promise<VideoGenerationResponse> {
     const videoId = `video-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const fileKey = `generated-videos/${videoId}.mp4`;
+    const filename = `${videoId}.mp4`;
+    const filepath = join(this.videoDir, filename);
 
     try {
       // Create a minimal MP4 file structure
       const mp4Buffer = this.createMinimalMP4();
-
-      // Upload to S3 instead of local filesystem
-      const { url } = await storagePut(fileKey, mp4Buffer, 'video/mp4');
+      
+      // Write to file
+      await this.writeFile(filepath, mp4Buffer);
 
       const duration = request.duration || 10;
       const resolution = request.resolution || '1080p';
 
       return {
         videoId,
-        url,
+        url: `/videos/${filename}`,
         duration,
         resolution,
         status: 'completed',
@@ -118,23 +128,37 @@ export class MockVideoService {
   }
 
   /**
-   * Get video by ID - returns S3 URL
+   * Write buffer to file
+   */
+  private writeFile(filepath: string, data: Buffer): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const stream = createWriteStream(filepath);
+      stream.write(data);
+      stream.end();
+      stream.on('finish', resolve);
+      stream.on('error', reject);
+    });
+  }
+
+  /**
+   * Get video by ID
    */
   async getVideo(videoId: string): Promise<VideoGenerationResponse | null> {
-    const fileKey = `generated-videos/${videoId}.mp4`;
-    try {
-      const { url } = await storageGet(fileKey);
+    const filename = `${videoId}.mp4`;
+    const filepath = join(this.videoDir, filename);
+
+    if (existsSync(filepath)) {
       return {
         videoId,
-        url,
+        url: `/videos/${filename}`,
         duration: 10,
         resolution: '1080p',
         status: 'completed',
         createdAt: new Date(),
       };
-    } catch {
-      return null;
     }
+
+    return null;
   }
 
   /**

@@ -36,18 +36,13 @@ export function getSessionCookieOptions(
   if (!isLocalhost && hostname) {
     // For production domains, set the domain to allow subdomains
     if (!hostname.startsWith(".")) {
-      // Special handling for manus.space - always use .manus.space for cross-subdomain cookies
-      if (hostname.includes("manus.space")) {
-        domain = ".manus.space";
+      // Extract the main domain (e.g., "example.com" from "sub.example.com")
+      const parts = hostname.split(".");
+      if (parts.length > 1) {
+        // For multi-part domains, use the last 2 parts
+        domain = parts.slice(-2).join(".");
       } else {
-        // Extract the main domain (e.g., "example.com" from "sub.example.com")
-        const parts = hostname.split(".");
-        if (parts.length > 1) {
-          // For multi-part domains, use the last 2 parts
-          domain = "." + parts.slice(-2).join(".");
-        } else {
-          domain = hostname;
-        }
+        domain = hostname;
       }
     } else {
       domain = hostname;

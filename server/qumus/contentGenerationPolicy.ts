@@ -246,7 +246,7 @@ class ContentGenerationPolicy {
     timeOfDay: number,
     preference: string
   ): "podcast" | "audiobook" | "radio" {
-    // Top of the Sol (6-12): Radio shows
+    // Morning (6-12): Radio shows
     // Afternoon (12-18): Podcasts
     // Evening (18-24): Audiobooks
     // Night (0-6): Podcasts

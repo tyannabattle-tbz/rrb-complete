@@ -47,7 +47,7 @@ export default function ActionLogViewer({ logs, isLoading = false }: ActionLogVi
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const tools = useMemo(() => {
-    const unique = new Set(logs.map((log, idx) => log.toolName));
+    const unique = new Set(logs.map((log) => log.toolName));
     return Array.from(unique).sort();
   }, [logs]);
 
@@ -103,7 +103,7 @@ export default function ActionLogViewer({ logs, isLoading = false }: ActionLogVi
   const exportLogs = () => {
     const csv = [
       ["Tool", "Status", "Duration (ms)", "Created At", "Parameters", "Result", "Error"].join(","),
-      ...filteredLogs.map((log, idx) =>
+      ...filteredLogs.map((log) =>
         [
           log.toolName,
           log.status,
@@ -171,7 +171,7 @@ export default function ActionLogViewer({ logs, isLoading = false }: ActionLogVi
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Tools</SelectItem>
-            {tools.map((tool, idx) => (
+            {tools.map((tool) => (
               <SelectItem key={tool} value={tool}>
                 {tool}
               </SelectItem>
@@ -200,9 +200,9 @@ export default function ActionLogViewer({ logs, isLoading = false }: ActionLogVi
             <p className="text-muted-foreground">No action logs found</p>
           </Card>
         ) : (
-          filteredLogs.map((log, idx) => (
+          filteredLogs.map((log) => (
             <Card
-              key={`log-${idx}-${log.id}`}
+              key={log.id}
               className="p-4 cursor-pointer hover:bg-muted/50 transition-colors"
               onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
             >

@@ -199,7 +199,7 @@ export default function ClientPortal() {
               {donationHistoryQuery.data && donationHistoryQuery.data.length > 0 ? (
                 <div className="space-y-4">
                   {donationHistoryQuery.data.map((donation, index) => (
-                    <div key={`item-${index}`} className="bg-gray-800 p-4 rounded border border-gray-700">
+                    <div key={index} className="bg-gray-800 p-4 rounded border border-gray-700">
                       <div className="flex justify-between items-center">
                         <div>
                           <p className="text-white font-semibold">${donation.amount}</p>
@@ -225,7 +225,7 @@ export default function ClientPortal() {
               {contentUploadsQuery.data && contentUploadsQuery.data.length > 0 ? (
                 <div className="space-y-4">
                   {contentUploadsQuery.data.map((content, index) => (
-                    <div key={`item-${index}`} className="bg-gray-800 p-4 rounded border border-gray-700">
+                    <div key={index} className="bg-gray-800 p-4 rounded border border-gray-700">
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="text-white font-semibold">{content.title}</p>

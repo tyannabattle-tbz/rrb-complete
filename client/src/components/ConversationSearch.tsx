@@ -91,7 +91,7 @@ export function ConversationSearch() {
             ) : (
               results.map((result, idx) => (
                 <div
-                  key={`item-${idx}`}
+                  key={idx}
                   className="p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
                 >
                   <p className="text-sm font-medium">Session #{result.sessionId}</p>
@@ -116,7 +116,7 @@ export function ConversationSearch() {
           <CardContent className="space-y-2">
             {savedSearches.map((search, idx) => (
               <Button
-                key={`item-${idx}`}
+                key={idx}
                 variant="outline"
                 className="w-full justify-start"
                 onClick={() => {

@@ -26,7 +26,7 @@ export function MobileHeader() {
       {/* Main Header Bar */}
       <div className="flex h-14 items-center justify-between px-4 gap-2">
         {/* Logo */}
-        <div className="text-xl font-bold text-primary flex-shrink-0">RRB</div>
+        <div className="text-xl font-bold text-primary flex-shrink-0">Qumus</div>
 
         {/* Search Bar (centered, takes available space) */}
         {showSearch ? (

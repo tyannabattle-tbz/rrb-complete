@@ -238,7 +238,7 @@ describe("Content Generation Policy", () => {
     });
 
     it("should select content type based on time of day", async () => {
-      const topOfTheSolDecision = await contentGenerationPolicy.evaluateAndDecide({
+      const morningDecision = await contentGenerationPolicy.evaluateAndDecide({
         currentListenerCount: 5000,
         timeOfDay: 8,
         dayOfWeek: 1,
@@ -265,7 +265,7 @@ describe("Content Generation Policy", () => {
         availableTopics: ["News"],
       });
 
-      expect(topOfTheSolDecision?.contentType).toBe("radio");
+      expect(morningDecision?.contentType).toBe("radio");
       expect(afternoonDecision?.contentType).toBe("podcast");
       expect(eveningDecision?.contentType).toBe("audiobook");
     });

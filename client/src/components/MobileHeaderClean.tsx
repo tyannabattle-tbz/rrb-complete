@@ -12,26 +12,16 @@ export function MobileHeaderClean() {
     setMobileMenuOpen(false);
   }, [location]);
 
-  // Listen for sidebar close events from child components
-  useEffect(() => {
-    const handleSidebarClose = () => {
-      setMobileMenuOpen(false);
-    };
-    window.addEventListener('closeMobileMenu', handleSidebarClose);
-    return () => window.removeEventListener('closeMobileMenu', handleSidebarClose);
-  }, []);
-
   const toggleMenu = () => {
-    const newState = !mobileMenuOpen;
-    setMobileMenuOpen(newState);
+    setMobileMenuOpen(!mobileMenuOpen);
     // Dispatch custom event to notify other components
-    window.dispatchEvent(new CustomEvent('mobileMenuToggle', { detail: { open: newState } }));
+    window.dispatchEvent(new CustomEvent('mobileMenuToggle', { detail: { open: !mobileMenuOpen } }));
   };
 
   return (
     <header className="md:hidden sticky top-0 z-50 w-full bg-background border-b border-border">
       <div className="flex h-16 items-center justify-between px-4">
-        <div className="text-2xl font-bold text-primary">RRB</div>
+        <div className="text-2xl font-bold text-primary">Qumus</div>
         
         <Button
           variant="ghost"

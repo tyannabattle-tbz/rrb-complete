@@ -1,16 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Play, Pause, Volume2, Radio, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { trpc } from '@/lib/trpc';
-import { NotificationCenter } from '@/components/rrb/NotificationCenter';
-import { RecordingPanel } from '@/components/rrb/RecordingPanel';
-import { AnalyticsDashboard } from '@/components/rrb/AnalyticsDashboard';
-import { QualitySelectorWidget } from '@/components/rrb/QualitySelectorWidget';
-import { StreamHealthDashboard } from '@/components/rrb/StreamHealthDashboard';
-import { RatingPanel } from '@/components/rrb/RatingPanel';
-import { initializeNotifications } from '@/lib/notificationService';
 
 interface StreamConfig {
   url: string;
@@ -28,48 +21,38 @@ export default function RadioStation() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [streamStatus, setStreamStatus] = useState('Ready');
   const [listeners, setListeners] = useState(0);
-  const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false);
-  const [showQualitySelector, setShowQualitySelector] = useState(false);
-  const [showHealthDashboard, setShowHealthDashboard] = useState(false);
-  const [showRatingPanel, setShowRatingPanel] = useState(false);
-  const [selectedQuality, setSelectedQuality] = useState<'low' | 'medium' | 'high' | 'lossless'>('medium');
-
-  // Initialize notifications on mount
-  useEffect(() => {
-    initializeNotifications();
-  }, []);
 
   // Real audio streams with working URLs
   const sampleStreams: StreamConfig[] = [
     {
-      url: 'https://ice1.somafm.com/sonicuniverse-128-mp3',
-      name: 'Sonic Universe — Jazz Fusion & Soul',
-      genre: 'Jazz/Soul/Funk',
-      bitrate: '128 kbps',
+      url: 'https://stream.rockinrockinboogie.com/live',
+      name: 'RockinRockinBoogie Live',
+      genre: 'Rock/Pop',
+      bitrate: '320 kbps',
     },
     {
-      url: 'https://funkyradio.streamingmedia.it/play.mp3',
-      name: 'Funky Radio — Classic Funk',
-      genre: 'Funk/Soul/R&B',
-      bitrate: '128 kbps',
+      url: 'https://stream.rockinrockinboogie.com/classics',
+      name: 'RRB Classics',
+      genre: 'Classic Rock',
+      bitrate: '256 kbps',
     },
     {
-      url: 'https://ice1.somafm.com/seventies-128-mp3',
-      name: 'Left Coast 70s — Mellow Vibes',
-      genre: '70s Rock/Soul',
-      bitrate: '128 kbps',
+      url: 'https://stream.rockinrockinboogie.com/indie',
+      name: 'RRB Indie Mix',
+      genre: 'Indie/Alternative',
+      bitrate: '192 kbps',
     },
     {
-      url: 'https://ice1.somafm.com/secretagent-128-mp3',
-      name: 'Secret Agent — Lounge & Spy',
-      genre: 'Lounge/Jazz',
-      bitrate: '128 kbps',
+      url: 'https://stream.rockinrockinboogie.com/jazz',
+      name: 'RRB Jazz Lounge',
+      genre: 'Jazz',
+      bitrate: '256 kbps',
     },
     {
-      url: 'https://stream.radioparadise.com/mp3-128',
-      name: 'Radio Paradise — Eclectic Mix',
-      genre: 'Eclectic/Rock',
-      bitrate: '128 kbps',
+      url: 'https://stream.rockinrockinboogie.com/electronic',
+      name: 'RRB Electronic',
+      genre: 'Electronic/EDM',
+      bitrate: '320 kbps',
     },
   ];
 
@@ -125,25 +108,13 @@ export default function RadioStation() {
       setStreamStatus('Paused');
     } else if (audioRef.current) {
       try {
-        // Validate URL before setting
-        if (!url || url.trim() === '') {
-          setStreamStatus('Invalid stream URL');
-          return;
-        }
-
-        // Reset audio element state
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        
-        // Set source and properties
         audioRef.current.src = url;
         audioRef.current.volume = volume / 100;
         audioRef.current.crossOrigin = 'anonymous';
-        audioRef.current.preload = 'auto';
         
         // Add comprehensive error handling
-        audioRef.current.onerror = (e) => {
-          console.error('Audio playback error for URL:', url, e);
+        audioRef.current.onerror = () => {
+          console.error('Audio playback error for URL:', url);
           setStreamStatus('Stream unavailable - check network');
           setIsPlaying(false);
         };
@@ -156,10 +127,6 @@ export default function RadioStation() {
           setStreamStatus('Stream loaded');
         };
         
-        // Load the source
-        audioRef.current.load();
-        
-        // Attempt to play
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           await playPromise;
@@ -196,16 +163,15 @@ export default function RadioStation() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header with Notification Center */}
-        <div className="text-center mb-8 flex items-center justify-between">
-          <div className="flex items-center justify-center gap-3 flex-1">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
             <Radio className="w-8 h-8 text-purple-400" />
             <h1 className="text-4xl font-bold text-white">RockinRockinBoogie</h1>
           </div>
-          <NotificationCenter />
+          <p className="text-purple-200">Live Audio Streaming Station</p>
         </div>
-        <p className="text-purple-200 text-center mb-8">Live Audio Streaming Station</p>
 
         {/* Main Player Card */}
         <Card className="bg-slate-800 border-purple-500 border-2 p-8 mb-6">
@@ -286,9 +252,9 @@ export default function RadioStation() {
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-white mb-4">Available Streams</h3>
           <div className="grid grid-cols-1 gap-3">
-            {sampleStreams.map((stream) => (
+            {sampleStreams.map((stream, index) => (
               <Card
-                key={stream.url}
+                key={index}
                 onClick={() => selectStream(stream)}
                 className={`p-4 cursor-pointer transition-all ${
                   currentStream?.url === stream.url
@@ -314,7 +280,7 @@ export default function RadioStation() {
 
         {/* Settings */}
         {showSettings && (
-          <Card className="bg-slate-800 border-slate-700 p-6 mb-6">
+          <Card className="bg-slate-800 border-slate-700 p-6">
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <Settings className="w-5 h-5" />
               Stream Settings
@@ -340,98 +306,17 @@ export default function RadioStation() {
           </Card>
         )}
 
-        {/* Settings and Advanced Features Toggle */}
-        <div className="mt-6 text-center space-y-4 mb-8">
-          <div className="flex gap-2 justify-center flex-wrap">
-            <Button
-              onClick={() => setShowSettings(!showSettings)}
-              variant="outline"
-              className="border-purple-500 text-purple-400 hover:bg-purple-500/10"
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              {showSettings ? 'Hide Settings' : 'Show Settings'}
-            </Button>
-            <Button
-              onClick={() => setShowQualitySelector(!showQualitySelector)}
-              variant="outline"
-              className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/10"
-            >
-              Audio Quality
-            </Button>
-            <Button
-              onClick={() => setShowHealthDashboard(!showHealthDashboard)}
-              variant="outline"
-              className="border-green-500 text-green-400 hover:bg-green-500/10"
-            >
-              Stream Health
-            </Button>
-            <Button
-              onClick={() => setShowRatingPanel(!showRatingPanel)}
-              variant="outline"
-              className="border-amber-500 text-amber-400 hover:bg-amber-500/10"
-            >
-              Rate Stream
-            </Button>
-            <Button
-              onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
-              variant="outline"
-              className="border-blue-500 text-blue-400 hover:bg-blue-500/10"
-            >
-              {showAdvancedFeatures ? 'Hide Advanced' : 'Show Advanced'}
-            </Button>
-          </div>
+        {/* Settings Toggle */}
+        <div className="mt-6 text-center">
+          <Button
+            onClick={() => setShowSettings(!showSettings)}
+            variant="outline"
+            className="border-purple-500 text-purple-400 hover:bg-purple-500/10"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            {showSettings ? 'Hide Settings' : 'Show Settings'}
+          </Button>
         </div>
-
-        {/* Quality Selector */}
-        {showQualitySelector && (
-          <Card className="bg-slate-800 border-cyan-500 border-2 p-6 mb-6">
-            <QualitySelectorWidget
-              onQualityChange={setSelectedQuality}
-              compact={false}
-            />
-          </Card>
-        )}
-
-        {/* Stream Health Dashboard */}
-        {showHealthDashboard && (
-          <Card className="bg-slate-800 border-green-500 border-2 p-6 mb-6">
-            <StreamHealthDashboard
-              compact={false}
-              autoMonitor={true}
-            />
-          </Card>
-        )}
-
-        {/* Rating Panel */}
-        {showRatingPanel && currentStream && (
-          <Card className="bg-slate-800 border-amber-500 border-2 p-6 mb-6">
-            <RatingPanel
-              targetId={currentStream.url}
-              targetType="stream"
-              targetLabel={currentStream.name}
-              compact={false}
-            />
-          </Card>
-        )}
-
-        {/* Advanced Features Section */}
-        {showAdvancedFeatures && currentStream && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white">Advanced Features</h2>
-            
-            {/* Recording Panel */}
-            <RecordingPanel channelId={currentStream.url} channelName={currentStream.name} />
-
-            {/* Analytics Dashboard */}
-            <AnalyticsDashboard channelId={currentStream.url} channelName={currentStream.name} />
-          </div>
-        )}
-
-        {showAdvancedFeatures && !currentStream && (
-          <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 text-center">
-            <p className="text-gray-400">Select a stream to access advanced features like recording and analytics.</p>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -79,10 +79,6 @@ export class AgentNetworkService extends EventEmitter {
   private encryptionEnabled: boolean = true;
   private heartbeatInterval: NodeJS.Timer | null = null;
   private discoveryInterval: NodeJS.Timer | null = null;
-  private offlineMode: boolean = false;
-  private registryAvailable: boolean = false;
-  private discoveryFailCount: number = 0;
-  private maxDiscoveryRetries: number = 3;
 
   constructor(
     agentId: string,
@@ -116,31 +112,9 @@ export class AgentNetworkService extends EventEmitter {
    * Initialize agent network services
    */
   private initializeNetwork(): void {
-    // Start in offline mode by default - registry is not yet deployed
-    // This prevents DNS errors from spamming the logs
-    this.offlineMode = true;
-    this.registryAvailable = false;
-    console.log('[AgentNetwork] Starting in offline/local mode (registry not configured)');
     this.startHeartbeat();
+    this.startDiscovery();
     this.setupMessageHandlers();
-  }
-
-  /**
-   * Check if the agent registry is reachable
-   */
-  private async checkRegistryAvailability(): Promise<boolean> {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 3000);
-      const response = await fetch(`${this.registryEndpoint}/api/health`, {
-        method: 'GET',
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      return response.ok;
-    } catch {
-      return false;
-    }
   }
 
   /**
@@ -156,10 +130,6 @@ export class AgentNetworkService extends EventEmitter {
    * Register agent with central registry
    */
   async registerWithRegistry(): Promise<void> {
-    if (this.offlineMode) {
-      console.log('[AgentNetwork] Offline mode - skipping registry registration');
-      return;
-    }
     try {
       const response = await fetch(`${this.registryEndpoint}/api/agents/register`, {
         method: 'POST',
@@ -188,39 +158,23 @@ export class AgentNetworkService extends EventEmitter {
    * Discover other agents matching criteria
    */
   async discoverAgents(request: AgentDiscoveryRequest): Promise<AgentRegistry[]> {
-    if (this.offlineMode) {
-      return []; // Silently return empty in offline mode
-    }
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5000);
       const response = await fetch(`${this.registryEndpoint}/api/agents/discover`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(request),
-        signal: controller.signal,
       });
-      clearTimeout(timeout);
 
       if (!response.ok) {
         throw new Error(`Agent discovery failed: ${response.statusText}`);
       }
 
       const agents: AgentRegistry[] = await response.json();
-      this.discoveryFailCount = 0; // Reset on success
       this.emit('agents-discovered', { count: agents.length, agents });
 
       return agents;
     } catch (error) {
-      this.discoveryFailCount++;
-      // Only log first few failures, then go silent to avoid log spam
-      if (this.discoveryFailCount <= this.maxDiscoveryRetries) {
-        console.warn(`[AgentNetwork] Discovery attempt ${this.discoveryFailCount}/${this.maxDiscoveryRetries} failed`);
-      }
-      if (this.discoveryFailCount >= this.maxDiscoveryRetries) {
-        console.log('[AgentNetwork] Max discovery retries reached, switching to offline mode');
-        this.offlineMode = true;
-      }
+      this.emit('error', { type: 'discovery', error });
       return [];
     }
   }
@@ -556,10 +510,7 @@ export class AgentNetworkService extends EventEmitter {
     });
 
     this.on('error', (data) => {
-      // Suppress repetitive network errors in offline mode
-      if (!this.offlineMode) {
-        console.error(`[AgentNetwork] Error: ${data.type}`, data.error);
-      }
+      console.error(`Agent network error: ${data.type}`, data.error);
     });
   }
 

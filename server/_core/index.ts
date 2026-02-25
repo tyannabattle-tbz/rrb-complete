@@ -4,12 +4,6 @@ import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
-import { registerRSSRoutes } from "../rss-feeds";
-import { handleStripeWebhook } from "../webhooks/stripeWebhook";
-import { createSitemapRouter } from "../services/sitemapGenerator";
-import { domainRoutingMiddleware } from "../middleware/domainRouting";
-import streamProxyRouter from "../routes/streamProxy";
-import hlsStreamRouter from "../routes/hlsStream";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -42,27 +36,11 @@ async function startServer() {
   initializeWebSocket(server);
   console.log("[WebSocket] Manager initialized");
   
-  // Stripe webhook MUST be registered BEFORE express.json() for signature verification
-  app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
-
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
-  
-  // Domain routing middleware - must be before other routes
-  app.use(domainRoutingMiddleware);
-  console.log("[Domain Routing] Middleware initialized");
-  
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
-  // RSS feeds for podcast directories, news aggregators, and radio listings
-  registerRSSRoutes(app);
-  // SEO Sitemap routes
-  app.use('/', createSitemapRouter(process.env.VITE_APP_URL || 'https://www.rockinrockinboogie.com'));
-  // Stream proxy routes for CORS-free audio streaming
-  app.use('/api/stream', streamProxyRouter);
-  // HLS stream routes for iOS compatibility
-  app.use('/api/stream', hlsStreamRouter);
   // tRPC API
   app.use(
     "/api/trpc",
@@ -83,86 +61,6 @@ async function startServer() {
 
   if (port !== preferredPort) {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
-  }
-
-  // Initialize QUMUS Complete Engine (database persistence + heartbeat)
-  try {
-    const { QumusCompleteEngine } = await import("../qumus-complete-engine");
-    await QumusCompleteEngine.initialize();
-  } catch (e) {
-    console.log('[QUMUS Engine] Init skipped:', (e as Error).message);
-  }
-
-  // Initialize QUMUS Content Scheduler (24/7 auto-rotation)
-  try {
-    const { getContentScheduler } = await import("../services/contentSchedulerService");
-    const scheduler = getContentScheduler();
-    scheduler.start();
-  } catch (e) {
-    console.log('[ContentScheduler] Init skipped:', (e as Error).message);
-  }
-
-  // Initialize QUMUS Autonomous Event Loop (generates real decisions)
-  try {
-    const { getAutonomousLoop } = await import("../services/qumus-autonomous-loop");
-    const loop = getAutonomousLoop();
-    // Start with 2-minute intervals between batches
-    loop.start(120_000);
-    console.log('[QUMUS Loop] Autonomous event loop started');
-  } catch (e) {
-    console.log('[QUMUS Loop] Init skipped:', (e as Error).message);
-  }
-
-  // Initialize AI Agent Networking — cross-platform collaboration
-  try {
-    const { getAgentNetwork } = await import("../services/agent-networking");
-    const network = getAgentNetwork();
-    network.start();
-    console.log('[Agent Network] Cross-platform AI agent networking started');
-  } catch (e) {
-    console.log('[Agent Network] Init skipped:', (e as Error).message);
-  }
-
-  // Initialize Sweet Miracles Grant Discovery Engine
-  try {
-    const { startGrantDiscovery } = await import("../services/grant-discovery-engine");
-    startGrantDiscovery(3600000); // Scan every hour
-    console.log('[Grant Discovery] Automated grant finding protocol activated');
-  } catch (e) {
-    console.log('[Grant Discovery] Init skipped:', (e as Error).message);
-  }
-
-  // Initialize AI Business Operations Assistants (10 autonomous bots)
-  try {
-    const { startAIBusinessAssistants } = await import("../services/ai-business-assistants");
-    startAIBusinessAssistants();
-    console.log('[AI Business Bots] 10 autonomous AI assistants activated');
-    console.log('[AI Business Bots] Bookkeeping | HR | Accounting | Legal | Radio Directory');
-    console.log('[AI Business Bots] Social Media | Content Calendar | Engagement | Grant Discovery | Emergency');
-  } catch (e) {
-    console.log('[AI Business Bots] Init skipped:', (e as Error).message);
-  }
-
-  // Initialize AI Commercial Generation Engine (radio broadcast integration)
-  try {
-    const { startCommercialEngine } = await import("../services/commercial-engine");
-    startCommercialEngine();
-    console.log('[Commercial Engine] AI commercial generation & rotation active');
-    console.log('[Commercial Engine] 7 default commercials seeded (station IDs, PSAs, promos, fundraisers)');
-    console.log('[Commercial Engine] Auto-rotation scheduling engaged for 24/7 broadcast');
-  } catch (e) {
-    console.log('[Commercial Engine] Init skipped:', (e as Error).message);
-  }
-
-  // Initialize QUMUS Business Operations Oversight (monitors all modules every 5 minutes)
-  try {
-    const { QumusBusinessOversight } = await import("../services/qumus-business-oversight");
-    QumusBusinessOversight.start();
-    console.log('[QUMUS Oversight] Business operations monitoring ACTIVE');
-    console.log('[QUMUS Oversight] Monitoring: Bookkeeping, HR, Accounting, Legal, Commercials, Radio, Advertising, Social Media, Grants');
-    console.log('[QUMUS Oversight] Scan interval: every 5 minutes | Autonomy: 100% QUMUS-controlled');
-  } catch (e) {
-    console.log('[QUMUS Oversight] Init skipped:', (e as Error).message);
   }
 
   server.listen(port, () => {

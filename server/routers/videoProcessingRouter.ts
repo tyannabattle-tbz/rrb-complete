@@ -94,7 +94,7 @@ export const videoProcessingRouter = router({
         progress,
         status: isComplete ? 'completed' : 'processing',
         message: isComplete ? 'Video processing complete!' : `Processing... ${progress}%`,
-        downloadUrl: isComplete ? `/api/trpc/videoProcessing.getProcessingStatus?videoId=${input.videoId}` : null,
+        downloadUrl: isComplete ? `https://storage.example.com/videos/${input.videoId}.mp4` : null,
         fileSize: isComplete ? 245.8 : null,
       };
     }),

@@ -141,7 +141,7 @@ export default function VideoAnalytics() {
                 { title: "Motion Graphics", views: 980, engagement: 76 },
                 { title: "Abstract Art", views: 617, engagement: 54 },
               ].map((video, idx) => (
-                <div key={`item-${idx}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <p className="font-semibold text-gray-900">{video.title}</p>
                     <p className="text-sm text-gray-600">{video.views} views</p>

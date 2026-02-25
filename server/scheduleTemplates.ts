@@ -20,12 +20,12 @@ export interface ProgrammingBlock {
 }
 
 /**
- * Top of the Sol Template (6 AM - 12 PM)
+ * Morning Drive Template (6 AM - 12 PM)
  */
-export const TOP_OF_THE_SOL_TEMPLATE: ScheduleTemplate = {
-  id: 'top-of-the-sol',
-  name: 'Top of the Sol',
-  description: 'High-energy Top of the Sol programming with frequent commercials',
+export const MORNING_DRIVE_TEMPLATE: ScheduleTemplate = {
+  id: 'morning-drive',
+  name: 'Morning Drive',
+  description: 'High-energy morning programming with frequent commercials',
   blocks: [
     {
       dayOfWeek: 1, // Monday
@@ -264,7 +264,7 @@ function generateWeekendBlocks(): ProgrammingBlock[] {
  * All available templates
  */
 export const ALL_TEMPLATES: ScheduleTemplate[] = [
-  TOP_OF_THE_SOL_TEMPLATE,
+  MORNING_DRIVE_TEMPLATE,
   AFTERNOON_TEMPLATE,
   EVENING_TEMPLATE,
   OVERNIGHT_TEMPLATE,

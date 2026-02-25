@@ -59,22 +59,6 @@ export class AgentWebSocketManager {
       }));
     } else if (type === "ping") {
       ws.send(JSON.stringify({ type: "pong", timestamp: new Date().toISOString() }));
-    } else if (type === "game") {
-      // Solbones game messages — broadcast to all clients in the same session/room
-      this.broadcastToRoom(sessionId, ws, message);
-    }
-  }
-
-  // Broadcast a game message to all clients in a room EXCEPT the sender
-  private broadcastToRoom(sessionId: number, sender: WebSocket, message: any) {
-    const clients = this.clients.get(sessionId);
-    if (clients) {
-      const payload = JSON.stringify(message);
-      clients.forEach((client) => {
-        if (client !== sender && client.readyState === WebSocket.OPEN) {
-          client.send(payload);
-        }
-      });
     }
   }
 

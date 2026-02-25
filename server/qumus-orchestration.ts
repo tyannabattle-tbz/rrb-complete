@@ -378,7 +378,7 @@ export async function generateRecommendations(userId: number, userProfile: {
 
   return {
     recommendations: [
-      { contentId: "med_001", title: "Top of the Sol Mindfulness", score: 92 },
+      { contentId: "med_001", title: "Morning Mindfulness", score: 92 },
       { contentId: "pod_042", title: "Wellness Conversations", score: 88 },
     ],
     autonomousDecision: decision.autonomousAction,

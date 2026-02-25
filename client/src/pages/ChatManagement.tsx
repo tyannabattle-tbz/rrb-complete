@@ -99,7 +99,7 @@ export const ChatManagement: React.FC = () => {
                         size="sm"
                         variant="outline"
                         className="w-full"
-                        onClick={() => toast.success('Conversations archived successfully')}
+                        onClick={() => toast.info('Archive feature coming soon')}
                       >
                         Archive All
                       </Button>
@@ -120,7 +120,7 @@ export const ChatManagement: React.FC = () => {
                         size="sm"
                         variant="outline"
                         className="w-full"
-                        onClick={() => toast.success('Conversations hidden from view')}
+                        onClick={() => toast.info('Hide feature coming soon')}
                       >
                         Hide All
                       </Button>

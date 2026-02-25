@@ -107,7 +107,7 @@ export function AnomalyDetectionPanel() {
         <CardContent>
           <div className="space-y-3">
             {anomalies && anomalies.length > 0 ? (
-              anomalies.map((anomaly: any, idx) => (
+              anomalies.map((anomaly: any) => (
                 <div
                   key={anomaly.id}
                   className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition"
@@ -171,7 +171,7 @@ export function AnomalyDetectionPanel() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {insights.map((insight: any, idx) => (
+            {insights.map((insight: any) => (
               <div key={insight.id} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="flex items-start justify-between mb-2">
                   <Badge variant="outline">{insight.insightType}</Badge>
@@ -185,7 +185,7 @@ export function AnomalyDetectionPanel() {
                     <p className="text-xs font-semibold text-gray-600 mb-2">Recommended Actions:</p>
                     <ul className="text-xs space-y-1">
                       {insight.actionItems.map((item: string, idx: number) => (
-                        <li key={`item-${idx}`} className="flex items-start gap-2">
+                        <li key={idx} className="flex items-start gap-2">
                           <span className="text-blue-600 mt-0.5">•</span>
                           <span>{item}</span>
                         </li>

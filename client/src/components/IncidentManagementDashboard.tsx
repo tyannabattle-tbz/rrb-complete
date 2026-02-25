@@ -153,7 +153,7 @@ export function IncidentManagementDashboard() {
             ) : (
               mockIncidents
                 .filter((i) => i.status !== "resolved")
-                .map((incident, idx) => (
+                .map((incident) => (
                   <div
                     key={incident.id}
                     className={`p-4 border-2 rounded-lg cursor-pointer hover:shadow-md transition-shadow ${getStatusColor(incident.status)}`}
@@ -241,7 +241,7 @@ export function IncidentManagementDashboard() {
                     {mockIncidents
                       .find((i) => i.id === selectedIncident)
                       ?.timeline.map((event, idx) => (
-                        <div key={`item-${idx}`} className="flex gap-2 text-sm">
+                        <div key={idx} className="flex gap-2 text-sm">
                           <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                           <div>
                             <p className="font-medium">{event.type}</p>

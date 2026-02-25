@@ -56,7 +56,7 @@ export function RockinBoogiePlayerFinal() {
             title: "Rockin' Rockin' Boogie - Original Recording",
             artist: "Little Richard",
             duration: 180,
-            streamUrl: "https://stream.radioparadise.com/aac-128",
+            streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
             channel: "Rockin' Rockin' Boogie",
           },
           {
@@ -64,7 +64,7 @@ export function RockinBoogiePlayerFinal() {
             title: "Tutti Frutti",
             artist: "Little Richard",
             duration: 160,
-            streamUrl: "https://stream.radioparadise.com/aac-128",
+            streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
             channel: "Rockin' Rockin' Boogie",
           },
         ],
@@ -78,7 +78,7 @@ export function RockinBoogiePlayerFinal() {
             title: "The Thrill is Gone",
             artist: "B.B. King",
             duration: 280,
-            streamUrl: "https://stream.radioparadise.com/aac-128",
+            streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
             channel: "Blues Hour",
           },
         ],
@@ -92,7 +92,7 @@ export function RockinBoogiePlayerFinal() {
             title: "Take Five",
             artist: "Dave Brubeck",
             duration: 320,
-            streamUrl: "https://stream.radioparadise.com/aac-128",
+            streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
             channel: "Jazz Essentials",
           },
         ],
@@ -105,7 +105,7 @@ export function RockinBoogiePlayerFinal() {
 
     // Load downloaded episodes
     const downloaded = await getAllDownloadedEpisodes();
-    setDownloadedEpisodes(new Set(downloaded.map((e, idx) => e.id)));
+    setDownloadedEpisodes(new Set(downloaded.map((e) => e.id)));
 
     // Load playlists from localStorage
     const savedPlaylists = localStorage.getItem("rockinBoogiePlaylists");
@@ -228,7 +228,7 @@ export function RockinBoogiePlayerFinal() {
   }
 
   function addToPlaylist(playlistId: string, episode: Episode) {
-    const updatedPlaylists = playlists.map((p, idx) => {
+    const updatedPlaylists = playlists.map((p) => {
       if (p.id === playlistId) {
         return {
           ...p,
@@ -299,7 +299,7 @@ export function RockinBoogiePlayerFinal() {
       <div className="mb-6">
         <h3 className="text-orange-400 font-bold mb-3 uppercase text-sm">Channels</h3>
         <div className="grid grid-cols-3 gap-3">
-          {channels.map((channel, idx) => (
+          {channels.map((channel) => (
             <button
               key={channel.id}
               onClick={() => switchChannel(channel)}
@@ -432,7 +432,7 @@ export function RockinBoogiePlayerFinal() {
       <div className="mt-8">
         <h3 className="text-orange-400 font-bold mb-4 uppercase text-sm">Episodes</h3>
         <div className="space-y-2">
-          {currentChannel?.episodes.map((episode, idx) => (
+          {currentChannel?.episodes.map((episode) => (
             <div
               key={episode.id}
               onClick={() => setCurrentEpisode(episode)}
@@ -464,8 +464,8 @@ export function RockinBoogiePlayerFinal() {
         <div className="mt-8">
           <h3 className="text-orange-400 font-bold mb-4 uppercase text-sm">Your Playlists</h3>
           <div className="grid grid-cols-2 gap-4">
-            {playlists.map((playlist, idx) => (
-              <div key={`playlist-${idx}-${playlist.id || 'unnamed'}`} className="bg-slate-700/50 p-4 rounded-lg">
+            {playlists.map((playlist) => (
+              <div key={playlist.id} className="bg-slate-700/50 p-4 rounded-lg">
                 <p className="font-semibold">{playlist.name}</p>
                 <p className="text-sm text-slate-400">{playlist.episodes.length} episodes</p>
               </div>

@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { Request, Response } from "express";
 import { getDb } from "../db";
-import { users, donations, usersWithStripe, royaltyDistributions } from "../../drizzle/schema";
+import { users, donations, usersWithStripe } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { notifyOwner } from "../_core/notification";
 
@@ -29,12 +29,6 @@ export async function handleStripeWebhook(req: Request, res: Response) {
 
   console.log(`[Stripe Webhook] Received event: ${event.type}`);
 
-  // Handle test events for webhook verification
-  if (event.id.startsWith('evt_test_')) {
-    console.log("[Webhook] Test event detected, returning verification response");
-    return res.json({ verified: true });
-  }
-
   try {
     switch (event.type) {
       case "payment_intent.succeeded":
@@ -55,18 +49,6 @@ export async function handleStripeWebhook(req: Request, res: Response) {
 
       case "charge.refunded":
         await handleChargeRefunded(event.data.object as Stripe.Charge);
-        break;
-
-      case "checkout.session.completed":
-        await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
-        break;
-
-      case "transfer.paid":
-        await handleTransferPaid(event.data.object as Stripe.Transfer);
-        break;
-
-      case "account.updated":
-        await handleAccountUpdated(event.data.object as Stripe.Account);
         break;
 
       default:
@@ -350,141 +332,5 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
     }
   } catch (error) {
     console.error("[Stripe Webhook] Error handling charge refunded:", error);
-  }
-}
-
-/**
- * Handle checkout session completed (merchandise purchases)
- */
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const customerId = session.customer as string;
-  const amount = (session.amount_total || 0) / 100;
-  const metadata = session.metadata || {};
-
-  console.log(`[Stripe Webhook] Checkout completed: $${amount}, type: ${metadata.type || 'unknown'}`);
-
-  try {
-    if (metadata.type === 'merchandise') {
-      console.log(`[Stripe Webhook] ✓ Merchandise purchase: $${amount}`);
-      console.log(`[Stripe Webhook]   Items: ${metadata.items || 'N/A'}`);
-      console.log(`[Stripe Webhook]   Customer: ${metadata.customer_name || 'Unknown'} (${metadata.customer_email || 'N/A'})`);
-
-      // Notify owner of merchandise purchase
-      await notifyOwner({
-        title: "🛍️ Merchandise Purchase",
-        content: `New merchandise order! Amount: $${amount.toFixed(2)}. Customer: ${metadata.customer_name || 'Unknown'}. Items: ${metadata.items || 'N/A'}`,
-      });
-    } else if (metadata.type === 'donation') {
-      // Handle donation checkout completion
-      const db = await getDb();
-      if (db && metadata.user_id) {
-        await db.insert(donations).values({
-          userId: parseInt(metadata.user_id),
-          amount: amount.toString(),
-          stripeCustomerId: customerId,
-          status: "completed",
-          createdAt: new Date(),
-        });
-        console.log(`[Stripe Webhook] ✓ Recorded donation: $${amount}`);
-      }
-
-      await notifyOwner({
-        title: "💝 New Donation",
-        content: `New donation received! Amount: $${amount.toFixed(2)}. Donor: ${metadata.customer_name || 'Anonymous'}`,
-      });
-    } else {
-      console.log(`[Stripe Webhook] Checkout completed for unknown type: ${metadata.type}`);
-    }
-  } catch (error) {
-    console.error("[Stripe Webhook] Error handling checkout completed:", error);
-  }
-}
-
-/**
- * Handle Stripe Connect transfer paid — confirms royalty payout delivery
- */
-async function handleTransferPaid(transfer: Stripe.Transfer) {
-  const metadata = transfer.metadata || {};
-  const distributionId = metadata.distributionId;
-  const amount = (transfer.amount || 0) / 100;
-
-  console.log(`[Stripe Webhook] Transfer paid: $${amount}, distribution: ${distributionId}`);
-
-  if (!distributionId) {
-    console.log("[Stripe Webhook] Transfer has no distributionId metadata, skipping");
-    return;
-  }
-
-  try {
-    const db = await getDb();
-    if (!db) {
-      console.warn("[Stripe Webhook] Database not available");
-      return;
-    }
-
-    // Confirm the distribution is marked as paid (should already be from the mutation)
-    const [dist] = await db
-      .select()
-      .from(royaltyDistributions)
-      .where(eq(royaltyDistributions.id, parseInt(distributionId)));
-
-    if (dist && dist.status !== "paid") {
-      await db
-        .update(royaltyDistributions)
-        .set({
-          status: "paid",
-          transactionRef: transfer.id,
-        })
-        .where(eq(royaltyDistributions.id, parseInt(distributionId)));
-
-      console.log(`[Stripe Webhook] ✓ Confirmed payout for distribution ${distributionId}: $${amount}`);
-    } else {
-      console.log(`[Stripe Webhook] Distribution ${distributionId} already marked as paid`);
-    }
-
-    await notifyOwner({
-      title: "✅ Royalty Payout Confirmed",
-      content: `Stripe confirmed delivery of $${amount.toFixed(2)} royalty payout to ${metadata.artistName || 'collaborator'}. Transfer: ${transfer.id}`,
-    });
-  } catch (error) {
-    console.error("[Stripe Webhook] Error handling transfer paid:", error);
-  }
-}
-
-/**
- * Handle Stripe Connect account updates — track onboarding completion
- */
-async function handleAccountUpdated(account: Stripe.Account) {
-  const metadata = account.metadata || {};
-  const collaboratorId = metadata.collaboratorId;
-
-  console.log(`[Stripe Webhook] Account updated: ${account.id}, details_submitted: ${account.details_submitted}`);
-
-  if (!collaboratorId) {
-    console.log("[Stripe Webhook] Account has no collaboratorId metadata, skipping");
-    return;
-  }
-
-  try {
-    const db = await getDb();
-    if (!db) return;
-
-    const { royaltyCollaborators } = await import("../../drizzle/schema");
-
-    if (account.details_submitted && account.charges_enabled) {
-      await db
-        .update(royaltyCollaborators)
-        .set({ stripeOnboardingComplete: true })
-        .where(eq(royaltyCollaborators.id, parseInt(collaboratorId)));
-
-      console.log(`[Stripe Webhook] ✓ Onboarding complete for collaborator ${collaboratorId}`);
-
-      await notifyOwner({
-        title: "🎉 Artist Payout Account Ready",
-        content: `${metadata.artistName || 'Collaborator'} has completed Stripe Connect onboarding and is ready to receive royalty payouts.`,
-      });
-    }
-  } catch (error) {
-    console.error("[Stripe Webhook] Error handling account updated:", error);
   }
 }

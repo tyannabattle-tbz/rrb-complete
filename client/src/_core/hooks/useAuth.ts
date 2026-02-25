@@ -14,22 +14,9 @@ export function useAuth(options?: UseAuthOptions) {
   const utils = trpc.useUtils();
 
   const meQuery = trpc.auth.me.useQuery(undefined, {
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
+    retry: false,
     refetchOnWindowFocus: false,
-    refetchOnMount: "stale",
-    refetchInterval: false,
-    staleTime: 1000 * 60 * 60, // 1 hour - don't refetch constantly
   });
-
-  // Store the current URL before redirecting to login
-  const getReturnToUrl = useCallback(() => {
-    if (typeof window === 'undefined') return '/';
-    const current = window.location.pathname + window.location.search + window.location.hash;
-    // Don't return to login page or oauth callback
-    if (current.includes('/oauth') || current.includes('/legal') || current === '/') return '/';
-    return current;
-  }, []);
 
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => {
@@ -78,26 +65,15 @@ export function useAuth(options?: UseAuthOptions) {
     if (meQuery.isLoading || logoutMutation.isPending) return;
     if (state.user) return;
     if (typeof window === "undefined") return;
-    
-    const currentPath = window.location.pathname;
-    
-    // Don't redirect if already on login page or oauth callback
-    if (currentPath === redirectPath || currentPath.includes('/oauth') || currentPath.includes('/legal')) return;
+    if (window.location.pathname === redirectPath) return;
 
-    // Store the return-to URL in localStorage before redirecting to login
-    const returnTo = getReturnToUrl();
-    if (returnTo !== '/') {
-      localStorage.setItem('auth-return-to', returnTo);
-    }
-    
-    window.location.href = redirectPath;
+    window.location.href = redirectPath
   }, [
     redirectOnUnauthenticated,
     redirectPath,
     logoutMutation.isPending,
     meQuery.isLoading,
     state.user,
-    getReturnToUrl,
   ]);
 
   return {

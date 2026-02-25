@@ -199,7 +199,7 @@ export function MegaControlStationDashboard() {
             <CardContent>
               <div className="space-y-3">
                 {controlDashboard.getActivityFeed().map((activity, idx) => (
-                  <div key={`item-${idx}`} className="flex items-center justify-between border-b pb-2">
+                  <div key={idx} className="flex items-center justify-between border-b pb-2">
                     <div>
                       <p className="font-medium text-sm">{activity.action}</p>
                       <p className="text-xs text-gray-500">{activity.details}</p>
@@ -274,7 +274,7 @@ export function MegaControlStationDashboard() {
                 <CardTitle>Optimization Recommendations</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {resourceSummary.recommendations.map((rec, idx) => (
+                {resourceSummary.recommendations.map((rec) => (
                   <div key={rec.id} className="p-3 border rounded-lg">
                     <div className="flex justify-between items-start">
                       <div>
@@ -302,7 +302,7 @@ export function MegaControlStationDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {projects.map((project, idx) => (
+                {projects.map((project) => (
                   <div key={project.id} className="p-3 border rounded-lg">
                     <div className="flex justify-between items-start mb-2">
                       <div>
@@ -336,7 +336,7 @@ export function MegaControlStationDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {tasks.map((task, idx) => (
+                {tasks.map((task) => (
                   <div key={task.id} className="flex items-center justify-between p-2 border rounded">
                     <div>
                       <p className="font-medium text-sm">{task.name}</p>
@@ -362,7 +362,7 @@ export function MegaControlStationDashboard() {
             <CardContent>
               <div className="space-y-2">
                 {resourceSummary?.alerts && resourceSummary.alerts.length > 0 ? (
-                  resourceSummary.alerts.map((alert, idx) => (
+                  resourceSummary.alerts.map((alert) => (
                     <div key={alert.id} className="p-3 border rounded-lg bg-red-50">
                       <div className="flex justify-between items-start">
                         <div>

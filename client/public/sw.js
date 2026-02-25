@@ -1,66 +1,97 @@
-// Use daily date-based cache name to force updates on each build
-const CACHE_VERSION = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-const CACHE_NAME = `qumus-${CACHE_VERSION}`;
-const urlsToCache = [
+const CACHE_NAME = 'hybridcast-v1';
+const RUNTIME_CACHE = 'hybridcast-runtime';
+
+const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/qumus-icon-192.png',
-  '/qumus-icon-512.png',
 ];
 
-// Install event
+// Install event - cache assets
 self.addEventListener('install', (event) => {
-  console.log('[QUMUS SW] Installing with cache:', CACHE_NAME);
+  console.log('[SW] Installing Service Worker');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[QUMUS SW] Caching assets:', urlsToCache);
-      return cache.addAll(urlsToCache);
+      console.log('[SW] Caching assets');
+      return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  // Force the waiting service worker to become the active service worker
   self.skipWaiting();
 });
 
-// Fetch event
+// Activate event - clean up old caches
+self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating Service Worker');
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
+            console.log('[SW] Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+// Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
+  const { request } = event;
+
   // Skip non-GET requests
-  if (event.request.method !== 'GET') {
+  if (request.method !== 'GET') {
     return;
   }
 
-  // Skip API requests (let them go to network)
-  if (event.request.url.includes('/api/')) {
+  // Skip chrome extensions
+  if (request.url.startsWith('chrome-extension://')) {
+    return;
+  }
+
+  // Network first strategy for API calls
+  if (request.url.includes('/api/')) {
     event.respondWith(
-      fetch(event.request)
-        .then((response) => response)
+      fetch(request)
+        .then((response) => {
+          // Cache successful responses
+          if (response.ok) {
+            const cache = caches.open(RUNTIME_CACHE);
+            cache.then((c) => c.put(request, response.clone()));
+          }
+          return response;
+        })
         .catch(() => {
-          // Return offline page if network fails
-          return caches.match('/index.html');
+          // Fallback to cache if offline
+          return caches.match(request).then((cached) => {
+            if (cached) {
+              console.log('[SW] Serving from cache:', request.url);
+              return cached;
+            }
+            return new Response('Offline', { status: 503 });
+          });
         })
     );
     return;
   }
 
-  // Cache-first strategy for static assets
+  // Cache first strategy for static assets
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        return response;
+    caches.match(request).then((cached) => {
+      if (cached) {
+        return cached;
       }
 
-      return fetch(event.request).then((response) => {
-        // Don't cache non-successful responses
-        if (!response || response.status !== 200 || response.type === 'error') {
+      return fetch(request).then((response) => {
+        if (!response.ok) {
           return response;
         }
 
-        // Clone the response
-        const responseToCache = response.clone();
-
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
+        // Cache successful responses
+        const cache = caches.open(RUNTIME_CACHE);
+        cache.then((c) => c.put(request, response.clone()));
 
         return response;
       });
@@ -68,41 +99,43 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Activate event - clean up old caches
-self.addEventListener('activate', (event) => {
-  console.log('[QUMUS SW] Activating with cache:', CACHE_NAME);
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      console.log('[QUMUS SW] Found caches:', cacheNames);
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME && cacheName.startsWith('qumus-')) {
-            console.log('[QUMUS SW] Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  event.waitUntil(self.clients.claim());
+// Background sync for pending items
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-broadcasts') {
+    event.waitUntil(syncBroadcasts());
+  }
 });
 
-// Handle push notifications
+async function syncBroadcasts() {
+  console.log('[SW] Syncing broadcasts');
+  try {
+    const response = await fetch('/api/broadcasts/sync', {
+      method: 'POST',
+    });
+    if (response.ok) {
+      console.log('[SW] Broadcasts synced');
+    }
+  } catch (error) {
+    console.error('[SW] Sync failed:', error);
+  }
+}
+
+// Push notifications
 self.addEventListener('push', (event) => {
-  const data = event.data ? event.data.json() : {};
-  const title = data.title || 'QUMUS Notification';
+  const data = event.data?.json() ?? {};
+  const title = data.title || 'HybridCast Notification';
   const options = {
-    body: data.body || 'You have a new notification',
-    icon: '/qumus-icon-192.png',
-    badge: '/qumus-icon-192.png',
-    tag: data.tag || 'qumus-notification',
+    body: data.body || '',
+    icon: '/icon-192x192.png',
+    badge: '/badge-72x72.png',
+    tag: data.tag || 'notification',
     requireInteraction: data.requireInteraction || false,
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Handle notification clicks
+// Notification click
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
@@ -119,3 +152,5 @@ self.addEventListener('notificationclick', (event) => {
     })
   );
 });
+
+console.log('[SW] Service Worker loaded');

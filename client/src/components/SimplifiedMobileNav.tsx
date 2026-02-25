@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BookOpen, Music, Radio, Heart, Building2, ExternalLink, Headphones, Shield, Podcast, Film, Video, Smartphone, Dice5, Globe, Trophy } from 'lucide-react';
+import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface NavItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  path: string;
-  external?: boolean;
-}
 
 interface NavSection {
   title: string;
-  items: NavItem[];
+  items: {
+    id: string;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    path: string;
+  }[];
 }
 
 export function SimplifiedMobileNav() {
@@ -22,67 +19,26 @@ export function SimplifiedMobileNav() {
 
   const navSections: NavSection[] = [
     {
-      title: 'Navigate',
+      title: 'Core',
       items: [
         { id: 'nav-home', label: 'Home', icon: Home, path: '/' },
-        { id: 'nav-radio', label: 'Radio Station', icon: Radio, path: '/rrb/radio-station' },
-        { id: 'nav-music', label: 'The Music', icon: Music, path: '/rrb/the-music' },
-        { id: 'nav-solbones', label: '⚡ Solbones 4+3+2', icon: Dice5, path: '/solbones' },
-        { id: 'nav-solbones-online', label: 'Online Multiplayer', icon: Globe, path: '/solbones-online' },
-        { id: 'nav-solbones-tournament', label: 'Tournament Brackets', icon: Trophy, path: '/solbones-tournament' },
+        { id: 'nav-chat', label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
+        { id: 'nav-search', label: 'Search', icon: Search, path: '/search' },
       ],
     },
     {
-      title: 'Legacy Restored',
+      title: 'Media',
       items: [
-        { id: 'nav-legacy', label: 'The Legacy', icon: BookOpen, path: '/rrb/the-legacy' },
-        { id: 'nav-grandma', label: 'Grandma Helen', icon: Heart, path: '/rrb/grandma-helen' },
-        { id: 'nav-proof', label: 'Proof Vault', icon: Shield, path: '/rrb/proof-vault' },
-        { id: 'nav-omission', label: 'Systematic Omission', icon: BookOpen, path: '/rrb/systematic-omission' },
-        { id: 'nav-lr', label: 'Little Richard Connection', icon: Music, path: '/rrb/little-richard-connection' },
-        { id: 'nav-family', label: 'Family Tree', icon: Heart, path: '/rrb/family-tree' },
-        { id: 'nav-obituary', label: 'Obituary & Memorial', icon: Heart, path: '/rrb/obituary' },
-        { id: 'nav-candy', label: 'Candy Through the Years', icon: BookOpen, path: '/rrb/candy-through-the-years' },
-        { id: 'nav-sources', label: 'Verified Sources', icon: Shield, path: '/rrb/verified-sources' },
+        { id: 'nav-boogie', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
+        { id: 'nav-radio', label: 'HybridCast', icon: Radio, path: '/gps-radar' },
+        { id: 'nav-broadcast', label: 'Broadcast', icon: Zap, path: '/broadcast-hub' },
       ],
     },
     {
-      title: 'Listen & Watch',
+      title: 'Account',
       items: [
-        { id: 'nav-freq', label: 'Healing Frequencies', icon: Headphones, path: '/rrb/healing-music-frequencies' },
-        { id: 'nav-meditation', label: 'Meditation Guides', icon: Headphones, path: '/rrb/meditation-guides' },
-        { id: 'nav-podcast', label: 'Podcast & Video', icon: Podcast, path: '/rrb/podcast-and-video' },
-        { id: 'nav-audiobooks', label: 'Audiobooks', icon: Headphones, path: '/rrb/audiobooks' },
-        { id: 'nav-setlist', label: 'Setlist Archive', icon: Music, path: '/rrb/setlist-archive' },
-      ],
-    },
-    {
-      title: 'Community',
-      items: [
-        { id: 'nav-sweet', label: 'Sweet Miracles', icon: Heart, path: 'https://sweetmiraclesattt.wixsite.com/sweet-miracles', external: true },
-        { id: 'nav-books', label: 'Books & Miracles', icon: BookOpen, path: '/rrb/books-and-miracles' },
-        { id: 'nav-testimonials', label: 'Testimonials', icon: Heart, path: '/rrb/testimonials-and-stories' },
-        { id: 'nav-news', label: 'News & Updates', icon: BookOpen, path: '/rrb/news' },
-        { id: 'nav-faq', label: 'FAQ', icon: BookOpen, path: '/rrb/faq' },
-      ],
-    },
-    {
-      title: 'Studio',
-      items: [
-        { id: 'nav-studio', label: 'Production Studio', icon: Film, path: '/studio' },
-        { id: 'nav-video-proc', label: 'Video Processing', icon: Video, path: '/video-processing' },
-        { id: 'nav-motion', label: 'Motion Studio', icon: Film, path: '/motion-studio' },
-        { id: 'nav-mobile-studio', label: 'Mobile Studio', icon: Smartphone, path: '/mobile-studio' },
-        { id: 'nav-media-hub', label: 'Media Hub', icon: Film, path: '/rrb/media-hub' },
-      ],
-    },
-    {
-      title: 'Canryn Production',
-      items: [
-        { id: 'nav-canryn', label: 'Canryn Production', icon: Building2, path: '/rrb/canryn-production' },
-        { id: 'nav-divisions', label: 'Divisions', icon: Building2, path: '/rrb/divisions' },
-        { id: 'nav-hybridcast', label: 'HybridCast Emergency', icon: Radio, path: '/hybridcast' },
-        { id: 'nav-merch', label: 'Merchandise', icon: Building2, path: '/rrb/merchandise-shop' },
+        { id: 'nav-dashboard', label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
+        { id: 'nav-settings', label: 'Settings', icon: Settings, path: '/settings' },
       ],
     },
   ];
@@ -91,12 +47,8 @@ export function SimplifiedMobileNav() {
     return location === path || location.startsWith(path + '?');
   };
 
-  const handleNavigation = (item: NavItem) => {
-    if (item.external) {
-      window.open(item.path, '_blank', 'noopener,noreferrer');
-    } else {
-      navigate(item.path);
-    }
+  const handleNavigation = (path: string) => {
+    navigate(path);
     setIsOpen(false);
   };
 
@@ -121,35 +73,34 @@ export function SimplifiedMobileNav() {
         />
       )}
 
-      {/* Mobile Navigation Menu */}
+      {/* Simplified Navigation Menu */}
       {isOpen && (
-        <nav className="fixed top-16 right-0 bottom-0 w-72 bg-background border-l border-border z-40 md:hidden overflow-y-auto">
-          <div className="p-4 space-y-5">
+        <nav className="fixed top-16 right-0 bottom-0 w-64 bg-background border-l border-border z-40 md:hidden overflow-y-auto">
+          <div className="p-4 space-y-6">
             {navSections.map((section) => (
               <div key={section.title}>
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                   {section.title}
                 </h3>
-                <div className="space-y-1">
+                <div className="space-y-2">
                   {section.items.map((item) => {
                     const Icon = item.icon;
-                    const active = !item.external && isActive(item.path);
+                    const active = isActive(item.path);
 
                     return (
                       <Button
                         key={item.id}
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleNavigation(item)}
-                        className={`w-full justify-start gap-3 h-9 ${
+                        onClick={() => handleNavigation(item.path)}
+                        className={`w-full justify-start gap-3 h-10 ${
                           active
                             ? 'bg-primary/10 text-primary font-medium'
                             : 'text-foreground hover:bg-muted/50'
                         }`}
                       >
                         <Icon className="h-4 w-4 flex-shrink-0" />
-                        <span className="truncate text-sm">{item.label}</span>
-                        {item.external && <ExternalLink className="h-3 w-3 ml-auto opacity-50 flex-shrink-0" />}
+                        <span className="truncate">{item.label}</span>
                       </Button>
                     );
                   })}

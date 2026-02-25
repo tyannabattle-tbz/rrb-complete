@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -54,133 +54,169 @@ const LISTENING_HISTORY: EpisodeHistory[] = [
   { date: 'Sun', episodes: 4 },
 ];
 
-const LISTENING_TIME: EpisodeHistory[] = [
-  { date: 'Mon', episodes: 2 },
-  { date: 'Tue', episodes: 3 },
-  { date: 'Wed', episodes: 1 },
-  { date: 'Thu', episodes: 2 },
-  { date: 'Fri', episodes: 3 },
-  { date: 'Sat', episodes: 4 },
-  { date: 'Sun', episodes: 2 },
-];
-
-const LISTENING_DISTRIBUTION = [
-  { name: 'Top of the Sol', value: 35 },
-  { name: 'Afternoon', value: 25 },
-  { name: 'Evening', value: 30 },
-  { name: 'Night', value: 10 },
-];
-
 const FAVORITE_PODCASTS: FavoritePodcast[] = [
-  { name: "Rockin' Rockin' Boogie", episodes: 85, hours: 142 },
+  { name: 'Rockin\' Rockin\' Boogie', episodes: 85, hours: 142 },
   { name: 'Rock Around the Clock', episodes: 62, hours: 104 },
   { name: 'Classic Rock Legends', episodes: 45, hours: 75 },
+  { name: 'Vinyl Stories', episodes: 32, hours: 53 },
+  { name: 'Music History Deep Dives', episodes: 23, hours: 38 },
 ];
 
-const COLORS = ['#f59e0b', '#3b82f6', '#ef4444', '#10b981'];
+const LISTENING_TIME_DATA = [
+  { name: 'Morning (6-12)', value: 25 },
+  { name: 'Afternoon (12-18)', value: 35 },
+  { name: 'Evening (18-24)', value: 30 },
+  { name: 'Night (24-6)', value: 10 },
+];
+
+const COLORS = ['#f59e0b', '#8b5cf6', '#3b82f6', '#10b981'];
 
 export function ListenerDashboard() {
+  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('week');
+
   return (
-    <div className="min-h-screen bg-slate-900">
-      <div className="p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-4 md:mb-8">
-          <h1 className="text-xl md:text-4xl font-bold text-white mb-1">Your Listening Dashboard</h1>
-          <p className="text-xs md:text-base text-slate-400">Track your podcast listening journey</p>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">Your Listening Dashboard</h1>
+          <p className="text-slate-400">Track your podcast listening journey</p>
         </div>
 
-        {/* Stats Grid - Mobile: 1 col, Tablet: 2 cols, Desktop: 4 cols */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6 mb-4 md:mb-8">
-          <Card className="bg-slate-800 p-3 md:p-6">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-slate-800 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-400 text-xs md:text-sm mb-1">Total Episodes</p>
-                <p className="text-xl md:text-3xl font-bold text-white">{STATS.totalEpisodes}</p>
+                <p className="text-slate-400 text-sm mb-1">Total Episodes</p>
+                <p className="text-3xl font-bold text-white">{STATS.totalEpisodes}</p>
               </div>
-              <Music className="w-6 h-6 md:w-12 md:h-12 text-amber-500 opacity-20" />
+              <Music className="w-12 h-12 text-amber-500 opacity-20" />
             </div>
           </Card>
 
-          <Card className="bg-slate-800 p-3 md:p-6">
+          <Card className="bg-slate-800 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-400 text-xs md:text-sm mb-1">Total Hours</p>
-                <p className="text-xl md:text-3xl font-bold text-white">{STATS.totalHours}</p>
+                <p className="text-slate-400 text-sm mb-1">Total Hours</p>
+                <p className="text-3xl font-bold text-white">{STATS.totalHours}</p>
               </div>
-              <Clock className="w-6 h-6 md:w-12 md:h-12 text-blue-500 opacity-20" />
+              <Clock className="w-12 h-12 text-blue-500 opacity-20" />
             </div>
           </Card>
 
-          <Card className="bg-slate-800 p-3 md:p-6">
+          <Card className="bg-slate-800 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-400 text-xs md:text-sm mb-1">Favorites</p>
-                <p className="text-xl md:text-3xl font-bold text-white">{STATS.favoriteCount}</p>
+                <p className="text-slate-400 text-sm mb-1">Favorites</p>
+                <p className="text-3xl font-bold text-white">{STATS.favoriteCount}</p>
               </div>
-              <Heart className="w-6 h-6 md:w-12 md:h-12 text-red-500 opacity-20" />
+              <Heart className="w-12 h-12 text-red-500 opacity-20" />
             </div>
           </Card>
 
-          <Card className="bg-slate-800 p-3 md:p-6">
+          <Card className="bg-slate-800 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-400 text-xs md:text-sm mb-1">Listening Streak</p>
-                <p className="text-xl md:text-3xl font-bold text-white">{STATS.streakDays} days</p>
+                <p className="text-slate-400 text-sm mb-1">Listening Streak</p>
+                <p className="text-3xl font-bold text-white">{STATS.streakDays} days</p>
               </div>
-              <TrendingUp className="w-6 h-6 md:w-12 md:h-12 text-green-500 opacity-20" />
+              <TrendingUp className="w-12 h-12 text-green-500 opacity-20" />
             </div>
           </Card>
         </div>
 
-        {/* Charts - Mobile: 1 col, Desktop: 2 cols */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-8 mb-4 md:mb-8">
-          <Card className="bg-slate-800 p-3 md:p-6">
-            <h2 className="text-lg md:text-xl font-bold text-white mb-4">Weekly Listening</h2>
-            <ResponsiveContainer width="100%" height={200}>
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Weekly Listening */}
+          <Card className="bg-slate-800 p-6">
+            <h3 className="text-xl font-bold text-white mb-4">Weekly Listening</h3>
+            <ResponsiveContainer width="100%" height={300}>
               <BarChart data={LISTENING_HISTORY}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                <XAxis dataKey="date" stroke="#94a3b8" tick={{ fontSize: 12 }} />
-                <YAxis stroke="#94a3b8" tick={{ fontSize: 12 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                <XAxis dataKey="date" stroke="#94a3b8" />
+                <YAxis stroke="#94a3b8" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
+                  labelStyle={{ color: '#fff' }}
+                />
                 <Bar dataKey="episodes" fill="#f59e0b" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
 
-          <Card className="bg-slate-800 p-3 md:p-6">
-            <h2 className="text-lg md:text-xl font-bold text-white mb-4">When You Listen</h2>
-            <ResponsiveContainer width="100%" height={200}>
+          {/* Listening Time Distribution */}
+          <Card className="bg-slate-800 p-6">
+            <h3 className="text-xl font-bold text-white mb-4">When You Listen</h3>
+            <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={LISTENING_DISTRIBUTION}
+                  data={LISTENING_TIME_DATA}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}%`}
                   outerRadius={80}
-                  paddingAngle={2}
+                  fill="#8884d8"
                   dataKey="value"
                 >
-                  {LISTENING_DISTRIBUTION.map((entry, index) => (
+                  {LISTENING_TIME_DATA.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
+                  labelStyle={{ color: '#fff' }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </Card>
         </div>
 
         {/* Favorite Podcasts */}
-        <Card className="bg-slate-800 p-3 md:p-6">
-          <h2 className="text-lg md:text-xl font-bold text-white mb-4">Your Favorite Podcasts</h2>
-          <div className="space-y-2 md:space-y-4">
-            {FAVORITE_PODCASTS.map((podcast, index) => (
-              <div key={`listener-${index}`} className="flex items-center justify-between pb-2 md:pb-4 border-b border-slate-700 last:border-b-0">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm md:text-base font-medium text-white truncate">{podcast.name}</p>
-                  <p className="text-xs md:text-sm text-slate-400">{podcast.episodes} episodes • {podcast.hours} hours</p>
+        <Card className="bg-slate-800 p-6">
+          <h3 className="text-xl font-bold text-white mb-6">Your Favorite Podcasts</h3>
+          <div className="space-y-4">
+            {FAVORITE_PODCASTS.map((podcast, idx) => (
+              <div key={idx} className="flex items-center justify-between p-4 bg-slate-700 rounded-lg">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Badge className="bg-amber-500 text-black">#{idx + 1}</Badge>
+                    <h4 className="font-semibold text-white">{podcast.name}</h4>
+                  </div>
+                  <p className="text-sm text-slate-400">
+                    {podcast.episodes} episodes • {podcast.hours} hours
+                  </p>
                 </div>
-                <Badge variant="secondary" className="ml-2 text-xs md:text-sm">{Math.round((podcast.episodes / 200) * 100)}%</Badge>
+                <div className="text-right">
+                  <div className="w-24 bg-slate-600 rounded-full h-2">
+                    <div
+                      className="bg-amber-500 h-2 rounded-full"
+                      style={{
+                        width: `${(podcast.episodes / FAVORITE_PODCASTS[0].episodes) * 100}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Achievements Section */}
+        <Card className="bg-slate-800 p-6 mt-8">
+          <h3 className="text-xl font-bold text-white mb-6">Achievements</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: '🎵', title: '100 Episodes', desc: 'Listened to 100 episodes' },
+              { icon: '⏰', title: '100 Hours', desc: 'Accumulated 100 listening hours' },
+              { icon: '❤️', title: 'Collector', desc: 'Favorited 10 episodes' },
+              { icon: '🔥', title: 'On Fire', desc: '7-day listening streak' },
+            ].map((achievement, idx) => (
+              <div key={idx} className="p-4 bg-slate-700 rounded-lg text-center">
+                <div className="text-3xl mb-2">{achievement.icon}</div>
+                <h4 className="font-semibold text-white text-sm mb-1">{achievement.title}</h4>
+                <p className="text-xs text-slate-400">{achievement.desc}</p>
               </div>
             ))}
           </div>

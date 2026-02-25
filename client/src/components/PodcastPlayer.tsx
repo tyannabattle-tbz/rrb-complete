@@ -13,28 +13,28 @@ const EPISODES = [
     id: 'rr-001',
     title: "Rockin' Rockin' Boogie",
     artist: 'Little Richard',
-    streamUrl: 'https://stream.radioparadise.com/aac-128',
+    streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     channel: 'Rockin\' Rockin\' Boogie',
   },
   {
     id: 'rr-002',
     title: 'Tutti Frutti',
     artist: 'Little Richard',
-    streamUrl: 'https://stream.radioparadise.com/aac-128',
+    streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     channel: 'Rockin\' Rockin\' Boogie',
   },
   {
     id: 'bh-001',
     title: 'The Thrill is Gone',
     artist: 'B.B. King',
-    streamUrl: 'https://stream.radioparadise.com/mp3-128',
+    streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
     channel: 'Blues Hour',
   },
   {
     id: 'je-001',
     title: 'Take Five',
     artist: 'Dave Brubeck',
-    streamUrl: 'https://stream.radioparadise.com/aac-320',
+    streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
     channel: 'Jazz Essentials',
   },
 ];
@@ -144,9 +144,9 @@ export function PodcastPlayer() {
         <Card className="mb-6 p-6 border-2 border-orange-300">
           <h3 className="text-sm font-bold text-orange-600 mb-4">CHANNELS</h3>
           <div className="grid grid-cols-3 gap-3">
-            {CHANNELS.map((channel, idx) => (
+            {CHANNELS.map((channel) => (
               <Button
-                key={`channel-${idx}-${channel.id || 'unnamed'}`}
+                key={channel.id}
                 onClick={() => handleSwitchChannel(channel.id)}
                 variant={currentChannel === channel.id ? 'default' : 'outline'}
                 className={`text-sm h-auto py-2 ${

@@ -9,11 +9,7 @@ import { getLoginUrl } from "./const";
 import { ToastProvider, useGlobalToast } from "./contexts/ToastContext";
 import { NotificationContainer } from "./components/NotificationToast";
 import { AccessibilityPanel } from "./components/AccessibilityPanel";
-import { registerServiceWorker, requestNotificationPermission } from "./lib/swRegister";
-
 import "./index.css";
-
-
 
 const queryClient = new QueryClient();
 
@@ -59,11 +55,6 @@ const trpcClient = trpc.createClient({
   ],
 });
 
-function ToastNotificationContainer() {
-  const { toasts, removeToast } = useGlobalToast();
-  return <NotificationContainer toasts={toasts} onDismiss={removeToast} />;
-}
-
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
@@ -76,6 +67,11 @@ createRoot(document.getElementById("root")!).render(
   </trpc.Provider>
 );
 
+function ToastNotificationContainer() {
+  const { toasts, removeToast } = useGlobalToast();
+  return <NotificationContainer toasts={toasts} onDismiss={removeToast} />;
+}
+
 // Apply accessibility settings on page load
 if (typeof window !== 'undefined') {
   const saved = localStorage.getItem('accessibilitySettings');
@@ -86,16 +82,4 @@ if (typeof window !== 'undefined') {
     root.style.letterSpacing = `${settings.textSpacing * 0.05}em`;
     root.style.lineHeight = `${1.5 * settings.textSpacing}`;
   }
-
-  // Register service worker for cache invalidation and offline support
-  registerServiceWorker().catch((err) => {
-    console.error('[App] Failed to register service worker:', err);
-  });
-
-  // Request notification permission for cache update alerts
-  requestNotificationPermission().catch((err) => {
-    console.error('[App] Failed to request notification permission:', err);
-  });
 }
-
-

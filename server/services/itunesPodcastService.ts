@@ -96,7 +96,7 @@ function generatePlaceholderEpisodes(podcast: PodcastResult): Episode[] {
       description: `Episode ${i + 1} of ${podcast.collectionName}`,
       pubDate: new Date(Date.now() - i * 7 * 24 * 60 * 60 * 1000).toISOString(),
       duration: 3600 + Math.random() * 3600, // 1-2 hours
-      streamUrl: `https://ice1.somafm.com/groovesalad-128-mp3`,
+      streamUrl: `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${(i % 11) + 1}.mp3`,
       imageUrl: podcast.artworkUrl600,
       channel: podcast.collectionName,
     });

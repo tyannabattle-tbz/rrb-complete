@@ -123,7 +123,7 @@ export default function RockinBoogieAdminDashboard() {
                     { name: 'Sweet Miracles', status: 'online', icon: '💝' },
                     { name: 'Canryn', status: 'online', icon: '🧘' },
                   ].map((sub, idx) => (
-                    <div key={`item-${idx}`} className="flex items-center justify-between p-2 bg-slate-700/50 rounded">
+                    <div key={idx} className="flex items-center justify-between p-2 bg-slate-700/50 rounded">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">{sub.icon}</span>
                         <span className="text-white">{sub.name}</span>
@@ -200,7 +200,7 @@ export default function RockinBoogieAdminDashboard() {
                 { name: 'Sweet Miracles', icon: '💝', listeners: 1240, donations: 89, uptime: '99.7%' },
                 { name: 'Canryn', icon: '🧘', listeners: 4340, sessions: 234, uptime: '99.9%' },
               ].map((sub, idx) => (
-                <Card key={`item-${idx}`} className="bg-slate-800 border-slate-700">
+                <Card key={idx} className="bg-slate-800 border-slate-700">
                   <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                       <span className="text-2xl">{sub.icon}</span>

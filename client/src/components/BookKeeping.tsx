@@ -20,11 +20,11 @@ export function BookKeeping() {
   const [records, setRecords] = useState<BroadcastRecord[]>([
     {
       id: '1',
-      title: 'Top of the Sol News - Feb 7',
+      title: 'Morning News - Feb 7',
       date: '2026-02-07',
       duration: 30,
       fileSize: '45 MB',
-      tags: ['news', 'top-of-the-sol'],
+      tags: ['news', 'morning'],
       status: 'archived',
       recordedAt: Date.now() - 86400000,
     },

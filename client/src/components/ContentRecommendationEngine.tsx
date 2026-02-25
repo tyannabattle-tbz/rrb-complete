@@ -82,43 +82,43 @@ export const ContentRecommendationEngine: React.FC = () => {
   }));
 
   return (
-    <div className="w-full space-y-4 bg-gradient-to-br from-purple-50 to-blue-50 p-3 md:p-6">
+    <div className="w-full space-y-6 bg-gradient-to-br from-purple-50 to-blue-50 p-6">
       {/* Header Banner */}
-      <div className="rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 p-4 sm:p-6 text-white shadow-lg">
-        <h1 className="text-lg md:text-3xl font-bold">Content Recommendation Engine</h1>
-        <p className="mt-1 sm:mt-2 text-xs md:text-lg font-semibold">Powered by Qumus AI</p>
-        <p className="mt-1 sm:mt-2 text-xs md:text-sm opacity-90">Personalized video suggestions based on your viewing history and preferences</p>
+      <div className="rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 p-6 text-white shadow-lg">
+        <h1 className="text-3xl font-bold">Content Recommendation Engine</h1>
+        <p className="mt-2 text-lg font-semibold">Powered by Qumus AI</p>
+        <p className="mt-2 text-sm opacity-90">Personalized video suggestions based on your viewing history and preferences</p>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 gap-2 md:gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-white p-3 md:p-6 shadow-md">
-          <p className="text-xs md:text-sm font-medium text-gray-600">Recommendations</p>
-          <p className="mt-2 text-2xl sm:text-3xl font-bold text-purple-600">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-white p-6 shadow-md">
+          <p className="text-sm font-medium text-gray-600">Recommendations</p>
+          <p className="mt-2 text-3xl font-bold text-purple-600">
             {metrics?.totalRecommendations || 0}
           </p>
           <p className="mt-1 text-xs text-gray-500">Generated for you</p>
         </Card>
 
-        <Card className="bg-white p-3 md:p-6 shadow-md">
-          <p className="text-xs md:text-sm font-medium text-gray-600">Avg Relevance</p>
-          <p className="mt-2 text-2xl sm:text-3xl font-bold text-blue-600">
+        <Card className="bg-white p-6 shadow-md">
+          <p className="text-sm font-medium text-gray-600">Avg Relevance</p>
+          <p className="mt-2 text-3xl font-bold text-blue-600">
             {(metrics?.avgRelevanceScore || 0).toFixed(2)}
           </p>
           <p className="mt-1 text-xs text-gray-500">Out of 1.0</p>
         </Card>
 
-        <Card className="bg-white p-3 md:p-6 shadow-md">
-          <p className="text-xs md:text-sm font-medium text-gray-600">Click-Through Rate</p>
-          <p className="mt-2 text-2xl sm:text-3xl font-bold text-green-600">
+        <Card className="bg-white p-6 shadow-md">
+          <p className="text-sm font-medium text-gray-600">Click-Through Rate</p>
+          <p className="mt-2 text-3xl font-bold text-green-600">
             {(metrics?.clickThroughRate || 0).toFixed(1)}%
           </p>
           <p className="mt-1 text-xs text-gray-500">User engagement</p>
         </Card>
 
-        <Card className="bg-white p-3 md:p-6 shadow-md">
-          <p className="text-xs md:text-sm font-medium text-gray-600">User Satisfaction</p>
-          <p className="mt-2 text-2xl sm:text-3xl font-bold text-orange-600">
+        <Card className="bg-white p-6 shadow-md">
+          <p className="text-sm font-medium text-gray-600">User Satisfaction</p>
+          <p className="mt-2 text-3xl font-bold text-orange-600">
             {(metrics?.userSatisfaction || 0).toFixed(1)}/5
           </p>
           <p className="mt-1 text-xs text-gray-500">Average rating</p>
@@ -126,9 +126,9 @@ export const ContentRecommendationEngine: React.FC = () => {
       </div>
 
       {/* Personalized Recommendations */}
-      <Card className="p-3 md:p-6 shadow-md">
-        <div className="mb-3 sm:mb-4 flex items-center justify-between">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800">Personalized for You</h2>
+      <Card className="p-6 shadow-md">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-800">Personalized for You</h2>
           <div className="flex gap-2">
             {categories.map(cat => (
               <Button
@@ -145,7 +145,7 @@ export const ContentRecommendationEngine: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredRecommendations.slice(0, 6).map((rec, idx) => (
+          {filteredRecommendations.slice(0, 6).map((rec) => (
             <div key={rec.videoId} className="rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
               {rec.thumbnail && (
                 <img
@@ -197,8 +197,8 @@ export const ContentRecommendationEngine: React.FC = () => {
       <Card className="p-6 shadow-md">
         <h2 className="mb-4 text-xl font-bold text-gray-800">Recommended Playlists</h2>
         <div className="space-y-4">
-          {playlists.map((playlist, idx) => (
-            <div key={`playlist-${idx}-${playlist.id || 'unnamed'}`} className="rounded-lg border border-gray-200 p-4">
+          {playlists.map((playlist) => (
+            <div key={playlist.id} className="rounded-lg border border-gray-200 p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-800">{playlist.name}</h3>
@@ -206,7 +206,7 @@ export const ContentRecommendationEngine: React.FC = () => {
                     {playlist.videos.length} videos • {playlist.totalDuration.toFixed(1)} hours
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {playlist.videos.slice(0, 3).map((video, idx) => (
+                    {playlist.videos.slice(0, 3).map((video) => (
                       <span key={video.videoId} className="inline-block rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700">
                         {video.title.substring(0, 20)}...
                       </span>

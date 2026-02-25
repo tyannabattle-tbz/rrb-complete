@@ -46,7 +46,7 @@ export default function UserProfile({ userId }: { userId?: string }) {
     {
       videoId: "video-1",
       title: "Cinematic Sunset",
-      thumbnail: "",
+      thumbnail: "/videos/video-1770028842286-0v6pzrmxd.mp4",
       views: 5200,
       likes: 342,
       createdAt: new Date(Date.now() - 86400000),
@@ -54,7 +54,7 @@ export default function UserProfile({ userId }: { userId?: string }) {
     {
       videoId: "video-2",
       title: "Urban Motion",
-      thumbnail: "",
+      thumbnail: "/videos/video-1770027261553-4v2do7gu.mp4",
       views: 3100,
       likes: 218,
       createdAt: new Date(Date.now() - 172800000),

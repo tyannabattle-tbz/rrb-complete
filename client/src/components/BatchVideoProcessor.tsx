@@ -87,7 +87,7 @@ export function BatchVideoProcessorComponent({
           <p className="text-sm font-semibold mb-2">Preset Details:</p>
           <ul className="text-sm text-gray-600 space-y-1">
             {preset.jobs.map((job, idx) => (
-              <li key={`item-${idx}`}>
+              <li key={idx}>
                 • {job.preset} - {job.format.toUpperCase()} @ {job.quality} ({job.duration}s)
               </li>
             ))}
@@ -160,7 +160,7 @@ export function BatchVideoProcessorComponent({
 
             {/* All Jobs */}
             <TabsContent value="all" className="space-y-3 mt-4">
-              {jobs.map((job, idx) => (
+              {jobs.map((job) => (
                 <JobCard key={job.id} job={job} onCancel={handleCancelJob} />
               ))}
             </TabsContent>
@@ -169,7 +169,7 @@ export function BatchVideoProcessorComponent({
             <TabsContent value="completed" className="space-y-3 mt-4">
               {jobs
                 .filter((j) => j.status === 'completed')
-                .map((job, idx) => (
+                .map((job) => (
                   <JobCard key={job.id} job={job} onCancel={handleCancelJob} />
                 ))}
             </TabsContent>
@@ -178,7 +178,7 @@ export function BatchVideoProcessorComponent({
             <TabsContent value="processing" className="space-y-3 mt-4">
               {jobs
                 .filter((j) => j.status === 'processing')
-                .map((job, idx) => (
+                .map((job) => (
                   <JobCard key={job.id} job={job} onCancel={handleCancelJob} />
                 ))}
             </TabsContent>
@@ -187,7 +187,7 @@ export function BatchVideoProcessorComponent({
             <TabsContent value="failed" className="space-y-3 mt-4">
               {jobs
                 .filter((j) => j.status === 'failed')
-                .map((job, idx) => (
+                .map((job) => (
                   <JobCard key={job.id} job={job} onCancel={handleCancelJob} />
                 ))}
             </TabsContent>

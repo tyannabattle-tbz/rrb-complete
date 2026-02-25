@@ -36,7 +36,7 @@ export default function MobileStudio() {
   const [sessions, setSessions] = useState<StreamingSession[]>([
     {
       id: '1',
-      title: 'Top of the Sol Broadcast',
+      title: 'Morning Broadcast',
       status: 'live',
       startTime: Date.now() - 3600000,
       viewers: 2340,

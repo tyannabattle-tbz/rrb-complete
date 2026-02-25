@@ -165,7 +165,7 @@ export default function QumusMonitoringDashboard() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {policies?.policies?.map((policy: any, idx: number) => (
-                    <div key={`item-${idx}`} className="p-4 bg-slate-700 rounded-lg border border-slate-600">
+                    <div key={idx} className="p-4 bg-slate-700 rounded-lg border border-slate-600">
                       <div className="flex items-start justify-between mb-2">
                         <h4 className="font-semibold text-white">{policy.name}</h4>
                         <Badge className="bg-green-600 text-white">{policy.autonomyLevel}%</Badge>
@@ -194,7 +194,7 @@ export default function QumusMonitoringDashboard() {
               <CardContent>
                 <div className="space-y-3">
                   {services?.services?.map((service: any, idx: number) => (
-                    <div key={`item-${idx}`} className="flex items-center justify-between p-3 bg-slate-700 rounded border border-slate-600">
+                    <div key={idx} className="flex items-center justify-between p-3 bg-slate-700 rounded border border-slate-600">
                       <div>
                         <p className="font-semibold text-white">{service.name}</p>
                         <p className="text-sm text-slate-400">{service.description}</p>

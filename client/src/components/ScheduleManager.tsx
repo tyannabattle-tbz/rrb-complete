@@ -168,7 +168,7 @@ export function ScheduleManager() {
               <p>No schedule slots for this day</p>
             </div>
           ) : (
-            schedule.map((slot, idx) => {
+            schedule.map((slot) => {
               const contentType = getContentTypeIcon(slot.contentType);
               const Icon = contentType.icon;
 
@@ -228,7 +228,7 @@ export function ScheduleManager() {
         <h3 className="text-xl font-bold text-gray-800">Available Content</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
-            { title: 'Top of the Sol Show', type: 'radio', duration: 120 },
+            { title: 'Morning Show', type: 'radio', duration: 120 },
             { title: 'News Update', type: 'video', duration: 10 },
             { title: 'Tech Podcast', type: 'podcast', duration: 45 },
             { title: 'Product Ad', type: 'commercial', duration: 30 },
@@ -237,7 +237,7 @@ export function ScheduleManager() {
             const Icon = contentType.icon;
 
             return (
-              <div key={`item-${idx}`} className={`p-4 rounded-lg ${contentType.color}`}>
+              <div key={idx} className={`p-4 rounded-lg ${contentType.color}`}>
                 <div className="flex items-center gap-2 mb-2">
                   <Icon className="w-5 h-5" />
                   <span className="font-semibold">{content.title}</span>

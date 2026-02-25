@@ -82,7 +82,7 @@ export function KeyboardShortcutsGuide({ open = false, onOpenChange }: KeyboardS
   const KeyDisplay = ({ keys }: { keys: string[] }) => (
     <div className="flex gap-1">
       {keys.map((key, idx) => (
-        <div key={`item-${idx}`}>
+        <div key={idx}>
           <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">
             {key}
           </kbd>
@@ -107,19 +107,19 @@ export function KeyboardShortcutsGuide({ open = false, onOpenChange }: KeyboardS
 
         <Tabs defaultValue="navigation" className="w-full">
           <TabsList className="grid w-full grid-cols-5">
-            {categories.map((cat, idx) => (
+            {categories.map((cat) => (
               <TabsTrigger key={cat} value={cat} className="text-xs">
                 {categoryLabels[cat]}
               </TabsTrigger>
             ))}
           </TabsList>
 
-          {categories.map((category, idx) => (
+          {categories.map((category) => (
             <TabsContent key={category} value={category} className="space-y-3">
               {shortcuts
                 .filter((s) => s.category === category)
                 .map((shortcut, idx) => (
-                  <div key={`item-${idx}`} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900">
+                  <div key={idx} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900">
                     <span className="text-sm text-muted-foreground">{shortcut.description}</span>
                     <KeyDisplay keys={shortcut.keys} />
                   </div>

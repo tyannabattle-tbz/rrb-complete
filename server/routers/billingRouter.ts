@@ -103,7 +103,7 @@ export const billingRouter = router({
             amount: 29,
             status: 'paid',
             description: 'Pro Plan - Monthly',
-            downloadUrl: null as string | null, // Invoices are fetched from Stripe when available
+            downloadUrl: '/invoices/inv-1.pdf',
           },
           {
             id: 'inv-2',
@@ -111,7 +111,7 @@ export const billingRouter = router({
             amount: 29,
             status: 'paid',
             description: 'Pro Plan - Monthly',
-            downloadUrl: null as string | null, // Invoices are fetched from Stripe when available
+            downloadUrl: '/invoices/inv-2.pdf',
           },
         ],
         total: 2,

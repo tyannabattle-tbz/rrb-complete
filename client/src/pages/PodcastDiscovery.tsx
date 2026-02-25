@@ -180,7 +180,7 @@ export default function PodcastDiscovery() {
         {/* Podcasts Grid */}
         {!isLoading && podcasts.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {podcasts.map((podcast, idx) => (
+            {podcasts.map((podcast) => (
               <Card
                 key={podcast.id}
                 className="bg-white/10 border-orange-400 backdrop-blur-sm hover:bg-white/20 transition-all overflow-hidden group"
@@ -232,7 +232,7 @@ export default function PodcastDiscovery() {
                     <div className="flex flex-wrap gap-1">
                       {podcast.genres.slice(0, 2).map((genre, idx) => (
                         <span
-                          key={`item-${idx}`}
+                          key={idx}
                           className="text-xs bg-orange-600/50 text-orange-100 px-2 py-1 rounded"
                         >
                           {genre}

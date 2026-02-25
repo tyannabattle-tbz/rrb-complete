@@ -2,17 +2,18 @@
  * Meditation Hub - Complete Wellness Platform
  * 
  * Features:
- * - Guided meditation sessions with real audio playback via global AudioContext
+ * - Guided meditation sessions with audio playback
  * - Healing frequencies (432Hz, 528Hz, binaural beats)
- * - Live ambient streams from SomaFM (Drone Zone, Deep Space One, Groove Salad)
  * - Session history and progress tracking
  * - Favorite sessions and bookmarks
  * - Meditation statistics and streaks
+ * - Personalized recommendations
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
 import {
   Play,
   Pause,
@@ -24,23 +25,27 @@ import {
   Zap,
   TrendingUp,
   Music,
-  Radio,
   Waves,
 } from 'lucide-react';
-import { useAudio } from '@/contexts/AudioContext';
-import type { AudioTrack } from '@/contexts/AudioContext';
-import { LIVE_STREAMS } from '@/lib/streamLibrary';
 
 interface MeditationSession {
   id: string;
   title: string;
   description: string;
-  duration: number;
+  duration: number; // in seconds
+  audioUrl: string;
   category: 'breathing' | 'body-scan' | 'visualization' | 'loving-kindness' | 'sleep';
   frequency?: 'binaural' | '432Hz' | '528Hz';
   difficulty: 'beginner' | 'intermediate' | 'advanced';
+  imageUrl: string;
   instructor: string;
-  audioTrack: AudioTrack;
+}
+
+interface UserProgress {
+  sessionId: string;
+  completedAt: number;
+  duration: number; // actual listening time
+  rating: number; // 1-5
 }
 
 interface MeditationStats {
@@ -48,147 +53,217 @@ interface MeditationStats {
   totalMinutes: number;
   currentStreak: number;
   longestStreak: number;
+  favoriteCategory: string;
+  lastSessionDate: number;
 }
 
-// Map sessions to real audio tracks
 const MEDITATION_SESSIONS: MeditationSession[] = [
   {
     id: 'med-001',
-    title: 'Top of the Sol Awakening',
-    description: 'Start your day with energy and clarity through ambient soundscapes',
-    duration: 600,
+    title: 'Morning Awakening',
+    description: 'Start your day with energy and clarity',
+    duration: 600, // 10 minutes
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     category: 'breathing',
     frequency: '432Hz',
     difficulty: 'beginner',
+    imageUrl: 'https://via.placeholder.com/300x300?text=Morning+Awakening',
     instructor: 'Sarah Chen',
-    audioTrack: {
-      id: 'med-track-001',
-      title: 'Top of the Sol Awakening',
-      artist: 'Meditation Hub · Sarah Chen',
-      url: LIVE_STREAMS.droneZone.url,
-      channel: 'Meditation',
-      duration: 360,
-      frequency: 432,
-    },
   },
   {
     id: 'med-002',
     title: 'Deep Relaxation',
-    description: 'Release tension and find inner peace with deep ambient drones',
-    duration: 1200,
+    description: 'Release tension and find inner peace',
+    duration: 1200, // 20 minutes
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     category: 'body-scan',
     frequency: '528Hz',
     difficulty: 'intermediate',
+    imageUrl: 'https://via.placeholder.com/300x300?text=Deep+Relaxation',
     instructor: 'Marcus Johnson',
-    audioTrack: {
-      id: 'med-track-002',
-      title: 'Deep Relaxation',
-      artist: 'Meditation Hub · Marcus Johnson',
-      url: LIVE_STREAMS.deepSpaceOne.url,
-      channel: 'Meditation',
-      duration: 420,
-      frequency: 528,
-    },
   },
   {
     id: 'med-003',
     title: 'Loving Kindness',
-    description: 'Cultivate compassion and connection through gentle soundscapes',
-    duration: 900,
+    description: 'Cultivate compassion and connection',
+    duration: 900, // 15 minutes
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
     category: 'loving-kindness',
     difficulty: 'beginner',
+    imageUrl: 'https://via.placeholder.com/300x300?text=Loving+Kindness',
     instructor: 'Emma Wilson',
-    audioTrack: {
-      id: 'med-track-003',
-      title: 'Loving Kindness',
-      artist: 'Meditation Hub · Emma Wilson',
-      url: LIVE_STREAMS.grooveSalad.url,
-      channel: 'Meditation',
-      duration: 380,
-      frequency: 528,
-    },
   },
   {
     id: 'med-004',
     title: 'Sleep Meditation',
-    description: 'Drift into peaceful, restorative sleep with binaural beats',
-    duration: 1800,
+    description: 'Drift into peaceful, restorative sleep',
+    duration: 1800, // 30 minutes
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     category: 'sleep',
     frequency: 'binaural',
     difficulty: 'beginner',
+    imageUrl: 'https://via.placeholder.com/300x300?text=Sleep+Meditation',
     instructor: 'Dr. Lisa Park',
-    audioTrack: {
-      id: 'med-track-004',
-      title: 'Sleep Meditation',
-      artist: 'Meditation Hub · Dr. Lisa Park',
-      url: LIVE_STREAMS.lush.url,
-      channel: 'Meditation',
-      duration: 600,
-      frequency: 432,
-    },
   },
   {
     id: 'med-005',
     title: 'Visualization Journey',
-    description: 'Explore your inner landscape with deep space ambient',
-    duration: 1200,
+    description: 'Explore your inner landscape',
+    duration: 1200, // 20 minutes
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     category: 'visualization',
     frequency: '432Hz',
     difficulty: 'intermediate',
+    imageUrl: 'https://via.placeholder.com/300x300?text=Visualization',
     instructor: 'James Mitchell',
-    audioTrack: {
-      id: 'med-track-005',
-      title: 'Visualization Journey',
-      artist: 'Meditation Hub · James Mitchell',
-      url: LIVE_STREAMS.deepSpaceOne.url,
-      channel: 'Meditation',
-      duration: 390,
-      frequency: 432,
-    },
   },
 ];
 
-// Live ambient streams for continuous meditation
-const AMBIENT_STREAMS: AudioTrack[] = [
-  LIVE_STREAMS.droneZone,
-  LIVE_STREAMS.deepSpaceOne,
-  LIVE_STREAMS.grooveSalad,
-];
-
 export default function MeditationHub() {
-  const audio = useAudio();
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string>(MEDITATION_SESSIONS[0].id);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(70);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [progress, setProgress] = useState<UserProgress[]>([]);
   const [stats, setStats] = useState<MeditationStats>({
     totalSessions: 0,
     totalMinutes: 0,
     currentStreak: 0,
     longestStreak: 0,
+    favoriteCategory: '',
+    lastSessionDate: 0,
   });
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [showLiveStreams, setShowLiveStreams] = useState(false);
+  const [sessionRating, setSessionRating] = useState(0);
 
-  // Load from localStorage
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem('meditation_favorites');
-    const savedStats = localStorage.getItem('meditation_stats');
-    if (savedFavorites) setFavorites(JSON.parse(savedFavorites));
-    if (savedStats) setStats(JSON.parse(savedStats));
-  }, []);
+  const currentSession = MEDITATION_SESSIONS.find(s => s.id === currentSessionId);
 
-  useEffect(() => {
-    localStorage.setItem('meditation_favorites', JSON.stringify(favorites));
-  }, [favorites]);
-
-  useEffect(() => {
-    localStorage.setItem('meditation_stats', JSON.stringify(stats));
-  }, [stats]);
-
+  // Format time display
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Load favorites from localStorage
+  useEffect(() => {
+    const savedFavorites = localStorage.getItem('meditation_favorites');
+    const savedProgress = localStorage.getItem('meditation_progress');
+    const savedStats = localStorage.getItem('meditation_stats');
+
+    if (savedFavorites) setFavorites(JSON.parse(savedFavorites));
+    if (savedProgress) setProgress(JSON.parse(savedProgress));
+    if (savedStats) setStats(JSON.parse(savedStats));
+  }, []);
+
+  // Save favorites to localStorage
+  useEffect(() => {
+    localStorage.setItem('meditation_favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  // Save progress to localStorage
+  useEffect(() => {
+    localStorage.setItem('meditation_progress', JSON.stringify(progress));
+    localStorage.setItem('meditation_stats', JSON.stringify(stats));
+  }, [progress, stats]);
+
+  // Set audio src when session changes
+  useEffect(() => {
+    if (audioRef.current && currentSession?.audioUrl) {
+      audioRef.current.src = currentSession.audioUrl;
+      audioRef.current.load();
+      setCurrentTime(0);
+    }
+  }, [currentSessionId, currentSession]);
+
+  // Set volume
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+  }, [volume]);
+
+  // Handle play/pause
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.play().catch(err => {
+        console.error('Play error:', err);
+        setIsPlaying(false);
+      });
+    } else {
+      audioRef.current.pause();
+    }
+  }, [isPlaying]);
+
+  // Handle time update
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  // Handle metadata loaded
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  // Handle session end
+  const handleSessionEnd = () => {
+    setIsPlaying(false);
+
+    // Record session completion
+    if (currentSession) {
+      const newProgress: UserProgress = {
+        sessionId: currentSession.id,
+        completedAt: Date.now(),
+        duration: currentTime,
+        rating: sessionRating,
+      };
+
+      setProgress([...progress, newProgress]);
+
+      // Update stats
+      const newStats = { ...stats };
+      newStats.totalSessions += 1;
+      newStats.totalMinutes += Math.floor(currentTime / 60);
+      newStats.lastSessionDate = Date.now();
+
+      // Calculate streak
+      const today = new Date().toDateString();
+      const lastSessionDate = new Date(stats.lastSessionDate).toDateString();
+      if (lastSessionDate === today) {
+        newStats.currentStreak = stats.currentStreak + 1;
+      } else {
+        newStats.currentStreak = 1;
+      }
+
+      if (newStats.currentStreak > stats.longestStreak) {
+        newStats.longestStreak = newStats.currentStreak;
+      }
+
+      setStats(newStats);
+      setSessionRating(0);
+    }
+  };
+
+  // Handle progress bar click
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (audioRef.current) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = x / rect.width;
+      audioRef.current.currentTime = percentage * duration;
+    }
+  };
+
+  // Toggle favorite
   const toggleFavorite = (sessionId: string) => {
     setFavorites(prev =>
       prev.includes(sessionId)
@@ -197,206 +272,190 @@ export default function MeditationHub() {
     );
   };
 
-  const playSession = (session: MeditationSession) => {
-    audio.play(session.audioTrack);
-    // Update stats
-    setStats(prev => ({
-      ...prev,
-      totalSessions: prev.totalSessions + 1,
-      totalMinutes: prev.totalMinutes + Math.floor(session.duration / 60),
-    }));
-  };
-
-  const playAllSessions = () => {
-    const allTracks = MEDITATION_SESSIONS.map(s => s.audioTrack);
-    audio.playQueue(allTracks, 0);
-  };
-
-  const playLiveStream = (stream: AudioTrack) => {
-    audio.play(stream);
-    setShowLiveStreams(false);
-  };
-
-  // Check if a meditation track is currently playing
-  const isSessionPlaying = (sessionId: string) => {
-    const session = MEDITATION_SESSIONS.find(s => s.id === sessionId);
-    return session && audio.currentTrack?.id === session.audioTrack.id && audio.isPlaying;
-  };
-
+  // Filter sessions by category
   const filteredSessions =
     selectedCategory === 'all'
       ? MEDITATION_SESSIONS
       : MEDITATION_SESSIONS.filter(s => s.category === selectedCategory);
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 md:p-6">
+    <div className="w-full min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-purple-900 mb-2">🧘 Meditation Hub</h1>
+          <h1 className="text-4xl font-bold text-purple-900 mb-2">🧘 Meditation Hub</h1>
           <p className="text-gray-600">Find peace, clarity, and wellness through guided meditation</p>
         </div>
 
-        {/* Live Ambient Streams */}
-        <Card className="mb-6 p-4 md:p-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-bold flex items-center gap-2">
-              <Waves className="w-5 h-5" /> Drop Radio — 432Hz Live Streams
-            </h2>
-            <button
-              onClick={() => setShowLiveStreams(!showLiveStreams)}
-              className="text-sm text-white/80 hover:text-white flex items-center gap-1"
-            >
-              <Radio className="w-4 h-4" />
-              {showLiveStreams ? 'Hide' : 'Show Streams'}
-            </button>
-          </div>
-          <p className="text-sm text-white/70 mb-3">
-            24/7 ambient soundscapes for meditation, sleep, and deep focus
-          </p>
-          {showLiveStreams && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-              {AMBIENT_STREAMS.map(stream => {
-                const isActive = audio.currentTrack?.id === stream.id;
-                return (
-                  <button
-                    key={stream.id}
-                    onClick={() => playLiveStream(stream)}
-                    className={`p-4 rounded-xl text-left transition-all ${
-                      isActive
-                        ? 'bg-white/30 ring-2 ring-white/50'
-                        : 'bg-white/10 hover:bg-white/20'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      {isActive && audio.isPlaying ? (
-                        <Pause className="w-5 h-5" />
-                      ) : (
-                        <Play className="w-5 h-5" />
-                      )}
-                      <span className="font-semibold text-sm truncate">{stream.title}</span>
-                    </div>
-                    <p className="text-xs text-white/60">{stream.artist}</p>
-                    {isActive && (
-                      <div className="flex items-center gap-1 mt-2">
-                        <div className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
-                        <span className="text-[10px] text-red-300 font-bold">LIVE</span>
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
+        {/* Audio Element */}
+        <audio
+          ref={audioRef}
+          crossOrigin="anonymous"
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedMetadata={handleLoadedMetadata}
+          onEnded={handleSessionEnd}
+        />
+
+        {/* Current Session Display */}
+        {currentSession && (
+          <Card className="mb-8 p-8 bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h2 className="text-3xl font-bold mb-2">{currentSession.title}</h2>
+                <p className="text-purple-100 mb-4">{currentSession.description}</p>
+                <div className="flex gap-3 flex-wrap">
+                  <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm">
+                    {currentSession.instructor}
+                  </span>
+                  <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm">
+                    {currentSession.difficulty}
+                  </span>
+                  {currentSession.frequency && (
+                    <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm">
+                      {currentSession.frequency}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <img
+                src={currentSession.imageUrl}
+                alt={currentSession.title}
+                className="w-32 h-32 rounded-lg object-cover ml-4"
+              />
             </div>
-          )}
-          {!showLiveStreams && (
-            <button
-              onClick={() => setShowLiveStreams(true)}
-              className="mt-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors"
-            >
-              🎧 Start a Live Ambient Stream
-            </button>
-          )}
-        </Card>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
+          {/* Main Player */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Play All Button */}
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Guided Sessions</h2>
-              <Button
-                onClick={playAllSessions}
-                className="bg-purple-600 hover:bg-purple-700 text-white"
-              >
-                <Play className="w-4 h-4 mr-2" /> Play All
-              </Button>
-            </div>
+            {/* Progress Bar */}
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div
+                  onClick={handleProgressClick}
+                  className="w-full h-2 bg-gray-200 rounded-full cursor-pointer hover:h-3 transition-all"
+                >
+                  <div
+                    className="h-full bg-purple-600 rounded-full transition-all"
+                    style={{ width: `${(currentTime / duration) * 100}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+              </div>
+            </Card>
 
-            {/* Sessions Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredSessions.map(session => {
-                const playing = isSessionPlaying(session.id);
-                return (
-                  <Card
-                    key={session.id}
-                    className={`overflow-hidden cursor-pointer transition-all hover:shadow-lg ${
-                      playing ? 'ring-2 ring-purple-500 shadow-purple-200 shadow-lg' : ''
+            {/* Volume Control */}
+            <Card className="p-6">
+              <div className="flex items-center gap-4">
+                <Volume2 className="w-5 h-5 text-purple-600" />
+                <Slider
+                  value={[volume]}
+                  min={0}
+                  max={100}
+                  step={1}
+                  onValueChange={(value) => setVolume(value[0])}
+                  className="flex-1"
+                />
+                <span className="text-sm text-gray-600 w-8 text-right">{volume}%</span>
+              </div>
+            </Card>
+
+            {/* Playback Controls */}
+            <Card className="p-6">
+              <div className="flex gap-4 justify-center items-center">
+                <Button
+                  onClick={() => {
+                    const currentIndex = MEDITATION_SESSIONS.findIndex(
+                      s => s.id === currentSessionId
+                    );
+                    if (currentIndex > 0) {
+                      setCurrentSessionId(MEDITATION_SESSIONS[currentIndex - 1].id);
+                      setIsPlaying(true);
+                    }
+                  }}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <SkipBack className="w-4 h-4" />
+                  Previous
+                </Button>
+
+                <Button
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg font-bold flex items-center gap-2"
+                >
+                  {isPlaying ? (
+                    <>
+                      <Pause className="w-5 h-5" />
+                      Pause
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-5 h-5" />
+                      Play
+                    </>
+                  )}
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    const currentIndex = MEDITATION_SESSIONS.findIndex(
+                      s => s.id === currentSessionId
+                    );
+                    if (currentIndex < MEDITATION_SESSIONS.length - 1) {
+                      setCurrentSessionId(MEDITATION_SESSIONS[currentIndex + 1].id);
+                      setIsPlaying(true);
+                    }
+                  }}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  Next
+                  <SkipForward className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  onClick={() => toggleFavorite(currentSession?.id || '')}
+                  className={`ml-auto ${
+                    favorites.includes(currentSession?.id || '')
+                      ? 'bg-red-600 hover:bg-red-700'
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  } text-white`}
+                >
+                  <Heart
+                    className={`w-4 h-4 ${
+                      favorites.includes(currentSession?.id || '') ? 'fill-current' : ''
                     }`}
-                    onClick={() => {
-                      if (playing) {
-                        audio.togglePlayPause();
-                      } else {
-                        playSession(session);
-                      }
-                    }}
-                  >
-                    <div className="h-32 bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center relative">
-                      <div className="text-5xl opacity-50">
-                        {session.category === 'breathing' ? '🌬️' :
-                         session.category === 'body-scan' ? '🧘' :
-                         session.category === 'visualization' ? '🌌' :
-                         session.category === 'loving-kindness' ? '💜' : '🌙'}
-                      </div>
-                      {playing && (
-                        <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 px-2 py-1 rounded-full">
-                          <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-                          <span className="text-[10px] text-white font-bold">PLAYING</span>
-                        </div>
-                      )}
-                      <button
-                        className="absolute bottom-3 right-3 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (playing) {
-                            audio.togglePlayPause();
-                          } else {
-                            playSession(session);
-                          }
-                        }}
-                      >
-                        {playing ? (
-                          <Pause className="w-5 h-5 text-purple-600" />
-                        ) : (
-                          <Play className="w-5 h-5 text-purple-600 ml-0.5" />
-                        )}
-                      </button>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-bold text-gray-900 mb-1">{session.title}</h3>
-                      <p className="text-sm text-gray-600 mb-3">{session.description}</p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs text-gray-500 flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> {formatTime(session.duration)}
-                          </span>
-                          {session.frequency && (
-                            <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
-                              {session.frequency}
-                            </span>
-                          )}
-                          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-                            {session.difficulty}
-                          </span>
-                        </div>
-                        <button
-                          onClick={e => {
-                            e.stopPropagation();
-                            toggleFavorite(session.id);
-                          }}
-                          className="text-red-500 hover:text-red-600"
-                        >
-                          <Heart
-                            className={`w-5 h-5 ${
-                              favorites.includes(session.id) ? 'fill-current' : ''
-                            }`}
-                          />
-                        </button>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
+                  />
+                </Button>
+              </div>
+            </Card>
+
+            {/* Session Rating */}
+            <Card className="p-6">
+              <div className="space-y-3">
+                <p className="font-semibold text-gray-700">Rate this session</p>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map(rating => (
+                    <button
+                      key={rating}
+                      onClick={() => setSessionRating(rating)}
+                      className={`px-4 py-2 rounded-lg transition ${
+                        sessionRating >= rating
+                          ? 'bg-yellow-400 text-white'
+                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                      }`}
+                    >
+                      ⭐
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </Card>
           </div>
 
           {/* Sidebar */}
@@ -407,25 +466,29 @@ export default function MeditationHub() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-gray-700">
-                    <Music className="w-4 h-4" /> Sessions
+                    <Music className="w-4 h-4" />
+                    Sessions
                   </div>
                   <span className="font-bold text-purple-600">{stats.totalSessions}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-gray-700">
-                    <Clock className="w-4 h-4" /> Minutes
+                    <Clock className="w-4 h-4" />
+                    Minutes
                   </div>
                   <span className="font-bold text-purple-600">{stats.totalMinutes}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-gray-700">
-                    <Zap className="w-4 h-4" /> Streak
+                    <Zap className="w-4 h-4" />
+                    Streak
                   </div>
                   <span className="font-bold text-purple-600">{stats.currentStreak} days</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-gray-700">
-                    <TrendingUp className="w-4 h-4" /> Best Streak
+                    <TrendingUp className="w-4 h-4" />
+                    Best Streak
                   </div>
                   <span className="font-bold text-purple-600">{stats.longestStreak} days</span>
                 </div>
@@ -447,22 +510,60 @@ export default function MeditationHub() {
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                     >
-                      {cat === 'all' ? 'All Sessions' : cat.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                      {cat === 'all' ? 'All Sessions' : cat.replace('-', ' ').toUpperCase()}
                     </button>
                   )
                 )}
               </div>
             </Card>
+          </div>
+        </div>
 
-            {/* Audio Info */}
-            <Card className="p-6 bg-amber-50 border-amber-200">
-              <h3 className="font-bold text-amber-900 mb-2">💡 Audio Tip</h3>
-              <p className="text-sm text-amber-800">
-                Audio playback persists across all pages. Start a meditation session or live stream, 
-                then navigate freely — your audio will keep playing. Use the player bar at the bottom 
-                to control playback from anywhere.
-              </p>
-            </Card>
+        {/* Sessions Grid */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Sessions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredSessions.map(session => (
+              <Card
+                key={session.id}
+                className={`overflow-hidden cursor-pointer transition hover:shadow-lg ${
+                  currentSessionId === session.id ? 'ring-2 ring-purple-600' : ''
+                }`}
+                onClick={() => {
+                  setCurrentSessionId(session.id);
+                  setIsPlaying(true);
+                }}
+              >
+                <img
+                  src={session.imageUrl}
+                  alt={session.title}
+                  className="w-full h-40 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="font-bold text-lg text-gray-900 mb-1">{session.title}</h3>
+                  <p className="text-sm text-gray-600 mb-3">{session.description}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <Clock className="w-4 h-4" />
+                      {formatTime(session.duration)}
+                    </div>
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        toggleFavorite(session.id);
+                      }}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <Heart
+                        className={`w-5 h-5 ${
+                          favorites.includes(session.id) ? 'fill-current' : ''
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </Card>
+            ))}
           </div>
         </div>
       </div>

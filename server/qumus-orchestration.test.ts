@@ -20,9 +20,9 @@ describe("QUMUS Decision Orchestration", () => {
       const decision = await qumusEngine.makeDecision(
         DecisionPolicy.CONTENT_SCHEDULING,
         1,
-        "Schedule Top of the Sol drive show",
+        "Schedule morning drive show",
         {
-          title: "Top of the Sol Drive Show",
+          title: "Morning Drive Show",
           startTime: "06:00",
           duration: "4h",
         }
@@ -170,7 +170,7 @@ describe("QUMUS Decision Orchestration", () => {
         1,
         "Schedule content",
         {
-          title: "Top of the Sol Show",
+          title: "Morning Show",
           startTime: "06:00",
           duration: "4h",
         },

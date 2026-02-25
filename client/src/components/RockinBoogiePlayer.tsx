@@ -43,7 +43,7 @@ const CHANNELS: Channel[] = [
         id: 'rr-001',
         title: "Rockin' Rockin' Boogie - Original Recording",
         artist: 'Little Richard',
-        streamUrl: 'https://stream.radioparadise.com/aac-128',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Rockin+Boogie',
         channel: "Rockin' Rockin' Boogie",
         duration: 180,
@@ -52,7 +52,7 @@ const CHANNELS: Channel[] = [
         id: 'rr-002',
         title: 'Tutti Frutti',
         artist: 'Little Richard',
-        streamUrl: 'https://stream.radioparadise.com/aac-128',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Tutti+Frutti',
         channel: "Rockin' Rockin' Boogie",
         duration: 160,
@@ -61,7 +61,7 @@ const CHANNELS: Channel[] = [
         id: 'rr-003',
         title: 'Johnny B. Goode',
         artist: 'Chuck Berry',
-        streamUrl: 'https://stream.radioparadise.com/aac-128',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Johnny+B+Goode',
         channel: "Rockin' Rockin' Boogie",
         duration: 170,
@@ -77,7 +77,7 @@ const CHANNELS: Channel[] = [
         id: 'bh-001',
         title: 'The Thrill is Gone',
         artist: 'B.B. King',
-        streamUrl: 'https://stream.radioparadise.com/mp3-128',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Blues+Hour',
         channel: 'Blues Hour',
         duration: 190,
@@ -86,7 +86,7 @@ const CHANNELS: Channel[] = [
         id: 'bh-002',
         title: 'Sweet Home Chicago',
         artist: 'Robert Johnson',
-        streamUrl: 'https://stream.radioparadise.com/mp3-128',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Sweet+Home',
         channel: 'Blues Hour',
         duration: 175,
@@ -102,7 +102,7 @@ const CHANNELS: Channel[] = [
         id: 'je-001',
         title: 'Take Five',
         artist: 'Dave Brubeck',
-        streamUrl: 'https://stream.radioparadise.com/aac-320',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Take+Five',
         channel: 'Jazz Essentials',
         duration: 300,
@@ -111,7 +111,7 @@ const CHANNELS: Channel[] = [
         id: 'je-002',
         title: 'Autumn Leaves',
         artist: 'Bill Evans',
-        streamUrl: 'https://stream.radioparadise.com/aac-320',
+        streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
         imageUrl: 'https://via.placeholder.com/300x300?text=Autumn+Leaves',
         channel: 'Jazz Essentials',
         duration: 280,
@@ -318,9 +318,9 @@ export function RockinBoogiePlayer() {
         <Card className="mb-8 p-6 bg-slate-800 border-slate-700">
           <h3 className="text-lg font-bold text-white mb-4">CHANNEL SELECT</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {CHANNELS.map((channel, idx) => (
+            {CHANNELS.map((channel) => (
               <Button
-                key={`${channel.id}-${idx}`}
+                key={channel.id}
                 onClick={() => handleChannelSwitch(channel.id)}
                 variant={currentChannelId === channel.id ? 'default' : 'outline'}
                 className={`h-16 text-base font-bold ${
@@ -450,11 +450,11 @@ export function RockinBoogiePlayer() {
           {/* Search Results */}
           {searchQuery && (
             <div className="space-y-4">
-              {filteredChannels.map((channel, idx) => (
-                <div key={`${channel.id}-${idx}`} className="border-t border-slate-700 pt-4">
+              {filteredChannels.map((channel) => (
+                <div key={channel.id} className="border-t border-slate-700 pt-4">
                   <h4 className="font-bold text-white mb-3">{channel.name}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {channel.episodes.map((ep, idx) => (
+                    {channel.episodes.map((ep) => (
                       <div
                         key={ep.id}
                         onClick={() => {

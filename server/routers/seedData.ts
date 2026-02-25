@@ -47,13 +47,13 @@ export const seedDataRouter = router({
       const channels = [
         {
           stationId,
-          name: "Top of the Sol Drive Show",
+          name: "Morning Drive Show",
           frequency: "101.5 FM",
           genre: "Pop/Rock",
           status: "active" as const,
           currentListeners: 12450,
           totalListeners: 45000,
-          streamUrl: "https://stream.rockinboogie.com/top-of-the-sol",
+          streamUrl: "https://stream.rockinboogie.com/morning-drive",
         },
         {
           stationId,
@@ -167,7 +167,7 @@ export const seedDataRouter = router({
           },
           {
             userId: ctx.user.id,
-            title: "Top of the Sol Drive Show",
+            title: "Morning Drive Show",
             type: "radio" as const,
             duration: "3h",
             listeners: 12450,

@@ -80,7 +80,7 @@ export default function AutomatedRemediationWorkflows() {
 
   const toggleWorkflow = (id: string) => {
     setWorkflows(
-      workflows.map((w, idx) =>
+      workflows.map((w) =>
         w.id === id ? { ...w, status: w.status === 'active' ? 'paused' : 'active' } : w
       )
     );
@@ -88,7 +88,7 @@ export default function AutomatedRemediationWorkflows() {
 
   const approveWorkflow = (id: string) => {
     setWorkflows(
-      workflows.map((w, idx) =>
+      workflows.map((w) =>
         w.id === id ? { ...w, approvalStatus: 'approved' } : w
       )
     );
@@ -97,7 +97,7 @@ export default function AutomatedRemediationWorkflows() {
 
   const rejectWorkflow = (id: string) => {
     setWorkflows(
-      workflows.map((w, idx) =>
+      workflows.map((w) =>
         w.id === id ? { ...w, approvalStatus: 'rejected' } : w
       )
     );
@@ -134,7 +134,7 @@ export default function AutomatedRemediationWorkflows() {
           {/* Workflows List */}
           <div className="lg:col-span-2 space-y-4">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Active Workflows</h2>
-            {workflows.map((workflow, idx) => (
+            {workflows.map((workflow) => (
               <Card
                 key={workflow.id}
                 className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 p-4 cursor-pointer hover:shadow-lg transition-shadow"
@@ -156,7 +156,7 @@ export default function AutomatedRemediationWorkflows() {
                   <div className="flex flex-wrap gap-2">
                     {workflow.actions.map((action, idx) => (
                       <span
-                        key={`item-${idx}`}
+                        key={idx}
                         className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs text-slate-700 dark:text-slate-300"
                       >
                         {action}
@@ -232,7 +232,7 @@ export default function AutomatedRemediationWorkflows() {
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Recent Executions</h2>
             <div className="space-y-3">
-              {executions.map((execution, idx) => {
+              {executions.map((execution) => {
                 const workflow = workflows.find((w) => w.id === execution.workflowId);
                 return (
                   <Card
@@ -247,7 +247,7 @@ export default function AutomatedRemediationWorkflows() {
                     </div>
                     <div className="space-y-1">
                       {execution.actions.map((action, idx) => (
-                        <div key={`item-${idx}`} className="flex items-center gap-2 text-xs">
+                        <div key={idx} className="flex items-center gap-2 text-xs">
                           {action.status === 'completed' && (
                             <CheckCircle className="w-3 h-3 text-green-600 dark:text-green-400" />
                           )}

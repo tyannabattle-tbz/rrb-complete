@@ -44,13 +44,13 @@ export interface UserMeditationProgress {
 const MEDITATION_SESSIONS: MeditationSession[] = [
   {
     id: "med_001",
-    title: "Top of the Sol Awakening",
+    title: "Morning Awakening",
     description: "Start your day with energy and clarity",
     duration: 10,
     instructor: "Sarah Chen",
     category: "breathing",
     frequency: "432Hz",
-    audioUrl: "https://ice1.somafm.com/groovesalad-128-mp3",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     difficulty: "beginner",
   },
   {
@@ -61,7 +61,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     instructor: "James Wilson",
     category: "body-scan",
     frequency: "528Hz",
-    audioUrl: "https://ice1.somafm.com/groovesalad-128-mp3",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
     difficulty: "intermediate",
   },
   {
@@ -72,7 +72,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     instructor: "Maya Patel",
     category: "loving-kindness",
     frequency: "432Hz",
-    audioUrl: "https://ice1.somafm.com/groovesalad-128-mp3",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
     difficulty: "beginner",
   },
   {
@@ -83,7 +83,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     instructor: "Dr. Michael Lee",
     category: "sleep",
     frequency: "binaural-beats",
-    audioUrl: "https://ice1.somafm.com/groovesalad-128-mp3",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     difficulty: "beginner",
   },
   {
@@ -94,7 +94,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     instructor: "Elena Rodriguez",
     category: "visualization",
     frequency: "528Hz",
-    audioUrl: "https://ice1.somafm.com/groovesalad-128-mp3",
+    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
     difficulty: "advanced",
   },
 ];

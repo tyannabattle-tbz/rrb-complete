@@ -97,7 +97,7 @@ describe("Content Generation Engine", () => {
     it("should generate a radio show script", async () => {
       const request: ContentGenerationRequest = {
         type: "radio",
-        title: "Top of the Sol Drive Show",
+        title: "Morning Drive Show",
         topic: "Daily News",
       };
 
@@ -105,7 +105,7 @@ describe("Content Generation Engine", () => {
 
       expect(content).toBeDefined();
       expect(content.type).toBe("radio");
-      expect(content.title).toBe("Top of the Sol Drive Show");
+      expect(content.title).toBe("Morning Drive Show");
       expect(content.status).toBe("generated");
       expect(content.script.length).toBeGreaterThan(0);
       expect(content.metadata.topic).toBe("Daily News");

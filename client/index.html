@@ -6,89 +6,24 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <meta name="theme-color" content="#0369a1" />
-    <meta name="description" content="QUMUS - Quantum Universal Management & Utility System. Autonomous orchestration engine with 12 intelligent decision policies, real-time monitoring, and 90% autonomy control." />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="QUMUS" />
-    <meta name="keywords" content="QUMUS, autonomous orchestration, AI management, decision policies, real-time monitoring, operator control center" />
+    <meta name="theme-color" content="#0066FF" />
+    <meta name="description" content="Create professional videos with AI-powered generation, watermarking, and analytics by Canryn Production" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qumus-icon-192.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qumus-icon-32.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qumus-icon-192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qumus-icon-512.png" />
-    <title>QUMUS - Autonomous Orchestration Engine</title>
-    <link rel="canonical" href="https://qumus.rockinrockinboogie.com" />
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://qumus.rockinrockinboogie.com" />
-    <meta property="og:title" content="QUMUS - Autonomous Orchestration Engine" />
-    <meta property="og:description" content="QUMUS - Quantum Universal Management & Utility System. Autonomous orchestration engine with 12 intelligent decision policies, real-time monitoring, and 90% autonomy control." />
-    <meta property="og:image" content="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qumus-og-image.png" />
-    <meta property="og:site_name" content="QUMUS" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="QUMUS - Autonomous Orchestration Engine" />
-    <meta name="twitter:description" content="Autonomous orchestration engine with 12 intelligent decision policies, real-time monitoring, and 90% autonomy control." />
-    <meta name="twitter:image" content="https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/qumus-og-image.png" />
-
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "QUMUS",
-      "alternateName": "Quantum Universal Management & Utility System",
-      "description": "Autonomous orchestration engine with 12 intelligent decision policies, real-time monitoring, and 90% autonomy control",
-      "url": "https://qumus.rockinrockinboogie.com",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "featureList": "Autonomous Policies, Real-Time Monitoring, Webhook Integration, Compliance Audit, Policy Scheduling, Alert Management"
-    }
-    </script>
-
-    <!-- Additional SEO Meta Tags -->
-    <meta name="author" content="Canryn Production" />
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <meta name="googlebot" content="index, follow" />
-    <meta name="bingbot" content="index, follow" />
-    <meta name="revisit-after" content="7 days" />
-    <meta name="language" content="English" />
-    <meta name="distribution" content="global" />
-    
+    <link rel="apple-touch-icon" href="/qumus-icon-192.webp" />
+    <link rel="icon" type="image/webp" href="/qumus-icon-192.webp" />
+    <link rel="icon" type="image/webp" sizes="512x512" href="/qumus-icon-512.webp" />
+    <title>Qumus - AI Video Generation Platform</title>
+    <!-- HybridCast integrated via native iframe component at /hybridcast route -->
+    <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    THIS IS THE END OF A COMMENT BLOCK, BLOCK TO BE DELETED -->
   </head>
 
   <body>
-    <div id="root">
-      <!-- Static SEO content for crawlers - replaced by React on mount -->
-      <h1>QUMUS - Autonomous Orchestration Engine</h1>
-      <h2>Quantum Universal Management & Utility System</h2>
-      <p>Autonomous orchestration engine with 12 intelligent decision policies, real-time monitoring, and 90% autonomy control. Operator control center for managing autonomous systems.</p>
-    </div>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          // Cache busting: add timestamp to force SW update on each publish
-          const swUrl = '/sw.js?v=' + new Date().getTime();
-          navigator.serviceWorker.register(swUrl, { scope: '/' }).then(reg => {
-            // Force update check immediately
-            reg.update();
-            console.log('[QUMUS] SW registered with cache busting:', swUrl);
-          }).catch(err => {
-            console.log('[QUMUS] SW registration failed:', err);
-          });
-        });
-      }
-    </script>
     <script
       defer
       src="%VITE_ANALYTICS_ENDPOINT%/umami"

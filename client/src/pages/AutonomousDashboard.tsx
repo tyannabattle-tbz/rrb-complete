@@ -214,7 +214,7 @@ export function AutonomousDashboard() {
             <div className="space-y-3">
               {recommendations?.recommendations && recommendations.recommendations.length > 0 ? (
                 recommendations.recommendations.map((rec, idx) => (
-                  <div key={`item-${idx}`} className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                  <div key={idx} className="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
                     <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-amber-900">{rec}</p>
                   </div>

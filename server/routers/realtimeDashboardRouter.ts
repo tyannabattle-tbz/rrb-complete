@@ -83,7 +83,7 @@ export const realtimeDashboardRouter = router({
                 status: 'completed',
                 progress: 100,
                 fileSize: 2.4,
-                downloadUrl: '/api/trpc/realtimeDashboard.getDashboardData',
+                downloadUrl: 'https://storage.example.com/export.json',
                 timestamp: new Date(),
               },
             });

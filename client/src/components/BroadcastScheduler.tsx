@@ -20,7 +20,7 @@ export function BroadcastScheduler() {
   const [broadcasts, setBroadcasts] = useState<ScheduledBroadcast[]>([
     {
       id: '1',
-      title: 'Top of the Sol News',
+      title: 'Morning News',
       date: '2026-02-08',
       startTime: '08:00',
       duration: 30,

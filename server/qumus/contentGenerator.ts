@@ -242,12 +242,12 @@ Generate a complete, engaging chapter.
     const duration = request.duration || 60;
 
     const prompt = request.customPrompt || `
-Create a radio show script for "${request.title || "Top of the Sol Drive Show"}" about "${topic}".
+Create a radio show script for "${request.title || "Morning Drive Show"}" about "${topic}".
 
 Requirements:
 - Duration: approximately ${duration} minutes
 - Tone: ${tone}
-- Target audience: ${request.targetAudience || "commuters and Top of the Sol listeners"}
+- Target audience: ${request.targetAudience || "commuters and morning listeners"}
 - Include: opening jingle cues, news segments, entertainment, listener interaction, weather/traffic breaks, closing
 - Format: Radio broadcast format with [MUSIC], [SOUND EFFECT], [PAUSE] markers
 - Add time codes for each segment
@@ -293,7 +293,7 @@ Generate a complete, professional radio show script.
     const content: GeneratedContent = {
       contentId: `radio-${Date.now()}`,
       type: "radio",
-      title: request.title || "Top of the Sol Drive Show",
+      title: request.title || "Morning Drive Show",
       description: summary,
       script,
       summary,

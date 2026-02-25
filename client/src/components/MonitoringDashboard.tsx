@@ -38,7 +38,7 @@ export function MonitoringDashboard() {
   ]);
 
   const [broadcasts, setBroadcasts] = useState<BroadcastMetric[]>([
-    { id: '1', title: 'Top of the Sol News Live', status: 'live', viewers: 2340, duration: 45, startTime: Date.now() - 1800000 },
+    { id: '1', title: 'Morning News Live', status: 'live', viewers: 2340, duration: 45, startTime: Date.now() - 1800000 },
     { id: '2', title: 'Music Hour', status: 'live', viewers: 1890, duration: 60, startTime: Date.now() - 900000 },
     { id: '3', title: 'Evening Talk Show', status: 'scheduled', viewers: 0, duration: 90, startTime: Date.now() + 3600000 },
   ]);

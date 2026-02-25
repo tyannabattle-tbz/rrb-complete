@@ -1,83 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useLocation, Link } from 'wouter';
-import { Search, Share2, Menu, X, Home, Radio, Music, Heart, BookOpen, Shield, Headphones, ChevronDown, ExternalLink, Podcast, Building2, Zap, Settings, Dice5, Film, Video, Smartphone, Clapperboard } from 'lucide-react';
+import React, { useState } from 'react';
+import { useLocation } from 'wouter';
+import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon, Map as MapIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { HybridCastTabNavigationFixed } from '@/components/HybridCastTabNavigationFixed';
+import { HybridCastStatusWidget } from '@/components/HybridCastStatusWidget';
 import { SimplifiedMobileNav } from '@/components/SimplifiedMobileNav';
-import { useAuth } from '@/_core/hooks/useAuth';
-
-interface DropdownItem {
-  label: string;
-  path: string;
-  external?: boolean;
-}
-
-interface NavDropdown {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  items: DropdownItem[];
-}
-
-function NavDropdownMenu({ dropdown, isOpen, onToggle, onNavigate }: {
-  dropdown: NavDropdown;
-  isOpen: boolean;
-  onToggle: () => void;
-  onNavigate: (path: string, external?: boolean) => void;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        if (isOpen) onToggle();
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen, onToggle]);
-
-  return (
-    <div ref={ref} className="relative">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={onToggle}
-        className={`gap-1.5 ${isOpen ? 'bg-accent text-accent-foreground' : ''}`}
-      >
-        <dropdown.icon className="h-4 w-4" />
-        <span className="hidden lg:inline">{dropdown.label}</span>
-        <ChevronDown className={`h-3 w-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-      </Button>
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-56 bg-popover text-popover-foreground border border-border rounded-lg shadow-lg py-1 z-50">
-          {dropdown.items.map((item, idx) => (
-            <button
-              key={`${dropdown.id}:${item.label}:${idx}`}
-              onClick={() => {
-                onNavigate(item.path, item.external);
-                onToggle();
-              }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors flex items-center justify-between"
-            >
-              {item.label}
-              {item.external && <ExternalLink className="h-3 w-3 opacity-50" />}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export function AppHeaderEnhanced() {
-  const [location, navigate] = useLocation();
+  const [, navigate] = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const { user, isAuthenticated } = useAuth();
-  const isAdmin = isAuthenticated && user?.role === 'admin';
+  const [showHybridCastTabs, setShowHybridCastTabs] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,12 +25,34 @@ export function AppHeaderEnhanced() {
     }
   };
 
+  const handleDownload = () => {
+    const pageData = {
+      timestamp: new Date().toISOString(),
+      url: window.location.href,
+      title: document.title,
+      content: document.body.innerText.substring(0, 5000),
+    };
+    
+    const dataStr = JSON.stringify(pageData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `qumus-export-${Date.now()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success('Content downloaded successfully');
+  };
+
   const handleShare = () => {
     const shareData = {
-      title: 'Rockin Rockin Boogie — Legacy Restored',
-      text: 'Check out Rockin Rockin Boogie — the legacy of Seabrun Candy Hunter!',
+      title: 'Qumus - AI Orchestration Platform',
+      text: 'Check out this amazing AI orchestration platform!',
       url: window.location.href,
     };
+
     if (navigator.share) {
       navigator.share(shareData).catch(() => {
         navigator.clipboard.writeText(window.location.href);
@@ -106,97 +64,18 @@ export function AppHeaderEnhanced() {
     }
   };
 
-  const handleNavigate = (path: string, external?: boolean) => {
-    if (external) {
-      window.open(path, '_blank', 'noopener,noreferrer');
-    } else {
-      navigate(path);
-    }
-  };
-
-  // Public-facing navigation organized by Legacy Restored / Legacy Continued
-  const dropdowns: NavDropdown[] = [
-    {
-      id: 'legacy',
-      label: 'The Legacy',
-      icon: BookOpen,
-      items: [
-        { label: 'The Legacy Story', path: '/rrb/the-legacy' },
-        { label: 'Grandma Helen', path: '/rrb/grandma-helen' },
-        { label: 'Proof Vault', path: '/rrb/proof-vault' },
-        { label: 'Systematic Omission', path: '/rrb/systematic-omission' },
-        { label: 'Little Richard Connection', path: '/rrb/little-richard-connection' },
-        { label: 'Family Tree', path: '/rrb/family-tree' },
-        { label: 'Obituary & Memorial', path: '/rrb/obituary' },
-        { label: 'Verified Sources', path: '/rrb/verified-sources' },
-      ],
-    },
-    {
-      id: 'music',
-      label: 'Music & Radio',
-      icon: Music,
-      items: [
-        { label: 'The Music', path: '/rrb/the-music' },
-        { label: 'Radio Station', path: '/rrb/radio-station' },
-        { label: 'Podcast Feeds', path: '/rrb/podcast-feeds' },
-        { label: 'Realtime Analytics', path: '/rrb/realtime-analytics' },
-        { label: 'Podcast & Video', path: '/rrb/podcast-and-video' },
-        { label: 'AI Assistants', path: '/rrb/ai-assistants' },
-        { label: 'Healing Frequencies', path: '/rrb/healing-music-frequencies' },
-        { label: 'Audiobooks', path: '/rrb/audiobooks' },
-        { label: 'Candy Through the Years', path: '/rrb/candy-through-the-years' },
-        { label: 'Setlist Archive', path: '/rrb/setlist-archive' },
-        { label: 'RSS Feeds', path: '/rss' },
-        { label: 'Meditation Guides', path: '/rrb/meditation-guides' },
-        { label: 'Frequency Guides', path: '/rrb/frequency-guides' },
-        { label: 'Custom Meditation', path: '/rrb/custom-meditation-builder' },
-      ],
-    },
-    {
-      id: 'community',
-      label: 'Community',
-      icon: Heart,
-      items: [
-        { label: 'Sweet Miracles', path: 'https://sweetmiraclesattt.wixsite.com/sweet-miracles', external: true },
-        { label: 'Books & Miracles', path: '/rrb/books-and-miracles' },
-        { label: 'Published Books (B&N)', path: '/rrb/books' },
-        { label: 'Photo Gallery', path: '/rrb/photo-gallery' },
-        { label: 'Testimonials & Stories', path: '/rrb/testimonials-and-stories' },
-        { label: 'Video Testimonials', path: '/rrb/video-testimonials' },
-        { label: 'Family Achievements', path: '/rrb/family-achievements' },
-        { label: 'News & Updates', path: '/rrb/news' },
-        { label: 'FAQ', path: '/rrb/faq' },
-      ],
-    },
-    {
-      id: 'studio',
-      label: 'Studio',
-      icon: Film,
-      items: [
-        { label: 'Production Studio', path: '/studio' },
-        { label: 'Video Processing', path: '/video-processing' },
-        { label: 'Motion Studio', path: '/motion-studio' },
-        { label: 'Mobile Studio', path: '/mobile-studio' },
-        { label: 'Video Production', path: '/video-production' },
-        { label: 'Audio Editor', path: '/audio-editor' },
-        { label: 'Media Hub', path: '/rrb/media-hub' },
-        { label: 'Live Podcast Production', path: '/live-podcast-production' },
-      ],
-    },
-    {
-      id: 'canryn',
-      label: 'Canryn',
-      icon: Building2,
-      items: [
-        { label: 'Canryn Production', path: '/rrb/canryn-production' },
-        { label: 'Divisions', path: '/rrb/divisions' },
-        { label: 'HybridCast Emergency', path: '/hybridcast' },
-        { label: 'Producer & Mentor', path: '/rrb/producer-mentor' },
-        { label: 'Business Partnerships', path: '/rrb/business-partnerships' },
-        { label: 'Merchandise', path: '/rrb/merchandise-shop' },
-        { label: 'Sponsorships', path: '/rrb/sponsorships' },
-      ],
-    },
+  const navItems = [
+    { id: 'nav-0', label: 'Home', icon: Home, path: '/' },
+    { id: 'nav-1', label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
+    { id: 'nav-2', label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
+    { id: 'nav-3', label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
+    { id: 'nav-4', label: 'HybridCast', icon: Radio, path: '/gps-radar', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
+    { id: 'nav-5', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
+    { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
+    { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
+    { id: 'nav-8', label: 'RRB Broadcast', icon: Eye, path: '/broadcast-monitoring' },
+    { id: 'nav-9', label: 'Recommendations', icon: TrendingUp, path: '/recommendations' },
+    { id: 'nav-10', label: 'Impact', icon: Heart, path: '/impact-dashboard' },
   ];
 
   return (
@@ -205,87 +84,109 @@ export function AppHeaderEnhanced() {
       <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo/Brand */}
-          <Link href="/" className="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity">
-            <div className="text-2xl font-bold text-primary">RRB</div>
-            <span className="text-xs font-semibold text-amber-500 bg-amber-500/20 px-2 py-1 rounded">LIVE</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            <div className="text-2xl font-bold text-primary">Qumus</div>
+            <span className="text-xs font-semibold text-cyan-500 bg-cyan-500/20 px-2 py-1 rounded">HybridCast</span>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/')}
-              className={`gap-1.5 ${location === '/' ? 'bg-accent text-accent-foreground' : ''}`}
-            >
-              <Home className="h-4 w-4" />
-              <span className="hidden lg:inline">Home</span>
-            </Button>
-
-            {dropdowns.map((dropdown, idx) => (
-              <NavDropdownMenu
-                key={dropdown.id}
-                dropdown={dropdown}
-                isOpen={openDropdown === dropdown.id}
-                onToggle={() => setOpenDropdown(openDropdown === dropdown.id ? null : dropdown.id)}
-                onNavigate={handleNavigate}
-              />
+            {navItems.map((item) => (
+              <Button
+                key={item.id}
+                variant="ghost"
+                size="sm"
+                onClick={() => item.action ? item.action() : navigate(item.path)}
+                className={`gap-2 ${item.label === 'HybridCast' && showHybridCastTabs ? 'bg-cyan-500/20 border border-cyan-500' : ''}`}
+              >
+                <item.icon className="h-4 w-4" />
+                <span className="hidden lg:inline">{item.label}</span>
+              </Button>
             ))}
           </nav>
 
           {/* Search and Actions */}
           <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+            {/* Search */}
             {showSearch ? (
               <form onSubmit={handleSearch} className="flex items-center gap-2">
-                <Input
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-32 md:w-48 text-sm"
-                  autoFocus
-                />
-                <Button type="button" variant="ghost" size="sm" onClick={() => setShowSearch(false)}>
+              <Input
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-32 md:w-48 text-sm"
+                autoFocus
+              />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSearch(false)}
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </form>
             ) : (
-              <Button variant="ghost" size="sm" onClick={() => setShowSearch(true)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSearch(true)}
+              >
                 <Search className="h-4 w-4" />
               </Button>
             )}
 
-            <Button variant="ghost" size="sm" onClick={handleShare} title="Share page">
-              <Share2 className="h-4 w-4" />
-            </Button>
+            {/* HybridCast Status Widget */}
+            <HybridCastStatusWidget />
 
-            {/* Solbones 4+3+2 Dice - visible to all */}
+            {/* Download */}
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/solbones')}
-              title="Solbones 4+3+2 Dice Game"
-              className="gap-1.5"
+              onClick={handleDownload}
+              title="Download page data"
             >
-              <Dice5 className="h-4 w-4" />
-              <span className="hidden lg:inline text-xs">Solbones 4+3+2</span>
+              <Download className="h-4 w-4" />
             </Button>
 
-            {/* Admin-only QUMUS link */}
-            {isAdmin && (
+            {/* Share */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleShare}
+              title="Share page"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+
+            {/* Mobile Menu handled by SimplifiedMobileNav */}
+          </div>
+        </div>
+
+        {/* Mobile Navigation handled by SimplifiedMobileNav */}
+      </header>
+
+      {/* HybridCast Tab Navigation Panel */}
+      {showHybridCastTabs && (
+        <div className="border-b border-border bg-slate-900 p-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <Radio className="w-5 h-5 text-cyan-400" />
+                HybridCast Control Center
+              </h3>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/qumus')}
-                title="QUMUS Admin Dashboard"
-                className="gap-1.5 text-cyan-500 hover:text-cyan-400"
+                onClick={() => setShowHybridCastTabs(false)}
               >
-                <Settings className="h-4 w-4" />
-                <span className="hidden lg:inline text-xs">Admin</span>
+                <X className="h-4 w-4" />
               </Button>
-            )}
+            </div>
+            <HybridCastTabNavigationFixed />
           </div>
         </div>
-      </header>
+      )}
     </>
   );
 }
