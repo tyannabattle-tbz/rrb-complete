@@ -174,7 +174,13 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(err => {
+          // Cache busting: add timestamp to SW registration to force update
+          const swUrl = '/sw.js?v=' + new Date().getTime();
+          navigator.serviceWorker.register(swUrl, { scope: '/' }).then(reg => {
+            // Force update check immediately
+            reg.update();
+            console.log('SW registered with cache busting:', swUrl);
+          }).catch(err => {
             console.log('SW registration failed:', err);
           });
         });
