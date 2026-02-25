@@ -72,8 +72,18 @@ export const appRouter = router({
 
   // Auth procedures
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
+    me: publicProcedure.query(({ ctx }) => {
+      console.log("[Auth.me] Query called", {
+        hasUser: !!ctx.user,
+        userId: ctx.user?.id,
+        userName: ctx.user?.name,
+        hostname: ctx.req.hostname,
+        hasCookies: !!ctx.req.headers.cookie,
+      });
+      return ctx.user;
+    }),
     logout: publicProcedure.mutation(({ ctx }) => {
+      console.log("[Auth.logout] Clearing session cookie");
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return {

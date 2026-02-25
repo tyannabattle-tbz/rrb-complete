@@ -1,29 +1,55 @@
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { TRPCClientError } from "@trpc/client";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type UseAuthOptions = {
   redirectOnUnauthenticated?: boolean;
   redirectPath?: string;
 };
 
+const STORAGE_KEY = "qumus_user_session";
+
 export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false, redirectPath = getLoginUrl() } =
     options ?? {};
   const utils = trpc.useUtils();
+  const [cachedUser, setCachedUser] = useState<any>(null);
+  const [hasTriedFetch, setHasTriedFetch] = useState(false);
+
+  // Load cached user on mount
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY);
+      if (cached) {
+        const user = JSON.parse(cached);
+        setCachedUser(user);
+        console.log("[Auth] Loaded cached user from localStorage:", user?.name);
+      }
+    } catch (e) {
+      console.error("[Auth] Failed to load cached user", e);
+    }
+  }, []);
 
   const meQuery = trpc.auth.me.useQuery(undefined, {
-    retry: true,
-    retryDelay: 1000,
+    retry: (failureCount) => {
+      // Retry up to 3 times with exponential backoff
+      return failureCount < 3;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    staleTime: 0,
+    refetchOnMount: "stale",
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => {
       utils.auth.me.setData(undefined, null);
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (e) {
+        console.error("[Auth] Failed to clear cached user", e);
+      }
     },
   });
 
@@ -40,48 +66,79 @@ export function useAuth(options?: UseAuthOptions) {
       throw error;
     } finally {
       utils.auth.me.setData(undefined, null);
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (e) {
+        console.error("[Auth] Failed to clear cached user", e);
+      }
       await utils.auth.me.invalidate();
     }
   }, [logoutMutation, utils]);
 
+  // Mark that we've tried to fetch
+  useEffect(() => {
+    if (!meQuery.isLoading) {
+      setHasTriedFetch(true);
+    }
+  }, [meQuery.isLoading]);
+
+  // Cache successful user data
+  useEffect(() => {
+    if (meQuery.data) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(meQuery.data));
+        console.log("[Auth] Cached user to localStorage:", meQuery.data?.name);
+      } catch (e) {
+        console.error("[Auth] Failed to cache user", e);
+      }
+    }
+  }, [meQuery.data]);
+
+  // Determine which user to use: fresh data, cached data, or null
+  const user = meQuery.data ?? (hasTriedFetch && cachedUser ? cachedUser : null);
+
   const state = useMemo(() => {
-    localStorage.setItem(
-      "manus-runtime-user-info",
-      JSON.stringify(meQuery.data)
-    );
     return {
-      user: meQuery.data ?? null,
-      loading: meQuery.isLoading || logoutMutation.isPending,
+      user,
+      loading: meQuery.isLoading && !user, // Only show loading if we don't have any user data
       error: meQuery.error ?? logoutMutation.error ?? null,
-      isAuthenticated: Boolean(meQuery.data),
+      isAuthenticated: Boolean(user),
+      isCached: !meQuery.data && !!cachedUser,
     };
   }, [
+    user,
     meQuery.data,
     meQuery.error,
     meQuery.isLoading,
     logoutMutation.error,
     logoutMutation.isPending,
+    cachedUser,
   ]);
 
+  // Force initial refetch on mount
   useEffect(() => {
-    // Force refetch on mount to ensure fresh auth state
+    console.log("[Auth] Component mounted, forcing refetch");
     meQuery.refetch();
   }, []);
 
+  // Handle redirect on unauthenticated
   useEffect(() => {
     if (!redirectOnUnauthenticated) return;
-    if (meQuery.isLoading || logoutMutation.isPending) return;
-    if (state.user) return;
+    if (meQuery.isLoading && !user) return; // Still loading, don't redirect yet
+    if (logoutMutation.isPending) return;
+    if (state.user) return; // User is authenticated
     if (typeof window === "undefined") return;
     if (window.location.pathname === redirectPath) return;
 
-    window.location.href = redirectPath
+    console.log("[Auth] Redirecting to login:", redirectPath);
+    window.location.href = redirectPath;
   }, [
     redirectOnUnauthenticated,
     redirectPath,
     logoutMutation.isPending,
     meQuery.isLoading,
     state.user,
+    user,
   ]);
 
   return {
