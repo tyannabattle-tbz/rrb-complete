@@ -56,6 +56,7 @@ import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { ecosystemIntegrationRouter } from "./routers/ecosystemIntegrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
+import { autonomousTaskRouter } from "./routers/autonomousTaskRouter";
 
 export const appRouter = router({
   // System router
@@ -69,6 +70,9 @@ export const appRouter = router({
 
   // Ecosystem Integration (State of Studio & Full Integration)
   ecosystemIntegration: ecosystemIntegrationRouter,
+
+  // Autonomous Task Management
+  autonomousTask: autonomousTaskRouter,
 
   // Auth procedures
   auth: router({
