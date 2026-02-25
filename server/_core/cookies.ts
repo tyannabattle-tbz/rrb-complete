@@ -50,8 +50,9 @@ export function getSessionCookieOptions(
       // Extract the main domain (e.g., "example.com" from "sub.example.com")
       const parts = hostname.split(".");
       if (parts.length > 1) {
-        // For multi-part domains, use the last 2 parts
-        domain = parts.slice(-2).join(".");
+        // For multi-part domains, use the last 2 parts with dot prefix
+        // This allows the cookie to be shared across all subdomains
+        domain = "." + parts.slice(-2).join(".");
       } else {
         domain = hostname;
       }
