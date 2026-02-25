@@ -1,22 +1,22 @@
 {
   "name": "QUMUS - Autonomous Orchestration Engine",
   "short_name": "QUMUS",
-  "description": "QUMUS - Quantum Universal Management & Utility System. Autonomous orchestration engine with 12 intelligent decision policies, real-time monitoring, and 90% autonomy control.",
+  "description": "The intelligent control center managing HybridCast, Rockin Rockin Boogie, Sweet Miracles, and all subsidiary platforms with 90%+ autonomy.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#0f172a",
-  "theme_color": "#0369a1",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/IjTuNOMFRPaOynnR.png",
+      "src": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/PnUrnfQRcwrjqYSA.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/sOInLjDnuIccWdNa.png",
+      "src": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/dsVRvhZeUKzHgArJ.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -54,10 +54,10 @@
       "name": "Dashboard",
       "short_name": "Dashboard",
       "description": "Open QUMUS Dashboard",
-      "url": "/admin/qumus",
+      "url": "/dashboard",
       "icons": [
         {
-          "src": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/IjTuNOMFRPaOynnR.png",
+          "src": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/PnUrnfQRcwrjqYSA.png",
           "sizes": "192x192"
         }
       ]

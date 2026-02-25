@@ -63,7 +63,7 @@ import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
 import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
 import { agentNetworkRouter } from "./routers/agentNetworkRouter";
 import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnectionRouter";
-// REMOVED: videoProductionWorkflowRouter - not needed for QUMUS
+import { videoProductionWorkflowRouter } from "./routers/videoProductionWorkflowRouter";
 import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
@@ -320,7 +320,8 @@ export const appRouter = router({
   // Seamless Agent Connection & Cross-Platform Communication
   seamlessAgentConnection: seamlessAgentConnectionRouter,
 
-  // REMOVED: Video Production Workflow - not needed for QUMUS
+  // Video Production Workflow - Generation to RRB Radio Broadcast
+  videoProductionWorkflow: videoProductionWorkflowRouter,
 
   // Map Arsenal - Military-grade tactical mapping
   mapArsenal: mapArsenalRouter,
@@ -500,7 +501,37 @@ export const appRouter = router({
         return { success: true, id: result };
       }),
 
-    // Agent session procedures removed - not implemented in QUMUS
+    // Get all sessions for the current user
+    getSessions: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        return db.getAgentSessionsByUserId(ctx.user.id);
+      }),
+
+    // Get session by ID
+    getSession: protectedProcedure
+      .input(z.number())
+      .query(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        const session = await db.getAgentSessionById(input);
+        if (!session || session.userId !== ctx.user.id) {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        }
+        return session;
+      }),
+
+    // Delete session
+    deleteSession: protectedProcedure
+      .input(z.number())
+      .mutation(async ({ ctx, input }) => {
+        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+        const session = await db.getAgentSessionById(input);
+        if (!session || session.userId !== ctx.user.id) {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        }
+        await db.deleteAgentSession(input);
+        return { success: true };
+      }),
   }),
   moderation: moderationRouter,
   notificationPreferences: notificationPreferencesRouter,
