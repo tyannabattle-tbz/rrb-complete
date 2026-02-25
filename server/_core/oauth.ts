@@ -64,8 +64,10 @@ export function registerOAuthRoutes(app: Express) {
       const setCookieHeader = res.getHeader('set-cookie');
       console.log("[OAuth] Set-Cookie header:", setCookieHeader);
       
-      console.log("[OAuth] Callback successful, redirecting to /");
-      res.redirect(302, "/");
+      // Also pass token in URL as fallback for client-side localStorage
+      const redirectUrl = `/?token=${encodeURIComponent(sessionToken)}`;
+      console.log("[OAuth] Callback successful, redirecting with token");
+      res.redirect(302, redirectUrl);
     } catch (error) {
       console.error("[OAuth] Callback failed", error);
       res.status(500).json({ error: "OAuth callback failed" });

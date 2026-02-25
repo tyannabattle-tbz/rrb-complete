@@ -226,6 +226,19 @@ function Router() {
 }
 
 function App() {
+  // Extract and store OAuth token from URL if present
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      // Store token in localStorage as fallback session
+      localStorage.setItem('qumus_session_token', token);
+      // Remove token from URL to clean up address bar
+      window.history.replaceState({}, document.title, window.location.pathname);
+      console.log('[App] OAuth token stored in localStorage');
+    }
+  }, []);
+
   return (
     <ErrorBoundary>
       <ThemeProvider
