@@ -500,37 +500,7 @@ export const appRouter = router({
         return { success: true, id: result };
       }),
 
-    // Get all sessions for the current user
-    getSessions: protectedProcedure
-      .query(async ({ ctx }) => {
-        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        return db.getAgentSessionsByUserId(ctx.user.id);
-      }),
-
-    // Get session by ID
-    getSession: protectedProcedure
-      .input(z.number())
-      .query(async ({ ctx, input }) => {
-        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        const session = await db.getAgentSessionById(input);
-        if (!session || session.userId !== ctx.user.id) {
-          throw new TRPCError({ code: "NOT_FOUND" });
-        }
-        return session;
-      }),
-
-    // Delete session
-    deleteSession: protectedProcedure
-      .input(z.number())
-      .mutation(async ({ ctx, input }) => {
-        if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" });
-        const session = await db.getAgentSessionById(input);
-        if (!session || session.userId !== ctx.user.id) {
-          throw new TRPCError({ code: "NOT_FOUND" });
-        }
-        await db.deleteAgentSession(input);
-        return { success: true };
-      }),
+    // Agent session procedures removed - not implemented in QUMUS
   }),
   moderation: moderationRouter,
   notificationPreferences: notificationPreferencesRouter,
