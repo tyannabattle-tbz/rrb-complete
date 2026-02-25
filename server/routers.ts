@@ -53,6 +53,7 @@ import { agentNetworkRouter } from "./routers/agentNetworkRouter";
 import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnectionRouter";
 import { videoProductionWorkflowRouter } from "./routers/videoProductionWorkflowRouter";
 import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
+import { ecosystemIntegrationRouter } from "./routers/ecosystemIntegrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
 
@@ -65,6 +66,9 @@ export const appRouter = router({
 
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter,
+
+  // Ecosystem Integration (State of Studio & Full Integration)
+  ecosystemIntegration: ecosystemIntegrationRouter,
 
   // Auth procedures
   auth: router({
