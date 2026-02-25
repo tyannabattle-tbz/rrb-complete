@@ -63,7 +63,7 @@ import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
 import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
 import { agentNetworkRouter } from "./routers/agentNetworkRouter";
 import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnectionRouter";
-import { videoProductionWorkflowRouter } from "./routers/videoProductionWorkflowRouter";
+// REMOVED: videoProductionWorkflowRouter - not needed for QUMUS
 import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
@@ -320,8 +320,7 @@ export const appRouter = router({
   // Seamless Agent Connection & Cross-Platform Communication
   seamlessAgentConnection: seamlessAgentConnectionRouter,
 
-  // Video Production Workflow - Generation to RRB Radio Broadcast
-  videoProductionWorkflow: videoProductionWorkflowRouter,
+  // REMOVED: Video Production Workflow - not needed for QUMUS
 
   // Map Arsenal - Military-grade tactical mapping
   mapArsenal: mapArsenalRouter,
