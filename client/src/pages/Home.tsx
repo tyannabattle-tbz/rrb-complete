@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import QumusChatPage from "./QumusChatPage";
+import QumusHome from "./QumusHome";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -39,6 +40,6 @@ export default function Home() {
     );
   }
 
-  // Authenticated user - show QUMUS Chat Interface
-  return <QumusChatPage />;
+  // Authenticated user - show QUMUS Home with full capabilities
+  return <QumusHome />;
 }
