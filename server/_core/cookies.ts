@@ -69,11 +69,24 @@ export function getSessionCookieOptions(
     secure,
   });
 
+  // Use 'none' for cross-site cookies on production HTTPS (required for OAuth redirect)
+  let sameSite: "strict" | "lax" | "none" = "lax";
+  if (isSecure && !isLocalhost && domain && domain !== hostname) {
+    sameSite = "none";
+  }
+
+  console.log("[Cookie] Final options", {
+    domain,
+    sameSite,
+    secure,
+    isLocalhost,
+  });
+
   return {
     domain,
     httpOnly: true,
     path: "/",
-    sameSite: "lax",
+    sameSite,
     secure,
   };
 }
