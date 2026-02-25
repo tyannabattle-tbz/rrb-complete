@@ -17,9 +17,19 @@ export function useAuth(options?: UseAuthOptions) {
   const [cachedUser, setCachedUser] = useState<any>(null);
   const [hasTriedFetch, setHasTriedFetch] = useState(false);
 
-  // Load cached user on mount
+  // Load cached user on mount and extract token from URL
   useEffect(() => {
     try {
+      // Extract token from URL parameter (from OAuth callback)
+      const params = new URLSearchParams(window.location.search);
+      const tokenFromUrl = params.get('token');
+      if (tokenFromUrl) {
+        localStorage.setItem('session_token', tokenFromUrl);
+        console.log('[Auth] Extracted token from URL and stored in localStorage');
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      
       const cached = localStorage.getItem(STORAGE_KEY);
       if (cached) {
         const user = JSON.parse(cached);
