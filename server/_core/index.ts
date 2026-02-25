@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { initializeWebSocket } from "../websocket";
+import { activateQumus } from "../qumus/qumusActivation";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -32,6 +33,25 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
   
+  // Activate QUMUS Autonomous Agent
+  try {
+    await activateQumus({
+      maxConcurrentTasks: 20,
+      enableAutoScheduling: true,
+      enableSelfImprovement: true,
+      enableMultiAgentCoordination: true,
+      enablePredictiveAnalytics: true,
+      ecosystemIntegration: {
+        rrb: true,
+        hybridcast: true,
+        canryn: true,
+        sweetMiracles: true,
+      },
+    });
+  } catch (error) {
+    console.error("[QUMUS] Activation failed:", error);
+  }
+  
   // Initialize WebSocket manager
   initializeWebSocket(server);
   console.log("[WebSocket] Manager initialized");
@@ -41,6 +61,18 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  
+  // QUMUS Health Check endpoint
+  app.get("/api/qumus/status", (req, res) => {
+    try {
+      const { getQumusActivation } = require("../qumus/qumusActivation");
+      const qumus = getQumusActivation();
+      const status = qumus.getStatus();
+      res.json({ success: true, status });
+    } catch (error) {
+      res.json({ success: false, error: String(error) });
+    }
+  });
   // tRPC API
   app.use(
     "/api/trpc",
