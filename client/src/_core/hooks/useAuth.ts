@@ -48,8 +48,9 @@ export function useAuth(options?: UseAuthOptions) {
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     refetchOnWindowFocus: true,
-    refetchOnMount: "stale",
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: true, // Always refetch on mount to catch OAuth redirect
+    staleTime: 0, // No cache - always check fresh
+    gcTime: 0, // Don't keep in garbage collection
   });
 
   const logoutMutation = trpc.auth.logout.useMutation({
@@ -85,12 +86,18 @@ export function useAuth(options?: UseAuthOptions) {
     }
   }, [logoutMutation, utils]);
 
-  // Mark that we've tried to fetch
+  // Mark that we've tried to fetch and log status
   useEffect(() => {
     if (!meQuery.isLoading) {
       setHasTriedFetch(true);
+      if (meQuery.error) {
+        console.error("[Auth] Query error:", meQuery.error);
+      }
+      if (meQuery.data) {
+        console.log("[Auth] User authenticated:", meQuery.data.name);
+      }
     }
-  }, [meQuery.isLoading]);
+  }, [meQuery.isLoading, meQuery.error, meQuery.data]);
 
   // Cache successful user data
   useEffect(() => {
@@ -108,9 +115,10 @@ export function useAuth(options?: UseAuthOptions) {
   const user = meQuery.data ?? (hasTriedFetch && cachedUser ? cachedUser : null);
 
   const state = useMemo(() => {
+    const isLoading = meQuery.isLoading && !user && !cachedUser; // Show loading only if no data at all
     return {
       user,
-      loading: meQuery.isLoading && !user, // Only show loading if we don't have any user data
+      loading: isLoading,
       error: meQuery.error ?? logoutMutation.error ?? null,
       isAuthenticated: Boolean(user),
       isCached: !meQuery.data && !!cachedUser,
@@ -125,11 +133,13 @@ export function useAuth(options?: UseAuthOptions) {
     cachedUser,
   ]);
 
-  // Force initial refetch on mount
+  // Force initial refetch on mount and log auth state
   useEffect(() => {
     console.log("[Auth] Component mounted, forcing refetch");
+    console.log("[Auth] Token in localStorage:", localStorage.getItem('session_token') ? 'YES' : 'NO');
+    console.log("[Auth] Cached user:", cachedUser?.name || 'NONE');
     meQuery.refetch();
-  }, []);
+  }, [meQuery]);
 
   // Handle redirect on unauthenticated
   useEffect(() => {
