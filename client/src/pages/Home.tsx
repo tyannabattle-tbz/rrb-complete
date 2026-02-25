@@ -138,5 +138,5 @@ export default function Home() {
     navigate('/admin/qumus');
   }, [navigate]);
 
-  return null;
+  return <></>; // Return empty fragment while redirecting
 }
