@@ -63,7 +63,7 @@ import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
 import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
 import { agentNetworkRouter } from "./routers/agentNetworkRouter";
 import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnectionRouter";
-// Removed: videoProductionWorkflowRouter - causes esbuild errors with missing database exports
+import { videoProductionWorkflowRouter } from "./routers/videoProductionWorkflowRouter";
 import { qumusOrchestrationRouter } from "./routers/qumusOrchestrationRouter";
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
@@ -320,7 +320,8 @@ export const appRouter = router({
   // Seamless Agent Connection & Cross-Platform Communication
   seamlessAgentConnection: seamlessAgentConnectionRouter,
 
-  // Video Production Workflow - Removed due to missing database exports
+  // Video Production Workflow - Generation to RRB Radio Broadcast
+  videoProductionWorkflow: videoProductionWorkflowRouter,
 
   // Map Arsenal - Military-grade tactical mapping
   mapArsenal: mapArsenalRouter,

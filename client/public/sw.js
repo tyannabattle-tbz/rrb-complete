@@ -1,6 +1,4 @@
-// Use timestamp-based cache name to force updates on each build
-const CACHE_VERSION = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-const CACHE_NAME = `qumus-${CACHE_VERSION}`;
+const CACHE_NAME = 'qumus-v1';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -11,15 +9,11 @@ const urlsToCache = [
 
 // Install event
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing with cache:', CACHE_NAME);
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Caching assets:', urlsToCache);
       return cache.addAll(urlsToCache);
     })
   );
-  // Force the waiting service worker to become the active service worker
-  self.skipWaiting();
 });
 
 // Fetch event
@@ -68,25 +62,19 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating with cache:', CACHE_NAME);
   event.waitUntil(
     caches.keys().then((cacheNames) => {
-      console.log('[SW] Found caches:', cacheNames);
       return Promise.all(
         cacheNames.map((cacheName) => {
-          // Delete all caches except the current one
-          if (cacheName !== CACHE_NAME && cacheName.startsWith('qumus-')) {
-            console.log('[SW] Deleting old cache:', cacheName);
+          if (cacheName !== CACHE_NAME) {
             return caches.delete(cacheName);
           }
         })
       );
     })
   );
-  // Claim all clients immediately
-  event.waitUntil(self.clients.claim());
 });
 
 // Handle push notifications
