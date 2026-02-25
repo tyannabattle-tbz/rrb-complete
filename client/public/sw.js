@@ -1,5 +1,7 @@
-const CACHE_NAME = 'hybridcast-v1';
-const RUNTIME_CACHE = 'hybridcast-runtime';
+// Use daily date-based cache name to force updates on each build
+const CACHE_VERSION = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+const CACHE_NAME = `qumus-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `qumus-runtime-${CACHE_VERSION}`;
 
 const ASSETS_TO_CACHE = [
   '/',
@@ -9,10 +11,10 @@ const ASSETS_TO_CACHE = [
 
 // Install event - cache assets
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing Service Worker');
+  console.log('[QUMUS SW] Installing with cache:', CACHE_NAME);
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Caching assets');
+      console.log('[QUMUS SW] Caching assets');
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
@@ -21,13 +23,14 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating Service Worker');
+  console.log('[QUMUS SW] Activating with cache:', CACHE_NAME);
   event.waitUntil(
     caches.keys().then((cacheNames) => {
+      console.log('[QUMUS SW] Found caches:', cacheNames);
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
-            console.log('[SW] Deleting old cache:', cacheName);
+          if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE && (cacheName.startsWith('qumus-') || cacheName.startsWith('hybridcast-'))) {
+            console.log('[QUMUS SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -94,10 +97,11 @@ self.addEventListener('fetch', (event) => {
         cache.then((c) => c.put(request, response.clone()));
 
         return response;
-      });
+      );
     })
   );
-});
+  event.waitUntil(self.clients.claim());
+});;
 
 // Background sync for pending items
 self.addEventListener('sync', (event) => {
