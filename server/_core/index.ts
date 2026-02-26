@@ -62,6 +62,46 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   
+  // TEST LOGIN ENDPOINT - Bypasses OAuth for development
+  app.get("/api/test-login", async (req, res) => {
+    try {
+      const { sdk } = require("./sdk");
+      const db = require("../db");
+      const { getSessionCookieOptions } = require("./cookies");
+      
+      const testOpenId = "test-user-" + Date.now();
+      const testUser = {
+        openId: testOpenId,
+        name: "Test User",
+        email: "test@qumus.local",
+        loginMethod: "test",
+      };
+      
+      // Create/update test user in database
+      await db.upsertUser({
+        ...testUser,
+        lastSignedIn: new Date(),
+      });
+      
+      // Create session token
+      const sessionToken = await sdk.createSessionToken(testOpenId, {
+        name: testUser.name,
+        expiresInMs: 86400000, // 24 hours
+      });
+      
+      // Set cookie
+      const cookieOptions = getSessionCookieOptions(req);
+      res.cookie("qumus_session", sessionToken, { ...cookieOptions, maxAge: 86400000 });
+      
+      // Redirect to home with token in URL
+      const redirectUrl = `/?token=${encodeURIComponent(sessionToken)}`;
+      res.redirect(302, redirectUrl);
+    } catch (error) {
+      console.error("[Test Login] Failed:", error);
+      res.status(500).json({ error: "Test login failed", details: String(error) });
+    }
+  });
+  
   // QUMUS Health Check endpoint
   app.get("/api/qumus/status", (req, res) => {
     try {
