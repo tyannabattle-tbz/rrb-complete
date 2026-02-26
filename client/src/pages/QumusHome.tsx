@@ -18,6 +18,8 @@ import { VoiceCommandTrainer } from "@/components/VoiceCommandTrainer";
 import { RealtimeARMetrics } from "@/components/RealtimeARMetrics";
 import { VoiceAnalyticsDashboard } from "@/components/VoiceAnalyticsDashboard";
 import { HistoricalMetricsViewer } from "@/components/HistoricalMetricsViewer";
+import { AdminQuickLinks } from "@/components/AdminQuickLinks";
+import { RRBDonationForm } from "@/components/RRBDonationForm";
 import { NeuralBackground } from "@/components/NeuralBackground";
 import "@/styles/futuristic.css";
 import { trpc } from "@/lib/trpc";
@@ -80,6 +82,8 @@ export default function QumusHome() {
   const [showHistoricalMetrics, setShowHistoricalMetrics] = useState(false);
   const [showVoiceTraining, setShowVoiceTraining] = useState(false);
   const [showRealtimeMetrics, setShowRealtimeMetrics] = useState(false);
+  const [showAdminLinks, setShowAdminLinks] = useState(false);
+  const [showRRBDonations, setShowRRBDonations] = useState(false);
 
   // tRPC queries
   const statusQuery = trpc.autonomousTask.getStatus.useQuery();
@@ -822,6 +826,50 @@ export default function QumusHome() {
 
         {/* Voice Command Training */}
         {showVoiceTraining && <VoiceCommandTrainer />}
+
+        {/* Admin Quick Links Section */}
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Globe size={18} className="text-cyan-400" />
+              Admin Control Center
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button
+              onClick={() => setShowAdminLinks(!showAdminLinks)}
+              className={showAdminLinks ? "w-full bg-cyan-600 hover:bg-cyan-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}
+            >
+              <Globe size={16} className="mr-2" />
+              {showAdminLinks ? "Hide" : "Show"} Quick Links
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Admin Quick Links */}
+        {showAdminLinks && <AdminQuickLinks />}
+
+        {/* RRB Donations Section */}
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Heart size={18} className="text-red-400" />
+              RRB Donations
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button
+              onClick={() => setShowRRBDonations(!showRRBDonations)}
+              className={showRRBDonations ? "w-full bg-red-600 hover:bg-red-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}
+            >
+              <Heart size={16} className="mr-2" />
+              {showRRBDonations ? "Hide" : "Show"} Donations
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* RRB Donation Form */}
+        {showRRBDonations && <RRBDonationForm />}
 
         {/* Refresh Button */}
         <div className="flex justify-center">
