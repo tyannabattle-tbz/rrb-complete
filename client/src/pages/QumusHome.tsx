@@ -9,6 +9,8 @@
  */
 
 import { useState, useEffect } from "react";
+import { NeuralBackground } from "@/components/NeuralBackground";
+import "@/styles/futuristic.css";
 import { trpc } from "@/lib/trpc";
 import {
   Card,
@@ -118,13 +120,14 @@ export default function QumusHome() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+      <NeuralBackground />
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-white">QUMUS Control Center</h1>
-          <p className="text-slate-400">
-            Autonomous Orchestration Engine • 90%+ Autonomy • Full Ecosystem Control
-          </p>
+        <div className="qumus-header">
+          <div className="header-content">
+            <h1 className="neon-text">QUMUS</h1>
+            <p className="header-subtitle">Autonomous Orchestration Engine • 90%+ Autonomy • Full Ecosystem Control</p>
+          </div>
         </div>
 
         {/* Status Overview */}
