@@ -57,6 +57,8 @@ import { ecosystemIntegrationRouter } from "./routers/ecosystemIntegrationRouter
 import { mapArsenalRouter } from "./mapArsenal";
 import { qumusAutonomousFinalizationRouter } from "./qumusAutonomousFinalization";
 import { autonomousTaskRouter } from "./routers/autonomousTaskRouter";
+import { taskExecutionEngine } from "./services/taskExecutionEngine";
+import { ecosystemExecutor } from "./services/ecosystemExecutor";
 
 export const appRouter = router({
   // System router
@@ -73,6 +75,78 @@ export const appRouter = router({
 
   // Autonomous Task Management
   autonomousTask: autonomousTaskRouter,
+
+  // Task Execution Engine
+  taskExecution: router({
+    submit: protectedProcedure
+      .input(
+        z.object({
+          goal: z.string().min(1, "Goal is required"),
+          priority: z.number().int().min(1).max(10).optional().default(5),
+          steps: z.array(z.string()).optional(),
+          constraints: z.array(z.string()).optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const taskId = await taskExecutionEngine.submitTask({
+          goal: input.goal,
+          priority: input.priority,
+          steps: input.steps,
+          constraints: input.constraints,
+          userId: ctx.user!.id,
+        });
+        return { taskId, success: true };
+      }),
+
+    getStatus: publicProcedure
+      .input(z.object({ taskId: z.string() }))
+      .query(async ({ input }) => {
+        return await taskExecutionEngine.getTaskStatus(input.taskId);
+      }),
+
+    getMetrics: publicProcedure.query(async () => {
+      return await taskExecutionEngine.getSystemMetrics();
+    }),
+  }),
+
+  // Ecosystem Command Execution
+  ecosystemCommand: router({
+    submit: protectedProcedure
+      .input(
+        z.object({
+          target: z.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+          action: z.string().min(1, "Action is required"),
+          params: z.record(z.any()).optional().default({}),
+          priority: z.number().int().min(1).max(10).optional().default(5),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const commandId = await ecosystemExecutor.submitCommand({
+          target: input.target,
+          action: input.action,
+          params: input.params,
+          priority: input.priority,
+          userId: ctx.user!.id,
+        });
+        return { commandId, success: true };
+      }),
+
+    getStatus: publicProcedure
+      .input(z.object({ commandId: z.string() }))
+      .query(async ({ input }) => {
+        return await ecosystemExecutor.getCommandStatus(input.commandId);
+      }),
+
+    getEntityStatus: publicProcedure
+      .input(z.object({ target: z.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) }))
+      .query(async ({ input }) => {
+        return await ecosystemExecutor.getEntityStatus(input.target);
+      }),
+
+    getAllStatuses: publicProcedure.query(async () => {
+      return await ecosystemExecutor.getAllEntityStatuses();
+    }),
+  }),
 
   // Auth procedures
   auth: router({

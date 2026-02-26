@@ -1431,3 +1431,78 @@ export const agentConnections = mysqlTable("agent_connections", {
 	lastCommunication: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
+
+
+// ============================================================================
+// QUMUS AUTONOMOUS TASK MANAGEMENT
+// ============================================================================
+
+export const autonomousTasks = mysqlTable("autonomous_tasks", {
+	id: varchar({ length: 255 }).primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	goal: text().notNull(),
+	priority: int().notNull().default(5),
+	status: mysqlEnum(['queued', 'executing', 'completed', 'failed', 'cancelled']).notNull().default('queued'),
+	steps: json(),
+	constraints: json(),
+	result: json(),
+	error: text(),
+	executionTime: int(),
+	retryCount: int().default(0),
+	maxRetries: int().default(3),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	startedAt: timestamp({ mode: 'string' }),
+	completedAt: timestamp({ mode: 'string' }),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const taskSteps = mysqlTable("task_steps", {
+	id: varchar({ length: 255 }).primaryKey(),
+	taskId: varchar({ length: 255 }).notNull().references(() => autonomousTasks.id, { onDelete: "cascade" }),
+	stepNumber: int().notNull(),
+	description: text().notNull(),
+	status: mysqlEnum(['pending', 'executing', 'completed', 'failed', 'skipped']).notNull().default('pending'),
+	result: json(),
+	error: text(),
+	executionTime: int(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	startedAt: timestamp({ mode: 'string' }),
+	completedAt: timestamp({ mode: 'string' }),
+});
+
+export const ecosystemCommands = mysqlTable("ecosystem_commands", {
+	id: varchar({ length: 255 }).primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	target: mysqlEnum(['rrb', 'hybridcast', 'canryn', 'sweet_miracles']).notNull(),
+	action: varchar({ length: 255 }).notNull(),
+	params: json().notNull(),
+	priority: int().notNull().default(5),
+	status: mysqlEnum(['queued', 'executing', 'completed', 'failed']).notNull().default('queued'),
+	result: json(),
+	error: text(),
+	executionTime: int(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	executedAt: timestamp({ mode: 'string' }),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+// systemMetrics already defined above - using existing table
+
+export const taskExecutionLog = mysqlTable("task_execution_log", {
+	id: int().autoincrement().primaryKey(),
+	taskId: varchar({ length: 255 }).notNull().references(() => autonomousTasks.id, { onDelete: "cascade" }),
+	eventType: mysqlEnum(['submitted', 'started', 'step_completed', 'completed', 'failed', 'retried']).notNull(),
+	details: json(),
+	timestamp: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const ecosystemStatus = mysqlTable("ecosystem_status", {
+	id: int().autoincrement().primaryKey(),
+	entity: mysqlEnum(['rrb', 'hybridcast', 'canryn', 'sweet_miracles']).notNull(),
+	status: mysqlEnum(['online', 'offline', 'degraded', 'maintenance']).notNull().default('online'),
+	lastHeartbeat: timestamp({ mode: 'string' }),
+	commandsProcessed: int().default(0),
+	failureRate: decimal({ precision: 5, scale: 2 }).default('0'),
+	metadata: json(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
