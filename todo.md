@@ -1492,3 +1492,42 @@
 - [x] Create FAQ section
 - [x] Add "Most Popular" badge for Pro tier
 - [x] Responsive grid layout (1 col mobile, 3 col desktop)
+
+
+## Access Control & Subscription Tiers (COMPLETED)
+- [x] Create subscription tier enum (free, ar_pro, voice_training, enterprise, hybridcast_basic, hybridcast_pro, hybridcast_enterprise)
+- [x] Build useSubscription hook to check user tier and feature access
+- [x] Create FeatureGate component for tier-based feature visibility
+- [ ] Implement middleware to enforce subscription access
+- [ ] Add tier-based rate limiting
+- [ ] Create upgrade prompts for free users
+- [ ] Build subscription management dashboard
+
+## Stripe Webhook Integration (COMPLETED)
+- [x] Wire emailService into webhookHandler.ts
+- [x] Send donation receipts on payment_intent.succeeded
+- [x] Send payment confirmations on checkout.session.completed
+- [x] Send welcome emails on subscription.created
+- [x] Send renewal reminders on invoice.upcoming
+- [x] Send cancellation emails on subscription.deleted
+- [x] Implement webhook retry logic
+- [x] Add webhook event logging to database
+
+## Donation & Payment Pages (IN PROGRESS)
+- [ ] Create /donations page with RRBDonationForm
+- [ ] Create /pricing/qumus page with QUMUS pricing
+- [ ] Create /pricing/hybridcast page with HybridCast pricing
+- [ ] Add donation success page with receipt
+- [ ] Add payment success page with subscription details
+- [ ] Implement tier-based feature preview
+- [ ] Add FAQ and support links
+
+## QUMUS Autonomous Policies (IN PROGRESS)
+- [ ] Create payment_processing policy (auto-update subscriptions)
+- [ ] Create email_notifications policy (auto-send receipts/confirmations)
+- [ ] Create metrics_persistence policy (auto-sync AR/voice data)
+- [ ] Create access_control policy (auto-enforce tier restrictions)
+- [ ] Create subscription_lifecycle policy (auto-renew/cancel)
+- [ ] Create fraud_detection policy (flag suspicious transactions)
+- [ ] Create audit_logging policy (log all financial transactions)
+- [ ] Add QUMUS policy dashboard widget
