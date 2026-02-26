@@ -51,6 +51,18 @@ interface AnalyticsData {
     executions: number;
     successRate: number;
   }>;
+  ecosystemMetrics?: {
+    rrb: { commands: number; successRate: number };
+    hybridcast: { commands: number; successRate: number };
+    canryn: { commands: number; successRate: number };
+    sweetMiracles: { commands: number; successRate: number };
+  };
+  systemHealth?: {
+    cpuUsage: number;
+    memoryUsage: number;
+    diskUsage: number;
+    networkBandwidth: number;
+  };
 }
 
 interface AnalyticsDashboardProps {
@@ -78,6 +90,18 @@ export default function AnalyticsDashboard({
       "File Operations": 38,
       "Database Query": 32,
       "API Call": 27,
+    },
+    ecosystemMetrics: {
+      rrb: { commands: 1234, successRate: 98.5 },
+      hybridcast: { commands: 856, successRate: 99.2 },
+      canryn: { commands: 567, successRate: 97.8 },
+      sweetMiracles: { commands: 432, successRate: 99.5 },
+    },
+    systemHealth: {
+      cpuUsage: 45,
+      memoryUsage: 62,
+      diskUsage: 73,
+      networkBandwidth: 38,
     },
     executionTimeline: [
       { timestamp: new Date(Date.now() - 3600000), duration: 1.2, status: "success" },
@@ -274,6 +298,50 @@ export default function AnalyticsDashboard({
           </BarChart>
         </ResponsiveContainer>
       </Card>
+
+      {/* Ecosystem Metrics */}
+      {mockData.ecosystemMetrics && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Ecosystem Performance</h3>
+          <div className="grid grid-cols-4 gap-4">
+            {Object.entries(mockData.ecosystemMetrics).map(([ecosystem, metrics]) => (
+              <div key={ecosystem} className="p-3 bg-muted/30 rounded-lg">
+                <p className="font-medium capitalize text-sm">{ecosystem}</p>
+                <p className="text-2xl font-bold mt-2">{metrics.commands}</p>
+                <p className="text-xs text-muted-foreground">commands</p>
+                <Badge className="mt-2" variant={metrics.successRate >= 98 ? "default" : "secondary"}>
+                  {metrics.successRate}% success
+                </Badge>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* System Health */}
+      {mockData.systemHealth && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">System Health</h3>
+          <div className="space-y-3">
+            {Object.entries(mockData.systemHealth).map(([metric, value]) => (
+              <div key={metric}>
+                <div className="flex justify-between mb-1">
+                  <p className="text-sm capitalize">{metric.replace(/([A-Z])/g, ' $1').trim()}</p>
+                  <p className="text-sm font-semibold">{value}%</p>
+                </div>
+                <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className={`h-full ${
+                      value > 80 ? 'bg-red-500' : value > 60 ? 'bg-yellow-500' : 'bg-green-500'
+                    }`}
+                    style={{ width: `${value}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Tool Performance Details */}
       <Card className="p-6">

@@ -39,7 +39,14 @@ import {
   Send,
   RefreshCw,
   TrendingUp,
+  Activity,
+  BarChart3,
+  Globe,
 } from "lucide-react";
+import { TaskHistory } from "@/components/TaskHistory";
+import { EcosystemStatusDashboard } from "@/components/EcosystemStatusDashboard";
+import AnalyticsDashboard from "@/components/AnalyticsDashboard";
+import { useMetricsWebSocket } from "@/hooks/useMetricsWebSocket";
 
 export default function QumusHome() {
   const [taskGoal, setTaskGoal] = useState("");
@@ -47,6 +54,8 @@ export default function QumusHome() {
   const [selectedTarget, setSelectedTarget] = useState("rrb");
   const [selectedAction, setSelectedAction] = useState("schedule_broadcast");
   const [commandParams, setCommandParams] = useState("");
+  const [activeTab, setActiveTab] = useState<'tasks' | 'commands' | 'monitoring' | 'insights' | 'history' | 'ecosystem' | 'analytics'>('tasks');
+  const { metrics, isConnected } = useMetricsWebSocket();
 
   // tRPC queries
   const statusQuery = trpc.autonomousTask.getStatus.useQuery();
