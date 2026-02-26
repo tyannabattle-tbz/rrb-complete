@@ -1531,3 +1531,53 @@
 - [ ] Create fraud_detection policy (flag suspicious transactions)
 - [ ] Create audit_logging policy (log all financial transactions)
 - [ ] Add QUMUS policy dashboard widget
+
+
+## Pricing & Donation Pages (COMPLETED)
+- [x] Create /pricing/qumus page with QUMUS pricing tiers (PricingQumus.tsx)
+- [x] Add FeatureGate protection to premium content
+- [x] Implement tier-based CTAs and upgrade prompts
+- [x] Add FAQ sections for each pricing page
+- [x] Feature comparison table with 8 features
+- [x] "Most Popular" badge for AR Pro tier
+- [x] Responsive grid layout (1-4 cols)
+- [x] Free tier included
+
+## QUMUS Autonomous Decision Policies (IN PROGRESS)
+- [ ] Payment Processing Policy (auto-process, validate, reconcile)
+- [ ] Email Notification Policy (send receipts, confirmations, reminders)
+- [ ] Metrics Persistence Policy (sync data to database, archive)
+- [ ] Access Control Policy (enforce tier-based access, rate limiting)
+- [ ] Subscription Lifecycle Policy (auto-renew, upgrade, downgrade)
+- [ ] Fraud Detection Policy (monitor suspicious activity, alert)
+- [ ] Audit Logging Policy (log all transactions, maintain compliance)
+- [ ] Add policy dashboard to monitor autonomous decisions
+- [ ] Implement policy override mechanism for human review
+
+## Subscription Management Dashboard (IN PROGRESS)
+- [ ] Create /dashboard/subscriptions page
+- [ ] Display active subscriptions with tier info
+- [ ] Show payment history and invoices
+- [ ] Add upgrade/downgrade options
+- [ ] Implement cancellation workflow
+- [ ] Add billing address management
+- [ ] Show renewal dates and auto-renewal status
+- [ ] Create usage analytics by tier
+- [ ] Add subscription pause/resume functionality
+
+## Cloud File Storage System (COMPLETED)
+- [x] Setup S3 bucket configuration (using existing storagePut/storageGet)
+- [x] Create file upload service (fileStorageService.ts with progress)
+- [x] Create file download service with presigned URLs
+- [x] Build file management dashboard UI (FileManagementDashboard.tsx)
+- [x] Implement file listing with pagination
+- [x] Create file sharing with expiring links (24hr default)
+- [x] Add file deletion with confirmation
+- [x] Create storage quota management by tier
+- [x] Add file access logging and audit trail (fileAccessLogs table)
+- [x] Create bulk upload/download functionality
+- [x] Add file search and filtering (filesRouter.search)
+- [x] Implement tRPC router (files.ts) with 8 endpoints
+- [x] Add storage usage calculation and display
+- [x] File type icons (image, video, audio, document)
+- [x] Metadata persistence in database
