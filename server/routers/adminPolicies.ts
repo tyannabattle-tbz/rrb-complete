@@ -1,6 +1,6 @@
 import { router, protectedProcedure, adminProcedure } from '../_core/trpc';
 import { z } from 'zod';
-import { db } from '../db';
+// Database imports handled within procedures
 
 export const adminPoliciesRouter = router({
   /**

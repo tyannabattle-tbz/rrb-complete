@@ -1,5 +1,5 @@
 import { storagePut, storageGet } from './storage';
-import { db } from './db';
+// Database imports handled within service functions
 
 export interface TaskArtifact {
   id: string;

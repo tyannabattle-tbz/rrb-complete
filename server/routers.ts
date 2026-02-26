@@ -60,6 +60,12 @@ import { autonomousTaskRouter } from "./routers/autonomousTaskRouter";
 import { taskExecutionEngine } from "./services/taskExecutionEngine";
 import { ecosystemExecutor } from "./services/ecosystemExecutor";
 
+// Import new payment, admin, task, and file routers
+import { paymentsRouter } from "./routers/payments";
+import { adminPoliciesRouter } from "./routers/adminPolicies";
+import { tasksRouter } from "./routers/tasks";
+import { filesRouter } from "./routers/files";
+
 export const appRouter = router({
   // System router
   system: systemRouter,
@@ -323,6 +329,18 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  // Payment Processing Router
+  payments: paymentsRouter,
+
+  // Admin Policies Monitoring Router
+  adminPolicies: adminPoliciesRouter,
+
+  // Task Execution Router
+  tasks: tasksRouter,
+
+  // File Management Router
+  files: filesRouter,
 });
 
 export type AppRouter = typeof appRouter;

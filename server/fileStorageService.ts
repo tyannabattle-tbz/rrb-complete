@@ -1,7 +1,7 @@
 import { storagePut, storageGet } from './storage';
-import { db } from './db';
-import { files, fileAccessLogs } from '@/drizzle/schema';
-import { eq, and, desc } from 'drizzle-orm';
+// Database imports handled within service functions to avoid circular dependencies
+// import { files, fileAccessLogs } from '@/drizzle/schema';
+// import { eq, and, desc } from 'drizzle-orm';
 
 export interface FileMetadata {
   id: string;

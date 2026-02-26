@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { usePolicyDecisions } from '@/hooks/useWebSocket';
 
 interface PolicyDecision {
   id: string;
@@ -28,6 +29,11 @@ interface HumanReviewItem {
 export default function AdminPoliciesDashboard() {
   const { user } = useAuth();
   const [decisions, setDecisions] = useState<PolicyDecision[]>([]);
+
+  // Listen for real-time policy decisions via WebSocket
+  usePolicyDecisions((decision) => {
+    setDecisions((prev) => [decision, ...prev.slice(0, 99)]);
+  });
   const [reviewQueue, setReviewQueue] = useState<HumanReviewItem[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);

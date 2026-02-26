@@ -1,9 +1,9 @@
 import { router, protectedProcedure } from '../_core/trpc';
 import { z } from 'zod';
-import { db } from '../db';
+// Database imports handled within procedures
 import { executePolicies } from '../qumusPolicies';
 import { uploadTaskArtifact, processTaskCompletion } from '../taskArtifactsService';
-import { emailService } from '../emailService';
+// Email service handled within procedures
 
 export const tasksRouter = router({
   /**

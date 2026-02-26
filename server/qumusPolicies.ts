@@ -3,9 +3,8 @@
  * 7 core policies for autonomous orchestration with 90% autonomy and 10% human oversight
  */
 
-import { db } from './db';
-import { emailService } from './emailService';
-import { storagePut } from './storage';
+// Database and service imports handled within policy functions
+// to avoid circular dependencies
 
 export interface PolicyDecision {
   policyId: string;

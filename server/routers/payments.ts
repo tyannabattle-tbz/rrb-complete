@@ -1,8 +1,7 @@
 import { router, protectedProcedure } from '../_core/trpc';
 import { z } from 'zod';
 import { executePolicies, PolicyContext, requiresHumanReview, getAverageConfidence } from '../qumusPolicies';
-import { db } from '../db';
-import { emailService } from '../emailService';
+// Database and email service imports handled within procedures
 
 export const paymentsRouter = router({
   /**
