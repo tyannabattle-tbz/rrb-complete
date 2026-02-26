@@ -9,7 +9,6 @@
  */
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import {
   Card,
@@ -43,7 +42,6 @@ import {
 } from "lucide-react";
 
 export default function QumusHome() {
-  const { user } = useAuth();
   const [taskGoal, setTaskGoal] = useState("");
   const [taskPriority, setTaskPriority] = useState("5");
   const [selectedTarget, setSelectedTarget] = useState("rrb");
