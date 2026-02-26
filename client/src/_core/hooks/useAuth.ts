@@ -9,6 +9,8 @@ type UseAuthOptions = {
 };
 
 const STORAGE_KEY = "qumus_user_session";
+const TOKEN_EXPIRY_KEY = "session_token_expires";
+const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false, redirectPath = getLoginUrl() } =
@@ -25,16 +27,28 @@ export function useAuth(options?: UseAuthOptions) {
       const tokenFromUrl = params.get('token');
       if (tokenFromUrl) {
         localStorage.setItem('session_token', tokenFromUrl);
-        console.log('[Auth] Extracted token from URL and stored in localStorage');
+        // Store token expiration time (24 hours from now)
+        const expiresAt = new Date().getTime() + SESSION_DURATION;
+        localStorage.setItem(TOKEN_EXPIRY_KEY, expiresAt.toString());
+        console.log('[Auth] Extracted token from URL and stored in localStorage (expires in 24h)');
         // Clean up URL
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       
-      const cached = localStorage.getItem(STORAGE_KEY);
-      if (cached) {
-        const user = JSON.parse(cached);
-        setCachedUser(user);
-        console.log("[Auth] Loaded cached user from localStorage:", user?.name);
+      // Check if session token is still valid
+      const tokenExpiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
+      if (tokenExpiry && new Date().getTime() > parseInt(tokenExpiry)) {
+        console.log('[Auth] Session token expired, clearing cache');
+        localStorage.removeItem('session_token');
+        localStorage.removeItem(TOKEN_EXPIRY_KEY);
+        localStorage.removeItem(STORAGE_KEY);
+      } else {
+        const cached = localStorage.getItem(STORAGE_KEY);
+        if (cached) {
+          const user = JSON.parse(cached);
+          setCachedUser(user);
+          console.log("[Auth] Loaded cached user from localStorage:", user?.name);
+        }
       }
     } catch (e) {
       console.error("[Auth] Failed to load cached user", e);
@@ -47,10 +61,10 @@ export function useAuth(options?: UseAuthOptions) {
       return failureCount < 3;
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    refetchOnWindowFocus: true,
-    refetchOnMount: true, // Always refetch on mount to catch OAuth redirect
-    staleTime: 0, // No cache - always check fresh
-    gcTime: 0, // Don't keep in garbage collection
+    refetchOnWindowFocus: false, // Don't refetch on every window focus to reduce API calls
+    refetchOnMount: false, // Use cached data on mount if available
+    staleTime: 30 * 60 * 1000, // Keep data fresh for 30 minutes
+    gcTime: 60 * 60 * 1000, // Keep in garbage collection for 1 hour
   });
 
   const logoutMutation = trpc.auth.logout.useMutation({
@@ -58,6 +72,8 @@ export function useAuth(options?: UseAuthOptions) {
       utils.auth.me.setData(undefined, null);
       try {
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem('session_token');
+        localStorage.removeItem(TOKEN_EXPIRY_KEY);
       } catch (e) {
         console.error("[Auth] Failed to clear cached user", e);
       }
@@ -79,6 +95,8 @@ export function useAuth(options?: UseAuthOptions) {
       utils.auth.me.setData(undefined, null);
       try {
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem('session_token');
+        localStorage.removeItem(TOKEN_EXPIRY_KEY);
       } catch (e) {
         console.error("[Auth] Failed to clear cached user", e);
       }
@@ -99,12 +117,15 @@ export function useAuth(options?: UseAuthOptions) {
     }
   }, [meQuery.isLoading, meQuery.error, meQuery.data]);
 
-  // Cache successful user data
+  // Cache successful user data and extend session expiry
   useEffect(() => {
     if (meQuery.data) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(meQuery.data));
-        console.log("[Auth] Cached user to localStorage:", meQuery.data?.name);
+        // Extend session expiry on each successful auth check
+        const expiresAt = new Date().getTime() + SESSION_DURATION;
+        localStorage.setItem(TOKEN_EXPIRY_KEY, expiresAt.toString());
+        console.log("[Auth] Cached user to localStorage and extended session:", meQuery.data?.name);
       } catch (e) {
         console.error("[Auth] Failed to cache user", e);
       }
@@ -133,13 +154,16 @@ export function useAuth(options?: UseAuthOptions) {
     cachedUser,
   ]);
 
-  // Force initial refetch on mount and log auth state
+  // Initial fetch on mount
   useEffect(() => {
-    console.log("[Auth] Component mounted, forcing refetch");
+    console.log("[Auth] Component mounted");
     console.log("[Auth] Token in localStorage:", localStorage.getItem('session_token') ? 'YES' : 'NO');
     console.log("[Auth] Cached user:", cachedUser?.name || 'NONE');
-    meQuery.refetch();
-  }, [meQuery]);
+    // Only refetch if we don't have cached data
+    if (!cachedUser) {
+      meQuery.refetch();
+    }
+  }, []);
 
   // Handle redirect on unauthenticated
   useEffect(() => {
