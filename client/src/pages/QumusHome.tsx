@@ -9,6 +9,10 @@
  */
 
 import { useState, useEffect } from "react";
+import { ARGlassInterface } from "@/components/ARGlassInterface";
+import { voiceCommandService } from "@/services/voiceCommandService";
+import { predictiveAnalyticsService } from "@/services/predictiveAnalyticsService";
+import { PredictionsCard } from "@/components/PredictionsCard";
 import { NeuralBackground } from "@/components/NeuralBackground";
 import "@/styles/futuristic.css";
 import { trpc } from "@/lib/trpc";
@@ -49,6 +53,7 @@ import { TaskHistory } from "@/components/TaskHistory";
 import { EcosystemStatusDashboard } from "@/components/EcosystemStatusDashboard";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import { useMetricsWebSocket } from "@/hooks/useMetricsWebSocket";
+import { Mic, Brain as BrainIcon, Glasses } from "lucide-react";
 
 export default function QumusHome() {
   const [taskGoal, setTaskGoal] = useState("");
@@ -58,6 +63,11 @@ export default function QumusHome() {
   const [commandParams, setCommandParams] = useState("");
   const [activeTab, setActiveTab] = useState<'tasks' | 'commands' | 'monitoring' | 'insights' | 'history' | 'ecosystem' | 'analytics'>('tasks');
   const { metrics, isConnected } = useMetricsWebSocket();
+  const [showARInterface, setShowARInterface] = useState(false);
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [selectedPersona, setSelectedPersona] = useState('analytical');
+  const [taskPrediction, setTaskPrediction] = useState<any>(null);
+  const [showPredictions, setShowPredictions] = useState(false);
 
   // tRPC queries
   const statusQuery = trpc.autonomousTask.getStatus.useQuery();
@@ -88,11 +98,36 @@ export default function QumusHome() {
 
   const handleSubmitTask = async () => {
     if (!taskGoal.trim()) return;
-
+    const prediction = predictiveAnalyticsService.predictTaskOutcome(taskGoal, parseInt(taskPriority));
+    setTaskPrediction(prediction);
     await submitTaskMutation.mutateAsync({
       goal: taskGoal,
       priority: parseInt(taskPriority),
     });
+  };
+
+  const handleVoiceCommand = () => {
+    setIsVoiceActive(!isVoiceActive);
+    if (!isVoiceActive) {
+      voiceCommandService.startListening((transcript) => {
+        setTaskGoal(transcript);
+      });
+    } else {
+      voiceCommandService.stopListening();
+    }
+  };
+
+  const handlePersonaChange = (persona: string) => {
+    setSelectedPersona(persona);
+    voiceCommandService.setPersona(persona);
+  };
+
+  const handleShowPredictions = () => {
+    if (taskGoal.trim()) {
+      const prediction = predictiveAnalyticsService.predictTaskOutcome(taskGoal, parseInt(taskPriority));
+      setTaskPrediction(prediction);
+      setShowPredictions(true);
+    }
   };
 
   const handleSubmitCommand = async () => {
@@ -233,15 +268,14 @@ export default function QumusHome() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-slate-300">
-                    Task Goal
-                  </label>
-                  <Textarea
-                    value={taskGoal}
-                    onChange={(e) => setTaskGoal(e.target.value)}
-                    placeholder="e.g., Generate 10 marketing videos with branding..."
-                    className="mt-2 bg-slate-700 border-slate-600 text-white placeholder-slate-500"
-                  />
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-sm font-medium text-slate-300">Task Goal</label>
+                    <Button onClick={handleVoiceCommand} size="sm" variant={isVoiceActive ? "default" : "outline"} className={isVoiceActive ? "bg-red-600 hover:bg-red-700" : "border-slate-600"}>
+                      <Mic size={14} className="mr-1" />
+                      {isVoiceActive ? "Listening..." : "Voice"}
+                    </Button>
+                  </div>
+                  <Textarea value={taskGoal} onChange={(e) => setTaskGoal(e.target.value)} placeholder="e.g., Generate 10 marketing videos with branding..." className="mt-2 bg-slate-700 border-slate-600 text-white placeholder-slate-500" />
                 </div>
 
                 <div>
@@ -262,16 +296,21 @@ export default function QumusHome() {
                   </Select>
                 </div>
 
-                <Button
-                  onClick={handleSubmitTask}
-                  disabled={!taskGoal.trim() || submitTaskMutation.isPending}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  <Send size={16} className="mr-2" />
-                  {submitTaskMutation.isPending ? "Submitting..." : "Submit Task"}
-                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={handleShowPredictions} disabled={!taskGoal.trim()} variant="outline" className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700">
+                    <BrainIcon size={16} className="mr-2" />
+                    Predict
+                  </Button>
+                  <Button onClick={handleSubmitTask} disabled={!taskGoal.trim() || submitTaskMutation.isPending} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+                    <Send size={16} className="mr-2" />
+                    {submitTaskMutation.isPending ? "Submitting..." : "Submit Task"}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
+
+            {/* Predictions */}
+            {showPredictions && taskPrediction && <PredictionsCard prediction={taskPrediction} />}
 
             {/* Active Plans */}
             {activePlans.length > 0 && (
@@ -661,6 +700,49 @@ export default function QumusHome() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* AI Personas & Advanced Controls */}
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <BrainIcon size={18} className="text-purple-400" />
+              AI Personas & Advanced Controls
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-slate-300 mb-2 block">Select AI Persona</label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {['analytical', 'creative', 'aggressive', 'conservative'].map((persona) => (
+                  <Button key={persona} onClick={() => handlePersonaChange(persona)} variant={selectedPersona === persona ? "default" : "outline"} className={selectedPersona === persona ? "bg-purple-600 hover:bg-purple-700" : "border-slate-600"}>
+                    {persona.charAt(0).toUpperCase() + persona.slice(1)}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-slate-400 mt-2">Current: <span className="text-purple-400 font-medium">{selectedPersona}</span> mode</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AR Glass Interface */}
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Glasses size={18} className="text-cyan-400" />
+              Google Glass AR Integration
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => setShowARInterface(!showARInterface)} className={showARInterface ? "w-full bg-cyan-600 hover:bg-cyan-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
+              <Glasses size={16} className="mr-2" />
+              {showARInterface ? "Hide AR Interface" : "Show AR Interface"}
+            </Button>
+            <p className="text-xs text-slate-400 mt-2">Enable augmented reality visualization for real-time task monitoring and holographic displays</p>
+          </CardContent>
+        </Card>
+
+        {/* AR Glass Interface Component */}
+        {showARInterface && <ARGlassInterface />}
 
         {/* Refresh Button */}
         <div className="flex justify-center">
