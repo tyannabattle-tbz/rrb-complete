@@ -1506,3 +1506,128 @@ export const ecosystemStatus = mysqlTable("ecosystem_status", {
 	metadata: json(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
+
+// AR Metrics table - stores real-time AR visualization metrics
+export const arMetrics = mysqlTable("ar_metrics", {
+	id: int().autoincrement().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	cpuUsage: decimal({ precision: 5, scale: 2 }).notNull(), // 0-100
+	memoryUsage: decimal({ precision: 5, scale: 2 }).notNull(), // 0-100
+	storageUsage: decimal({ precision: 5, scale: 2 }).notNull(), // 0-100
+	networkLatency: decimal({ precision: 10, scale: 2 }).notNull(), // milliseconds
+	taskExecutionTime: decimal({ precision: 10, scale: 2 }).notNull(), // milliseconds
+	successRate: decimal({ precision: 5, scale: 2 }).notNull(), // 0-100
+	activeConnections: int().notNull(),
+	broadcastQuality: mysqlEnum(['low', 'medium', 'high', 'ultra']).notNull(),
+	timestamp: timestamp({ mode: 'string' }).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+// Voice Commands table - stores trained voice commands and usage
+export const voiceCommands = mysqlTable("voice_commands", {
+	id: int().autoincrement().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	commandName: varchar({ length: 255 }).notNull(),
+	commandPhrase: text().notNull(),
+	targetSystem: mysqlEnum(['qumus', 'hybridcast', 'rrb', 'canryn']).notNull(),
+	targetAction: text().notNull(),
+	confidence: decimal({ precision: 5, scale: 2 }).notNull(), // 0-100
+	usageCount: int().default(0),
+	successCount: int().default(0),
+	lastUsed: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+// Donations table - tracks RRB donations
+export const donations = mysqlTable("donations", {
+	id: int().autoincrement().primaryKey(),
+	donorName: varchar({ length: 255 }),
+	donorEmail: varchar({ length: 255 }).notNull(),
+	amount: int().notNull(), // in cents
+	currency: mysqlEnum(['USD', 'EUR', 'GBP']).default('USD'),
+	stripePaymentIntentId: varchar({ length: 255 }).notNull().unique(),
+	status: mysqlEnum(['pending', 'succeeded', 'failed', 'refunded']).default('pending'),
+	broadcastHoursFunded: decimal({ precision: 10, scale: 2 }).notNull(),
+	receiptSent: int().default(0),
+	receiptUrl: text(),
+	metadata: json(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+// Subscriptions table - tracks QUMUS and HybridCast subscriptions
+export const subscriptions = mysqlTable("subscriptions", {
+	id: int().autoincrement().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	stripeSubscriptionId: varchar({ length: 255 }).notNull().unique(),
+	plan: mysqlEnum(['ar_pro', 'voice_training', 'enterprise', 'hybridcast_basic', 'hybridcast_pro', 'hybridcast_enterprise']).notNull(),
+	status: mysqlEnum(['active', 'past_due', 'canceled', 'unpaid']).default('active'),
+	currentPeriodStart: timestamp({ mode: 'string' }).notNull(),
+	currentPeriodEnd: timestamp({ mode: 'string' }).notNull(),
+	cancelAtPeriodEnd: int().default(0),
+	canceledAt: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+// Payments table - tracks all payments
+export const payments = mysqlTable("payments", {
+	id: int().autoincrement().primaryKey(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	stripePaymentIntentId: varchar({ length: 255 }).notNull().unique(),
+	amount: int().notNull(), // in cents
+	currency: mysqlEnum(['USD', 'EUR', 'GBP']).default('USD'),
+	status: mysqlEnum(['succeeded', 'processing', 'requires_payment_method', 'requires_confirmation', 'requires_action', 'requires_capture', 'canceled']).default('processing'),
+	productName: varchar({ length: 255 }).notNull(),
+	metadata: json(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+// Email Logs table - tracks email delivery
+export const emailLogs = mysqlTable("email_logs", {
+	id: int().autoincrement().primaryKey(),
+	recipientEmail: varchar({ length: 255 }).notNull(),
+	emailType: mysqlEnum(['donation_receipt', 'payment_confirmation', 'subscription_welcome', 'subscription_renewal', 'subscription_canceled']).notNull(),
+	subject: varchar({ length: 255 }).notNull(),
+	status: mysqlEnum(['sent', 'failed', 'bounced', 'opened', 'clicked']).default('sent'),
+	relatedId: varchar({ length: 255 }), // donation_id or payment_id
+	retryCount: int().default(0),
+	errorMessage: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	sentAt: timestamp({ mode: 'string' }),
+});
+
+// HybridCast Pricing Plans table
+export const hybridcastPlans = mysqlTable("hybridcast_plans", {
+	id: int().autoincrement().primaryKey(),
+	planName: varchar({ length: 255 }).notNull(),
+	stripePriceId: varchar({ length: 255 }).notNull().unique(),
+	amount: int().notNull(), // in cents
+	currency: mysqlEnum(['USD', 'EUR', 'GBP']).default('USD'),
+	interval: mysqlEnum(['month', 'year']).notNull(),
+	features: json().notNull(), // array of features
+	maxBroadcasts: int(),
+	maxListeners: int(),
+	maxStorageGb: int(),
+	priority: int().default(0),
+	description: text(),
+	isActive: int().default(1),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+// RRB Donation Analytics table
+export const donationAnalytics = mysqlTable("donation_analytics", {
+	id: int().autoincrement().primaryKey(),
+	period: varchar({ length: 64 }).notNull(), // e.g., '2026-02-26'
+	totalDonations: decimal({ precision: 15, scale: 2 }).default('0'),
+	donationCount: int().default(0),
+	averageDonation: decimal({ precision: 10, scale: 2 }).default('0'),
+	totalBroadcastHoursFunded: decimal({ precision: 10, scale: 2 }).default('0'),
+	topDonor: varchar({ length: 255 }),
+	topDonorAmount: decimal({ precision: 10, scale: 2 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
