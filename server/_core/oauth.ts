@@ -27,12 +27,30 @@ export function registerOAuthRoutes(app: Express) {
     }
 
     try {
-      console.log("[OAuth] Exchanging code for token");
-      const tokenResponse = await sdk.exchangeCodeForToken(code, state);
-      console.log("[OAuth] Got token response");
+      console.log("[OAuth] Exchanging code for token", { code: code?.substring(0, 20), state: state?.substring(0, 20) });
+      let tokenResponse;
+      try {
+        tokenResponse = await sdk.exchangeCodeForToken(code, state);
+        console.log("[OAuth] Got token response", { hasAccessToken: !!tokenResponse.accessToken });
+      } catch (tokenError) {
+        console.error("[OAuth] Token exchange failed", {
+          error: tokenError instanceof Error ? tokenError.message : String(tokenError),
+          code: tokenError instanceof Error ? tokenError.constructor.name : typeof tokenError,
+        });
+        throw tokenError;
+      }
       
-      const userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
-      console.log("[OAuth] Got user info", { openId: userInfo.openId });
+      let userInfo;
+      try {
+        userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
+        console.log("[OAuth] Got user info", { openId: userInfo.openId });
+      } catch (userError) {
+        console.error("[OAuth] User info retrieval failed", {
+          error: userError instanceof Error ? userError.message : String(userError),
+          code: userError instanceof Error ? userError.constructor.name : typeof userError,
+        });
+        throw userError;
+      }
 
       if (!userInfo.openId) {
         console.error("[OAuth] Missing openId in user info");
