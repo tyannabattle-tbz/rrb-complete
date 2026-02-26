@@ -1581,3 +1581,37 @@
 - [x] Add storage usage calculation and display
 - [x] File type icons (image, video, audio, document)
 - [x] Metadata persistence in database
+
+
+## File Storage in Task Workflows (COMPLETED)
+- [x] Add file attachment field to task submission form (TaskFileAttachment.tsx)
+- [x] Create file upload handler in task submission
+- [x] Auto-upload files to S3 on task creation
+- [x] Link files to task execution results
+- [x] Create task artifact storage system
+- [x] Add file access logging for tasks
+- [x] Create file download from task results
+
+## QUMUS Autonomous Decision Policies (COMPLETED)
+- [x] Payment Processing Policy (auto-validate, reconcile, refund)
+- [x] Email Notification Policy (auto-send receipts, confirmations)
+- [x] Metrics Persistence Policy (auto-sync to database)
+- [x] Access Control Policy (auto-enforce tier restrictions)
+- [x] Subscription Lifecycle Policy (auto-renew, cancel, upgrade)
+- [x] Fraud Detection Policy (auto-flag suspicious activity)
+- [x] Audit Logging Policy (auto-log all transactions)
+- [x] Created qumusPolicies.ts with 7 core policies
+- [x] Added executePolicies function for orchestration
+- [x] Implemented confidence scoring and human review flags
+
+## Subscription Management Dashboard (COMPLETED)
+- [x] Create /dashboard/subscriptions page (SubscriptionDashboard.tsx)
+- [x] Show active subscriptions list with tier badges
+- [x] Display payment history with status indicators
+- [x] Add upgrade/downgrade options
+- [x] Create cancellation workflow with confirmation
+- [x] Show renewal dates and auto-renewal status
+- [x] Create subscription pause/resume functionality
+- [x] Add billing information section
+- [x] Create invoice download feature
+- [x] Expandable subscription details with actions
