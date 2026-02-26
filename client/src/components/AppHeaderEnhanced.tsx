@@ -81,7 +81,7 @@ export function AppHeaderEnhanced() {
   return (
     <>
       <SimplifiedMobileNav />
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="fixed top-0 left-0 right-0 z-[100] w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo/Brand */}
           <div className="flex items-center gap-2">
@@ -90,14 +90,14 @@ export function AppHeaderEnhanced() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1 overflow-x-auto">
             {navItems.map((item) => (
               <Button
                 key={item.id}
                 variant="ghost"
                 size="sm"
                 onClick={() => item.action ? item.action() : navigate(item.path)}
-                className={`gap-2 ${item.label === 'HybridCast' && showHybridCastTabs ? 'bg-cyan-500/20 border border-cyan-500' : ''}`}
+                className={`gap-2 whitespace-nowrap ${item.label === 'HybridCast' && showHybridCastTabs ? 'bg-cyan-500/20 border border-cyan-500' : ''}`}
               >
                 <item.icon className="h-4 w-4" />
                 <span className="hidden lg:inline">{item.label}</span>

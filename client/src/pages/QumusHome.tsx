@@ -154,15 +154,13 @@ export default function QumusHome() {
   const learnings = learningsQuery.data?.learnings || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 pt-24">
       <NeuralBackground />
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="qumus-header">
-          <div className="header-content">
-            <h1 className="neon-text">QUMUS</h1>
-            <p className="header-subtitle">Autonomous Orchestration Engine • 90%+ Autonomy • Full Ecosystem Control</p>
-          </div>
+        {/* Mobile Title - Hidden on large screens */}
+        <div className="lg:hidden mb-6">
+          <h1 className="text-3xl font-bold text-cyan-400 mb-2">QUMUS</h1>
+          <p className="text-sm text-slate-400">Autonomous Orchestration Engine • 90%+ Autonomy • Full Ecosystem Control</p>
         </div>
 
         {/* Status Overview */}
@@ -747,12 +745,20 @@ export default function QumusHome() {
         {/* Refresh Button */}
         <div className="flex justify-center">
           <Button
-            onClick={() => {
-              statusQuery.refetch();
-              activePlansQuery.refetch();
-              commandHistoryQuery.refetch();
-              successRateQuery.refetch();
-              learningsQuery.refetch();
+            onClick={async () => {
+              try {
+                await Promise.all([
+                  statusQuery.refetch(),
+                  activePlansQuery.refetch(),
+                  commandHistoryQuery.refetch(),
+                  successRateQuery.refetch(),
+                  learningsQuery.refetch()
+                ]);
+                voiceCommandService.speak('Status refreshed successfully');
+              } catch (error) {
+                console.error('Refresh failed:', error);
+                voiceCommandService.speak('Refresh failed, please try again');
+              }
             }}
             variant="outline"
             className="border-slate-600 text-slate-300 hover:bg-slate-700"
