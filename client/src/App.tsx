@@ -114,6 +114,10 @@ import SweetMiraclesDashboard from '@/pages/SweetMiraclesDashboard';
 import DroneLogisticsTracker from '@/components/DroneLogisticsTracker';
 import DroneVideoCapture from '@/components/DroneVideoCapture';
 import MapArsenal from '@/components/MapArsenal';
+import RRBDashboard from "@/pages/RRBDashboard";
+import RRBBroadcastManager from "@/pages/RRBBroadcastManager";
+import SweetMiraclesManager from "@/pages/SweetMiraclesManager";
+import RRBListenerAnalytics from "@/pages/RRBListenerAnalytics";
 import { Toaster } from 'sonner';
 
 // Version: 3.0.0 - Mobile-first header redesign
@@ -220,6 +224,18 @@ function Router() {
       <Route path="/drone-video" component={DroneVideoCapture} />
       <Route path="/map-arsenal" component={MapArsenal} />
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
+      <Route path="/rrb" component={RRBDashboard} />
+      <Route path="/rrb/broadcast" component={RRBDashboard} />
+      <Route path="/rrb/donations" component={RRBDashboard} />
+      <Route path="/rrb/listeners" component={RRBListenerAnalytics} />
+      <Route path="/rrb/analytics" component={RRBListenerAnalytics} />
+      <Route path="/rrb/listeners" component={RRBDashboard} />
+      <Route path="/rrb/analytics" component={RRBDashboard} />
+      <Route path="/rrb/broadcast-manager" component={RRBBroadcastManager} />
+      <Route path="/rrb/sweet-miracles" component={SweetMiraclesManager} />
+      <Route path="/rrb/donations" component={SweetMiraclesManager} />
+      <Route path="/rrb/listeners" component={RRBListenerAnalytics} />
+      <Route path="/rrb/analytics" component={RRBListenerAnalytics} />
       <Route component={NotFound} />
     </Switch>
     </>
