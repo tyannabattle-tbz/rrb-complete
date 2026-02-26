@@ -16,6 +16,8 @@ import { PredictionsCard } from "@/components/PredictionsCard";
 import { StripeCheckoutButton } from "@/components/StripeCheckoutButton";
 import { VoiceCommandTrainer } from "@/components/VoiceCommandTrainer";
 import { RealtimeARMetrics } from "@/components/RealtimeARMetrics";
+import { VoiceAnalyticsDashboard } from "@/components/VoiceAnalyticsDashboard";
+import { HistoricalMetricsViewer } from "@/components/HistoricalMetricsViewer";
 import { NeuralBackground } from "@/components/NeuralBackground";
 import "@/styles/futuristic.css";
 import { trpc } from "@/lib/trpc";
@@ -52,6 +54,7 @@ import {
   BarChart3,
   Globe,
   Mic,
+  Heart,
 } from "lucide-react";
 import { TaskHistory } from "@/components/TaskHistory";
 import { EcosystemStatusDashboard } from "@/components/EcosystemStatusDashboard";
@@ -72,7 +75,9 @@ export default function QumusHome() {
   const [selectedPersona, setSelectedPersona] = useState('analytical');
   const [taskPrediction, setTaskPrediction] = useState<any>(null);
   const [showPredictions, setShowPredictions] = useState(false);
-  const [showPremiumFeatures, setShowPremiumFeatures] = useState(false);
+  const [showPremiumPlans, setShowPremiumPlans] = useState(false);
+  const [showVoiceAnalytics, setShowVoiceAnalytics] = useState(false);
+  const [showHistoricalMetrics, setShowHistoricalMetrics] = useState(false);
   const [showVoiceTraining, setShowVoiceTraining] = useState(false);
   const [showRealtimeMetrics, setShowRealtimeMetrics] = useState(false);
 
@@ -761,25 +766,29 @@ export default function QumusHome() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Button onClick={() => setShowPremiumFeatures(!showPremiumFeatures)} className={showPremiumFeatures ? "w-full bg-yellow-600 hover:bg-yellow-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <Button onClick={() => setShowPremiumPlans(!showPremiumPlans)} className={showPremiumPlans ? "w-full bg-yellow-600 hover:bg-yellow-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
                 <Zap size={16} className="mr-2" />
-                {showPremiumFeatures ? "Hide" : "Show"} Plans
+                {showPremiumPlans ? "Hide" : "Show"} Plans
               </Button>
-              <Button onClick={() => setShowRealtimeMetrics(!showRealtimeMetrics)} className={showRealtimeMetrics ? "w-full bg-cyan-600 hover:bg-cyan-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
-                <Activity size={16} className="mr-2" />
-                {showRealtimeMetrics ? "Hide" : "Show"} Metrics
-              </Button>
-              <Button onClick={() => setShowVoiceTraining(!showVoiceTraining)} className={showVoiceTraining ? "w-full bg-purple-600 hover:bg-purple-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
+              <Button onClick={() => setShowVoiceAnalytics(!showVoiceAnalytics)} className={showVoiceAnalytics ? "w-full bg-purple-600 hover:bg-purple-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
                 <Mic size={16} className="mr-2" />
-                {showVoiceTraining ? "Hide" : "Show"} Training
+                {showVoiceAnalytics ? "Hide" : "Show"} Voice Stats
+              </Button>
+              <Button onClick={() => setShowHistoricalMetrics(!showHistoricalMetrics)} className={showHistoricalMetrics ? "w-full bg-blue-600 hover:bg-blue-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
+                <TrendingUp size={16} className="mr-2" />
+                {showHistoricalMetrics ? "Hide" : "Show"} History
+              </Button>
+              <Button onClick={() => setShowVoiceTraining(!showVoiceTraining)} className={showVoiceTraining ? "w-full bg-cyan-600 hover:bg-cyan-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
+                <Mic size={16} className="mr-2" />
+                {showVoiceTraining ? "Hide" : "Show"} Train
               </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Premium Plans */}
-        {showPremiumFeatures && (
+        {showPremiumPlans && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <StripeCheckoutButton
               productName="AR Glass Pro"
@@ -804,6 +813,12 @@ export default function QumusHome() {
             />
           </div>
         )}
+
+        {/* Voice Analytics Dashboard */}
+        {showVoiceAnalytics && <VoiceAnalyticsDashboard />}
+
+        {/* Historical Metrics Viewer */}
+        {showHistoricalMetrics && <HistoricalMetricsViewer />}
 
         {/* Voice Command Training */}
         {showVoiceTraining && <VoiceCommandTrainer />}
