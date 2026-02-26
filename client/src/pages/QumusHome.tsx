@@ -13,6 +13,9 @@ import { ARGlassInterface } from "@/components/ARGlassInterface";
 import { voiceCommandService } from "@/services/voiceCommandService";
 import { predictiveAnalyticsService } from "@/services/predictiveAnalyticsService";
 import { PredictionsCard } from "@/components/PredictionsCard";
+import { StripeCheckoutButton } from "@/components/StripeCheckoutButton";
+import { VoiceCommandTrainer } from "@/components/VoiceCommandTrainer";
+import { RealtimeARMetrics } from "@/components/RealtimeARMetrics";
 import { NeuralBackground } from "@/components/NeuralBackground";
 import "@/styles/futuristic.css";
 import { trpc } from "@/lib/trpc";
@@ -48,12 +51,13 @@ import {
   Activity,
   BarChart3,
   Globe,
+  Mic,
 } from "lucide-react";
 import { TaskHistory } from "@/components/TaskHistory";
 import { EcosystemStatusDashboard } from "@/components/EcosystemStatusDashboard";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import { useMetricsWebSocket } from "@/hooks/useMetricsWebSocket";
-import { Mic, Brain as BrainIcon, Glasses } from "lucide-react";
+import { Brain as BrainIcon, Glasses } from "lucide-react";
 
 export default function QumusHome() {
   const [taskGoal, setTaskGoal] = useState("");
@@ -68,6 +72,9 @@ export default function QumusHome() {
   const [selectedPersona, setSelectedPersona] = useState('analytical');
   const [taskPrediction, setTaskPrediction] = useState<any>(null);
   const [showPredictions, setShowPredictions] = useState(false);
+  const [showPremiumFeatures, setShowPremiumFeatures] = useState(false);
+  const [showVoiceTraining, setShowVoiceTraining] = useState(false);
+  const [showRealtimeMetrics, setShowRealtimeMetrics] = useState(false);
 
   // tRPC queries
   const statusQuery = trpc.autonomousTask.getStatus.useQuery();
@@ -741,6 +748,65 @@ export default function QumusHome() {
 
         {/* AR Glass Interface Component */}
         {showARInterface && <ARGlassInterface />}
+
+        {/* Real-time AR Metrics */}
+        {showRealtimeMetrics && <RealtimeARMetrics />}
+
+        {/* Premium Features Section */}
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Zap size={18} className="text-yellow-400" />
+              Premium Features
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <Button onClick={() => setShowPremiumFeatures(!showPremiumFeatures)} className={showPremiumFeatures ? "w-full bg-yellow-600 hover:bg-yellow-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
+                <Zap size={16} className="mr-2" />
+                {showPremiumFeatures ? "Hide" : "Show"} Plans
+              </Button>
+              <Button onClick={() => setShowRealtimeMetrics(!showRealtimeMetrics)} className={showRealtimeMetrics ? "w-full bg-cyan-600 hover:bg-cyan-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
+                <Activity size={16} className="mr-2" />
+                {showRealtimeMetrics ? "Hide" : "Show"} Metrics
+              </Button>
+              <Button onClick={() => setShowVoiceTraining(!showVoiceTraining)} className={showVoiceTraining ? "w-full bg-purple-600 hover:bg-purple-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}>
+                <Mic size={16} className="mr-2" />
+                {showVoiceTraining ? "Hide" : "Show"} Training
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Premium Plans */}
+        {showPremiumFeatures && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <StripeCheckoutButton
+              productName="AR Glass Pro"
+              priceId="price_ar_glass_pro"
+              amount={9900}
+              currency="USD"
+              description="Advanced AR visualization and real-time metrics"
+            />
+            <StripeCheckoutButton
+              productName="Voice Training Suite"
+              priceId="price_voice_training"
+              amount={4900}
+              currency="USD"
+              description="Unlimited custom voice commands"
+            />
+            <StripeCheckoutButton
+              productName="QUMUS Enterprise"
+              priceId="price_qumus_enterprise"
+              amount={29900}
+              currency="USD"
+              description="All features + priority support"
+            />
+          </div>
+        )}
+
+        {/* Voice Command Training */}
+        {showVoiceTraining && <VoiceCommandTrainer />}
 
         {/* Refresh Button */}
         <div className="flex justify-center">
