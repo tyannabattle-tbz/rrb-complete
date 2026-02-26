@@ -21,6 +21,16 @@ import { HistoricalMetricsViewer } from "@/components/HistoricalMetricsViewer";
 import { AdminQuickLinks } from "@/components/AdminQuickLinks";
 import { RRBDonationForm } from "@/components/RRBDonationForm";
 import { NeuralBackground } from "@/components/NeuralBackground";
+import {
+  FuturisticCard,
+  FuturisticButton,
+  FuturisticMetric,
+  FuturisticHeader,
+  FuturisticGrid,
+  FuturisticSection,
+  FuturisticDivider,
+  FuturisticBadge,
+} from "@/components/FuturisticDesignSystem";
 import "@/styles/futuristic.css";
 import { trpc } from "@/lib/trpc";
 import {
