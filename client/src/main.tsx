@@ -90,3 +90,4 @@ if (typeof window !== 'undefined') {
     root.style.lineHeight = `${1.5 * settings.textSpacing}`;
   }
 }
+// Build timestamp: Thu Feb 26 19:33:34 EST 2026
