@@ -185,9 +185,9 @@ export default function QumusHome() {
   const learnings = learningsQuery.data?.learnings || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-6 pt-20 md:pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-6 pt-24 md:pt-28 pb-24 md:pb-8">
       <NeuralBackground />
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 px-2 md:px-0">
         {/* Header */}
         <FuturisticHeader 
           title="QUMUS Control Center"
@@ -252,7 +252,7 @@ export default function QumusHome() {
 
         {/* Main Control Tabs */}
         <Tabs defaultValue="tasks" className="w-full" onValueChange={(value) => setActiveTab(value as any)}>
-          <TabsList className="grid w-full grid-cols-4 md:grid-cols-7 bg-slate-800/50 border border-slate-700 rounded-lg p-1">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-1 bg-slate-800/50 border border-slate-700 rounded-lg p-2">
             <TabsTrigger value="tasks" className="text-xs md:text-sm">
               <Zap size={16} className="mr-1 md:mr-2" />
               <span className="hidden md:inline">Tasks</span>

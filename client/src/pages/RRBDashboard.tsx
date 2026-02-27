@@ -78,8 +78,8 @@ export default function RRBDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-6 pt-20 md:pt-24">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-6 pt-24 md:pt-28 pb-24 md:pb-8">
+      <div className="max-w-7xl mx-auto space-y-6 px-2 md:px-0">
         {/* Header */}
         <FuturisticHeader
           title="Rockin' Rockin' Boogie"
@@ -124,7 +124,7 @@ export default function RRBDashboard() {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 md:grid-cols-6 bg-slate-800/50 border border-slate-700 rounded-lg p-1">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-1 bg-slate-800/50 border border-slate-700 rounded-lg p-2">
             <TabsTrigger value="overview" className="text-xs md:text-sm">
               <BarChart3 size={16} className="mr-1 md:mr-2" />
               <span className="hidden md:inline">Overview</span>
@@ -185,7 +185,11 @@ export default function RRBDashboard() {
                             : `${broadcast.listeners} listeners • ${broadcast.duration}`}
                         </p>
                       </div>
-                      <FuturisticButton variant="secondary" size="sm">
+                      <FuturisticButton 
+                        variant="secondary" 
+                        size="sm"
+                        onClick={() => alert(broadcast.status === 'live' ? 'Opening broadcast...' : 'Reminder set!')}
+                      >
                         {broadcast.status === "live" ? (
                           <>
                             <Play size={14} className="mr-1" />
@@ -206,19 +210,36 @@ export default function RRBDashboard() {
 
             <FuturisticSection title="Quick Actions">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <FuturisticButton variant="primary" glow className="w-full">
+                <FuturisticButton 
+                  variant="primary" 
+                  glow 
+                  className="w-full"
+                  onClick={() => alert('Go Live feature coming soon!')}
+                >
                   <Radio size={16} className="mr-2" />
                   Go Live
                 </FuturisticButton>
-                <FuturisticButton variant="secondary" className="w-full">
+                <FuturisticButton 
+                  variant="secondary" 
+                  className="w-full"
+                  onClick={() => alert('Schedule feature coming soon!')}
+                >
                   <Clock size={16} className="mr-2" />
                   Schedule
                 </FuturisticButton>
-                <FuturisticButton variant="secondary" className="w-full">
+                <FuturisticButton 
+                  variant="secondary" 
+                  className="w-full"
+                  onClick={() => alert('Content management coming soon!')}
+                >
                   <Globe size={16} className="mr-2" />
                   Content
                 </FuturisticButton>
-                <FuturisticButton variant="secondary" className="w-full">
+                <FuturisticButton 
+                  variant="secondary" 
+                  className="w-full"
+                  onClick={() => alert('Share feature coming soon!')}
+                >
                   <Share2 size={16} className="mr-2" />
                   Share
                 </FuturisticButton>
