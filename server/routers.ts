@@ -69,6 +69,9 @@ import { filesRouter } from "./routers/files";
 // Import Qumus Full Stack Router (unified autonomous system)
 import { qumusFullStackRouter } from "./routers/qumusFullStackRouter";
 
+// Import RRB Unified Router
+import { rrbUnifiedRouter } from "./routers/rrbUnifiedRouter";
+
 export const appRouter = router({
   // System router
   system: systemRouter,
@@ -347,6 +350,9 @@ export const appRouter = router({
 
   // Qumus Full Stack Router (Unified Autonomous System)
   qumusFullStack: qumusFullStackRouter,
+
+  // RRB Unified Router (All RRB Systems Orchestrated)
+  rrb: rrbUnifiedRouter,
 });
 
 export type AppRouter = typeof appRouter;
