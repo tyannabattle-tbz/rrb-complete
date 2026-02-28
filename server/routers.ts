@@ -66,6 +66,9 @@ import { adminPoliciesRouter } from "./routers/adminPolicies";
 import { tasksRouter } from "./routers/tasks";
 import { filesRouter } from "./routers/files";
 
+// Import Qumus Full Stack Router (unified autonomous system)
+import { qumusFullStackRouter } from "./routers/qumusFullStackRouter";
+
 export const appRouter = router({
   // System router
   system: systemRouter,
@@ -341,6 +344,9 @@ export const appRouter = router({
 
   // File Management Router
   files: filesRouter,
+
+  // Qumus Full Stack Router (Unified Autonomous System)
+  qumusFullStack: qumusFullStackRouter,
 });
 
 export type AppRouter = typeof appRouter;
