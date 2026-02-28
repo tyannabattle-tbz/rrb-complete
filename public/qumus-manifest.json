@@ -1,0 +1,141 @@
+{
+  "name": "Qumus - Autonomous Orchestration",
+  "short_name": "Qumus",
+  "description": "Autonomous AI orchestration engine controlling RRB, HybridCast, and all systems",
+  "start_url": "http://localhost:3000/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#06b6d4",
+  "icons": [
+    {
+      "src": "/qumus-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/qumus-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/qumus-icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/qumus-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/qumus-screenshot-540.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/qumus-screenshot-1280.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View Qumus orchestration dashboard",
+      "url": "http://localhost:3000/qumus",
+      "icons": [
+        {
+          "src": "/qumus-shortcut-dashboard.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "short_name": "Tasks",
+      "description": "View active tasks and decisions",
+      "url": "http://localhost:3000/qumus/tasks",
+      "icons": [
+        {
+          "src": "/qumus-shortcut-tasks.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Metrics",
+      "short_name": "Metrics",
+      "description": "View system metrics and analytics",
+      "url": "http://localhost:3000/qumus/metrics",
+      "icons": [
+        {
+          "src": "/qumus-shortcut-metrics.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "media",
+          "accept": ["image/*", "video/*", "audio/*"]
+        }
+      ]
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+qumus",
+      "url": "http://localhost:3000/protocol?url=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/file-handler",
+      "accept": {
+        "audio/*": [".mp3", ".wav", ".ogg", ".m4a"],
+        "video/*": [".mp4", ".webm", ".mov"],
+        "image/*": [".jpg", ".png", ".gif", ".webp"]
+      },
+      "icons": [
+        {
+          "src": "/qumus-file-handler.png",
+          "sizes": "256x256",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": "",
+  "accessibility": {
+    "wcag_level": "AA",
+    "screen_reader_support": true,
+    "keyboard_navigation": true,
+    "color_contrast": "WCAG AA"
+  }
+}

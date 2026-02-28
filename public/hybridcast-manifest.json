@@ -1,0 +1,155 @@
+{
+  "name": "HybridCast - Emergency Broadcast",
+  "short_name": "HybridCast",
+  "description": "Offline-first emergency broadcast system with mesh networking and disaster communication",
+  "start_url": "http://localhost:3002/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#ef4444",
+  "icons": [
+    {
+      "src": "/hybridcast-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/hybridcast-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/hybridcast-icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/hybridcast-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/hybridcast-screenshot-540.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/hybridcast-screenshot-1280.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["emergency", "utilities", "communication"],
+  "shortcuts": [
+    {
+      "name": "Emergency Alerts",
+      "short_name": "Alerts",
+      "description": "View active emergency alerts",
+      "url": "http://localhost:3002/emergency/alerts",
+      "icons": [
+        {
+          "src": "/hybridcast-shortcut-alerts.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Broadcast",
+      "short_name": "Broadcast",
+      "description": "Send emergency broadcast",
+      "url": "http://localhost:3002/emergency/broadcast",
+      "icons": [
+        {
+          "src": "/hybridcast-shortcut-broadcast.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Mesh Network",
+      "short_name": "Mesh",
+      "description": "View mesh network status",
+      "url": "http://localhost:3002/emergency/mesh",
+      "icons": [
+        {
+          "src": "/hybridcast-shortcut-mesh.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Offline Mode",
+      "short_name": "Offline",
+      "description": "Offline communication mode",
+      "url": "http://localhost:3002/emergency/offline",
+      "icons": [
+        {
+          "src": "/hybridcast-shortcut-offline.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "media",
+          "accept": ["image/*", "video/*", "audio/*", "application/pdf"]
+        }
+      ]
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+emergency",
+      "url": "http://localhost:3002/protocol?url=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/file-handler",
+      "accept": {
+        "image/*": [".jpg", ".png", ".gif", ".webp"],
+        "video/*": [".mp4", ".webm"],
+        "audio/*": [".mp3", ".wav", ".ogg"],
+        "application/pdf": [".pdf"]
+      },
+      "icons": [
+        {
+          "src": "/hybridcast-file-handler.png",
+          "sizes": "256x256",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": "",
+  "accessibility": {
+    "wcag_level": "AA",
+    "screen_reader_support": true,
+    "keyboard_navigation": true,
+    "color_contrast": "WCAG AA"
+  }
+}
