@@ -118,6 +118,10 @@ import RRBDashboard from "@/pages/RRBDashboard";
 import RRBBroadcastManager from "@/pages/RRBBroadcastManager";
 import SweetMiraclesManager from "@/pages/SweetMiraclesManager";
 import RRBListenerAnalytics from "@/pages/RRBListenerAnalytics";
+import FuturePastBridge from "@/pages/FuturePastBridge";
+import RRBRadioLanding from "@/pages/RRBRadioLanding";
+import HybridCastLanding from "@/pages/HybridCastLanding";
+import { PortAwareRouter } from "@/components/PortAwareRouter";
 import { Toaster } from 'sonner';
 
 // Version: 3.0.0 - Mobile-first header redesign
@@ -126,7 +130,8 @@ function Router() {
     <>
       <Breadcrumbs />
       <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={() => <PortAwareRouter qumusComponent={FuturePastBridge} rrbComponent={RRBRadioLanding} hybridcastComponent={HybridCastLanding} />} />
+      <Route path="/home" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
