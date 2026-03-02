@@ -15,19 +15,6 @@ export function AppHeaderEnhanced() {
   const [showSearch, setShowSearch] = useState(false);
   const [showHybridCastTabs, setShowHybridCastTabs] = useState(false);
 
-  // Detect current system
-  const getCurrentSystem = () => {
-    const hostname = window.location.hostname;
-    if (hostname.includes('rrb') || hostname === 'rockinrockinboogie.com' || hostname === 'www.rockinrockinboogie.com') {
-      return 'rrb';
-    } else if (hostname.includes('hybrid')) {
-      return 'hybridcast';
-    }
-    return 'qumus';
-  };
-
-  const currentSystem = getCurrentSystem();
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -78,12 +65,12 @@ export function AppHeaderEnhanced() {
   };
 
   const navItems = [
-    { id: 'nav-0', label: 'Home', icon: Home, path: '/', system: currentSystem },
+    { id: 'nav-0', label: 'Home', icon: Home, path: '/' },
     { id: 'nav-1', label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
     { id: 'nav-2', label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
     { id: 'nav-3', label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
     { id: 'nav-4', label: 'HybridCast', icon: Radio, path: '/gps-radar', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
-    { id: 'nav-5', label: 'Rockin Boogie', icon: Music, path: 'https://www.rockinrockinboogie.com', external: true },
+    { id: 'nav-5', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
     { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
     { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
     { id: 'nav-8', label: 'RRB Broadcast', icon: Eye, path: '/broadcast-monitoring' },
@@ -109,18 +96,7 @@ export function AppHeaderEnhanced() {
                 key={item.id}
                 variant="ghost"
                 size="sm"
-                onClick={() => {
-                  if (item.action) {
-                    item.action();
-                  } else if (item.external) {
-                    window.location.href = item.path;
-                  } else if (item.id === 'nav-0') {
-                    // Home button - always navigate to /
-                    navigate('/');
-                  } else {
-                    navigate(item.path);
-                  }
-                }}
+                onClick={() => item.action ? item.action() : navigate(item.path)}
                 className={`gap-2 whitespace-nowrap ${item.label === 'HybridCast' && showHybridCastTabs ? 'bg-cyan-500/20 border border-cyan-500' : ''}`}
               >
                 <item.icon className="h-4 w-4" />
