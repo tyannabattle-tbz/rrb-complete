@@ -204,7 +204,7 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button
-              onClick={() => setLocation('/qumus')}
+              onClick={() => window.open('https://qumus.manus.space/', '_blank')}
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               size="lg"
             >
@@ -218,7 +218,7 @@ export default function Home() {
               Go to RRB Radio →
             </Button>
             <Button
-              onClick={() => setLocation('/emergency')}
+              onClick={() => window.open('https://hybridcast.manus.space/', '_blank')}
               className="bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700"
               size="lg"
             >

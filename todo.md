@@ -2044,3 +2044,36 @@
 - [ ] Create operator training documentation
 - [ ] Final integration testing
 - [ ] Deploy to production
+
+
+---
+
+## CRITICAL FIXES - Navigation & WebSocket (PRIORITY)
+
+### WebSocket & HMR Issues
+- [ ] Fix Vite WebSocket configuration for proper HMR connection
+- [ ] Update server HMR settings to match deployed domain
+- [ ] Test WebSocket connection on mobile and desktop
+
+### Navigation Button Fixes
+- [x] Update "Enter Qumus" button → redirect to https://qumus.manus.space/
+- [x] Update "Go to RRB Radio" button → redirect to original RRB legacy site (RRBPort3001)
+- [x] Update "Emergency Broadcast" button → redirect to https://hybridcast.manus.space/
+- [x] Fix OAuth redirect loop on /rrb route
+- [x] Test all buttons redirect correctly
+
+### RRB Legacy Site Restoration (PRIMARY)
+- [ ] Find original RRB spinning record site code
+- [ ] Restore RRB as legacy restoration first (primary focus)
+- [ ] Add family photos (dad and Richard with dad book announcement)
+- [ ] Add UN banner
+- [ ] Add Solbones 4+3+2 dice game
+- [ ] Add healing frequency player (432Hz default)
+- [ ] Add radio channels with streaming
+- [ ] Integrate with ecosystem metrics
+
+### Button Functionality Testing
+- [ ] Test all navigation buttons work correctly
+- [ ] Verify external redirects work
+- [ ] Ensure RRB loads without auth issues
+- [ ] Fix error indicators in bottom nav
