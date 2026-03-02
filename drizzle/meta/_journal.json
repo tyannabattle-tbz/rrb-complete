@@ -162,20 +162,6 @@
       "when": 1770351820216,
       "tag": "0022_sturdy_enchantress",
       "breakpoints": true
-    },
-    {
-      "idx": 23,
-      "version": "5",
-      "when": 1772419992160,
-      "tag": "0023_tranquil_jean_grey",
-      "breakpoints": true
-    },
-    {
-      "idx": 24,
-      "version": "5",
-      "when": 1772420038816,
-      "tag": "0024_vengeful_rawhide_kid",
-      "breakpoints": true
     }
   ]
 }
