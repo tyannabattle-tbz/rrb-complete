@@ -65,9 +65,14 @@ async function startServer() {
   // TEST LOGIN ENDPOINT - Bypasses OAuth for development
   app.get("/api/test-login", async (req, res) => {
     try {
-      const { sdk } = require("./sdk");
-      const db = require("../db");
-      const { getSessionCookieOptions } = require("./cookies");
+      // Import using dynamic import for ES6 modules
+      const sdkModule = await import("./sdk");
+      const dbModule = await import("../db");
+      const cookiesModule = await import("./cookies");
+      
+      const sdk = sdkModule.default || sdkModule;
+      const db = dbModule.default || dbModule;
+      const getSessionCookieOptions = cookiesModule.getSessionCookieOptions;
       
       const testOpenId = "test-user-" + Date.now();
       const testUser = {
