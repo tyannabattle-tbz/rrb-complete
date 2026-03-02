@@ -115,6 +115,7 @@ import DroneLogisticsTracker from '@/components/DroneLogisticsTracker';
 import DroneVideoCapture from '@/components/DroneVideoCapture';
 import MapArsenal from '@/components/MapArsenal';
 import RRBDashboard from "@/pages/RRBDashboard";
+import RRBPort3001 from "@/pages/RRBPort3001";
 import RRBBroadcastManager from "@/pages/RRBBroadcastManager";
 import SweetMiraclesManager from "@/pages/SweetMiraclesManager";
 import RRBListenerAnalytics from "@/pages/RRBListenerAnalytics";
@@ -224,7 +225,7 @@ function Router() {
       <Route path="/drone-video" component={DroneVideoCapture} />
       <Route path="/map-arsenal" component={MapArsenal} />
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
-      <Route path="/rrb" component={RRBDashboard} />
+      <Route path="/rrb" component={RRBPort3001} />
       <Route path="/rrb/broadcast" component={RRBDashboard} />
       <Route path="/rrb/donations" component={RRBDashboard} />
       <Route path="/rrb/listeners" component={RRBListenerAnalytics} />
