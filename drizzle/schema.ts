@@ -1019,6 +1019,10 @@ export const users = mysqlTable("users", {
 	email: varchar({ length: 320 }),
 	loginMethod: varchar({ length: 64 }),
 	role: mysqlEnum(['user','admin']).default('user').notNull(),
+	systemRoles: json().default('[]'), // ['qumus_admin', 'rrb_broadcaster', 'hybridcast_operator']
+	accessibleSystems: json().default('["qumus","rrb","hybridcast"]'), // which systems user can access
+	preferences: json(), // user preferences like theme, language, notifications
+	lastActiveSystem: varchar({ length: 64 }).default('qumus'), // last system accessed
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 	lastSignedIn: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
@@ -1631,3 +1635,91 @@ export const donationAnalytics = mysqlTable("donation_analytics", {
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
+
+
+// ============ ECOSYSTEM INTEGRATION TABLES ============
+
+// Broadcasts table - unified across all systems
+export const broadcasts = mysqlTable("broadcasts", {
+	id: int().autoincrement().primaryKey(),
+	system: mysqlEnum(['qumus', 'rrb', 'hybridcast']).notNull(), // which system owns this broadcast
+	createdBy: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+	title: varchar({ length: 255 }).notNull(),
+	description: text(),
+	content: text(),
+	status: mysqlEnum(['scheduled', 'live', 'completed', 'cancelled']).default('scheduled'),
+	startTime: timestamp({ mode: 'string' }).notNull(),
+	endTime: timestamp({ mode: 'string' }),
+	duration: int(), // in seconds
+	channels: json().default('[]'), // array of channel IDs
+	isEmergency: int().default(0),
+	metadata: json(), // system-specific metadata
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+// Listeners table - tracks listener engagement
+export const listeners = mysqlTable("listeners", {
+	id: int().autoincrement().primaryKey(),
+	broadcastId: int().notNull().references(() => broadcasts.id, { onDelete: "cascade" }),
+	userId: int().references(() => users.id, { onDelete: "set null" }),
+	sessionId: varchar({ length: 255 }).notNull(), // anonymous listener session
+	joinedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	leftAt: timestamp({ mode: 'string' }),
+	duration: int(), // in seconds
+	engagement: int().default(0), // 0-100 engagement score
+	metadata: json(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+
+
+// Autonomous decisions log - Qumus orchestration
+export const autonomousDecisions = mysqlTable("autonomous_decisions", {
+	id: int().autoincrement().primaryKey(),
+	decisionId: varchar({ length: 255 }).unique().notNull(), // unique decision identifier
+	policy: varchar({ length: 255 }).notNull(), // which policy made this decision
+	system: mysqlEnum(['qumus', 'rrb', 'hybridcast']).notNull(),
+	action: varchar({ length: 255 }).notNull(),
+	reasoning: text(),
+	autonomyLevel: int().default(90), // 0-100, how autonomous was this decision
+	humanOverride: int().default(0),
+	overrideReason: text(),
+	result: mysqlEnum(['success', 'failed', 'pending']).default('pending'),
+	metadata: json(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+// Cross-system commands
+export const systemCommands = mysqlTable("system_commands", {
+	id: int().autoincrement().primaryKey(),
+	commandId: varchar({ length: 255 }).unique().notNull(),
+	sourceSystem: mysqlEnum(['qumus', 'rrb', 'hybridcast']).notNull(),
+	targetSystem: mysqlEnum(['qumus', 'rrb', 'hybridcast']).notNull(),
+	command: varchar({ length: 255 }).notNull(),
+	parameters: json(),
+	status: mysqlEnum(['pending', 'executing', 'completed', 'failed']).default('pending'),
+	result: json(),
+	errorMessage: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	completedAt: timestamp({ mode: 'string' }),
+});
+
+// System audit log - comprehensive logging
+export const systemAuditLog = mysqlTable("system_audit_log", {
+	id: int().autoincrement().primaryKey(),
+	system: mysqlEnum(['qumus', 'rrb', 'hybridcast']).notNull(),
+	userId: int().references(() => users.id, { onDelete: "set null" }),
+	action: varchar({ length: 255 }).notNull(),
+	resourceType: varchar({ length: 64 }),
+	resourceId: varchar({ length: 255 }),
+	changes: json(),
+	ipAddress: varchar({ length: 45 }),
+	userAgent: text(),
+	status: mysqlEnum(['success', 'failed']).default('success'),
+	errorMessage: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+

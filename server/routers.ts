@@ -48,6 +48,7 @@ import { qumusAutonomousScalingRouter } from "./routers/qumusAutonomousScalingRo
 import { qumusChatRouter } from "./routers/qumusChatRouter";
 import { socialSharingRouter } from "./routers/socialSharingRouter";
 import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
+import { ecosystemRouter } from "./routers/ecosystem";
 import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
 import { agentNetworkRouter } from "./routers/agentNetworkRouter";
 import { seamlessAgentConnectionRouter } from "./routers/seamlessAgentConnectionRouter";
@@ -84,6 +85,9 @@ export const appRouter = router({
 
   // Ecosystem Integration (State of Studio & Full Integration)
   ecosystemIntegration: ecosystemIntegrationRouter,
+
+  // New Ecosystem Router (Broadcasts, Listeners, Donations, Metrics)
+  ecosystem: ecosystemRouter,
 
   // Autonomous Task Management
   autonomousTask: autonomousTaskRouter,

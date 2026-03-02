@@ -176,6 +176,20 @@
       "when": 1772420038816,
       "tag": "0024_vengeful_rawhide_kid",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1772425159609,
+      "tag": "0025_quick_calypso",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "5",
+      "when": 1772425723738,
+      "tag": "0026_minor_hobgoblin",
+      "breakpoints": true
     }
   ]
 }
