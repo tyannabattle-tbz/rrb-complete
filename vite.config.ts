@@ -98,49 +98,6 @@ function vitePluginManusDebugCollector(): Plugin {
     },
 
     configureServer(server: ViteDevServer) {
-      // GET /api/stream/channel-*: RRB Radio audio streaming
-      server.middlewares.use("/api/stream/channel-", (req, res, next) => {
-        if (req.method !== "GET") {
-          return next();
-        }
-
-        // Extract channel ID from URL
-        const channelMatch = req.url?.match(/\/api\/stream\/channel-([a-zA-Z0-9-]+)/);
-        if (!channelMatch) {
-          return next();
-        }
-
-        const channelId = channelMatch[1];
-        console.log(`[RRB Audio Stream] Streaming channel: ${channelId}`);
-
-        // Set audio streaming headers
-        res.setHeader("Content-Type", "audio/mpeg");
-        res.setHeader("Accept-Ranges", "bytes");
-        res.setHeader("Cache-Control", "no-cache");
-        res.setHeader("Connection", "keep-alive");
-
-        // Generate test audio stream (silence with 432Hz tone for healing frequency)
-        // In production, this would stream actual audio files or live broadcasts
-        const sampleRate = 44100;
-        const frequency = 432; // Healing frequency (default as per knowledge)
-        const duration = 30; // 30 seconds of audio
-        const numSamples = sampleRate * duration;
-        const audioBuffer = Buffer.alloc(numSamples * 2);
-
-        // Generate sine wave at 432Hz
-        for (let i = 0; i < numSamples; i++) {
-          const sample = Math.sin((2 * Math.PI * frequency * i) / sampleRate) * 32767;
-          audioBuffer.writeInt16LE(sample, i * 2);
-        }
-
-        // Send audio data
-        res.writeHead(200, {
-          "Content-Type": "audio/wav",
-          "Content-Length": audioBuffer.length,
-        });
-        res.end(audioBuffer);
-      });
-
       // POST /__manus__/logs: Browser sends logs (written directly to files)
       server.middlewares.use("/__manus__/logs", (req, res, next) => {
         if (req.method !== "POST") {
