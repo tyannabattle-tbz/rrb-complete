@@ -7,18 +7,62 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <meta name="theme-color" content="#0066FF" />
-    <meta name="description" content="Create professional videos with AI-powered generation, watermarking, and analytics by Canryn Production" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/qumus-icon-192.webp" />
-    <link rel="icon" type="image/webp" href="/qumus-icon-192.webp" />
-    <link rel="icon" type="image/webp" sizes="512x512" href="/qumus-icon-512.webp" />
-    <title>Qumus - AI Video Generation Platform</title>
-    <!-- HybridCast integrated via native iframe component at /hybridcast route -->
-    <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    THIS IS THE END OF A COMMENT BLOCK, BLOCK TO BE DELETED -->
+    <meta name="description" id="meta-description" content="Qumus - AI-powered autonomous orchestration engine" />
+    <meta property="og:title" id="og-title" content="Qumus" />
+    <meta property="og:description" id="og-description" content="Qumus - AI-powered autonomous orchestration engine" />
+    <meta property="og:image" id="og-image" content="/qumus-icon-512.webp" />
+    <meta property="og:url" id="og-url" content="" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" id="twitter-title" content="Qumus" />
+    <meta name="twitter:description" id="twitter-description" content="Qumus - AI-powered autonomous orchestration engine" />
+    <meta name="twitter:image" id="twitter-image" content="/qumus-icon-512.webp" />
+    <link rel="manifest" href="/manifest-qumus.json" id="manifest-link" />
+    <link rel="apple-touch-icon" href="/qumus-icon-192.webp" id="apple-icon" />
+    <link rel="icon" type="image/webp" href="/qumus-icon-192.webp" id="favicon" />
+    <link rel="icon" type="image/webp" sizes="512x512" href="/qumus-icon-512.webp" id="favicon-512" />
+    <title id="page-title">Qumus - Autonomous Orchestration Engine</title>
+    <script>
+      // Update metadata based on current domain
+      (function() {
+        const hostname = window.location.hostname;
+        const isRRB = hostname.includes('rrb') || hostname === 'rockinrockinboogie.com' || hostname === 'www.rockinrockinboogie.com';
+        
+        if (isRRB) {
+          // RRB metadata
+          document.getElementById('page-title').textContent = "Rockin' Rockin' Boogie - Radio Station";
+          document.getElementById('meta-description').content = "Rockin' Rockin' Boogie - A 501(c)(3) nonprofit radio station with healing frequencies, autonomous orchestration, and community giving.";
+          document.getElementById('og-title').content = "Rockin' Rockin' Boogie";
+          document.getElementById('og-description').content = "A 501(c)(3) nonprofit radio station with healing frequencies and autonomous orchestration.";
+          document.getElementById('og-image').content = "/rrb-icon-512.webp";
+          document.getElementById('twitter-title').content = "Rockin' Rockin' Boogie";
+          document.getElementById('twitter-description').content = "A 501(c)(3) nonprofit radio station with healing frequencies and autonomous orchestration.";
+          document.getElementById('twitter-image').content = "/rrb-icon-512.webp";
+          document.getElementById('manifest-link').href = "/manifest-rrb.json";
+          document.getElementById('apple-icon').href = "/rrb-icon-192.webp";
+          document.getElementById('favicon').href = "/rrb-icon-192.webp";
+          document.getElementById('favicon-512').href = "/rrb-icon-512.webp";
+          document.querySelector('meta[name="theme-color"]').content = "#d4af37";
+        } else {
+          // Qumus metadata (default)
+          document.getElementById('page-title').textContent = "Qumus - Autonomous Orchestration Engine";
+          document.getElementById('meta-description').content = "Qumus - AI-powered autonomous orchestration engine with 90% autonomous decision-making and real-time monitoring.";
+          document.getElementById('og-title').content = "Qumus";
+          document.getElementById('og-description').content = "AI-powered autonomous orchestration engine with 90% autonomous decision-making.";
+          document.getElementById('og-image').content = "/qumus-icon-512.webp";
+          document.getElementById('twitter-title').content = "Qumus";
+          document.getElementById('twitter-description').content = "AI-powered autonomous orchestration engine with 90% autonomous decision-making.";
+          document.getElementById('twitter-image').content = "/qumus-icon-512.webp";
+          document.getElementById('manifest-link').href = "/manifest-qumus.json";
+          document.getElementById('apple-icon').href = "/qumus-icon-192.webp";
+          document.getElementById('favicon').href = "/qumus-icon-192.webp";
+          document.getElementById('favicon-512').href = "/qumus-icon-512.webp";
+          document.querySelector('meta[name="theme-color"]').content = "#0066FF";
+        }
+        document.getElementById('og-url').content = window.location.href;
+        console.log('[Metadata] Updated for:', isRRB ? 'RRB' : 'Qumus', 'domain:', hostname);
+      })();
+    </script>
+
   </head>
 
   <body>
