@@ -122,6 +122,9 @@ import QumusPort3000 from "@/pages/QumusPort3000";
 import RRBPort3001 from "@/pages/RRBPort3001";
 import HybridCastPort3002 from "@/pages/HybridCastPort3002";
 import RRBMusicStreaming from "@/pages/RRBMusicStreaming";
+import RRBLegacySite from "@/pages/RRBLegacySite";
+import SolbonesGame from "@/pages/SolbonesGame";
+import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
 import { Toaster } from 'sonner';
 
 // Version: 3.0.0 - Mobile-first header redesign
@@ -229,7 +232,9 @@ function Router() {
       <Route path="/map-arsenal" component={MapArsenal} />
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
       <Route path="/qumus" component={QumusPort3000} />
-      <Route path="/rrb" component={RRBMusicStreaming} />
+      <Route path="/rrb" component={RRBLegacySite} />
+      <Route path="/solbones" component={SolbonesGame} />
+      <Route path="/donate" component={SweetMiraclesDonation} />
       <Route path="/emergency" component={HybridCastPort3002} />
       <Route path="/rrb/broadcast" component={RRBDashboard} />
       <Route path="/rrb/donations" component={RRBDashboard} />
