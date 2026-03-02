@@ -13,38 +13,13 @@ interface QuickLink {
 }
 
 export function AdminQuickLinks() {
-  // Determine the current system based on hostname
-  const getCurrentSystem = () => {
-    const hostname = window.location.hostname;
-    if (hostname.includes('rrb') || hostname === 'rockinrockinboogie.com' || hostname === 'www.rockinrockinboogie.com') {
-      return 'rrb';
-    } else if (hostname.includes('hybrid')) {
-      return 'hybridcast';
-    }
-    return 'qumus';
-  };
-
-  const currentSystem = getCurrentSystem();
-
-  // Get the base URL for each system
-  const getSystemUrl = (system: string) => {
-    const protocol = window.location.protocol;
-    if (system === 'rrb') {
-      return `${protocol}//rockinrockinboogie.com`;
-    } else if (system === 'hybridcast') {
-      return `${protocol}//hybridcast.rockinrockinboogie.com`;
-    } else {
-      return `${protocol}//qumus.rockinrockinboogie.com`;
-    }
-  };
-
   const quickLinks: QuickLink[] = [
     {
       id: 'hybridcast',
       title: 'HybridCast',
       description: 'Emergency broadcast and mesh networking platform',
       icon: <Radio size={24} className="text-cyan-400" />,
-      url: currentSystem === 'hybridcast' ? '/' : getSystemUrl('hybridcast'),
+      url: '/hybridcast',
       color: 'from-cyan-900/50 to-blue-900/50',
       badge: 'Emergency Ready',
     },
@@ -53,7 +28,7 @@ export function AdminQuickLinks() {
       title: 'Rockin\' Rockin\' Boogie',
       description: '501(c)(3) nonprofit radio station and broadcast hub',
       icon: <Heart size={24} className="text-red-400" />,
-      url: currentSystem === 'rrb' ? '/' : getSystemUrl('rrb'),
+      url: '/rrb',
       color: 'from-red-900/50 to-pink-900/50',
       badge: 'Nonprofit',
     },
@@ -115,13 +90,7 @@ export function AdminQuickLinks() {
             </CardHeader>
             <CardContent>
               <Button
-                onClick={() => {
-                  if (link.url.startsWith('http')) {
-                    window.location.href = link.url;
-                  } else {
-                    window.location.href = link.url;
-                  }
-                }}
+                onClick={() => window.location.href = link.url}
                 className="w-full bg-slate-700 hover:bg-slate-600 text-white border border-slate-600"
               >
                 Open

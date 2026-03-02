@@ -151,7 +151,7 @@ export default function QumusPort3000() {
                     <p className="text-sm text-purple-300">Active Listeners</p>
                     <p className="text-2xl font-bold text-pink-400">{systemStatus.rrb.listeners || 0}</p>
                   </div>
-                  <a href="https://rockinrockinboogie.com" target="_blank" rel="noopener noreferrer">
+                  <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer">
                     <Button className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
                       Go to RRB
                     </Button>

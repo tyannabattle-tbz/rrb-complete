@@ -25,39 +25,15 @@ export const PortAwareRouter: React.FC<PortAwareRouterProps> = ({
     
     console.log(`[PortAwareRouter] Hostname: ${hostname}, Port: ${port}`);
     
-    // Domain-based routing for rockinrockinboogie.com ecosystem
-    // rockinrockinboogie.com (main) or 3001 → RRB Radio Station
-    // qumus.rockinrockinboogie.com or 3000 → Qumus Orchestration
-    // hybridcast.rockinrockinboogie.com or 3002 → HybridCast Emergency
-    
-    if (
-      hostname.startsWith('3001-') || 
-      hostname.includes('rrb') || 
-      hostname === 'rockinrockinboogie.com' || 
-      hostname === 'www.rockinrockinboogie.com' ||
-      port === 3001
-    ) {
-      console.log('[PortAwareRouter] Routing to RRB Radio Station');
+    // Check hostname for port indicators (for proxied URLs like 3001-xxxxx.us2.manus.computer)
+    if (hostname.startsWith('3001-') || hostname.includes('rrb') || port === 3001) {
+      console.log('[PortAwareRouter] Routing to RRB Radio');
       setSystem('rrb');
-    } else if (
-      hostname.startsWith('3002-') || 
-      hostname.includes('hybrid') || 
-      hostname === 'hybridcast.rockinrockinboogie.com' ||
-      port === 3002
-    ) {
-      console.log('[PortAwareRouter] Routing to HybridCast Emergency');
+    } else if (hostname.startsWith('3002-') || hostname.includes('hybrid') || port === 3002) {
+      console.log('[PortAwareRouter] Routing to HybridCast');
       setSystem('hybridcast');
-    } else if (
-      hostname.startsWith('3000-') || 
-      hostname.includes('qumus') || 
-      hostname === 'qumus.rockinrockinboogie.com' ||
-      port === 3000
-    ) {
-      console.log('[PortAwareRouter] Routing to Qumus Orchestration');
-      setSystem('qumus');
     } else {
-      // Default to Qumus for unknown domains
-      console.log('[PortAwareRouter] Unknown domain, defaulting to Qumus');
+      console.log('[PortAwareRouter] Routing to Qumus');
       setSystem('qumus');
     }
     

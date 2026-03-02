@@ -8,7 +8,6 @@ import { Play, Pause, Volume2, VolumeX, Radio, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card } from '@/components/ui/card';
-import { toast } from 'sonner';
 
 interface Channel {
   id: number;
@@ -255,12 +254,7 @@ export const RRBRadioPlayer: React.FC<RadioPlayerProps> = ({
       <audio
         ref={audioRef}
         crossOrigin="anonymous"
-        src={`/api/stream/channel-${selectedChannel.id}`}
-        onError={(e) => {
-          console.error('Audio playback error:', e);
-          setIsLoading(false);
-          toast?.error?.('Unable to load audio stream');
-        }}
+        src={`http://localhost:8080/stream/channel-${selectedChannel.id}`}
       />
     </div>
   );
