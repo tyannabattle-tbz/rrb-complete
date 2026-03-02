@@ -1,0 +1,220 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "activity_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_collaboration"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_execution_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_installations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_memory"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_performance_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_registry"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_sessions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_snapshots"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "agent_tools"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_baselines"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_insights"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_patterns"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_reports"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "anomaly_rules"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "api_keys"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "api_usage"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "audit_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "auto_save_settings"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "detected_anomalies"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "email_configs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "escalation_policies"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "feature_flags"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "filter_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "filter_presets"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "finetuning_datasets"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "finetuning_evaluations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "finetuning_jobs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "finetuning_models"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "integration_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "memory_store"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "messages"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "model_comparisons"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "notification_events"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "notification_preferences"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "notifications"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "performance_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "performance_trends"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "plugins"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "predictive_alerts"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "quota_alerts"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "quotas"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "rate_limit_events"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "reasoning_chains"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "report_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "scheduled_reports"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "session_annotations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "session_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "session_shares"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "session_versions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "subscription_tiers"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "suppression_rules"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "system_alerts"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "system_metrics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "task_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "team_members"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "teams"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "tool_executions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "tool_usage_stats"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "training_data"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "usage_quotas"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "user_subscriptions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "users"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_endpoints"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_installations"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_marketplace_reviews"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c": "webhook_templates"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c\n__drizzle_migrations\nactivity_logs\nagent_collaboration\nagent_execution_logs\nagent_installations\nagent_memory\nagent_performance_metrics\nagent_registry\nagent_sessions\nagent_snapshots\nagent_tools\nanomaly_baselines\nanomaly_history\nanomaly_insights\nanomaly_patterns\nanomaly_reports\nanomaly_rules\napi_keys\napi_usage\naudit_logs\nauto_save_settings\ndetected_anomalies\nemail_configs\nescalation_policies\nfeature_flags\nfilter_history\nfilter_presets\nfinetuning_datasets\nfinetuning_evaluations\nfinetuning_jobs\nfinetuning_models\nintegration_logs\nmemory_store\nmessages\nmodel_comparisons\nnotification_events\nnotification_preferences\nnotifications\nperformance_metrics\nperformance_trends\nplugins\npredictive_alerts\nquota_alerts\nquotas\nrate_limit_events\nreasoning_chains\nreport_history\nscheduled_reports\nsession_annotations\nsession_metrics\nsession_shares\nsession_versions\nsubscription_tiers\nsuppression_rules\nsystem_alerts\nsystem_metrics\ntask_history\nteam_members\nteams\ntool_executions\ntool_usage_stats\ntraining_data\nusage_quotas\nuser_subscriptions\nusers\nwebhook_endpoints\nwebhook_installations\nwebhook_logs\nwebhook_marketplace_reviews\nwebhook_templates\n",
+  "stderr": "",
+  "execution_time_ms": 171
+}
