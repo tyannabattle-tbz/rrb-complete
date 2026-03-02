@@ -3,8 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -42,92 +40,77 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-info: var(--info);
-  --color-error: var(--error);
 }
 
 :root {
-  /* Futuristic Neon Palette */
-  --primary: oklch(0.65 0.25 280);      /* Neon Cyan */
-  --primary-foreground: oklch(0.95 0.01 0);
-  --sidebar-primary: oklch(0.65 0.25 280);
-  --sidebar-primary-foreground: oklch(0.95 0.01 0);
-  /* Gradient Chart Colors */
-  --chart-1: oklch(0.7 0.25 280);       /* Cyan */
-  --chart-2: oklch(0.65 0.25 320);      /* Magenta */
-  --chart-3: oklch(0.6 0.25 40);        /* Orange */
-  --chart-4: oklch(0.55 0.25 140);      /* Lime */
-  --chart-5: oklch(0.5 0.25 260);       /* Purple */
-  --radius: 0.75rem;
-  --background: oklch(0.08 0.01 260);   /* Deep Dark Blue */
-  --foreground: oklch(0.95 0.01 0);     /* Near White */
-  --card: oklch(0.12 0.02 260);         /* Dark Blue-Gray */
-  --card-foreground: oklch(0.95 0.01 0);
-  --popover: oklch(0.15 0.02 260);
-  --popover-foreground: oklch(0.95 0.01 0);
-  --secondary: oklch(0.65 0.25 320);    /* Neon Magenta */
-  --secondary-foreground: oklch(0.95 0.01 0);
-  --muted: oklch(0.3 0.05 260);
-  --muted-foreground: oklch(0.7 0.05 260);
-  --accent: oklch(0.7 0.25 280);        /* Bright Cyan */
-  --accent-foreground: oklch(0.08 0.01 260);
-  --destructive: oklch(0.65 0.25 0);    /* Neon Red */
-  --destructive-foreground: oklch(0.95 0.01 0);
-  --border: oklch(0.2 0.05 260);
-  --input: oklch(0.15 0.03 260);
-  --ring: oklch(0.65 0.25 280);
-  --sidebar: oklch(0.1 0.01 260);
-  --sidebar-foreground: oklch(0.95 0.01 0);
-  --sidebar-accent: oklch(0.65 0.25 320);
-  --sidebar-accent-foreground: oklch(0.95 0.01 0);
-  --sidebar-border: oklch(0.2 0.05 260);
-  --sidebar-ring: oklch(0.65 0.25 280);
-  --success: oklch(0.65 0.25 140);      /* Neon Green */
-  --warning: oklch(0.65 0.25 40);       /* Neon Orange */
-  --info: oklch(0.65 0.25 280);         /* Neon Cyan */
-  --error: oklch(0.65 0.25 0);          /* Neon Red */
+  --primary: var(--color-blue-700);
+  --primary-foreground: var(--color-blue-50);
+  --sidebar-primary: var(--color-blue-600);
+  --sidebar-primary-foreground: var(--color-blue-50);
+  --chart-1: var(--color-blue-300);
+  --chart-2: var(--color-blue-500);
+  --chart-3: var(--color-blue-600);
+  --chart-4: var(--color-blue-700);
+  --chart-5: var(--color-blue-800);
+  --radius: 0.65rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.235 0.015 65);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.235 0.015 65);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.235 0.015 65);
+  --secondary: oklch(0.98 0.001 286.375);
+  --secondary-foreground: oklch(0.4 0.015 65);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.967 0.001 286.375);
+  --accent-foreground: oklch(0.141 0.005 285.823);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.623 0.214 259.815);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.235 0.015 65);
+  --sidebar-accent: oklch(0.967 0.001 286.375);
+  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-ring: oklch(0.623 0.214 259.815);
 }
 
 .dark {
-  /* Futuristic Neon Palette (Dark Mode) */
-  --primary: oklch(0.7 0.28 280);       /* Bright Neon Cyan */
-  --primary-foreground: oklch(0.08 0.01 260);
-  --sidebar-primary: oklch(0.7 0.28 280);
-  --sidebar-primary-foreground: oklch(0.08 0.01 260);
-  --background: oklch(0.05 0.005 260); /* Ultra Dark */
-  --foreground: oklch(0.98 0.01 0);    /* Near White */
-  --card: oklch(0.1 0.02 260);         /* Very Dark Blue */
-  --card-foreground: oklch(0.98 0.01 0);
-  --popover: oklch(0.12 0.02 260);
-  --popover-foreground: oklch(0.98 0.01 0);
-  --secondary: oklch(0.7 0.28 320);    /* Bright Neon Magenta */
-  --secondary-foreground: oklch(0.98 0.01 0);
-  --muted: oklch(0.25 0.05 260);
-  --muted-foreground: oklch(0.65 0.08 260);
-  --accent: oklch(0.75 0.3 280);       /* Ultra Bright Cyan */
-  --accent-foreground: oklch(0.05 0.005 260);
-  --destructive: oklch(0.7 0.28 0);    /* Bright Neon Red */
-  --destructive-foreground: oklch(0.98 0.01 0);
-  --border: oklch(0.18 0.06 260);
-  --input: oklch(0.12 0.04 260);
-  --ring: oklch(0.75 0.3 280);
-  --chart-1: oklch(0.7 0.28 280);
-  --chart-2: oklch(0.7 0.28 320);
-  --chart-3: oklch(0.65 0.28 40);
-  --chart-4: oklch(0.65 0.28 140);
-  --chart-5: oklch(0.6 0.28 260);
-  --sidebar: oklch(0.08 0.01 260);
-  --sidebar-foreground: oklch(0.98 0.01 0);
-  --sidebar-accent: oklch(0.7 0.28 320);
-  --sidebar-accent-foreground: oklch(0.98 0.01 0);
-  --sidebar-border: oklch(0.18 0.06 260);
-  --sidebar-ring: oklch(0.75 0.3 280);
-  --success: oklch(0.7 0.28 140);      /* Bright Neon Green */
-  --warning: oklch(0.7 0.28 40);       /* Bright Neon Orange */
-  --info: oklch(0.7 0.28 280);         /* Bright Neon Cyan */
-  --error: oklch(0.7 0.28 0);          /* Bright Neon Red */
+  --primary: var(--color-blue-700);
+  --primary-foreground: var(--color-blue-50);
+  --sidebar-primary: var(--color-blue-500);
+  --sidebar-primary-foreground: var(--color-blue-50);
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.85 0.005 65);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.85 0.005 65);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.85 0.005 65);
+  --secondary: oklch(0.24 0.006 286.033);
+  --secondary-foreground: oklch(0.7 0.005 65);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground:  oklch(0.92 0.005 65);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.488 0.243 264.376);
+  --chart-1: var(--color-blue-300);
+  --chart-2: var(--color-blue-500);
+  --chart-3: var(--color-blue-600);
+  --chart-4: var(--color-blue-700);
+  --chart-5: var(--color-blue-800);
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.85 0.005 65);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground:  oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.488 0.243 264.376);
 }
 
 @layer base {
@@ -136,10 +119,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Geist', system-ui, -apple-system, sans-serif;
-  }
-  code {
-    font-family: 'JetBrains Mono', monospace;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -155,11 +134,24 @@
 }
 
 @layer components {
+  /**
+   * Custom container utility that centers content and adds responsive padding.
+   *
+   * This overrides Tailwind's default container behavior to:
+   * - Auto-center content (mx-auto)
+   * - Add responsive horizontal padding
+   * - Set max-width for large screens
+   *
+   * Usage: <div className="container">...</div>
+   *
+   * For custom widths, use max-w-* utilities directly:
+   * <div className="max-w-6xl mx-auto px-4">...</div>
+   */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem;
+    padding-left: 1rem; /* 16px - mobile padding */
     padding-right: 1rem;
   }
 
@@ -168,457 +160,18 @@
     min-width: 0;
   }
 
-  /* Futuristic Button Styles with Glassmorphism */
-  .btn-primary {
-    @apply px-4 py-2.5 rounded-lg bg-primary/80 backdrop-blur-md text-primary-foreground font-medium transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,255,255,0.5)] hover:scale-105 active:scale-95 border border-primary/50;
-  }
-
-  .btn-secondary {
-    @apply px-4 py-2.5 rounded-lg bg-secondary/80 backdrop-blur-md text-secondary-foreground font-medium transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,0,255,0.5)] active:scale-95 border border-secondary/50;
-  }
-
-  .btn-ghost {
-    @apply px-4 py-2.5 rounded-lg text-foreground hover:bg-primary/10 transition-all duration-300 backdrop-blur-sm;
-  }
-
-  /* Glassmorphism Card Styles */
-  .card-elegant {
-    @apply bg-card/40 backdrop-blur-xl text-card-foreground rounded-xl border border-primary/20 shadow-[0_8px_32px_0_rgba(0,255,255,0.1)] hover:shadow-[0_8px_32px_0_rgba(0,255,255,0.2)] transition-all duration-300 p-6;
-  }
-
-  .card-minimal {
-    @apply bg-card/30 backdrop-blur-lg text-card-foreground rounded-lg border border-primary/10 p-4 hover:border-primary/30 transition-all duration-300;
-  }
-
-  .card-neon {
-    @apply bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-xl text-card-foreground rounded-xl border border-primary/30 shadow-[0_0_20px_rgba(0,255,255,0.2)] p-6 hover:shadow-[0_0_30px_rgba(0,255,255,0.4)] transition-all duration-300;
-  }
-
-  /* Futuristic Input Styles */
-  .input-elegant {
-    @apply px-4 py-2.5 rounded-lg bg-input/50 backdrop-blur-md border border-primary/30 text-foreground placeholder-muted-foreground transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent focus:border-primary/50 focus:shadow-[0_0_15px_rgba(0,255,255,0.3)];
-  }
-
-  /* Badge Styles */
-  .badge-primary {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary font-medium text-sm;
-  }
-
-  .badge-success {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success font-medium text-sm;
-  }
-
-  .badge-warning {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning/10 text-warning font-medium text-sm;
-  }
-
-  .badge-error {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 text-error font-medium text-sm;
-  }
-
-  /* Status Indicator */
-  .status-dot {
-    @apply inline-block w-2 h-2 rounded-full;
-  }
-
-  .status-dot.idle {
-    @apply bg-muted;
-  }
-
-  .status-dot.reasoning {
-    @apply bg-warning animate-pulse;
-  }
-
-  .status-dot.executing {
-    @apply bg-info animate-pulse;
-  }
-
-  .status-dot.completed {
-    @apply bg-success;
-  }
-
-  .status-dot.error {
-    @apply bg-error animate-pulse;
-  }
-
-  /* Scrollbar Styling */
-  .scrollbar-elegant::-webkit-scrollbar {
-    @apply w-2 h-2;
-  }
-
-  .scrollbar-elegant::-webkit-scrollbar-track {
-    @apply bg-background;
-  }
-
-  .scrollbar-elegant::-webkit-scrollbar-thumb {
-    @apply bg-muted rounded-full hover:bg-muted/80;
-  }
-
-  /* Glassmorphism Effect */
-  .glass {
-    @apply bg-background/30 backdrop-blur-xl border border-primary/20 shadow-[0_8px_32px_0_rgba(0,255,255,0.1)];
-  }
-
-  .glass-neon {
-    @apply bg-background/20 backdrop-blur-2xl border border-primary/40 shadow-[0_0_30px_rgba(0,255,255,0.3)];
-  }
-
-  /* Gradient Text - Neon */
-  .gradient-text {
-    @apply bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent;
-    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  /* Holographic Effect */
-  .holographic {
-    @apply relative overflow-hidden;
-  }
-
-  .holographic::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0;
-    animation: shimmer 3s infinite;
-  }
-
-  /* Neon Glow */
-  .neon-glow {
-    @apply shadow-[0_0_10px_rgba(0,255,255,0.5),0_0_20px_rgba(0,255,255,0.3)];
-  }
-
-  .neon-glow-magenta {
-    @apply shadow-[0_0_10px_rgba(255,0,255,0.5),0_0_20px_rgba(255,0,255,0.3)];
-  }
-
   @media (min-width: 640px) {
     .container {
-      padding-left: 1.5rem;
+      padding-left: 1.5rem; /* 24px - tablet padding */
       padding-right: 1.5rem;
     }
   }
 
   @media (min-width: 1024px) {
     .container {
-      padding-left: 2rem;
+      padding-left: 2rem; /* 32px - desktop padding */
       padding-right: 2rem;
-      max-width: 1280px;
+      max-width: 1280px; /* Standard content width */
     }
-  }
-}
-
-/* Animations */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes glow-pulse {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-  }
-}
-
-@keyframes scan-line {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(100%);
-  }
-}
-
-@layer utilities {
-  .animate-slide-in-up {
-    animation: slideInUp 0.3s ease-out;
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.3s ease-out;
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  .animate-shimmer {
-    animation: shimmer 3s infinite;
-  }
-
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .animate-glow-pulse {
-    animation: glow-pulse 2s ease-in-out infinite;
-  }
-
-  .animate-scan-line {
-    animation: scan-line 3s linear infinite;
-  }
-}
-
-
-/* Mobile Touch Optimization - WCAG 2.1 AA Compliance */
-@media (max-width: 768px) {
-  /* Hide desktop header completely on mobile */
-  .hidden.md\:block {
-    display: none !important;
-  }
-
-  /* Ensure mobile header is visible */
-  .md\:hidden {
-    display: block !important;
-  }
-
-  /* Fix horizontal scrolling */
-  * {
-    max-width: 100%;
-  }
-
-  html, body {
-    width: 100%;
-    overflow-x: hidden;
-  }
-  /* Ensure minimum 44x44px touch targets */
-  button,
-  a,
-  input[type="checkbox"],
-  input[type="radio"],
-  [role="button"] {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  /* Optimize form inputs for mobile */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="search"],
-  input[type="number"],
-  textarea,
-  select {
-    min-height: 44px;
-    font-size: 16px;
-    padding: 12px 16px;
-  }
-
-  /* Ensure adequate spacing between interactive elements */
-  button + button,
-  a + a,
-  button + a,
-  a + button {
-    margin-left: 8px;
-  }
-
-  /* Optimize navigation items */
-  nav button,
-  nav a {
-    padding: 12px 16px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* Ensure list items are tappable */
-  li button,
-  li a {
-    padding: 12px 16px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-  }
-
-  /* Optimize icon buttons */
-  button svg,
-  a svg {
-    min-width: 24px;
-    min-height: 24px;
-  }
-
-  /* Remove horizontal scrolling */
-  body {
-    overflow-x: hidden;
-  }
-
-  /* Ensure full-width content on mobile */
-  .container {
-    width: 100%;
-    padding: 0 16px;
-    max-width: 100%;
-  }
-
-  /* Optimize spacing for mobile */
-  .gap-1 {
-    gap: 4px;
-  }
-
-  .gap-2 {
-    gap: 8px;
-  }
-
-  .gap-3 {
-    gap: 12px;
-  }
-
-  .gap-4 {
-    gap: 16px;
-  }
-
-  /* Ensure text is readable without zoom */
-  body {
-    font-size: 16px;
-  }
-
-  /* Optimize focus states for touch */
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  select:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 2px;
-  }
-
-  /* Optimize card interactions */
-  .card-interactive {
-    min-height: 60px;
-    padding: 16px;
-  }
-
-  /* Prevent text selection on long press */
-  button,
-  a,
-  [role="button"] {
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  /* Optimize mobile menu */
-  nav {
-    max-height: calc(100vh - 4rem);
-    overflow-y: auto;
-  }
-
-  /* Ensure adequate padding for mobile content */
-  main {
-    padding-bottom: 80px;
-  }
-
-  /* Mobile Bottom Navigation Improvements */
-  nav button {
-    min-height: 80px;
-    padding: 8px 4px;
-    flex-direction: column;
-  }
-
-  nav button svg {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 2px;
-  }
-
-  nav button span {
-    font-size: 11px;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-  }
-
-  /* Mobile Header Improvements */
-  header[class*="MobileHeader"] {
-    padding: 0;
-  }
-
-  header[class*="MobileHeader"] > div {
-    gap: 8px;
-  }
-
-  /* Prevent text wrapping in header */
-  header input {
-    max-width: 100%;
-  }
-}
-
-/* Additional Mobile Optimizations */
-@media (max-width: 768px) {
-  /* Ensure proper spacing around bottom nav */
-  body {
-    padding-bottom: 0;
-  }
-
-  /* Optimize dialog/modal for mobile */
-  [role="dialog"] {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    border-radius: 16px 16px 0 0;
-  }
-
-  /* Improve mobile table scrolling */
-  table {
-    font-size: 14px;
-  }
-
-  /* Optimize mobile list items */
-  li {
-    padding: 12px 0;
-  }
-
-  /* Ensure proper spacing in forms */
-  form > * + * {
-    margin-top: 16px;
-  }
-
-  /* Optimize dropdown menus */
-  [role="listbox"],
-  [role="menu"] {
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
   }
 }

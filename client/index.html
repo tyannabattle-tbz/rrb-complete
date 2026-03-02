@@ -6,109 +6,17 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <meta name="theme-color" content="#0066FF" />
-    <meta name="description" id="meta-description" content="Qumus - AI-powered autonomous orchestration engine" />
-    <meta property="og:title" id="og-title" content="Qumus" />
-    <meta property="og:description" id="og-description" content="Qumus - AI-powered autonomous orchestration engine" />
-    <meta property="og:image" id="og-image" content="/qumus-icon-512.webp" />
-    <meta property="og:url" id="og-url" content="" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" id="twitter-title" content="Qumus" />
-    <meta name="twitter:description" id="twitter-description" content="Qumus - AI-powered autonomous orchestration engine" />
-    <meta name="twitter:image" id="twitter-image" content="/qumus-icon-512.webp" />
-    <link rel="manifest" href="/manifest-qumus.json" id="manifest-link" />
-    <link rel="apple-touch-icon" href="/qumus-icon-192.webp" id="apple-icon" />
-    <link rel="icon" type="image/webp" href="/qumus-icon-192.webp" id="favicon" />
-    <link rel="icon" type="image/webp" sizes="512x512" href="/qumus-icon-512.webp" id="favicon-512" />
-    <title id="page-title">Qumus - Autonomous Orchestration Engine</title>
-    <script>
-      // Update metadata based on current domain - CRITICAL: Run before any caching
-      (function() {
-        const hostname = window.location.hostname;
-        const fullUrl = window.location.href;
-        
-        // Strict domain detection - check exact matches first
-        const isRRB = 
-          hostname === 'rockinrockinboogie.com' || 
-          hostname === 'www.rockinrockinboogie.com' ||
-          hostname.startsWith('rrb-') ||
-          hostname.includes('.rockinrockinboogie.com') && !hostname.includes('qumus');
-        
-        const metadata = isRRB ? {
-          title: "Rockin' Rockin' Boogie - Radio Station",
-          description: "Rockin' Rockin' Boogie - A 501(c)(3) nonprofit radio station with healing frequencies, autonomous orchestration, and community giving.",
-          ogTitle: "Rockin' Rockin' Boogie",
-          ogDescription: "A 501(c)(3) nonprofit radio station with healing frequencies and autonomous orchestration.",
-          ogImage: "/rrb-icon-512.webp",
-          twitterTitle: "Rockin' Rockin' Boogie",
-          twitterDescription: "A 501(c)(3) nonprofit radio station with healing frequencies and autonomous orchestration.",
-          twitterImage: "/rrb-icon-512.webp",
-          manifest: "/manifest-rrb.json",
-          icon192: "/rrb-icon-192.webp",
-          icon512: "/rrb-icon-512.webp",
-          themeColor: "#d4af37",
-          system: 'RRB'
-        } : {
-          title: "Qumus - Autonomous Orchestration Engine",
-          description: "Qumus - AI-powered autonomous orchestration engine with 90% autonomous decision-making and real-time monitoring.",
-          ogTitle: "Qumus",
-          ogDescription: "AI-powered autonomous orchestration engine with 90% autonomous decision-making.",
-          ogImage: "/qumus-icon-512.webp",
-          twitterTitle: "Qumus",
-          twitterDescription: "AI-powered autonomous orchestration engine with 90% autonomous decision-making.",
-          twitterImage: "/qumus-icon-512.webp",
-          manifest: "/manifest-qumus.json",
-          icon192: "/qumus-icon-192.webp",
-          icon512: "/qumus-icon-512.webp",
-          themeColor: "#0066FF",
-          system: 'Qumus'
-        };
-        
-        // Update all metadata
-        document.getElementById('page-title').textContent = metadata.title;
-        document.getElementById('meta-description').content = metadata.description;
-        document.getElementById('og-title').content = metadata.ogTitle;
-        document.getElementById('og-description').content = metadata.ogDescription;
-        document.getElementById('og-image').content = metadata.ogImage;
-        document.getElementById('og-url').content = fullUrl;
-        document.getElementById('twitter-title').content = metadata.twitterTitle;
-        document.getElementById('twitter-description').content = metadata.twitterDescription;
-        document.getElementById('twitter-image').content = metadata.twitterImage;
-        document.getElementById('manifest-link').href = metadata.manifest;
-        document.getElementById('apple-icon').href = metadata.icon192;
-        document.getElementById('favicon').href = metadata.icon192;
-        document.getElementById('favicon-512').href = metadata.icon512;
-        document.querySelector('meta[name="theme-color"]').content = metadata.themeColor;
-        
-        // Add cache-busting parameter to manifest
-        const manifestLink = document.getElementById('manifest-link');
-        manifestLink.href = metadata.manifest + '?v=' + new Date().getTime();
-        
-        console.log('[Metadata] System:', metadata.system, '| Domain:', hostname, '| URL:', fullUrl);
-      })();
-    </script>
-
+    <title>Manus Agent Web Interface</title>    
+    <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    THIS IS THE END OF A COMMENT BLOCK, BLOCK TO BE DELETED -->
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          // Cache busting: add timestamp to force SW update on each publish
-          const swUrl = '/sw.js?v=' + new Date().getTime();
-          navigator.serviceWorker.register(swUrl, { scope: '/' }).then(reg => {
-            // Force update check immediately
-            reg.update();
-            const system = window.location.hostname.includes('rrb') || window.location.hostname === 'rockinrockinboogie.com' ? 'RRB' : 'Qumus';
-            console.log('[' + system + '] SW registered with cache busting:', swUrl);
-          }).catch(err => {
-            console.log('[SW] Registration failed:', err);
-          });
-        });
-      }
-    </script>
     <script
       defer
       src="%VITE_ANALYTICS_ENDPOINT%/umami"
