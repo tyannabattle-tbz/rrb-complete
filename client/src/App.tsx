@@ -234,8 +234,8 @@ function Router() {
       <Route path="/map-arsenal" component={MapArsenal} />
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
       <Route path="/qumus" component={QumusPort3000} />
-      <Route path="/rrb" component={RRBLegacySite} />
-      <Route path="/solbones" component={SolbonesGame} />
+      <Route path="/rrb" component={RRBPort3001} />
+      <Route path="/solbones" component={Solbones} />
       <Route path="/donate" component={SweetMiraclesDonation} />
       <Route path="/ecosystem-dashboard" component={EcosystemMasterDashboard} />
       <Route path="/admin" component={AdminControlPanel} />
