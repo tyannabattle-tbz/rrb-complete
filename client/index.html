@@ -22,44 +22,69 @@
     <link rel="icon" type="image/webp" sizes="512x512" href="/qumus-icon-512.webp" id="favicon-512" />
     <title id="page-title">Qumus - Autonomous Orchestration Engine</title>
     <script>
-      // Update metadata based on current domain
+      // Update metadata based on current domain - CRITICAL: Run before any caching
       (function() {
         const hostname = window.location.hostname;
-        const isRRB = hostname.includes('rrb') || hostname === 'rockinrockinboogie.com' || hostname === 'www.rockinrockinboogie.com';
+        const fullUrl = window.location.href;
         
-        if (isRRB) {
-          // RRB metadata
-          document.getElementById('page-title').textContent = "Rockin' Rockin' Boogie - Radio Station";
-          document.getElementById('meta-description').content = "Rockin' Rockin' Boogie - A 501(c)(3) nonprofit radio station with healing frequencies, autonomous orchestration, and community giving.";
-          document.getElementById('og-title').content = "Rockin' Rockin' Boogie";
-          document.getElementById('og-description').content = "A 501(c)(3) nonprofit radio station with healing frequencies and autonomous orchestration.";
-          document.getElementById('og-image').content = "/rrb-icon-512.webp";
-          document.getElementById('twitter-title').content = "Rockin' Rockin' Boogie";
-          document.getElementById('twitter-description').content = "A 501(c)(3) nonprofit radio station with healing frequencies and autonomous orchestration.";
-          document.getElementById('twitter-image').content = "/rrb-icon-512.webp";
-          document.getElementById('manifest-link').href = "/manifest-rrb.json";
-          document.getElementById('apple-icon').href = "/rrb-icon-192.webp";
-          document.getElementById('favicon').href = "/rrb-icon-192.webp";
-          document.getElementById('favicon-512').href = "/rrb-icon-512.webp";
-          document.querySelector('meta[name="theme-color"]').content = "#d4af37";
-        } else {
-          // Qumus metadata (default)
-          document.getElementById('page-title').textContent = "Qumus - Autonomous Orchestration Engine";
-          document.getElementById('meta-description').content = "Qumus - AI-powered autonomous orchestration engine with 90% autonomous decision-making and real-time monitoring.";
-          document.getElementById('og-title').content = "Qumus";
-          document.getElementById('og-description').content = "AI-powered autonomous orchestration engine with 90% autonomous decision-making.";
-          document.getElementById('og-image').content = "/qumus-icon-512.webp";
-          document.getElementById('twitter-title').content = "Qumus";
-          document.getElementById('twitter-description').content = "AI-powered autonomous orchestration engine with 90% autonomous decision-making.";
-          document.getElementById('twitter-image').content = "/qumus-icon-512.webp";
-          document.getElementById('manifest-link').href = "/manifest-qumus.json";
-          document.getElementById('apple-icon').href = "/qumus-icon-192.webp";
-          document.getElementById('favicon').href = "/qumus-icon-192.webp";
-          document.getElementById('favicon-512').href = "/qumus-icon-512.webp";
-          document.querySelector('meta[name="theme-color"]').content = "#0066FF";
-        }
-        document.getElementById('og-url').content = window.location.href;
-        console.log('[Metadata] Updated for:', isRRB ? 'RRB' : 'Qumus', 'domain:', hostname);
+        // Strict domain detection - check exact matches first
+        const isRRB = 
+          hostname === 'rockinrockinboogie.com' || 
+          hostname === 'www.rockinrockinboogie.com' ||
+          hostname.startsWith('rrb-') ||
+          hostname.includes('.rockinrockinboogie.com') && !hostname.includes('qumus');
+        
+        const metadata = isRRB ? {
+          title: "Rockin' Rockin' Boogie - Radio Station",
+          description: "Rockin' Rockin' Boogie - A 501(c)(3) nonprofit radio station with healing frequencies, autonomous orchestration, and community giving.",
+          ogTitle: "Rockin' Rockin' Boogie",
+          ogDescription: "A 501(c)(3) nonprofit radio station with healing frequencies and autonomous orchestration.",
+          ogImage: "/rrb-icon-512.webp",
+          twitterTitle: "Rockin' Rockin' Boogie",
+          twitterDescription: "A 501(c)(3) nonprofit radio station with healing frequencies and autonomous orchestration.",
+          twitterImage: "/rrb-icon-512.webp",
+          manifest: "/manifest-rrb.json",
+          icon192: "/rrb-icon-192.webp",
+          icon512: "/rrb-icon-512.webp",
+          themeColor: "#d4af37",
+          system: 'RRB'
+        } : {
+          title: "Qumus - Autonomous Orchestration Engine",
+          description: "Qumus - AI-powered autonomous orchestration engine with 90% autonomous decision-making and real-time monitoring.",
+          ogTitle: "Qumus",
+          ogDescription: "AI-powered autonomous orchestration engine with 90% autonomous decision-making.",
+          ogImage: "/qumus-icon-512.webp",
+          twitterTitle: "Qumus",
+          twitterDescription: "AI-powered autonomous orchestration engine with 90% autonomous decision-making.",
+          twitterImage: "/qumus-icon-512.webp",
+          manifest: "/manifest-qumus.json",
+          icon192: "/qumus-icon-192.webp",
+          icon512: "/qumus-icon-512.webp",
+          themeColor: "#0066FF",
+          system: 'Qumus'
+        };
+        
+        // Update all metadata
+        document.getElementById('page-title').textContent = metadata.title;
+        document.getElementById('meta-description').content = metadata.description;
+        document.getElementById('og-title').content = metadata.ogTitle;
+        document.getElementById('og-description').content = metadata.ogDescription;
+        document.getElementById('og-image').content = metadata.ogImage;
+        document.getElementById('og-url').content = fullUrl;
+        document.getElementById('twitter-title').content = metadata.twitterTitle;
+        document.getElementById('twitter-description').content = metadata.twitterDescription;
+        document.getElementById('twitter-image').content = metadata.twitterImage;
+        document.getElementById('manifest-link').href = metadata.manifest;
+        document.getElementById('apple-icon').href = metadata.icon192;
+        document.getElementById('favicon').href = metadata.icon192;
+        document.getElementById('favicon-512').href = metadata.icon512;
+        document.querySelector('meta[name="theme-color"]').content = metadata.themeColor;
+        
+        // Add cache-busting parameter to manifest
+        const manifestLink = document.getElementById('manifest-link');
+        manifestLink.href = metadata.manifest + '?v=' + new Date().getTime();
+        
+        console.log('[Metadata] System:', metadata.system, '| Domain:', hostname, '| URL:', fullUrl);
       })();
     </script>
 
@@ -76,9 +101,10 @@
           navigator.serviceWorker.register(swUrl, { scope: '/' }).then(reg => {
             // Force update check immediately
             reg.update();
-            console.log('[QUMUS] SW registered with cache busting:', swUrl);
+            const system = window.location.hostname.includes('rrb') || window.location.hostname === 'rockinrockinboogie.com' ? 'RRB' : 'Qumus';
+            console.log('[' + system + '] SW registered with cache busting:', swUrl);
           }).catch(err => {
-            console.log('[QUMUS] SW registration failed:', err);
+            console.log('[SW] Registration failed:', err);
           });
         });
       }
