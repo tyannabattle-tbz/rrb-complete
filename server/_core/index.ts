@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
@@ -28,7 +29,7 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
   throw new Error(`No available port found starting from ${startPort}`);
 }
 
-async function createQumusServer(port: number) {
+async function startServer() {
   const app = express();
   const server = createServer(app);
   
@@ -58,7 +59,6 @@ async function createQumusServer(port: number) {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
-  
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   
@@ -113,7 +113,6 @@ async function createQumusServer(port: number) {
       res.json({ success: false, error: String(error) });
     }
   });
-  
   // tRPC API
   app.use(
     "/api/trpc",
@@ -122,7 +121,6 @@ async function createQumusServer(port: number) {
       createContext,
     })
   );
-  
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
@@ -130,120 +128,16 @@ async function createQumusServer(port: number) {
     serveStatic(app);
   }
 
-  server.listen(port, () => {
-    console.log(`🌉 QUMUS Server running on http://localhost:${port}/`);
-  });
-  
-  return server;
-}
+  const preferredPort = parseInt(process.env.PORT || "3000");
+  const port = await findAvailablePort(preferredPort);
 
-async function createRRBServer(port: number) {
-  const app = express();
-  const server = createServer(app);
-  
-  // Configure body parser
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
-  
-  // RRB Status endpoint
-  app.get("/api/rrb/status", (req, res) => {
-    res.json({
-      status: "online",
-      currentShow: "Top of the Sol Motivation Mix",
-      listeners: 342,
-      uptime: "24h",
-    });
-  });
-  
-  // RRB Broadcast endpoint
-  app.get("/api/rrb/broadcast", (req, res) => {
-    res.json({
-      channels: [
-        { id: 1, name: "Main Channel", listeners: 342, status: "live" },
-        { id: 2, name: "Healing Frequencies", listeners: 89, status: "scheduled" },
-        { id: 3, name: "Community Spotlight", listeners: 156, status: "live" },
-      ],
-    });
-  });
-  
-  // Serve RRB UI (same Vite app, different route)
-  if (process.env.NODE_ENV === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+  if (port !== preferredPort) {
+    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
   server.listen(port, () => {
-    console.log(`📻 RRB Radio Server running on http://localhost:${port}/`);
+    console.log(`Server running on http://localhost:${port}/`);
   });
-  
-  return server;
 }
 
-async function createHybridCastServer(port: number) {
-  const app = express();
-  const server = createServer(app);
-  
-  // Configure body parser
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
-  
-  // HybridCast Status endpoint
-  app.get("/api/hybridcast/status", (req, res) => {
-    res.json({
-      status: "ready",
-      alerts: 0,
-      coverage: "global",
-      meshNodes: 24,
-      offlineCapable: true,
-    });
-  });
-  
-  // HybridCast Alerts endpoint
-  app.get("/api/hybridcast/alerts", (req, res) => {
-    res.json({
-      alerts: [],
-      lastUpdate: new Date().toISOString(),
-    });
-  });
-  
-  // Serve HybridCast UI (same Vite app, different route)
-  if (process.env.NODE_ENV === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
-
-  server.listen(port, () => {
-    console.log(`🚨 HybridCast Server running on http://localhost:${port}/`);
-  });
-  
-  return server;
-}
-
-async function startServers() {
-  try {
-    // Start all three servers
-    const qumusPort = await findAvailablePort(parseInt(process.env.PORT || "3000"));
-    const rrbPort = await findAvailablePort(3001);
-    const hybridcastPort = await findAvailablePort(3002);
-    
-    console.log("\n🌉 Starting Future-Past Bridge Ecosystem...\n");
-    
-    // Create all servers
-    await createQumusServer(qumusPort);
-    await createRRBServer(rrbPort);
-    await createHybridCastServer(hybridcastPort);
-    
-    console.log("\n✅ All Systems Online:");
-    console.log(`   🌉 Qumus (Brain):        http://localhost:${qumusPort}`);
-    console.log(`   📻 RRB Radio:            http://localhost:${rrbPort}`);
-    console.log(`   🚨 HybridCast (Emergency): http://localhost:${hybridcastPort}\n`);
-    
-  } catch (error) {
-    console.error("Failed to start servers:", error);
-    process.exit(1);
-  }
-}
-
-startServers().catch(console.error);
+startServer().catch(console.error);

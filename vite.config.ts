@@ -186,7 +186,7 @@ export default defineConfig({
     },
     hmr: {
       protocol: "wss",
-      host: process.env.VITE_HMR_HOST,
+      host: undefined,
       port: 443,
     },
   },
