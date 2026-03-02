@@ -125,6 +125,8 @@ import RRBMusicStreaming from "@/pages/RRBMusicStreaming";
 import RRBLegacySite from "@/pages/RRBLegacySite";
 import SolbonesGame from "@/pages/SolbonesGame";
 import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
+import EcosystemMasterDashboard from "@/pages/EcosystemMasterDashboard";
+import AdminControlPanel from "@/pages/AdminControlPanel";
 import { Toaster } from 'sonner';
 
 // Version: 3.0.0 - Mobile-first header redesign
@@ -235,6 +237,8 @@ function Router() {
       <Route path="/rrb" component={RRBLegacySite} />
       <Route path="/solbones" component={SolbonesGame} />
       <Route path="/donate" component={SweetMiraclesDonation} />
+      <Route path="/ecosystem-dashboard" component={EcosystemMasterDashboard} />
+      <Route path="/admin" component={AdminControlPanel} />
       <Route path="/emergency" component={HybridCastPort3002} />
       <Route path="/rrb/broadcast" component={RRBDashboard} />
       <Route path="/rrb/donations" component={RRBDashboard} />
