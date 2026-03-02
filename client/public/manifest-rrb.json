@@ -10,25 +10,25 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/rrb-icon-192.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-icon-192-APBVcymJ7tS9XkCQkNizsV.webp",
       "sizes": "192x192",
       "type": "image/webp",
       "purpose": "any"
     },
     {
-      "src": "/rrb-icon-512.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-icon-512-9LvL6zkv2MBtmeTGaiyCV2.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "any"
     },
     {
-      "src": "/rrb-icon-192.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-icon-192-APBVcymJ7tS9XkCQkNizsV.webp",
       "sizes": "192x192",
       "type": "image/webp",
       "purpose": "maskable"
     },
     {
-      "src": "/rrb-icon-512.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-icon-512-9LvL6zkv2MBtmeTGaiyCV2.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "maskable"
@@ -52,7 +52,7 @@
       "url": "/",
       "icons": [
         {
-          "src": "/rrb-icon-192.webp",
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-icon-192-APBVcymJ7tS9XkCQkNizsV.webp",
           "sizes": "192x192",
           "type": "image/webp"
         }
@@ -65,7 +65,7 @@
       "url": "/rockin-boogie",
       "icons": [
         {
-          "src": "/rrb-icon-192.webp",
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-icon-192-APBVcymJ7tS9XkCQkNizsV.webp",
           "sizes": "192x192",
           "type": "image/webp"
         }
@@ -78,7 +78,7 @@
       "url": "/sweet-miracles",
       "icons": [
         {
-          "src": "/rrb-icon-192.webp",
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-icon-192-APBVcymJ7tS9XkCQkNizsV.webp",
           "sizes": "192x192",
           "type": "image/webp"
         }

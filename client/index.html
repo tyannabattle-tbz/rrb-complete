@@ -7,6 +7,10 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <meta name="theme-color" content="#0066FF" />
+    <!-- Aggressive Cache Busting -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <meta name="description" id="meta-description" content="Qumus - AI-powered autonomous orchestration engine" />
     <meta property="og:title" id="og-title" content="Qumus" />
     <meta property="og:description" id="og-description" content="Qumus - AI-powered autonomous orchestration engine" />
@@ -16,10 +20,10 @@
     <meta name="twitter:title" id="twitter-title" content="Qumus" />
     <meta name="twitter:description" id="twitter-description" content="Qumus - AI-powered autonomous orchestration engine" />
     <meta name="twitter:image" id="twitter-image" content="/qumus-icon-512.webp" />
-    <link rel="manifest" href="/manifest-qumus.json" id="manifest-link" />
-    <link rel="apple-touch-icon" href="/qumus-icon-192.webp" id="apple-icon" />
-    <link rel="icon" type="image/webp" href="/qumus-icon-192.webp" id="favicon" />
-    <link rel="icon" type="image/webp" sizes="512x512" href="/qumus-icon-512.webp" id="favicon-512" />
+    <link rel="manifest" href="/manifest-qumus.json" id="manifest-link" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" href="/qumus-icon-192.webp" id="apple-icon" crossorigin="use-credentials" />
+    <link rel="icon" type="image/webp" href="/qumus-icon-192.webp" id="favicon" crossorigin="use-credentials" />
+    <link rel="icon" type="image/webp" sizes="512x512" href="/qumus-icon-512.webp" id="favicon-512" crossorigin="use-credentials" />
     <title id="page-title">Qumus - Autonomous Orchestration Engine</title>
     <script>
       // Update metadata based on current domain - CRITICAL: Run before any caching
@@ -80,12 +84,33 @@
         document.getElementById('favicon-512').href = metadata.icon512;
         document.querySelector('meta[name="theme-color"]').content = metadata.themeColor;
         
-        // Add cache-busting parameter to manifest
+        // Add cache-busting parameter to manifest and all icons
         const manifestLink = document.getElementById('manifest-link');
-        manifestLink.href = metadata.manifest + '?v=' + new Date().getTime();
+        const timestamp = new Date().getTime();
+        manifestLink.href = metadata.manifest + '?v=' + timestamp;
+        
+        // Force favicon refresh
+        document.getElementById('favicon').href = metadata.icon192 + '?v=' + timestamp;
+        document.getElementById('favicon-512').href = metadata.icon512 + '?v=' + timestamp;
+        document.getElementById('apple-icon').href = metadata.icon192 + '?v=' + timestamp;
+        
+        // Force service worker cache update
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
         
         console.log('[Metadata] System:', metadata.system, '| Domain:', hostname, '| URL:', fullUrl);
       })();
+    </script>
+    <script>
+      // Prevent caching of index.html itself
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          registrations.forEach(reg => reg.unregister());
+        });
+      }
     </script>
 
   </head>
