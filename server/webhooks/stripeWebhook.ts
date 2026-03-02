@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { Request, Response } from "express";
 import { getDb } from "../db";
-import { users, donations, usersWithStripe } from "../../drizzle/schema";
+import { users, donations, payments } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { notifyOwner } from "../_core/notification";
 
@@ -90,27 +90,28 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
       .limit(1);
 
     if (user.length > 0) {
-      // Store Stripe customer mapping
-      try {
-        await db
-          .insert(usersWithStripe)
-          .values({
-            userId: user[0].id,
-            stripeCustomerId: customerId,
-          })
-          .onDuplicateKeyUpdate({ set: { stripeCustomerId: customerId } });
-      } catch (err) {
-        console.log("[Stripe Webhook] Stripe mapping already exists or updated");
-      }
+      // Record payment
+      await db.insert(payments).values({
+        userId: user[0].id,
+        stripePaymentIntentId: paymentIntent.id,
+        amount: Math.round(amount * 100), // Convert to cents
+        currency: 'USD',
+        status: "succeeded",
+        productName: "Donation",
+        metadata: { customerId },
+      }).catch(err => {
+        console.log("[Stripe Webhook] Payment record already exists or updated");
+      });
 
       // Record donation
       await db.insert(donations).values({
-        userId: user[0].id,
-        amount: amount.toString(),
+        donorEmail: user[0].email || "unknown@example.com",
+        donorName: user[0].name || "Anonymous Donor",
+        amount: Math.round(amount * 100), // in cents
         stripePaymentIntentId: paymentIntent.id,
-        stripeCustomerId: customerId,
-        status: "completed",
-        createdAt: new Date(),
+        status: "succeeded",
+        broadcastHoursFunded: (amount / 50).toFixed(2), // $50 = 1 hour
+        createdAt: new Date().toISOString(),
       });
 
       console.log(`[Stripe Webhook] ✓ Recorded donation: $${amount} from user ${clientRefId}`);
@@ -146,22 +147,23 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
       return;
     }
 
-    // Find user by Stripe customer ID
-    const stripeMapping = await db
+    // Find payment by latest invoice
+    const latestInvoiceId = subscription.latest_invoice as string;
+    const paymentRecords = await db
       .select()
-      .from(usersWithStripe)
-      .where(eq(usersWithStripe.stripeCustomerId, customerId))
+      .from(payments)
+      .where(eq(payments.stripePaymentIntentId, latestInvoiceId))
       .limit(1);
 
-    if (stripeMapping.length === 0) {
-      console.warn(`[Stripe Webhook] No user found for customer ${customerId}`);
+    if (paymentRecords.length === 0) {
+      console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
 
     const userRecords = await db
       .select()
       .from(users)
-      .where(eq(users.id, stripeMapping[0].userId))
+      .where(eq(users.id, paymentRecords[0].userId))
       .limit(1);
 
     if (userRecords.length > 0) {
@@ -202,21 +204,22 @@ async function handleSubscriptionCancelled(subscription: Stripe.Subscription) {
       return;
     }
 
-    const stripeMapping = await db
+    const latestInvoiceId = subscription.latest_invoice as string;
+    const paymentRecords = await db
       .select()
-      .from(usersWithStripe)
-      .where(eq(usersWithStripe.stripeCustomerId, customerId))
+      .from(payments)
+      .where(eq(payments.stripePaymentIntentId, latestInvoiceId))
       .limit(1);
 
-    if (stripeMapping.length === 0) {
-      console.warn(`[Stripe Webhook] No user found for customer ${customerId}`);
+    if (paymentRecords.length === 0) {
+      console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
 
     const userRecords = await db
       .select()
       .from(users)
-      .where(eq(users.id, stripeMapping[0].userId))
+      .where(eq(users.id, paymentRecords[0].userId))
       .limit(1);
 
     if (userRecords.length > 0) {
@@ -250,21 +253,21 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
       return;
     }
 
-    const stripeMapping = await db
+    const paymentRecords = await db
       .select()
-      .from(usersWithStripe)
-      .where(eq(usersWithStripe.stripeCustomerId, customerId))
+      .from(payments)
+      .where(eq(payments.stripePaymentIntentId, invoice.id))
       .limit(1);
 
-    if (stripeMapping.length === 0) {
-      console.warn(`[Stripe Webhook] No user found for customer ${customerId}`);
+    if (paymentRecords.length === 0) {
+      console.warn(`[Stripe Webhook] No payment found for invoice ${invoice.id}`);
       return;
     }
 
     const userRecords = await db
       .select()
       .from(users)
-      .where(eq(users.id, stripeMapping[0].userId))
+      .where(eq(users.id, paymentRecords[0].userId))
       .limit(1);
 
     if (userRecords.length > 0) {
@@ -272,12 +275,13 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
 
       // Record invoice payment as donation
       await db.insert(donations).values({
-        userId: user.id,
-        amount: amount.toString(),
-        stripeInvoiceId: invoice.id,
-        stripeCustomerId: customerId,
-        status: "completed",
-        createdAt: new Date(),
+        donorEmail: user.email || "unknown@example.com",
+        donorName: user.name || "Anonymous Donor",
+        amount: Math.round(amount * 100), // in cents
+        stripePaymentIntentId: invoice.id,
+        status: "succeeded",
+        broadcastHoursFunded: (amount / 50).toFixed(2), // $50 = 1 hour
+        createdAt: new Date().toISOString(),
       });
 
       console.log(`[Stripe Webhook] ✓ Recorded invoice payment: $${amount} from user ${user.id}`);
@@ -303,21 +307,21 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
       return;
     }
 
-    const stripeMapping = await db
+    const paymentRecords = await db
       .select()
-      .from(usersWithStripe)
-      .where(eq(usersWithStripe.stripeCustomerId, customerId))
+      .from(payments)
+      .where(eq(payments.stripePaymentIntentId, charge.id))
       .limit(1);
 
-    if (stripeMapping.length === 0) {
-      console.warn(`[Stripe Webhook] No user found for customer ${customerId}`);
+    if (paymentRecords.length === 0) {
+      console.warn(`[Stripe Webhook] No payment found for charge ${charge.id}`);
       return;
     }
 
     const userRecords = await db
       .select()
       .from(users)
-      .where(eq(users.id, stripeMapping[0].userId))
+      .where(eq(users.id, paymentRecords[0].userId))
       .limit(1);
 
     if (userRecords.length > 0) {

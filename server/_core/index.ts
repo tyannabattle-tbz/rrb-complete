@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { initializeWebSocket } from "../websocket";
+import { handleStripeWebhook } from "../webhooks/stripeWebhook";
 import { activateQumus } from "../qumus/qumusActivation";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -32,6 +33,14 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
+  
+  // Stripe webhook endpoint - must be BEFORE body parser to get raw body
+  app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+    handleStripeWebhook(req as any, res).catch(err => {
+      console.error('[Stripe Webhook] Unhandled error:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    });
+  });
   
   // Activate QUMUS Autonomous Agent
   try {
@@ -118,6 +127,34 @@ async function startServer() {
       res.json({ success: false, error: String(error) });
     }
   });
+  
+  // Stripe checkout endpoint
+  app.post("/api/stripe/checkout", async (req, res) => {
+    try {
+      const { createCheckoutSession } = await import("../stripeService");
+      const { userId, userEmail, userName, productName, priceId, successUrl, cancelUrl } = req.body;
+      
+      if (!userId || !userEmail || !priceId) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      const session = await createCheckoutSession({
+        userId,
+        userEmail,
+        userName: userName || "Donor",
+        productName: productName || "Donation",
+        priceId,
+        successUrl: successUrl || `${req.protocol}://${req.get("host")}/donate?success=true`,
+        cancelUrl: cancelUrl || `${req.protocol}://${req.get("host")}/donate?cancelled=true`,
+      });
+      
+      res.json({ sessionId: session.id, url: session.url });
+    } catch (error) {
+      console.error("[Stripe Checkout] Error:", error);
+      res.status(500).json({ error: String(error) });
+    }
+  });
+  
   // tRPC API
   app.use(
     "/api/trpc",
