@@ -160,6 +160,7 @@ export default defineConfig({
       "@shared": path.resolve(import.meta.dirname, "shared"),
       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
     },
+    dedupe: ["react", "react-dom", "@trpc/react-query"],
   },
   envDir: path.resolve(import.meta.dirname),
   root: path.resolve(import.meta.dirname, "client"),
@@ -182,6 +183,11 @@ export default defineConfig({
     fs: {
       strict: true,
       deny: ["**/.*"],
+    },
+    hmr: {
+      protocol: "wss",
+      host: process.env.VITE_HMR_HOST,
+      port: 443,
     },
   },
 });

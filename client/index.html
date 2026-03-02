@@ -6,7 +6,14 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Manus Agent Web Interface</title>    
+    <meta name="theme-color" content="#0066FF" />
+    <meta name="description" content="Create professional videos with AI-powered generation, watermarking, and analytics by Canryn Production" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/qumus-icon-192.webp" />
+    <link rel="icon" type="image/webp" href="/qumus-icon-192.webp" />
+    <link rel="icon" type="image/webp" sizes="512x512" href="/qumus-icon-512.webp" />
+    <title>Qumus - AI Video Generation Platform</title>
+    <!-- HybridCast integrated via native iframe component at /hybridcast route -->
     <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,6 +24,21 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // Cache busting: add timestamp to force SW update on each publish
+          const swUrl = '/sw.js?v=' + new Date().getTime();
+          navigator.serviceWorker.register(swUrl, { scope: '/' }).then(reg => {
+            // Force update check immediately
+            reg.update();
+            console.log('[QUMUS] SW registered with cache busting:', swUrl);
+          }).catch(err => {
+            console.log('[QUMUS] SW registration failed:', err);
+          });
+        });
+      }
+    </script>
     <script
       defer
       src="%VITE_ANALYTICS_ENDPOINT%/umami"

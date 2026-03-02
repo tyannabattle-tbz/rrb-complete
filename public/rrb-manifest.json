@@ -1,0 +1,153 @@
+{
+  "name": "RRB - Rockin' Rockin' Boogie Radio",
+  "short_name": "RRB Radio",
+  "description": "24/7 autonomous radio station with healing frequencies, podcasts, and live broadcasts",
+  "start_url": "http://localhost:3001/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1a1625",
+  "theme_color": "#ec4899",
+  "icons": [
+    {
+      "src": "/rrb-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/rrb-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/rrb-icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/rrb-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/rrb-screenshot-540.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/rrb-screenshot-1280.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["music", "entertainment", "podcasts"],
+  "shortcuts": [
+    {
+      "name": "Live Radio",
+      "short_name": "Live",
+      "description": "Listen to live broadcast",
+      "url": "http://localhost:3001/rrb/live",
+      "icons": [
+        {
+          "src": "/rrb-shortcut-live.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Healing Frequencies",
+      "short_name": "Healing",
+      "description": "Solfeggio healing frequencies",
+      "url": "http://localhost:3001/rrb/healing",
+      "icons": [
+        {
+          "src": "/rrb-shortcut-healing.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Podcasts",
+      "short_name": "Podcasts",
+      "description": "Browse podcast library",
+      "url": "http://localhost:3001/rrb/podcasts",
+      "icons": [
+        {
+          "src": "/rrb-shortcut-podcasts.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Schedule",
+      "short_name": "Schedule",
+      "description": "View broadcast schedule",
+      "url": "http://localhost:3001/rrb/schedule",
+      "icons": [
+        {
+          "src": "/rrb-shortcut-schedule.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "media",
+          "accept": ["audio/*", "video/*"]
+        }
+      ]
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+rrb",
+      "url": "http://localhost:3001/protocol?url=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/file-handler",
+      "accept": {
+        "audio/*": [".mp3", ".wav", ".ogg", ".m4a", ".flac"],
+        "video/*": [".mp4", ".webm", ".mov"]
+      },
+      "icons": [
+        {
+          "src": "/rrb-file-handler.png",
+          "sizes": "256x256",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": "",
+  "accessibility": {
+    "wcag_level": "AA",
+    "screen_reader_support": true,
+    "keyboard_navigation": true,
+    "color_contrast": "WCAG AA"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "query": "-- Drop regions column if it exists\nALTER TABLE emergency_alerts DROP COLUMN IF EXISTS regions;\n\n-- Ensure broadcastChannelIds has a default value\nALTER TABLE emergency_alerts MODIFY COLUMN broadcastChannelIds TEXT DEFAULT '[]';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute -- Drop regions column if it exists\nALTER TABLE emergency_alerts DROP COLUMN IF EXISTS regions;\n\n-- Ensure broadcastChannelIds has a default value\nALTER TABLE emergency_alerts MODIFY COLUMN broadcastChannelIds TEXT DEFAULT '[]';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1101 (42000) at line 5: BLOB/TEXT/JSON column 'broadcastChannelIds' can't have a default value"
+  ]
+}

@@ -279,10 +279,15 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     response_format,
   } = params;
 
+  const normalizedMessages = messages.map(normalizeMessage);
+  console.log('[LLM DEBUG] Messages being sent to LLM:', JSON.stringify(normalizedMessages, null, 2));
+
   const payload: Record<string, unknown> = {
     model: "gemini-2.5-flash",
-    messages: messages.map(normalizeMessage),
+    messages: normalizedMessages,
   };
+  
+  console.log('[LLM DEBUG] Full payload:', JSON.stringify(payload, null, 2));
 
   if (tools && tools.length > 0) {
     payload.tools = tools;

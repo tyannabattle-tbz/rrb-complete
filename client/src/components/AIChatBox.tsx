@@ -3,7 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Loader2, Send, User, Sparkles } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Streamdown } from "streamdown";
 
 /**
@@ -149,18 +149,13 @@ export function AIChatBox({
     }
   }, []);
 
-  // Scroll to bottom helper function with smooth animation
+  // Scroll to bottom helper function
   const scrollToBottom = () => {
-    const viewport = scrollAreaRef.current?.querySelector(
-      '[data-radix-scroll-area-viewport]'
-    ) as HTMLDivElement;
-
-    if (viewport) {
+    if (scrollAreaRef.current) {
       requestAnimationFrame(() => {
-        viewport.scrollTo({
-          top: viewport.scrollHeight,
-          behavior: 'smooth'
-        });
+        if (scrollAreaRef.current) {
+          scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+        }
       });
     }
   };
@@ -174,7 +169,7 @@ export function AIChatBox({
     setInput("");
 
     // Scroll immediately after sending
-    scrollToBottom();
+    setTimeout(() => scrollToBottom(), 100);
 
     // Keep focus on input
     textareaRef.current?.focus();
@@ -187,6 +182,16 @@ export function AIChatBox({
     }
   };
 
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (scrollAreaRef.current) {
+        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+      }
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [displayMessages.length, isLoading]);
+
   return (
     <div
       ref={containerRef}
@@ -197,7 +202,7 @@ export function AIChatBox({
       style={{ height }}
     >
       {/* Messages Area */}
-      <div ref={scrollAreaRef} className="flex-1 overflow-hidden">
+      <div ref={scrollAreaRef} className="flex-1 overflow-y-auto overflow-x-hidden">
         {displayMessages.length === 0 ? (
           <div className="flex h-full flex-col p-4">
             <div className="flex flex-1 flex-col items-center justify-center gap-6 text-muted-foreground">
@@ -223,8 +228,7 @@ export function AIChatBox({
             </div>
           </div>
         ) : (
-          <ScrollArea className="h-full">
-            <div className="flex flex-col space-y-4 p-4">
+          <div className="flex flex-col space-y-4 p-4">
               {displayMessages.map((message, index) => {
                 // Apply min-height to last message only if NOT loading (when loading, the loading indicator gets it)
                 const isLastMessage = index === displayMessages.length - 1;
@@ -297,10 +301,8 @@ export function AIChatBox({
                   </div>
                 </div>
               )}
-            </div>
-          </ScrollArea>
+          </div>
         )}
-      </div>
 
       {/* Input Area */}
       <form
@@ -330,6 +332,7 @@ export function AIChatBox({
           )}
         </Button>
       </form>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,40 @@
+/**
+ * Integration & Marketplace Module Router
+ * Groups all integration, marketplace, and collaboration-related routers
+ */
+
+import { router } from '../../_core/trpc';
+import { webhooksRouter } from '../webhooks';
+import { webhookIntegrationRouter } from '../webhookIntegrationRouter';
+import { marketplaceRouter } from '../marketplace';
+import { templateMarketplaceRouter } from '../templateMarketplace';
+import { collaborationRouter } from '../collaborationRouter';
+import { sessionSharingRouter } from '../sessionSharing';
+import { sessionPinningRouter } from '../sessionPinning';
+import { feedbackSystemRouter } from '../feedbackSystem';
+import { apiIntegrationRouter } from '../apiIntegrationRouter';
+import { stripeIntegrationRouter } from '../stripeIntegration';
+import { agentManagementRouter } from '../agentManagement';
+
+export const integrationsRouter = router({
+  // Webhooks
+  webhooks: webhooksRouter,
+  webhookIntegration: webhookIntegrationRouter,
+
+  // Marketplaces
+  marketplace: marketplaceRouter,
+  templateMarketplace: templateMarketplaceRouter,
+
+  // Collaboration
+  collaboration: collaborationRouter,
+  sessionSharing: sessionSharingRouter,
+  sessionPinning: sessionPinningRouter,
+  feedback: feedbackSystemRouter,
+
+  // API & Payments
+  apiIntegration: apiIntegrationRouter,
+  stripe: stripeIntegrationRouter,
+
+  // Agent Management
+  agentManagement: agentManagementRouter,
+});
