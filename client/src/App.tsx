@@ -130,7 +130,7 @@ function Router() {
     <>
       <Breadcrumbs />
       <Switch>
-      <Route path="/" component={() => <PortAwareRouter qumusComponent={FuturePastBridge} rrbComponent={RRBRadioLanding} hybridcastComponent={HybridCastLanding} />} />
+      <Route path="/" component={() => <PortAwareRouter qumusComponent={FuturePastBridge} rrbComponent={RRBPort3001} hybridcastComponent={HybridCastLanding} />} />
       <Route path="/home" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
