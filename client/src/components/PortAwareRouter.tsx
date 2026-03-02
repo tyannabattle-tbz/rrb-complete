@@ -26,7 +26,8 @@ export const PortAwareRouter: React.FC<PortAwareRouterProps> = ({
     console.log(`[PortAwareRouter] Hostname: ${hostname}, Port: ${port}`);
     
     // Check hostname for port indicators (for proxied URLs like 3001-xxxxx.us2.manus.computer)
-    if (hostname.startsWith('3001-') || hostname.includes('rrb') || port === 3001) {
+    // RRB: rockinrockinboogie.com, 3001-xxxxx.us2.manus.computer, or port 3001
+    if (hostname.startsWith('3001-') || hostname.includes('rrb') || hostname.includes('rockinrockinboogie') || port === 3001) {
       console.log('[PortAwareRouter] Routing to RRB Radio');
       setSystem('rrb');
     } else if (hostname.startsWith('3002-') || hostname.includes('hybrid') || port === 3002) {
