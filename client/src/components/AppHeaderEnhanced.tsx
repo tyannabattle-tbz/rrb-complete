@@ -70,7 +70,7 @@ export function AppHeaderEnhanced() {
     { id: 'nav-2', label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
     { id: 'nav-3', label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
     { id: 'nav-4', label: 'HybridCast', icon: Radio, path: '/gps-radar', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
-    { id: 'nav-5', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
+    { id: 'nav-5', label: 'Rockin Boogie', icon: Music, path: 'https://www.rockinrockinboogie.com', external: true },
     { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
     { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
     { id: 'nav-8', label: 'RRB Broadcast', icon: Eye, path: '/broadcast-monitoring' },
@@ -96,7 +96,15 @@ export function AppHeaderEnhanced() {
                 key={item.id}
                 variant="ghost"
                 size="sm"
-                onClick={() => item.action ? item.action() : navigate(item.path)}
+                onClick={() => {
+                  if (item.action) {
+                    item.action();
+                  } else if (item.external) {
+                    window.location.href = item.path;
+                  } else {
+                    navigate(item.path);
+                  }
+                }}
                 className={`gap-2 whitespace-nowrap ${item.label === 'HybridCast' && showHybridCastTabs ? 'bg-cyan-500/20 border border-cyan-500' : ''}`}
               >
                 <item.icon className="h-4 w-4" />
