@@ -1631,3 +1631,73 @@ export const donationAnalytics = mysqlTable("donation_analytics", {
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
+
+
+// RRB 40+ Channel Streaming Aggregator Tables
+export const rrbChannels = mysqlTable("rrb_channels", {
+	id: int().autoincrement().notNull().primaryKey(),
+	name: varchar({ length: 255 }).notNull(),
+	description: text(),
+	category: varchar({ length: 64 }).notNull(), // 'music', 'healing', 'talk', 'community', 'special'
+	genre: varchar({ length: 64 }),
+	artwork: varchar({ length: 512 }), // URL to channel artwork/logo
+	isActive: int().default(1),
+	priority: int().default(100), // Lower number = higher priority in UI
+	listeners: int().default(0), // Current listener count
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const rrbStreamSources = mysqlTable("rrb_stream_sources", {
+	id: int().autoincrement().notNull().primaryKey(),
+	channelId: int().notNull().references(() => rrbChannels.id, { onDelete: "cascade" }),
+	url: varchar({ length: 512 }).notNull(), // Stream URL
+	sourceType: mysqlEnum(['soma', 'icecast', 'shoutcast', 'generic', 'custom']).notNull(),
+	priority: int().default(100), // Lower = higher priority for fallback
+	bitrate: int(), // kbps
+	format: varchar({ length: 32 }), // 'mp3', 'ogg', 'aac', 'wav'
+	isActive: int().default(1),
+	lastHealthCheck: timestamp({ mode: 'string' }),
+	healthStatus: mysqlEnum(['healthy', 'degraded', 'offline', 'unknown']).default('unknown'),
+	failureCount: int().default(0),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const rrbFrequencies = mysqlTable("rrb_frequencies", {
+	id: int().autoincrement().notNull().primaryKey(),
+	frequency: int().notNull(), // Hz (e.g., 432, 528, 741)
+	name: varchar({ length: 64 }).notNull(), // e.g., "Miracle Tone"
+	description: text(),
+	solfeggio: varchar({ length: 64 }), // e.g., "MI - 369 Hz"
+	benefits: text(), // Health benefits description
+	color: varchar({ length: 7 }), // Hex color for UI
+	isDefault: int().default(0),
+	isActive: int().default(1),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const rrbListeningHistory = mysqlTable("rrb_listening_history", {
+	id: int().autoincrement().notNull().primaryKey(),
+	userId: int().references(() => users.id, { onDelete: "cascade" }),
+	channelId: int().notNull().references(() => rrbChannels.id, { onDelete: "cascade" }),
+	frequencyId: int().references(() => rrbFrequencies.id, { onDelete: "set null" }),
+	sessionStartTime: timestamp({ mode: 'string' }).notNull(),
+	sessionEndTime: timestamp({ mode: 'string' }),
+	durationSeconds: int(),
+	deviceType: varchar({ length: 64 }), // 'mobile', 'desktop', 'tablet'
+	userAgent: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const rrbChannelStats = mysqlTable("rrb_channel_stats", {
+	id: int().autoincrement().notNull().primaryKey(),
+	channelId: int().notNull().references(() => rrbChannels.id, { onDelete: "cascade" }),
+	date: timestamp({ mode: 'string' }).notNull(),
+	totalListeners: int().default(0),
+	peakListeners: int().default(0),
+	averageSessionDuration: int().default(0), // seconds
+	totalStreamTime: int().default(0), // seconds
+	uptime: decimal({ precision: 5, scale: 2 }).default('100'), // percentage
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});

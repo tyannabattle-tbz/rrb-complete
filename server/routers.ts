@@ -72,6 +72,9 @@ import { qumusFullStackRouter } from "./routers/qumusFullStackRouter";
 // Import RRB Unified Router
 import { rrbUnifiedRouter } from "./routers/rrbUnifiedRouter";
 
+// Import RRB Channels Router
+import { rrbChannelsRouter } from "./routers/rrbChannelsRouter";
+
 export const appRouter = router({
   // System router
   system: systemRouter,
@@ -353,6 +356,9 @@ export const appRouter = router({
 
   // RRB Unified Router (All RRB Systems Orchestrated)
   rrb: rrbUnifiedRouter,
+
+  // RRB Channels (40+ streaming channels with fallback)
+  rrbChannels: rrbChannelsRouter,
 });
 
 export type AppRouter = typeof appRouter;

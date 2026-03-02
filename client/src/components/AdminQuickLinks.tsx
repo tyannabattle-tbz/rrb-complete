@@ -30,7 +30,7 @@ export function AdminQuickLinks() {
   const getSystemUrl = (system: string) => {
     const protocol = window.location.protocol;
     if (system === 'rrb') {
-      return `${protocol}//rockinrockinboogie.com`;
+      return `${protocol}//www.rockinrockinboogie.com`;
     } else if (system === 'hybridcast') {
       return `${protocol}//hybridcast.rockinrockinboogie.com`;
     } else {
