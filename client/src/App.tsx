@@ -118,6 +118,9 @@ import RRBDashboard from "@/pages/RRBDashboard";
 import RRBBroadcastManager from "@/pages/RRBBroadcastManager";
 import SweetMiraclesManager from "@/pages/SweetMiraclesManager";
 import RRBListenerAnalytics from "@/pages/RRBListenerAnalytics";
+import QumusPort3000 from "@/pages/QumusPort3000";
+import RRBPort3001 from "@/pages/RRBPort3001";
+import HybridCastPort3002 from "@/pages/HybridCastPort3002";
 import { Toaster } from 'sonner';
 
 // Version: 3.0.0 - Mobile-first header redesign
@@ -224,7 +227,9 @@ function Router() {
       <Route path="/drone-video" component={DroneVideoCapture} />
       <Route path="/map-arsenal" component={MapArsenal} />
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
-      <Route path="/rrb" component={RRBDashboard} />
+      <Route path="/qumus" component={QumusPort3000} />
+      <Route path="/rrb" component={RRBPort3001} />
+      <Route path="/emergency" component={HybridCastPort3002} />
       <Route path="/rrb/broadcast" component={RRBDashboard} />
       <Route path="/rrb/donations" component={RRBDashboard} />
       <Route path="/rrb/listeners" component={RRBListenerAnalytics} />
