@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Radio, Volume2, Users, Music } from 'lucide-react';
+import { Radio, Volume2, Users, Music, Play, Pause } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function RRBPort3001() {
   const [radioStatus, setRadioStatus] = useState({
@@ -18,8 +21,10 @@ export default function RRBPort3001() {
     { id: 3, name: 'Community Spotlight', listeners: 156, status: 'live' },
   ]);
 
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [activeChannel, setActiveChannel] = useState<number | null>(null);
+
   useEffect(() => {
-    // Fetch RRB status from port 3001
     const fetchStatus = async () => {
       try {
         const response = await fetch('http://localhost:3001/api/rrb/status');
@@ -34,6 +39,32 @@ export default function RRBPort3001() {
     const interval = setInterval(fetchStatus, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  const handlePlayStream = () => {
+    setIsPlaying(!isPlaying);
+    if (!isPlaying) {
+      toast.success('Now playing: Top of the Sol Motivation Mix');
+      setActiveChannel(1);
+    } else {
+      toast.info('Stream paused');
+      setActiveChannel(null);
+    }
+  };
+
+  const handlePlaylist = () => {
+    toast.info('Playlist opened - Select a show to play');
+  };
+
+  const handleListenChannel = (channelId: number) => {
+    const channel = channels.find(c => c.id === channelId);
+    setActiveChannel(channelId);
+    setIsPlaying(true);
+    toast.success(`Now listening to: ${channel?.name}`);
+  };
+
+  const handleViewSchedule = () => {
+    toast.info('Full schedule loaded');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-pink-900 to-slate-900">
@@ -94,11 +125,30 @@ export default function RRBPort3001() {
                 </div>
               </div>
               <div className="flex gap-2 pt-4">
-                <Button className="flex-1 bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
-                  <Volume2 className="w-4 h-4 mr-2" />
-                  Play Stream
+                <Button 
+                  onClick={handlePlayStream}
+                  className={`flex-1 transition-all ${
+                    isPlaying 
+                      ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' 
+                      : 'bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700'
+                  }`}
+                >
+                  {isPlaying ? (
+                    <>
+                      <Pause className="w-4 h-4 mr-2" />
+                      Pause Stream
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-4 h-4 mr-2" />
+                      Play Stream
+                    </>
+                  )}
                 </Button>
-                <Button className="flex-1 bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
+                <Button 
+                  onClick={handlePlaylist}
+                  className="flex-1 bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 transition-all"
+                >
                   <Music className="w-4 h-4 mr-2" />
                   Playlist
                 </Button>
@@ -112,7 +162,14 @@ export default function RRBPort3001() {
           <h3 className="text-2xl font-bold text-white mb-6">Active Channels</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {channels.map((channel) => (
-              <Card key={channel.id} className="bg-slate-800/50 border-pink-500/20 hover:border-pink-500/50 transition-all">
+              <Card 
+                key={channel.id} 
+                className={`border-pink-500/20 hover:border-pink-500/50 transition-all cursor-pointer ${
+                  activeChannel === channel.id 
+                    ? 'bg-gradient-to-br from-pink-600/30 to-orange-600/30 border-pink-500' 
+                    : 'bg-slate-800/50'
+                }`}
+              >
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
@@ -136,8 +193,15 @@ export default function RRBPort3001() {
                       <p className="text-sm text-pink-300">Listeners</p>
                       <p className="text-2xl font-bold text-pink-400">{channel.listeners}</p>
                     </div>
-                    <Button className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
-                      Listen Now
+                    <Button 
+                      onClick={() => handleListenChannel(channel.id)}
+                      className={`w-full transition-all ${
+                        activeChannel === channel.id
+                          ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
+                          : 'bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700'
+                      }`}
+                    >
+                      {activeChannel === channel.id ? 'Now Playing' : 'Listen Now'}
                     </Button>
                   </div>
                 </CardContent>
@@ -171,7 +235,10 @@ export default function RRBPort3001() {
                   <span className="text-pink-400">6:00 PM</span>
                 </div>
               </div>
-              <Button className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
+              <Button 
+                onClick={handleViewSchedule}
+                className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 transition-all"
+              >
                 View Full Schedule
               </Button>
             </CardContent>
@@ -200,71 +267,13 @@ export default function RRBPort3001() {
                   <span className="text-pink-400 font-bold">45 min</span>
                 </div>
               </div>
-              <Button className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
-                Detailed Analytics
+              <Button className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 transition-all">
+                View Analytics
               </Button>
             </CardContent>
           </Card>
         </div>
-
-        {/* RRB Features */}
-        <Card className="bg-slate-800/50 border-pink-500/20 mb-12">
-          <CardHeader>
-            <CardTitle>RRB Ecosystem</CardTitle>
-            <CardDescription>Integrated features and experiences</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { icon: '🎵', name: '24/7 Broadcasting', desc: 'Continuous radio service' },
-                { icon: '🧘', name: 'Healing Frequencies', desc: '9 Solfeggio frequencies' },
-                { icon: '🎲', name: 'Solbones Game', desc: 'Sacred math dice game' },
-                { icon: '💝', name: 'Donations', desc: 'Support the mission' },
-                { icon: '🛍️', name: 'Merchandise', desc: 'RRB products' },
-                { icon: '📊', name: 'Analytics', desc: 'Listener insights' },
-              ].map((feature, idx) => (
-                <div key={idx} className="p-4 bg-slate-700/50 rounded-lg">
-                  <div className="text-2xl mb-2">{feature.icon}</div>
-                  <p className="font-semibold text-white">{feature.name}</p>
-                  <p className="text-sm text-pink-300">{feature.desc}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Control Panel */}
-        <Card className="bg-slate-800/50 border-pink-500/20">
-          <CardHeader>
-            <CardTitle>Station Controls</CardTitle>
-            <CardDescription>Manage RRB operations</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Button className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
-                📻 Stream Control
-              </Button>
-              <Button className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
-                📅 Schedule
-              </Button>
-              <Button className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
-                🎧 Audio Settings
-              </Button>
-              <Button className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
-                📊 Reports
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-pink-500/20 bg-slate-900/50 mt-16 py-8">
-        <div className="container mx-auto px-4 text-center text-pink-300">
-          <p>Rockin Rockin Boogie • 24/7 Radio Broadcasting</p>
-          <p className="text-sm mt-2">Orchestrated by Qumus • Offline Capable</p>
-        </div>
-      </footer>
     </div>
   );
 }
