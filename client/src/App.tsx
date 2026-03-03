@@ -135,7 +135,7 @@ function Router() {
     <>
       <Breadcrumbs />
       <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={RRBLegacySite} />
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
