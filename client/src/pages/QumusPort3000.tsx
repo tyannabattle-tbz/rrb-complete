@@ -150,7 +150,7 @@ export default function QumusPort3000() {
                   <p className="text-sm text-purple-300">Active Listeners</p>
                   <p className="text-2xl font-bold text-pink-400">{systemStatus.rrb.listeners || 0}</p>
                 </div>
-                <Button onClick={() => setLocation('/rrb')} className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
+                <Button onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')} className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
                   Go to RRB
                 </Button>
               </div>
@@ -183,7 +183,7 @@ export default function QumusPort3000() {
                   <p className="text-sm text-purple-300">Active Alerts</p>
                   <p className="text-2xl font-bold text-red-400">{systemStatus.hybridcast.alerts || 0}</p>
                 </div>
-                <Button onClick={() => setLocation('/emergency')} className="w-full bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700">
+                <Button onClick={() => window.open('https://www.hybridcast.sbs', '_blank')} className="w-full bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700">
                   Emergency Panel
                 </Button>
               </div>

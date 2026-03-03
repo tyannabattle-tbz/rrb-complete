@@ -89,7 +89,7 @@ export default function RRBLegacySite() {
                 {isSpinning ? '⏸ Pause Record' : '▶ Play Record'}
               </Button>
               <Button
-                onClick={() => setLocation('/rrb')}
+                onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')}
                 variant="outline"
                 className="border-pink-500 text-pink-400 hover:bg-pink-500/10"
               >
@@ -171,7 +171,7 @@ export default function RRBLegacySite() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="bg-slate-800/50 border-pink-500/20 hover:border-pink-500/50 transition-all cursor-pointer"
-              onClick={() => setLocation('/rrb')}>
+              onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')}>
               <CardContent className="pt-6 text-center">
                 <Radio className="w-12 h-12 text-pink-400 mx-auto mb-4" />
                 <h4 className="text-lg font-bold text-white mb-2">Radio Station</h4>
@@ -331,7 +331,7 @@ export default function RRBLegacySite() {
               Donate Now
             </Button>
             <Button
-              onClick={() => setLocation('/rrb')}
+              onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')}
               variant="outline"
               className="border-pink-500 text-pink-400 hover:bg-pink-500/10"
               size="lg"

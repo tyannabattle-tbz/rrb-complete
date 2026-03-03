@@ -2161,3 +2161,14 @@
 - [x] Verify Stripe donation flow - 25/25 tests pass, page loads correctly
 - [x] Run ecosystem tests - 36/36 pass
 - [x] TypeScript: zero errors after all changes
+
+## Cross-Site Navigation Fix (COMPLETED)
+- [x] "Go to RRB Radio" button → opens https://www.rockinrockinboogie.com (external)
+- [x] "Emergency Broadcast" button → opens https://www.hybridcast.sbs (external)
+- [x] "Enter QUMUS" button → stays internal, opens QUMUS dashboard
+- [x] Update bottom nav RRB link → external to rockinrockinboogie.com
+- [x] Update bottom nav Broadcast link → external to hybridcast.sbs
+- [x] Update desktop nav (AppHeaderEnhanced) Rockin Boogie + HybridCast → external
+- [x] Update QumusPort3000 RRB + Emergency buttons → external
+- [x] Update RRBLegacySite back-to-RRB links → external
+- [x] Update Home.tsx system cards → external for RRB + HybridCast

@@ -122,7 +122,8 @@ export default function Home() {
       description: 'Complete radio station ecosystem with healing frequencies, games, and community.',
       features: ['24/7 Radio', 'Healing Frequencies', 'Solbones Game', 'Listener Analytics'],
       color: 'from-pink-600 to-orange-600',
-      path: '/rrb',
+      path: 'https://www.rockinrockinboogie.com',
+      external: true,
       status: 'Active',
     },
     {
@@ -131,7 +132,8 @@ export default function Home() {
       description: 'Offline-first emergency broadcast system. Mesh networking for disaster communication.',
       features: ['Emergency Alerts', 'Offline PWA', 'Mesh Network', 'Multi-Channel Broadcast'],
       color: 'from-red-600 to-yellow-600',
-      path: '/emergency',
+      path: 'https://www.hybridcast.sbs',
+      external: true,
       status: 'Active',
     },
     {
@@ -211,14 +213,14 @@ export default function Home() {
               Enter QUMUS →
             </Button>
             <Button
-              onClick={() => setLocation('/rrb')}
+              onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')}
               className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700"
               size="lg"
             >
               Go to RRB Radio →
             </Button>
             <Button
-              onClick={() => setLocation('/emergency')}
+              onClick={() => window.open('https://www.hybridcast.sbs', '_blank')}
               className="bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700"
               size="lg"
             >
@@ -233,7 +235,7 @@ export default function Home() {
             <Card
               key={system.id}
               className="bg-slate-800/50 border-purple-500/20 hover:border-purple-500/50 transition-all cursor-pointer hover:shadow-lg hover:shadow-purple-500/20"
-              onClick={() => setLocation(system.path)}
+              onClick={() => (system as any).external ? window.open(system.path, '_blank') : setLocation(system.path)}
             >
               <CardHeader>
                 <div className="flex items-start justify-between mb-2">
@@ -260,10 +262,13 @@ export default function Home() {
                     ))}
                   </div>
                   <Button
-                    onClick={() => setLocation(system.path)}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      (system as any).external ? window.open(system.path, '_blank') : setLocation(system.path);
+                    }}
+                    className={`w-full bg-gradient-to-r ${system.color} hover:opacity-90`}
                   >
-                    Access →
+                    {(system as any).external ? 'Visit Site →' : 'Access →'}
                   </Button>
                 </div>
               </CardContent>
@@ -376,7 +381,7 @@ export default function Home() {
               Support the Mission
             </Button>
             <Button
-              onClick={() => setLocation('/rrb')}
+              onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')}
               variant="outline"
               className="border-pink-500 text-pink-400 hover:bg-pink-500/10"
               size="lg"

@@ -13,12 +13,12 @@ export function MobileBottomNav() {
   const [location] = useLocation();
   const [showMore, setShowMore] = React.useState(false);
 
-  const navItems: NavItem[] = [
-    { id: 'nav-home', label: 'Home', icon: Home, path: '/agent' },
+  const navItems: (NavItem & { external?: boolean })[] = [
+    { id: 'nav-home', label: 'Home', icon: Home, path: '/' },
     { id: 'nav-tasks', label: 'Tasks', icon: Zap, path: '/agent' },
-    { id: 'nav-rrb', label: 'RRB', icon: Radio, path: '/rrb' },
-    { id: 'nav-donate', label: 'Donate', icon: Heart, path: '/rrb/donations' },
-    { id: 'nav-broadcast', label: 'Broadcast', icon: Globe, path: '/rrb/broadcast' },
+    { id: 'nav-rrb', label: 'RRB', icon: Radio, path: 'https://www.rockinrockinboogie.com', external: true },
+    { id: 'nav-donate', label: 'Donate', icon: Heart, path: '/donate' },
+    { id: 'nav-broadcast', label: 'Broadcast', icon: Globe, path: 'https://www.hybridcast.sbs', external: true },
     { id: 'nav-analytics', label: 'Analytics', icon: BarChart3, path: '/agent' },
     { id: 'nav-settings', label: 'Settings', icon: Settings, path: '/settings' },
   ];
@@ -38,6 +38,21 @@ export function MobileBottomNav() {
             const Icon = item.icon;
             const active = isActive(item.path);
             
+            if (item.external) {
+              return (
+                <a
+                  key={item.id}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center justify-center w-14 h-14 rounded-lg transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-700/50"
+                  title={item.label}
+                >
+                  <Icon size={24} />
+                  <span className="text-xs mt-1 font-medium">{item.label}</span>
+                </a>
+              );
+            }
             return (
               <Link
                 key={item.id}
