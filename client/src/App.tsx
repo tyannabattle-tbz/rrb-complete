@@ -131,11 +131,16 @@ import { Toaster } from 'sonner';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
+  // Determine which home page to show based on hostname
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+  const isRRBDomain = hostname.includes('rockinrockinboogie.com') || hostname.includes('rrb');
+  const HomeComponent = isRRBDomain ? RRBLegacySite : Home;
+  
   return (
     <>
       <Breadcrumbs />
       <Switch>
-      <Route path="/" component={RRBLegacySite} />
+      <Route path="/" component={HomeComponent} />
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
