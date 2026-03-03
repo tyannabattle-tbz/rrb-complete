@@ -24,21 +24,8 @@ export default function RRBPort3001() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeChannel, setActiveChannel] = useState<number | null>(null);
 
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/api/rrb/status');
-        const data = await response.json();
-        setRadioStatus(data);
-      } catch (error) {
-        console.error('Failed to fetch RRB status:', error);
-      }
-    };
-
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  // Radio status is initialized with default values above
+  // No external fetch needed - data is managed locally
 
   const handlePlayStream = () => {
     setIsPlaying(!isPlaying);

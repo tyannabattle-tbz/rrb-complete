@@ -17,22 +17,8 @@ export default function HybridCastPort3002() {
     { id: 2, severity: 'medium', message: 'Network latency detected', time: '30 minutes ago' },
   ]);
 
-  useEffect(() => {
-    // Fetch HybridCast status from port 3002
-    const fetchStatus = async () => {
-      try {
-        const response = await fetch('http://localhost:3002/api/hybridcast/status');
-        const data = await response.json();
-        setEmergencyStatus(data);
-      } catch (error) {
-        console.error('Failed to fetch HybridCast status:', error);
-      }
-    };
-
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  // Emergency status is initialized with default values above
+  // No external fetch needed - data is managed locally
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-red-900 to-slate-900">

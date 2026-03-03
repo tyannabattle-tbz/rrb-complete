@@ -2136,4 +2136,14 @@
 - [x] Update meta description to reflect RRB mission
 - [x] Verify all core pages work: Home, /rrb, /solbones, /donate, /ecosystem-dashboard
 - [x] Run tests to ensure nothing is broken (25/25 Stripe tests pass, 38/38 ecosystem tests pass, 2 pre-existing stripeService failures)
-- [ ] Save checkpoint for publishing
+- [x] Save checkpoint for publishing (version: 4a992df2)
+
+## Bug Fixes - User Reported Issues
+- [x] Fix "Enter Qumus" button routing - now navigates to /qumus within the app
+- [x] Fix "Home" button navigation - added Legacy sections, Mission Statement, Canryn Production info
+- [x] Fix legacy page (Seabrun Candy Hunter Legacy) - fully rebuilt with styled content
+- [x] Fix console errors - removed localhost:3001/3002 fetches, disabled agent-registry polling
+- [x] Fill in empty content sections on home/ecosystem pages
+- [x] Fix /donations path to /donate
+- [x] Replace /shop with /legacy link
+- [x] Add /legacy route for RRBLegacySite page

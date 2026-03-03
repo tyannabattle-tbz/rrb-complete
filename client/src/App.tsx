@@ -237,6 +237,7 @@ function Router() {
       <Route path="/rrb" component={RRBPort3001} />
       <Route path="/solbones" component={Solbones} />
       <Route path="/donate" component={SweetMiraclesDonation} />
+      <Route path="/legacy" component={RRBLegacySite} />
       <Route path="/ecosystem-dashboard" component={EcosystemMasterDashboard} />
       <Route path="/admin" component={AdminControlPanel} />
       <Route path="/emergency" component={HybridCastPort3002} />

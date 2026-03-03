@@ -113,7 +113,8 @@ export class AgentNetworkService extends EventEmitter {
    */
   private initializeNetwork(): void {
     this.startHeartbeat();
-    this.startDiscovery();
+    // Discovery disabled - agent-registry.qumus.io not yet deployed
+    // this.startDiscovery();
     this.setupMessageHandlers();
   }
 

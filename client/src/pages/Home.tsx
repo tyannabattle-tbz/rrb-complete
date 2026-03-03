@@ -140,16 +140,16 @@ export default function Home() {
       description: 'Nonprofit donation platform. Supporting legacy recovery and community impact.',
       features: ['Donations', 'Impact Tracking', 'Nonprofit Metrics', 'Community Support'],
       color: 'from-green-600 to-emerald-600',
-      path: '/donations',
+      path: '/donate',
       status: 'Active',
     },
     {
-      id: 'shop',
-      title: '🛍️ Merchandise',
-      description: 'RRB merchandise shop. Support the mission through community products.',
-      features: ['Products', 'Inventory', 'Orders', 'Community Support'],
+      id: 'legacy',
+      title: '\uD83D\uDCDC Legacy Restored',
+      description: 'Seabrun Candy Hunter legacy site. Music, broadcasting, and community by Canryn Production.',
+      features: ['Legacy Archive', 'Family Heritage', 'Verified Documents', 'Community Impact'],
       color: 'from-indigo-600 to-purple-600',
-      path: '/shop',
+      path: '/legacy',
       status: 'Active',
     },
     {
@@ -204,7 +204,7 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button
-              onClick={() => window.open('https://qumus.manus.space/', '_blank')}
+              onClick={() => setLocation('/qumus')}
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               size="lg"
             >
@@ -218,7 +218,7 @@ export default function Home() {
               Go to RRB Radio →
             </Button>
             <Button
-              onClick={() => window.open('https://hybridcast.manus.space/', '_blank')}
+              onClick={() => setLocation('/emergency')}
               className="bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700"
               size="lg"
             >
@@ -294,16 +294,125 @@ export default function Home() {
           <div className="text-center">
             <div className="text-4xl mb-4">⚡</div>
             <h4 className="text-lg font-semibold text-white mb-2">Always Ready</h4>
-            <p className="text-purple-300">24/7 operation on your Mac mini</p>
+            <p className="text-purple-300">24/7 broadcasting and community support</p>
           </div>
+        </div>
+      </section>
+
+      {/* Legacy Restored & Legacy Continued */}
+      <section className="container mx-auto px-4 py-16 border-t border-purple-500/20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Card className="bg-slate-800/50 border-purple-500/20">
+            <CardHeader>
+              <CardTitle className="text-2xl text-white">Legacy Restored</CardTitle>
+              <CardDescription className="text-purple-300">
+                Preserving the past through verified documentation
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-gray-300">
+                Preserving the legacy of Seabrun Candy Hunter through verified documentation,
+                live radio broadcasting, healing music frequencies, and community empowerment.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary" className="bg-pink-500/20 text-pink-300 border-pink-500/50">Radio Station</Badge>
+                <Badge variant="secondary" className="bg-pink-500/20 text-pink-300 border-pink-500/50">Podcast</Badge>
+                <Badge variant="secondary" className="bg-pink-500/20 text-pink-300 border-pink-500/50">Audiobooks</Badge>
+                <Badge variant="secondary" className="bg-pink-500/20 text-pink-300 border-pink-500/50">Verified Documents</Badge>
+              </div>
+              <Button
+                onClick={() => setLocation('/legacy')}
+                className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700 mt-4"
+              >
+                Explore Legacy
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-slate-800/50 border-purple-500/20">
+            <CardHeader>
+              <CardTitle className="text-2xl text-white">Legacy Continued</CardTitle>
+              <CardDescription className="text-purple-300">
+                Building generational wealth through innovation
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-gray-300">
+                Canryn Production and its subsidiaries continue the mission through
+                autonomous broadcasting, community tools, and Sweet Miracles grant and donation funding.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">Canryn Production</Badge>
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">Sweet Miracles</Badge>
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">QUMUS AI</Badge>
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">HybridCast</Badge>
+              </div>
+              <Button
+                onClick={() => setLocation('/ecosystem-dashboard')}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 mt-4"
+              >
+                View Dashboard
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Mission Statement */}
+      <section className="container mx-auto px-4 py-16 border-t border-purple-500/20">
+        <div className="bg-gradient-to-r from-pink-600/20 to-purple-600/20 rounded-xl border border-pink-500/20 p-12 text-center">
+          <h3 className="text-3xl font-bold text-white mb-4">"A Voice for the Voiceless"</h3>
+          <p className="text-lg text-purple-300 mb-6 max-w-3xl mx-auto">
+            Providing the community with access to essential tools during crises, enabling them
+            to produce their own media, broadcast as they choose, and access information and communication.
+            Powered by Canryn Production and Sweet Miracles.
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Button
+              onClick={() => setLocation('/donate')}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              size="lg"
+            >
+              Support the Mission
+            </Button>
+            <Button
+              onClick={() => setLocation('/rrb')}
+              variant="outline"
+              className="border-pink-500 text-pink-400 hover:bg-pink-500/10"
+              size="lg"
+            >
+              Listen Now
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Canryn Production Subsidiaries */}
+      <section className="container mx-auto px-4 py-16 border-t border-purple-500/20">
+        <h3 className="text-2xl font-bold text-white mb-8 text-center">Canryn Production & Subsidiaries</h3>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {[
+            { name: "Little C", owner: "Carlos Kembrel" },
+            { name: "Sean's Music", owner: "Sean Hunter" },
+            { name: "Anna's", owner: "Tyanna & LaShanna" },
+            { name: "Jaelon Enterprises", owner: "Jaelon Hunter" },
+            { name: "Payten Music (BMI)", owner: "RRB Registration" },
+          ].map((sub, idx) => (
+            <Card key={idx} className="bg-slate-800/50 border-purple-500/20 text-center">
+              <CardContent className="pt-4 pb-4">
+                <p className="font-semibold text-white text-sm">{sub.name}</p>
+                <p className="text-xs text-purple-300 mt-1">{sub.owner}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-purple-500/20 bg-slate-900/50 mt-16 py-8">
         <div className="container mx-auto px-4 text-center text-purple-300">
-          <p>Built with ❤️ for RRB by Qumus</p>
-          <p className="text-sm mt-2">Offline. Autonomous. Yours.</p>
+          <p>A Canryn Production and its subsidiaries</p>
+          <p className="text-sm mt-2">"A Voice for the Voiceless" — Sweet Miracles 501(c)(3) & 508</p>
         </div>
       </footer>
     </div>
