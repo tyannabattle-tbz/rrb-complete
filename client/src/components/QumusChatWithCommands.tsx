@@ -21,7 +21,7 @@ export function QumusChatWithCommands() {
     {
       id: '0',
       role: 'assistant',
-      content: 'Welcome to Rockin Rockin Boogie! I can help you manage music, broadcasts, donations, and meditation. Try commands like:\n\n• "Play music from rockin rockin boogie"\n• "Start emergency broadcast"\n• "Donate $500 to sweet miracles"\n• "Start meditation session"',
+      content: 'Welcome to QUMUS! I can help you manage music, broadcasts, donations, and meditation. Try commands like:\n\n• "Play music from rockin rockin boogie"\n• "Start emergency broadcast"\n• "Donate $500 to sweet miracles"\n• "Start meditation session"',
       timestamp: Date.now(),
     },
   ]);
