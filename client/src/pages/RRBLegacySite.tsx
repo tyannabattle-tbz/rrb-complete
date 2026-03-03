@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +8,20 @@ import { Radio, Music, Heart, Globe, BookOpen, Users, Shield, FileText, Mic, Hea
 export default function RRBLegacySite() {
   const [isSpinning, setIsSpinning] = useState(true);
   const [, setLocation] = useLocation();
+  const [audioStarted, setAudioStarted] = useState(false);
+
+  // Auto-play audio on page load with low volume
+  useEffect(() => {
+    if (!audioStarted) {
+      const audio = new Audio('https://stream.rockinrockinboogie.com/live');
+      audio.volume = 0.2; // Low volume (20%)
+      audio.play().catch(err => {
+        console.log('Auto-play prevented by browser policy:', err);
+        // Browser policy prevents auto-play without user interaction
+      });
+      setAudioStarted(true);
+    }
+  }, [audioStarted]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -87,6 +101,16 @@ export default function RRBLegacySite() {
                 className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700"
               >
                 {isSpinning ? '⏸ Pause Record' : '▶ Play Record'}
+              </Button>
+              <Button
+                onClick={() => {
+                  const audio = new Audio('https://stream.rockinrockinboogie.com/live');
+                  audio.volume = 0.2;
+                  audio.play();
+                }}
+                className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700"
+              >
+                🎙 Start Broadcast
               </Button>
               <Button
                 onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')}
