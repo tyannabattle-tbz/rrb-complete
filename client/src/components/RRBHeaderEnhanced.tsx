@@ -4,22 +4,13 @@ import { Search, Download, Share2, Menu, X, Home, Radio, Music, Heart, Globe, Za
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { SearchBox } from '@/components/SearchBox';
 
 export function RRBHeaderEnhanced() {
   const [, navigate] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-      setSearchQuery('');
-      setShowSearch(false);
-      toast.success(`Searching for: ${searchQuery}`);
-    }
-  };
+
 
   const handleDownload = () => {
     const pageData = {
@@ -111,28 +102,10 @@ export function RRBHeaderEnhanced() {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            {/* Search */}
-            {showSearch ? (
-              <form onSubmit={handleSearch} className="hidden sm:flex items-center gap-2">
-                <Input
-                  type="text"
-                  placeholder="Search RRB..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-32 h-8 text-sm border-pink-500/30 focus:border-pink-500"
-                  autoFocus
-                />
-              </form>
-            ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSearch(true)}
-                className="hidden sm:flex text-pink-300 hover:text-pink-100"
-              >
-                <Search className="w-4 h-4" />
-              </Button>
-            )}
+            {/* Search Box */}
+            <div className="hidden sm:block w-64">
+              <SearchBox category="rrb" />
+            </div>
 
             {/* Download */}
             <Button

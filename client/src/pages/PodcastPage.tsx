@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { PodcastFrequencyFilter } from '@/components/PodcastFrequencyFilter';
 
 interface Podcast {
   id: string;
@@ -94,6 +95,7 @@ export default function PodcastPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(70);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [selectedFrequencies, setSelectedFrequencies] = useState<number[]>([]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -151,6 +153,14 @@ export default function PodcastPage() {
               className="pl-12 h-12 border-pink-500/30 focus:border-pink-500 bg-slate-800/50"
             />
           </div>
+        </div>
+
+        {/* Frequency Filter */}
+        <div className="mb-8 p-6 bg-slate-800/50 rounded-lg border border-pink-500/20">
+          <PodcastFrequencyFilter
+            selectedFrequencies={selectedFrequencies}
+            onFrequencyChange={setSelectedFrequencies}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

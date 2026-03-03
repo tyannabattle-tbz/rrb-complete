@@ -7,23 +7,14 @@ import { toast } from 'sonner';
 import { HybridCastTabNavigationFixed } from '@/components/HybridCastTabNavigationFixed';
 import { HybridCastStatusWidget } from '@/components/HybridCastStatusWidget';
 import { SimplifiedMobileNav } from '@/components/SimplifiedMobileNav';
+import { SearchBox } from '@/components/SearchBox';
 
 export function AppHeaderEnhanced() {
   const [, navigate] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
   const [showHybridCastTabs, setShowHybridCastTabs] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-      setSearchQuery('');
-      setShowSearch(false);
-      toast.success(`Searching for: ${searchQuery}`);
-    }
-  };
+
 
   const handleDownload = () => {
     const pageData = {
@@ -111,34 +102,10 @@ export function AppHeaderEnhanced() {
 
           {/* Search and Actions */}
           <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
-            {/* Search */}
-            {showSearch ? (
-              <form onSubmit={handleSearch} className="flex items-center gap-2">
-              <Input
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-32 md:w-48 text-sm"
-                autoFocus
-              />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowSearch(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </form>
-            ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSearch(true)}
-              >
-                <Search className="h-4 w-4" />
-              </Button>
-            )}
+            {/* Search Box */}
+            <div className="hidden sm:block w-64">
+              <SearchBox category="qumus" />
+            </div>
 
             {/* HybridCast Status Widget */}
             <HybridCastStatusWidget />
