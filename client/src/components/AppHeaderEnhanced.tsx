@@ -65,17 +65,17 @@ export function AppHeaderEnhanced() {
   };
 
   const navItems = [
-    { id: 'nav-0', label: 'Home', icon: Home, path: '/' },
-    { id: 'nav-1', label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
-    { id: 'nav-2', label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
-    { id: 'nav-3', label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
-    { id: 'nav-4', label: 'HybridCast', icon: Radio, path: 'https://www.hybridcast.sbs', external: true, action: () => setShowHybridCastTabs(!showHybridCastTabs) },
-    { id: 'nav-5', label: 'RRB Radio', icon: Music, path: 'https://www.rockinrockinboogie.com', external: true },
-    { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
-    { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
-    { id: 'nav-8', label: 'Broadcast Monitor', icon: Eye, path: '/broadcast-monitoring' },
-    { id: 'nav-9', label: 'Recommendations', icon: TrendingUp, path: '/recommendations' },
-    { id: 'nav-10', label: 'Impact', icon: Heart, path: '/impact-dashboard' },
+    { id: 'nav-0', label: 'Home', icon: Home, path: '/', action: () => navigate('/') },
+    { id: 'nav-1', label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard', action: () => navigate('/comprehensive-dashboard') },
+    { id: 'nav-2', label: 'Chat', icon: MessageSquare, path: '/qumus-chat', action: () => navigate('/qumus-chat') },
+    { id: 'nav-3', label: 'GPS Map', icon: MapPin, path: '/gps-radar', action: () => navigate('/gps-radar') },
+    { id: 'nav-4', label: 'HybridCast', icon: Radio, path: '/hybridcast', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
+    { id: 'nav-5', label: 'RRB Radio', icon: Music, path: '/', action: () => navigate('/') },
+    { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub', action: () => navigate('/broadcast-hub') },
+    { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio', action: () => navigate('/mobile-studio') },
+    { id: 'nav-8', label: 'Broadcast Monitor', icon: Eye, path: '/broadcast-monitoring', action: () => navigate('/broadcast-monitoring') },
+    { id: 'nav-9', label: 'Recommendations', icon: TrendingUp, path: '/recommendations', action: () => navigate('/recommendations') },
+    { id: 'nav-10', label: 'Impact', icon: Heart, path: '/impact-dashboard', action: () => navigate('/impact-dashboard') },
   ];
 
   return (
