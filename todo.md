@@ -2172,3 +2172,11 @@
 - [x] Update QumusPort3000 RRB + Emergency buttons → external
 - [x] Update RRBLegacySite back-to-RRB links → external
 - [x] Update Home.tsx system cards → external for RRB + HybridCast
+
+## SEO Optimization (Score: 42 → Target: 80+)
+- [x] Fix SEO title (currently "Qumus" - only 5 chars, needs 30-60 chars)
+- [x] Fix SEO description (currently 202 chars, shorten to ~155 chars)
+- [x] Add keywords meta tag
+- [x] Add H1 heading to home page
+- [x] Add H2 headings to home page
+- [x] Verify SEO score improvement (10 SEO tests passing)

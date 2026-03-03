@@ -44,7 +44,11 @@ export default function Home() {
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md bg-slate-800 border-slate-700">
+        <div className="w-full max-w-md">
+        {/* SEO: Visible headings for crawlers and users */}
+        <h1 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">QUMUS Orchestration Engine</h1>
+        <h2 className="text-sm text-center text-slate-400 mb-6">Autonomous Broadcasting and Ecosystem Control by Canryn Production</h2>
+        <Card className="w-full bg-slate-800 border-slate-700">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <Zap className="w-12 h-12 text-blue-500" />
@@ -101,6 +105,7 @@ export default function Home() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     );
   }
