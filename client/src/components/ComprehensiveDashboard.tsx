@@ -330,7 +330,7 @@ export function ComprehensiveDashboard() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">Qumus Dashboard</h1>
+              <h1 className="text-3xl font-bold text-slate-900">RRB Dashboard</h1>
               <p className="text-sm text-slate-500">Comprehensive system monitoring and analytics</p>
             </div>
             <div className="flex items-center gap-2">

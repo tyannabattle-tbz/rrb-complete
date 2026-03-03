@@ -299,7 +299,7 @@ export default function HybridCastPort3002() {
       <footer className="border-t border-red-500/20 bg-slate-900/50 mt-16 py-8">
         <div className="container mx-auto px-4 text-center text-red-300">
           <p>HybridCast Emergency Broadcast System • Offline Capable • Mesh Enabled</p>
-          <p className="text-sm mt-2">Orchestrated by Qumus • Always Ready</p>
+          <p className="text-sm mt-2">Orchestrated by QUMUS • Always Ready</p>
         </div>
       </footer>
     </div>

@@ -1,7 +1,7 @@
 {
-  "name": "RockinRockinBoogie - Autonomous Entertainment Platform",
+  "name": "Rockin Rockin Boogie - A Voice for the Voiceless",
   "short_name": "RRB",
-  "description": "Autonomous entertainment platform powered by QUMUS AI orchestration. Stream music, podcasts, and live broadcasts with 90% autonomous decision-making.",
+  "description": "Complete broadcasting ecosystem by Canryn Production. 24/7 radio, healing frequencies, Solbones game, Sweet Miracles donations, and community support.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -10,75 +10,67 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/qumus-icon-192.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
       "sizes": "192x192",
       "type": "image/webp",
       "purpose": "any"
     },
     {
-      "src": "/qumus-icon-512.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-512-Wanohmisra7dATUv6gm8bx.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "any"
     },
     {
-      "src": "/qumus-icon-192.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
       "sizes": "192x192",
       "type": "image/webp",
       "purpose": "maskable"
     },
     {
-      "src": "/qumus-icon-512.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-512-Wanohmisra7dATUv6gm8bx.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/qumus-splash-screen.png",
-      "sizes": "540x720",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
-  "categories": ["entertainment", "music", "podcasts"],
+  "categories": ["entertainment", "music", "community"],
   "prefer_related_applications": false,
   "shortcuts": [
     {
-      "name": "Radio Station",
+      "name": "RRB Radio",
       "short_name": "Radio",
-      "description": "Access live radio streaming",
-      "url": "/radio",
+      "description": "24/7 Radio Broadcasting with healing frequencies",
+      "url": "/rrb",
       "icons": [
         {
-          "src": "/qumus-icon-192.webp",
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
           "sizes": "192x192",
           "type": "image/webp"
         }
       ]
     },
     {
-      "name": "Podcasts",
-      "short_name": "Podcasts",
-      "description": "Browse and listen to podcasts",
-      "url": "/podcasts",
+      "name": "Sweet Miracles Donate",
+      "short_name": "Donate",
+      "description": "Support legacy recovery through Sweet Miracles",
+      "url": "/donate",
       "icons": [
         {
-          "src": "/qumus-icon-192.webp",
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
           "sizes": "192x192",
           "type": "image/webp"
         }
       ]
     },
     {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "View autonomous system dashboard",
-      "url": "/autonomous-dashboard",
+      "name": "Solbones Game",
+      "short_name": "Solbones",
+      "description": "Sacred math dice game with Solfeggio frequencies",
+      "url": "/solbones",
       "icons": [
         {
-          "src": "/qumus-icon-192.webp",
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
           "sizes": "192x192",
           "type": "image/webp"
         }

@@ -331,7 +331,7 @@ export default function UnifiedDashboard() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 <div className="p-3 bg-purple-900/20 rounded border border-purple-500/30">
-                  <p className="text-sm font-semibold text-purple-300">Qumus</p>
+                  <p className="text-sm font-semibold text-purple-300">QUMUS</p>
                   <p className="text-xs text-slate-400 mt-1">90% autonomous control, 10% human override</p>
                 </div>
                 <div className="p-3 bg-pink-900/20 rounded border border-pink-500/30">

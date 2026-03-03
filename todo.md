@@ -2147,3 +2147,17 @@
 - [x] Fix /donations path to /donate
 - [x] Replace /shop with /legacy link
 - [x] Add /legacy route for RRBLegacySite page
+
+## Full Rebrand & Follow-up - Apply All Now (COMPLETED)
+- [x] Generate RRB logo and favicon (golden vinyl record with music notes)
+- [x] Upload logo/favicon to CDN (192px and 512px WebP)
+- [x] Replace "Qumus" branding in header/nav with "RRB" + logo across all 5 header components
+- [x] Update all page titles from Qumus to RRB (AgentDashboard, ComprehensiveDashboard, OptimizationHub, etc.)
+- [x] Update DashboardLayout sidebar branding (AgentLayout.tsx)
+- [x] Update manifest.json PWA name, icons, shortcuts
+- [x] Update chat welcome messages (ChatInterface, QumusChatInterface)
+- [x] Update translator.ts, iOSApp.ts, service worker cache names
+- [x] Domain prefix: user can change via Settings > Domains
+- [x] Verify Stripe donation flow - 25/25 tests pass, page loads correctly
+- [x] Run ecosystem tests - 36/36 pass
+- [x] TypeScript: zero errors after all changes

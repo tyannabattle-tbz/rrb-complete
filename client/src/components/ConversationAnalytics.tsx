@@ -72,7 +72,7 @@ export const ConversationAnalytics: React.FC = () => {
 
       // Prepare CSV content
       const csvContent = [
-        ['Qumus Conversation Analytics Report'],
+        ['RRB Conversation Analytics Report'],
         ['Generated:', new Date().toLocaleString()],
         [''],
         ['Summary Statistics'],

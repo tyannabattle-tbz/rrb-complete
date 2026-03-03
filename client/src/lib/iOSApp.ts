@@ -94,7 +94,7 @@ export class QumusIOSApp {
 
   constructor() {
     this.config = {
-      appName: 'Qumus',
+      appName: 'Rockin Rockin Boogie',
       bundleId: 'com.qumus.app',
       version: '1.0.0',
       minimumOSVersion: '14.0',
@@ -189,7 +189,7 @@ export class QumusIOSApp {
         },
       ],
       navigationBar: {
-        title: 'Qumus',
+        title: 'Rockin Rockin Boogie',
         rightBarItems: [
           {
             id: 'settings-btn',

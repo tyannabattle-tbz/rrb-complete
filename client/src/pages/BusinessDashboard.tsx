@@ -178,7 +178,7 @@ export function BusinessDashboard() {
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-4">
                   {[
-                    { name: 'Qumus', desc: 'Video Generation & Distribution' },
+                    { name: 'QUMUS Engine', desc: 'Autonomous Orchestration' },
                     { name: 'Nexus', desc: 'Creator Collaboration Hub' },
                     { name: 'Forge', desc: 'AI Content Engine' },
                     { name: 'Atlas', desc: 'Distribution & Analytics' },

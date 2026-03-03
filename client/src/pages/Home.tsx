@@ -109,7 +109,7 @@ export default function Home() {
   const systems = [
     {
       id: 'qumus',
-      title: '🧠 Qumus Orchestration',
+      title: '🧠 QUMUS Engine',
       description: 'Autonomous AI orchestration engine. 90% autonomous control with human oversight.',
       features: ['Task Execution', 'Policy Decisions', 'LLM Integration', 'Real-time Monitoring'],
       color: 'from-purple-600 to-blue-600',
@@ -208,7 +208,7 @@ export default function Home() {
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               size="lg"
             >
-              Enter Qumus →
+              Enter QUMUS →
             </Button>
             <Button
               onClick={() => setLocation('/rrb')}
@@ -284,7 +284,7 @@ export default function Home() {
           <div className="text-center">
             <div className="text-4xl mb-4">🧠</div>
             <h4 className="text-lg font-semibold text-white mb-2">90% Autonomous</h4>
-            <p className="text-purple-300">Qumus AI makes decisions with human oversight</p>
+            <p className="text-purple-300">QUMUS AI makes decisions with human oversight</p>
           </div>
           <div className="text-center">
             <div className="text-4xl mb-4">🌍</div>

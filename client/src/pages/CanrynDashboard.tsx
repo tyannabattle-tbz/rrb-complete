@@ -17,7 +17,7 @@ export function CanrynDashboard() {
 
   const getSubsidiaryIcon = (name: string) => {
     switch (name) {
-      case 'Qumus':
+      case 'QUMUS':
         return <Zap className="w-5 h-5" />;
       case 'RRB Radio':
         return <Radio className="w-5 h-5" />;

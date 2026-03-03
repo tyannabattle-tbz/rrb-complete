@@ -136,8 +136,8 @@ export default function ChatMessage({
             <ShareableLink
               videoId={videoId}
               videoUrl={videoUrl}
-              title="Check out this video generated with Qumus"
-              description="Created with Qumus AI Video Generator"
+              title="Check out this content from Rockin Rockin Boogie"
+              description="Created with Rockin Rockin Boogie by Canryn Production"
             />
           </div>
         )}

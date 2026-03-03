@@ -475,7 +475,7 @@ export default function AdvancedStudioDashboard() {
       <footer className="border-t border-purple-500/30 bg-slate-900/50 py-6 mt-12">
         <div className="container mx-auto px-4 text-center text-slate-400 text-sm">
           <p>Advanced Studio Dashboard • Professional Broadcasting • AR Glasses • Voice Control • AI Orchestration</p>
-          <p className="mt-2">Powered by Qumus • RRB Radio • HybridCast Emergency</p>
+          <p className="mt-2">Powered by QUMUS • RRB Radio • HybridCast Emergency</p>
         </div>
       </footer>
     </div>

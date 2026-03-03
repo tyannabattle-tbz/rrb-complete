@@ -195,7 +195,7 @@ export default function PersonalityProfiles({
 
       {profiles.length === 0 ? (
         <p className="text-xs text-muted-foreground">
-          No profiles yet. Create one to customize Qumus's behavior.
+          No profiles yet. Create one to customize the system's behavior.
         </p>
       ) : (
         <div className="space-y-2">

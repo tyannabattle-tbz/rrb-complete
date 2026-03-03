@@ -86,7 +86,7 @@ export const ContentRecommendationEngine: React.FC = () => {
       {/* Header Banner */}
       <div className="rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 p-6 text-white shadow-lg">
         <h1 className="text-3xl font-bold">Content Recommendation Engine</h1>
-        <p className="mt-2 text-lg font-semibold">Powered by Qumus AI</p>
+        <p className="mt-2 text-lg font-semibold">Powered by QUMUS AI for Canryn Production</p>
         <p className="mt-2 text-sm opacity-90">Personalized video suggestions based on your viewing history and preferences</p>
       </div>
 

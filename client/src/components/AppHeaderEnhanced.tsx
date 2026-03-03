@@ -48,8 +48,8 @@ export function AppHeaderEnhanced() {
 
   const handleShare = () => {
     const shareData = {
-      title: 'Qumus - AI Orchestration Platform',
-      text: 'Check out this amazing AI orchestration platform!',
+      title: 'Rockin Rockin Boogie - A Voice for the Voiceless',
+      text: 'Rockin Rockin Boogie - Music, Broadcasting & Community by Canryn Production',
       url: window.location.href,
     };
 
@@ -85,7 +85,7 @@ export function AppHeaderEnhanced() {
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo/Brand */}
           <div className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-primary">Qumus</div>
+            <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp" alt="RRB" className="w-8 h-8 rounded" /><span className="text-xl font-bold text-primary">RRB</span>
             <span className="text-xs font-semibold text-cyan-500 bg-cyan-500/20 px-2 py-1 rounded">HybridCast</span>
           </div>
 

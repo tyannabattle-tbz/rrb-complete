@@ -41,7 +41,7 @@ export function HybridCastBroadcastEnhanced() {
     averageWatchTime: 0,
   });
 
-  const [title, setTitle] = useState('Qumus Live Stream');
+  const [title, setTitle] = useState('RRB Live Stream');
   const [description, setDescription] = useState('Broadcasting with HybridCast');
   const [selectedQuality, setSelectedQuality] = useState('1080p');
   const [selectedBitrate, setSelectedBitrate] = useState('5 Mbps');

@@ -19,7 +19,7 @@ export default function AgentDashboard() {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto">
         <Card className="p-6">
-          <h1 className="text-3xl font-bold mb-6">Qumus</h1>
+          <h1 className="text-3xl font-bold mb-6">Rockin Rockin Boogie</h1>
           <p className="text-muted-foreground mb-6">
             Welcome, {user?.name || "User"}. Use the QUMUS chat interface below to interact with the agent.
           </p>
