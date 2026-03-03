@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Radio, Music, Heart, Globe, BookOpen, Users, Shield, FileText, Mic, Headphones } from 'lucide-react';
+import { RRBHeaderEnhanced } from '@/components/RRBHeaderEnhanced';
+import { BreadcrumbNavigation } from '@/components/BreadcrumbNavigation';
 
 export default function RRBLegacySite() {
   const [isSpinning, setIsSpinning] = useState(true);
@@ -25,6 +27,12 @@ export default function RRBLegacySite() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* RRB Header */}
+      <RRBHeaderEnhanced />
+      
+      {/* Breadcrumb Navigation */}
+      <BreadcrumbNavigation />
+      
       {/* UN Banner */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 px-4 text-center">
         <div className="flex items-center justify-center gap-2">
@@ -33,9 +41,9 @@ export default function RRBLegacySite() {
         </div>
       </div>
 
-      {/* Header */}
-      <header className="border-b border-pink-500/20 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-6">
+      {/* Legacy Info Header */}
+      <header className="border-b border-pink-500/20 bg-slate-900/50 backdrop-blur-sm sticky top-32 z-40">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Radio className="w-8 h-8 text-pink-400 animate-pulse" />

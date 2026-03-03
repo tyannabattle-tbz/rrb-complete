@@ -128,6 +128,8 @@ import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
 import EcosystemMasterDashboard from "@/pages/EcosystemMasterDashboard";
 import AdminControlPanel from "@/pages/AdminControlPanel";
 import { Toaster } from 'sonner';
+import { BreadcrumbNavigation } from '@/components/BreadcrumbNavigation';
+import { MobileNavigationDrawer } from '@/components/MobileNavigationDrawer';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -138,6 +140,7 @@ function Router() {
   
   return (
     <>
+      <BreadcrumbNavigation />
       <Breadcrumbs />
       <Switch>
       <Route path="/" component={HomeComponent} />
