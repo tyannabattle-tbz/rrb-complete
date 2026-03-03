@@ -126,6 +126,7 @@ import RRBPort3001 from "@/pages/RRBPort3001";
 import HybridCastPort3002 from "@/pages/HybridCastPort3002";
 import RRBMusicStreaming from "@/pages/RRBMusicStreaming";
 import RRBLegacySite from "@/pages/RRBLegacySite";
+import RRBEcosystemDashboard from "@/pages/RRBEcosystemDashboard";
 import SolbonesGame from "@/pages/SolbonesGame";
 import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
 import EcosystemMasterDashboard from "@/pages/EcosystemMasterDashboard";
@@ -139,7 +140,7 @@ function Router() {
   // Determine which home page to show based on hostname
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isRRBDomain = hostname.includes('rockinrockinboogie.com') || hostname.includes('rrb');
-  const HomeComponent = isRRBDomain ? RRBLegacySite : Home;
+  const HomeComponent = isRRBDomain ? RRBEcosystemDashboard : Home;
   
   return (
     <>
