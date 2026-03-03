@@ -4926,7 +4926,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z70 } from "zod";
+import { z as z71 } from "zod";
 import { TRPCError as TRPCError14 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -26904,6 +26904,152 @@ var rrbUnifiedRouter = router({
   })
 });
 
+// server/routers/search.ts
+import { z as z70 } from "zod";
+var searchIndex = [
+  {
+    id: "1",
+    title: "Rockin Rockin Boogie Legacy",
+    description: "Preserving the legacy of Seabrun Candy Hunter through verified documentation, live radio broadcasting, healing music frequencies, and community empowerment.",
+    category: "rrb",
+    url: "/",
+    tags: ["legacy", "radio", "community"]
+  },
+  {
+    id: "2",
+    title: "RRB Radio Station",
+    description: "24/7 live radio broadcasting with healing frequencies and community engagement.",
+    category: "rrb",
+    url: "/radio-station",
+    tags: ["radio", "streaming", "live"]
+  },
+  {
+    id: "3",
+    title: "Music Library",
+    description: "Curated music collection with Spotify integration for all healing frequencies.",
+    category: "rrb",
+    url: "/music-library",
+    tags: ["music", "spotify", "healing"]
+  },
+  {
+    id: "4",
+    title: "Podcast & Video",
+    description: "YouTube integrated podcast and video content with full playback controls.",
+    category: "rrb",
+    url: "/podcasts",
+    tags: ["podcasts", "video", "youtube"]
+  },
+  {
+    id: "5",
+    title: "Solbones Game",
+    description: "Sacred math dice game with Solfeggio frequencies and multiplayer support.",
+    category: "rrb",
+    url: "/solbones",
+    tags: ["game", "dice", "frequencies"]
+  },
+  {
+    id: "6",
+    title: "Sweet Miracles Donations",
+    description: "Support the RRB legacy through Stripe-powered donations and community funding.",
+    category: "rrb",
+    url: "/donations",
+    tags: ["donations", "fundraising", "community"]
+  },
+  {
+    id: "7",
+    title: "Listener Analytics",
+    description: "Real-time listener metrics, engagement tracking, and channel analytics.",
+    category: "rrb",
+    url: "/listener-analytics",
+    tags: ["analytics", "metrics", "insights"]
+  },
+  {
+    id: "8",
+    title: "QUMUS Orchestration",
+    description: "Autonomous AI orchestration engine with 90% autonomous control and human oversight.",
+    category: "qumus",
+    url: "/comprehensive-dashboard",
+    tags: ["qumus", "ai", "orchestration"]
+  },
+  {
+    id: "9",
+    title: "Broadcast Hub",
+    description: "Complete broadcast management platform with scheduling, compliance, and automation.",
+    category: "qumus",
+    url: "/broadcast-hub",
+    tags: ["broadcast", "scheduling", "management"]
+  },
+  {
+    id: "10",
+    title: "HybridCast Emergency",
+    description: "Offline-first emergency broadcast system with mesh networking and resilience.",
+    category: "qumus",
+    url: "/hybridcast",
+    tags: ["emergency", "broadcast", "offline"]
+  }
+];
+var searchRouter = router({
+  search: publicProcedure.input(
+    z70.object({
+      query: z70.string().min(1).max(100),
+      category: z70.enum(["all", "rrb", "qumus"]).optional().default("all"),
+      limit: z70.number().min(1).max(50).optional().default(10)
+    })
+  ).query(({ input }) => {
+    const { query: query2, category, limit } = input;
+    const searchTerm = query2.toLowerCase();
+    let results = searchIndex;
+    if (category !== "all") {
+      results = results.filter((item) => item.category === category);
+    }
+    results = results.filter((item) => {
+      const titleMatch = item.title.toLowerCase().includes(searchTerm);
+      const descMatch = item.description.toLowerCase().includes(searchTerm);
+      const tagMatch = item.tags.some((tag) => tag.toLowerCase().includes(searchTerm));
+      return titleMatch || descMatch || tagMatch;
+    });
+    results.sort((a, b) => {
+      const aTitle = a.title.toLowerCase().includes(searchTerm) ? 1 : 0;
+      const bTitle = b.title.toLowerCase().includes(searchTerm) ? 1 : 0;
+      return bTitle - aTitle;
+    });
+    results = results.slice(0, limit);
+    return {
+      query: query2,
+      category,
+      results,
+      totalResults: results.length
+    };
+  }),
+  // Get popular search terms
+  getPopularSearches: publicProcedure.query(() => {
+    return {
+      popular: [
+        "radio",
+        "music",
+        "podcast",
+        "donations",
+        "frequencies",
+        "broadcast",
+        "orchestration"
+      ]
+    };
+  }),
+  // Get search suggestions based on partial query
+  getSuggestions: publicProcedure.input(z70.object({ query: z70.string().min(1).max(50) })).query(({ input }) => {
+    const { query: query2 } = input;
+    const searchTerm = query2.toLowerCase();
+    const suggestions = searchIndex.filter(
+      (item) => item.title.toLowerCase().includes(searchTerm) || item.description.toLowerCase().includes(searchTerm)
+    ).map((item) => ({
+      title: item.title,
+      category: item.category,
+      url: item.url
+    })).slice(0, 5);
+    return { suggestions };
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -26921,11 +27067,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z70.object({
-        goal: z70.string().min(1, "Goal is required"),
-        priority: z70.number().int().min(1).max(10).optional().default(5),
-        steps: z70.array(z70.string()).optional(),
-        constraints: z70.array(z70.string()).optional()
+      z71.object({
+        goal: z71.string().min(1, "Goal is required"),
+        priority: z71.number().int().min(1).max(10).optional().default(5),
+        steps: z71.array(z71.string()).optional(),
+        constraints: z71.array(z71.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -26937,7 +27083,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z70.object({ taskId: z70.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z71.object({ taskId: z71.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -26947,11 +27093,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z70.object({
-        target: z70.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z70.string().min(1, "Action is required"),
-        params: z70.record(z70.any()).optional().default({}),
-        priority: z70.number().int().min(1).max(10).optional().default(5)
+      z71.object({
+        target: z71.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z71.string().min(1, "Action is required"),
+        params: z71.record(z71.any()).optional().default({}),
+        priority: z71.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -26963,10 +27109,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z70.object({ commandId: z70.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z71.object({ commandId: z71.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z70.object({ target: z70.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z71.object({ target: z71.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -27061,12 +27207,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z70.object({
-      sessionName: z70.string().min(1),
-      systemPrompt: z70.string().optional(),
-      temperature: z70.number().min(0).max(100).optional(),
-      model: z70.string().optional(),
-      maxSteps: z70.number().min(1).optional()
+    createSession: protectedProcedure.input(z71.object({
+      sessionName: z71.string().min(1),
+      systemPrompt: z71.string().optional(),
+      temperature: z71.number().min(0).max(100).optional(),
+      model: z71.string().optional(),
+      maxSteps: z71.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -27087,7 +27233,7 @@ var appRouter = router({
       return (void 0)(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z70.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z71.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
       const session = await (void 0)(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -27096,7 +27242,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z70.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z71.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
       const session = await (void 0)(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -27117,7 +27263,9 @@ var appRouter = router({
   // Qumus Full Stack Router (Unified Autonomous System)
   qumusFullStack: qumusFullStackRouter,
   // RRB Unified Router (All RRB Systems Orchestrated)
-  rrb: rrbUnifiedRouter
+  rrb: rrbUnifiedRouter,
+  // Search Router (Global Search Across Content)
+  search: searchRouter
 });
 
 // server/_core/context.ts

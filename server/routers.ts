@@ -73,6 +73,10 @@ import { qumusFullStackRouter } from "./routers/qumusFullStackRouter";
 // Import RRB Unified Router
 import { rrbUnifiedRouter } from "./routers/rrbUnifiedRouter";
 
+// Import Search Router
+import { searchRouter } from "./routers/search";
+import { router as trpcRouter } from "./_core/trpc";
+
 export const appRouter = router({
   // System router
   system: systemRouter,
@@ -357,6 +361,9 @@ export const appRouter = router({
 
   // RRB Unified Router (All RRB Systems Orchestrated)
   rrb: rrbUnifiedRouter,
+
+  // Search Router (Global Search Across Content)
+  search: searchRouter,
 });
 
 export type AppRouter = typeof appRouter;

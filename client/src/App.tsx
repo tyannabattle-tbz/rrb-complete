@@ -48,6 +48,8 @@ import { QumusChatInterface } from './components/QumusChatInterface';
 import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
 import { MobileResponsiveLayout } from './components/MobileResponsiveLayout';
+import PodcastPage from './pages/PodcastPage';
+import ListenerAnalyticsDashboard from './pages/ListenerAnalyticsDashboard';
 import { MobileHeaderClean } from './components/MobileHeaderClean';
 import { Breadcrumbs } from './components/Breadcrumbs';
 import { CanrynDashboard } from './pages/CanrynDashboard';
@@ -183,6 +185,8 @@ function Router() {
       <Route path="/chat" component={QumusChatInterface} />
       <Route path="/qumus-chat" component={QumusChatPage} />
       <Route path="/radio-station" component={RadioStation} />
+      <Route path="/podcasts" component={PodcastPage} />
+      <Route path="/listener-analytics" component={ListenerAnalyticsDashboard} />
       <Route path="/enhanced-chat" component={EnhancedChatPage} />
       <Route path="/qumus-dashboard" component={QumusMonitoringDashboard} />
       <Route path="/policy-decisions" component={PolicyDecisionLogging} />
