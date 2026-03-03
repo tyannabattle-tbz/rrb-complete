@@ -32,7 +32,7 @@ export const MobileNav = ({
   return (
     <nav className="md:hidden fixed top-0 left-0 right-0 bg-background border-b border-border z-50">
       <div className="flex items-center justify-between p-4">
-        <h1 className="text-lg font-bold">RRB</h1>
+        <h1 className="text-lg font-bold">QUMUS</h1>
         <TouchButton
           onClick={() => setIsOpen(!isOpen)}
           className="bg-transparent hover:bg-accent/10"
@@ -93,7 +93,7 @@ export const PWAInstallPrompt = () => {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 bg-accent text-accent-foreground rounded-lg p-4 shadow-lg z-40 md:max-w-sm md:left-auto md:right-4">
-      <p className="text-sm font-medium mb-3">Install RRB on your device</p>
+      <p className="text-sm font-medium mb-3">Install QUMUS on your device</p>
       <div className="flex gap-2">
         <TouchButton
           onClick={handleInstall}

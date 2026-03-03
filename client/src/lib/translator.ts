@@ -1,7 +1,7 @@
 // Language translations for Qumus platform
 export const translations: Record<string, Record<string, string>> = {
   en: {
-    'app.title': 'Rockin Rockin Boogie',
+    'app.title': 'QUMUS',
     'app.subtitle': 'Autonomous Orchestration Engine',
     'nav.home': 'Home',
     'nav.dashboard': 'Dashboard',
@@ -28,7 +28,7 @@ export const translations: Record<string, Record<string, string>> = {
     'preferences.notifications': 'Notifications',
   },
   es: {
-    'app.title': 'Rockin Rockin Boogie',
+    'app.title': 'QUMUS',
     'app.subtitle': 'Motor de Orquestación Autónoma',
     'nav.home': 'Inicio',
     'nav.dashboard': 'Panel de Control',
@@ -55,7 +55,7 @@ export const translations: Record<string, Record<string, string>> = {
     'preferences.notifications': 'Notificaciones',
   },
   fr: {
-    'app.title': 'Rockin Rockin Boogie',
+    'app.title': 'QUMUS',
     'app.subtitle': 'Moteur d\'Orchestration Autonome',
     'nav.home': 'Accueil',
     'nav.dashboard': 'Tableau de Bord',
@@ -82,7 +82,7 @@ export const translations: Record<string, Record<string, string>> = {
     'preferences.notifications': 'Notifications',
   },
   de: {
-    'app.title': 'Rockin Rockin Boogie',
+    'app.title': 'QUMUS',
     'app.subtitle': 'Autonomes Orchestrierungs-Engine',
     'nav.home': 'Startseite',
     'nav.dashboard': 'Dashboard',
@@ -109,7 +109,7 @@ export const translations: Record<string, Record<string, string>> = {
     'preferences.notifications': 'Benachrichtigungen',
   },
   ja: {
-    'app.title': 'Rockin Rockin Boogie',
+    'app.title': 'QUMUS',
     'app.subtitle': '自律型オーケストレーションエンジン',
     'nav.home': 'ホーム',
     'nav.dashboard': 'ダッシュボード',
@@ -136,7 +136,7 @@ export const translations: Record<string, Record<string, string>> = {
     'preferences.notifications': '通知',
   },
   zh: {
-    'app.title': 'Rockin Rockin Boogie',
+    'app.title': 'QUMUS',
     'app.subtitle': '自主编排引擎',
     'nav.home': '主页',
     'nav.dashboard': '仪表板',

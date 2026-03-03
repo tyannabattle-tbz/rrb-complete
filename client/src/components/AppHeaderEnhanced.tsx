@@ -48,8 +48,8 @@ export function AppHeaderEnhanced() {
 
   const handleShare = () => {
     const shareData = {
-      title: 'Rockin Rockin Boogie - A Voice for the Voiceless',
-      text: 'Rockin Rockin Boogie - Music, Broadcasting & Community by Canryn Production',
+      title: 'QUMUS - Autonomous Orchestration Engine',
+      text: 'QUMUS - Autonomous Orchestration by Canryn Production',
       url: window.location.href,
     };
 
@@ -70,10 +70,10 @@ export function AppHeaderEnhanced() {
     { id: 'nav-2', label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
     { id: 'nav-3', label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
     { id: 'nav-4', label: 'HybridCast', icon: Radio, path: 'https://www.hybridcast.sbs', external: true, action: () => setShowHybridCastTabs(!showHybridCastTabs) },
-    { id: 'nav-5', label: 'Rockin Boogie', icon: Music, path: 'https://www.rockinrockinboogie.com', external: true },
+    { id: 'nav-5', label: 'RRB Radio', icon: Music, path: 'https://www.rockinrockinboogie.com', external: true },
     { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
     { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio' },
-    { id: 'nav-8', label: 'RRB Broadcast', icon: Eye, path: '/broadcast-monitoring' },
+    { id: 'nav-8', label: 'Broadcast Monitor', icon: Eye, path: '/broadcast-monitoring' },
     { id: 'nav-9', label: 'Recommendations', icon: TrendingUp, path: '/recommendations' },
     { id: 'nav-10', label: 'Impact', icon: Heart, path: '/impact-dashboard' },
   ];
@@ -85,7 +85,7 @@ export function AppHeaderEnhanced() {
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo/Brand */}
           <div className="flex items-center gap-2">
-            <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp" alt="RRB" className="w-8 h-8 rounded" /><span className="text-xl font-bold text-primary">RRB</span>
+            <span className="text-2xl">⚡</span><span className="text-xl font-bold text-primary">QUMUS</span>
             <span className="text-xs font-semibold text-cyan-500 bg-cyan-500/20 px-2 py-1 rounded">HybridCast</span>
           </div>
 

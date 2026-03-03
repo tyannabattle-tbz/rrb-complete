@@ -177,12 +177,12 @@ export default function Home() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="text-4xl">🎵</div>
+              <div className="text-4xl">⚡</div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
-                  RRB Ecosystem
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  QUMUS Ecosystem
                 </h1>
-                <p className="text-sm text-purple-300">Offline. Autonomous. Yours.</p>
+                <p className="text-sm text-purple-300">Autonomous. Orchestrated. Yours.</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

@@ -36,7 +36,7 @@ export function QumusChatInterface() {
     if (saved.length > 0) return saved;
     return [{
       role: 'assistant',
-      content: 'Welcome to Rockin Rockin Boogie! I\'m QUMUS, the autonomous orchestration engine powering this ecosystem. I operate at 90%+ autonomy managing broadcasting, healing frequencies, community support, and more. I can help you with radio streaming, Solbones game, donations, HybridCast emergency broadcast, and the full Canryn Production ecosystem. What would you like to know?',
+      content: 'Welcome to QUMUS! I\'m the autonomous orchestration engine powering the Canryn Production ecosystem. I operate at 90%+ autonomy managing broadcasting, healing frequencies, community support, and more. I can help you with radio streaming, Solbones game, donations, HybridCast emergency broadcast, and the full Canryn Production ecosystem. What would you like to know?',
       timestamp: Date.now(),
     }];
   });

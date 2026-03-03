@@ -16,7 +16,7 @@ export function MobileBottomNav() {
   const navItems: (NavItem & { external?: boolean })[] = [
     { id: 'nav-home', label: 'Home', icon: Home, path: '/' },
     { id: 'nav-tasks', label: 'Tasks', icon: Zap, path: '/agent' },
-    { id: 'nav-rrb', label: 'RRB', icon: Radio, path: 'https://www.rockinrockinboogie.com', external: true },
+    { id: 'nav-rrb', label: 'Radio', icon: Radio, path: 'https://www.rockinrockinboogie.com', external: true },
     { id: 'nav-donate', label: 'Donate', icon: Heart, path: '/donate' },
     { id: 'nav-broadcast', label: 'Broadcast', icon: Globe, path: 'https://www.hybridcast.sbs', external: true },
     { id: 'nav-analytics', label: 'Analytics', icon: BarChart3, path: '/agent' },

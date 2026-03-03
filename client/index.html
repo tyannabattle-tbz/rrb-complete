@@ -6,20 +6,27 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <meta name="theme-color" content="#0066FF" />
+    <meta name="theme-color" content="#3B82F6" />
     <meta name="description" content="QUMUS autonomous orchestration by Canryn Production. 24/7 radio, healing frequencies, emergency broadcast, and community support." />
-    <meta name="keywords" content="QUMUS, Canryn Production, Rockin Rockin Boogie, RRB, autonomous orchestration, radio broadcasting, healing frequencies, HybridCast, emergency broadcast, Sweet Miracles, community support" />
+    <meta name="keywords" content="QUMUS, Canryn Production, Rockin Rockin Boogie, autonomous orchestration, radio broadcasting, healing frequencies, HybridCast, emergency broadcast, Sweet Miracles, community support" />
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="QUMUS - Autonomous Orchestration Engine" />
+    <meta property="og:description" content="QUMUS autonomous orchestration by Canryn Production. 24/7 radio, healing frequencies, emergency broadcast, and community support." />
+    <meta property="og:image" content="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-512_88c1a124.png" />
+    <meta property="og:url" content="https://qumus.manus.space" />
+    <meta property="og:site_name" content="QUMUS by Canryn Production" />
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="QUMUS - Autonomous Orchestration Engine" />
+    <meta name="twitter:description" content="QUMUS autonomous orchestration by Canryn Production. 24/7 radio, healing frequencies, emergency broadcast, and community support." />
+    <meta name="twitter:image" content="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-512_88c1a124.png" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp" />
-    <link rel="icon" type="image/webp" href="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp" />
-    <link rel="icon" type="image/webp" sizes="512x512" href="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-512-Wanohmisra7dATUv6gm8bx.webp" />
+    <link rel="apple-touch-icon" href="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-192_fa07364c.png" />
+    <link rel="icon" type="image/png" href="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-192_fa07364c.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-512_88c1a124.png" />
     <title>QUMUS - Autonomous Orchestration Engine by Canryn Production</title>
     <!-- HybridCast integrated via native iframe component at /hybridcast route -->
-    <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    THIS IS THE END OF A COMMENT BLOCK, BLOCK TO BE DELETED -->
   </head>
 
   <body>
@@ -28,14 +35,12 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          // Cache busting: add timestamp to force SW update on each publish
           const swUrl = '/sw.js?v=' + new Date().getTime();
           navigator.serviceWorker.register(swUrl, { scope: '/' }).then(reg => {
-            // Force update check immediately
             reg.update();
-            console.log('[RRB] SW registered with cache busting:', swUrl);
+            console.log('[QUMUS] SW registered with cache busting:', swUrl);
           }).catch(err => {
-            console.log('[RRB] SW registration failed:', err);
+            console.log('[QUMUS] SW registration failed:', err);
           });
         });
       }

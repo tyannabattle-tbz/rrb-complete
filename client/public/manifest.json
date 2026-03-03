@@ -1,52 +1,52 @@
 {
-  "name": "Rockin Rockin Boogie - A Voice for the Voiceless",
-  "short_name": "RRB",
-  "description": "Complete broadcasting ecosystem by Canryn Production. 24/7 radio, healing frequencies, Solbones game, Sweet Miracles donations, and community support.",
+  "name": "QUMUS - Autonomous Orchestration Engine by Canryn Production",
+  "short_name": "QUMUS",
+  "description": "QUMUS autonomous orchestration by Canryn Production. 24/7 radio, healing frequencies, emergency broadcast, and community support.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
-  "theme_color": "#d4af37",
+  "background_color": "#0f172a",
+  "theme_color": "#3B82F6",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-192_fa07364c.png",
       "sizes": "192x192",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-512-Wanohmisra7dATUv6gm8bx.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-512_88c1a124.png",
       "sizes": "512x512",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-192_fa07364c.png",
       "sizes": "192x192",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-512-Wanohmisra7dATUv6gm8bx.webp",
+      "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-512_88c1a124.png",
       "sizes": "512x512",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "categories": ["entertainment", "music", "community"],
+  "categories": ["productivity", "utilities", "entertainment"],
   "prefer_related_applications": false,
   "shortcuts": [
     {
-      "name": "RRB Radio",
-      "short_name": "Radio",
-      "description": "24/7 Radio Broadcasting with healing frequencies",
-      "url": "/rrb",
+      "name": "QUMUS Dashboard",
+      "short_name": "Dashboard",
+      "description": "Autonomous orchestration dashboard",
+      "url": "/qumus",
       "icons": [
         {
-          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-192_fa07364c.png",
           "sizes": "192x192",
-          "type": "image/webp"
+          "type": "image/png"
         }
       ]
     },
@@ -57,9 +57,9 @@
       "url": "/donate",
       "icons": [
         {
-          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-192_fa07364c.png",
           "sizes": "192x192",
-          "type": "image/webp"
+          "type": "image/png"
         }
       ]
     },
@@ -70,9 +70,9 @@
       "url": "/solbones",
       "icons": [
         {
-          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp",
+          "src": "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/qumus-icon-192_fa07364c.png",
           "sizes": "192x192",
-          "type": "image/webp"
+          "type": "image/png"
         }
       ]
     }

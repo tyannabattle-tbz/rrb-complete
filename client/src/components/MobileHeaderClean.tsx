@@ -21,7 +21,7 @@ export function MobileHeaderClean() {
   return (
     <header className="md:hidden sticky top-0 z-50 w-full bg-background border-b border-border">
       <div className="flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-2"><img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp" alt="RRB" className="w-8 h-8 rounded" /><span className="text-xl font-bold text-primary">RRB</span></div>
+        <div className="flex items-center gap-2"><span className="text-2xl">⚡</span><span className="text-xl font-bold text-primary">QUMUS</span></div>
         
         <Button
           variant="ghost"

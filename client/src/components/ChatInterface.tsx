@@ -360,7 +360,7 @@ export default function ChatInterface({
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-foreground mb-2">
-                Welcome to Rockin Rockin Boogie
+                Welcome to QUMUS
               </h2>
               <p className="text-muted-foreground">
                 Start a conversation to interact with your autonomous agent

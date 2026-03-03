@@ -78,7 +78,7 @@ export function AppHeader() {
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo/Brand */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2"><img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb-logo-192-dzAibatRvMdcku6TfWGqEe.webp" alt="RRB" className="w-8 h-8 rounded" /><span className="text-xl font-bold text-primary">RRB</span></div>
+          <div className="flex items-center gap-2"><span className="text-2xl">⚡</span><span className="text-xl font-bold text-primary">QUMUS</span></div>
         </div>
 
         {/* Desktop Navigation */}

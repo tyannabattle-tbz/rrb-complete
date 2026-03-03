@@ -1,7 +1,7 @@
 // Use daily date-based cache name to force updates on each build
 const CACHE_VERSION = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-const CACHE_NAME = `rrb-${CACHE_VERSION}`;
-const RUNTIME_CACHE = `rrb-runtime-${CACHE_VERSION}`;
+const CACHE_NAME = `qumus-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `qumus-runtime-${CACHE_VERSION}`;
 
 const ASSETS_TO_CACHE = [
   '/',
