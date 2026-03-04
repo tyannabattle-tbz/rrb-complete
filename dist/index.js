@@ -27025,13 +27025,13 @@ var searchRouter = router({
   getPopularSearches: publicProcedure.query(() => {
     return {
       popular: [
-        "radio",
-        "music",
-        "podcast",
-        "donations",
-        "frequencies",
-        "broadcast",
-        "orchestration"
+        { title: "radio", category: "rrb" },
+        { title: "music", category: "rrb" },
+        { title: "podcast", category: "rrb" },
+        { title: "donations", category: "rrb" },
+        { title: "frequencies", category: "rrb" },
+        { title: "broadcast", category: "qumus" },
+        { title: "orchestration", category: "qumus" }
       ]
     };
   }),
