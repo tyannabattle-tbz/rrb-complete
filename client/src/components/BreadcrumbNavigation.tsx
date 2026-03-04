@@ -40,12 +40,12 @@ export function BreadcrumbNavigation() {
 
   return (
     <nav 
-      className="fixed top-16 left-0 right-0 z-[99] bg-background/80 backdrop-blur border-b border-border px-4 md:px-6 py-2"
+      className="fixed top-16 left-0 right-0 z-[99] bg-background/80 backdrop-blur border-b border-border px-2 md:px-6 py-1 md:py-2"
       aria-label="Breadcrumb"
     >
-      <div className="flex items-center gap-1 overflow-x-auto">
+      <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto text-xs md:text-sm">
         {breadcrumbs.map((crumb, index) => (
-          <div key={crumb.path} className="flex items-center gap-1 whitespace-nowrap">
+          <div key={crumb.path} className="flex items-center gap-0.5 md:gap-1 whitespace-nowrap">
             {index === 0 ? (
               <Button
                 variant="ghost"

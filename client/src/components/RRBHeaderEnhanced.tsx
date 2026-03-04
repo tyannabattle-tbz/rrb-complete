@@ -67,15 +67,15 @@ export function RRBHeaderEnhanced() {
       <header className="fixed top-0 left-0 right-0 z-[100] w-full border-b border-pink-500/20 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 backdrop-blur supports-[backdrop-filter]:bg-slate-900/60">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo/Brand with Gold Vinyl */}
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10">
+          <div className="flex items-center gap-1 md:gap-3 flex-shrink-0">
+            <div className="relative w-8 md:w-10 h-8 md:h-10">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-600 via-yellow-700 to-yellow-800 shadow-lg flex items-center justify-center animate-spin" style={{ animationDuration: '6s' }}>
                 <div className="absolute inset-1 rounded-full border-2 border-yellow-900 opacity-50"></div>
-                <Music className="w-5 h-5 text-yellow-200" />
+                <Music className="w-4 md:w-5 h-4 md:h-5 text-yellow-200" />
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold bg-gradient-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">
+              <span className="text-base md:text-lg font-bold bg-gradient-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">
                 RRB
               </span>
               <span className="text-xs text-pink-300 font-semibold">Legacy</span>
@@ -101,9 +101,9 @@ export function RRBHeaderEnhanced() {
           </nav>
 
           {/* Right Side Actions */}
-          <div className="flex items-center gap-2">
-            {/* Search Box */}
-            <div className="hidden sm:block w-64">
+          <div className="flex items-center gap-1 md:gap-2">
+            {/* Search Box - Hidden on mobile, shown on tablet+ */}
+            <div className="hidden md:block w-48 lg:w-64">
               <SearchBox category="rrb" />
             </div>
 
@@ -112,7 +112,7 @@ export function RRBHeaderEnhanced() {
               variant="ghost"
               size="sm"
               onClick={handleDownload}
-              className="hidden sm:flex text-pink-300 hover:text-pink-100"
+              className="hidden md:flex text-pink-300 hover:text-pink-100 p-2 h-10 w-10"
               title="Download page data"
             >
               <Download className="w-4 h-4" />
@@ -123,7 +123,7 @@ export function RRBHeaderEnhanced() {
               variant="ghost"
               size="sm"
               onClick={handleShare}
-              className="hidden sm:flex text-pink-300 hover:text-pink-100"
+              className="hidden md:flex text-pink-300 hover:text-pink-100 p-2 h-10 w-10"
               title="Share this page"
             >
               <Share2 className="w-4 h-4" />

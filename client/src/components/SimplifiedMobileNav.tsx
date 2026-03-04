@@ -57,9 +57,9 @@ export function SimplifiedMobileNav() {
       {/* Mobile Menu Button */}
       <Button
         variant="ghost"
-        size="sm"
+        size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden fixed top-4 right-4 z-50"
+        className="md:hidden fixed top-3 right-3 z-50 h-12 w-12"
         title={isOpen ? 'Close menu' : 'Open menu'}
       >
         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -93,14 +93,14 @@ export function SimplifiedMobileNav() {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleNavigation(item.path)}
-                        className={`w-full justify-start gap-3 h-10 ${
+                        className={`w-full justify-start gap-3 h-12 px-3 ${
                           active
                             ? 'bg-primary/10 text-primary font-medium'
                             : 'text-foreground hover:bg-muted/50'
                         }`}
                       >
-                        <Icon className="h-4 w-4 flex-shrink-0" />
-                        <span className="truncate">{item.label}</span>
+                        <Icon className="h-5 w-5 flex-shrink-0" />
+                        <span className="truncate text-sm">{item.label}</span>
                       </Button>
                     );
                   })}

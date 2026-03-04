@@ -75,9 +75,10 @@ export function AppHeaderEnhanced() {
       <header className="fixed top-0 left-0 right-0 z-[100] w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           {/* Logo/Brand */}
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">⚡</span><span className="text-xl font-bold text-primary">QUMUS</span>
-            <span className="text-xs font-semibold text-cyan-500 bg-cyan-500/20 px-2 py-1 rounded">HybridCast</span>
+          <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+            <span className="text-xl md:text-2xl">⚡</span>
+            <span className="text-lg md:text-xl font-bold text-primary">QUMUS</span>
+            <span className="hidden sm:inline text-xs font-semibold text-cyan-500 bg-cyan-500/20 px-2 py-1 rounded">HybridCast</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -102,8 +103,8 @@ export function AppHeaderEnhanced() {
 
           {/* Search and Actions */}
           <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
-            {/* Search Box */}
-            <div className="hidden sm:block w-64">
+            {/* Search Box - Hidden on mobile, shown on tablet+ */}
+            <div className="hidden md:block w-48 lg:w-64">
               <SearchBox category="qumus" />
             </div>
 
