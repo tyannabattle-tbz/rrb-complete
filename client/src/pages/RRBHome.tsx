@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Radio, Music, Users, Gamepad2, Shield, Globe, Play, ChevronRight, Zap } from 'lucide-react';
+import { Radio, Users, Gamepad2, Shield, Globe, Play, ChevronRight, Zap } from 'lucide-react';
 
 export default function RRBHome() {
   const [, setLocation] = useLocation();
