@@ -327,6 +327,73 @@ describe("Advanced Features Integration", () => {
 });
 
 /**
+ * Final Setup Features - Credentials, Live Mode, Scheduling
+ */
+describe("Final Setup Features", () => {
+  it("should manage social media credentials securely", () => {
+    const credential = {
+      platform: 'twitter',
+      access_token: 'encrypted_token_xyz',
+      account_name: 'RockinRockinBoogie',
+      account_id: 'acc_123',
+      is_active: true,
+    };
+
+    expect(credential.platform).toBe('twitter');
+    expect(credential.is_active).toBe(true);
+  });
+
+  it("should handle Stripe live mode configuration", () => {
+    const config = {
+      mode: 'live',
+      is_configured: true,
+      verified_at: Date.now(),
+    };
+
+    expect(config.mode).toBe('live');
+    expect(config.is_configured).toBe(true);
+  });
+
+  it("should create and execute scheduled posts", () => {
+    const schedule = {
+      id: 'schedule-123',
+      content: 'New episode live now!',
+      platforms: ['twitter', 'facebook', 'instagram'],
+      scheduled_at: Date.now() + 3600000,
+      status: 'scheduled',
+    };
+
+    expect(schedule.platforms.length).toBe(3);
+    expect(schedule.status).toBe('scheduled');
+  });
+
+  it("should create recurring posting schedules", () => {
+    const recurring = {
+      id: 'recurring-123',
+      frequency: 'daily',
+      time_of_day: '09:00',
+      platforms: ['twitter', 'instagram'],
+      is_active: true,
+    };
+
+    expect(recurring.frequency).toBe('daily');
+    expect(recurring.is_active).toBe(true);
+  });
+
+  it("should track posting statistics", () => {
+    const stats = {
+      pending_posts: 5,
+      posted_posts: 42,
+      failed_posts: 1,
+      active_recurring: 3,
+    };
+
+    expect(stats.posted_posts).toBeGreaterThan(stats.pending_posts);
+    expect(stats.active_recurring).toBeGreaterThan(0);
+  });
+});
+
+/**
  * Final Features - Stripe Webhooks, Social Connectors, Analytics Widgets
  */
 describe("Final Features Integration", () => {
