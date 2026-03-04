@@ -67,9 +67,19 @@ export default function SweetMiraclesDonation() {
                 <p className="text-sm text-green-300">"A Voice for the Voiceless" • 501(c)(3) & 508 Organization</p>
               </div>
             </div>
-            <Badge className="bg-green-500/20 text-green-400 border-green-500/50">
-              ✓ Verified 501(c)(3)
-            </Badge>
+            <div className="flex items-center gap-4">
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/50">
+                ✓ Verified 501(c)(3)
+              </Badge>
+              <a
+                href="https://sweetmiraclesattt.wixsite.com/sweet-miracles"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-green-400 hover:text-green-300 text-sm underline"
+              >
+                Visit Main Site →
+              </a>
+            </div>
           </div>
         </div>
       </header>

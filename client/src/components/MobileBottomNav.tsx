@@ -49,7 +49,7 @@ export function MobileBottomNav() {
                   title={item.label}
                 >
                   <Icon size={24} />
-                  <span className="text-xs mt-1 font-medium">{item.label}</span>
+                  <span className="text-xs mt-1 font-medium truncate max-w-[50px]">{item.label}</span>
                 </a>
               );
             }
@@ -65,7 +65,7 @@ export function MobileBottomNav() {
                 title={item.label}
               >
                 <Icon size={24} />
-                <span className="text-xs mt-1 font-medium">{item.label}</span>
+                <span className="text-xs mt-1 font-medium truncate max-w-[50px]">{item.label}</span>
               </Link>
             );
           })}

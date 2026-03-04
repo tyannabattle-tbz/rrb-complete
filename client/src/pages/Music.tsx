@@ -116,7 +116,7 @@ export default function Music() {
                 {channelsLoading ? (
                   <div className="text-center py-8 text-slate-400">Loading channels...</div>
                 ) : (
-                  <div className="space-y-3 max-h-[600px] overflow-y-auto">
+                  <div className="space-y-3 max-h-[300px] md:max-h-[600px] overflow-y-auto">
                     {filteredChannels.map((channel: any) => (
                       <div
                         key={channel.id}

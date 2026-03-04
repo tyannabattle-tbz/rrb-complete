@@ -239,8 +239,8 @@ export default function Studio() {
             </TabsList>
 
             {/* Monitors Tab */}
-            <TabsContent value="monitors" className="flex-1 overflow-auto p-6 space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <TabsContent value="monitors" className="flex-1 overflow-auto p-4 md:p-6 space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
                 {/* Main Monitor */}
                 <div className="lg:col-span-2">
                   <Card className="bg-slate-800 border-slate-700 h-96">
