@@ -142,6 +142,11 @@ import GrowthCampaigns from "@/pages/GrowthCampaigns";
 import CommunityForums from "@/pages/CommunityForums";
 import EmergencyDrills from "@/pages/EmergencyDrills";
 import DonorGrowthCampaigns from "@/pages/DonorGrowthCampaigns";
+import PoliciesControlPage from "@/pages/PoliciesControlPage";
+import TaskQueuePage from "@/pages/TaskQueuePage";
+import AuditTrailPage from "@/pages/AuditTrailPage";
+import CommandCenterPage from "@/pages/CommandCenterPage";
+import SystemHealthPage from "@/pages/SystemHealthPage";
 import { Toaster } from 'sonner';
 import { BreadcrumbNavigation } from '@/components/BreadcrumbNavigation';
 import { MobileNavigationDrawer } from '@/components/MobileNavigationDrawer';
@@ -286,6 +291,11 @@ function Router() {
       <Route path="/community-forums" component={CommunityForums} />
       <Route path="/emergency-drills" component={EmergencyDrills} />
       <Route path="/donor-campaigns" component={DonorGrowthCampaigns} />
+      <Route path="/policies" component={PoliciesControlPage} />
+      <Route path="/tasks" component={TaskQueuePage} />
+      <Route path="/audit" component={AuditTrailPage} />
+      <Route path="/commands" component={CommandCenterPage} />
+      <Route path="/health" component={SystemHealthPage} />
       <Route component={NotFound} />
     </Switch>
     </>
