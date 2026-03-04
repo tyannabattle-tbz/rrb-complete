@@ -4,6 +4,7 @@ import { getDb } from "../db";
 import { users, donations, payments } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { notifyOwner } from "../_core/notification";
+import { notificationService } from "../services/notificationService";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2026-01-28.clover",
@@ -180,6 +181,15 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
         await notifyOwner({
           title: "🔄 Subscription Updated",
           content: `Donor subscription updated. Amount: $${amount.toFixed(2)}/month. Status: ${status}`,
+        });
+
+        // Send real-time notification to donor
+        await notificationService.sendNotification(user.id.toString(), {
+          type: 'system_alert',
+          title: '📝 Subscription Updated',
+          message: `Your recurring donation is now ${status}. Amount: $${amount.toFixed(2)}/month`,
+          severity: 'info',
+          data: { subscription_id: subscriptionId, status, amount },
         });
       }
     }

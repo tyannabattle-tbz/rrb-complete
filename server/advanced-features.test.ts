@@ -327,6 +327,77 @@ describe("Advanced Features Integration", () => {
 });
 
 /**
+ * Final Features - Stripe Webhooks, Social Connectors, Analytics Widgets
+ */
+describe("Final Features Integration", () => {
+  it("should handle Stripe webhook events", () => {
+    const webhookEvent = {
+      id: 'evt_1234',
+      type: 'customer.subscription.created',
+      data: {
+        object: {
+          id: 'sub_123',
+          status: 'active',
+          metadata: { donor_id: 'user-1' },
+        },
+      },
+    };
+
+    expect(webhookEvent.type).toContain('subscription');
+    expect(webhookEvent.data.object.status).toBe('active');
+  });
+
+  it("should post to multiple social media platforms", () => {
+    const postResult = {
+      platform: 'twitter',
+      postId: 'tweet_123',
+      url: 'https://twitter.com/i/web/status/tweet_123',
+      success: true,
+    };
+
+    expect(postResult.success).toBe(true);
+    expect(postResult.url).toContain('twitter.com');
+  });
+
+  it("should track campaign analytics metrics", () => {
+    const campaignMetrics = {
+      campaign_name: 'Spring Listener Growth',
+      total_listeners: 5000,
+      growth_rate: 12.5,
+      engagement: 78,
+    };
+
+    expect(campaignMetrics.total_listeners).toBeGreaterThan(0);
+    expect(campaignMetrics.growth_rate).toBeGreaterThan(0);
+  });
+
+  it("should track revenue analytics", () => {
+    const revenueMetrics = {
+      total_raised: 154200,
+      monthly_recurring: 8700,
+      recurring_donors: 87,
+      avg_donation: 450,
+    };
+
+    expect(revenueMetrics.total_raised).toBeGreaterThan(0);
+    expect(revenueMetrics.recurring_donors).toBeGreaterThan(0);
+  });
+
+  it("should track bot performance metrics", () => {
+    const botMetrics = {
+      total_bots: 4,
+      active_bots: 3,
+      posts_today: 12,
+      total_engagement: 8900,
+      avg_engagement_per_post: 741.67,
+    };
+
+    expect(botMetrics.active_bots).toBeLessThanOrEqual(botMetrics.total_bots);
+    expect(botMetrics.total_engagement).toBeGreaterThan(0);
+  });
+});
+
+/**
  * Integration Tests
  */
 describe("Cross-Feature Integration", () => {

@@ -28162,6 +28162,274 @@ init_db();
 init_schema();
 import Stripe2 from "stripe";
 import { eq as eq13 } from "drizzle-orm";
+
+// server/services/notificationService.ts
+init_db();
+import { v4 as uuid2 } from "uuid";
+var NotificationService = class {
+  notifications = /* @__PURE__ */ new Map();
+  subscribers = /* @__PURE__ */ new Map();
+  /**
+   * Send notification to user
+   */
+  async sendNotification(userId, notification) {
+    const fullNotification = {
+      ...notification,
+      id: uuid2(),
+      read: false,
+      createdAt: Date.now()
+    };
+    if (!this.notifications.has(userId)) {
+      this.notifications.set(userId, []);
+    }
+    this.notifications.get(userId).push(fullNotification);
+    try {
+      const db2 = await getDb();
+      await db2.run(
+        `INSERT INTO notifications (id, user_id, type, title, message, severity, data, created_at, expires_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          fullNotification.id,
+          userId,
+          fullNotification.type,
+          fullNotification.title,
+          fullNotification.message,
+          fullNotification.severity,
+          JSON.stringify(fullNotification.data || {}),
+          fullNotification.createdAt,
+          fullNotification.expiresAt
+        ]
+      );
+    } catch (error) {
+      console.error("Failed to persist notification:", error);
+    }
+    this.notifySubscribers(userId, fullNotification);
+    return fullNotification;
+  }
+  /**
+   * Get notifications for user
+   */
+  async getNotifications(userId, limit = 50) {
+    try {
+      const db2 = await getDb();
+      const rows = await db2.all(
+        `SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT ?`,
+        [userId, limit]
+      );
+      return rows.map((row) => ({
+        id: row.id,
+        userId: row.user_id,
+        type: row.type,
+        title: row.title,
+        message: row.message,
+        severity: row.severity,
+        read: row.read === 1,
+        data: row.data ? JSON.parse(row.data) : void 0,
+        createdAt: row.created_at,
+        expiresAt: row.expires_at
+      }));
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+      return [];
+    }
+  }
+  /**
+   * Mark notification as read
+   */
+  async markAsRead(notificationId) {
+    try {
+      const db2 = await getDb();
+      await db2.run(
+        `UPDATE notifications SET read = 1 WHERE id = ?`,
+        [notificationId]
+      );
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
+    }
+  }
+  /**
+   * Mark all notifications as read
+   */
+  async markAllAsRead(userId) {
+    try {
+      const db2 = await getDb();
+      await db2.run(
+        `UPDATE notifications SET read = 1 WHERE user_id = ?`,
+        [userId]
+      );
+    } catch (error) {
+      console.error("Failed to mark all notifications as read:", error);
+    }
+  }
+  /**
+   * Delete notification
+   */
+  async deleteNotification(notificationId) {
+    try {
+      const db2 = await getDb();
+      await db2.run(
+        `DELETE FROM notifications WHERE id = ?`,
+        [notificationId]
+      );
+    } catch (error) {
+      console.error("Failed to delete notification:", error);
+    }
+  }
+  /**
+   * Subscribe to real-time notifications
+   */
+  subscribe(userId, callback) {
+    if (!this.subscribers.has(userId)) {
+      this.subscribers.set(userId, /* @__PURE__ */ new Set());
+    }
+    this.subscribers.get(userId).add(callback);
+    return () => {
+      this.subscribers.get(userId)?.delete(callback);
+    };
+  }
+  /**
+   * Notify all subscribers
+   */
+  notifySubscribers(userId, notification) {
+    const callbacks = this.subscribers.get(userId);
+    if (callbacks) {
+      callbacks.forEach((callback) => {
+        try {
+          callback(notification);
+        } catch (error) {
+          console.error("Error in notification callback:", error);
+        }
+      });
+    }
+  }
+  /**
+   * Send task completion notification
+   */
+  async notifyTaskCompleted(userId, taskId, taskGoal, executionTime) {
+    await this.sendNotification(userId, {
+      type: "task_completed",
+      title: "Task Completed",
+      message: `Autonomous task completed in ${(executionTime / 1e3).toFixed(2)}s`,
+      severity: "success",
+      data: { taskId, taskGoal, executionTime }
+    });
+  }
+  /**
+   * Send task failure notification
+   */
+  async notifyTaskFailed(userId, taskId, taskGoal, error) {
+    await this.sendNotification(userId, {
+      type: "task_failed",
+      title: "Task Failed",
+      message: `Task failed: ${error}`,
+      severity: "error",
+      data: { taskId, taskGoal, error }
+    });
+  }
+  /**
+   * Send command execution notification
+   */
+  async notifyCommandExecuted(userId, ecosystem, command, success) {
+    await this.sendNotification(userId, {
+      type: "command_executed",
+      title: `${ecosystem} Command ${success ? "Executed" : "Failed"}`,
+      message: `Command "${command}" on ${ecosystem}`,
+      severity: success ? "success" : "error",
+      data: { ecosystem, command, success }
+    });
+  }
+  /**
+   * Send system alert
+   */
+  async notifySystemAlert(userId, title, message, severity = "warning") {
+    await this.sendNotification(userId, {
+      type: "system_alert",
+      title,
+      message,
+      severity
+    });
+  }
+  /**
+   * Send ecosystem status notification
+   */
+  async notifyEcosystemStatus(userId, ecosystem, status) {
+    const severityMap = {
+      online: "success",
+      offline: "error",
+      degraded: "warning"
+    };
+    await this.sendNotification(userId, {
+      type: "ecosystem_status",
+      title: `${ecosystem} Status Changed`,
+      message: `${ecosystem} is now ${status}`,
+      severity: severityMap[status],
+      data: { ecosystem, status }
+    });
+  }
+  /**
+   * Campaign milestone notification
+   */
+  async notifyCampaignMilestone(userId, campaignName, milestone) {
+    await this.sendNotification(userId, {
+      type: "system_alert",
+      title: "\u{1F3AF} Campaign Milestone Reached!",
+      message: `${campaignName} has reached ${milestone} listeners!`,
+      severity: "success",
+      data: { campaignName, milestone }
+    });
+  }
+  /**
+   * Drill completion notification
+   */
+  async notifyDrillComplete(userId, drillName, successRate) {
+    await this.sendNotification(userId, {
+      type: "system_alert",
+      title: "\u2705 Emergency Drill Complete",
+      message: `${drillName} completed with ${successRate.toFixed(1)}% success rate`,
+      severity: "success",
+      data: { drillName, successRate }
+    });
+  }
+  /**
+   * Donation received notification
+   */
+  async notifyDonationReceived(userId, amount, donorName) {
+    await this.sendNotification(userId, {
+      type: "system_alert",
+      title: "\u{1F49D} Donation Received",
+      message: `${donorName || "Anonymous"} donated $${amount.toFixed(2)}`,
+      severity: "success",
+      data: { amount, donorName }
+    });
+  }
+  /**
+   * Bot action notification
+   */
+  async notifyBotAction(userId, botName, action) {
+    await this.sendNotification(userId, {
+      type: "system_alert",
+      title: "\u{1F916} Bot Action Completed",
+      message: `${botName}: ${action}`,
+      severity: "info",
+      data: { botName, action }
+    });
+  }
+  /**
+   * Social media post notification
+   */
+  async notifySocialPost(userId, platform, engagement) {
+    await this.sendNotification(userId, {
+      type: "system_alert",
+      title: `\u{1F4F1} Post on ${platform}`,
+      message: `Your post received ${engagement} engagements`,
+      severity: "success",
+      data: { platform, engagement }
+    });
+  }
+};
+var notificationService = new NotificationService();
+
+// server/webhooks/stripeWebhook.ts
 var stripe2 = new Stripe2(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2026-01-28.clover"
 });
@@ -28279,6 +28547,13 @@ async function handleSubscriptionUpdated(subscription) {
         await notifyOwner({
           title: "\u{1F504} Subscription Updated",
           content: `Donor subscription updated. Amount: $${amount.toFixed(2)}/month. Status: ${status}`
+        });
+        await notificationService.sendNotification(user.id.toString(), {
+          type: "system_alert",
+          title: "\u{1F4DD} Subscription Updated",
+          message: `Your recurring donation is now ${status}. Amount: $${amount.toFixed(2)}/month`,
+          severity: "info",
+          data: { subscription_id: subscriptionId, status, amount }
         });
       }
     }
