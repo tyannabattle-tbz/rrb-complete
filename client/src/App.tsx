@@ -137,6 +137,10 @@ import SolbonesGame from "@/pages/SolbonesGame";
 import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
 import EcosystemMasterDashboard from "@/pages/EcosystemMasterDashboard";
 import AdminControlPanel from "@/pages/AdminControlPanel";
+import GrowthCampaigns from "@/pages/GrowthCampaigns";
+import CommunityForums from "@/pages/CommunityForums";
+import EmergencyDrills from "@/pages/EmergencyDrills";
+import DonorGrowthCampaigns from "@/pages/DonorGrowthCampaigns";
 import { Toaster } from 'sonner';
 import { BreadcrumbNavigation } from '@/components/BreadcrumbNavigation';
 import { MobileNavigationDrawer } from '@/components/MobileNavigationDrawer';
@@ -276,6 +280,10 @@ function Router() {
       <Route path="/rrb/donations" component={SweetMiraclesManager} />
       <Route path="/rrb/listeners" component={RRBListenerAnalytics} />
       <Route path="/rrb/analytics" component={RRBListenerAnalytics} />
+      <Route path="/growth-campaigns" component={GrowthCampaigns} />
+      <Route path="/community-forums" component={CommunityForums} />
+      <Route path="/emergency-drills" component={EmergencyDrills} />
+      <Route path="/donor-campaigns" component={DonorGrowthCampaigns} />
       <Route component={NotFound} />
     </Switch>
     </>
