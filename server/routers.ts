@@ -82,6 +82,7 @@ import { customStationBuilderRouter } from "./routers/customStationBuilder";
 import { advancedSchedulingRouter } from "./routers/advancedSchedulingRouter";
 import { engagementWebhooksRouter } from "./routers/engagementWebhooksRouter";
 import { callInRouter } from "./routers/callInRouter";
+import { advancedFeaturesRouter } from "./routers/advancedFeaturesRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -392,6 +393,9 @@ export const appRouter = router({
 
   // Interactive Call-In System
   callIn: callInRouter,
+
+  // Advanced Features (Multi-Region Failover, Analytics, AI Recommendations)
+  advancedFeatures: advancedFeaturesRouter,
 
   // Analytics Tracking & Metrics
   analytics: router({
