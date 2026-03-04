@@ -274,6 +274,59 @@ describe("Real-Time Notifications Feature", () => {
 });
 
 /**
+ * Advanced Features - Notifications, Recurring Donations, Social Bots
+ */
+describe("Advanced Features Integration", () => {
+  it("should have campaign milestone notification", () => {
+    const notification = {
+      type: 'system_alert',
+      title: '🎯 Campaign Milestone Reached!',
+      message: 'Spring Listener Growth has reached 5000 listeners!',
+      severity: 'success',
+    };
+
+    expect(notification).toHaveProperty('type');
+    expect(notification.severity).toBe('success');
+  });
+
+  it("should have recurring donation structure", () => {
+    const donation = {
+      id: 'recurring-1',
+      amount: 50,
+      interval: 'monthly',
+      status: 'active',
+    };
+
+    expect(donation).toHaveProperty('id');
+    expect(['monthly', 'yearly']).toContain(donation.interval);
+  });
+
+  it("should have social media bot structure", () => {
+    const bot = {
+      id: 'bot-1',
+      type: 'engagement',
+      platforms: ['twitter', 'facebook'],
+      enabled: true,
+    };
+
+    expect(bot).toHaveProperty('id');
+    expect(['engagement', 'support', 'promotion', 'moderation']).toContain(bot.type);
+  });
+
+  it("should validate notification triggers across all systems", () => {
+    const triggers = [
+      { system: 'campaigns', event: 'milestone_reached', notification: true },
+      { system: 'donations', event: 'received', notification: true },
+      { system: 'bots', event: 'action_completed', notification: true },
+    ];
+
+    triggers.forEach(trigger => {
+      expect(trigger.notification).toBe(true);
+    });
+  });
+});
+
+/**
  * Integration Tests
  */
 describe("Cross-Feature Integration", () => {

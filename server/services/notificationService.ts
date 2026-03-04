@@ -240,6 +240,71 @@ class NotificationService {
       data: { ecosystem, status },
     });
   }
+
+  /**
+   * Campaign milestone notification
+   */
+  async notifyCampaignMilestone(userId: string, campaignName: string, milestone: number): Promise<void> {
+    await this.sendNotification(userId, {
+      type: 'system_alert',
+      title: '🎯 Campaign Milestone Reached!',
+      message: `${campaignName} has reached ${milestone} listeners!`,
+      severity: 'success',
+      data: { campaignName, milestone },
+    });
+  }
+
+  /**
+   * Drill completion notification
+   */
+  async notifyDrillComplete(userId: string, drillName: string, successRate: number): Promise<void> {
+    await this.sendNotification(userId, {
+      type: 'system_alert',
+      title: '✅ Emergency Drill Complete',
+      message: `${drillName} completed with ${successRate.toFixed(1)}% success rate`,
+      severity: 'success',
+      data: { drillName, successRate },
+    });
+  }
+
+  /**
+   * Donation received notification
+   */
+  async notifyDonationReceived(userId: string, amount: number, donorName?: string): Promise<void> {
+    await this.sendNotification(userId, {
+      type: 'system_alert',
+      title: '💝 Donation Received',
+      message: `${donorName || 'Anonymous'} donated $${amount.toFixed(2)}`,
+      severity: 'success',
+      data: { amount, donorName },
+    });
+  }
+
+  /**
+   * Bot action notification
+   */
+  async notifyBotAction(userId: string, botName: string, action: string): Promise<void> {
+    await this.sendNotification(userId, {
+      type: 'system_alert',
+      title: '🤖 Bot Action Completed',
+      message: `${botName}: ${action}`,
+      severity: 'info',
+      data: { botName, action },
+    });
+  }
+
+  /**
+   * Social media post notification
+   */
+  async notifySocialPost(userId: string, platform: string, engagement: number): Promise<void> {
+    await this.sendNotification(userId, {
+      type: 'system_alert',
+      title: `📱 Post on ${platform}`,
+      message: `Your post received ${engagement} engagements`,
+      severity: 'success',
+      data: { platform, engagement },
+    });
+  }
 }
 
 export const notificationService = new NotificationService();
