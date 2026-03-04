@@ -78,6 +78,7 @@ import { rrbUnifiedRouter } from "./routers/rrbUnifiedRouter";
 // Import Search Router
 import { searchRouter } from "./routers/search";
 import { contentCalendarRouter } from "./routers/contentCalendarRouter";
+import { customStationBuilderRouter } from "./routers/customStationBuilder";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -367,6 +368,9 @@ export const appRouter = router({
 
   // Search Router (Global Search Across Content)
   search: searchRouter,
+
+  // Custom Station Builder (Elite Platform)
+  customStationBuilder: customStationBuilderRouter,
 
   // Real Spotify Integration
   spotify: spotifyRouter,

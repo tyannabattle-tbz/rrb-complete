@@ -44,6 +44,7 @@ import CollaborativeEditor from "./pages/CollaborativeEditor";
 import { HybridCastConfig } from "./pages/HybridCastConfig";
 import { VideoWatermarkEditor } from "./pages/VideoWatermarkEditor";
 import { BatchVideoGenerator } from './pages/BatchVideoGenerator';
+import { RRBRadioIntegration } from './pages/RRBRadioIntegration';
 import { QumusChatInterface } from './components/QumusChatInterface';
 import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
@@ -198,6 +199,7 @@ function Router() {
       <Route path="/chat" component={QumusChatInterface} />
       <Route path="/qumus-chat" component={QumusChatPage} />
       <Route path="/radio-station" component={RadioStation} />
+      <Route path="/rrb-radio" component={RRBRadioIntegration} />
       <Route path="/studio" component={StudioSuite} />
       <Route path="/media-library" component={MediaLibrary} />
       <Route path="/podcasts" component={PodcastPage} />

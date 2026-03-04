@@ -1796,3 +1796,84 @@ export const analyticsSummary = mysqlTable('analytics_summary', {
   }>(),
   createdAt: timestamp('created_at').defaultNow(),
 });
+
+// Custom Station Builder Schema
+export const customStations = mysqlTable('custom_stations', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: varchar('user_id', { length: 255 }).notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  contentTypes: json('content_types').$type<string[]>().notNull(),
+  icon: varchar('icon', { length: 50 }),
+  color: varchar('color', { length: 20 }),
+  isPublic: int('is_public').default(0),
+  totalListeners: int('total_listeners').default(0),
+  currentListeners: int('current_listeners').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const stationTemplates = mysqlTable('station_templates', {
+  id: int('id').primaryKey().autoincrement(),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  contentTypes: json('content_types').$type<string[]>().notNull(),
+  icon: varchar('icon', { length: 50 }).notNull(),
+  color: varchar('color', { length: 20 }).notNull(),
+  isActive: int('is_active').default(1),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const stationContentSources = mysqlTable('station_content_sources', {
+  id: int('id').primaryKey().autoincrement(),
+  stationId: int('station_id').notNull(),
+  contentType: varchar('content_type', { length: 50 }).notNull(),
+  sourceUrl: varchar('source_url', { length: 500 }).notNull(),
+  priority: int('priority').default(1),
+  isActive: int('is_active').default(1),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const stationPlaybackHistory = mysqlTable('station_playback_history', {
+  id: int('id').primaryKey().autoincrement(),
+  stationId: int('station_id').notNull(),
+  contentType: varchar('content_type', { length: 50 }).notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  duration: int('duration'),
+  startTime: timestamp('start_time').notNull(),
+  endTime: timestamp('end_time'),
+  listeners: int('listeners').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const userStationPreferences = mysqlTable('user_station_preferences', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: varchar('user_id', { length: 255 }).notNull(),
+  stationId: int('station_id').notNull(),
+  isFavorite: int('is_favorite').default(0),
+  lastListenedAt: timestamp('last_listened_at'),
+  totalListenTime: int('total_listen_time').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const stationSharing = mysqlTable('station_sharing', {
+  id: int('id').primaryKey().autoincrement(),
+  stationId: int('station_id').notNull(),
+  ownerId: varchar('owner_id', { length: 255 }).notNull(),
+  sharedWithUserId: varchar('shared_with_user_id', { length: 255 }).notNull(),
+  permission: varchar('permission', { length: 20 }).default('view'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const stationAnalytics = mysqlTable('station_analytics', {
+  id: int('id').primaryKey().autoincrement(),
+  stationId: int('station_id').notNull(),
+  date: timestamp('date').notNull(),
+  totalListeners: int('total_listeners').default(0),
+  peakListeners: int('peak_listeners').default(0),
+  totalListenTime: int('total_listen_time').default(0),
+  uniqueUsers: int('unique_users').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+});
