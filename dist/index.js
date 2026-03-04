@@ -2462,9 +2462,9 @@ async function setFeatureFlag(userId, flagName, isEnabled, rolloutPercentage, co
   }
 }
 async function recordSystemMetric(metrics) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.insert(systemMetrics).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.insert(systemMetrics).values({
     timestamp: /* @__PURE__ */ new Date(),
     activeUsers: metrics.activeUsers || 0,
     totalSessions: metrics.totalSessions || 0,
@@ -2478,21 +2478,21 @@ async function recordSystemMetric(metrics) {
   });
 }
 async function getLatestSystemMetric() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.select().from(systemMetrics).orderBy(desc2(systemMetrics.timestamp)).limit(1);
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.select().from(systemMetrics).orderBy(desc2(systemMetrics.timestamp)).limit(1);
   return result2[0];
 }
 async function getSystemMetricsHistory(hours = 24) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
   const startTime = new Date(Date.now() - hours * 60 * 60 * 1e3);
-  return database.select().from(systemMetrics).where(gte(systemMetrics.timestamp, startTime)).orderBy(desc2(systemMetrics.timestamp));
+  return database2.select().from(systemMetrics).where(gte(systemMetrics.timestamp, startTime)).orderBy(desc2(systemMetrics.timestamp));
 }
 async function createSystemAlert(severity, title, description) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.insert(systemAlerts).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.insert(systemAlerts).values({
     severity,
     title,
     description,
@@ -2501,9 +2501,9 @@ async function createSystemAlert(severity, title, description) {
   return result2[0].insertId;
 }
 async function getSystemAlerts(status) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  let query2 = database.select().from(systemAlerts);
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  let query2 = database2.select().from(systemAlerts);
   if (status) {
     query2 = query2.where(eq2(systemAlerts.status, status));
   }
@@ -2513,26 +2513,26 @@ async function getActiveSystemAlerts() {
   return getSystemAlerts("active");
 }
 async function acknowledgeSystemAlert(alertId, userId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.update(systemAlerts).set({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.update(systemAlerts).set({
     status: "acknowledged",
     acknowledgedBy: userId,
     acknowledgedAt: /* @__PURE__ */ new Date()
   }).where(eq2(systemAlerts.id, alertId));
 }
 async function resolveSystemAlert(alertId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.update(systemAlerts).set({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.update(systemAlerts).set({
     status: "resolved",
     resolvedAt: /* @__PURE__ */ new Date()
   }).where(eq2(systemAlerts.id, alertId));
 }
 async function createAuditLog(data) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.insert(auditLogs).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.insert(auditLogs).values({
     userId: data.userId,
     action: data.action,
     resource: data.resource,
@@ -2542,8 +2542,8 @@ async function createAuditLog(data) {
   });
 }
 async function getAuditLogs(filters) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
   const conditions = [];
   if (filters?.userId) {
     conditions.push(eq2(auditLogs.userId, filters.userId));
@@ -2557,99 +2557,99 @@ async function getAuditLogs(filters) {
   if (filters?.status) {
     conditions.push(eq2(auditLogs.status, filters.status));
   }
-  let query2 = database.select().from(auditLogs);
+  let query2 = database2.select().from(auditLogs);
   if (conditions.length > 0) {
     query2 = query2.where(and2(...conditions));
   }
   return query2.orderBy(desc2(auditLogs.createdAt));
 }
 async function getTotalUserCount() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.select({ count: count() }).from(users);
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.select({ count: count() }).from(users);
   return result2[0]?.count || 0;
 }
 async function getActiveUserCount() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
-  const result2 = await database.select({ count: count() }).from(users).where(gte(users.lastSignedIn, sevenDaysAgo));
+  const result2 = await database2.select({ count: count() }).from(users).where(gte(users.lastSignedIn, sevenDaysAgo));
   return result2[0]?.count || 0;
 }
 async function getNewUsersThisMonth() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
   const firstOfMonth = /* @__PURE__ */ new Date();
   firstOfMonth.setDate(1);
   firstOfMonth.setHours(0, 0, 0, 0);
-  const result2 = await database.select({ count: count() }).from(users).where(gte(users.createdAt, firstOfMonth));
+  const result2 = await database2.select({ count: count() }).from(users).where(gte(users.createdAt, firstOfMonth));
   return result2[0]?.count || 0;
 }
 async function getTopUsersByActivity() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select({
     userId: users.id,
     userName: users.name,
     sessionCount: count(agentSessions.id)
   }).from(users).leftJoin(agentSessions, eq2(users.id, agentSessions.userId)).groupBy(users.id).orderBy(desc2(count(agentSessions.id))).limit(10);
 }
 async function getTotalApiRequests() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.select({ total: sum(apiUsage.requestCount) }).from(apiUsage);
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.select({ total: sum(apiUsage.requestCount) }).from(apiUsage);
   return result2[0]?.total ? parseInt(result2[0].total.toString()) : 0;
 }
 async function getTotalTokensUsed() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.select({ total: sum(apiUsage.tokenCount) }).from(apiUsage);
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.select({ total: sum(apiUsage.tokenCount) }).from(apiUsage);
   return result2[0]?.total ? parseInt(result2[0].total.toString()) : 0;
 }
 async function getRequestsPerMinute() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
   const oneMinuteAgo = new Date(Date.now() - 60 * 1e3);
-  const result2 = await database.select({ count: count() }).from(toolExecutions).where(gte(toolExecutions.createdAt, oneMinuteAgo));
+  const result2 = await database2.select({ count: count() }).from(toolExecutions).where(gte(toolExecutions.createdAt, oneMinuteAgo));
   return result2[0]?.count || 0;
 }
 async function getTopApiEndpoints() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select({
     toolName: toolExecutions.toolName,
     count: count(toolExecutions.id)
   }).from(toolExecutions).groupBy(toolExecutions.toolName).orderBy(desc2(count(toolExecutions.id))).limit(10);
 }
 async function getApiErrorRate() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const total = await database.select({ count: count() }).from(toolExecutions);
-  const failed = await database.select({ count: count() }).from(toolExecutions).where(eq2(toolExecutions.status, "failed"));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const total = await database2.select({ count: count() }).from(toolExecutions);
+  const failed = await database2.select({ count: count() }).from(toolExecutions).where(eq2(toolExecutions.status, "failed"));
   const totalCount = total[0]?.count || 0;
   const failedCount = failed[0]?.count || 0;
   return totalCount > 0 ? failedCount / totalCount * 100 : 0;
 }
 async function getPublicWebhookTemplates() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(webhookTemplates).where(eq2(webhookTemplates.isPublic, true)).orderBy(desc2(webhookTemplates.downloads));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(webhookTemplates).where(eq2(webhookTemplates.isPublic, true)).orderBy(desc2(webhookTemplates.downloads));
 }
 async function getWebhookTemplate(templateId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.select().from(webhookTemplates).where(eq2(webhookTemplates.id, templateId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.select().from(webhookTemplates).where(eq2(webhookTemplates.id, templateId));
   return result2[0];
 }
 async function getAllWebhookInstallations() {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(webhookInstallations);
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(webhookInstallations);
 }
 async function createWebhookInstallation(userId, templateId, name, config) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.insert(webhookInstallations).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.insert(webhookInstallations).values({
     userId,
     templateId,
     name,
@@ -2659,38 +2659,38 @@ async function createWebhookInstallation(userId, templateId, name, config) {
   return result2[0].insertId;
 }
 async function getWebhookInstallation(installationId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.select().from(webhookInstallations).where(eq2(webhookInstallations.id, installationId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.select().from(webhookInstallations).where(eq2(webhookInstallations.id, installationId));
   return result2[0];
 }
 async function getUserWebhookInstallations(userId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(webhookInstallations).where(eq2(webhookInstallations.userId, userId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(webhookInstallations).where(eq2(webhookInstallations.userId, userId));
 }
 async function updateWebhookInstallation(installationId, config) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.update(webhookInstallations).set({ config, updatedAt: /* @__PURE__ */ new Date() }).where(eq2(webhookInstallations.id, installationId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.update(webhookInstallations).set({ config, updatedAt: /* @__PURE__ */ new Date() }).where(eq2(webhookInstallations.id, installationId));
 }
 async function deleteWebhookInstallation(installationId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.delete(webhookInstallations).where(eq2(webhookInstallations.id, installationId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.delete(webhookInstallations).where(eq2(webhookInstallations.id, installationId));
 }
 async function incrementTemplateDownloads(templateId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
   const template = await getWebhookTemplate(templateId);
   if (template) {
-    await database.update(webhookTemplates).set({ downloads: (template.downloads || 0) + 1 }).where(eq2(webhookTemplates.id, templateId));
+    await database2.update(webhookTemplates).set({ downloads: (template.downloads || 0) + 1 }).where(eq2(webhookTemplates.id, templateId));
   }
 }
 async function createWebhookMarketplaceReview(templateId, userId, rating, review) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.insert(webhookMarketplaceReviews).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.insert(webhookMarketplaceReviews).values({
     templateId,
     userId,
     rating,
@@ -2698,24 +2698,24 @@ async function createWebhookMarketplaceReview(templateId, userId, rating, review
   });
 }
 async function getTemplateReviews(templateId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(webhookMarketplaceReviews).where(eq2(webhookMarketplaceReviews.templateId, templateId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(webhookMarketplaceReviews).where(eq2(webhookMarketplaceReviews.templateId, templateId));
 }
 async function getTemplateInstallations(templateId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(webhookInstallations).where(eq2(webhookInstallations.templateId, templateId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(webhookInstallations).where(eq2(webhookInstallations.templateId, templateId));
 }
 async function updateTemplateRating(templateId, rating, reviewCount) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.update(webhookTemplates).set({ rating: rating.toString(), reviews: reviewCount }).where(eq2(webhookTemplates.id, templateId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.update(webhookTemplates).set({ rating: rating.toString(), reviews: reviewCount }).where(eq2(webhookTemplates.id, templateId));
 }
 async function createWebhookTemplate(data) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.insert(webhookTemplates).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.insert(webhookTemplates).values({
     ...data,
     createdAt: /* @__PURE__ */ new Date(),
     updatedAt: /* @__PURE__ */ new Date()
@@ -2723,14 +2723,14 @@ async function createWebhookTemplate(data) {
   return result2[0].insertId;
 }
 async function updateTemplatePublicStatus(templateId, isPublic) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.update(webhookTemplates).set({ isPublic, updatedAt: /* @__PURE__ */ new Date() }).where(eq2(webhookTemplates.id, templateId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.update(webhookTemplates).set({ isPublic, updatedAt: /* @__PURE__ */ new Date() }).where(eq2(webhookTemplates.id, templateId));
 }
 async function createFinetuningDataset(userId, name, description, dataCount = 0) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.insert(finetuningDatasets).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.insert(finetuningDatasets).values({
     userId,
     name,
     description,
@@ -2741,25 +2741,25 @@ async function createFinetuningDataset(userId, name, description, dataCount = 0)
   return result2[0].insertId;
 }
 async function getFinetuningDataset(datasetId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.select().from(finetuningDatasets).where(eq2(finetuningDatasets.id, datasetId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.select().from(finetuningDatasets).where(eq2(finetuningDatasets.id, datasetId));
   return result2[0];
 }
 async function getUserFinetuningDatasets(userId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(finetuningDatasets).where(eq2(finetuningDatasets.userId, userId)).orderBy(desc2(finetuningDatasets.createdAt));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(finetuningDatasets).where(eq2(finetuningDatasets.userId, userId)).orderBy(desc2(finetuningDatasets.createdAt));
 }
 async function updateFinetuningDataset(datasetId, updates) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.update(finetuningDatasets).set({ ...updates, updatedAt: /* @__PURE__ */ new Date() }).where(eq2(finetuningDatasets.id, datasetId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.update(finetuningDatasets).set({ ...updates, updatedAt: /* @__PURE__ */ new Date() }).where(eq2(finetuningDatasets.id, datasetId));
 }
 async function createFinetuningJob(userId, datasetId, modelName, baseModel, epochs = 3, batchSize = 32, learningRate = "0.0001") {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.insert(finetuningJobs).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.insert(finetuningJobs).values({
     userId,
     datasetId,
     modelName,
@@ -2772,25 +2772,25 @@ async function createFinetuningJob(userId, datasetId, modelName, baseModel, epoc
   return result2[0].insertId;
 }
 async function getFinetuningJob(jobId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.select().from(finetuningJobs).where(eq2(finetuningJobs.id, jobId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.select().from(finetuningJobs).where(eq2(finetuningJobs.id, jobId));
   return result2[0];
 }
 async function getUserFinetuningJobs(userId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(finetuningJobs).where(eq2(finetuningJobs.userId, userId)).orderBy(desc2(finetuningJobs.createdAt));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(finetuningJobs).where(eq2(finetuningJobs.userId, userId)).orderBy(desc2(finetuningJobs.createdAt));
 }
 async function updateFinetuningJob(jobId, updates) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  await database.update(finetuningJobs).set(updates).where(eq2(finetuningJobs.id, jobId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  await database2.update(finetuningJobs).set(updates).where(eq2(finetuningJobs.id, jobId));
 }
 async function createFinetuningModel(userId, jobId, name, baseModel, modelPath, metrics) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.insert(finetuningModels).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.insert(finetuningModels).values({
     userId,
     jobId,
     name,
@@ -2801,20 +2801,20 @@ async function createFinetuningModel(userId, jobId, name, baseModel, modelPath, 
   return result2[0].insertId;
 }
 async function getFinetuningModel(modelId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.select().from(finetuningModels).where(eq2(finetuningModels.id, modelId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.select().from(finetuningModels).where(eq2(finetuningModels.id, modelId));
   return result2[0];
 }
 async function getUserFinetuningModels(userId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(finetuningModels).where(eq2(finetuningModels.userId, userId)).orderBy(desc2(finetuningModels.createdAt));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(finetuningModels).where(eq2(finetuningModels.userId, userId)).orderBy(desc2(finetuningModels.createdAt));
 }
 async function createFinetuningEvaluation(jobId, modelId, metrics) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  const result2 = await database.insert(finetuningEvaluations).values({
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  const result2 = await database2.insert(finetuningEvaluations).values({
     jobId,
     modelId,
     accuracy: metrics.accuracy.toString(),
@@ -2828,15 +2828,15 @@ async function createFinetuningEvaluation(jobId, modelId, metrics) {
   return result2[0].insertId;
 }
 async function getModelEvaluations(modelId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(finetuningEvaluations).where(eq2(finetuningEvaluations.modelId, modelId));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(finetuningEvaluations).where(eq2(finetuningEvaluations.modelId, modelId));
 }
 async function createModelComparison(userId, baselineModelId, candidateModelId, baselineMetrics, candidateMetrics) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
   const improvement = calculateImprovement(baselineMetrics, candidateMetrics);
-  const result2 = await database.insert(modelComparisons).values({
+  const result2 = await database2.insert(modelComparisons).values({
     userId,
     baselineModelId,
     candidateModelId,
@@ -2848,9 +2848,9 @@ async function createModelComparison(userId, baselineModelId, candidateModelId, 
   return result2[0].insertId;
 }
 async function getModelComparisons(userId) {
-  const database = await getDb();
-  if (!database) throw new Error("Database not available");
-  return database.select().from(modelComparisons).where(eq2(modelComparisons.userId, userId)).orderBy(desc2(modelComparisons.comparedAt));
+  const database2 = await getDb();
+  if (!database2) throw new Error("Database not available");
+  return database2.select().from(modelComparisons).where(eq2(modelComparisons.userId, userId)).orderBy(desc2(modelComparisons.comparedAt));
 }
 function calculateImprovement(baseline, candidate) {
   const baselineF1 = baseline.f1Score || 0;
@@ -15228,27 +15228,37 @@ import { z as z40 } from "zod";
 // server/db-helpers.ts
 init_db();
 init_schema();
+init_db();
 import { eq as eq7, desc as desc3, and as and5, sql as sql2 } from "drizzle-orm";
+var drizzleDb = null;
+async function getDatabase() {
+  if (!drizzleDb) {
+    drizzleDb = await getDb();
+  }
+  return drizzleDb;
+}
 async function getOrCreateClientProfile(userId, email) {
-  const existing = await (void 0)().from(clientProfiles).where(eq7(clientProfiles.userId, userId));
+  const database2 = await getDatabase();
+  if (!database2) throw new Error("Database not available");
+  const existing = await database2.select().from(clientProfiles).where(eq7(clientProfiles.userId, userId));
   if (existing.length > 0) {
     return existing[0];
   }
-  await (void 0)(clientProfiles).values({
+  await database2.insert(clientProfiles).values({
     userId,
     fullName: "Client",
     email
   });
-  return (void 0)().from(clientProfiles).where(eq7(clientProfiles.userId, userId));
+  return database2.select().from(clientProfiles).where(eq7(clientProfiles.userId, userId));
 }
 async function updateClientProfile(userId, updates) {
-  return (void 0)(clientProfiles).set(updates).where(eq7(clientProfiles.userId, userId));
+  return database.update(clientProfiles).set(updates).where(eq7(clientProfiles.userId, userId));
 }
 async function getClientProfile(userId) {
-  return (void 0)().from(clientProfiles).where(eq7(clientProfiles.userId, userId));
+  return database.select().from(clientProfiles).where(eq7(clientProfiles.userId, userId));
 }
 async function recordDonation(userId, amount, purpose, transactionId) {
-  return (void 0)(clientDonationHistory).values({
+  return database.insert(clientDonationHistory).values({
     userId,
     amount,
     purpose,
@@ -15257,10 +15267,10 @@ async function recordDonation(userId, amount, purpose, transactionId) {
   });
 }
 async function getDonationHistory(userId) {
-  return (void 0)().from(clientDonationHistory).where(eq7(clientDonationHistory.userId, userId)).orderBy(desc3(clientDonationHistory.createdAt));
+  return database.select().from(clientDonationHistory).where(eq7(clientDonationHistory.userId, userId)).orderBy(desc3(clientDonationHistory.createdAt));
 }
 async function recordContentUpload(userId, title, contentUrl, contentType, fileSize, duration) {
-  return (void 0)(clientContentUploads).values({
+  return database.insert(clientContentUploads).values({
     userId,
     title,
     contentUrl,
@@ -15271,10 +15281,10 @@ async function recordContentUpload(userId, title, contentUrl, contentType, fileS
   });
 }
 async function getClientContentUploads(userId) {
-  return (void 0)().from(clientContentUploads).where(eq7(clientContentUploads.userId, userId)).orderBy(desc3(clientContentUploads.createdAt));
+  return database.select().from(clientContentUploads).where(eq7(clientContentUploads.userId, userId)).orderBy(desc3(clientContentUploads.createdAt));
 }
 async function createReview(userId, rating, title, content, category = "general") {
-  return (void 0)(reviews).values({
+  return database.insert(reviews).values({
     userId,
     rating,
     title,
@@ -15285,10 +15295,10 @@ async function createReview(userId, rating, title, content, category = "general"
   });
 }
 async function getReviews(limit = 10, offset = 0) {
-  return (void 0)().from(reviews).where(eq7(reviews.status, "approved")).orderBy(desc3(reviews.createdAt)).limit(limit).offset(offset);
+  return database.select().from(reviews).where(eq7(reviews.status, "approved")).orderBy(desc3(reviews.createdAt)).limit(limit).offset(offset);
 }
 async function getReviewsByCategory(category, limit = 10) {
-  return (void 0)().from(reviews).where(
+  return database.select().from(reviews).where(
     and5(
       eq7(reviews.status, "approved"),
       eq7(reviews.category, category)
@@ -15296,24 +15306,26 @@ async function getReviewsByCategory(category, limit = 10) {
   ).orderBy(desc3(reviews.createdAt)).limit(limit);
 }
 async function getReviewById(reviewId) {
-  return (void 0)().from(reviews).where(eq7(reviews.id, reviewId));
+  return database.select().from(reviews).where(eq7(reviews.id, reviewId));
 }
 async function recordReviewHelpfulness(reviewId, userId, isHelpful) {
-  const existing = await (void 0)().from(reviewHelpfulness).where(
+  const database2 = await getDatabase();
+  if (!database2) throw new Error("Database not available");
+  const existing = await database2.select().from(reviewHelpfulness).where(
     and5(
       eq7(reviewHelpfulness.reviewId, reviewId),
       eq7(reviewHelpfulness.userId, userId)
     )
   );
   if (existing.length > 0) {
-    return (void 0)(reviewHelpfulness).set({ isHelpful: isHelpful ? 1 : 0 }).where(
+    return database2.update(reviewHelpfulness).set({ isHelpful: isHelpful ? 1 : 0 }).where(
       and5(
         eq7(reviewHelpfulness.reviewId, reviewId),
         eq7(reviewHelpfulness.userId, userId)
       )
     );
   }
-  return (void 0)(reviewHelpfulness).values({
+  return database2.insert(reviewHelpfulness).values({
     reviewId,
     userId,
     isHelpful: isHelpful ? 1 : 0
@@ -15334,14 +15346,14 @@ async function getAverageRating() {
   return result2[0];
 }
 async function addReviewResponse(reviewId, responderId, response) {
-  return (void 0)(reviewResponses).values({
+  return database.insert(reviewResponses).values({
     reviewId,
     responderId,
     response
   });
 }
 async function getReviewResponses(reviewId) {
-  return (void 0)().from(reviewResponses).where(eq7(reviewResponses.reviewId, reviewId)).orderBy(desc3(reviewResponses.createdAt));
+  return database.select().from(reviewResponses).where(eq7(reviewResponses.reviewId, reviewId)).orderBy(desc3(reviewResponses.createdAt));
 }
 
 // server/routers/clientPortalRouter.ts
@@ -19824,8 +19836,8 @@ var SeamlessAgentConnectionService = class {
    */
   async discoverAgents(capabilities, platforms, minTrustScore = 50) {
     try {
-      const database = getDb();
-      const agents_list = await database.query.agents.findMany({
+      const database2 = getDb();
+      const agents_list = await database2.query.agents.findMany({
         where: and7(
           or(
             ...capabilities.map(
@@ -19851,8 +19863,8 @@ var SeamlessAgentConnectionService = class {
    */
   async getAgentProfile(agentId) {
     try {
-      const database = getDb();
-      const agent = await database.query.agents.findFirst({
+      const database2 = getDb();
+      const agent = await database2.query.agents.findFirst({
         where: eq9(agents.id, agentId)
       });
       if (!agent) return null;
@@ -20001,8 +20013,8 @@ var SeamlessAgentConnectionService = class {
    */
   async getActiveChannels(agentId) {
     try {
-      const database = getDb();
-      const channels = await database.query.agentConnections.findMany({
+      const database2 = getDb();
+      const channels = await database2.query.agentConnections.findMany({
         where: or(
           eq9(agentConnections.sourceAgentId, agentId),
           eq9(agentConnections.targetAgentId, agentId)
@@ -20053,8 +20065,8 @@ var SeamlessAgentConnectionService = class {
    */
   async getConnectionStats() {
     try {
-      const database = getDb();
-      const connections = await database.query.agentConnections.findMany({
+      const database2 = getDb();
+      const connections = await database2.query.agentConnections.findMany({
         limit: 1e3
       });
       return {
@@ -27840,10 +27852,10 @@ var AgentWebSocketManager = class {
       clients.delete(ws);
     });
   }
-  broadcastUpdate(update3) {
-    const clients = this.clients.get(update3.sessionId);
+  broadcastUpdate(update2) {
+    const clients = this.clients.get(update2.sessionId);
     if (clients && clients.size > 0) {
-      const message = JSON.stringify(update3);
+      const message = JSON.stringify(update2);
       clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(message);
