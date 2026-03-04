@@ -150,8 +150,6 @@ function Router() {
   
   return (
     <>
-      <BreadcrumbNavigation />
-      <Breadcrumbs />
       <Switch>
       <Route path="/" component={HomeComponent} />
       <Route path="/agent" component={AgentDashboard} />

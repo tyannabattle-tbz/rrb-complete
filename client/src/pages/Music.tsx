@@ -4,7 +4,7 @@ import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, Volume2, Music, Radio, TrendingUp } from 'lucide-react';
+import { Play, Pause, Volume2, Music as MusicIcon, Radio, TrendingUp } from 'lucide-react';
 
 export default function Music() {
   const [, setLocation] = useLocation();
@@ -91,7 +91,7 @@ export default function Music() {
             <Card className="bg-slate-800/50 border-pink-500/20">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <Music className="w-5 h-5 text-pink-500" />
+                  <MusicIcon className="w-5 h-5 text-pink-500" />
                   All Channels
                 </CardTitle>
                 <CardDescription>Select a channel to listen</CardDescription>

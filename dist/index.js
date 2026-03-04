@@ -26,10 +26,10 @@ var __copyProps = (to, from, except, desc6) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // shared/const.ts
-var COOKIE_NAME2, ONE_YEAR_MS, UNAUTHED_ERR_MSG, NOT_ADMIN_ERR_MSG;
+var COOKIE_NAME, ONE_YEAR_MS, UNAUTHED_ERR_MSG, NOT_ADMIN_ERR_MSG;
 var init_const = __esm({
   "shared/const.ts"() {
-    COOKIE_NAME2 = "app_session_id";
+    COOKIE_NAME = "app_session_id";
     ONE_YEAR_MS = 1e3 * 60 * 60 * 24 * 365;
     UNAUTHED_ERR_MSG = "Please login (10001)";
     NOT_ADMIN_ERR_MSG = "You do not have required permission (10002)";
@@ -3126,7 +3126,7 @@ var init_sdk = __esm({
           });
         } else {
           const cookies = this.parseCookies(req.headers.cookie);
-          sessionToken = cookies.get(COOKIE_NAME2);
+          sessionToken = cookies.get(COOKIE_NAME);
           console.log("[Auth] Checking cookie-based token", {
             hasCookie: !!sessionToken,
             cookieCount: cookies.size
@@ -4745,7 +4745,7 @@ function registerOAuthRoutes(app) {
       const cookieOptions = getSessionCookieOptions(req);
       console.log("[OAuth] Setting session cookie with options", cookieOptions);
       console.log("[OAuth] Session token created for user:", userInfo.openId);
-      res.cookie(COOKIE_NAME2, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
       const setCookieHeader = res.getHeader("set-cookie");
       console.log("[OAuth] Set-Cookie header:", setCookieHeader);
       const redirectUrl = `/?token=${encodeURIComponent(sessionToken)}`;
@@ -27654,7 +27654,7 @@ var appRouter = router({
     logout: publicProcedure.mutation(({ ctx }) => {
       console.log("[Auth.logout] Clearing session cookie");
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME2, { ...cookieOptions, maxAge: -1 });
+      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return {
         success: true
       };
@@ -28381,6 +28381,8 @@ async function handleChargeRefunded(charge) {
 
 // server/_core/index.ts
 init_qumusActivation();
+var COOKIE_NAME2 = "session";
+var ONE_YEAR_MS2 = 365 * 24 * 60 * 60 * 1e3;
 function isPortAvailable(port) {
   return new Promise((resolve) => {
     const server = net.createServer();
@@ -28442,7 +28444,8 @@ async function startServer() {
         email: "test@qumus.local",
         loginMethod: "test"
       };
-      await db2.upsertUser(testUser.openId, {
+      await db2.upsertUser({
+        openId: testUser.openId,
         name: testUser.name,
         email: testUser.email,
         loginMethod: testUser.loginMethod,
@@ -28458,7 +28461,7 @@ async function startServer() {
         openId: testOpenId
       });
       const cookieOptions = getSessionCookieOptions2(req);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 864e5 });
+      res.cookie(COOKIE_NAME2, sessionToken, { ...cookieOptions, maxAge: 864e5 });
       console.log("[Test Login] Cookie set successfully");
       const redirectUrl = `/?token=${encodeURIComponent(sessionToken)}`;
       console.log("[Test Login] Redirecting to", redirectUrl.substring(0, 50));

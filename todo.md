@@ -148,6 +148,13 @@
 - [x] Add proper spacing and padding to prevent element overlap
 - [x] Test all interactive elements on mobile device
 
+## OAuth Login System - CRITICAL FIX (URGENT)
+- [ ] Fix OAuth and test-login endpoints on deployed domain
+- [ ] Verify session token creation and persistence
+- [ ] Test login flow end-to-end
+- [ ] Deploy fixed code to production
+- [ ] Verify users can access QUMUS ecosystem after login
+
 ## QUMUS Control Center - Full Capacity Implementation (PRIORITY)
 
 ### Phase 1: Comprehensive Audit (IN PROGRESS)

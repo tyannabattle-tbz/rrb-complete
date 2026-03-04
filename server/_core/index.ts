@@ -11,6 +11,9 @@ import { initializeWebSocket } from "../websocket";
 import { handleStripeWebhook } from "../webhooks/stripeWebhook";
 import { activateQumus } from "../qumus/qumusActivation";
 
+const COOKIE_NAME = "session";
+const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
     const server = net.createServer();
@@ -89,7 +92,8 @@ async function startServer() {
       };
       
       // Create/update test user in database
-      await db.upsertUser(testUser.openId, {
+      await db.upsertUser({
+        openId: testUser.openId,
         name: testUser.name,
         email: testUser.email,
         loginMethod: testUser.loginMethod,
