@@ -4725,19 +4725,20 @@ function registerOAuthRoutes(app) {
         });
         throw userError;
       }
-      if (!userInfo.openId) {
-        console.error("[OAuth] Missing openId in user info");
+      const openId = userInfo.openId || userInfo.id || userInfo.sub;
+      if (!openId) {
+        console.error("[OAuth] Missing openId in user info", userInfo);
         res.status(400).json({ error: "openId missing from user info" });
         return;
       }
       await upsertUser({
-        openId: userInfo.openId,
+        openId,
         name: userInfo.name || null,
         email: userInfo.email ?? null,
-        loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
+        loginMethod: userInfo.loginMethod ?? userInfo.platform ?? "oauth",
         lastSignedIn: /* @__PURE__ */ new Date()
       });
-      const sessionToken = await sdk.createSessionToken(userInfo.openId, {
+      const sessionToken = await sdk.createSessionToken(openId, {
         name: userInfo.name || "",
         expiresInMs: ONE_YEAR_MS
       });
