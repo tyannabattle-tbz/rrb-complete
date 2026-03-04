@@ -53,13 +53,13 @@ export function RRBHeaderEnhanced() {
 
   const navItems = [
     { id: 'nav-0', label: 'Home', icon: Home, path: '/', action: () => navigate('/') },
-    { id: 'nav-1', label: 'Radio Station', icon: Radio, path: '/radio-station', action: () => navigate('/radio-station') },
-    { id: 'nav-2', label: 'Music Library', icon: Music, path: '/music-library', action: () => navigate('/music-library') },
-    { id: 'nav-3', label: 'Podcasts', icon: Mic, path: '/podcasts', action: () => navigate('/podcasts') },
-    { id: 'nav-4', label: 'Solbones Game', icon: Zap, path: '/solbones', action: () => navigate('/solbones') },
-    { id: 'nav-5', label: 'Donations', icon: Heart, path: '/donations', action: () => navigate('/donations') },
-    { id: 'nav-6', label: 'Analytics', icon: TrendingUp, path: '/listener-analytics', action: () => navigate('/listener-analytics') },
-    { id: 'nav-7', label: 'Meditation', icon: Globe, path: '/meditation', action: () => navigate('/meditation') },
+    { id: 'nav-1', label: 'Music', icon: Radio, path: '/music', action: () => navigate('/music') },
+    { id: 'nav-2', label: 'Legacy', icon: Music, path: '/legacy', action: () => navigate('/legacy') },
+    { id: 'nav-3', label: 'Proof', icon: Mic, path: '/proof', action: () => navigate('/proof') },
+    { id: 'nav-4', label: 'Studio', icon: Zap, path: '/studio', action: () => navigate('/studio') },
+    { id: 'nav-5', label: 'Podcast', icon: Heart, path: '/podcast', action: () => navigate('/podcast') },
+    { id: 'nav-6', label: 'Gallery', icon: TrendingUp, path: '/gallery', action: () => navigate('/gallery') },
+    { id: 'nav-7', label: 'Games', icon: Globe, path: '/solbones', action: () => navigate('/solbones') },
   ];
 
   return (
