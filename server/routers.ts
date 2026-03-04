@@ -79,6 +79,9 @@ import { rrbUnifiedRouter } from "./routers/rrbUnifiedRouter";
 import { searchRouter } from "./routers/search";
 import { contentCalendarRouter } from "./routers/contentCalendarRouter";
 import { customStationBuilderRouter } from "./routers/customStationBuilder";
+import { advancedSchedulingRouter } from "./routers/advancedSchedulingRouter";
+import { engagementWebhooksRouter } from "./routers/engagementWebhooksRouter";
+import { callInRouter } from "./routers/callInRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -380,6 +383,15 @@ export const appRouter = router({
 
   // Content Calendar & Scheduling
   contentCalendar: contentCalendarRouter,
+
+  // Advanced Scheduling Features
+  advancedScheduling: advancedSchedulingRouter,
+
+  // Real-time Engagement Webhooks
+  engagementWebhooks: engagementWebhooksRouter,
+
+  // Interactive Call-In System
+  callIn: callInRouter,
 
   // Analytics Tracking & Metrics
   analytics: router({
