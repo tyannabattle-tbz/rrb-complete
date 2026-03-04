@@ -9,24 +9,8 @@ import { AlertCircle, Zap } from 'lucide-react';
 export default function Home() {
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
-  const [audioPlaying, setAudioPlaying] = useState(false);
 
-  // Auto-play RRB audio on entry (low volume)
-  useEffect(() => {
-    if (user) {
-      const audio = new Audio('/rrb-theme.mp3');
-      audio.volume = 0.2; // Low volume
-      audio.loop = true;
-      audio.play().catch(() => {
-        console.log('Autoplay blocked, user interaction required');
-      });
-      setAudioPlaying(true);
-
-      return () => {
-        audio.pause();
-      };
-    }
-  }, [user]);
+  // Audio playback is handled by radio player component
 
   // Show loading state
   if (isLoading) {
@@ -189,11 +173,7 @@ export default function Home() {
               <Badge variant="outline" className="border-green-500 text-green-400">
                 All Systems Online
               </Badge>
-              {audioPlaying && (
-                <Badge variant="outline" className="border-pink-500 text-pink-400">
-                  🎶 Playing
-                </Badge>
-              )}
+
             </div>
           </div>
         </div>
