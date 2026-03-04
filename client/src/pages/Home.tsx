@@ -366,7 +366,7 @@ export default function Home() {
               Support the Mission
             </Button>
             <Button
-              onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')}
+              onClick={() => setLocation('/music')}
               variant="outline"
               className="border-pink-500 text-pink-400 hover:bg-pink-500/10"
               size="lg"

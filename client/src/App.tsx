@@ -109,6 +109,9 @@ import BroadcastTemplatesLibrary from '@/pages/BroadcastTemplatesLibrary';
 import UserPreferences from '@/pages/UserPreferences';
 import WebhookManagement from '@/pages/WebhookManagement';
 import Solbones from '@/pages/Solbones';
+import Music from '@/pages/Music';
+import Proof from '@/pages/Proof';
+import Legacy from '@/pages/Legacy';
 import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
@@ -178,6 +181,9 @@ function Router() {
       <Route path="/editor/:videoId" component={() => <VideoEditor videoUrl="" videoId="" />} />
       <Route path="/profile/:userId" component={(props: any) => <UserProfile userId={props.params.userId} />} />
       <Route path="/community" component={Community} />
+      <Route path="/music" component={Music} />
+      <Route path="/proof" component={Proof} />
+      <Route path="/legacy" component={Legacy} />
       <Route path="/creator-onboarding" component={CreatorOnboarding} />
       <Route path="/analytics" component={VideoAnalytics} />
       <Route path="/search" component={VideoSearch} />
