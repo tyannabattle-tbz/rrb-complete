@@ -14851,46 +14851,367 @@ var hybridcastSyncRouter = router({
 
 // server/routers/solbonesRouter.ts
 import { z as z39 } from "zod";
+import { TRPCError as TRPCError9 } from "@trpc/server";
+var gameSessions = /* @__PURE__ */ new Map();
+var playerStats = /* @__PURE__ */ new Map();
+var tournaments = [
+  {
+    id: "tournament-1",
+    name: "RRB Spring Championship",
+    status: "active",
+    maxPlayers: 64,
+    players: [],
+    rounds: 5,
+    leaderboard: []
+  },
+  {
+    id: "tournament-2",
+    name: "Healing Frequencies Cup",
+    status: "active",
+    maxPlayers: 32,
+    players: [],
+    rounds: 3,
+    leaderboard: []
+  }
+];
+function calculateRoundScore(diceRoll) {
+  const { die1, die2, die3, frequencyDie } = diceRoll;
+  const dice = [die1, die2, die3].sort();
+  if (die1 === die2 && die2 === die3) {
+    const baseValue = die1;
+    let points = baseValue;
+    let tallies = 1;
+    if (frequencyDie) {
+      points = baseValue * 2;
+    }
+    return {
+      points,
+      tallies,
+      scoringType: `Tribing Up (${baseValue}s) - ${frequencyDie ? "Frequency" : "Regular"}`
+    };
+  }
+  if (die1 === die2 || die2 === die3 || die1 === die3) {
+    let scoringDie = 0;
+    if (die1 === die2) {
+      scoringDie = die3;
+    } else if (die2 === die3) {
+      scoringDie = die1;
+    } else {
+      scoringDie = die2;
+    }
+    let points = scoringDie;
+    if (frequencyDie && scoringDie === (frequencyDie === "red" ? 2 : frequencyDie === "purple" ? 3 : 4)) {
+      points = scoringDie * 2;
+    }
+    return {
+      points,
+      tallies: 0,
+      scoringType: `Roll a Pair - Third die: ${scoringDie}${frequencyDie ? ` (${frequencyDie})` : ""}`
+    };
+  }
+  if (dice[0] === 2 && dice[1] === 3 && dice[2] === 4 || die1 === 4 && die2 === 3 && die3 === 2 || die1 === 4 && die2 === 2 && die3 === 3 || die1 === 3 && die2 === 4 && die3 === 2 || die1 === 3 && die2 === 2 && die3 === 4 || die1 === 2 && die2 === 4 && die3 === 3 || die1 === 2 && die2 === 3 && die3 === 4) {
+    return {
+      points: 9,
+      tallies: 1,
+      scoringType: "In the Ether (4+3+2)"
+    };
+  }
+  if (frequencyDie && dice[0] === 2 && dice[1] === 3 && dice[2] === 4) {
+    return {
+      points: 18,
+      tallies: 2,
+      scoringType: "Zan Zone (4+3+2 with all frequency)"
+    };
+  }
+  return {
+    points: 0,
+    tallies: 0,
+    scoringType: "No score"
+  };
+}
+var solbonesRouter = router({
+  /**
+   * Start a new game session
+   */
+  startGame: protectedProcedure.input(z39.object({
+    playerNames: z39.array(z39.string()).min(1).max(9)
+  })).mutation(async ({ ctx, input }) => {
+    const sessionId = `game-${Date.now()}`;
+    const session = {
+      sessionId,
+      players: input.playerNames.map((name, idx) => ({
+        playerId: `player-${idx}`,
+        playerName: name,
+        totalScore: 0,
+        roundScores: [],
+        talliesRemaining: 0,
+        hasRolledInFinalRound: false
+      })),
+      currentPlayerIndex: 0,
+      gameStatus: "active",
+      winnerScore: null,
+      winnerId: null,
+      createdAt: /* @__PURE__ */ new Date()
+    };
+    gameSessions.set(sessionId, session);
+    return {
+      sessionId,
+      currentPlayer: session.players[0],
+      gameStatus: session.gameStatus
+    };
+  }),
+  /**
+   * Roll dice and score
+   */
+  rollDice: protectedProcedure.input(z39.object({
+    sessionId: z39.string(),
+    die1: z39.number().min(1).max(6),
+    die2: z39.number().min(1).max(6),
+    die3: z39.number().min(1).max(6),
+    frequencyDie: z39.enum(["red", "purple", "blue"]).optional(),
+    useTally: z39.boolean().default(false)
+  })).mutation(async ({ ctx, input }) => {
+    const session = gameSessions.get(input.sessionId);
+    if (!session) {
+      throw new TRPCError9({ code: "NOT_FOUND", message: "Game session not found" });
+    }
+    const currentPlayer = session.players[session.currentPlayerIndex];
+    const diceRoll = {
+      die1: input.die1,
+      die2: input.die2,
+      die3: input.die3,
+      frequencyDie: input.frequencyDie
+    };
+    if (input.useTally) {
+      if (currentPlayer.talliesRemaining <= 0) {
+        throw new TRPCError9({
+          code: "BAD_REQUEST",
+          message: "No tallies available"
+        });
+      }
+      currentPlayer.talliesRemaining--;
+    }
+    const { points, tallies, scoringType } = calculateRoundScore(diceRoll);
+    const roundScore = {
+      rollNumber: currentPlayer.roundScores.length + 1,
+      diceRoll,
+      points,
+      tallies,
+      scoringType
+    };
+    currentPlayer.roundScores.push(roundScore);
+    currentPlayer.totalScore += points;
+    currentPlayer.talliesRemaining += tallies;
+    let gameStatus = session.gameStatus;
+    if (currentPlayer.totalScore >= 63 && session.gameStatus === "active") {
+      session.gameStatus = "final_round";
+      session.winnerScore = currentPlayer.totalScore;
+      session.winnerId = currentPlayer.playerId;
+    }
+    return {
+      roundScore,
+      playerScore: currentPlayer.totalScore,
+      talliesRemaining: currentPlayer.talliesRemaining,
+      gameStatus,
+      message: points > 0 ? `Scored ${points} points!` : "No score this roll"
+    };
+  }),
+  /**
+   * End current player's turn
+   */
+  endTurn: protectedProcedure.input(z39.object({
+    sessionId: z39.string()
+  })).mutation(async ({ ctx, input }) => {
+    const session = gameSessions.get(input.sessionId);
+    if (!session) {
+      throw new TRPCError9({ code: "NOT_FOUND", message: "Game session not found" });
+    }
+    const currentPlayer = session.players[session.currentPlayerIndex];
+    const roundScore = currentPlayer.roundScores.reduce((sum2, r) => sum2 + r.points, 0);
+    if (roundScore === 0 && currentPlayer.roundScores.length > 0) {
+      const nextIdx = (session.currentPlayerIndex + 1) % session.players.length;
+      session.players[nextIdx].totalScore += 1;
+    }
+    currentPlayer.roundScores = [];
+    session.currentPlayerIndex = (session.currentPlayerIndex + 1) % session.players.length;
+    if (session.gameStatus === "final_round") {
+      const nextPlayer = session.players[session.currentPlayerIndex];
+      nextPlayer.hasRolledInFinalRound = true;
+      if (session.players.every((p) => p.hasRolledInFinalRound)) {
+        session.gameStatus = "completed";
+      }
+    }
+    return {
+      nextPlayer: session.players[session.currentPlayerIndex],
+      gameStatus: session.gameStatus
+    };
+  }),
+  /**
+   * Get game state
+   */
+  getGameState: publicProcedure.input(z39.object({
+    sessionId: z39.string()
+  })).query(async ({ input }) => {
+    const session = gameSessions.get(input.sessionId);
+    if (!session) {
+      throw new TRPCError9({ code: "NOT_FOUND", message: "Game session not found" });
+    }
+    return {
+      sessionId: session.sessionId,
+      players: session.players.map((p) => ({
+        playerId: p.playerId,
+        playerName: p.playerName,
+        totalScore: p.totalScore,
+        talliesRemaining: p.talliesRemaining
+      })),
+      currentPlayer: session.players[session.currentPlayerIndex],
+      gameStatus: session.gameStatus,
+      winnerScore: session.winnerScore,
+      winnerId: session.winnerId
+    };
+  }),
+  /**
+   * Get player statistics
+   */
+  getPlayerStats: publicProcedure.input(z39.object({
+    playerId: z39.string()
+  })).query(async ({ input }) => {
+    let stats = playerStats.get(input.playerId);
+    if (!stats) {
+      stats = {
+        playerId: input.playerId,
+        playerName: "Unknown Player",
+        totalGames: 0,
+        totalScore: 0,
+        averageScore: 0,
+        highestScore: 0,
+        gamesWon: 0,
+        level: 1,
+        badges: []
+      };
+    }
+    return stats;
+  }),
+  /**
+   * Get leaderboard
+   */
+  getLeaderboard: publicProcedure.input(z39.object({
+    sortBy: z39.enum(["totalScore", "highestScore", "averageScore", "gamesWon"]).default("totalScore"),
+    limit: z39.number().default(10)
+  })).query(async () => {
+    const stats = Array.from(playerStats.values());
+    stats.sort((a, b) => {
+      if (a.totalScore !== b.totalScore) return b.totalScore - a.totalScore;
+      return b.highestScore - a.highestScore;
+    });
+    return stats.slice(0, 10).map((stat, idx) => ({
+      rank: idx + 1,
+      playerName: stat.playerName,
+      totalScore: stat.totalScore,
+      highestScore: stat.highestScore,
+      gamesWon: stat.gamesWon,
+      level: stat.level,
+      badges: stat.badges
+    }));
+  }),
+  /**
+   * Get tournaments
+   */
+  getTournaments: publicProcedure.query(async () => {
+    return tournaments.map((t2) => ({
+      id: t2.id,
+      name: t2.name,
+      status: t2.status,
+      maxPlayers: t2.maxPlayers,
+      playerCount: t2.players.length,
+      rounds: t2.rounds
+    }));
+  }),
+  /**
+   * Join tournament
+   */
+  joinTournament: protectedProcedure.input(z39.object({
+    tournamentId: z39.string()
+  })).mutation(async ({ ctx, input }) => {
+    const tournament = tournaments.find((t2) => t2.id === input.tournamentId);
+    if (!tournament) {
+      throw new TRPCError9({ code: "NOT_FOUND", message: "Tournament not found" });
+    }
+    if (tournament.players.length >= tournament.maxPlayers) {
+      throw new TRPCError9({ code: "BAD_REQUEST", message: "Tournament is full" });
+    }
+    const playerId = ctx.user?.id.toString() || `guest-${Date.now()}`;
+    if (!tournament.players.includes(playerId)) {
+      tournament.players.push(playerId);
+    }
+    return {
+      tournamentId: tournament.id,
+      playerCount: tournament.players.length,
+      maxPlayers: tournament.maxPlayers
+    };
+  }),
+  /**
+   * Get frequency reference
+   */
+  getFrequencyReference: publicProcedure.query(async () => {
+    return [
+      { diceValue: 2, frequency: 174, note: "UT", color: "red", description: "Foundation & Security" },
+      { diceValue: 3, frequency: 285, note: "RE", color: "purple", description: "Tissue Repair" },
+      { diceValue: 4, frequency: 432, note: "FA", color: "blue", description: "Heart Chakra" },
+      { diceValue: 5, frequency: 528, note: "SOL", color: "yellow", description: "DNA Repair" },
+      { diceValue: 6, frequency: 639, note: "LA", color: "green", description: "Cell Communication" },
+      { diceValue: 7, frequency: 741, note: "TI", color: "indigo", description: "Intuition & Insight" },
+      { diceValue: 8, frequency: 852, note: "DO", color: "violet", description: "Spiritual Awakening" }
+    ];
+  }),
+  /**
+   * Get game rules
+   */
+  getGameRules: publicProcedure.query(async () => {
+    return {
+      winCondition: "63+ points",
+      rollsPerRound: 3,
+      talliesPerRound: 1,
+      scoringOptions: [
+        {
+          name: "Roll a Pair",
+          description: "Two dice the same = third die is your score",
+          example: "2 6s and a 3 = 3 points"
+        },
+        {
+          name: "Tribing Up",
+          description: "All 3 dice the same = 1 die value + 1 tally",
+          example: "Three 4s = 4 points + 1 tally"
+        },
+        {
+          name: "Vibing Up",
+          description: "Frequency die as scorer = double the value + 1 tally if trips",
+          example: "Two 6s and purple 3 = 6 points (3 \xD7 2)"
+        },
+        {
+          name: "In the Ether",
+          description: "Roll 4+3+2 = 9 points + 1 tally",
+          example: "4, 3, 2 in any order = 9 points"
+        },
+        {
+          name: "Zan Zone",
+          description: "Roll 4+3+2 with all frequency = 18 points + 2 tallies",
+          example: "Blue 4, Purple 3, Red 2 = 18 points"
+        }
+      ],
+      endgame: "After first player reaches 63+, all other players get one final round to beat that score",
+      tiebreaker: "Each player rolls 1 die; highest wins"
+    };
+  })
+});
+
+// server/routers/clientPortalRouter.ts
+import { z as z40 } from "zod";
 
 // server/db-helpers.ts
 init_db();
 init_schema();
 import { eq as eq7, desc as desc3, and as and5, sql as sql2 } from "drizzle-orm";
-async function recordFrequencyRoll(userId, frequencyName, frequency, notes) {
-  return (void 0)(solbonesFrequencyRolls).values({
-    userId,
-    frequencyName,
-    frequency,
-    notes
-  });
-}
-async function getUserFrequencyHistory(userId, limit = 20) {
-  return (void 0)().from(solbonesFrequencyRolls).where(eq7(solbonesFrequencyRolls.userId, userId)).orderBy(desc3(solbonesFrequencyRolls.createdAt)).limit(limit);
-}
-async function getOrCreateLeaderboardEntry(userId) {
-  const existing = await (void 0)().from(solbonesLeaderboard).where(eq7(solbonesLeaderboard.userId, userId));
-  if (existing.length > 0) {
-    return existing[0];
-  }
-  await (void 0)(solbonesLeaderboard).values({
-    userId,
-    totalRolls: 0,
-    streak: 0,
-    score: 0
-  });
-  return (void 0)().from(solbonesLeaderboard).where(eq7(solbonesLeaderboard.userId, userId));
-}
-async function updateLeaderboardStats(userId, totalRolls, favoriteFrequency, score) {
-  return (void 0)(solbonesLeaderboard).set({
-    totalRolls,
-    favoriteFrequency,
-    score,
-    lastRollDate: (/* @__PURE__ */ new Date()).toISOString()
-  }).where(eq7(solbonesLeaderboard.userId, userId));
-}
-async function getTopLeaderboard(limit = 10) {
-  return (void 0)().from(solbonesLeaderboard).orderBy(desc3(solbonesLeaderboard.score)).limit(limit);
-}
 async function getOrCreateClientProfile(userId, email) {
   const existing = await (void 0)().from(clientProfiles).where(eq7(clientProfiles.userId, userId));
   if (existing.length > 0) {
@@ -15006,76 +15327,7 @@ async function getReviewResponses(reviewId) {
   return (void 0)().from(reviewResponses).where(eq7(reviewResponses.reviewId, reviewId)).orderBy(desc3(reviewResponses.createdAt));
 }
 
-// server/routers/solbonesRouter.ts
-import { TRPCError as TRPCError9 } from "@trpc/server";
-var SOLFEGGIO_FREQUENCIES = [
-  { name: "UT", frequency: 174, description: "Foundation and security" },
-  { name: "RE", frequency: 285, description: "Tissue repair" },
-  { name: "MI", frequency: 369, description: "Emotional healing" },
-  { name: "FA", frequency: 432, description: "Heart chakra harmony" },
-  { name: "SOL", frequency: 528, description: "DNA repair and miracles" },
-  { name: "LA", frequency: 639, description: "Relationships" },
-  { name: "TI", frequency: 741, description: "Spiritual awakening" },
-  { name: "DO", frequency: 852, description: "Spiritual order" }
-];
-var solbonesRouter = router({
-  // Roll the frequency dice
-  rollDice: protectedProcedure.input(z39.object({
-    notes: z39.string().optional()
-  })).mutation(async ({ ctx, input }) => {
-    if (!ctx.user) throw new TRPCError9({ code: "UNAUTHORIZED" });
-    const randomFreq = SOLFEGGIO_FREQUENCIES[Math.floor(Math.random() * SOLFEGGIO_FREQUENCIES.length)];
-    await recordFrequencyRoll(
-      ctx.user.id,
-      randomFreq.name,
-      randomFreq.frequency,
-      input.notes
-    );
-    const history = await getUserFrequencyHistory(ctx.user.id, 100);
-    const totalRolls = history.length + 1;
-    const frequencies = history.map((h) => h.frequencyName);
-    const favorite = frequencies.length > 0 ? frequencies.sort(
-      (a, b) => frequencies.filter((x) => x === b).length - frequencies.filter((x) => x === a).length
-    )[0] : randomFreq.name;
-    await updateLeaderboardStats(
-      ctx.user.id,
-      totalRolls,
-      favorite,
-      totalRolls * 10
-    );
-    return {
-      success: true,
-      frequency: randomFreq,
-      totalRolls
-    };
-  }),
-  // Get user's frequency history
-  getHistory: protectedProcedure.input(z39.object({
-    limit: z39.number().default(20)
-  })).query(async ({ ctx, input }) => {
-    if (!ctx.user) throw new TRPCError9({ code: "UNAUTHORIZED" });
-    return getUserFrequencyHistory(ctx.user.id, input.limit);
-  }),
-  // Get user's leaderboard stats
-  getStats: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.user) throw new TRPCError9({ code: "UNAUTHORIZED" });
-    const result2 = await getOrCreateLeaderboardEntry(ctx.user.id);
-    return result2[0] || null;
-  }),
-  // Get top leaderboard
-  getLeaderboard: publicProcedure.input(z39.object({
-    limit: z39.number().default(10)
-  })).query(async ({ input }) => {
-    return getTopLeaderboard(input.limit);
-  }),
-  // Get all frequencies
-  getFrequencies: publicProcedure.query(async () => {
-    return SOLFEGGIO_FREQUENCIES;
-  })
-});
-
 // server/routers/clientPortalRouter.ts
-import { z as z40 } from "zod";
 import { TRPCError as TRPCError10 } from "@trpc/server";
 var clientPortalRouter = router({
   // Get or create client profile
