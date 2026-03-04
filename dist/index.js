@@ -4943,7 +4943,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z71 } from "zod";
+import { z as z73 } from "zod";
 import { TRPCError as TRPCError14 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -18067,55 +18067,294 @@ var userPreferenceSyncRouter = router({
   })
 });
 
-// server/routers/ecosystem.ts
+// server/routers/spotifyRouter.ts
 import { z as z53 } from "zod";
+import axios3 from "axios";
+var SPOTIFY_API_BASE = "https://api.spotify.com/v1";
+var RRB_CHANNELS = [
+  { id: 1, name: "Root Chakra", frequency: 396, spotifyPlaylistId: "playlist_root_chakra" },
+  { id: 2, name: "Sacral Flow", frequency: 417, spotifyPlaylistId: "playlist_sacral_flow" },
+  { id: 3, name: "Solar Plexus", frequency: 528, spotifyPlaylistId: "playlist_solar_plexus" },
+  { id: 4, name: "Heart Healing", frequency: 639, spotifyPlaylistId: "playlist_heart_healing" },
+  { id: 5, name: "Throat Chakra", frequency: 741, spotifyPlaylistId: "playlist_throat_chakra" },
+  { id: 6, name: "Third Eye", frequency: 852, spotifyPlaylistId: "playlist_third_eye" },
+  { id: 7, name: "Crown Awakening", frequency: 963, spotifyPlaylistId: "playlist_crown_awakening" }
+  // ... add remaining 34 channels
+];
+async function getSpotifyAccessToken() {
+  const clientId = process.env.SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    throw new Error("Spotify credentials not configured");
+  }
+  const response = await axios3.post(
+    "https://accounts.spotify.com/api/token",
+    new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: clientId,
+      client_secret: clientSecret
+    }).toString(),
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    }
+  );
+  return response.data.access_token;
+}
+async function getPlaylistTracks(playlistId, accessToken) {
+  const response = await axios3.get(
+    `${SPOTIFY_API_BASE}/playlists/${playlistId}/tracks`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    }
+  );
+  return response.data.items;
+}
+var spotifyRouter = router({
+  // Get all 41 RRB channels
+  getChannels: publicProcedure.query(async () => {
+    return RRB_CHANNELS.map((channel) => ({
+      id: channel.id,
+      name: channel.name,
+      frequency: channel.frequency,
+      description: `${channel.frequency}Hz Solfeggio frequency`
+    }));
+  }),
+  // Get channel details with current playlist
+  getChannelDetails: publicProcedure.input(z53.object({ channelId: z53.number() })).query(async ({ input }) => {
+    const channel = RRB_CHANNELS.find((c) => c.id === input.channelId);
+    if (!channel) throw new Error("Channel not found");
+    try {
+      const accessToken = await getSpotifyAccessToken();
+      const tracks = await getPlaylistTracks(channel.spotifyPlaylistId, accessToken);
+      return {
+        ...channel,
+        tracks: tracks.map((item) => ({
+          id: item.track.id,
+          name: item.track.name,
+          artist: item.track.artists[0]?.name,
+          duration: item.track.duration_ms,
+          url: item.track.external_urls.spotify
+        })),
+        trackCount: tracks.length
+      };
+    } catch (error) {
+      console.error("[Spotify] Error fetching playlist:", error);
+      throw new Error("Failed to fetch channel details");
+    }
+  }),
+  // Search tracks across all channels
+  searchTracks: publicProcedure.input(z53.object({ query: z53.string() })).query(async ({ input }) => {
+    try {
+      const accessToken = await getSpotifyAccessToken();
+      const response = await axios3.get(
+        `${SPOTIFY_API_BASE}/search`,
+        {
+          params: {
+            q: input.query,
+            type: "track",
+            limit: 20
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        }
+      );
+      return response.data.tracks.items.map((track) => ({
+        id: track.id,
+        name: track.name,
+        artist: track.artists[0]?.name,
+        album: track.album.name,
+        duration: track.duration_ms,
+        url: track.external_urls.spotify,
+        imageUrl: track.album.images[0]?.url
+      }));
+    } catch (error) {
+      console.error("[Spotify] Search error:", error);
+      throw new Error("Search failed");
+    }
+  }),
+  // Get current listener stats (requires backend tracking)
+  getListenerStats: publicProcedure.query(async () => {
+    return {
+      totalListeners: 0,
+      activeChannels: RRB_CHANNELS.length,
+      topChannel: RRB_CHANNELS[0],
+      averageListenersPerChannel: 0
+    };
+  }),
+  // Track listener (protected - requires auth)
+  trackListener: protectedProcedure.input(z53.object({ channelId: z53.number() })).mutation(async ({ input, ctx }) => {
+    console.log(`[Spotify] User ${ctx.user.id} listening to channel ${input.channelId}`);
+    return { success: true };
+  })
+});
+
+// server/routers/youtubeRouter.ts
+import { z as z54 } from "zod";
+import axios4 from "axios";
+var YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
+var youtubeRouter = router({
+  // Search YouTube for RRB content
+  searchVideos: publicProcedure.input(z54.object({
+    query: z54.string(),
+    maxResults: z54.number().default(20)
+  })).query(async ({ input }) => {
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) throw new Error("YouTube API key not configured");
+    try {
+      const response = await axios4.get(`${YOUTUBE_API_BASE}/search`, {
+        params: {
+          q: input.query,
+          part: "snippet",
+          type: "video",
+          maxResults: input.maxResults,
+          key: apiKey
+        }
+      });
+      return response.data.items.map((item) => ({
+        id: item.id.videoId,
+        title: item.snippet.title,
+        description: item.snippet.description,
+        thumbnail: item.snippet.thumbnails.medium.url,
+        channelTitle: item.snippet.channelTitle,
+        publishedAt: item.snippet.publishedAt
+      }));
+    } catch (error) {
+      console.error("[YouTube] Search error:", error);
+      throw new Error("YouTube search failed");
+    }
+  }),
+  // Get video details
+  getVideoDetails: publicProcedure.input(z54.object({ videoId: z54.string() })).query(async ({ input }) => {
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) throw new Error("YouTube API key not configured");
+    try {
+      const response = await axios4.get(`${YOUTUBE_API_BASE}/videos`, {
+        params: {
+          id: input.videoId,
+          part: "snippet,statistics,contentDetails",
+          key: apiKey
+        }
+      });
+      const video = response.data.items[0];
+      if (!video) throw new Error("Video not found");
+      return {
+        id: video.id,
+        title: video.snippet.title,
+        description: video.snippet.description,
+        thumbnail: video.snippet.thumbnails.high.url,
+        channelTitle: video.snippet.channelTitle,
+        publishedAt: video.snippet.publishedAt,
+        duration: video.contentDetails.duration,
+        viewCount: parseInt(video.statistics.viewCount || "0"),
+        likeCount: parseInt(video.statistics.likeCount || "0"),
+        commentCount: parseInt(video.statistics.commentCount || "0"),
+        embedUrl: `https://www.youtube.com/embed/${input.videoId}`
+      };
+    } catch (error) {
+      console.error("[YouTube] Get video error:", error);
+      throw new Error("Failed to fetch video details");
+    }
+  }),
+  // Get RRB channel videos
+  getRRBChannelVideos: publicProcedure.input(z54.object({
+    channelId: z54.string(),
+    maxResults: z54.number().default(20)
+  })).query(async ({ input }) => {
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) throw new Error("YouTube API key not configured");
+    try {
+      const response = await axios4.get(`${YOUTUBE_API_BASE}/search`, {
+        params: {
+          channelId: input.channelId,
+          part: "snippet",
+          type: "video",
+          order: "date",
+          maxResults: input.maxResults,
+          key: apiKey
+        }
+      });
+      return response.data.items.map((item) => ({
+        id: item.id.videoId,
+        title: item.snippet.title,
+        description: item.snippet.description,
+        thumbnail: item.snippet.thumbnails.medium.url,
+        publishedAt: item.snippet.publishedAt
+      }));
+    } catch (error) {
+      console.error("[YouTube] Channel videos error:", error);
+      throw new Error("Failed to fetch channel videos");
+    }
+  }),
+  // Track video view (protected)
+  trackVideoView: protectedProcedure.input(z54.object({ videoId: z54.string() })).mutation(async ({ input, ctx }) => {
+    console.log(`[YouTube] User ${ctx.user.id} viewed video ${input.videoId}`);
+    return { success: true, timestamp: /* @__PURE__ */ new Date() };
+  }),
+  // Save video to user library (protected)
+  saveVideo: protectedProcedure.input(z54.object({
+    videoId: z54.string(),
+    title: z54.string(),
+    thumbnail: z54.string()
+  })).mutation(async ({ input, ctx }) => {
+    console.log(`[YouTube] User ${ctx.user.id} saved video ${input.videoId}`);
+    return { success: true, savedAt: /* @__PURE__ */ new Date() };
+  })
+});
+
+// server/routers/ecosystem.ts
+import { z as z55 } from "zod";
 var broadcastsRouter = router({
-  create: protectedProcedure.input(z53.object({
-    system: z53.enum(["qumus", "rrb", "hybridcast"]),
-    title: z53.string(),
-    description: z53.string().optional(),
-    content: z53.string().optional(),
-    startTime: z53.date(),
-    endTime: z53.date().optional(),
-    channels: z53.array(z53.string()).optional(),
-    isEmergency: z53.boolean().default(false)
+  create: protectedProcedure.input(z55.object({
+    system: z55.enum(["qumus", "rrb", "hybridcast"]),
+    title: z55.string(),
+    description: z55.string().optional(),
+    content: z55.string().optional(),
+    startTime: z55.date(),
+    endTime: z55.date().optional(),
+    channels: z55.array(z55.string()).optional(),
+    isEmergency: z55.boolean().default(false)
   })).mutation(async ({ ctx, input }) => {
     return { id: 1, success: true };
   }),
-  getBySystem: publicProcedure.input(z53.object({
-    system: z53.enum(["qumus", "rrb", "hybridcast"]),
-    status: z53.enum(["scheduled", "live", "completed", "cancelled"]).optional(),
-    limit: z53.number().default(20)
+  getBySystem: publicProcedure.input(z55.object({
+    system: z55.enum(["qumus", "rrb", "hybridcast"]),
+    status: z55.enum(["scheduled", "live", "completed", "cancelled"]).optional(),
+    limit: z55.number().default(20)
   })).query(async ({ input }) => {
     return [];
   }),
-  updateStatus: protectedProcedure.input(z53.object({
-    broadcastId: z53.number(),
-    status: z53.enum(["scheduled", "live", "completed", "cancelled"])
+  updateStatus: protectedProcedure.input(z55.object({
+    broadcastId: z55.number(),
+    status: z55.enum(["scheduled", "live", "completed", "cancelled"])
   })).mutation(async ({ input }) => {
     return { success: true };
   })
 });
 var listenersRouter = router({
-  join: publicProcedure.input(z53.object({
-    broadcastId: z53.number(),
-    userId: z53.number().optional(),
-    sessionId: z53.string()
+  join: publicProcedure.input(z55.object({
+    broadcastId: z55.number(),
+    userId: z55.number().optional(),
+    sessionId: z55.string()
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  leave: publicProcedure.input(z53.object({
-    listenerId: z53.number()
+  leave: publicProcedure.input(z55.object({
+    listenerId: z55.number()
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  getActive: publicProcedure.input(z53.object({
-    broadcastId: z53.number()
+  getActive: publicProcedure.input(z55.object({
+    broadcastId: z55.number()
   })).query(async ({ input }) => {
     return [];
   }),
-  getAnalytics: publicProcedure.input(z53.object({
-    broadcastId: z53.number()
+  getAnalytics: publicProcedure.input(z55.object({
+    broadcastId: z55.number()
   })).query(async ({ input }) => {
     return {
       totalListeners: 0,
@@ -18125,22 +18364,22 @@ var listenersRouter = router({
   })
 });
 var donationsRouter = router({
-  create: protectedProcedure.input(z53.object({
-    broadcastId: z53.number().optional(),
-    amount: z53.number(),
-    currency: z53.enum(["USD", "EUR", "GBP"]).default("USD"),
-    purpose: z53.string().optional()
+  create: protectedProcedure.input(z55.object({
+    broadcastId: z55.number().optional(),
+    amount: z55.number(),
+    currency: z55.enum(["USD", "EUR", "GBP"]).default("USD"),
+    purpose: z55.string().optional()
   })).mutation(async ({ ctx, input }) => {
     return { success: true };
   }),
-  getByBroadcast: publicProcedure.input(z53.object({
-    broadcastId: z53.number()
+  getByBroadcast: publicProcedure.input(z55.object({
+    broadcastId: z55.number()
   })).query(async ({ input }) => {
     return [];
   }),
-  getAnalytics: publicProcedure.input(z53.object({
-    system: z53.enum(["qumus", "rrb", "hybridcast"]),
-    period: z53.enum(["day", "week", "month"]).default("month")
+  getAnalytics: publicProcedure.input(z55.object({
+    system: z55.enum(["qumus", "rrb", "hybridcast"]),
+    period: z55.enum(["day", "week", "month"]).default("month")
   })).query(async ({ input }) => {
     return {
       totalDonations: 0,
@@ -18150,72 +18389,72 @@ var donationsRouter = router({
   })
 });
 var metricsRouter = router({
-  record: protectedProcedure.input(z53.object({
-    system: z53.enum(["qumus", "rrb", "hybridcast"]),
-    activeListeners: z53.number(),
-    totalBroadcasts: z53.number(),
-    totalDonations: z53.number(),
-    uptime: z53.number(),
-    cpuUsage: z53.number().optional(),
-    memoryUsage: z53.number().optional(),
-    bandwidth: z53.number().optional()
+  record: protectedProcedure.input(z55.object({
+    system: z55.enum(["qumus", "rrb", "hybridcast"]),
+    activeListeners: z55.number(),
+    totalBroadcasts: z55.number(),
+    totalDonations: z55.number(),
+    uptime: z55.number(),
+    cpuUsage: z55.number().optional(),
+    memoryUsage: z55.number().optional(),
+    bandwidth: z55.number().optional()
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  getLatest: publicProcedure.input(z53.object({
-    system: z53.enum(["qumus", "rrb", "hybridcast"])
+  getLatest: publicProcedure.input(z55.object({
+    system: z55.enum(["qumus", "rrb", "hybridcast"])
   })).query(async ({ input }) => {
     return null;
   }),
-  getHistory: publicProcedure.input(z53.object({
-    system: z53.enum(["qumus", "rrb", "hybridcast"]),
-    hours: z53.number().default(24)
+  getHistory: publicProcedure.input(z55.object({
+    system: z55.enum(["qumus", "rrb", "hybridcast"]),
+    hours: z55.number().default(24)
   })).query(async ({ input }) => {
     return [];
   })
 });
 var autonomousRouter = router({
-  logDecision: protectedProcedure.input(z53.object({
-    policy: z53.string(),
-    system: z53.enum(["qumus", "rrb", "hybridcast"]),
-    action: z53.string(),
-    reasoning: z53.string().optional(),
-    autonomyLevel: z53.number().default(90)
+  logDecision: protectedProcedure.input(z55.object({
+    policy: z55.string(),
+    system: z55.enum(["qumus", "rrb", "hybridcast"]),
+    action: z55.string(),
+    reasoning: z55.string().optional(),
+    autonomyLevel: z55.number().default(90)
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  getHistory: publicProcedure.input(z53.object({
-    system: z53.enum(["qumus", "rrb", "hybridcast"]),
-    limit: z53.number().default(50)
+  getHistory: publicProcedure.input(z55.object({
+    system: z55.enum(["qumus", "rrb", "hybridcast"]),
+    limit: z55.number().default(50)
   })).query(async ({ input }) => {
     return [];
   }),
-  override: protectedProcedure.input(z53.object({
-    decisionId: z53.number(),
-    reason: z53.string()
+  override: protectedProcedure.input(z55.object({
+    decisionId: z55.number(),
+    reason: z55.string()
   })).mutation(async ({ input }) => {
     return { success: true };
   })
 });
 var commandsRouter = router({
-  send: protectedProcedure.input(z53.object({
-    sourceSystem: z53.enum(["qumus", "rrb", "hybridcast"]),
-    targetSystem: z53.enum(["qumus", "rrb", "hybridcast"]),
-    command: z53.string(),
-    parameters: z53.record(z53.any()).optional()
+  send: protectedProcedure.input(z55.object({
+    sourceSystem: z55.enum(["qumus", "rrb", "hybridcast"]),
+    targetSystem: z55.enum(["qumus", "rrb", "hybridcast"]),
+    command: z55.string(),
+    parameters: z55.record(z55.any()).optional()
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  getStatus: publicProcedure.input(z53.object({
-    commandId: z53.string()
+  getStatus: publicProcedure.input(z55.object({
+    commandId: z55.string()
   })).query(async ({ input }) => {
     return null;
   }),
-  updateResult: protectedProcedure.input(z53.object({
-    commandId: z53.string(),
-    status: z53.enum(["pending", "executing", "completed", "failed"]),
-    result: z53.record(z53.any()).optional(),
-    errorMessage: z53.string().optional()
+  updateResult: protectedProcedure.input(z55.object({
+    commandId: z55.string(),
+    status: z55.enum(["pending", "executing", "completed", "failed"]),
+    result: z55.record(z55.any()).optional(),
+    errorMessage: z55.string().optional()
   })).mutation(async ({ input }) => {
     return { success: true };
   })
@@ -18224,31 +18463,31 @@ var radioRouter = router({
   getAll: publicProcedure.query(async () => {
     return [];
   }),
-  getById: publicProcedure.input(z53.object({
-    id: z53.number()
+  getById: publicProcedure.input(z55.object({
+    id: z55.number()
   })).query(async ({ input }) => {
     return [];
   }),
-  updateListeners: protectedProcedure.input(z53.object({
-    channelId: z53.number(),
-    count: z53.number()
+  updateListeners: protectedProcedure.input(z55.object({
+    channelId: z55.number(),
+    count: z55.number()
   })).mutation(async ({ input }) => {
     return { success: true };
   })
 });
 var auditRouter = router({
-  log: protectedProcedure.input(z53.object({
-    system: z53.enum(["qumus", "rrb", "hybridcast"]),
-    action: z53.string(),
-    resourceType: z53.string().optional(),
-    resourceId: z53.string().optional(),
-    changes: z53.record(z53.any()).optional()
+  log: protectedProcedure.input(z55.object({
+    system: z55.enum(["qumus", "rrb", "hybridcast"]),
+    action: z55.string(),
+    resourceType: z55.string().optional(),
+    resourceId: z55.string().optional(),
+    changes: z55.record(z55.any()).optional()
   })).mutation(async ({ ctx, input }) => {
     return { success: true };
   }),
-  getLog: publicProcedure.input(z53.object({
-    system: z53.enum(["qumus", "rrb", "hybridcast"]),
-    limit: z53.number().default(100)
+  getLog: publicProcedure.input(z55.object({
+    system: z55.enum(["qumus", "rrb", "hybridcast"]),
+    limit: z55.number().default(100)
   })).query(async ({ input }) => {
     return [];
   })
@@ -18265,10 +18504,10 @@ var ecosystemRouter = router({
 });
 
 // server/routers/offlinePlaylistRouter.ts
-import { z as z55 } from "zod";
+import { z as z57 } from "zod";
 
 // server/services/offlinePlaylistService.ts
-import { z as z54 } from "zod";
+import { z as z56 } from "zod";
 var OfflinePlaylistService = class {
   /**
    * Create a new offline playlist
@@ -18492,30 +18731,30 @@ var OfflinePlaylistService = class {
     }
   }
 };
-var OfflinePlaylistSchema = z54.object({
-  id: z54.string(),
-  userId: z54.string(),
-  name: z54.string(),
-  description: z54.string().optional(),
-  items: z54.array(z54.object({
-    id: z54.string(),
-    contentId: z54.string(),
-    contentType: z54.enum(["podcast", "song", "audiobook"]),
-    title: z54.string(),
-    artist: z54.string().optional(),
-    duration: z54.number(),
-    fileSize: z54.number(),
-    fileUrl: z54.string().url(),
-    localPath: z54.string().optional(),
-    downloadedAt: z54.number().optional(),
-    isDownloaded: z54.boolean(),
-    downloadProgress: z54.number().optional()
+var OfflinePlaylistSchema = z56.object({
+  id: z56.string(),
+  userId: z56.string(),
+  name: z56.string(),
+  description: z56.string().optional(),
+  items: z56.array(z56.object({
+    id: z56.string(),
+    contentId: z56.string(),
+    contentType: z56.enum(["podcast", "song", "audiobook"]),
+    title: z56.string(),
+    artist: z56.string().optional(),
+    duration: z56.number(),
+    fileSize: z56.number(),
+    fileUrl: z56.string().url(),
+    localPath: z56.string().optional(),
+    downloadedAt: z56.number().optional(),
+    isDownloaded: z56.boolean(),
+    downloadProgress: z56.number().optional()
   })),
-  createdAt: z54.number(),
-  updatedAt: z54.number(),
-  totalSize: z54.number(),
-  isDownloading: z54.boolean().optional(),
-  downloadProgress: z54.number().optional()
+  createdAt: z56.number(),
+  updatedAt: z56.number(),
+  totalSize: z56.number(),
+  isDownloading: z56.boolean().optional(),
+  downloadProgress: z56.number().optional()
 });
 
 // server/routers/offlinePlaylistRouter.ts
@@ -18523,9 +18762,9 @@ var offlinePlaylistRouter = router({
   /**
    * Create new offline playlist
    */
-  createPlaylist: protectedProcedure.input(z55.object({
-    name: z55.string().min(1).max(100),
-    description: z55.string().max(500).optional()
+  createPlaylist: protectedProcedure.input(z57.object({
+    name: z57.string().min(1).max(100),
+    description: z57.string().max(500).optional()
   })).mutation(async ({ input, ctx }) => {
     const playlist = OfflinePlaylistService.createPlaylist(
       ctx.user.id,
@@ -18549,8 +18788,8 @@ var offlinePlaylistRouter = router({
   /**
    * Get playlist by ID
    */
-  getPlaylist: protectedProcedure.input(z55.object({
-    playlistId: z55.string()
+  getPlaylist: protectedProcedure.input(z57.object({
+    playlistId: z57.string()
   })).query(async ({ input, ctx }) => {
     return {
       playlist: null
@@ -18559,15 +18798,15 @@ var offlinePlaylistRouter = router({
   /**
    * Add item to playlist
    */
-  addItemToPlaylist: protectedProcedure.input(z55.object({
-    playlistId: z55.string(),
-    contentId: z55.string(),
-    contentType: z55.enum(["podcast", "song", "audiobook"]),
-    title: z55.string(),
-    artist: z55.string().optional(),
-    duration: z55.number(),
-    fileSize: z55.number(),
-    fileUrl: z55.string().url()
+  addItemToPlaylist: protectedProcedure.input(z57.object({
+    playlistId: z57.string(),
+    contentId: z57.string(),
+    contentType: z57.enum(["podcast", "song", "audiobook"]),
+    title: z57.string(),
+    artist: z57.string().optional(),
+    duration: z57.number(),
+    fileSize: z57.number(),
+    fileUrl: z57.string().url()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -18577,9 +18816,9 @@ var offlinePlaylistRouter = router({
   /**
    * Remove item from playlist
    */
-  removeItemFromPlaylist: protectedProcedure.input(z55.object({
-    playlistId: z55.string(),
-    itemId: z55.string()
+  removeItemFromPlaylist: protectedProcedure.input(z57.object({
+    playlistId: z57.string(),
+    itemId: z57.string()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -18589,12 +18828,12 @@ var offlinePlaylistRouter = router({
   /**
    * Update item download status
    */
-  updateItemDownloadStatus: protectedProcedure.input(z55.object({
-    playlistId: z55.string(),
-    itemId: z55.string(),
-    isDownloaded: z55.boolean(),
-    downloadProgress: z55.number().min(0).max(100).optional(),
-    localPath: z55.string().optional()
+  updateItemDownloadStatus: protectedProcedure.input(z57.object({
+    playlistId: z57.string(),
+    itemId: z57.string(),
+    isDownloaded: z57.boolean(),
+    downloadProgress: z57.number().min(0).max(100).optional(),
+    localPath: z57.string().optional()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -18604,8 +18843,8 @@ var offlinePlaylistRouter = router({
   /**
    * Check storage quota
    */
-  checkStorageQuota: protectedProcedure.input(z55.object({
-    requiredSize: z55.number()
+  checkStorageQuota: protectedProcedure.input(z57.object({
+    requiredSize: z57.number()
   })).query(async ({ input, ctx }) => {
     return {
       sufficient: true,
@@ -18628,8 +18867,8 @@ var offlinePlaylistRouter = router({
   /**
    * Create download job
    */
-  createDownloadJob: protectedProcedure.input(z55.object({
-    playlistId: z55.string()
+  createDownloadJob: protectedProcedure.input(z57.object({
+    playlistId: z57.string()
   })).mutation(async ({ input, ctx }) => {
     const job = OfflinePlaylistService.createDownloadJob(input.playlistId);
     return {
@@ -18640,8 +18879,8 @@ var offlinePlaylistRouter = router({
   /**
    * Get download job status
    */
-  getDownloadJobStatus: protectedProcedure.input(z55.object({
-    jobId: z55.string()
+  getDownloadJobStatus: protectedProcedure.input(z57.object({
+    jobId: z57.string()
   })).query(async ({ input, ctx }) => {
     return {
       job: null
@@ -18650,8 +18889,8 @@ var offlinePlaylistRouter = router({
   /**
    * Get playlist statistics
    */
-  getPlaylistStats: protectedProcedure.input(z55.object({
-    playlistId: z55.string()
+  getPlaylistStats: protectedProcedure.input(z57.object({
+    playlistId: z57.string()
   })).query(async ({ input, ctx }) => {
     return {
       totalItems: 0,
@@ -18666,9 +18905,9 @@ var offlinePlaylistRouter = router({
   /**
    * Sync playlist with server
    */
-  syncPlaylist: protectedProcedure.input(z55.object({
-    playlistId: z55.string(),
-    lastSyncTime: z55.number()
+  syncPlaylist: protectedProcedure.input(z57.object({
+    playlistId: z57.string(),
+    lastSyncTime: z57.number()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -18680,9 +18919,9 @@ var offlinePlaylistRouter = router({
   /**
    * Clean up old downloaded items
    */
-  cleanupOldItems: protectedProcedure.input(z55.object({
-    playlistId: z55.string(),
-    maxAge: z55.number().optional()
+  cleanupOldItems: protectedProcedure.input(z57.object({
+    playlistId: z57.string(),
+    maxAge: z57.number().optional()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -18692,8 +18931,8 @@ var offlinePlaylistRouter = router({
   /**
    * Export playlist
    */
-  exportPlaylist: protectedProcedure.input(z55.object({
-    playlistId: z55.string()
+  exportPlaylist: protectedProcedure.input(z57.object({
+    playlistId: z57.string()
   })).query(async ({ input, ctx }) => {
     return {
       data: "",
@@ -18703,9 +18942,9 @@ var offlinePlaylistRouter = router({
   /**
    * Import playlist
    */
-  importPlaylist: protectedProcedure.input(z55.object({
-    name: z55.string(),
-    data: z55.string()
+  importPlaylist: protectedProcedure.input(z57.object({
+    name: z57.string(),
+    data: z57.string()
   })).mutation(async ({ input, ctx }) => {
     const playlist = OfflinePlaylistService.importPlaylist(ctx.user.id, input.data);
     if (!playlist) {
@@ -18719,9 +18958,9 @@ var offlinePlaylistRouter = router({
   /**
    * Estimate download time
    */
-  estimateDownloadTime: protectedProcedure.input(z55.object({
-    totalSize: z55.number(),
-    networkSpeed: z55.number().optional()
+  estimateDownloadTime: protectedProcedure.input(z57.object({
+    totalSize: z57.number(),
+    networkSpeed: z57.number().optional()
   })).query(async ({ input, ctx }) => {
     const seconds = OfflinePlaylistService.estimateDownloadTime(
       input.totalSize,
@@ -18737,8 +18976,8 @@ var offlinePlaylistRouter = router({
   /**
    * Delete playlist
    */
-  deletePlaylist: protectedProcedure.input(z55.object({
-    playlistId: z55.string()
+  deletePlaylist: protectedProcedure.input(z57.object({
+    playlistId: z57.string()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -18748,10 +18987,10 @@ var offlinePlaylistRouter = router({
   /**
    * Update playlist metadata
    */
-  updatePlaylist: protectedProcedure.input(z55.object({
-    playlistId: z55.string(),
-    name: z55.string().optional(),
-    description: z55.string().optional()
+  updatePlaylist: protectedProcedure.input(z57.object({
+    playlistId: z57.string(),
+    name: z57.string().optional(),
+    description: z57.string().optional()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -18761,7 +19000,7 @@ var offlinePlaylistRouter = router({
 });
 
 // server/routers/agentNetworkRouter.ts
-import { z as z56 } from "zod";
+import { z as z58 } from "zod";
 
 // server/services/agentNetworkService.ts
 import { createHash, randomBytes } from "crypto";
@@ -19503,12 +19742,12 @@ var agentNetworkRouter = router({
    * Register this agent in the network
    */
   registerAgent: protectedProcedure.input(
-    z56.object({
-      name: z56.string(),
-      description: z56.string(),
-      capabilities: z56.array(z56.string()),
-      autonomyLevel: z56.number().min(0).max(100),
-      metadata: z56.record(z56.any()).optional()
+    z58.object({
+      name: z58.string(),
+      description: z58.string(),
+      capabilities: z58.array(z58.string()),
+      autonomyLevel: z58.number().min(0).max(100),
+      metadata: z58.record(z58.any()).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -19544,11 +19783,11 @@ var agentNetworkRouter = router({
    * Discover agents in the network
    */
   discoverAgents: publicProcedure.input(
-    z56.object({
-      capabilities: z56.array(z56.string()).optional(),
-      minAutonomy: z56.number().min(0).max(100).optional(),
-      maxAutonomy: z56.number().min(0).max(100).optional(),
-      limit: z56.number().min(1).max(100).default(20)
+    z58.object({
+      capabilities: z58.array(z58.string()).optional(),
+      minAutonomy: z58.number().min(0).max(100).optional(),
+      maxAutonomy: z58.number().min(0).max(100).optional(),
+      limit: z58.number().min(1).max(100).default(20)
     })
   ).query(async ({ input }) => {
     try {
@@ -19576,8 +19815,8 @@ var agentNetworkRouter = router({
    * Connect to another agent
    */
   connectToAgent: protectedProcedure.input(
-    z56.object({
-      agentId: z56.string()
+    z58.object({
+      agentId: z58.string()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -19610,14 +19849,14 @@ var agentNetworkRouter = router({
    * Send message to another agent
    */
   sendMessage: protectedProcedure.input(
-    z56.object({
-      toAgentId: z56.string(),
-      type: z56.enum(["query", "command", "notification"]),
-      payload: z56.record(z56.any()),
-      priority: z56.enum(["low", "normal", "high", "critical"]).default("normal"),
-      encrypted: z56.boolean().default(true),
-      requiresResponse: z56.boolean().default(false),
-      responseTimeout: z56.number().optional()
+    z58.object({
+      toAgentId: z58.string(),
+      type: z58.enum(["query", "command", "notification"]),
+      payload: z58.record(z58.any()),
+      priority: z58.enum(["low", "normal", "high", "critical"]).default("normal"),
+      encrypted: z58.boolean().default(true),
+      requiresResponse: z58.boolean().default(false),
+      responseTimeout: z58.number().optional()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -19697,8 +19936,8 @@ var agentNetworkRouter = router({
    * Get top agents by trust score
    */
   getTopAgents: publicProcedure.input(
-    z56.object({
-      limit: z56.number().min(1).max(50).default(10)
+    z58.object({
+      limit: z58.number().min(1).max(50).default(10)
     })
   ).query(async ({ input }) => {
     try {
@@ -19726,8 +19965,8 @@ var agentNetworkRouter = router({
    * Get agent connections
    */
   getConnections: protectedProcedure.input(
-    z56.object({
-      agentId: z56.string().optional()
+    z58.object({
+      agentId: z58.string().optional()
     })
   ).query(async ({ input }) => {
     try {
@@ -19756,8 +19995,8 @@ var agentNetworkRouter = router({
    * Disconnect from an agent
    */
   disconnectFromAgent: protectedProcedure.input(
-    z56.object({
-      agentId: z56.string()
+    z58.object({
+      agentId: z58.string()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -19803,9 +20042,9 @@ var agentNetworkRouter = router({
    * Update agent trust level
    */
   updateTrustLevel: protectedProcedure.input(
-    z56.object({
-      agentId: z56.string(),
-      trustLevel: z56.number().min(0).max(100)
+    z58.object({
+      agentId: z58.string(),
+      trustLevel: z58.number().min(0).max(100)
     })
   ).mutation(async ({ input }) => {
     try {
@@ -19823,7 +20062,7 @@ var agentNetworkRouter = router({
 });
 
 // server/routers/seamlessAgentConnectionRouter.ts
-import { z as z57 } from "zod";
+import { z as z59 } from "zod";
 
 // server/services/seamlessAgentConnectionService.ts
 init_schema();
@@ -20167,10 +20406,10 @@ var seamlessAgentConnectionRouter = router({
    * Discover agents by capabilities
    */
   discoverAgents: publicProcedure.input(
-    z57.object({
-      capabilities: z57.array(z57.string()),
-      platforms: z57.array(z57.string()).optional(),
-      minTrustScore: z57.number().default(50)
+    z59.object({
+      capabilities: z59.array(z59.string()),
+      platforms: z59.array(z59.string()).optional(),
+      minTrustScore: z59.number().default(50)
     })
   ).query(async ({ input }) => {
     return await seamlessAgentConnectionService.discoverAgents(
@@ -20182,17 +20421,17 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Get agent profile
    */
-  getAgentProfile: publicProcedure.input(z57.object({ agentId: z57.string() })).query(async ({ input }) => {
+  getAgentProfile: publicProcedure.input(z59.object({ agentId: z59.string() })).query(async ({ input }) => {
     return await seamlessAgentConnectionService.getAgentProfile(input.agentId);
   }),
   /**
    * Initiate connection request
    */
   initiateConnectionRequest: protectedProcedure.input(
-    z57.object({
-      targetAgentId: z57.string(),
-      purpose: z57.string(),
-      capabilities: z57.array(z57.string())
+    z59.object({
+      targetAgentId: z59.string(),
+      purpose: z59.string(),
+      capabilities: z59.array(z59.string())
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.initiateConnectionRequest(
@@ -20206,8 +20445,8 @@ var seamlessAgentConnectionRouter = router({
    * Accept connection request
    */
   acceptConnectionRequest: protectedProcedure.input(
-    z57.object({
-      requestId: z57.string()
+    z59.object({
+      requestId: z59.string()
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.acceptConnectionRequest(input.requestId, ctx.user.id.toString());
@@ -20216,9 +20455,9 @@ var seamlessAgentConnectionRouter = router({
    * Reject connection request
    */
   rejectConnectionRequest: protectedProcedure.input(
-    z57.object({
-      requestId: z57.string(),
-      reason: z57.string()
+    z59.object({
+      requestId: z59.string(),
+      reason: z59.string()
     })
   ).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.rejectConnectionRequest(input.requestId, input.reason);
@@ -20227,12 +20466,12 @@ var seamlessAgentConnectionRouter = router({
    * Send unified message
    */
   sendUnifiedMessage: protectedProcedure.input(
-    z57.object({
-      channelId: z57.string(),
-      targetAgentId: z57.string(),
-      messageType: z57.enum(["request", "response", "notification", "broadcast"]),
-      payload: z57.record(z57.any()),
-      encrypt: z57.boolean().default(true)
+    z59.object({
+      channelId: z59.string(),
+      targetAgentId: z59.string(),
+      messageType: z59.enum(["request", "response", "notification", "broadcast"]),
+      payload: z59.record(z59.any()),
+      encrypt: z59.boolean().default(true)
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.sendUnifiedMessage(
@@ -20248,13 +20487,13 @@ var seamlessAgentConnectionRouter = router({
    * Receive unified message
    */
   receiveUnifiedMessage: protectedProcedure.input(
-    z57.object({
-      messageId: z57.string(),
-      sourceAgentId: z57.string(),
-      channelId: z57.string(),
-      messageType: z57.enum(["request", "response", "notification", "broadcast"]),
-      payload: z57.record(z57.any()),
-      encrypted: z57.boolean()
+    z59.object({
+      messageId: z59.string(),
+      sourceAgentId: z59.string(),
+      channelId: z59.string(),
+      messageType: z59.enum(["request", "response", "notification", "broadcast"]),
+      payload: z59.record(z59.any()),
+      encrypted: z59.boolean()
     })
   ).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.receiveUnifiedMessage({
@@ -20272,7 +20511,7 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Acknowledge message delivery
    */
-  acknowledgeMessage: protectedProcedure.input(z57.object({ messageId: z57.string() })).mutation(async ({ input }) => {
+  acknowledgeMessage: protectedProcedure.input(z59.object({ messageId: z59.string() })).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.acknowledgeMessage(input.messageId);
   }),
   /**
@@ -20284,17 +20523,17 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Close secure channel
    */
-  closeChannel: protectedProcedure.input(z57.object({ channelId: z57.string() })).mutation(async ({ input }) => {
+  closeChannel: protectedProcedure.input(z59.object({ channelId: z59.string() })).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.closeChannel(input.channelId);
   }),
   /**
    * Broadcast message to multiple agents
    */
   broadcastMessage: protectedProcedure.input(
-    z57.object({
-      targetAgentIds: z57.array(z57.string()),
-      messageType: z57.string(),
-      payload: z57.record(z57.any())
+    z59.object({
+      targetAgentIds: z59.array(z59.string()),
+      messageType: z59.string(),
+      payload: z59.record(z59.any())
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.broadcastMessage(
@@ -20313,16 +20552,16 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Monitor connection health
    */
-  monitorConnectionHealth: protectedProcedure.input(z57.object({ channelId: z57.string() })).query(async ({ input }) => {
+  monitorConnectionHealth: protectedProcedure.input(z59.object({ channelId: z59.string() })).query(async ({ input }) => {
     return await seamlessAgentConnectionService.monitorConnectionHealth(input.channelId);
   }),
   /**
    * Establish cross-platform connection
    */
   establishCrossPlatformConnection: protectedProcedure.input(
-    z57.object({
-      targetAgentId: z57.string(),
-      platforms: z57.array(z57.string())
+    z59.object({
+      targetAgentId: z59.string(),
+      platforms: z59.array(z59.string())
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.establishCrossPlatformConnection(
@@ -20334,16 +20573,16 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Sync agent state across platforms
    */
-  syncAgentState: protectedProcedure.input(z57.object({ platforms: z57.array(z57.string()) })).mutation(async ({ input, ctx }) => {
+  syncAgentState: protectedProcedure.input(z59.object({ platforms: z59.array(z59.string()) })).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.syncAgentState(ctx.user.id.toString(), input.platforms);
   }),
   /**
    * Handle connection failure and recovery
    */
   handleConnectionFailure: protectedProcedure.input(
-    z57.object({
-      channelId: z57.string(),
-      error: z57.string()
+    z59.object({
+      channelId: z59.string(),
+      error: z59.string()
     })
   ).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.handleConnectionFailure(input.channelId, input.error);
@@ -20358,24 +20597,24 @@ var seamlessAgentConnectionRouter = router({
 
 // server/routers/videoProductionWorkflowRouter.ts
 init_db();
-import { z as z58 } from "zod";
-var videoProductionSchema = z58.object({
-  videoId: z58.string(),
-  title: z58.string(),
-  description: z58.string().optional(),
-  duration: z58.number(),
-  generatedAt: z58.date(),
-  videoUrl: z58.string(),
-  thumbnailUrl: z58.string().optional(),
-  metadata: z58.record(z58.any()).optional()
+import { z as z60 } from "zod";
+var videoProductionSchema = z60.object({
+  videoId: z60.string(),
+  title: z60.string(),
+  description: z60.string().optional(),
+  duration: z60.number(),
+  generatedAt: z60.date(),
+  videoUrl: z60.string(),
+  thumbnailUrl: z60.string().optional(),
+  metadata: z60.record(z60.any()).optional()
 });
-var broadcastScheduleSchema = z58.object({
-  videoId: z58.string(),
-  rrbRadioStationId: z58.string(),
-  scheduledTime: z58.date(),
-  priority: z58.enum(["low", "medium", "high"]).optional(),
-  autoRepeat: z58.boolean().optional(),
-  repeatInterval: z58.string().optional()
+var broadcastScheduleSchema = z60.object({
+  videoId: z60.string(),
+  rrbRadioStationId: z60.string(),
+  scheduledTime: z60.date(),
+  priority: z60.enum(["low", "medium", "high"]).optional(),
+  autoRepeat: z60.boolean().optional(),
+  repeatInterval: z60.string().optional()
   // cron expression
 });
 var videoProductionWorkflowRouter = router({
@@ -20411,7 +20650,7 @@ var videoProductionWorkflowRouter = router({
     }
   }),
   // Get video production status
-  getVideoStatus: protectedProcedure.input(z58.object({ videoId: z58.string() })).query(async ({ input }) => {
+  getVideoStatus: protectedProcedure.input(z60.object({ videoId: z60.string() })).query(async ({ input }) => {
     try {
       const video = await (void 0).videos.findFirst({
         where: (videos2, { eq: eq14 }) => eq14(videos2.id, input.videoId)
@@ -20469,7 +20708,7 @@ var videoProductionWorkflowRouter = router({
     }
   }),
   // Get all scheduled broadcasts for RRB Radio
-  getScheduledBroadcasts: protectedProcedure.input(z58.object({ stationId: z58.string().optional() })).query(async ({ ctx, input }) => {
+  getScheduledBroadcasts: protectedProcedure.input(z60.object({ stationId: z60.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcastSchedules.findMany({
         where: (schedules, { eq: eq14, and: and9 }) => input.stationId ? and9(
@@ -20493,9 +20732,9 @@ var videoProductionWorkflowRouter = router({
   }),
   // Trigger immediate broadcast to RRB Radio
   broadcastNow: protectedProcedure.input(
-    z58.object({
-      videoId: z58.string(),
-      rrbRadioStationId: z58.string()
+    z60.object({
+      videoId: z60.string(),
+      rrbRadioStationId: z60.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -20529,7 +20768,7 @@ var videoProductionWorkflowRouter = router({
     }
   }),
   // Get broadcast history
-  getBroadcastHistory: protectedProcedure.input(z58.object({ videoId: z58.string().optional() })).query(async ({ ctx, input }) => {
+  getBroadcastHistory: protectedProcedure.input(z60.object({ videoId: z60.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcasts.findMany({
         where: (broadcasts5, { eq: eq14, and: and9 }) => input.videoId ? and9(
@@ -20965,7 +21204,7 @@ var RRBRadioService = class {
 var rrbRadioService = new RRBRadioService();
 
 // server/routers/qumusOrchestrationRouter.ts
-import { z as z59 } from "zod";
+import { z as z61 } from "zod";
 var qumusOrchestrationRouter2 = router({
   /**
    * Get Canryn ecosystem configuration
@@ -21009,9 +21248,9 @@ var qumusOrchestrationRouter2 = router({
    * Update subsidiary status (requires protection)
    */
   updateSubsidiaryStatus: protectedProcedure.input(
-    z59.object({
-      subsidiaryId: z59.string(),
-      status: z59.enum(["active", "inactive", "maintenance"])
+    z61.object({
+      subsidiaryId: z61.string(),
+      status: z61.enum(["active", "inactive", "maintenance"])
     })
   ).mutation(async ({ input }) => {
     const success = canrynEcosystem.updateSubsidiaryStatus(
@@ -21030,9 +21269,9 @@ var qumusOrchestrationRouter2 = router({
    * Update autonomy level
    */
   updateAutonomyLevel: protectedProcedure.input(
-    z59.object({
-      subsidiaryId: z59.string(),
-      level: z59.number().min(0).max(100)
+    z61.object({
+      subsidiaryId: z61.string(),
+      level: z61.number().min(0).max(100)
     })
   ).mutation(async ({ input }) => {
     const success = canrynEcosystem.updateAutonomyLevel(
@@ -21050,14 +21289,14 @@ var qumusOrchestrationRouter2 = router({
   /**
    * Enable human override
    */
-  enableHumanOverride: protectedProcedure.input(z59.object({ subsidiaryId: z59.string() })).mutation(async ({ input }) => {
+  enableHumanOverride: protectedProcedure.input(z61.object({ subsidiaryId: z61.string() })).mutation(async ({ input }) => {
     const success = canrynEcosystem.enableHumanOverride(input.subsidiaryId);
     return { success };
   }),
   /**
    * Disable human override (autonomous mode)
    */
-  disableHumanOverride: protectedProcedure.input(z59.object({ subsidiaryId: z59.string() })).mutation(async ({ input }) => {
+  disableHumanOverride: protectedProcedure.input(z61.object({ subsidiaryId: z61.string() })).mutation(async ({ input }) => {
     const success = canrynEcosystem.disableHumanOverride(input.subsidiaryId);
     return { success };
   }),
@@ -21065,15 +21304,15 @@ var qumusOrchestrationRouter2 = router({
    * Schedule video broadcast on RRB Radio
    */
   scheduleRRBBroadcast: protectedProcedure.input(
-    z59.object({
-      title: z59.string(),
-      description: z59.string(),
-      videoUrl: z59.string(),
-      stationId: z59.string(),
-      scheduledTime: z59.date(),
-      duration: z59.number(),
-      quality: z59.enum(["480p", "720p", "1080p", "4K"]),
-      bitrate: z59.number()
+    z61.object({
+      title: z61.string(),
+      description: z61.string(),
+      videoUrl: z61.string(),
+      stationId: z61.string(),
+      scheduledTime: z61.date(),
+      duration: z61.number(),
+      quality: z61.enum(["480p", "720p", "1080p", "4K"]),
+      bitrate: z61.number()
     })
   ).mutation(async ({ input }) => {
     const broadcastId = await rrbRadioService.scheduleBroadcast({
@@ -21095,26 +21334,26 @@ var qumusOrchestrationRouter2 = router({
   /**
    * Get RRB Radio broadcasts
    */
-  getRRBBroadcasts: publicProcedure.input(z59.object({ stationId: z59.string() })).query(async ({ input }) => {
+  getRRBBroadcasts: publicProcedure.input(z61.object({ stationId: z61.string() })).query(async ({ input }) => {
     return await rrbRadioService.listBroadcasts(input.stationId);
   }),
   /**
    * Get upcoming broadcasts
    */
-  getUpcomingBroadcasts: publicProcedure.input(z59.object({ limit: z59.number().default(10) })).query(async ({ input }) => {
+  getUpcomingBroadcasts: publicProcedure.input(z61.object({ limit: z61.number().default(10) })).query(async ({ input }) => {
     return await rrbRadioService.getUpcomingBroadcasts(input.limit);
   }),
   /**
    * Start broadcast
    */
-  startBroadcast: protectedProcedure.input(z59.object({ broadcastId: z59.string() })).mutation(async ({ input }) => {
+  startBroadcast: protectedProcedure.input(z61.object({ broadcastId: z61.string() })).mutation(async ({ input }) => {
     const success = await rrbRadioService.startBroadcast(input.broadcastId);
     return { success };
   }),
   /**
    * End broadcast
    */
-  endBroadcast: protectedProcedure.input(z59.object({ broadcastId: z59.string() })).mutation(async ({ input }) => {
+  endBroadcast: protectedProcedure.input(z61.object({ broadcastId: z61.string() })).mutation(async ({ input }) => {
     const success = await rrbRadioService.endBroadcast(input.broadcastId);
     return { success };
   }),
@@ -21128,9 +21367,9 @@ var qumusOrchestrationRouter2 = router({
    * Get or create RRB station
    */
   getOrCreateStation: protectedProcedure.input(
-    z59.object({
-      stationId: z59.string(),
-      name: z59.string()
+    z61.object({
+      stationId: z61.string(),
+      name: z61.string()
     })
   ).mutation(async ({ input }) => {
     return await rrbRadioService.getOrCreateStation(
@@ -21149,14 +21388,14 @@ var qumusOrchestrationRouter2 = router({
    * From generation → production → RRB Radio broadcast
    */
   orchestrateVideoWorkflow: protectedProcedure.input(
-    z59.object({
-      videoId: z59.string(),
-      title: z59.string(),
-      description: z59.string(),
-      videoUrl: z59.string(),
-      stationId: z59.string(),
-      scheduledTime: z59.date(),
-      automationEnabled: z59.boolean().default(true)
+    z61.object({
+      videoId: z61.string(),
+      title: z61.string(),
+      description: z61.string(),
+      videoUrl: z61.string(),
+      stationId: z61.string(),
+      scheduledTime: z61.date(),
+      automationEnabled: z61.boolean().default(true)
     })
   ).mutation(async ({ input, ctx }) => {
     console.log("[Qumus] Orchestrating video workflow");
@@ -21939,7 +22178,7 @@ ${report.recommendations.map((r) => `- ${r}`).join("\n")}
 var dailyStatusReportService = new DailyStatusReportService();
 
 // server/routers/ecosystemIntegrationRouter.ts
-import { z as z60 } from "zod";
+import { z as z62 } from "zod";
 var ecosystemIntegrationRouter = router({
   /**
    * Get current ecosystem integration status
@@ -21981,9 +22220,9 @@ var ecosystemIntegrationRouter = router({
    * Update stream frequency (protected)
    */
   updateStreamFrequency: protectedProcedure.input(
-    z60.object({
-      streamId: z60.string(),
-      frequency: z60.number()
+    z62.object({
+      streamId: z62.string(),
+      frequency: z62.number()
     })
   ).mutation(async ({ input }) => {
     const success = audioStreamingService.updateStreamFrequency(
@@ -21996,8 +22235,8 @@ var ecosystemIntegrationRouter = router({
    * Trigger emergency broadcast (protected)
    */
   triggerEmergencyBroadcast: protectedProcedure.input(
-    z60.object({
-      message: z60.string()
+    z62.object({
+      message: z62.string()
     })
   ).mutation(async ({ input }) => {
     const success = await ecosystemIntegration.triggerEmergencyBroadcast(
@@ -22029,9 +22268,9 @@ var ecosystemIntegrationRouter = router({
    * Update system status (protected)
    */
   updateSystemStatus: protectedProcedure.input(
-    z60.object({
-      system: z60.enum(["qumus", "rrb", "hybridCast", "canryn", "sweetMiracles"]),
-      updates: z60.record(z60.any())
+    z62.object({
+      system: z62.enum(["qumus", "rrb", "hybridCast", "canryn", "sweetMiracles"]),
+      updates: z62.record(z62.any())
     })
   ).mutation(async ({ input }) => {
     ecosystemIntegration.updateSystemStatus(input.system, input.updates);
@@ -22061,8 +22300,8 @@ var ecosystemIntegrationRouter = router({
    * Get metrics history (protected)
    */
   getMetricsHistory: protectedProcedure.input(
-    z60.object({
-      limit: z60.number().optional()
+    z62.object({
+      limit: z62.number().optional()
     })
   ).query(async ({ input }) => {
     return stateOfStudio.getMetricsHistory(input.limit);
@@ -22091,8 +22330,8 @@ var ecosystemIntegrationRouter = router({
    * Check system health
    */
   checkSystemHealth: publicProcedure.input(
-    z60.object({
-      system: z60.enum(["qumus", "rrb", "hybridCast", "canryn", "sweetMiracles"])
+    z62.object({
+      system: z62.enum(["qumus", "rrb", "hybridCast", "canryn", "sweetMiracles"])
     })
   ).query(async ({ input }) => {
     const isHealthy = ecosystemIntegration.checkSystemHealth(input.system);
@@ -22107,14 +22346,14 @@ var ecosystemIntegrationRouter = router({
   /**
    * Update legacy status (protected)
    */
-  updateLegacyStatus: protectedProcedure.input(z60.record(z60.any())).mutation(async ({ input }) => {
+  updateLegacyStatus: protectedProcedure.input(z62.record(z62.any())).mutation(async ({ input }) => {
     stateOfStudio.updateLegacyStatus(input);
     return { success: true };
   })
 });
 
 // server/mapArsenal.ts
-import { z as z61 } from "zod";
+import { z as z63 } from "zod";
 var mapArsenalRouter = router({
   // Get all tactical assets
   getAssets: publicProcedure.query(async () => {
@@ -22313,11 +22552,11 @@ var mapArsenalRouter = router({
   }),
   // Create incident report
   createIncident: publicProcedure.input(
-    z61.object({
-      type: z61.enum(["threat", "emergency", "alert", "info"]),
-      location: z61.object({ lat: z61.number(), lng: z61.number() }),
-      severity: z61.enum(["low", "medium", "high", "critical"]),
-      description: z61.string()
+    z63.object({
+      type: z63.enum(["threat", "emergency", "alert", "info"]),
+      location: z63.object({ lat: z63.number(), lng: z63.number() }),
+      severity: z63.enum(["low", "medium", "high", "critical"]),
+      description: z63.string()
     })
   ).mutation(async ({ input }) => {
     return {
@@ -22329,9 +22568,9 @@ var mapArsenalRouter = router({
   }),
   // Update asset status
   updateAssetStatus: publicProcedure.input(
-    z61.object({
-      assetId: z61.string(),
-      status: z61.enum(["active", "idle", "warning", "critical"])
+    z63.object({
+      assetId: z63.string(),
+      status: z63.enum(["active", "idle", "warning", "critical"])
     })
   ).mutation(async ({ input }) => {
     return {
@@ -22342,13 +22581,13 @@ var mapArsenalRouter = router({
   }),
   // Get route optimization
   optimizeRoute: publicProcedure.input(
-    z61.object({
-      origin: z61.object({ lat: z61.number(), lng: z61.number() }),
-      destination: z61.object({ lat: z61.number(), lng: z61.number() }),
-      constraints: z61.object({
-        maxDistance: z61.number().optional(),
-        maxTime: z61.number().optional(),
-        avoidZones: z61.array(z61.object({ lat: z61.number(), lng: z61.number() })).optional()
+    z63.object({
+      origin: z63.object({ lat: z63.number(), lng: z63.number() }),
+      destination: z63.object({ lat: z63.number(), lng: z63.number() }),
+      constraints: z63.object({
+        maxDistance: z63.number().optional(),
+        maxTime: z63.number().optional(),
+        avoidZones: z63.array(z63.object({ lat: z63.number(), lng: z63.number() })).optional()
       }).optional()
     })
   ).mutation(async ({ input }) => {
@@ -22379,7 +22618,7 @@ var mapArsenalRouter = router({
 });
 
 // server/qumusAutonomousFinalization.ts
-import { z as z62 } from "zod";
+import { z as z64 } from "zod";
 var autonomousPolicies = {
   // 1. Broadcast Management Policy
   broadcastManagement: {
@@ -22474,9 +22713,9 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Initialize Qumus as autonomous entity
    */
-  initializeAutonomous: protectedProcedure.input(z62.object({
-    autonomyLevel: z62.number().min(0.5).max(1).optional(),
-    policies: z62.array(z62.string()).optional()
+  initializeAutonomous: protectedProcedure.input(z64.object({
+    autonomyLevel: z64.number().min(0.5).max(1).optional(),
+    policies: z64.array(z64.string()).optional()
   })).mutation(async ({ ctx, input }) => {
     if (ctx.user?.role !== "admin") {
       throw new Error("Only administrators can initialize Qumus");
@@ -22519,7 +22758,7 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Get specific policy details
    */
-  getPolicy: publicProcedure.input(z62.object({ policyId: z62.string() })).query(async ({ input }) => {
+  getPolicy: publicProcedure.input(z64.object({ policyId: z64.string() })).query(async ({ input }) => {
     const policy = Object.values(autonomousPolicies).find(
       (p) => p.id === input.policyId
     );
@@ -22531,10 +22770,10 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Trigger autonomous decision
    */
-  triggerDecision: protectedProcedure.input(z62.object({
-    policyId: z62.string(),
-    trigger: z62.string(),
-    context: z62.record(z62.any()).optional()
+  triggerDecision: protectedProcedure.input(z64.object({
+    policyId: z64.string(),
+    trigger: z64.string(),
+    context: z64.record(z64.any()).optional()
   })).mutation(async ({ ctx, input }) => {
     const policy = Object.values(autonomousPolicies).find(
       (p) => p.id === input.policyId
@@ -22558,9 +22797,9 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Get autonomous decision history
    */
-  getDecisionHistory: protectedProcedure.input(z62.object({
-    limit: z62.number().min(1).max(100).default(50),
-    policyFilter: z62.string().optional()
+  getDecisionHistory: protectedProcedure.input(z64.object({
+    limit: z64.number().min(1).max(100).default(50),
+    policyFilter: z64.string().optional()
   })).query(async ({ input }) => {
     const decisions3 = Array.from({ length: input.limit }, (_, i) => ({
       id: `decision-${Date.now() - i * 1e3}`,
@@ -22578,10 +22817,10 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Override autonomous decision (human intervention)
    */
-  overrideDecision: protectedProcedure.input(z62.object({
-    decisionId: z62.string(),
-    newAction: z62.string(),
-    reason: z62.string()
+  overrideDecision: protectedProcedure.input(z64.object({
+    decisionId: z64.string(),
+    newAction: z64.string(),
+    reason: z64.string()
   })).mutation(async ({ ctx, input }) => {
     if (ctx.user?.role !== "admin") {
       throw new Error("Only administrators can override decisions");
@@ -22626,9 +22865,9 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Finalize Qumus for production deployment
    */
-  finalizeProduction: protectedProcedure.input(z62.object({
-    environment: z62.enum(["development", "staging", "production"]),
-    confirmFinal: z62.boolean()
+  finalizeProduction: protectedProcedure.input(z64.object({
+    environment: z64.enum(["development", "staging", "production"]),
+    confirmFinal: z64.boolean()
   })).mutation(async ({ ctx, input }) => {
     if (ctx.user?.role !== "admin") {
       throw new Error("Only administrators can finalize production");
@@ -22658,17 +22897,17 @@ init_qumusActivation();
 init_ecosystemController();
 init_planningEngine();
 init_memorySystem();
-import { z as z63 } from "zod";
+import { z as z65 } from "zod";
 var autonomousTaskRouter = router({
   /**
    * Submit a task for autonomous execution
    */
   submitTask: protectedProcedure.input(
-    z63.object({
-      goal: z63.string().describe("The goal or task description"),
-      steps: z63.array(z63.string()).optional().describe("Optional steps to execute"),
-      priority: z63.number().min(1).max(10).default(5).describe("Task priority (1-10)"),
-      constraints: z63.array(z63.string()).optional().describe("Constraints or requirements")
+    z65.object({
+      goal: z65.string().describe("The goal or task description"),
+      steps: z65.array(z65.string()).optional().describe("Optional steps to execute"),
+      priority: z65.number().min(1).max(10).default(5).describe("Task priority (1-10)"),
+      constraints: z65.array(z65.string()).optional().describe("Constraints or requirements")
     })
   ).mutation(async ({ input, ctx }) => {
     try {
@@ -22699,11 +22938,11 @@ var autonomousTaskRouter = router({
    * Submit an ecosystem command (RRB, HybridCast, Canryn, Sweet Miracles)
    */
   submitEcosystemCommand: protectedProcedure.input(
-    z63.object({
-      target: z63.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-      action: z63.string(),
-      params: z63.record(z63.any()),
-      priority: z63.number().min(1).max(10).default(5)
+    z65.object({
+      target: z65.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+      action: z65.string(),
+      params: z65.record(z65.any()),
+      priority: z65.number().min(1).max(10).default(5)
     })
   ).mutation(async ({ input, ctx }) => {
     try {
@@ -22758,11 +22997,11 @@ var autonomousTaskRouter = router({
    * Create an autonomous goal
    */
   createGoal: protectedProcedure.input(
-    z63.object({
-      description: z63.string(),
-      priority: z63.number().min(1).max(10).default(5),
-      constraints: z63.array(z63.string()).optional(),
-      deadline: z63.date().optional()
+    z65.object({
+      description: z65.string(),
+      priority: z65.number().min(1).max(10).default(5),
+      constraints: z65.array(z65.string()).optional(),
+      deadline: z65.date().optional()
     })
   ).mutation(async ({ input, ctx }) => {
     try {
@@ -22794,7 +23033,7 @@ var autonomousTaskRouter = router({
   /**
    * Generate a plan for a goal
    */
-  generatePlan: protectedProcedure.input(z63.object({ goalId: z63.string() })).mutation(async ({ input }) => {
+  generatePlan: protectedProcedure.input(z65.object({ goalId: z65.string() })).mutation(async ({ input }) => {
     try {
       const planning = getPlanningEngine();
       const plan = planning.generatePlan(input.goalId);
@@ -22820,7 +23059,7 @@ var autonomousTaskRouter = router({
   /**
    * Execute a plan
    */
-  executePlan: protectedProcedure.input(z63.object({ planId: z63.string() })).mutation(async ({ input, ctx }) => {
+  executePlan: protectedProcedure.input(z65.object({ planId: z65.string() })).mutation(async ({ input, ctx }) => {
     try {
       const planning = getPlanningEngine();
       const result2 = await planning.executePlan(input.planId);
@@ -22881,7 +23120,7 @@ var autonomousTaskRouter = router({
   /**
    * Get memory facts
    */
-  getMemoryFacts: protectedProcedure.input(z63.object({ search: z63.string().optional() })).query(async ({ input }) => {
+  getMemoryFacts: protectedProcedure.input(z65.object({ search: z65.string().optional() })).query(async ({ input }) => {
     try {
       const memory = getMemorySystem();
       if (input.search) {
@@ -22932,9 +23171,9 @@ var autonomousTaskRouter = router({
    * Get ecosystem command history
    */
   getCommandHistory: protectedProcedure.input(
-    z63.object({
-      target: z63.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]).optional(),
-      limit: z63.number().min(1).max(100).default(20)
+    z65.object({
+      target: z65.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]).optional(),
+      limit: z65.number().min(1).max(100).default(20)
     })
   ).query(async ({ input }) => {
     try {
@@ -23652,7 +23891,7 @@ var EcosystemExecutor = class {
 var ecosystemExecutor = new EcosystemExecutor();
 
 // server/routers/payments.ts
-import { z as z64 } from "zod";
+import { z as z66 } from "zod";
 
 // server/qumusPolicies.ts
 async function paymentProcessingPolicy(context) {
@@ -23964,12 +24203,12 @@ var paymentsRouter = router({
    * Process a payment with full policy evaluation
    */
   processPayment: protectedProcedure.input(
-    z64.object({
-      amount: z64.number().positive(),
-      currency: z64.string().default("USD"),
-      paymentMethod: z64.string(),
-      description: z64.string(),
-      metadata: z64.record(z64.any()).optional()
+    z66.object({
+      amount: z66.number().positive(),
+      currency: z66.string().default("USD"),
+      paymentMethod: z66.string(),
+      description: z66.string(),
+      metadata: z66.record(z66.any()).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     const policyContext = {
@@ -24066,9 +24305,9 @@ var paymentsRouter = router({
    * Create a subscription with policy evaluation
    */
   createSubscription: protectedProcedure.input(
-    z64.object({
-      tier: z64.enum(["free", "ar_pro", "voice_training", "enterprise"]),
-      billingCycle: z64.enum(["monthly", "yearly"]).default("monthly")
+    z66.object({
+      tier: z66.enum(["free", "ar_pro", "voice_training", "enterprise"]),
+      billingCycle: z66.enum(["monthly", "yearly"]).default("monthly")
     })
   ).mutation(async ({ ctx, input }) => {
     const tierPricing = {
@@ -24157,9 +24396,9 @@ var paymentsRouter = router({
    * Get payment history with policy context
    */
   getPaymentHistory: protectedProcedure.input(
-    z64.object({
-      limit: z64.number().default(50),
-      offset: z64.number().default(0)
+    z66.object({
+      limit: z66.number().default(50),
+      offset: z66.number().default(0)
     })
   ).query(async ({ ctx, input }) => {
     const payments2 = await db.query(
@@ -24176,9 +24415,9 @@ var paymentsRouter = router({
    * Get policy decisions for a user
    */
   getPolicyDecisions: protectedProcedure.input(
-    z64.object({
-      action: z64.string().optional(),
-      limit: z64.number().default(50)
+    z66.object({
+      action: z66.string().optional(),
+      limit: z66.number().default(50)
     })
   ).query(async ({ ctx, input }) => {
     let query2 = "SELECT * FROM policy_decisions WHERE userId = ?";
@@ -24201,10 +24440,10 @@ var paymentsRouter = router({
    * Override a policy decision (admin only)
    */
   overridePolicyDecision: protectedProcedure.input(
-    z64.object({
-      decisionId: z64.string(),
-      override: z64.enum(["approve", "deny"]),
-      reason: z64.string()
+    z66.object({
+      decisionId: z66.string(),
+      override: z66.enum(["approve", "deny"]),
+      reason: z66.string()
     })
   ).mutation(async ({ ctx, input }) => {
     if (ctx.user.role !== "admin") {
@@ -24231,19 +24470,19 @@ async function processStripePayment(amount, currency, metadata) {
 }
 
 // server/routers/adminPolicies.ts
-import { z as z65 } from "zod";
+import { z as z67 } from "zod";
 var adminPoliciesRouter = router({
   /**
    * Get all policy decisions with optional filtering
    */
   getPolicyDecisions: adminProcedure.input(
-    z65.object({
-      limit: z65.number().default(50),
-      offset: z65.number().default(0),
-      policyId: z65.string().optional(),
-      decision: z65.enum(["approve", "deny", "review"]).optional(),
-      startDate: z65.date().optional(),
-      endDate: z65.date().optional()
+    z67.object({
+      limit: z67.number().default(50),
+      offset: z67.number().default(0),
+      policyId: z67.string().optional(),
+      decision: z67.enum(["approve", "deny", "review"]).optional(),
+      startDate: z67.date().optional(),
+      endDate: z67.date().optional()
     })
   ).query(async ({ input }) => {
     try {
@@ -24313,10 +24552,10 @@ var adminPoliciesRouter = router({
    * Get human review queue
    */
   getHumanReviewQueue: adminProcedure.input(
-    z65.object({
-      limit: z65.number().default(50),
-      offset: z65.number().default(0),
-      status: z65.enum(["pending", "approved", "denied"]).optional()
+    z67.object({
+      limit: z67.number().default(50),
+      offset: z67.number().default(0),
+      status: z67.enum(["pending", "approved", "denied"]).optional()
     })
   ).query(async ({ input }) => {
     try {
@@ -24416,9 +24655,9 @@ var adminPoliciesRouter = router({
    * Approve human review
    */
   approveReview: adminProcedure.input(
-    z65.object({
-      reviewId: z65.string(),
-      notes: z65.string().optional()
+    z67.object({
+      reviewId: z67.string(),
+      notes: z67.string().optional()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -24443,9 +24682,9 @@ var adminPoliciesRouter = router({
    * Deny human review
    */
   denyReview: adminProcedure.input(
-    z65.object({
-      reviewId: z65.string(),
-      reason: z65.string()
+    z67.object({
+      reviewId: z67.string(),
+      reason: z67.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -24470,10 +24709,10 @@ var adminPoliciesRouter = router({
    * Override policy decision
    */
   overridePolicyDecision: adminProcedure.input(
-    z65.object({
-      decisionId: z65.string(),
-      override: z65.enum(["approve", "deny"]),
-      reason: z65.string()
+    z67.object({
+      decisionId: z67.string(),
+      override: z67.enum(["approve", "deny"]),
+      reason: z67.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -24513,10 +24752,10 @@ var adminPoliciesRouter = router({
    * Get policy audit trail
    */
   getAuditTrail: adminProcedure.input(
-    z65.object({
-      limit: z65.number().default(100),
-      offset: z65.number().default(0),
-      adminId: z65.number().optional()
+    z67.object({
+      limit: z67.number().default(100),
+      offset: z67.number().default(0),
+      adminId: z67.number().optional()
     })
   ).query(async ({ input }) => {
     try {
@@ -24579,7 +24818,7 @@ var adminPoliciesRouter = router({
 });
 
 // server/routers/tasks.ts
-import { z as z66 } from "zod";
+import { z as z68 } from "zod";
 
 // server/taskArtifactsService.ts
 async function uploadTaskArtifact(taskId, userId, fileName, fileBuffer, mimeType, metadata) {
@@ -24664,12 +24903,12 @@ var tasksRouter = router({
    * Submit autonomous task
    */
   submitTask: protectedProcedure.input(
-    z66.object({
-      goal: z66.string().min(10).max(5e3),
-      priority: z66.number().min(1).max(10),
-      persona: z66.enum(["analytical", "creative", "aggressive", "conservative"]).optional(),
-      attachments: z66.array(z66.object({ fileKey: z66.string(), fileName: z66.string() })).optional(),
-      metadata: z66.record(z66.any()).optional()
+    z68.object({
+      goal: z68.string().min(10).max(5e3),
+      priority: z68.number().min(1).max(10),
+      persona: z68.enum(["analytical", "creative", "aggressive", "conservative"]).optional(),
+      attachments: z68.array(z68.object({ fileKey: z68.string(), fileName: z68.string() })).optional(),
+      metadata: z68.record(z68.any()).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -24744,8 +24983,8 @@ var tasksRouter = router({
    * Execute task (autonomous)
    */
   executeTask: protectedProcedure.input(
-    z66.object({
-      taskId: z66.string()
+    z68.object({
+      taskId: z68.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -24815,7 +25054,7 @@ var tasksRouter = router({
   /**
    * Get task status
    */
-  getTaskStatus: protectedProcedure.input(z66.object({ taskId: z66.string() })).query(async ({ ctx, input }) => {
+  getTaskStatus: protectedProcedure.input(z68.object({ taskId: z68.string() })).query(async ({ ctx, input }) => {
     try {
       const tasks = await db.query("SELECT * FROM tasks WHERE id = ? AND userId = ?", [
         input.taskId,
@@ -24846,10 +25085,10 @@ var tasksRouter = router({
    * Get task history
    */
   getTaskHistory: protectedProcedure.input(
-    z66.object({
-      limit: z66.number().default(50),
-      offset: z66.number().default(0),
-      status: z66.enum(["pending", "queued", "executing", "completed", "failed", "denied"]).optional()
+    z68.object({
+      limit: z68.number().default(50),
+      offset: z68.number().default(0),
+      status: z68.enum(["pending", "queued", "executing", "completed", "failed", "denied"]).optional()
     })
   ).query(async ({ ctx, input }) => {
     try {
@@ -24894,7 +25133,7 @@ var tasksRouter = router({
   /**
    * Cancel task
    */
-  cancelTask: protectedProcedure.input(z66.object({ taskId: z66.string(), reason: z66.string().optional() })).mutation(async ({ ctx, input }) => {
+  cancelTask: protectedProcedure.input(z68.object({ taskId: z68.string(), reason: z68.string().optional() })).mutation(async ({ ctx, input }) => {
     try {
       const tasks = await db.query("SELECT * FROM tasks WHERE id = ? AND userId = ?", [
         input.taskId,
@@ -24955,7 +25194,7 @@ var tasksRouter = router({
 });
 
 // server/routers/files.ts
-import { z as z67 } from "zod";
+import { z as z69 } from "zod";
 
 // server/fileStorageService.ts
 async function uploadFile(userId, fileName, fileBuffer, mimeType, isPublic = false) {
@@ -25116,11 +25355,11 @@ var filesRouter = router({
    * Upload a file to cloud storage
    */
   upload: protectedProcedure.input(
-    z67.object({
-      fileName: z67.string(),
-      fileBuffer: z67.instanceof(Buffer),
-      mimeType: z67.string(),
-      isPublic: z67.boolean().optional()
+    z69.object({
+      fileName: z69.string(),
+      fileBuffer: z69.instanceof(Buffer),
+      mimeType: z69.string(),
+      isPublic: z69.boolean().optional()
     })
   ).mutation(async ({ ctx, input }) => {
     return uploadFile(
@@ -25135,9 +25374,9 @@ var filesRouter = router({
    * Download a file with presigned URL
    */
   download: protectedProcedure.input(
-    z67.object({
-      fileId: z67.string(),
-      expiresIn: z67.number().optional()
+    z69.object({
+      fileId: z69.string(),
+      expiresIn: z69.number().optional()
     })
   ).query(async ({ ctx, input }) => {
     return downloadFile(ctx.user.id, input.fileId, input.expiresIn);
@@ -25146,9 +25385,9 @@ var filesRouter = router({
    * List user's files with pagination
    */
   list: protectedProcedure.input(
-    z67.object({
-      limit: z67.number().default(50),
-      offset: z67.number().default(0)
+    z69.object({
+      limit: z69.number().default(50),
+      offset: z69.number().default(0)
     })
   ).query(async ({ ctx, input }) => {
     return listUserFiles(ctx.user.id, input.limit, input.offset);
@@ -25156,7 +25395,7 @@ var filesRouter = router({
   /**
    * Delete a file
    */
-  delete: protectedProcedure.input(z67.object({ fileId: z67.string() })).mutation(async ({ ctx, input }) => {
+  delete: protectedProcedure.input(z69.object({ fileId: z69.string() })).mutation(async ({ ctx, input }) => {
     await deleteFile(ctx.user.id, input.fileId);
     return { success: true };
   }),
@@ -25164,9 +25403,9 @@ var filesRouter = router({
    * Share a file with expiring link
    */
   share: protectedProcedure.input(
-    z67.object({
-      fileId: z67.string(),
-      expiresInHours: z67.number().default(24)
+    z69.object({
+      fileId: z69.string(),
+      expiresInHours: z69.number().default(24)
     })
   ).mutation(async ({ ctx, input }) => {
     return shareFile(ctx.user.id, input.fileId, input.expiresInHours);
@@ -25181,9 +25420,9 @@ var filesRouter = router({
    * Get file access audit trail
    */
   getAuditTrail: protectedProcedure.input(
-    z67.object({
-      fileId: z67.string(),
-      limit: z67.number().default(100)
+    z69.object({
+      fileId: z69.string(),
+      limit: z69.number().default(100)
     })
   ).query(async ({ ctx, input }) => {
     return getFileAuditTrail(parseInt(input.fileId), input.limit);
@@ -25192,8 +25431,8 @@ var filesRouter = router({
    * Bulk download files as ZIP
    */
   bulkDownload: protectedProcedure.input(
-    z67.object({
-      fileIds: z67.array(z67.string())
+    z69.object({
+      fileIds: z69.array(z69.string())
     })
   ).mutation(async ({ ctx, input }) => {
     return {
@@ -25204,7 +25443,7 @@ var filesRouter = router({
   /**
    * Search files by name
    */
-  search: protectedProcedure.input(z67.object({ query: z67.string() })).query(async ({ ctx, input }) => {
+  search: protectedProcedure.input(z69.object({ query: z69.string() })).query(async ({ ctx, input }) => {
     const { files: files2 } = await listUserFiles(ctx.user.id, 1e3);
     return files2.filter(
       (f) => f.fileName.toLowerCase().includes(input.query.toLowerCase())
@@ -25213,7 +25452,7 @@ var filesRouter = router({
 });
 
 // server/routers/qumusFullStackRouter.ts
-import { z as z68 } from "zod";
+import { z as z70 } from "zod";
 
 // server/services/qumusIntegrationService.ts
 init_db();
@@ -25720,11 +25959,11 @@ var qumusFullStackRouter = router({
    * Submit a new autonomous task
    */
   submitTask: protectedProcedure.input(
-    z68.object({
-      goal: z68.string().min(1, "Goal is required"),
-      priority: z68.number().int().min(1).max(10).optional().default(5),
-      steps: z68.array(z68.string()).optional(),
-      constraints: z68.array(z68.string()).optional()
+    z70.object({
+      goal: z70.string().min(1, "Goal is required"),
+      priority: z70.number().int().min(1).max(10).optional().default(5),
+      steps: z70.array(z70.string()).optional(),
+      constraints: z70.array(z70.string()).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     const taskId = await taskExecutionEngine.submitTask({
@@ -25743,7 +25982,7 @@ var qumusFullStackRouter = router({
   /**
    * Get task status with real-time updates
    */
-  getTaskStatus: protectedProcedure.input(z68.object({ taskId: z68.string() })).query(async ({ input }) => {
+  getTaskStatus: protectedProcedure.input(z70.object({ taskId: z70.string() })).query(async ({ input }) => {
     const status = await taskExecutionEngine.getTaskStatus(input.taskId);
     return status || { error: "Task not found" };
   }),
@@ -25778,7 +26017,7 @@ var qumusFullStackRouter = router({
   /**
    * Get task execution logs
    */
-  getTaskLogs: protectedProcedure.input(z68.object({ taskId: z68.string() })).query(async ({ input }) => {
+  getTaskLogs: protectedProcedure.input(z70.object({ taskId: z70.string() })).query(async ({ input }) => {
     try {
       const db2 = await getDb();
       if (!db2) return [];
@@ -25793,11 +26032,11 @@ var qumusFullStackRouter = router({
    * Process Stripe payment for task
    */
   processPayment: protectedProcedure.input(
-    z68.object({
-      taskId: z68.string(),
-      amount: z68.number().positive(),
-      currency: z68.string().default("USD"),
-      description: z68.string()
+    z70.object({
+      taskId: z70.string(),
+      amount: z70.number().positive(),
+      currency: z70.string().default("USD"),
+      description: z70.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -25823,11 +26062,11 @@ var qumusFullStackRouter = router({
    * Send email notification
    */
   sendNotification: protectedProcedure.input(
-    z68.object({
-      taskId: z68.string(),
-      to: z68.string().email(),
-      subject: z68.string(),
-      body: z68.string()
+    z70.object({
+      taskId: z70.string(),
+      to: z70.string().email(),
+      subject: z70.string(),
+      body: z70.string()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -25852,11 +26091,11 @@ var qumusFullStackRouter = router({
    * Upload file to S3
    */
   uploadFile: protectedProcedure.input(
-    z68.object({
-      taskId: z68.string(),
-      fileName: z68.string(),
-      fileBuffer: z68.instanceof(Buffer),
-      mimeType: z68.string()
+    z70.object({
+      taskId: z70.string(),
+      fileName: z70.string(),
+      fileBuffer: z70.instanceof(Buffer),
+      mimeType: z70.string()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -25881,11 +26120,11 @@ var qumusFullStackRouter = router({
    * Execute webhook
    */
   executeWebhook: protectedProcedure.input(
-    z68.object({
-      taskId: z68.string(),
-      url: z68.string().url(),
-      method: z68.enum(["GET", "POST", "PUT", "DELETE"]).default("POST"),
-      body: z68.record(z68.any()).optional()
+    z70.object({
+      taskId: z70.string(),
+      url: z70.string().url(),
+      method: z70.enum(["GET", "POST", "PUT", "DELETE"]).default("POST"),
+      body: z70.record(z70.any()).optional()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -25915,7 +26154,7 @@ var qumusFullStackRouter = router({
   /**
    * Subscribe to task events (for WebSocket)
    */
-  subscribeToTask: protectedProcedure.input(z68.object({ taskId: z68.string() })).mutation(async ({ input }) => {
+  subscribeToTask: protectedProcedure.input(z70.object({ taskId: z70.string() })).mutation(async ({ input }) => {
     return {
       success: true,
       message: `Subscribed to task ${input.taskId}`
@@ -25934,9 +26173,9 @@ var qumusFullStackRouter = router({
    * Get task execution history
    */
   getExecutionHistory: protectedProcedure.input(
-    z68.object({
-      limit: z68.number().default(50),
-      offset: z68.number().default(0)
+    z70.object({
+      limit: z70.number().default(50),
+      offset: z70.number().default(0)
     })
   ).query(async ({ ctx, input }) => {
     try {
@@ -25961,7 +26200,7 @@ var qumusFullStackRouter = router({
   /**
    * Cancel a task
    */
-  cancelTask: protectedProcedure.input(z68.object({ taskId: z68.string() })).mutation(async ({ input }) => {
+  cancelTask: protectedProcedure.input(z70.object({ taskId: z70.string() })).mutation(async ({ input }) => {
     try {
       const db2 = await getDb();
       if (!db2) throw new Error("Database connection failed");
@@ -25989,7 +26228,7 @@ var qumusFullStackRouter = router({
   /**
    * Retry a failed task
    */
-  retryTask: protectedProcedure.input(z68.object({ taskId: z68.string() })).mutation(async ({ ctx, input }) => {
+  retryTask: protectedProcedure.input(z70.object({ taskId: z70.string() })).mutation(async ({ ctx, input }) => {
     try {
       const db2 = await getDb();
       if (!db2) throw new Error("Database connection failed");
@@ -26038,7 +26277,7 @@ var qumusFullStackRouter = router({
 });
 
 // server/routers/rrbUnifiedRouter.ts
-import { z as z69 } from "zod";
+import { z as z71 } from "zod";
 
 // server/config/offlineConfig.ts
 import path from "path";
@@ -27046,10 +27285,10 @@ var rrbUnifiedRouter = router({
     getChannels: publicProcedure.query(async () => {
       return await rrbRadioService2.getAllChannels();
     }),
-    getChannel: publicProcedure.input(z69.object({ channelId: z69.number() })).query(async ({ input }) => {
+    getChannel: publicProcedure.input(z71.object({ channelId: z71.number() })).query(async ({ input }) => {
       return await rrbRadioService2.getChannel(input.channelId);
     }),
-    getChannelStats: publicProcedure.input(z69.object({ channelId: z69.number() })).query(async ({ input }) => {
+    getChannelStats: publicProcedure.input(z71.object({ channelId: z71.number() })).query(async ({ input }) => {
       return await rrbRadioService2.getChannelStats(input.channelId);
     }),
     getActiveBroadcasts: publicProcedure.query(async () => {
@@ -27058,7 +27297,7 @@ var rrbUnifiedRouter = router({
     getSystemHealth: publicProcedure.query(async () => {
       return await rrbRadioService2.getSystemHealth();
     }),
-    generateAutoSchedule: protectedProcedure.input(z69.object({ channelId: z69.number(), daysAhead: z69.number().default(7) })).mutation(async ({ input }) => {
+    generateAutoSchedule: protectedProcedure.input(z71.object({ channelId: z71.number(), daysAhead: z71.number().default(7) })).mutation(async ({ input }) => {
       return await rrbRadioService2.generateAutoSchedule(input.channelId, input.daysAhead);
     })
   }),
@@ -27070,10 +27309,10 @@ var rrbUnifiedRouter = router({
     getSessions: publicProcedure.query(async () => {
       return await healingFrequenciesService.getSessions();
     }),
-    getSession: publicProcedure.input(z69.object({ id: z69.string() })).query(async ({ input }) => {
+    getSession: publicProcedure.input(z71.object({ id: z71.string() })).query(async ({ input }) => {
       return await healingFrequenciesService.getSession(input.id);
     }),
-    generateBinauralBeat: publicProcedure.input(z69.object({ frequency: z69.number(), duration: z69.number() })).query(async ({ input }) => {
+    generateBinauralBeat: publicProcedure.input(z71.object({ frequency: z71.number(), duration: z71.number() })).query(async ({ input }) => {
       return await healingFrequenciesService.generateBinauralBeat(
         input.frequency,
         input.duration
@@ -27082,27 +27321,27 @@ var rrbUnifiedRouter = router({
   }),
   // ==================== SOLBONES GAME ====================
   solbones: router({
-    createGame: publicProcedure.input(z69.object({ players: z69.array(z69.string()), aiCount: z69.number().default(0) })).mutation(async ({ input }) => {
+    createGame: publicProcedure.input(z71.object({ players: z71.array(z71.string()), aiCount: z71.number().default(0) })).mutation(async ({ input }) => {
       return await solbonesGameService.createGame(input.players, input.aiCount);
     }),
-    rollDice: publicProcedure.input(z69.object({ gameId: z69.string() })).mutation(async ({ input }) => {
+    rollDice: publicProcedure.input(z71.object({ gameId: z71.string() })).mutation(async ({ input }) => {
       return await solbonesGameService.rollDice(input.gameId);
     }),
-    getGameState: publicProcedure.input(z69.object({ gameId: z69.string() })).query(async ({ input }) => {
+    getGameState: publicProcedure.input(z71.object({ gameId: z71.string() })).query(async ({ input }) => {
       return await solbonesGameService.getGameState(input.gameId);
     }),
-    endGame: publicProcedure.input(z69.object({ gameId: z69.string() })).mutation(async ({ input }) => {
+    endGame: publicProcedure.input(z71.object({ gameId: z71.string() })).mutation(async ({ input }) => {
       return await solbonesGameService.endGame(input.gameId);
     })
   }),
   // ==================== EMERGENCY BROADCAST ====================
   emergency: router({
     createAlert: protectedProcedure.input(
-      z69.object({
-        title: z69.string(),
-        message: z69.string(),
-        severity: z69.enum(["low", "medium", "high", "critical"]),
-        channels: z69.array(z69.number())
+      z71.object({
+        title: z71.string(),
+        message: z71.string(),
+        severity: z71.enum(["low", "medium", "high", "critical"]),
+        channels: z71.array(z71.number())
       })
     ).mutation(async ({ input }) => {
       return await hybridcastEmergencyService.createAlert(
@@ -27115,17 +27354,17 @@ var rrbUnifiedRouter = router({
     getActiveAlerts: publicProcedure.query(async () => {
       return await hybridcastEmergencyService.getActiveAlerts();
     }),
-    broadcastAlert: protectedProcedure.input(z69.object({ alertId: z69.string() })).mutation(async ({ input }) => {
+    broadcastAlert: protectedProcedure.input(z71.object({ alertId: z71.string() })).mutation(async ({ input }) => {
       return await hybridcastEmergencyService.broadcastAlert(input.alertId);
     })
   }),
   // ==================== SWEET MIRACLES DONATIONS ====================
   donations: router({
     createDonation: publicProcedure.input(
-      z69.object({
-        amount: z69.number().positive(),
-        donorEmail: z69.string().email(),
-        message: z69.string().optional()
+      z71.object({
+        amount: z71.number().positive(),
+        donorEmail: z71.string().email(),
+        message: z71.string().optional()
       })
     ).mutation(async ({ input }) => {
       return await sweetMiraclesDonationService.createDonation(
@@ -27150,13 +27389,13 @@ var rrbUnifiedRouter = router({
       return await merchandiseShopService.getProducts();
     }),
     createOrder: protectedProcedure.input(
-      z69.object({
-        products: z69.array(z69.object({ productId: z69.number(), quantity: z69.number() }))
+      z71.object({
+        products: z71.array(z71.object({ productId: z71.number(), quantity: z71.number() }))
       })
     ).mutation(async ({ input }) => {
       return await merchandiseShopService.createOrder(input.products);
     }),
-    getOrder: publicProcedure.input(z69.object({ orderId: z69.string() })).query(async ({ input }) => {
+    getOrder: publicProcedure.input(z71.object({ orderId: z71.string() })).query(async ({ input }) => {
       return await merchandiseShopService.getOrder(input.orderId);
     })
   }),
@@ -27186,7 +27425,7 @@ var rrbUnifiedRouter = router({
 });
 
 // server/routers/search.ts
-import { z as z70 } from "zod";
+import { z as z72 } from "zod";
 var searchIndex = [
   {
     id: "1",
@@ -27271,10 +27510,10 @@ var searchIndex = [
 ];
 var searchRouter = router({
   search: publicProcedure.input(
-    z70.object({
-      query: z70.string().min(1).max(100),
-      category: z70.enum(["all", "rrb", "qumus"]).optional().default("all"),
-      limit: z70.number().min(1).max(50).optional().default(10)
+    z72.object({
+      query: z72.string().min(1).max(100),
+      category: z72.enum(["all", "rrb", "qumus"]).optional().default("all"),
+      limit: z72.number().min(1).max(50).optional().default(10)
     })
   ).query(({ input }) => {
     const { query: query2, category, limit } = input;
@@ -27317,7 +27556,7 @@ var searchRouter = router({
     };
   }),
   // Get search suggestions based on partial query
-  getSuggestions: publicProcedure.input(z70.object({ query: z70.string().min(1).max(50) })).query(({ input }) => {
+  getSuggestions: publicProcedure.input(z72.object({ query: z72.string().min(1).max(50) })).query(({ input }) => {
     const { query: query2 } = input;
     const searchTerm = query2.toLowerCase();
     const suggestions = searchIndex.filter(
@@ -27348,11 +27587,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z71.object({
-        goal: z71.string().min(1, "Goal is required"),
-        priority: z71.number().int().min(1).max(10).optional().default(5),
-        steps: z71.array(z71.string()).optional(),
-        constraints: z71.array(z71.string()).optional()
+      z73.object({
+        goal: z73.string().min(1, "Goal is required"),
+        priority: z73.number().int().min(1).max(10).optional().default(5),
+        steps: z73.array(z73.string()).optional(),
+        constraints: z73.array(z73.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -27364,7 +27603,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z71.object({ taskId: z71.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z73.object({ taskId: z73.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -27374,11 +27613,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z71.object({
-        target: z71.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z71.string().min(1, "Action is required"),
-        params: z71.record(z71.any()).optional().default({}),
-        priority: z71.number().int().min(1).max(10).optional().default(5)
+      z73.object({
+        target: z73.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z73.string().min(1, "Action is required"),
+        params: z73.record(z73.any()).optional().default({}),
+        priority: z73.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -27390,10 +27629,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z71.object({ commandId: z71.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z73.object({ commandId: z73.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z71.object({ target: z71.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z73.object({ target: z73.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -27488,12 +27727,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z71.object({
-      sessionName: z71.string().min(1),
-      systemPrompt: z71.string().optional(),
-      temperature: z71.number().min(0).max(100).optional(),
-      model: z71.string().optional(),
-      maxSteps: z71.number().min(1).optional()
+    createSession: protectedProcedure.input(z73.object({
+      sessionName: z73.string().min(1),
+      systemPrompt: z73.string().optional(),
+      temperature: z73.number().min(0).max(100).optional(),
+      model: z73.string().optional(),
+      maxSteps: z73.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -27514,7 +27753,7 @@ var appRouter = router({
       return (void 0)(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z71.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z73.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
       const session = await (void 0)(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -27523,7 +27762,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z71.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z73.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
       const session = await (void 0)(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -27546,7 +27785,11 @@ var appRouter = router({
   // RRB Unified Router (All RRB Systems Orchestrated)
   rrb: rrbUnifiedRouter,
   // Search Router (Global Search Across Content)
-  search: searchRouter
+  search: searchRouter,
+  // Real Spotify Integration
+  spotify: spotifyRouter,
+  // Real YouTube Integration
+  youtube: youtubeRouter
 });
 
 // server/_core/context.ts

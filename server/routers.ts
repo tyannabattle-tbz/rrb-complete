@@ -48,6 +48,8 @@ import { qumusAutonomousScalingRouter } from "./routers/qumusAutonomousScalingRo
 import { qumusChatRouter } from "./routers/qumusChatRouter";
 import { socialSharingRouter } from "./routers/socialSharingRouter";
 import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
+import { spotifyRouter } from "./routers/spotifyRouter";
+import { youtubeRouter } from "./routers/youtubeRouter";
 import { ecosystemRouter } from "./routers/ecosystem";
 import { offlinePlaylistRouter } from "./routers/offlinePlaylistRouter";
 import { agentNetworkRouter } from "./routers/agentNetworkRouter";
@@ -364,6 +366,12 @@ export const appRouter = router({
 
   // Search Router (Global Search Across Content)
   search: searchRouter,
+
+  // Real Spotify Integration
+  spotify: spotifyRouter,
+
+  // Real YouTube Integration
+  youtube: youtubeRouter,
 });
 
 export type AppRouter = typeof appRouter;
