@@ -39,7 +39,7 @@ var init_const = __esm({
 // drizzle/schema.ts
 import { mysqlTable, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog;
+var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog, contentCalendarPosts, bulkScheduleTemplates, platformEngagementMetrics, analyticsSummary;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
     activityLogs = mysqlTable("activity_logs", {
@@ -1613,6 +1613,64 @@ var init_schema = __esm({
       status: mysqlEnum(["success", "failed"]).default("success"),
       errorMessage: text(),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    contentCalendarPosts = mysqlTable("content_calendar_posts", {
+      id: int("id").primaryKey().autoincrement(),
+      userId: varchar("user_id", { length: 255 }).notNull(),
+      title: varchar("title", { length: 255 }).notNull(),
+      content: text("content").notNull(),
+      scheduledTime: timestamp("scheduled_time").notNull(),
+      platforms: json("platforms").$type().notNull(),
+      status: varchar("status", { length: 20 }).default("draft"),
+      mediaUrls: json("media_urls").$type(),
+      hashtags: json("hashtags").$type(),
+      createdAt: timestamp("created_at").defaultNow(),
+      updatedAt: timestamp("updated_at").defaultNow(),
+      publishedAt: timestamp("published_at")
+    });
+    bulkScheduleTemplates = mysqlTable("bulk_schedule_templates", {
+      id: int("id").primaryKey().autoincrement(),
+      userId: varchar("user_id", { length: 255 }).notNull(),
+      name: varchar("name", { length: 255 }).notNull(),
+      description: text("description"),
+      posts: json("posts").$type().notNull(),
+      schedulePattern: varchar("schedule_pattern", { length: 20 }).notNull(),
+      startDate: timestamp("start_date").notNull(),
+      endDate: timestamp("end_date"),
+      isActive: int("is_active").default(1),
+      createdAt: timestamp("created_at").defaultNow(),
+      updatedAt: timestamp("updated_at").defaultNow()
+    });
+    platformEngagementMetrics = mysqlTable("platform_engagement_metrics", {
+      id: int("id").primaryKey().autoincrement(),
+      postId: int("post_id").notNull(),
+      platform: varchar("platform", { length: 20 }).notNull(),
+      externalPostId: varchar("external_post_id", { length: 255 }).notNull(),
+      likes: int("likes").default(0),
+      shares: int("shares").default(0),
+      comments: int("comments").default(0),
+      views: int("views").default(0),
+      clicks: int("clicks").default(0),
+      impressions: int("impressions").default(0),
+      engagementRate: varchar("engagement_rate", { length: 50 }).default("0%"),
+      lastUpdated: timestamp("last_updated").defaultNow(),
+      createdAt: timestamp("created_at").defaultNow()
+    });
+    analyticsSummary = mysqlTable("analytics_summary", {
+      id: int("id").primaryKey().autoincrement(),
+      userId: varchar("user_id", { length: 255 }).notNull(),
+      platform: varchar("platform", { length: 20 }).notNull(),
+      period: varchar("period", { length: 20 }).notNull(),
+      periodDate: timestamp("period_date").notNull(),
+      totalPosts: int("total_posts").default(0),
+      totalLikes: int("total_likes").default(0),
+      totalShares: int("total_shares").default(0),
+      totalComments: int("total_comments").default(0),
+      totalViews: int("total_views").default(0),
+      totalImpressions: int("total_impressions").default(0),
+      averageEngagementRate: varchar("average_engagement_rate", { length: 50 }).default("0%"),
+      topPost: json("top_post").$type(),
+      createdAt: timestamp("created_at").defaultNow()
     });
   }
 });
@@ -4943,7 +5001,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z73 } from "zod";
+import { z as z74 } from "zod";
 import { TRPCError as TRPCError14 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -20622,7 +20680,7 @@ var videoProductionWorkflowRouter = router({
   registerGeneratedVideo: protectedProcedure.input(videoProductionSchema).mutation(async ({ ctx, input }) => {
     try {
       const videoRecord = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq14 }) => eq14(videos2.id, input.videoId)
+        where: (videos2, { eq: eq15 }) => eq15(videos2.id, input.videoId)
       });
       if (!videoRecord) {
         await (void 0)(void 0).values({
@@ -20653,7 +20711,7 @@ var videoProductionWorkflowRouter = router({
   getVideoStatus: protectedProcedure.input(z60.object({ videoId: z60.string() })).query(async ({ input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq14 }) => eq14(videos2.id, input.videoId)
+        where: (videos2, { eq: eq15 }) => eq15(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -20675,7 +20733,7 @@ var videoProductionWorkflowRouter = router({
   scheduleForRRBRadio: protectedProcedure.input(broadcastScheduleSchema).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq14 }) => eq14(videos2.id, input.videoId)
+        where: (videos2, { eq: eq15 }) => eq15(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -20711,10 +20769,10 @@ var videoProductionWorkflowRouter = router({
   getScheduledBroadcasts: protectedProcedure.input(z60.object({ stationId: z60.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcastSchedules.findMany({
-        where: (schedules, { eq: eq14, and: and9 }) => input.stationId ? and9(
-          eq14(schedules.createdBy, String(ctx.user.id)),
-          eq14(schedules.stationId, input.stationId)
-        ) : eq14(schedules.createdBy, String(ctx.user.id))
+        where: (schedules, { eq: eq15, and: and10 }) => input.stationId ? and10(
+          eq15(schedules.createdBy, String(ctx.user.id)),
+          eq15(schedules.stationId, input.stationId)
+        ) : eq15(schedules.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         scheduleId: broadcast.id,
@@ -20739,7 +20797,7 @@ var videoProductionWorkflowRouter = router({
   ).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq14 }) => eq14(videos2.id, input.videoId)
+        where: (videos2, { eq: eq15 }) => eq15(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -20771,10 +20829,10 @@ var videoProductionWorkflowRouter = router({
   getBroadcastHistory: protectedProcedure.input(z60.object({ videoId: z60.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq14, and: and9 }) => input.videoId ? and9(
-          eq14(broadcasts5.createdBy, String(ctx.user.id)),
-          eq14(broadcasts5.videoId, input.videoId)
-        ) : eq14(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq15, and: and10 }) => input.videoId ? and10(
+          eq15(broadcasts5.createdBy, String(ctx.user.id)),
+          eq15(broadcasts5.videoId, input.videoId)
+        ) : eq15(broadcasts5.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         broadcastId: broadcast.id,
@@ -20794,10 +20852,10 @@ var videoProductionWorkflowRouter = router({
   getWorkflowStats: protectedProcedure.query(async ({ ctx }) => {
     try {
       const videos2 = await (void 0).videos.findMany({
-        where: (videos3, { eq: eq14 }) => eq14(videos3.userId, String(ctx.user.id))
+        where: (videos3, { eq: eq15 }) => eq15(videos3.userId, String(ctx.user.id))
       });
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq14 }) => eq14(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq15 }) => eq15(broadcasts5.createdBy, String(ctx.user.id))
       });
       const statusCounts = {
         generated: videos2.filter((v) => v.status === "generated").length,
@@ -27570,6 +27628,219 @@ var searchRouter = router({
   })
 });
 
+// server/routers/contentCalendarRouter.ts
+init_schema();
+init_db();
+import { z as z73 } from "zod";
+import { eq as eq13, and as and9, gte as gte3, lte as lte3 } from "drizzle-orm";
+var contentCalendarRouter = router({
+  // Create a new post
+  createPost: protectedProcedure.input(z73.object({
+    title: z73.string().min(1).max(255),
+    content: z73.string().min(1),
+    scheduledTime: z73.date(),
+    platforms: z73.array(z73.enum(["twitter", "youtube", "facebook", "instagram"])),
+    mediaUrls: z73.array(z73.string()).optional(),
+    hashtags: z73.array(z73.string()).optional()
+  })).mutation(async ({ ctx, input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database connection failed");
+    const post = await db2.insert(contentCalendarPosts).values({
+      userId: ctx.user.id.toString(),
+      title: input.title,
+      content: input.content,
+      scheduledTime: input.scheduledTime,
+      platforms: input.platforms,
+      mediaUrls: input.mediaUrls || [],
+      hashtags: input.hashtags || [],
+      status: "scheduled"
+    });
+    return { success: true, postId: post[0] };
+  }),
+  // Get calendar posts for a date range
+  getPostsByDateRange: protectedProcedure.input(z73.object({
+    startDate: z73.date(),
+    endDate: z73.date()
+  })).query(async ({ ctx, input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database connection failed");
+    const posts = await db2.select().from(contentCalendarPosts).where(
+      and9(
+        eq13(contentCalendarPosts.userId, ctx.user.id.toString()),
+        gte3(contentCalendarPosts.scheduledTime, input.startDate),
+        lte3(contentCalendarPosts.scheduledTime, input.endDate)
+      )
+    );
+    return posts;
+  }),
+  // Update post (drag-and-drop reschedule)
+  updatePostSchedule: protectedProcedure.input(z73.object({
+    postId: z73.number(),
+    newScheduledTime: z73.date()
+  })).mutation(async ({ ctx, input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database connection failed");
+    await db2.update(contentCalendarPosts).set({ scheduledTime: input.newScheduledTime, updatedAt: /* @__PURE__ */ new Date() }).where(
+      and9(
+        eq13(contentCalendarPosts.id, input.postId),
+        eq13(contentCalendarPosts.userId, ctx.user.id.toString())
+      )
+    );
+    return { success: true };
+  }),
+  // Bulk schedule posts
+  bulkSchedulePosts: protectedProcedure.input(z73.object({
+    posts: z73.array(z73.object({
+      title: z73.string(),
+      content: z73.string(),
+      platforms: z73.array(z73.enum(["twitter", "youtube", "facebook", "instagram"])),
+      mediaUrls: z73.array(z73.string()).optional(),
+      hashtags: z73.array(z73.string()).optional()
+    })),
+    startDate: z73.date(),
+    interval: z73.enum(["hourly", "daily", "weekly"])
+  })).mutation(async ({ ctx, input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database connection failed");
+    const createdPosts = [];
+    let currentDate = new Date(input.startDate);
+    for (const post of input.posts) {
+      const result2 = await db2.insert(contentCalendarPosts).values({
+        userId: ctx.user.id.toString(),
+        title: post.title,
+        content: post.content,
+        scheduledTime: new Date(currentDate),
+        platforms: post.platforms,
+        mediaUrls: post.mediaUrls || [],
+        hashtags: post.hashtags || [],
+        status: "scheduled"
+      });
+      createdPosts.push(result2[0]);
+      if (input.interval === "hourly") {
+        currentDate.setHours(currentDate.getHours() + 1);
+      } else if (input.interval === "daily") {
+        currentDate.setDate(currentDate.getDate() + 1);
+      } else if (input.interval === "weekly") {
+        currentDate.setDate(currentDate.getDate() + 7);
+      }
+    }
+    return { success: true, count: createdPosts.length };
+  }),
+  // Get engagement metrics for a post
+  getPostMetrics: protectedProcedure.input(z73.object({ postId: z73.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database connection failed");
+    const metrics = await db2.select().from(platformEngagementMetrics).where(eq13(platformEngagementMetrics.postId, input.postId));
+    return metrics;
+  }),
+  // Update engagement metrics (called by webhook/scheduler)
+  updateEngagementMetrics: publicProcedure.input(z73.object({
+    postId: z73.number(),
+    platform: z73.enum(["twitter", "youtube", "facebook", "instagram"]),
+    externalPostId: z73.string(),
+    likes: z73.number().optional(),
+    shares: z73.number().optional(),
+    comments: z73.number().optional(),
+    views: z73.number().optional(),
+    clicks: z73.number().optional(),
+    impressions: z73.number().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database connection failed");
+    const existing = await db2.select().from(platformEngagementMetrics).where(
+      and9(
+        eq13(platformEngagementMetrics.postId, input.postId),
+        eq13(platformEngagementMetrics.platform, input.platform)
+      )
+    );
+    if (existing.length > 0) {
+      const totalEngagement = (input.likes || 0) + (input.shares || 0) + (input.comments || 0);
+      const engagementRate = input.impressions ? (totalEngagement / input.impressions * 100).toFixed(2) + "%" : "0%";
+      await db2.update(platformEngagementMetrics).set({
+        likes: input.likes || 0,
+        shares: input.shares || 0,
+        comments: input.comments || 0,
+        views: input.views || 0,
+        clicks: input.clicks || 0,
+        impressions: input.impressions || 0,
+        engagementRate,
+        lastUpdated: /* @__PURE__ */ new Date()
+      }).where(eq13(platformEngagementMetrics.id, existing[0].id));
+    } else {
+      const totalEngagement = (input.likes || 0) + (input.shares || 0) + (input.comments || 0);
+      const engagementRate = input.impressions ? (totalEngagement / input.impressions * 100).toFixed(2) + "%" : "0%";
+      await db2.insert(platformEngagementMetrics).values({
+        postId: input.postId,
+        platform: input.platform,
+        externalPostId: input.externalPostId,
+        likes: input.likes || 0,
+        shares: input.shares || 0,
+        comments: input.comments || 0,
+        views: input.views || 0,
+        clicks: input.clicks || 0,
+        impressions: input.impressions || 0,
+        engagementRate
+      });
+    }
+    return { success: true };
+  }),
+  // Get analytics summary for user
+  getAnalyticsSummary: protectedProcedure.input(z73.object({
+    platform: z73.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional(),
+    period: z73.enum(["daily", "weekly", "monthly"]).optional(),
+    startDate: z73.date().optional(),
+    endDate: z73.date().optional()
+  })).query(async ({ ctx, input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database connection failed");
+    let query2 = db2.select().from(analyticsSummary).where(eq13(analyticsSummary.userId, ctx.user.id.toString()));
+    if (input.platform && input.platform !== "all") {
+      query2 = query2.where(eq13(analyticsSummary.platform, input.platform));
+    }
+    if (input.period) {
+      query2 = query2.where(eq13(analyticsSummary.period, input.period));
+    }
+    const results = await query2;
+    return results;
+  }),
+  // Create bulk schedule template
+  createBulkTemplate: protectedProcedure.input(z73.object({
+    name: z73.string().min(1).max(255),
+    description: z73.string().optional(),
+    posts: z73.array(z73.object({
+      title: z73.string(),
+      content: z73.string(),
+      platforms: z73.array(z73.enum(["twitter", "youtube", "facebook", "instagram"])),
+      mediaUrls: z73.array(z73.string()).optional(),
+      hashtags: z73.array(z73.string()).optional()
+    })),
+    schedulePattern: z73.enum(["daily", "weekly", "biweekly", "monthly"]),
+    startDate: z73.date(),
+    endDate: z73.date().optional()
+  })).mutation(async ({ ctx, input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database connection failed");
+    const template = await db2.insert(bulkScheduleTemplates).values({
+      userId: ctx.user.id.toString(),
+      name: input.name,
+      description: input.description,
+      posts: input.posts,
+      schedulePattern: input.schedulePattern,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      isActive: true
+    });
+    return { success: true, templateId: template[0] };
+  }),
+  // Get bulk templates
+  getBulkTemplates: protectedProcedure.query(async ({ ctx }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database connection failed");
+    const templates = await db2.select().from(bulkScheduleTemplates).where(eq13(bulkScheduleTemplates.userId, ctx.user.id.toString()));
+    return templates;
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -27587,11 +27858,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z73.object({
-        goal: z73.string().min(1, "Goal is required"),
-        priority: z73.number().int().min(1).max(10).optional().default(5),
-        steps: z73.array(z73.string()).optional(),
-        constraints: z73.array(z73.string()).optional()
+      z74.object({
+        goal: z74.string().min(1, "Goal is required"),
+        priority: z74.number().int().min(1).max(10).optional().default(5),
+        steps: z74.array(z74.string()).optional(),
+        constraints: z74.array(z74.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -27603,7 +27874,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z73.object({ taskId: z73.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z74.object({ taskId: z74.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -27613,11 +27884,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z73.object({
-        target: z73.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z73.string().min(1, "Action is required"),
-        params: z73.record(z73.any()).optional().default({}),
-        priority: z73.number().int().min(1).max(10).optional().default(5)
+      z74.object({
+        target: z74.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z74.string().min(1, "Action is required"),
+        params: z74.record(z74.any()).optional().default({}),
+        priority: z74.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -27629,10 +27900,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z73.object({ commandId: z73.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z74.object({ commandId: z74.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z73.object({ target: z73.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z74.object({ target: z74.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -27727,12 +27998,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z73.object({
-      sessionName: z73.string().min(1),
-      systemPrompt: z73.string().optional(),
-      temperature: z73.number().min(0).max(100).optional(),
-      model: z73.string().optional(),
-      maxSteps: z73.number().min(1).optional()
+    createSession: protectedProcedure.input(z74.object({
+      sessionName: z74.string().min(1),
+      systemPrompt: z74.string().optional(),
+      temperature: z74.number().min(0).max(100).optional(),
+      model: z74.string().optional(),
+      maxSteps: z74.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -27753,7 +28024,7 @@ var appRouter = router({
       return (void 0)(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z73.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z74.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
       const session = await (void 0)(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -27762,7 +28033,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z73.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z74.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
       const session = await (void 0)(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -27789,7 +28060,35 @@ var appRouter = router({
   // Real Spotify Integration
   spotify: spotifyRouter,
   // Real YouTube Integration
-  youtube: youtubeRouter
+  youtube: youtubeRouter,
+  // Content Calendar & Scheduling
+  contentCalendar: contentCalendarRouter,
+  // Analytics Tracking & Metrics
+  analytics: router({
+    getUnifiedMetrics: protectedProcedure.input(z74.object({
+      dateRange: z74.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z74.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    })).query(async ({ ctx, input }) => {
+      return {
+        totalLikes: 0,
+        totalShares: 0,
+        totalComments: 0,
+        totalViews: 0,
+        totalImpressions: 0,
+        averageEngagementRate: "0%"
+      };
+    }),
+    comparePlatforms: protectedProcedure.input(z74.object({
+      dateRange: z74.enum(["week", "month", "year"]).optional().default("month")
+    })).query(async ({ ctx, input }) => {
+      return [];
+    }),
+    getEngagementTrend: protectedProcedure.input(z74.object({
+      dateRange: z74.enum(["week", "month", "year"]).optional().default("month")
+    })).query(async ({ ctx, input }) => {
+      return [];
+    })
+  })
 });
 
 // server/_core/context.ts
@@ -28161,7 +28460,7 @@ function initializeWebSocket(server) {
 init_db();
 init_schema();
 import Stripe2 from "stripe";
-import { eq as eq13 } from "drizzle-orm";
+import { eq as eq14 } from "drizzle-orm";
 
 // server/services/notificationService.ts
 init_db();
@@ -28484,7 +28783,7 @@ async function handlePaymentSucceeded(paymentIntent) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const user = await db2.select().from(users).where(eq13(users.id, parseInt(clientRefId))).limit(1);
+    const user = await db2.select().from(users).where(eq14(users.id, parseInt(clientRefId))).limit(1);
     if (user.length > 0) {
       await db2.insert(payments).values({
         userId: user[0].id,
@@ -28532,12 +28831,12 @@ async function handleSubscriptionUpdated(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq13(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq14(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq13(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq14(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       if (subscription.items.data.length > 0) {
@@ -28572,12 +28871,12 @@ async function handleSubscriptionCancelled(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq13(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq14(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq13(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq14(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Cancelled subscription for user ${user.id}`);
@@ -28600,12 +28899,12 @@ async function handleInvoicePaid(invoice) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq13(payments.stripePaymentIntentId, invoice.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq14(payments.stripePaymentIntentId, invoice.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for invoice ${invoice.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq13(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq14(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       await db2.insert(donations).values({
@@ -28635,12 +28934,12 @@ async function handleChargeRefunded(charge) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq13(payments.stripePaymentIntentId, charge.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq14(payments.stripePaymentIntentId, charge.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for charge ${charge.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq13(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq14(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Recorded refund: $${amount} for user ${user.id}`);

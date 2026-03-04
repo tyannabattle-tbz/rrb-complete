@@ -77,6 +77,7 @@ import { rrbUnifiedRouter } from "./routers/rrbUnifiedRouter";
 
 // Import Search Router
 import { searchRouter } from "./routers/search";
+import { contentCalendarRouter } from "./routers/contentCalendarRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -372,6 +373,47 @@ export const appRouter = router({
 
   // Real YouTube Integration
   youtube: youtubeRouter,
+
+  // Content Calendar & Scheduling
+  contentCalendar: contentCalendarRouter,
+
+  // Analytics Tracking & Metrics
+  analytics: router({
+    getUnifiedMetrics: protectedProcedure
+      .input(z.object({
+        dateRange: z.enum(['week', 'month', 'year']).optional().default('month'),
+        platform: z.enum(['twitter', 'youtube', 'facebook', 'instagram', 'all']).optional().default('all'),
+      }))
+      .query(async ({ ctx, input }) => {
+        // Placeholder for unified metrics aggregation
+        return {
+          totalLikes: 0,
+          totalShares: 0,
+          totalComments: 0,
+          totalViews: 0,
+          totalImpressions: 0,
+          averageEngagementRate: '0%',
+        };
+      }),
+
+    comparePlatforms: protectedProcedure
+      .input(z.object({
+        dateRange: z.enum(['week', 'month', 'year']).optional().default('month'),
+      }))
+      .query(async ({ ctx, input }) => {
+        // Placeholder for platform comparison
+        return [];
+      }),
+
+    getEngagementTrend: protectedProcedure
+      .input(z.object({
+        dateRange: z.enum(['week', 'month', 'year']).optional().default('month'),
+      }))
+      .query(async ({ ctx, input }) => {
+        // Placeholder for engagement trend
+        return [];
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

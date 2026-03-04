@@ -1723,3 +1723,76 @@ export const systemAuditLog = mysqlTable("system_audit_log", {
 });
 
 
+
+// Content Calendar Schema
+export const contentCalendarPosts = mysqlTable('content_calendar_posts', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: varchar('user_id', { length: 255 }).notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  content: text('content').notNull(),
+  scheduledTime: timestamp('scheduled_time').notNull(),
+  platforms: json('platforms').$type<string[]>().notNull(),
+  status: varchar('status', { length: 20 }).default('draft'),
+  mediaUrls: json('media_urls').$type<string[]>(),
+  hashtags: json('hashtags').$type<string[]>(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+  publishedAt: timestamp('published_at'),
+});
+
+export const bulkScheduleTemplates = mysqlTable('bulk_schedule_templates', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: varchar('user_id', { length: 255 }).notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  posts: json('posts').$type<Array<{
+    title: string;
+    content: string;
+    platforms: string[];
+    mediaUrls?: string[];
+    hashtags?: string[];
+  }>>().notNull(),
+  schedulePattern: varchar('schedule_pattern', { length: 20 }).notNull(),
+  startDate: timestamp('start_date').notNull(),
+  endDate: timestamp('end_date'),
+  isActive: int('is_active').default(1),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const platformEngagementMetrics = mysqlTable('platform_engagement_metrics', {
+  id: int('id').primaryKey().autoincrement(),
+  postId: int('post_id').notNull(),
+  platform: varchar('platform', { length: 20 }).notNull(),
+  externalPostId: varchar('external_post_id', { length: 255 }).notNull(),
+  likes: int('likes').default(0),
+  shares: int('shares').default(0),
+  comments: int('comments').default(0),
+  views: int('views').default(0),
+  clicks: int('clicks').default(0),
+  impressions: int('impressions').default(0),
+  engagementRate: varchar('engagement_rate', { length: 50 }).default('0%'),
+  lastUpdated: timestamp('last_updated').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const analyticsSummary = mysqlTable('analytics_summary', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: varchar('user_id', { length: 255 }).notNull(),
+  platform: varchar('platform', { length: 20 }).notNull(),
+  period: varchar('period', { length: 20 }).notNull(),
+  periodDate: timestamp('period_date').notNull(),
+  totalPosts: int('total_posts').default(0),
+  totalLikes: int('total_likes').default(0),
+  totalShares: int('total_shares').default(0),
+  totalComments: int('total_comments').default(0),
+  totalViews: int('total_views').default(0),
+  totalImpressions: int('total_impressions').default(0),
+  averageEngagementRate: varchar('average_engagement_rate', { length: 50 }).default('0%'),
+  topPost: json('top_post').$type<{
+    id: number;
+    title: string;
+    engagement: number;
+  }>(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
