@@ -26,10 +26,10 @@ var __copyProps = (to, from, except, desc6) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // shared/const.ts
-var COOKIE_NAME, ONE_YEAR_MS, UNAUTHED_ERR_MSG, NOT_ADMIN_ERR_MSG;
+var COOKIE_NAME2, ONE_YEAR_MS, UNAUTHED_ERR_MSG, NOT_ADMIN_ERR_MSG;
 var init_const = __esm({
   "shared/const.ts"() {
-    COOKIE_NAME = "app_session_id";
+    COOKIE_NAME2 = "app_session_id";
     ONE_YEAR_MS = 1e3 * 60 * 60 * 24 * 365;
     UNAUTHED_ERR_MSG = "Please login (10001)";
     NOT_ADMIN_ERR_MSG = "You do not have required permission (10002)";
@@ -3126,7 +3126,7 @@ var init_sdk = __esm({
           });
         } else {
           const cookies = this.parseCookies(req.headers.cookie);
-          sessionToken = cookies.get(COOKIE_NAME);
+          sessionToken = cookies.get(COOKIE_NAME2);
           console.log("[Auth] Checking cookie-based token", {
             hasCookie: !!sessionToken,
             cookieCount: cookies.size
@@ -4667,11 +4667,27 @@ init_const();
 init_db();
 init_cookies();
 init_sdk();
+init_env();
 function getQueryParam(req, key) {
   const value = req.query[key];
   return typeof value === "string" ? value : void 0;
 }
 function registerOAuthRoutes(app) {
+  app.get("/api/oauth/login", (req, res) => {
+    try {
+      const redirectUri = `${req.protocol}://${req.get("host")}/api/oauth/callback`;
+      const state = Buffer.from(redirectUri).toString("base64");
+      const loginUrl = `${ENV.oAuthPortalUrl}?client_id=${ENV.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code`;
+      console.log("[OAuth] Login initiated", {
+        redirectUri,
+        loginUrl: loginUrl.substring(0, 100)
+      });
+      res.redirect(302, loginUrl);
+    } catch (error) {
+      console.error("[OAuth] Login initiation failed", error);
+      res.status(500).json({ error: "OAuth login initiation failed" });
+    }
+  });
   app.get("/api/oauth/callback", async (req, res) => {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
@@ -4728,7 +4744,7 @@ function registerOAuthRoutes(app) {
       const cookieOptions = getSessionCookieOptions(req);
       console.log("[OAuth] Setting session cookie with options", cookieOptions);
       console.log("[OAuth] Session token created for user:", userInfo.openId);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      res.cookie(COOKIE_NAME2, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
       const setCookieHeader = res.getHeader("set-cookie");
       console.log("[OAuth] Set-Cookie header:", setCookieHeader);
       const redirectUrl = `/?token=${encodeURIComponent(sessionToken)}`;
@@ -27386,7 +27402,7 @@ var appRouter = router({
     logout: publicProcedure.mutation(({ ctx }) => {
       console.log("[Auth.logout] Clearing session cookie");
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+      ctx.res.clearCookie(COOKIE_NAME2, { ...cookieOptions, maxAge: -1 });
       return {
         success: true
       };
@@ -28159,12 +28175,10 @@ async function startServer() {
   registerOAuthRoutes(app);
   app.get("/api/test-login", async (req, res) => {
     try {
-      const sdkModule = await Promise.resolve().then(() => (init_sdk(), sdk_exports));
+      const { sdk: sdk2 } = await Promise.resolve().then(() => (init_sdk(), sdk_exports));
       const dbModule = await Promise.resolve().then(() => (init_db(), db_exports));
-      const cookiesModule = await Promise.resolve().then(() => (init_cookies(), cookies_exports));
-      const sdk2 = sdkModule.default || sdkModule;
-      const db2 = dbModule.default || dbModule;
-      const getSessionCookieOptions2 = cookiesModule.getSessionCookieOptions;
+      const db2 = dbModule;
+      const { getSessionCookieOptions: getSessionCookieOptions2 } = await Promise.resolve().then(() => (init_cookies(), cookies_exports));
       const testOpenId = "test-user-" + Date.now();
       const testUser = {
         openId: testOpenId,
@@ -28172,8 +28186,10 @@ async function startServer() {
         email: "test@qumus.local",
         loginMethod: "test"
       };
-      await db2.upsertUser({
-        ...testUser,
+      await db2.upsertUser(testUser.openId, {
+        name: testUser.name,
+        email: testUser.email,
+        loginMethod: testUser.loginMethod,
         lastSignedIn: /* @__PURE__ */ new Date()
       });
       const sessionToken = await sdk2.createSessionToken(testOpenId, {
@@ -28181,9 +28197,15 @@ async function startServer() {
         expiresInMs: 864e5
         // 24 hours
       });
+      console.log("[Test Login] Session token created", {
+        tokenLength: sessionToken.length,
+        openId: testOpenId
+      });
       const cookieOptions = getSessionCookieOptions2(req);
-      res.cookie("qumus_session", sessionToken, { ...cookieOptions, maxAge: 864e5 });
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 864e5 });
+      console.log("[Test Login] Cookie set successfully");
       const redirectUrl = `/?token=${encodeURIComponent(sessionToken)}`;
+      console.log("[Test Login] Redirecting to", redirectUrl.substring(0, 50));
       res.redirect(302, redirectUrl);
     } catch (error) {
       console.error("[Test Login] Failed:", error);

@@ -3,6 +3,7 @@ import type { Express, Request, Response } from "express";
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
+import { ENV } from "./env";
 
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
@@ -10,6 +11,26 @@ function getQueryParam(req: Request, key: string): string | undefined {
 }
 
 export function registerOAuthRoutes(app: Express) {
+  // OAuth Login Initiation Route
+  app.get("/api/oauth/login", (req: Request, res: Response) => {
+    try {
+      const redirectUri = `${req.protocol}://${req.get('host')}/api/oauth/callback`;
+      const state = Buffer.from(redirectUri).toString('base64');
+      const loginUrl = `${ENV.oAuthPortalUrl}?client_id=${ENV.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code`;
+      
+      console.log("[OAuth] Login initiated", {
+        redirectUri,
+        loginUrl: loginUrl.substring(0, 100),
+      });
+      
+      res.redirect(302, loginUrl);
+    } catch (error) {
+      console.error("[OAuth] Login initiation failed", error);
+      res.status(500).json({ error: "OAuth login initiation failed" });
+    }
+  });
+
+  // OAuth Callback Handler
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");

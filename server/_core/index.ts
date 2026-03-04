@@ -74,14 +74,11 @@ async function startServer() {
   // TEST LOGIN ENDPOINT - Bypasses OAuth for development
   app.get("/api/test-login", async (req, res) => {
     try {
-      // Import using dynamic import for ES6 modules
-      const sdkModule = await import("./sdk");
+      // Import SDK singleton
+      const { sdk } = await import("./sdk");
       const dbModule = await import("../db");
-      const cookiesModule = await import("./cookies");
-      
-      const sdk = sdkModule.default || sdkModule;
-      const db = dbModule.default || dbModule;
-      const getSessionCookieOptions = cookiesModule.getSessionCookieOptions;
+      const db = dbModule;
+      const { getSessionCookieOptions } = await import("./cookies");
       
       const testOpenId = "test-user-" + Date.now();
       const testUser = {
@@ -92,8 +89,10 @@ async function startServer() {
       };
       
       // Create/update test user in database
-      await db.upsertUser({
-        ...testUser,
+      await db.upsertUser(testUser.openId, {
+        name: testUser.name,
+        email: testUser.email,
+        loginMethod: testUser.loginMethod,
         lastSignedIn: new Date(),
       });
       
@@ -103,12 +102,20 @@ async function startServer() {
         expiresInMs: 86400000, // 24 hours
       });
       
+      console.log("[Test Login] Session token created", {
+        tokenLength: sessionToken.length,
+        openId: testOpenId,
+      });
+      
       // Set cookie
       const cookieOptions = getSessionCookieOptions(req);
-      res.cookie("qumus_session", sessionToken, { ...cookieOptions, maxAge: 86400000 });
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 86400000 });
+      
+      console.log("[Test Login] Cookie set successfully");
       
       // Redirect to home with token in URL
       const redirectUrl = `/?token=${encodeURIComponent(sessionToken)}`;
+      console.log("[Test Login] Redirecting to", redirectUrl.substring(0, 50));
       res.redirect(302, redirectUrl);
     } catch (error) {
       console.error("[Test Login] Failed:", error);
