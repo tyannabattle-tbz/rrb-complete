@@ -58,8 +58,10 @@ import { VideoProductionPage } from './pages/VideoProductionPage';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { analytics } from '@/lib/analytics';
+import { StudioSuite } from './pages/StudioSuite';
+import { MediaLibrary } from './pages/MediaLibrary';
+import RadioStation from './pages/RadioStation';
 import QumusChatPage from '@/pages/QumusChatPage';
-import RadioStation from '@/pages/RadioStation';
 import RockinRockinBoogiePage from '@/pages/RockinRockinBoogiePage';
 import BroadcastOrchestrationHub from '@/pages/BroadcastOrchestrationHub';
 import MobileStudio from '@/pages/MobileStudio';
@@ -187,6 +189,8 @@ function Router() {
       <Route path="/chat" component={QumusChatInterface} />
       <Route path="/qumus-chat" component={QumusChatPage} />
       <Route path="/radio-station" component={RadioStation} />
+      <Route path="/studio" component={StudioSuite} />
+      <Route path="/media-library" component={MediaLibrary} />
       <Route path="/podcasts" component={PodcastPage} />
       <Route path="/listener-analytics" component={ListenerAnalyticsDashboard} />
       <Route path="/search" component={SearchResults} />
