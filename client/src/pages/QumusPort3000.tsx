@@ -117,7 +117,7 @@ export default function QumusPort3000() {
                   <p className="text-sm text-purple-300">Autonomy Level</p>
                   <p className="text-2xl font-bold text-purple-400">{systemStatus.qumus.autonomyLevel}</p>
                 </div>
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                   Control Panel
                 </Button>
               </div>
@@ -241,16 +241,16 @@ export default function QumusPort3000() {
               <CardDescription>Manage orchestration engine</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+              <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                 📊 Dashboard
               </Button>
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+              <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                 ⚙️ Policies
               </Button>
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+              <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                 📋 Task Queue
               </Button>
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+              <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                 🔍 Audit Trail
               </Button>
             </CardContent>
@@ -262,16 +262,16 @@ export default function QumusPort3000() {
               <CardDescription>Send commands to RRB & HybridCast</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
+              <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
                 📻 Command RRB
               </Button>
-              <Button className="w-full bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700">
+              <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700">
                 🚨 Command HybridCast
               </Button>
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+              <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                 🔄 Sync All Systems
               </Button>
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+              <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
                 📡 System Status
               </Button>
             </CardContent>
