@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function EcosystemMasterDashboard() {
+  const [, navigate] = useRouter();
   const [metrics, setMetrics] = useState({
     qumusStatus: 'online',
     rrbListeners: 2847,
@@ -140,7 +142,11 @@ export default function EcosystemMasterDashboard() {
                   <span className="text-purple-400 font-bold">23</span>
                 </div>
               </div>
-              <Button className="w-full bg-purple-600 hover:bg-purple-700" size="sm">
+              <Button 
+                onClick={() => navigate('/admin-control-panel', { replace: false })}
+                className="w-full bg-purple-600 hover:bg-purple-700" 
+                size="sm"
+              >
                 Control Panel
               </Button>
             </CardContent>
@@ -170,7 +176,11 @@ export default function EcosystemMasterDashboard() {
                   <span className="text-pink-400 font-bold">342</span>
                 </div>
               </div>
-              <Button className="w-full bg-pink-600 hover:bg-pink-700" size="sm">
+              <Button 
+                onClick={() => navigate('/music', { replace: false })}
+                className="w-full bg-pink-600 hover:bg-pink-700" 
+                size="sm"
+              >
                 Access RRB
               </Button>
             </CardContent>
@@ -200,7 +210,11 @@ export default function EcosystemMasterDashboard() {
                   <span className="text-orange-400 font-bold">Active</span>
                 </div>
               </div>
-              <Button className="w-full bg-orange-600 hover:bg-orange-700" size="sm">
+              <Button 
+                onClick={() => navigate('/hybridcast', { replace: false })}
+                className="w-full bg-orange-600 hover:bg-orange-700" 
+                size="sm"
+              >
                 Emergency Control
               </Button>
             </CardContent>
@@ -272,23 +286,38 @@ export default function EcosystemMasterDashboard() {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full bg-purple-600 hover:bg-purple-700 justify-start">
+              <Button 
+                onClick={() => navigate('/admin-control-panel', { replace: false })}
+                className="w-full bg-purple-600 hover:bg-purple-700 justify-start"
+              >
                 <Settings className="w-4 h-4 mr-2" />
                 QUMUS Configuration
               </Button>
-              <Button className="w-full bg-pink-600 hover:bg-pink-700 justify-start">
+              <Button 
+                onClick={() => navigate('/rrb-broadcast-manager', { replace: false })}
+                className="w-full bg-pink-600 hover:bg-pink-700 justify-start"
+              >
                 <Radio className="w-4 h-4 mr-2" />
                 RRB Broadcast Control
               </Button>
-              <Button className="w-full bg-orange-600 hover:bg-orange-700 justify-start">
+              <Button 
+                onClick={() => navigate('/hybridcast', { replace: false })}
+                className="w-full bg-orange-600 hover:bg-orange-700 justify-start"
+              >
                 <AlertCircle className="w-4 h-4 mr-2" />
                 Emergency Broadcast
               </Button>
-              <Button className="w-full bg-green-600 hover:bg-green-700 justify-start">
+              <Button 
+                onClick={() => navigate('/sweet-miracles-dashboard', { replace: false })}
+                className="w-full bg-green-600 hover:bg-green-700 justify-start"
+              >
                 <Heart className="w-4 h-4 mr-2" />
                 Sweet Miracles Dashboard
               </Button>
-              <Button className="w-full bg-slate-700 hover:bg-slate-600 justify-start">
+              <Button 
+                onClick={() => window.print()}
+                className="w-full bg-slate-700 hover:bg-slate-600 justify-start"
+              >
                 <Download className="w-4 h-4 mr-2" />
                 Export Report
               </Button>
