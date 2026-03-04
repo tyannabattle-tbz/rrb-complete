@@ -112,6 +112,7 @@ import Solbones from '@/pages/Solbones';
 import Music from '@/pages/Music';
 import Proof from '@/pages/Proof';
 import Legacy from '@/pages/Legacy';
+import RRBHome from '@/pages/RRBHome';
 import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
@@ -145,7 +146,7 @@ function Router() {
   // Determine which home page to show based on hostname
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isRRBDomain = hostname.includes('rockinrockinboogie.com') || hostname.includes('rrb');
-  const HomeComponent = isRRBDomain ? RRBEcosystemDashboard : Home;
+  const HomeComponent = isRRBDomain ? RRBHome : Home;
   
   return (
     <>
