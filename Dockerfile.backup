@@ -1,0 +1,26 @@
+FROM alpine:latest
+
+WORKDIR /app
+
+# Install required tools
+RUN apk add --no-cache \
+    mysql-client \
+    bash \
+    curl \
+    tar \
+    gzip \
+    dcron
+
+# Copy backup script
+COPY scripts/backup.sh /app/backup.sh
+RUN chmod +x /app/backup.sh
+
+# Copy cron setup script
+COPY scripts/setup-cron.sh /app/setup-cron.sh
+RUN chmod +x /app/setup-cron.sh
+
+# Create backup directory
+RUN mkdir -p /backups
+
+# Setup cron and start
+CMD ["/app/setup-cron.sh"]
