@@ -143,7 +143,7 @@ export default function EcosystemMasterDashboard() {
                 </div>
               </div>
               <Button 
-                onClick={() => navigate('/admin-control-panel', { replace: false })}
+                onClick={() => navigate('/admin', { replace: false })}
                 className="w-full bg-purple-600 hover:bg-purple-700" 
                 size="sm"
               >
@@ -287,14 +287,14 @@ export default function EcosystemMasterDashboard() {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button 
-                onClick={() => navigate('/admin-control-panel', { replace: false })}
+                onClick={() => navigate('/admin', { replace: false })}
                 className="w-full bg-purple-600 hover:bg-purple-700 justify-start"
               >
                 <Settings className="w-4 h-4 mr-2" />
                 QUMUS Configuration
               </Button>
               <Button 
-                onClick={() => navigate('/rrb-broadcast-manager', { replace: false })}
+                onClick={() => navigate('/rrb/broadcast-manager', { replace: false })}
                 className="w-full bg-pink-600 hover:bg-pink-700 justify-start"
               >
                 <Radio className="w-4 h-4 mr-2" />
@@ -308,7 +308,7 @@ export default function EcosystemMasterDashboard() {
                 Emergency Broadcast
               </Button>
               <Button 
-                onClick={() => navigate('/sweet-miracles-dashboard', { replace: false })}
+                onClick={() => navigate('/sweet-miracles', { replace: false })}
                 className="w-full bg-green-600 hover:bg-green-700 justify-start"
               >
                 <Heart className="w-4 h-4 mr-2" />

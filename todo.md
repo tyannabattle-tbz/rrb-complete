@@ -2588,3 +2588,9 @@
 - [x] Cross-link all pages (RRB Radio, Live, SQUADD, Selma, Home)
 - [x] Add Selma event to main navigation
 - [x] Test all streaming and radio features end-to-end
+
+## 404 Error Sweep
+- [x] Extract all registered routes from App.tsx
+- [x] Extract all navigation links from all components
+- [x] Cross-reference to find broken links (links pointing to non-existent routes)
+- [x] Fix all 404 broken routes
