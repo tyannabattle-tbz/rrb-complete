@@ -153,6 +153,7 @@ import { MobileNavigationDrawer } from '@/components/MobileNavigationDrawer';
 import SquaddGoals from '@/pages/SquaddGoals';
 import LiveStreamPage from '@/pages/LiveStreamPage';
 import { EventBanners } from '@/components/EventBanners';
+import ValannaVoiceAssistant from '@/components/ValannaVoiceAssistant';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -352,6 +353,9 @@ function App() {
             
             {/* Mobile Bottom Navigation */}
             <MobileBottomNav />
+            
+            {/* Valanna - QUMUS AI Brain Voice Assistant */}
+            <ValannaVoiceAssistant />
           </TooltipProvider>
         </PresetProvider>
       </ThemeProvider>

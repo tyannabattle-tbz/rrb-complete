@@ -223,6 +223,37 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Meet Valanna - The QUMUS AI Brain */}
+        <div className="mb-16 bg-gradient-to-r from-slate-800/80 via-purple-900/40 to-slate-800/80 rounded-2xl border border-amber-500/20 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+            <div className="flex items-center justify-center p-8">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/valanna-avatar-mYpqZPJmy73yGwB7kFmCe9.webp"
+                alt="Valanna - The QUMUS AI Brain"
+                className="w-64 h-64 rounded-full border-4 border-amber-500/50 shadow-2xl shadow-amber-500/20 object-contain"
+              />
+            </div>
+            <div className="flex flex-col justify-center p-8">
+              <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/50 w-fit mb-4">QUMUS AI Brain</Badge>
+              <h3 className="text-3xl font-bold text-white mb-2">Meet Valanna</h3>
+              <p className="text-amber-300 text-lg mb-4">Named for Valerie and Anna's — Mother, Daughters, Legacy</p>
+              <p className="text-gray-300 mb-6">
+                Valanna is the autonomous intelligence at the heart of the QUMUS ecosystem.
+                She orchestrates all four systems — RRB Radio, HybridCast, Sweet Miracles, and
+                Canryn Production — making 90% of decisions autonomously with full audit trails
+                and human oversight. Every decision she makes carries the spirit of the family
+                that built this ecosystem.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">12 AI Policies</Badge>
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">90% Autonomous</Badge>
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">Full Audit Trail</Badge>
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">Human Override</Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* System Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {systems.map((system) => (
@@ -283,7 +314,7 @@ export default function Home() {
           <div className="text-center">
             <div className="text-4xl mb-4">🧠</div>
             <h4 className="text-lg font-semibold text-white mb-2">90% Autonomous</h4>
-            <p className="text-purple-300">QUMUS AI makes decisions with human oversight</p>
+            <p className="text-purple-300">Valanna makes decisions with human oversight</p>
           </div>
           <div className="text-center">
             <div className="text-4xl mb-4">🌍</div>
