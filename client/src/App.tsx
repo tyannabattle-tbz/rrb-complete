@@ -150,6 +150,9 @@ import SystemHealthPage from "@/pages/SystemHealthPage";
 import { Toaster } from 'sonner';
 import { BreadcrumbNavigation } from '@/components/BreadcrumbNavigation';
 import { MobileNavigationDrawer } from '@/components/MobileNavigationDrawer';
+import SquaddGoals from '@/pages/SquaddGoals';
+import LiveStreamPage from '@/pages/LiveStreamPage';
+import { EventBanners } from '@/components/EventBanners';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -296,6 +299,8 @@ function Router() {
       <Route path="/audit" component={AuditTrailPage} />
       <Route path="/commands" component={CommandCenterPage} />
       <Route path="/health" component={SystemHealthPage} />
+      <Route path="/squadd" component={SquaddGoals} />
+      <Route path="/live" component={LiveStreamPage} />
       <Route component={NotFound} />
     </Switch>
     </>
@@ -336,6 +341,9 @@ function App() {
             <div className="hidden md:block">
               <AppHeaderEnhanced />
             </div>
+            
+            {/* Event Banners */}
+            <EventBanners />
             
             {/* Main Content */}
             <MobileResponsiveLayout>
