@@ -63,7 +63,7 @@ const initialMessages = [
   { id: 2, user: 'SelmaPride', message: 'Ready for the Jubilee on Saturday!', time: '5m ago', avatar: '✊' },
   { id: 3, user: 'GhanaConnect', message: 'Greetings from Accra! SQUADD Goals!', time: '8m ago', avatar: '🌍' },
   { id: 4, user: 'SweetMiracles', message: 'A Voice for the Voiceless 💝', time: '12m ago', avatar: '💝' },
-  { id: 5, user: 'Va-Lanna', message: "Hey family! I'm watching over all the streams tonight. Everything's running smooth.", time: '15m ago', avatar: '🤖' },
+  { id: 5, user: 'Valanna', message: "Hey family! I'm watching over all the streams tonight. Everything's running smooth.", time: '15m ago', avatar: '🤖' },
 ];
 
 export default function LiveStreamPage() {
@@ -500,7 +500,7 @@ export default function LiveStreamPage() {
                       <div className="text-lg flex-shrink-0">{msg.avatar}</div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className={`text-xs font-semibold ${msg.user === 'Va-Lanna' ? 'text-purple-400' : 'text-[#D4A843]'}`}>
+                          <span className={`text-xs font-semibold ${msg.user === 'Valanna' ? 'text-purple-400' : 'text-[#D4A843]'}`}>
                             {msg.user}
                           </span>
                           <span className="text-xs text-[#E8E0D0]/30">{msg.time}</span>

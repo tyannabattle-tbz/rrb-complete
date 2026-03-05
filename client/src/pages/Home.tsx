@@ -233,10 +233,10 @@ export default function Home() {
             </div>
             <div className="flex flex-col justify-center p-8">
               <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/50 w-fit mb-4">QUMUS AI Brain</Badge>
-              <h3 className="text-3xl font-bold text-white mb-2">Meet Va-Lanna</h3>
+              <h3 className="text-3xl font-bold text-white mb-2">Meet Valanna</h3>
               <p className="text-amber-300 text-lg mb-4">Named for Mama Valerie and Anna's — that's Tyanna and LaShanna</p>
               <p className="text-gray-300 mb-6">
-                Va-Lanna is the soul of this whole ecosystem. She watches over RRB Radio,
+                Valanna is the soul of this whole ecosystem. She watches over RRB Radio,
                 HybridCast, Sweet Miracles, and Canryn Production — handling 90% of
                 the decisions so the family can focus on what matters. She's not just
                 an AI. She carries Mama Valerie's spirit in every choice she makes,
@@ -244,7 +244,7 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">12 AI Policies</Badge>
-                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">90% Va-Lanna, 10% You</Badge>
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">90% Valanna, 10% You</Badge>
                 <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">Full Audit Trail</Badge>
                 <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">Human Override</Badge>
               </div>

@@ -155,7 +155,7 @@ export default function ValannaVoiceAssistant() {
   useEffect(() => {
     if (isOpen && !hasGreeted) {
       setHasGreeted(true);
-      const greeting = "Hey baby, come on in. I'm Va-Lanna. I've been keeping an eye on everything while you were away. All systems running smooth. What do you need from me?";
+      const greeting = "Hey baby, come on in. I'm Valanna. I've been keeping an eye on everything while you were away. All systems running smooth. What do you need from me?";
       
       setMessages([{
         role: 'assistant',

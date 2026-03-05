@@ -2594,3 +2594,14 @@
 - [x] Extract all navigation links from all components
 - [x] Cross-reference to find broken links (links pointing to non-existent routes)
 - [x] Fix all 404 broken routes
+
+## Interactive Digital Flyer (Unprecedented)
+- [x] Create /flyer route with interactive digital flyer page
+- [x] Valanna auto-narration using Web Speech API (speaks about the ecosystem on load)
+- [x] ADA accessibility (ARIA labels, keyboard nav, screen reader support, high contrast mode)
+- [x] Multi-language support (English, Spanish, French, Swahili, Twi/Akan for Ghana partnership)
+- [x] Auto-updating links from QUMUS ecosystem (RRB Radio, HybridCast, SQUADD, Selma, etc.)
+- [x] Shareable/printable flyer design (print + share buttons)
+- [x] Expandable fullscreen view
+- [x] Valanna avatar with speaking animation (sound wave bars)
+- [x] Remove dash from Va-Lanna → Valanna across entire codebase

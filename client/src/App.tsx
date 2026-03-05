@@ -153,6 +153,7 @@ import { MobileNavigationDrawer } from '@/components/MobileNavigationDrawer';
 import SquaddGoals from '@/pages/SquaddGoals';
 import SelmaEvent from '@/pages/SelmaEvent';
 import LiveStreamPage from '@/pages/LiveStreamPage';
+import InteractiveFlyer from '@/pages/InteractiveFlyer';
 import { EventBanners } from '@/components/EventBanners';
 import ValannaVoiceAssistant from '@/components/ValannaVoiceAssistant';
 
@@ -304,6 +305,7 @@ function Router() {
       <Route path="/squadd" component={SquaddGoals} />
       <Route path="/selma" component={SelmaEvent} />
       <Route path="/live" component={LiveStreamPage} />
+      <Route path="/flyer" component={InteractiveFlyer} />
       <Route component={NotFound} />
     </Switch>
     </>
