@@ -2574,3 +2574,9 @@
 - [x] Generate QR codes for Digital War Chest on SQUADD page
 - [x] Fix Selma event not accessible from website (banner/link missing or broken)
 - [x] Fix closing slide garbled RIKVEN ACE text
+
+## Pre-Selma Event Final Push
+- [x] Add countdown timer to Selma banner (hours/minutes until Saturday March 7 10:00 AM CST)
+- [x] Make QR codes print-ready for Karen workshop handout
+- [ ] Publish site with all latest changes
+

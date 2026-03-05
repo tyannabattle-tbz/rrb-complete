@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -402,10 +402,80 @@ export default function SquaddGoals() {
             ))}
           </div>
 
-          <div className="text-center mt-8">
+          <div className="text-center mt-8 space-y-4">
             <p className="text-sm text-[#E8E0D0]/40">
               QR codes link to the Digital Directory. Print these for the workshop handout.
             </p>
+            <button
+              onClick={() => {
+                const printSection = document.getElementById('print-qr-section');
+                if (printSection) {
+                  printSection.style.display = 'block';
+                  window.print();
+                  setTimeout(() => { printSection.style.display = 'none'; }, 500);
+                }
+              }}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A843] text-[#0A0A0A] font-bold rounded-lg hover:bg-[#E8C860] transition-colors text-sm"
+            >
+              🖨️ Print QR Codes for Workshop
+            </button>
+          </div>
+
+          {/* Print-optimized QR section (hidden on screen, shown when printing) */}
+          <div id="print-qr-section" className="hidden print:block">
+            <style dangerouslySetInnerHTML={{ __html: `
+              @media print {
+                body * { visibility: hidden !important; }
+                #print-qr-section, #print-qr-section * { visibility: visible !important; }
+                #print-qr-section {
+                  position: fixed !important;
+                  left: 0 !important;
+                  top: 0 !important;
+                  width: 100% !important;
+                  display: block !important;
+                  background: white !important;
+                  padding: 20px !important;
+                }
+                .print-qr-card {
+                  page-break-inside: avoid !important;
+                  border: 2px solid #333 !important;
+                  padding: 16px !important;
+                  margin: 8px !important;
+                  background: white !important;
+                }
+              }
+            `}} />
+            <div style={{ background: 'white', padding: '24px', color: '#000' }}>
+              <h1 style={{ fontSize: '28px', fontWeight: 'bold', textAlign: 'center', marginBottom: '4px', color: '#000' }}>
+                SQUADD Goals — Digital War Chest
+              </h1>
+              <p style={{ textAlign: 'center', fontSize: '14px', marginBottom: '24px', color: '#555' }}>
+                GRITS & GREENS — Selma Jubilee 2026 | Saturday, March 7 | Wallace Community College
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                {[
+                  { name: 'Tyanna RaaShawn Battle', role: 'Founder, Sweet Miracles', focus: 'Elder Protection & Technology', email: 'sweetmiraclesattt@gmail.com', qrUrl: 'https://manuweb.sbs/squadd' },
+                  { name: 'Karen Jones', role: 'CEO, WHOM IT CONCERNS, INC.', focus: 'Agriculture & Environmental Justice', email: 'whomitconcerns@outlook.com', qrUrl: 'mailto:whomitconcerns@outlook.com' },
+                  { name: 'Furlesia "Freedom" Bell', role: 'REALTOR, Our Town Realty', focus: 'Community Development', email: 'furlesiabell@icloud.com', qrUrl: 'mailto:furlesiabell@icloud.com' },
+                  { name: 'Sherrette "Lady Freedom" Spicer', role: 'Virtual Broadcast Anchor', focus: 'Media & Communications', email: '', qrUrl: 'https://manuweb.sbs/live' },
+                  { name: 'LaShanna', role: 'Coalition Member', focus: 'Community Advocacy', email: '', qrUrl: 'https://manuweb.sbs/squadd' },
+                  { name: 'Full Digital Directory', role: 'All SQUADD Members', focus: 'Complete Coalition Roster', email: 'sweetmiraclesattt@gmail.com', qrUrl: 'https://manuweb.sbs/squadd' },
+                ].map((m, i) => (
+                  <div key={i} className="print-qr-card" style={{ textAlign: 'center', background: 'white', border: '2px solid #333', padding: '16px', borderRadius: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                      <QRCodeSVG value={m.qrUrl} size={120} bgColor="#ffffff" fgColor="#000000" level="H" />
+                    </div>
+                    <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', marginBottom: '2px' }}>{m.name}</h3>
+                    <p style={{ fontSize: '11px', color: '#555', marginBottom: '2px' }}>{m.role}</p>
+                    <p style={{ fontSize: '10px', color: '#888' }}>{m.focus}</p>
+                    {m.email && <p style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>{m.email}</p>}
+                  </div>
+                ))}
+              </div>
+              <p style={{ textAlign: 'center', fontSize: '11px', color: '#888', marginTop: '16px' }}>
+                Sweet Miracles 501(c)(3) & 508 | Canryn Production | In Honor of Seabrun Candy Hunter | manuweb.sbs/squadd
+              </p>
+            </div>
           </div>
         </div>
       </section>

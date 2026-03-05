@@ -1,9 +1,60 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { Calendar, MapPin, Globe, ArrowRight, X } from 'lucide-react';
+import { Calendar, MapPin, Globe, ArrowRight, X, Clock } from 'lucide-react';
 
 interface EventBannerProps {
   onClose?: (id: string) => void;
+}
+
+function useCountdown(targetDate: Date) {
+  const [timeLeft, setTimeLeft] = React.useState(() => calculateTimeLeft(targetDate));
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft(targetDate));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  return timeLeft;
+}
+
+function calculateTimeLeft(target: Date) {
+  const now = new Date();
+  const diff = target.getTime() - now.getTime();
+  if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  return { days, hours, minutes, seconds, expired: false };
+}
+
+function CountdownDisplay({ targetDate }: { targetDate: Date }) {
+  const { days, hours, minutes, seconds, expired } = useCountdown(targetDate);
+
+  if (expired) {
+    return (
+      <span className="flex items-center gap-1 text-[#4ADE80] font-bold text-xs animate-pulse">
+        <Clock className="w-3 h-3" /> HAPPENING NOW!
+      </span>
+    );
+  }
+
+  const parts: string[] = [];
+  if (days > 0) parts.push(`${days}d`);
+  parts.push(`${hours}h`);
+  parts.push(`${String(minutes).padStart(2, '0')}m`);
+  parts.push(`${String(seconds).padStart(2, '0')}s`);
+
+  return (
+    <span className="flex items-center gap-1.5 text-xs font-mono">
+      <Clock className="w-3 h-3 text-[#D4A843]" />
+      <span className="text-[#FBBF24] font-bold tracking-wider">{parts.join(' : ')}</span>
+    </span>
+  );
 }
 
 export function EventBanners({ onClose }: EventBannerProps) {
@@ -28,6 +79,8 @@ export function EventBanners({ onClose }: EventBannerProps) {
   const now = new Date();
   const selmaDate = new Date('2026-03-07T23:59:59');
   const unDate = new Date('2026-03-17T23:59:59');
+  // Event start time: Saturday March 7, 2026 at 10:00 AM CST (UTC-6)
+  const selmaStartDate = new Date('2026-03-07T16:00:00Z'); // 10 AM CST = 16:00 UTC
 
   const events = [
     {
@@ -40,9 +93,11 @@ export function EventBanners({ onClose }: EventBannerProps) {
       date: 'Saturday, March 7, 2026 — 10:00 AM CST',
       location: 'Wallace Community College, Room 112',
       seats: '90 Seats',
-      description: 'SQUADD workshop — agriculture, law advocacy, elder protection, environmental justice. 2 DAYS AWAY.',
+      description: 'SQUADD workshop — agriculture, law advocacy, elder protection, environmental justice.',
       ctaText: 'View Event Details',
       ctaAction: () => setLocation('/selma'),
+      showCountdown: true,
+      countdownTarget: selmaStartDate,
     },
     {
       id: 'un-ghana-csw70',
@@ -57,6 +112,8 @@ export function EventBanners({ onClose }: EventBannerProps) {
       description: 'From Selma to Ghana to the World — presenting the ecosystem that ensures no voice is ever silenced again.',
       ctaText: 'View SQUADD Goals',
       ctaAction: () => setLocation('/squadd'),
+      showCountdown: false,
+      countdownTarget: new Date('2026-03-17T14:00:00Z'),
     },
   ];
 
@@ -97,13 +154,16 @@ export function EventBanners({ onClose }: EventBannerProps) {
                     <span className="text-xs text-[#E8E0D0]/50 hidden lg:inline">—</span>
                     <span className="text-xs text-[#E8E0D0]/70 hidden lg:inline">{event.subtitle}</span>
                   </div>
-                  <div className="flex items-center gap-4 mt-1 text-xs text-[#E8E0D0]/60">
+                  <div className="flex items-center gap-4 mt-1 text-xs text-[#E8E0D0]/60 flex-wrap">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" /> {event.date}
                     </span>
                     <span className="flex items-center gap-1 hidden md:flex">
                       <MapPin className="w-3 h-3" /> {event.location}
                     </span>
+                    {event.showCountdown && event.countdownTarget && (
+                      <CountdownDisplay targetDate={event.countdownTarget} />
+                    )}
                   </div>
                 </div>
               </div>
