@@ -35,14 +35,14 @@ export function EventBanners({ onClose }: EventBannerProps) {
       show: now <= selmaDate && !dismissed.has('selma-jubilee-2026'),
       gradient: 'from-[#8B1A1A] via-[#6B0F0F] to-[#4A0A0A]',
       borderColor: 'border-[#D4A843]/30',
-      title: 'SELMA JUBILEE 2026',
-      subtitle: 'A Voice for the Voiceless',
-      date: 'March 7, 2026',
+      title: 'GRITS & GREENS — SELMA JUBILEE 2026',
+      subtitle: 'Turning Individual Grit into Collective Green',
+      date: 'Saturday, March 7, 2026 — 10:00 AM CST',
       location: 'Wallace Community College, Room 112',
       seats: '90 Seats',
-      description: 'Sweet Miracles presents the QUMUS/RRB/HybridCast ecosystem — technology built to honor the legacy of Seabrun Candy Hunter and protect the voiceless.',
-      ctaText: 'Learn More',
-      ctaAction: () => setLocation('/squadd'),
+      description: 'SQUADD workshop — agriculture, law advocacy, elder protection, environmental justice. 2 DAYS AWAY.',
+      ctaText: 'View Event Details',
+      ctaAction: () => setLocation('/selma'),
     },
     {
       id: 'un-ghana-csw70',
@@ -64,7 +64,7 @@ export function EventBanners({ onClose }: EventBannerProps) {
   if (visibleEvents.length === 0) return null;
 
   return (
-    <div className="space-y-0">
+    <div className="space-y-0 relative z-[90]">
       {visibleEvents.map((event) => (
         <div
           key={event.id}

@@ -2571,4 +2571,6 @@
 - [x] Make Valanna voice sound more human/natural (not robotic)
 - [x] Add pronunciation guides: Va-Lanna and Qu-Mus
 - [ ] Add Valanna avatar to Selma pitch slides
-- [ ] Generate QR codes for Digital War Chest on SQUADD page
+- [x] Generate QR codes for Digital War Chest on SQUADD page
+- [x] Fix Selma event not accessible from website (banner/link missing or broken)
+- [x] Fix closing slide garbled RIKVEN ACE text

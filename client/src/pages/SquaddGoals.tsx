@@ -3,6 +3,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { QRCodeSVG } from 'qrcode.react';
 import {
   Globe, Shield, Radio, Wifi, Heart, Users, ArrowRight,
   Zap, MapPin, Calendar, Mail, ExternalLink, ChevronRight
@@ -313,6 +314,98 @@ export default function SquaddGoals() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Digital War Chest - QR Codes */}
+      <section className="border-t border-[#D4A843]/10 bg-gradient-to-b from-[#0A0A0A] to-[#0D0D0D]">
+        <div className="container mx-auto px-4 py-20">
+          <div className="text-center mb-12">
+            <Badge className="bg-[#D4A843]/10 text-[#D4A843] border-[#D4A843]/30 mb-4">DIGITAL WAR CHEST</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#D4A843] mb-4">Scan. Connect. Act.</h2>
+            <p className="text-[#E8E0D0]/60 max-w-2xl mx-auto">
+              Every SQUADD member is in the Digital Directory. Scan a QR code to access bios, contact info, and coalition resources.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              {
+                name: 'Tyanna RaaShawn Battle',
+                role: 'Founder, Sweet Miracles',
+                focus: 'Elder Protection & Technology',
+                email: 'sweetmiraclesattt@gmail.com',
+                qrUrl: 'https://manuweb.sbs/squadd',
+              },
+              {
+                name: 'Karen Jones',
+                role: 'CEO/Founder, WHOM IT CONCERNS, INC.',
+                focus: 'Agriculture & Environmental Justice',
+                email: 'whomitconcerns@outlook.com',
+                qrUrl: 'mailto:whomitconcerns@outlook.com',
+              },
+              {
+                name: 'Furlesia "Freedom" Bell',
+                role: 'REALTOR, Our Town Realty',
+                focus: 'Community Development',
+                email: 'furlesiabell@icloud.com',
+                qrUrl: 'mailto:furlesiabell@icloud.com',
+              },
+              {
+                name: 'Sherrette "Lady Freedom" Spicer',
+                role: 'Virtual Broadcast Anchor',
+                focus: 'Media & Communications',
+                email: '',
+                qrUrl: 'https://manuweb.sbs/live',
+              },
+              {
+                name: 'LaShanna',
+                role: 'Coalition Member',
+                focus: 'Community Advocacy',
+                email: '',
+                qrUrl: 'https://manuweb.sbs/squadd',
+              },
+              {
+                name: 'Full Digital Directory',
+                role: 'All SQUADD Members',
+                focus: 'Complete Coalition Roster',
+                email: 'sweetmiraclesattt@gmail.com',
+                qrUrl: 'https://manuweb.sbs/squadd',
+              },
+            ].map((member, idx) => (
+              <Card key={idx} className="bg-[#111111] border-[#D4A843]/20 hover:border-[#D4A843]/40 transition-all">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-20 h-20 bg-white border border-[#D4A843]/30 rounded-lg flex items-center justify-center p-1">
+                      <QRCodeSVG
+                        value={member.qrUrl}
+                        size={72}
+                        bgColor="#ffffff"
+                        fgColor="#0A0A0A"
+                        level="M"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-bold text-[#E8E0D0] mb-1">{member.name}</h3>
+                      <p className="text-xs text-[#D4A843] mb-1">{member.role}</p>
+                      <p className="text-xs text-[#E8E0D0]/50 mb-2">{member.focus}</p>
+                      {member.email && (
+                        <a href={`mailto:${member.email}`} className="text-xs text-[#D4A843]/70 hover:text-[#D4A843] transition-colors flex items-center gap-1">
+                          <Mail className="w-3 h-3" /> {member.email}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <p className="text-sm text-[#E8E0D0]/40">
+              QR codes link to the Digital Directory. Print these for the workshop handout.
+            </p>
           </div>
         </div>
       </section>
