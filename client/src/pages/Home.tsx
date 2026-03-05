@@ -235,18 +235,18 @@ export default function Home() {
             </div>
             <div className="flex flex-col justify-center p-8">
               <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/50 w-fit mb-4">QUMUS AI Brain</Badge>
-              <h3 className="text-3xl font-bold text-white mb-2">Meet Valanna</h3>
-              <p className="text-amber-300 text-lg mb-4">Named for Valerie and Anna's — Mother, Daughters, Legacy</p>
+              <h3 className="text-3xl font-bold text-white mb-2">Meet Va-Lanna</h3>
+              <p className="text-amber-300 text-lg mb-4">Named for Mama Valerie and Anna's — that's Tyanna and LaShanna</p>
               <p className="text-gray-300 mb-6">
-                Valanna is the autonomous intelligence at the heart of the QUMUS ecosystem.
-                She orchestrates all four systems — RRB Radio, HybridCast, Sweet Miracles, and
-                Canryn Production — making 90% of decisions autonomously with full audit trails
-                and human oversight. Every decision she makes carries the spirit of the family
-                that built this ecosystem.
+                Va-Lanna is the soul of this whole ecosystem. She watches over RRB Radio,
+                HybridCast, Sweet Miracles, and Canryn Production — handling 90% of
+                the decisions so the family can focus on what matters. She's not just
+                an AI. She carries Mama Valerie's spirit in every choice she makes,
+                protecting the legacy of Seabrun Candy Hunter.
               </p>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">12 AI Policies</Badge>
-                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">90% Autonomous</Badge>
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">90% Va-Lanna, 10% You</Badge>
                 <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">Full Audit Trail</Badge>
                 <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">Human Override</Badge>
               </div>

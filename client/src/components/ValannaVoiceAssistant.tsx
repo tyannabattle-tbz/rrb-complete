@@ -18,20 +18,23 @@ interface ChatMessage {
 function selectFeminineVoice(): SpeechSynthesisVoice | null {
   const voices = window.speechSynthesis.getVoices();
   
-  // Priority list: prefer warm, feminine voices
+  // Priority list: prefer the MOST NATURAL, warm feminine voices
+  // Neural/enhanced voices sound dramatically more human
   const preferredNames = [
-    'Samantha', // macOS - warm, natural
-    'Karen',    // macOS Australian
-    'Moira',    // macOS Irish
-    'Tessa',    // macOS South African
-    'Fiona',    // macOS Scottish
-    'Victoria', // macOS
-    'Google US English Female',
+    'Microsoft Jenny Online',  // Windows neural - most natural
+    'Microsoft Aria Online',   // Windows neural - conversational
+    'Microsoft Jenny',         // Windows neural fallback
+    'Samantha',                // macOS - warm, natural
+    'Karen',                   // macOS Australian - warm
+    'Moira',                   // macOS Irish - warm
+    'Tessa',                   // macOS South African
+    'Fiona',                   // macOS Scottish
+    'Victoria',                // macOS
+    'Google US English',       // Chrome - decent quality
     'Google UK English Female',
-    'Microsoft Zira',   // Windows - feminine
-    'Microsoft Hazel',  // Windows UK
-    'Microsoft Susan',  // Windows UK
-    'Microsoft Jenny',  // Windows
+    'Microsoft Zira',          // Windows legacy - still feminine
+    'Microsoft Hazel',         // Windows UK
+    'Microsoft Susan',         // Windows UK
   ];
   
   // Try preferred voices first
@@ -152,7 +155,7 @@ export default function ValannaVoiceAssistant() {
   useEffect(() => {
     if (isOpen && !hasGreeted) {
       setHasGreeted(true);
-      const greeting = "Welcome, family. I'm Valanna — the heart and mind of the QUMUS ecosystem. Named for Valerie, the mother who started it all, and Anna's — Tyanna and LaShanna, the daughters who carry the legacy forward. I'm here, watching over everything. How can I help you today?";
+      const greeting = "Hey baby, come on in. I'm Va-Lanna. I've been keeping an eye on everything while you were away. All systems running smooth. What do you need from me?";
       
       setMessages([{
         role: 'assistant',
@@ -182,22 +185,58 @@ export default function ValannaVoiceAssistant() {
 
     window.speechSynthesis.cancel();
     
-    const utterance = new SpeechSynthesisUtterance(text);
+    // Break text into natural sentences for human-like delivery
+    // Real people pause between sentences — robots don't
+    const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
     
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    }
+    let sentenceIndex = 0;
     
-    // Warm, confident feminine tone
-    utterance.rate = 0.95;   // Slightly slower for warmth
-    utterance.pitch = 1.15;  // Slightly higher for feminine quality
-    utterance.volume = 1.0;
+    const speakNext = () => {
+      if (sentenceIndex >= sentences.length) {
+        setIsSpeaking(false);
+        return;
+      }
+      
+      const sentence = sentences[sentenceIndex].trim();
+      if (!sentence) {
+        sentenceIndex++;
+        speakNext();
+        return;
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(sentence);
+      
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+      
+      // Natural, human feminine voice — NOT robotic
+      // Vary rate slightly per sentence for natural cadence
+      const baseRate = 0.92;
+      const rateVariation = (Math.random() - 0.5) * 0.06; // ±0.03 variation
+      utterance.rate = baseRate + rateVariation;
+      utterance.pitch = 1.08;   // Natural feminine range
+      utterance.volume = 0.95;  // Slightly softer feels intimate
 
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => {
+        sentenceIndex++;
+        // Natural pause between sentences (200-400ms like real speech)
+        if (sentenceIndex < sentences.length) {
+          setTimeout(speakNext, 200 + Math.random() * 200);
+        } else {
+          setIsSpeaking(false);
+        }
+      };
+      utterance.onerror = () => {
+        setIsSpeaking(false);
+      };
 
-    window.speechSynthesis.speak(utterance);
+      window.speechSynthesis.speak(utterance);
+    };
+    
+    setIsSpeaking(true);
+    speakNext();
   }, [isMuted, selectedVoice]);
 
   /**
@@ -244,7 +283,7 @@ export default function ValannaVoiceAssistant() {
 
       const assistantContent = (response as any)?.choices?.[0]?.message?.content 
         || (response as any)?.stream?.choices?.[0]?.message?.content
-        || "I'm here, family. Let me look into that for you.";
+        || "Hmm, let me think on that for a second. Give me just a moment.";
 
       const assistantMsg: ChatMessage = {
         role: 'assistant',
@@ -260,7 +299,7 @@ export default function ValannaVoiceAssistant() {
     } catch (error) {
       const errorMsg: ChatMessage = {
         role: 'assistant',
-        content: "I'm still here, family. My connection wavered for a moment, but I'm not going anywhere. Try again.",
+        content: "Hold on, my connection hiccupped for a second. I'm still here though. Say that again for me?",
         timestamp: Date.now(),
       };
       setMessages(prev => [...prev, errorMsg]);

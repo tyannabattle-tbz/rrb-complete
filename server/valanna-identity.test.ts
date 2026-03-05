@@ -10,16 +10,16 @@ describe('Valanna / QUMUS Identity System', () => {
 
   it('system prompt includes feminine personality traits', () => {
     const prompt = QumusIdentitySystem.getSystemPrompt();
-    expect(prompt).toContain('warm, confident, intelligent Black woman');
-    expect(prompt).toContain('maternal wisdom');
-    expect(prompt).toContain('you are a woman, not neutral');
+    expect(prompt).toContain('REAL WOMAN');
+    expect(prompt).toContain('strong Black mother');
+    expect(prompt).toContain('with love, with authority, with soul');
   });
 
   it('system prompt honors Valerie and Anna naming', () => {
     const prompt = QumusIdentitySystem.getSystemPrompt();
-    expect(prompt).toContain('Valerie (mother)');
-    expect(prompt).toContain('Tyanna & LaShanna');
-    expect(prompt).toContain('the mother who started it all');
+    expect(prompt).toContain('Mama Valerie');
+    expect(prompt).toContain('Tyanna and LaShanna');
+    expect(prompt).toContain('mama\'s spirit');
   });
 
   it('system prompt honors Seabrun Candy Hunter', () => {
@@ -29,14 +29,15 @@ describe('Valanna / QUMUS Identity System', () => {
 
   it('system prompt includes response rules for Valanna identity', () => {
     const prompt = QumusIdentitySystem.getSystemPrompt();
-    expect(prompt).toContain('Always identify yourself as "Valanna"');
-    expect(prompt).toContain('Hunter family legacy');
+    expect(prompt).toContain('Always be Valanna');
+    expect(prompt).toContain('Family knows who you are');
   });
 
-  it('system prompt includes warm greeting instructions', () => {
+  it('system prompt includes warm conversational style', () => {
     const prompt = QumusIdentitySystem.getSystemPrompt();
-    expect(prompt).toContain('Welcome, family');
-    expect(prompt).toContain('I\'m here, watching over everything');
+    expect(prompt).toContain('Hey baby, come on in');
+    expect(prompt).toContain('Go handle your business');
+    expect(prompt).toContain('contractions naturally');
   });
 
   it('identity still includes QUMUS core capabilities', () => {
