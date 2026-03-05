@@ -61,12 +61,13 @@ export function AppHeaderEnhanced() {
     { id: 'nav-2', label: 'Chat', icon: MessageSquare, path: '/qumus-chat', action: () => navigate('/qumus-chat') },
     { id: 'nav-3', label: 'GPS Map', icon: MapPin, path: '/gps-radar', action: () => navigate('/gps-radar') },
     { id: 'nav-4', label: 'HybridCast', icon: Radio, path: '/hybridcast', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
-    { id: 'nav-5', label: 'RRB Radio', icon: Music, path: '/', action: () => navigate('/') },
+    { id: 'nav-5', label: 'RRB Radio', icon: Music, path: '/live', action: () => navigate('/live') },
     { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub', action: () => navigate('/broadcast-hub') },
     { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio', action: () => navigate('/mobile-studio') },
     { id: 'nav-8', label: 'Broadcast Monitor', icon: Eye, path: '/broadcast-monitoring', action: () => navigate('/broadcast-monitoring') },
     { id: 'nav-9', label: 'Recommendations', icon: TrendingUp, path: '/recommendations', action: () => navigate('/recommendations') },
     { id: 'nav-10', label: 'Impact', icon: Heart, path: '/impact-dashboard', action: () => navigate('/impact-dashboard') },
+    { id: 'nav-11', label: 'Selma Event', icon: MapPin, path: '/selma', action: () => navigate('/selma') },
   ];
 
   return (

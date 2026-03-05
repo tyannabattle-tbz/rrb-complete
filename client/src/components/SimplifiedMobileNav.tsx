@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap } from 'lucide-react';
+import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavSection {
@@ -27,10 +27,18 @@ export function SimplifiedMobileNav() {
       ],
     },
     {
+      title: 'Events',
+      items: [
+        { id: 'nav-selma', label: 'Selma Jubilee', icon: MapPin, path: '/selma' },
+        { id: 'nav-squadd', label: 'SQUADD Goals', icon: Globe, path: '/squadd' },
+      ],
+    },
+    {
       title: 'Media',
       items: [
+        { id: 'nav-live', label: 'Live Stream', icon: Video, path: '/live' },
+        { id: 'nav-radio', label: 'RRB Radio', icon: Radio, path: '/live' },
         { id: 'nav-boogie', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
-        { id: 'nav-radio', label: 'HybridCast', icon: Radio, path: '/gps-radar' },
         { id: 'nav-broadcast', label: 'Broadcast', icon: Zap, path: '/broadcast-hub' },
       ],
     },
@@ -38,6 +46,7 @@ export function SimplifiedMobileNav() {
       title: 'Account',
       items: [
         { id: 'nav-dashboard', label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
+        { id: 'nav-impact', label: 'Impact', icon: Heart, path: '/impact-dashboard' },
         { id: 'nav-settings', label: 'Settings', icon: Settings, path: '/settings' },
       ],
     },

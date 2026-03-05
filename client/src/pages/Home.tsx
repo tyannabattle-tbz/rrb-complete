@@ -111,8 +111,7 @@ export default function Home() {
       description: 'Complete radio station ecosystem with healing frequencies, games, and community.',
       features: ['24/7 Radio', 'Healing Frequencies', 'Solbones Game', 'Listener Analytics'],
       color: 'from-pink-600 to-orange-600',
-      path: 'https://www.rockinrockinboogie.com',
-      external: true,
+      path: '/rrb-radio',
       status: 'Active',
     },
     {
@@ -121,8 +120,7 @@ export default function Home() {
       description: 'Offline-first emergency broadcast system. Mesh networking for disaster communication.',
       features: ['Emergency Alerts', 'Offline PWA', 'Mesh Network', 'Multi-Channel Broadcast'],
       color: 'from-red-600 to-yellow-600',
-      path: 'https://www.hybridcast.sbs',
-      external: true,
+      path: '/hybridcast',
       status: 'Active',
     },
     {
@@ -207,14 +205,14 @@ export default function Home() {
               Enter QUMUS →
             </Button>
             <Button
-              onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')}
+              onClick={() => setLocation('/live')}
               className="bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700"
               size="lg"
             >
               Go to RRB Radio →
             </Button>
             <Button
-              onClick={() => window.open('https://www.hybridcast.sbs', '_blank')}
+              onClick={() => setLocation('/hybridcast')}
               className="bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700"
               size="lg"
             >

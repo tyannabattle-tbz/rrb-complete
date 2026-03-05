@@ -2578,5 +2578,13 @@
 ## Pre-Selma Event Final Push
 - [x] Add countdown timer to Selma banner (hours/minutes until Saturday March 7 10:00 AM CST)
 - [x] Make QR codes print-ready for Karen workshop handout
-- [ ] Publish site with all latest changes
+- [x] Publish site with all latest changes
 
+
+## RRB Radio + Video Streaming Update
+- [x] Update RRB Radio page to match ecosystem branding (gold/dark theme, Valanna, SQUADD)
+- [x] Connect video streaming with real player on /live page
+- [x] Ensure RRB Radio channels are functional with audio playback
+- [x] Cross-link all pages (RRB Radio, Live, SQUADD, Selma, Home)
+- [x] Add Selma event to main navigation
+- [x] Test all streaming and radio features end-to-end
