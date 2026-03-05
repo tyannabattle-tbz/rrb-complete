@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'wouter';
+import { useLocation } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 export default function EcosystemMasterDashboard() {
-  const [, navigate] = useRouter();
+  const [, navigate] = useLocation();
   const [metrics, setMetrics] = useState({
     qumusStatus: 'online',
     rrbListeners: 2847,

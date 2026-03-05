@@ -2565,3 +2565,6 @@
 - [ ] Add Valanna visual avatar with speaking animation
 - [ ] Integrate into QUMUS dashboard as active AI presence
 - [ ] Test voice input/output across browsers
+
+## March 2026 - Bug Fixes
+- [x] Fix TypeError: useRouter is not a function on /ecosystem-dashboard page
