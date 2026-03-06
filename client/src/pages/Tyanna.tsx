@@ -57,6 +57,7 @@ const COMMERCIALS: Commercial[] = [
     title: "Anna's Promotions — Where Vision Meets Action",
     type: 'audio',
     duration: '30s',
+    audioUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/tyanna_annas_vision_4e2070be.wav',
     script: `Where vision meets action. Anna's Promotions turns ideas into impact. Tyanna Battle brings strategic brand thinking and community-first event production to every project. From local gatherings to international stages, Anna's Promotions delivers. Named in honor of family legacy, built for the future. Visit manuweb.sbs/tyanna. A Canryn Production subsidiary.`,
     tagline: "Anna's Promotions — Where Vision Meets Action",
     category: 'Brand',

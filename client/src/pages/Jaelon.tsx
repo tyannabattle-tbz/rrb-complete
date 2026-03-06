@@ -57,6 +57,7 @@ const COMMERCIALS: Commercial[] = [
     title: 'Jaelon Enterprises — Building Tomorrow Today',
     type: 'audio',
     duration: '30s',
+    audioUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/jaelon_building_tomorrow_22fd62c7.wav',
     script: `Building tomorrow, today. Jaelon Enterprises is the innovation and business development arm of Canryn Production. Jaelon Hunter drives growth strategies that create generational wealth while serving communities. From business development to technology integration, Jaelon Enterprises builds the future. Visit manuweb.sbs/jaelon. A Canryn Production subsidiary.`,
     tagline: 'Jaelon Enterprises — Building Tomorrow Today',
     category: 'Business',

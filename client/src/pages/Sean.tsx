@@ -57,6 +57,7 @@ const COMMERCIALS: Commercial[] = [
     title: "Sean's Music — The Legacy Continues",
     type: 'audio',
     duration: '30s',
+    audioUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/sean_legacy_continues_0434dada.wav',
     script: `The music never stops. Sean Hunter carries forward the sound that Seabrun Candy Hunter created — the Rockin Rockin Boogie legacy lives on through Sean's Music. From the studios of Canryn Production, the rhythm continues. Sean's Music — where legacy meets the future. Listen now at manuweb.sbs/sean. A Canryn Production subsidiary.`,
     tagline: "Sean's Music — The Legacy Continues",
     category: 'Music',

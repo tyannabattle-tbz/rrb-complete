@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,6 +33,7 @@ export interface Commercial {
   script: string;
   tagline: string;
   category: string;
+  audioUrl?: string;  // CDN URL for the commercial audio file
 }
 
 export interface Accomplishment {
@@ -148,8 +149,11 @@ const colorMap: Record<string, {
 export default function FamilyMemberPage({ data }: { data: FamilyMemberData }) {
   const [, setLocation] = useLocation();
   const [activeCommercial, setActiveCommercial] = useState<string | null>(null);
+  const [audioProgress, setAudioProgress] = useState<number>(0);
   const [botPulse, setBotPulse] = useState<Record<string, boolean>>({});
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const c = colorMap[data.accentColor] || colorMap.purple;
 
@@ -171,13 +175,78 @@ export default function FamilyMemberPage({ data }: { data: FamilyMemberData }) {
     ? data.accomplishments 
     : data.accomplishments.filter(a => a.category === selectedCategory);
 
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
+  }, []);
+
   const playCommercial = (commercial: Commercial) => {
+    // If same commercial, toggle pause/play
     if (activeCommercial === commercial.id) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
       setActiveCommercial(null);
+      setAudioProgress(0);
       toast('Commercial Paused', { description: commercial.title });
     } else {
+      // Stop any currently playing audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+
       setActiveCommercial(commercial.id);
-      toast('Now Playing', { description: `${commercial.title} — ${commercial.duration}` });
+      setAudioProgress(0);
+
+      // Play real audio if available
+      if (commercial.audioUrl) {
+        const audio = new Audio(commercial.audioUrl);
+        audioRef.current = audio;
+        audio.play().catch(() => {
+          toast.error('Audio playback failed', { description: 'Could not play the commercial audio.' });
+        });
+
+        // Track progress
+        progressIntervalRef.current = setInterval(() => {
+          if (audio.duration && audio.currentTime) {
+            setAudioProgress((audio.currentTime / audio.duration) * 100);
+          }
+        }, 200);
+
+        audio.onended = () => {
+          setActiveCommercial(null);
+          setAudioProgress(0);
+          if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+            progressIntervalRef.current = null;
+          }
+          audioRef.current = null;
+          toast('Commercial Complete', { description: commercial.title });
+        };
+
+        toast('Now Playing', { description: `${commercial.title} — ${commercial.duration}` });
+      } else {
+        // No audio URL — show script only
+        toast('Now Playing (Script)', { description: `${commercial.title} — ${commercial.duration}` });
+      }
     }
   };
 
@@ -344,7 +413,7 @@ export default function FamilyMemberPage({ data }: { data: FamilyMemberData }) {
                           <div className="flex items-center gap-2 mt-3">
                             <Volume2 className="w-4 h-4 text-amber-400" />
                             <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
-                              <div className="h-full bg-amber-400 rounded-full animate-pulse" style={{ width: '60%' }} />
+                              <div className="h-full bg-amber-400 rounded-full transition-all duration-200" style={{ width: `${commercial.audioUrl ? audioProgress : 60}%` }} />
                             </div>
                             <span className="text-xs text-gray-500">{commercial.duration}</span>
                           </div>

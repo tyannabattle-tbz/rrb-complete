@@ -57,6 +57,7 @@ const COMMERCIALS: Commercial[] = [
     title: 'Little C — Where Creativity Meets Community',
     type: 'audio',
     duration: '30s',
+    audioUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/carlos_littlec_brand_9846a1f3.wav',
     script: `Little C — where creativity meets community. Carlos Kembrel brings vision to life through digital content that speaks to the heart of every community. From storytelling to production, Little C is the creative engine of Canryn Production. See the vision at manuweb.sbs/carlos. A Canryn Production subsidiary.`,
     tagline: 'Little C — Where Creativity Meets Community',
     category: 'Brand',

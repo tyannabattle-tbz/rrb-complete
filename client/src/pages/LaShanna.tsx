@@ -84,6 +84,7 @@ interface Commercial {
   script: string;
   tagline: string;
   category: string;
+  audioUrl?: string;
 }
 
 const COMMERCIALS: Commercial[] = [
@@ -92,6 +93,7 @@ const COMMERCIALS: Commercial[] = [
     title: 'A Voice for the Voiceless',
     type: 'audio',
     duration: '30s',
+    audioUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/lashanna_voice_voiceless_e662ca63.wav',
     script: `When communities need a champion, LaShanna Russell answers the call. From Selma to the United Nations, she's building bridges that connect people to the resources they need. Sweet Miracles — A Voice for the Voiceless. Because every community deserves to be heard. Visit manuweb.sbs to learn more.`,
     tagline: 'Sweet Miracles — A Voice for the Voiceless',
     category: 'Community Advocacy',
@@ -213,8 +215,11 @@ export default function LaShanna() {
   const [, setLocation] = useLocation();
 
   const [activeCommercial, setActiveCommercial] = useState<string | null>(null);
+  const [audioProgress, setAudioProgress] = useState<number>(0);
   const [botPulse, setBotPulse] = useState<Record<string, boolean>>({});
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Simulate bot activity pulses
   useEffect(() => {
@@ -233,13 +238,43 @@ export default function LaShanna() {
     ? ACCOMPLISHMENTS 
     : ACCOMPLISHMENTS.filter(a => a.category === selectedCategory);
 
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      if (progressIntervalRef.current) { clearInterval(progressIntervalRef.current); }
+    };
+  }, []);
+
   const playCommercial = (commercial: Commercial) => {
     if (activeCommercial === commercial.id) {
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      if (progressIntervalRef.current) { clearInterval(progressIntervalRef.current); progressIntervalRef.current = null; }
       setActiveCommercial(null);
-      toast({ title: 'Commercial Paused', description: commercial.title });
+      setAudioProgress(0);
+      toast('Commercial Paused', { description: commercial.title });
     } else {
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      if (progressIntervalRef.current) { clearInterval(progressIntervalRef.current); progressIntervalRef.current = null; }
       setActiveCommercial(commercial.id);
-      toast({ title: 'Now Playing', description: `${commercial.title} — ${commercial.duration}` });
+      setAudioProgress(0);
+      if (commercial.audioUrl) {
+        const audio = new Audio(commercial.audioUrl);
+        audioRef.current = audio;
+        audio.play().catch(() => toast.error('Audio playback failed'));
+        progressIntervalRef.current = setInterval(() => {
+          if (audio.duration && audio.currentTime) setAudioProgress((audio.currentTime / audio.duration) * 100);
+        }, 200);
+        audio.onended = () => {
+          setActiveCommercial(null); setAudioProgress(0);
+          if (progressIntervalRef.current) { clearInterval(progressIntervalRef.current); progressIntervalRef.current = null; }
+          audioRef.current = null;
+          toast('Commercial Complete', { description: commercial.title });
+        };
+        toast('Now Playing', { description: `${commercial.title} — ${commercial.duration}` });
+      } else {
+        toast('Now Playing (Script)', { description: `${commercial.title} — ${commercial.duration}` });
+      }
     }
   };
 

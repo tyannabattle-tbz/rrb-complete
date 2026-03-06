@@ -2700,3 +2700,8 @@
 - [x] Wire all family member routes in App.tsx (/carlos, /sean, /tyanna, /jaelon)
 - [x] Add family member links to Home page subsidiary cards
 - [x] Push all updates to GitHub + production
+
+## Commercial Audio Playback + Credentials — March 6 2026
+- [x] Wire CDN-hosted commercial audio into FamilyMemberPage play buttons
+- [x] Provide credentials summary to user for other Manus task
+- [x] File upload kept as signed-in only (security + storage tracking)
