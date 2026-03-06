@@ -84,8 +84,8 @@ export default function QumusPort3000() {
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-white mb-4">Autonomous Orchestration</h2>
           <p className="text-xl text-purple-300 mb-8 max-w-3xl mx-auto">
-            90% autonomous control. Qumus manages all RRB ecosystem systems, makes intelligent decisions,
-            and executes tasks autonomously. Monitor and control everything from this dashboard.
+            90% autonomous control. QUMUS manages all RRB ecosystem systems — Valanna handles operations,
+            Candy guards the legacy. Monitor and control everything from this dashboard.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export default function QumusPort3000() {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="w-5 h-5 text-purple-400" />
-                  Qumus Core
+                  QUMUS Core
                 </CardTitle>
                 <Badge
                   className={`${
@@ -125,11 +125,11 @@ export default function QumusPort3000() {
           </Card>
 
           {/* RRB Status */}
-          <Card className="bg-slate-800/50 border-pink-500/20 hover:border-pink-500/50 transition-all">
+          <Card className="bg-slate-800/50 border-amber-500/20 hover:border-amber-500/50 transition-all">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
-                  <Radio className="w-5 h-5 text-pink-400" />
+                  <Radio className="w-5 h-5 text-amber-400" />
                   RRB Radio
                 </CardTitle>
                 <Badge
@@ -142,16 +142,16 @@ export default function QumusPort3000() {
                   {systemStatus.rrb.status}
                 </Badge>
               </div>
-              <CardDescription>Port 3001</CardDescription>
+              <CardDescription>QUMUS Managed • 24/7</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-purple-300">Active Listeners</p>
-                  <p className="text-2xl font-bold text-pink-400">{systemStatus.rrb.listeners || 0}</p>
+                  <p className="text-2xl font-bold text-amber-400">{systemStatus.rrb.listeners || 0}</p>
                 </div>
-                <Button onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')} className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
-                  Go to RRB
+                <Button onClick={() => setLocation('/rrb')} className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
+                  Go to RRB Radio
                 </Button>
               </div>
             </CardContent>
@@ -175,7 +175,7 @@ export default function QumusPort3000() {
                   {systemStatus.hybridcast.status}
                 </Badge>
               </div>
-              <CardDescription>Port 3002</CardDescription>
+              <CardDescription>Emergency Broadcast • QUMUS Integrated</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -237,8 +237,8 @@ export default function QumusPort3000() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           <Card className="bg-slate-800/50 border-purple-500/20">
             <CardHeader>
-              <CardTitle>Qumus Controls</CardTitle>
-              <CardDescription>Manage orchestration engine</CardDescription>
+            <CardTitle>QUMUS Controls</CardTitle>
+            <CardDescription>Manage orchestration engine</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
@@ -262,7 +262,7 @@ export default function QumusPort3000() {
               <CardDescription>Send commands to RRB & HybridCast</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-pink-600 to-orange-600 hover:from-pink-700 hover:to-orange-700">
+              <Button onClick={() => setLocation('/rrb')} className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
                 📻 Command RRB
               </Button>
               <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700">
@@ -282,7 +282,7 @@ export default function QumusPort3000() {
         <Card className="bg-slate-800/50 border-purple-500/20">
           <CardHeader>
             <CardTitle>Autonomous Features</CardTitle>
-            <CardDescription>What Qumus handles automatically</CardDescription>
+            <CardDescription>What QUMUS handles automatically — Valanna executes, Candy oversees</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -313,7 +313,7 @@ export default function QumusPort3000() {
       {/* Footer */}
       <footer className="border-t border-purple-500/20 bg-slate-900/50 mt-16 py-8">
         <div className="container mx-auto px-4 text-center text-purple-300">
-          <p>Qumus Orchestration Engine &bull; 90% Autonomous &bull; 10% Human Override</p>
+          <p>QUMUS Orchestration Engine &bull; 90% Autonomous &bull; 10% Human Override</p>
           <p className="text-sm mt-2">A Canryn Production and its subsidiaries</p>
         </div>
       </footer>
