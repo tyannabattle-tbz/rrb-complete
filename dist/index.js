@@ -31922,8 +31922,7 @@ async function handleChargeRefunded(charge) {
 
 // server/_core/index.ts
 init_qumusActivation();
-var COOKIE_NAME2 = "session";
-var ONE_YEAR_MS2 = 365 * 24 * 60 * 60 * 1e3;
+init_const();
 function isPortAvailable(port) {
   return new Promise((resolve) => {
     const server = net.createServer();
@@ -31994,15 +31993,14 @@ async function startServer() {
       });
       const sessionToken = await sdk2.createSessionToken(testOpenId, {
         name: testUser.name,
-        expiresInMs: 864e5
-        // 24 hours
+        expiresInMs: ONE_YEAR_MS
       });
       console.log("[Test Login] Session token created", {
         tokenLength: sessionToken.length,
         openId: testOpenId
       });
       const cookieOptions = getSessionCookieOptions2(req);
-      res.cookie(COOKIE_NAME2, sessionToken, { ...cookieOptions, maxAge: 864e5 });
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
       console.log("[Test Login] Cookie set successfully");
       const redirectUrl = `/?token=${encodeURIComponent(sessionToken)}`;
       console.log("[Test Login] Redirecting to", redirectUrl.substring(0, 50));

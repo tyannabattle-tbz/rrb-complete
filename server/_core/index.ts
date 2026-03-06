@@ -10,9 +10,7 @@ import { serveStatic, setupVite } from "./vite";
 import { initializeWebSocket } from "../websocket";
 import { handleStripeWebhook } from "../webhooks/stripeWebhook";
 import { activateQumus } from "../qumus/qumusActivation";
-
-const COOKIE_NAME = "session";
-const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -103,7 +101,7 @@ async function startServer() {
       // Create session token
       const sessionToken = await sdk.createSessionToken(testOpenId, {
         name: testUser.name,
-        expiresInMs: 86400000, // 24 hours
+        expiresInMs: ONE_YEAR_MS,
       });
       
       console.log("[Test Login] Session token created", {
@@ -113,7 +111,7 @@ async function startServer() {
       
       // Set cookie
       const cookieOptions = getSessionCookieOptions(req);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 86400000 });
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
       
       console.log("[Test Login] Cookie set successfully");
       

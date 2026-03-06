@@ -8,7 +8,7 @@ import {
   Play, Pause, Volume2, VolumeX, Maximize, Minimize,
   Radio, Wifi, Users, MessageCircle, Heart, Send,
   Music, Mic, Video, SkipForward, SkipBack, Globe,
-  ArrowRight, Calendar, MapPin, Headphones
+  ArrowRight, Calendar, MapPin, Headphones, Settings
 } from 'lucide-react';
 
 // RRB Radio channels with real streaming URLs (Icecast/Shoutcast compatible)
@@ -57,6 +57,24 @@ const radioChannels = [
   },
 ];
 
+// Configurable broadcast stream URL - admin can update via settings
+const DEFAULT_STREAM_URL = 'https://www.youtube.com/embed/jfKfPfyJRdk';
+const SELMA_STREAM_URL = 'https://www.youtube.com/embed/jfKfPfyJRdk'; // Replace with actual Selma broadcast URL
+
+function getStreamUrl(): string {
+  try {
+    const saved = localStorage.getItem('rrb_broadcast_url');
+    if (saved) return saved;
+  } catch (e) {}
+  return DEFAULT_STREAM_URL;
+}
+
+function setStreamUrl(url: string): void {
+  try {
+    localStorage.setItem('rrb_broadcast_url', url);
+  } catch (e) {}
+}
+
 // Simulated live chat messages
 const initialMessages = [
   { id: 1, user: 'CommunityVoice', message: 'Love the healing frequencies today! 🎵', time: '2m ago', avatar: '🎵' },
@@ -80,6 +98,8 @@ export default function LiveStreamPage() {
   const [listenerCount, setListenerCount] = useState(247);
   const [showChat, setShowChat] = useState(true);
   const [audioError, setAudioError] = useState<string | null>(null);
+  const [showStreamSettings, setShowStreamSettings] = useState(false);
+  const [customStreamUrl, setCustomStreamUrl] = useState(getStreamUrl());
   const videoRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -231,6 +251,15 @@ export default function LiveStreamPage() {
                 </button>
               ))}
             </div>
+
+            {/* Stream Settings Button */}
+            <button
+              onClick={() => setShowStreamSettings(true)}
+              className="p-2 rounded-lg bg-[#111] text-[#E8E0D0]/50 hover:text-[#D4A843] hover:bg-[#D4A843]/10 transition-all"
+              title="Broadcast Stream Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -262,7 +291,7 @@ export default function LiveStreamPage() {
                     <div className="absolute inset-0 flex items-center justify-center">
                       {isPlaying ? (
                         <iframe
-                          src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=0"
+                          src={`${getStreamUrl()}?autoplay=1&mute=0`}
                           className="w-full h-full"
                           allow="autoplay; encrypted-media"
                           allowFullScreen
@@ -536,6 +565,55 @@ export default function LiveStreamPage() {
           )}
         </div>
       </div>
+      {/* Admin Stream URL Settings Modal */}
+      {showStreamSettings && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setShowStreamSettings(false)}>
+          <div className="bg-[#111] border border-[#D4A843]/30 rounded-xl p-6 max-w-lg w-full" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-[#D4A843] mb-4">Broadcast Stream Settings</h3>
+            <p className="text-xs text-[#E8E0D0]/50 mb-4">Set the live stream embed URL for Saturday's Selma broadcast. Supports YouTube, Facebook Live, Zoom, or any embeddable video URL.</p>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-[#E8E0D0]/60 mb-1 block">Stream Embed URL</label>
+                <input
+                  type="text"
+                  value={customStreamUrl}
+                  onChange={(e) => setCustomStreamUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+                  className="w-full bg-[#0A0A0A] border border-[#333] rounded-lg px-3 py-2 text-sm text-[#E8E0D0] placeholder-[#E8E0D0]/30 focus:outline-none focus:border-[#D4A843]/50"
+                />
+              </div>
+              <div className="text-xs text-[#E8E0D0]/40 space-y-1">
+                <p>Quick formats:</p>
+                <p>YouTube: https://www.youtube.com/embed/VIDEO_ID</p>
+                <p>Facebook: https://www.facebook.com/plugins/video.php?href=URL</p>
+                <p>Zoom: Your Zoom webinar embed link</p>
+              </div>
+              <div className="flex gap-2 pt-2">
+                <Button
+                  onClick={() => {
+                    setStreamUrl(customStreamUrl);
+                    setShowStreamSettings(false);
+                    window.location.reload();
+                  }}
+                  className="flex-1 bg-[#D4A843] text-[#0A0A0A] hover:bg-[#E8C860]"
+                >
+                  Save & Apply
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCustomStreamUrl(DEFAULT_STREAM_URL);
+                    setStreamUrl(DEFAULT_STREAM_URL);
+                  }}
+                  variant="outline"
+                  className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10"
+                >
+                  Reset Default
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2620,3 +2620,10 @@
 ## Bug Fixes - March 5 2026
 - [x] Fix blank white page after login (OAuth token key mismatch: qumus_session_token vs session_token)
 - [x] Fix Studio page streaming controls (connected to tRPC startStream/stopStream mutations with toast feedback)
+
+## Apply All - March 5 2026 (Round 2)
+- [x] Verify login flow works end-to-end (fixed cookie name mismatch in index.ts: 'session' → 'app_session_id')
+- [x] Ensure Studio streaming Start/Stop buttons fully functional with visual feedback
+- [x] Set up configurable Saturday broadcast URL on /live page (settings gear icon + admin modal)
+- [x] Add stream URL admin setting (localStorage-based, supports YouTube/Facebook/Zoom embeds)
+- [ ] Publish with all changes live (ready for user to click Publish)
