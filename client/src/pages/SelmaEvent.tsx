@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { Calendar, MapPin, Clock, Users, ArrowRight, Mic2, Globe, Shield, Leaf, Scale, Heart, Radio, Wifi, Gift, ChevronRight } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, ArrowRight, Mic2, Globe, Shield, Leaf, Scale, Heart, Radio, Wifi, Gift, ChevronRight, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function SelmaEvent() {
@@ -94,6 +94,13 @@ export default function SelmaEvent() {
               onClick={() => setLocation('/live')}
             >
               <Radio className="w-5 h-5 mr-2" /> Watch Live Stream
+            </Button>
+            <Button 
+              variant="outline" 
+              className="border-purple-500/50 text-purple-300 hover:bg-purple-500/10 px-8 py-3 text-lg"
+              onClick={() => setLocation('/flyer')}
+            >
+              <Share2 className="w-5 h-5 mr-2" /> Interactive Flyer
             </Button>
           </div>
         </div>
@@ -204,7 +211,7 @@ export default function SelmaEvent() {
       {/* Global Connection */}
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-3xl mx-auto text-center">
-          <Globe className="w-12 h-12 text-[#D4A843] mx-auto mb-4" />
+          <Globe className="w-12 h-12 text-[#D4A843] mx-auto mb-6" />
           <h2 className="text-3xl font-bold text-[#D4A843] mb-4">From Selma to the United Nations</h2>
           <p className="text-lg text-[#E8E0D0]/60 mb-6">
             This workshop prepares us for our UN virtual parallel event on <strong className="text-[#D4A843]">March 17, 2026</strong>, 
@@ -224,6 +231,13 @@ export default function SelmaEvent() {
               onClick={() => setLocation('/live')}
             >
               <Wifi className="w-4 h-4 mr-2" /> Virtual Attendance
+            </Button>
+            <Button 
+              variant="outline" 
+              className="border-purple-500/50 text-purple-300 hover:bg-purple-500/10"
+              onClick={() => setLocation('/flyer')}
+            >
+              <Share2 className="w-4 h-4 mr-2" /> Share Flyer
             </Button>
           </div>
         </div>

@@ -434,6 +434,23 @@ export const appRouter = router({
         return [];
       }),
   }),
+
+  // Email subscription for flyer and campaign updates
+  emailSubscription: router({
+    subscribe: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        name: z.string().optional(),
+        source: z.string().optional(),
+        language: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return db.subscribeEmail(input.email, input.name, input.source, input.language);
+      }),
+    count: publicProcedure.query(async () => {
+      return db.getSubscriberCount();
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

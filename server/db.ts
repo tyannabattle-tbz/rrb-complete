@@ -62,6 +62,7 @@ import {
   type AgentSnapshot,
   type IntegrationLog,
   type FeatureFlag,
+  emailSubscribers,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1573,4 +1574,30 @@ export async function generateVideoFromDescription(params: {
       error: String(error),
     };
   }
+}
+
+
+// ─── Email Subscriber Helpers ───
+export async function subscribeEmail(email: string, name?: string, source?: string, language?: string) {
+  const db = getDb();
+  try {
+    await db.insert(emailSubscribers).values({
+      email: email.toLowerCase().trim(),
+      name: name || null,
+      source: source || 'flyer',
+      language: language || 'en',
+    });
+    return { success: true };
+  } catch (error: any) {
+    if (error?.code === 'ER_DUP_ENTRY') {
+      return { success: true, message: 'Already subscribed' };
+    }
+    throw error;
+  }
+}
+
+export async function getSubscriberCount() {
+  const db = getDb();
+  const result = await db.select({ count: count() }).from(emailSubscribers).where(eq(emailSubscribers.isActive, true));
+  return result[0]?.count || 0;
 }

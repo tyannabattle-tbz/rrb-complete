@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, foreignKey, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, foreignKey, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index, boolean } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const activityLogs = mysqlTable("activity_logs", {
@@ -1876,4 +1876,15 @@ export const stationAnalytics = mysqlTable('station_analytics', {
   totalListenTime: int('total_listen_time').default(0),
   uniqueUsers: int('unique_users').default(0),
   createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Email subscribers for campaign updates and platform announcements
+export const emailSubscribers = mysqlTable('email_subscribers', {
+  id: int('id').autoincrement().primaryKey(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  name: varchar('name', { length: 255 }),
+  source: varchar('source', { length: 100 }).default('flyer'),
+  language: varchar('language', { length: 10 }).default('en'),
+  subscribedAt: timestamp('subscribed_at').defaultNow(),
+  isActive: boolean('is_active').default(true),
 });

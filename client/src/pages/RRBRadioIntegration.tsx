@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import {
   Play, Pause, SkipForward, Volume2, VolumeX, Radio, Heart,
   Share2, Users, Music, Headphones, Wifi, Globe, ArrowRight,
-  Calendar, MapPin
+  Calendar, MapPin, Phone, FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -270,12 +270,53 @@ export const RRBRadioIntegration: React.FC = () => {
         </div>
       </div>
 
+      {/* Valanna & Call-In Section */}
+      <div className="border-t border-[#D4A843]/10 bg-gradient-to-r from-purple-900/20 to-[#0A0A0A]">
+        <div className="container mx-auto px-4 py-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="p-6 bg-[#111] border border-purple-500/20 rounded-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white font-bold text-sm">V</div>
+                <div>
+                  <h3 className="font-bold text-[#E8E0D0]">Valanna AI</h3>
+                  <p className="text-xs text-purple-400">QUMUS-Powered Voice Assistant</p>
+                </div>
+              </div>
+              <p className="text-sm text-[#E8E0D0]/60 mb-4">
+                Valanna guides your experience across the entire Canryn Production ecosystem — from RRB Radio to HybridCast emergency broadcasts. She speaks, she listens, she delivers.
+              </p>
+              <Button className="bg-purple-600 hover:bg-purple-500 text-white w-full" onClick={() => navigate('/flyer')}>
+                <FileText className="w-4 h-4 mr-2" /> Open Interactive Flyer
+              </Button>
+            </div>
+            <div className="p-6 bg-[#111] border border-[#D4A843]/20 rounded-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <Phone className="w-8 h-8 text-[#D4A843]" />
+                <div>
+                  <h3 className="font-bold text-[#E8E0D0]">Call-In Line</h3>
+                  <p className="text-xs text-[#D4A843]/70">Live Feedback & Interaction</p>
+                </div>
+              </div>
+              <p className="text-sm text-[#E8E0D0]/60 mb-4">
+                Join the conversation live during broadcasts. Share your story, ask questions, or send a shout-out to the community. Your voice matters.
+              </p>
+              <Button variant="outline" className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10 w-full" onClick={() => navigate('/live')}>
+                <Wifi className="w-4 h-4 mr-2" /> Join Live Broadcast
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Quick Links */}
       <div className="border-t border-[#D4A843]/10">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-wrap gap-3 justify-center">
             <Button className="bg-[#D4A843] text-[#0A0A0A] hover:bg-[#E8C860]" onClick={() => navigate('/live')}>
               <Radio className="w-4 h-4 mr-2" /> Live Stream
+            </Button>
+            <Button variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10" onClick={() => navigate('/flyer')}>
+              <Share2 className="w-4 h-4 mr-2" /> Interactive Flyer
             </Button>
             <Button variant="outline" className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10" onClick={() => navigate('/selma')}>
               <MapPin className="w-4 h-4 mr-2" /> Selma Event
@@ -288,7 +329,7 @@ export const RRBRadioIntegration: React.FC = () => {
             </Button>
           </div>
           <p className="text-center text-xs text-[#E8E0D0]/30 mt-6">
-            Payten Music (BMI) • Canryn Production • In Honor of Seabrun Candy Hunter
+            Payten Music (BMI) • Canryn Production • QUMUS Autonomous Engine • In Honor of Seabrun Candy Hunter
           </p>
         </div>
       </div>

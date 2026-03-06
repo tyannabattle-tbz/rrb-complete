@@ -2605,3 +2605,14 @@
 - [x] Expandable fullscreen view
 - [x] Valanna avatar with speaking animation (sound wave bars)
 - [x] Remove dash from Va-Lanna → Valanna across entire codebase
+## Flyer Enhancements + RRB Sync (Post-Reset Recovery)
+- [x] Add QR code to interactive flyer (scannable link to manuweb.sbs/flyer)
+- [x] Add email capture form with database backend (email_subscribers table)
+- [x] Add social sharing buttons (Twitter/X, Facebook, LinkedIn, WhatsApp)
+- [x] Add UN delegate sharing messaging
+- [x] Add flyer link buttons to Selma event page (both button groups)
+- [x] Add Valanna AI section to RRB Radio page
+- [x] Add call-in feature section to RRB Radio page
+- [x] Add Interactive Flyer cross-link to RRB Radio quick links
+- [x] Email subscription tRPC procedure (subscribe + count)
+- [x] Re-apply all changes lost during sandbox reset

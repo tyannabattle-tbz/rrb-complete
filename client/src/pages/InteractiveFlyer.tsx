@@ -3,11 +3,15 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { QRCodeSVG } from 'qrcode.react';
+import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
 import {
   Volume2, VolumeX, Globe, Maximize2, Minimize2, Printer,
   Share2, Radio, Shield, Heart, Music, Users, Zap, MapPin,
   ExternalLink, Eye, Ear, Languages, Sun, Moon, ChevronDown,
-  Play, Pause, SkipForward, RotateCcw
+  Play, Pause, SkipForward, RotateCcw, Mail, X, Send,
+  Twitter, Facebook, Linkedin, MessageCircle
 } from 'lucide-react';
 
 // ─── Multi-language content ───
@@ -772,6 +776,80 @@ export default function InteractiveFlyer() {
         </div>
       </section>
 
+      {/* ─── QR Code & Share Section ─── */}
+      <section className="container mx-auto px-4 py-6" aria-label="QR Code and Sharing">
+        <div className={`rounded-xl border p-6 ${highContrast ? 'bg-gray-900 border-yellow-400' : 'bg-gradient-to-r from-purple-900/30 via-slate-900/50 to-purple-900/30 border-purple-500/20'}`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* QR Code */}
+            <div className="text-center">
+              <h3 className={`text-lg font-bold mb-3 ${highContrast ? 'text-yellow-300' : 'text-purple-300'}`}>
+                Scan to Share This Flyer
+              </h3>
+              <div className="inline-block p-4 bg-white rounded-xl shadow-lg">
+                <QRCodeSVG
+                  value={typeof window !== 'undefined' ? window.location.href : 'https://manuweb.sbs/flyer'}
+                  size={180}
+                  level="H"
+                  includeMargin={false}
+                  fgColor="#1a1a2e"
+                  bgColor="#ffffff"
+                />
+              </div>
+              <p className={`text-xs mt-2 ${highContrast ? 'text-yellow-200' : 'text-gray-400'}`}>
+                Point your phone camera at this code
+              </p>
+            </div>
+
+            {/* Social Sharing */}
+            <div>
+              <h3 className={`text-lg font-bold mb-3 ${highContrast ? 'text-yellow-300' : 'text-purple-300'}`}>
+                Share Across Platforms
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { name: 'Twitter/X', icon: <Twitter className="w-4 h-4" />, color: 'bg-sky-600 hover:bg-sky-500', url: `https://twitter.com/intent/tweet?text=${encodeURIComponent('Check out the QUMUS Ecosystem — Canryn Production is showing the world what Black women-owned tech looks like! 🔥')}&url=${encodeURIComponent('https://manuweb.sbs/flyer')}` },
+                  { name: 'Facebook', icon: <Facebook className="w-4 h-4" />, color: 'bg-blue-700 hover:bg-blue-600', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://manuweb.sbs/flyer')}` },
+                  { name: 'LinkedIn', icon: <Linkedin className="w-4 h-4" />, color: 'bg-blue-800 hover:bg-blue-700', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://manuweb.sbs/flyer')}` },
+                  { name: 'WhatsApp', icon: <MessageCircle className="w-4 h-4" />, color: 'bg-green-600 hover:bg-green-500', url: `https://wa.me/?text=${encodeURIComponent('QUMUS Ecosystem Interactive Flyer — Canryn Production: https://manuweb.sbs/flyer')}` },
+                ].map((social) => (
+                  <Button
+                    key={social.name}
+                    className={`${social.color} text-white w-full justify-start`}
+                    size="sm"
+                    onClick={() => window.open(social.url, '_blank', 'width=600,height=400')}
+                    aria-label={`Share on ${social.name}`}
+                  >
+                    {social.icon}
+                    <span className="ml-2 text-xs">{social.name}</span>
+                  </Button>
+                ))}
+              </div>
+              <div className="mt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`w-full ${highContrast ? 'border-yellow-400 text-yellow-300' : 'border-purple-500/30 text-purple-300 hover:bg-purple-500/10'}`}
+                  onClick={() => {
+                    const url = 'https://manuweb.sbs/flyer';
+                    navigator.clipboard.writeText(url).then(() => toast.success('Link copied to clipboard!'));
+                  }}
+                >
+                  <Share2 className="w-4 h-4 mr-2" /> Copy Link
+                </Button>
+              </div>
+              <p className={`text-xs mt-3 text-center ${highContrast ? 'text-yellow-200' : 'text-gray-500'}`}>
+                Share with UN delegates, community leaders, and supporters worldwide
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Email Capture ─── */}
+      <section className="container mx-auto px-4 py-4" aria-label="Email Subscription">
+        <EmailCaptureSection highContrast={highContrast} lang={lang} />
+      </section>
+
       {/* ─── Donate CTA ─── */}
       <section className="container mx-auto px-4 py-4" aria-label="Donate">
         <div className={`rounded-xl border p-6 text-center ${highContrast ? 'bg-gray-900 border-yellow-400' : 'bg-gradient-to-r from-green-900/40 via-emerald-900/30 to-green-900/40 border-green-500/30'}`}>
@@ -820,6 +898,83 @@ export default function InteractiveFlyer() {
           * { color: black !important; background: white !important; border-color: #333 !important; }
         }
       `}</style>
+    </div>
+  );
+}
+
+// ─── Email Capture Component ───
+function EmailCaptureSection({ highContrast, lang }: { highContrast: boolean; lang: string }) {
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const subscribeMutation = trpc.emailSubscription.subscribe.useMutation({
+    onSuccess: () => {
+      setSubmitted(true);
+      toast.success('Welcome to the movement! You\'re subscribed.');
+    },
+    onError: () => {
+      toast.error('Something went wrong. Please try again.');
+    },
+  });
+
+  if (submitted) {
+    return (
+      <div className={`rounded-xl border p-6 text-center ${highContrast ? 'bg-gray-900 border-yellow-400' : 'bg-gradient-to-r from-emerald-900/30 via-green-900/20 to-emerald-900/30 border-green-500/20'}`}>
+        <div className="text-3xl mb-2">\u2714\uFE0F</div>
+        <h3 className={`text-lg font-bold ${highContrast ? 'text-yellow-300' : 'text-green-300'}`}>You're In!</h3>
+        <p className={`text-sm ${highContrast ? 'text-yellow-200' : 'text-gray-400'}`}>Campaign updates and platform announcements are on the way.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`rounded-xl border p-6 ${highContrast ? 'bg-gray-900 border-yellow-400' : 'bg-gradient-to-r from-amber-900/20 via-slate-900/40 to-amber-900/20 border-amber-500/20'}`}>
+      <div className="text-center mb-4">
+        <Mail className={`w-8 h-8 mx-auto mb-2 ${highContrast ? 'text-yellow-400' : 'text-amber-400'}`} />
+        <h3 className={`text-lg font-bold ${highContrast ? 'text-yellow-300' : 'text-amber-300'}`}>
+          Stay Connected
+        </h3>
+        <p className={`text-sm ${highContrast ? 'text-yellow-200' : 'text-gray-400'}`}>
+          Get campaign updates, event announcements, and platform news
+        </p>
+      </div>
+      <form
+        className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!email) return;
+          subscribeMutation.mutate({ email, name: name || undefined, source: 'flyer', language: lang });
+        }}
+      >
+        <input
+          type="text"
+          placeholder="Your name (optional)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className={`flex-1 px-4 py-2 rounded-lg text-sm ${highContrast ? 'bg-black border-yellow-400 text-yellow-300 placeholder:text-yellow-600' : 'bg-slate-800 border-purple-500/30 text-white placeholder:text-gray-500'} border focus:outline-none focus:ring-2 focus:ring-amber-500/50`}
+          aria-label="Your name"
+        />
+        <input
+          type="email"
+          placeholder="your@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className={`flex-1 px-4 py-2 rounded-lg text-sm ${highContrast ? 'bg-black border-yellow-400 text-yellow-300 placeholder:text-yellow-600' : 'bg-slate-800 border-purple-500/30 text-white placeholder:text-gray-500'} border focus:outline-none focus:ring-2 focus:ring-amber-500/50`}
+          aria-label="Email address"
+        />
+        <Button
+          type="submit"
+          disabled={subscribeMutation.isPending}
+          className={highContrast ? 'bg-yellow-500 text-black hover:bg-yellow-400' : 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700'}
+        >
+          <Send className="w-4 h-4 mr-1" />
+          {subscribeMutation.isPending ? 'Joining...' : 'Join'}
+        </Button>
+      </form>
+      <p className={`text-xs text-center mt-3 ${highContrast ? 'text-yellow-200/60' : 'text-gray-500'}`}>
+        No spam. Unsubscribe anytime. Your data stays with us.
+      </p>
     </div>
   );
 }

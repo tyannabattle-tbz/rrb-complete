@@ -37,9 +37,9 @@ var init_const = __esm({
 });
 
 // drizzle/schema.ts
-import { mysqlTable, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index } from "drizzle-orm/mysql-core";
+import { mysqlTable, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index, boolean } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog, contentCalendarPosts, bulkScheduleTemplates, platformEngagementMetrics, analyticsSummary, customStations, stationTemplates, stationContentSources, stationPlaybackHistory, userStationPreferences, stationSharing, stationAnalytics;
+var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog, contentCalendarPosts, bulkScheduleTemplates, platformEngagementMetrics, analyticsSummary, customStations, stationTemplates, stationContentSources, stationPlaybackHistory, userStationPreferences, stationSharing, stationAnalytics, emailSubscribers;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
     activityLogs = mysqlTable("activity_logs", {
@@ -1745,6 +1745,15 @@ var init_schema = __esm({
       uniqueUsers: int("unique_users").default(0),
       createdAt: timestamp("created_at").defaultNow()
     });
+    emailSubscribers = mysqlTable("email_subscribers", {
+      id: int("id").autoincrement().primaryKey(),
+      email: varchar("email", { length: 255 }).notNull().unique(),
+      name: varchar("name", { length: 255 }),
+      source: varchar("source", { length: 100 }).default("flyer"),
+      language: varchar("language", { length: 10 }).default("en"),
+      subscribedAt: timestamp("subscribed_at").defaultNow(),
+      isActive: boolean("is_active").default(true)
+    });
   }
 });
 
@@ -2085,6 +2094,7 @@ __export(db_exports, {
   getSessionTasks: () => getSessionTasks,
   getSessionToolExecutions: () => getSessionToolExecutions,
   getSnapshots: () => getSnapshots,
+  getSubscriberCount: () => getSubscriberCount,
   getSystemAlerts: () => getSystemAlerts,
   getSystemMetricsHistory: () => getSystemMetricsHistory,
   getTemplateInstallations: () => getTemplateInstallations,
@@ -2113,6 +2123,7 @@ __export(db_exports, {
   saveApiKey: () => saveApiKey,
   setFeatureFlag: () => setFeatureFlag,
   storeMemory: () => storeMemory,
+  subscribeEmail: () => subscribeEmail,
   updateAgentSession: () => updateAgentSession,
   updateFinetuningDataset: () => updateFinetuningDataset,
   updateFinetuningJob: () => updateFinetuningJob,
@@ -3019,6 +3030,28 @@ async function generateVideoFromDescription(params2) {
       error: String(error)
     };
   }
+}
+async function subscribeEmail(email, name, source, language) {
+  const db2 = getDb();
+  try {
+    await db2.insert(emailSubscribers).values({
+      email: email.toLowerCase().trim(),
+      name: name || null,
+      source: source || "flyer",
+      language: language || "en"
+    });
+    return { success: true };
+  } catch (error) {
+    if (error?.code === "ER_DUP_ENTRY") {
+      return { success: true, message: "Already subscribed" };
+    }
+    throw error;
+  }
+}
+async function getSubscriberCount() {
+  const db2 = getDb();
+  const result2 = await db2.select({ count: count() }).from(emailSubscribers).where(eq2(emailSubscribers.isActive, true));
+  return result2[0]?.count || 0;
 }
 var _db;
 var init_db = __esm({
@@ -30956,6 +30989,20 @@ var appRouter = router({
       dateRange: z79.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
+    })
+  }),
+  // Email subscription for flyer and campaign updates
+  emailSubscription: router({
+    subscribe: publicProcedure.input(z79.object({
+      email: z79.string().email(),
+      name: z79.string().optional(),
+      source: z79.string().optional(),
+      language: z79.string().optional()
+    })).mutation(async ({ input }) => {
+      return subscribeEmail(input.email, input.name, input.source, input.language);
+    }),
+    count: publicProcedure.query(async () => {
+      return getSubscriberCount();
     })
   })
 });
