@@ -2686,3 +2686,17 @@
 - [x] Activate bots on LaShanna's page (social media, engagement, promotional)
 - [x] Complete remaining ecosystem code package files (CROSS_COMMUNICATION_API.md, SHARE_ECOSYSTEM_CODE.md, deploy-ecosystem.sh)
 - [x] Push all updates to GitHub + production
+
+## Growth Infrastructure — March 6 2026
+- [x] Create reusable FamilyMemberPage component for scalable family member pages
+- [x] Create Carlos Kembrel page (Little C) with accomplishments, commercials, bots
+- [x] Create Sean Hunter page (Sean's Music) with accomplishments, commercials, bots
+- [x] Create Tyanna Battle page (Anna's Promotions) with accomplishments, commercials, bots
+- [x] Create Jaelon Hunter page (Jaelon Enterprises) with accomplishments, commercials, bots
+- [x] Generate audio commercials for all family members (5 CDN-hosted WAV files)
+- [x] Build scalable bot registry infrastructure (ecosystem-registry.ts)
+- [x] Build commercial engine for automated ad rotation (commercial-audio.ts)
+- [x] Build growth dashboard for tracking ecosystem expansion (getEcosystemStats)
+- [x] Wire all family member routes in App.tsx (/carlos, /sean, /tyanna, /jaelon)
+- [x] Add family member links to Home page subsidiary cards
+- [x] Push all updates to GitHub + production

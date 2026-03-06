@@ -159,6 +159,10 @@ import WordFrequencyGame from '@/pages/WordFrequencyGame';
 import FrequencyMatchGame from '@/pages/FrequencyMatchGame';
 import RhythmRootsGame from '@/pages/RhythmRootsGame';
 import LaShanna from '@/pages/LaShanna';
+import Carlos from '@/pages/Carlos';
+import Sean from '@/pages/Sean';
+import Tyanna from '@/pages/Tyanna';
+import Jaelon from '@/pages/Jaelon';
 import { EventBanners } from '@/components/EventBanners';
 import ValannaVoiceAssistant from '@/components/ValannaVoiceAssistant';
 
@@ -309,6 +313,10 @@ function Router() {
       <Route path="/games/frequency-match" component={FrequencyMatchGame} />
       <Route path="/games/rhythm-roots" component={RhythmRootsGame} />
       <Route path="/lashanna" component={LaShanna} />
+      <Route path="/carlos" component={Carlos} />
+      <Route path="/sean" component={Sean} />
+      <Route path="/tyanna" component={Tyanna} />
+      <Route path="/jaelon" component={Jaelon} />
       <Route component={NotFound} />
     </Switch>
     </>
