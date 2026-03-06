@@ -154,7 +154,7 @@ const ACCOMPLISHMENTS: Accomplishment[] = [
 
 const MEMBER_DATA: FamilyMemberData = {
   name: 'Tyanna Battle',
-  title: 'Brand Strategist — Event Producer — Community Leader',
+  title: 'U.S. Navy Veteran — Civil Rights Advocate — App Developer — Founder',
   subtitle: "Co-Director, Anna's Promotions | SQUADD Coalition | Canryn Production",
   parentOrg: "Canryn Production — Anna's Promotions",
   accentColor: 'rose',

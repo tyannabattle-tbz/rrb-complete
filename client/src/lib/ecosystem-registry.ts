@@ -61,7 +61,7 @@ export const FAMILY_MEMBERS: FamilyMemberEntry[] = [
     name: 'Tyanna Battle',
     route: '/tyanna',
     subsidiary: "Anna's Promotions",
-    role: 'Brand Strategist',
+    role: 'U.S. Navy Veteran | App Developer | Founder',
     accentColor: 'rose',
     botCount: 5,
     commercialCount: 5,
