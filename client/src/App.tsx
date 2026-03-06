@@ -241,7 +241,7 @@ function Router() {
       <Route path="/admin-decisions" component={AdminDecisionDashboard} />
       <Route path="/autonomous-dashboard" component={AutonomousDashboardPage} />
       <Route path="/monitoring" component={PlatformMonitoringDashboard} />
-      <Route path="/studio" component={Studio} />
+      <Route path="/studio-controls" component={Studio} />
       <Route path="/podcast" component={PodcastPlayer} />
       <Route path="/podcast-discovery" component={PodcastDiscovery} />
       <Route path="/donate" component={DonationCheckout} />
@@ -276,23 +276,16 @@ function Router() {
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
       <Route path="/qumus" component={QumusPort3000} />
       <Route path="/rrb" component={RRBPort3001} />
-      <Route path="/solbones" component={Solbones} />
-      <Route path="/donate" component={SweetMiraclesDonation} />
       <Route path="/legacy" component={RRBLegacySite} />
       <Route path="/ecosystem-dashboard" component={EcosystemMasterDashboard} />
       <Route path="/admin" component={AdminControlPanel} />
       <Route path="/emergency" component={HybridCastPort3002} />
       <Route path="/rrb/broadcast" component={RRBDashboard} />
-      <Route path="/rrb/donations" component={RRBDashboard} />
-      <Route path="/rrb/listeners" component={RRBListenerAnalytics} />
-      <Route path="/rrb/analytics" component={RRBListenerAnalytics} />
-      <Route path="/rrb/listeners" component={RRBDashboard} />
-      <Route path="/rrb/analytics" component={RRBDashboard} />
-      <Route path="/rrb/broadcast-manager" component={RRBBroadcastManager} />
-      <Route path="/rrb/sweet-miracles" component={SweetMiraclesManager} />
       <Route path="/rrb/donations" component={SweetMiraclesManager} />
       <Route path="/rrb/listeners" component={RRBListenerAnalytics} />
       <Route path="/rrb/analytics" component={RRBListenerAnalytics} />
+      <Route path="/rrb/broadcast-manager" component={RRBBroadcastManager} />
+      <Route path="/rrb/sweet-miracles" component={SweetMiraclesManager} />
       <Route path="/growth-campaigns" component={GrowthCampaigns} />
       <Route path="/community-forums" component={CommunityForums} />
       <Route path="/emergency-drills" component={EmergencyDrills} />

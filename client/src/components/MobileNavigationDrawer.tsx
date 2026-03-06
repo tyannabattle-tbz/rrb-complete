@@ -28,7 +28,8 @@ export function MobileNavigationDrawer() {
 
   const rrbNavItems: NavItem[] = [
     { label: 'Home', icon: Home, path: '/', section: 'rrb' },
-    { label: 'Radio Station', icon: Radio, path: '/radio-station', section: 'rrb' },
+    { label: 'RRB Radio', icon: Radio, path: '/rrb-radio', section: 'rrb' },
+    { label: 'Live Stream', icon: Globe, path: '/live', section: 'rrb' },
     { label: 'Music Library', icon: Music, path: '/music', section: 'rrb' },
     { label: 'Podcasts', icon: Mic, path: '/podcasts', section: 'rrb' },
     { label: 'Solbones Game', icon: Zap, path: '/solbones', section: 'rrb' },

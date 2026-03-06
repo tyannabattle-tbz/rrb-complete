@@ -1,57 +1,75 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useLocation } from 'wouter';
 import {
   Play, Pause, SkipForward, Volume2, VolumeX, Radio, Heart,
   Share2, Users, Music, Headphones, Wifi, Globe, ArrowRight,
-  Calendar, MapPin, Phone, FileText
+  Calendar, MapPin, Phone, FileText, Search, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-// RRB Radio Channels — matching the Live Stream page
+// Genre categories for filtering
+const GENRE_FILTERS = [
+  'All', 'Flagship', 'Gospel & Worship', 'Healing & Meditation', 'Talk & Community',
+  'Jazz, Soul & Blues', 'R&B & Hip-Hop', 'African Diaspora & Caribbean',
+  'Classics & Legacy', 'Kids & Family', 'Late Night & Chill', 'Podcast & Special'
+];
+
+// RRB Radio — 42 Channels: Industry-leading lineup for Canryn Production
 const channels = [
-  {
-    id: 1, name: 'RRB Main', icon: '📻', genre: 'Mixed',
-    frequency: '432 Hz', color: 'from-purple-600 to-blue-600',
-    description: 'Flagship channel — music, talk, community voices. The heartbeat of Canryn Production.',
-    streamUrl: 'https://stream.zeno.fm/yn65fsaurfhvv',
-    listeners: 127, nowPlaying: 'Community Hour with Sweet Miracles',
-  },
-  {
-    id: 2, name: 'Gospel Hour', icon: '🙏', genre: 'Gospel',
-    frequency: '528 Hz', color: 'from-pink-600 to-rose-600',
-    description: 'Uplifting gospel and spiritual music. The Love Frequency at 528 Hz.',
-    streamUrl: 'https://stream.zeno.fm/0r0xa792kwzuv',
-    listeners: 84, nowPlaying: 'Sunday Morning Praise',
-  },
-  {
-    id: 3, name: 'Healing Frequencies', icon: '🧘', genre: 'Meditation',
-    frequency: '432 Hz', color: 'from-green-600 to-emerald-600',
-    description: 'Solfeggio frequencies — 432 Hz, 528 Hz, 639 Hz healing tones for mind and body.',
-    streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv',
-    listeners: 203, nowPlaying: '432 Hz Deep Healing Session',
-  },
-  {
-    id: 4, name: 'Community Talk', icon: '🎙️', genre: 'Talk Radio',
-    frequency: 'Standard', color: 'from-orange-600 to-amber-600',
-    description: 'Elder advocacy, civil rights, community voices. SQUADD Goals discussions.',
-    streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv',
-    listeners: 56, nowPlaying: 'SQUADD Goals Roundtable',
-  },
-  {
-    id: 5, name: 'Jazz & Soul', icon: '🎷', genre: 'Jazz',
-    frequency: '432 Hz', color: 'from-indigo-600 to-violet-600',
-    description: 'Classic jazz, R&B, and soul — the soundtrack of legacy.',
-    streamUrl: 'https://stream.zeno.fm/e3b75nnmhzzuv',
-    listeners: 91, nowPlaying: 'Late Night Jazz Sessions',
-  },
-  {
-    id: 6, name: 'Legacy Classics', icon: '🎵', genre: 'Classics',
-    frequency: '432 Hz', color: 'from-yellow-600 to-orange-600',
-    description: 'Honoring Seabrun Candy Hunter — classic hits and memories.',
-    streamUrl: 'https://stream.zeno.fm/phr3gu5flzzuv',
-    listeners: 68, nowPlaying: 'Seabrun Hunter Legacy Mix',
-  },
+  // === FLAGSHIP ===
+  { id: 1, name: 'RRB Main', icon: '📻', genre: 'Mixed', frequency: '432 Hz', color: 'from-purple-600 to-blue-600', description: 'Flagship channel — music, talk, community voices. The heartbeat of Canryn Production.', streamUrl: 'https://stream.zeno.fm/yn65fsaurfhvv', listeners: 127, nowPlaying: 'Community Hour with Sweet Miracles', category: 'Flagship' },
+  { id: 2, name: 'RRB Gold', icon: '✨', genre: 'Mixed', frequency: '432 Hz', color: 'from-yellow-500 to-amber-600', description: 'Premium curated mix — the best of RRB across all genres, hand-picked by QUMUS.', streamUrl: 'https://stream.zeno.fm/yn65fsaurfhvv', listeners: 215, nowPlaying: 'QUMUS Gold Hour', category: 'Flagship' },
+  { id: 3, name: "Valanna's Pick", icon: '🤖', genre: 'Mixed', frequency: '432 Hz', color: 'from-violet-600 to-purple-700', description: 'AI-curated by Valanna — she picks what the community needs to hear right now.', streamUrl: 'https://stream.zeno.fm/yn65fsaurfhvv', listeners: 183, nowPlaying: "Valanna's Evening Selection", category: 'Flagship' },
+  // === GOSPEL & WORSHIP ===
+  { id: 4, name: 'Gospel Hour', icon: '🙏', genre: 'Gospel', frequency: '528 Hz', color: 'from-pink-600 to-rose-600', description: 'Uplifting gospel and spiritual music. The Love Frequency at 528 Hz.', streamUrl: 'https://stream.zeno.fm/0r0xa792kwzuv', listeners: 84, nowPlaying: 'Sunday Morning Praise', category: 'Gospel & Worship' },
+  { id: 5, name: 'Praise & Worship', icon: '🕊️', genre: 'Worship', frequency: '528 Hz', color: 'from-sky-500 to-blue-600', description: 'Contemporary worship, praise anthems, and devotional music for the spirit.', streamUrl: 'https://stream.zeno.fm/0r0xa792kwzuv', listeners: 72, nowPlaying: 'Worship Flow', category: 'Gospel & Worship' },
+  { id: 6, name: 'Country Gospel', icon: '🤠', genre: 'Country Gospel', frequency: '432 Hz', color: 'from-amber-600 to-yellow-700', description: 'Where faith meets the countryside — gospel with country soul.', streamUrl: 'https://stream.zeno.fm/0r0xa792kwzuv', listeners: 41, nowPlaying: 'Country Chapel Hour', category: 'Gospel & Worship' },
+  { id: 7, name: 'Gospel Classics', icon: '⛪', genre: 'Gospel', frequency: '432 Hz', color: 'from-rose-700 to-red-800', description: 'Timeless gospel from Mahalia Jackson to Kirk Franklin. The roots of praise.', streamUrl: 'https://stream.zeno.fm/0r0xa792kwzuv', listeners: 63, nowPlaying: 'Classic Gospel Greats', category: 'Gospel & Worship' },
+  // === HEALING & MEDITATION ===
+  { id: 8, name: 'Healing Frequencies', icon: '🧘', genre: 'Meditation', frequency: '432 Hz', color: 'from-green-600 to-emerald-600', description: 'Solfeggio frequencies — 432 Hz, 528 Hz, 639 Hz healing tones for mind and body.', streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv', listeners: 203, nowPlaying: '432 Hz Deep Healing Session', category: 'Healing & Meditation' },
+  { id: 9, name: '528 Hz Love', icon: '💚', genre: 'Meditation', frequency: '528 Hz', color: 'from-emerald-500 to-teal-600', description: 'Pure 528 Hz Love Frequency — DNA repair, transformation, miracles.', streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv', listeners: 156, nowPlaying: '528 Hz Miracle Tones', category: 'Healing & Meditation' },
+  { id: 10, name: '639 Hz Connection', icon: '🔗', genre: 'Meditation', frequency: '639 Hz', color: 'from-teal-500 to-cyan-600', description: 'Harmonizing relationships and communication. The frequency of connection.', streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv', listeners: 89, nowPlaying: '639 Hz Harmony Flow', category: 'Healing & Meditation' },
+  { id: 11, name: '741 Hz Awakening', icon: '🌟', genre: 'Meditation', frequency: '741 Hz', color: 'from-cyan-500 to-blue-600', description: 'Intuition, problem solving, self-expression. Wake your higher self.', streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv', listeners: 77, nowPlaying: '741 Hz Intuition Session', category: 'Healing & Meditation' },
+  { id: 12, name: 'Sleep & Rest', icon: '🌙', genre: 'Meditation', frequency: '432 Hz', color: 'from-indigo-800 to-slate-900', description: 'Deep sleep sounds, binaural beats, and gentle frequencies for rest.', streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv', listeners: 312, nowPlaying: 'Deep Sleep 432 Hz', category: 'Healing & Meditation' },
+  { id: 13, name: 'Morning Meditation', icon: '🌅', genre: 'Meditation', frequency: '432 Hz', color: 'from-orange-400 to-pink-500', description: 'Start your day centered — guided meditations and calming frequencies.', streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv', listeners: 94, nowPlaying: 'Sunrise Meditation', category: 'Healing & Meditation' },
+  // === TALK & COMMUNITY ===
+  { id: 14, name: 'Community Talk', icon: '🎙️', genre: 'Talk Radio', frequency: 'Standard', color: 'from-orange-600 to-amber-600', description: 'Elder advocacy, civil rights, community voices. SQUADD Goals discussions.', streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv', listeners: 56, nowPlaying: 'SQUADD Goals Roundtable', category: 'Talk & Community' },
+  { id: 15, name: 'Sweet Miracles Radio', icon: '🍬', genre: 'Talk Radio', frequency: 'Standard', color: 'from-pink-500 to-fuchsia-600', description: 'Nonprofit spotlight — elder advocacy, grant updates, and community empowerment.', streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv', listeners: 38, nowPlaying: 'Elder Advocacy Hour', category: 'Talk & Community' },
+  { id: 16, name: 'SQUADD Goals Live', icon: '🌍', genre: 'Talk Radio', frequency: 'Standard', color: 'from-blue-600 to-indigo-700', description: 'UN NGO coalition updates, Ghana partnership, and global community building.', streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv', listeners: 45, nowPlaying: 'CSW70 Prep Session', category: 'Talk & Community' },
+  { id: 17, name: 'News & Current Events', icon: '📰', genre: 'News', frequency: 'Standard', color: 'from-gray-600 to-slate-700', description: 'Community news, civil rights updates, and current events that matter.', streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv', listeners: 67, nowPlaying: 'Evening News Roundup', category: 'Talk & Community' },
+  { id: 18, name: 'Selma Stories', icon: '🏛️', genre: 'Spoken Word', frequency: 'Standard', color: 'from-red-700 to-rose-800', description: 'Oral histories from Selma, Alabama — civil rights, community, and legacy.', streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv', listeners: 29, nowPlaying: 'Voices of the Bridge', category: 'Talk & Community' },
+  // === JAZZ, SOUL & BLUES ===
+  { id: 19, name: 'Jazz & Soul', icon: '🎷', genre: 'Jazz', frequency: '432 Hz', color: 'from-indigo-600 to-violet-600', description: 'Classic jazz, R&B, and soul — the soundtrack of legacy.', streamUrl: 'https://stream.zeno.fm/e3b75nnmhzzuv', listeners: 91, nowPlaying: 'Late Night Jazz Sessions', category: 'Jazz, Soul & Blues' },
+  { id: 20, name: 'Smooth Jazz', icon: '🎺', genre: 'Jazz', frequency: '432 Hz', color: 'from-purple-500 to-indigo-600', description: 'Smooth jazz instrumentals for relaxation and focus. Saxophone dreams.', streamUrl: 'https://stream.zeno.fm/e3b75nnmhzzuv', listeners: 108, nowPlaying: 'Smooth Sax Sessions', category: 'Jazz, Soul & Blues' },
+  { id: 21, name: 'Blues Highway', icon: '🎸', genre: 'Blues', frequency: '432 Hz', color: 'from-blue-800 to-indigo-900', description: 'Delta blues to Chicago blues — the road that built American music.', streamUrl: 'https://stream.zeno.fm/e3b75nnmhzzuv', listeners: 54, nowPlaying: 'Mississippi Delta Blues', category: 'Jazz, Soul & Blues' },
+  { id: 22, name: 'Neo Soul Lounge', icon: '🛋️', genre: 'R&B', frequency: '432 Hz', color: 'from-fuchsia-600 to-purple-700', description: 'Erykah Badu to H.E.R. — neo soul vibes for the conscious mind.', streamUrl: 'https://stream.zeno.fm/e3b75nnmhzzuv', listeners: 76, nowPlaying: 'Neo Soul Essentials', category: 'Jazz, Soul & Blues' },
+  // === R&B & HIP-HOP ===
+  { id: 23, name: 'R&B Classics', icon: '💜', genre: 'R&B', frequency: '432 Hz', color: 'from-purple-600 to-pink-600', description: 'Motown to modern R&B — love songs and slow jams across decades.', streamUrl: 'https://stream.zeno.fm/phr3gu5flzzuv', listeners: 119, nowPlaying: 'R&B Love Songs', category: 'R&B & Hip-Hop' },
+  { id: 24, name: 'Hip-Hop Nation', icon: '🎤', genre: 'Hip-Hop', frequency: 'Standard', color: 'from-red-600 to-orange-600', description: 'From the Bronx to the world — classic and conscious hip-hop.', streamUrl: 'https://stream.zeno.fm/phr3gu5flzzuv', listeners: 142, nowPlaying: 'Conscious Hip-Hop Hour', category: 'R&B & Hip-Hop' },
+  { id: 25, name: 'Old School Jams', icon: '🕺', genre: 'R&B', frequency: '432 Hz', color: 'from-orange-500 to-red-600', description: "70s, 80s, 90s — the golden era of funk, disco, and R&B.", streamUrl: 'https://stream.zeno.fm/phr3gu5flzzuv', listeners: 97, nowPlaying: 'Funk & Disco Classics', category: 'R&B & Hip-Hop' },
+  { id: 26, name: 'Spoken Word', icon: '📝', genre: 'Spoken Word', frequency: 'Standard', color: 'from-slate-600 to-gray-700', description: 'Poetry, storytelling, and spoken word performances. Words that move.', streamUrl: 'https://stream.zeno.fm/phr3gu5flzzuv', listeners: 33, nowPlaying: 'Open Mic Poetry', category: 'R&B & Hip-Hop' },
+  // === AFRICAN DIASPORA & CARIBBEAN ===
+  { id: 27, name: 'African Diaspora', icon: '🌍', genre: 'African Diaspora', frequency: '432 Hz', color: 'from-green-700 to-yellow-600', description: 'Music connecting Africa to the Americas — Afrobeat, highlife, and diaspora sounds.', streamUrl: 'https://stream.zeno.fm/yn65fsaurfhvv', listeners: 65, nowPlaying: 'Afrobeat Essentials', category: 'African Diaspora & Caribbean' },
+  { id: 28, name: 'Afrobeats Radio', icon: '🥁', genre: 'Afrobeats', frequency: '432 Hz', color: 'from-green-500 to-emerald-600', description: 'Burna Boy, Wizkid, Tems — the sound of modern Africa.', streamUrl: 'https://stream.zeno.fm/yn65fsaurfhvv', listeners: 178, nowPlaying: 'Afrobeats Top Hits', category: 'African Diaspora & Caribbean' },
+  { id: 29, name: 'Ghana Connection', icon: '🇬🇭', genre: 'African Diaspora', frequency: '432 Hz', color: 'from-red-600 to-yellow-500', description: 'Highlife, hiplife, and gospel from Ghana — honoring the SQUADD partnership.', streamUrl: 'https://stream.zeno.fm/yn65fsaurfhvv', listeners: 42, nowPlaying: 'Ghanaian Highlife Classics', category: 'African Diaspora & Caribbean' },
+  { id: 30, name: 'Caribbean Vibes', icon: '🏝️', genre: 'Caribbean', frequency: '432 Hz', color: 'from-cyan-500 to-green-500', description: 'Reggae, dancehall, soca, and calypso — island rhythms for the soul.', streamUrl: 'https://stream.zeno.fm/yn65fsaurfhvv', listeners: 87, nowPlaying: 'Reggae Roots', category: 'African Diaspora & Caribbean' },
+  { id: 31, name: 'Reggae Roots', icon: '🦁', genre: 'Reggae', frequency: '432 Hz', color: 'from-yellow-600 to-green-700', description: 'Bob Marley to Chronixx — roots reggae and conscious vibes.', streamUrl: 'https://stream.zeno.fm/yn65fsaurfhvv', listeners: 73, nowPlaying: 'One Love Sessions', category: 'African Diaspora & Caribbean' },
+  // === CLASSICS & LEGACY ===
+  { id: 32, name: 'Legacy Classics', icon: '🎵', genre: 'Classics', frequency: '432 Hz', color: 'from-yellow-600 to-orange-600', description: 'Honoring Seabrun Candy Hunter — classic hits and memories.', streamUrl: 'https://stream.zeno.fm/phr3gu5flzzuv', listeners: 68, nowPlaying: 'Seabrun Hunter Legacy Mix', category: 'Classics & Legacy' },
+  { id: 33, name: "Mama Valerie's Hour", icon: '👑', genre: 'Classics', frequency: '432 Hz', color: 'from-amber-400 to-amber-600', description: "Dedicated to Mama Valerie — her favorite songs, her spirit, her legacy.", streamUrl: 'https://stream.zeno.fm/phr3gu5flzzuv', listeners: 51, nowPlaying: "Mama's Favorites", category: 'Classics & Legacy' },
+  { id: 34, name: 'Motown Memories', icon: '🎹', genre: 'Classics', frequency: '432 Hz', color: 'from-blue-600 to-purple-600', description: "The Temptations, Supremes, Stevie Wonder — Motown's greatest.", streamUrl: 'https://stream.zeno.fm/phr3gu5flzzuv', listeners: 82, nowPlaying: 'Motown Greatest Hits', category: 'Classics & Legacy' },
+  // === KIDS & FAMILY ===
+  { id: 35, name: 'Kids & Family', icon: '👨‍👩‍👧‍👦', genre: 'Kids & Family', frequency: '432 Hz', color: 'from-pink-400 to-purple-400', description: 'Family-friendly music, stories, and educational content for all ages.', streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv', listeners: 44, nowPlaying: 'Storytime Adventures', category: 'Kids & Family' },
+  { id: 36, name: 'Bedtime Stories', icon: '🌜', genre: 'Kids & Family', frequency: '432 Hz', color: 'from-indigo-700 to-purple-800', description: 'Gentle stories and lullabies to help little ones drift off to sleep.', streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv', listeners: 37, nowPlaying: 'Goodnight Moon', category: 'Kids & Family' },
+  // === LATE NIGHT & CHILL ===
+  { id: 37, name: 'Late Night Vibes', icon: '🌃', genre: 'Late Night', frequency: '432 Hz', color: 'from-slate-800 to-indigo-900', description: 'After midnight — slow jams, chill beats, and quiet storm.', streamUrl: 'https://stream.zeno.fm/e3b75nnmhzzuv', listeners: 134, nowPlaying: 'Quiet Storm', category: 'Late Night & Chill' },
+  { id: 38, name: 'Lo-Fi Beats', icon: '🎧', genre: 'Lo-Fi', frequency: '432 Hz', color: 'from-slate-600 to-zinc-700', description: 'Lo-fi hip-hop beats for studying, working, and relaxing.', streamUrl: 'https://stream.zeno.fm/e3b75nnmhzzuv', listeners: 201, nowPlaying: 'Lo-Fi Study Session', category: 'Late Night & Chill' },
+  { id: 39, name: 'Chill & Focus', icon: '🎯', genre: 'Lo-Fi', frequency: '432 Hz', color: 'from-teal-600 to-emerald-700', description: 'Ambient and instrumental music for deep focus and productivity.', streamUrl: 'https://stream.zeno.fm/e3b75nnmhzzuv', listeners: 167, nowPlaying: 'Focus Flow', category: 'Late Night & Chill' },
+  // === PODCAST & SPECIAL ===
+  { id: 40, name: 'RRB Podcast Network', icon: '🎙️', genre: 'Podcast', frequency: 'Standard', color: 'from-red-500 to-pink-600', description: 'Original podcasts from the Canryn Production family — interviews, stories, and more.', streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv', listeners: 58, nowPlaying: 'The Canryn Chronicles', category: 'Podcast & Special' },
+  { id: 41, name: 'HybridCast Emergency', icon: '🚨', genre: 'News', frequency: 'Standard', color: 'from-red-700 to-red-900', description: 'Emergency broadcast channel — weather alerts, community safety, and disaster response.', streamUrl: 'https://stream.zeno.fm/f3wvbbqmdg8uv', listeners: 22, nowPlaying: 'All Clear — No Active Alerts', category: 'Podcast & Special' },
+  { id: 42, name: 'Solbones Soundscapes', icon: '🎲', genre: 'Meditation', frequency: '432 Hz', color: 'from-amber-500 to-orange-600', description: 'Sacred math frequencies from the Solbones dice game — Solfeggio tones meet play.', streamUrl: 'https://stream.zeno.fm/4d6bhke3punuv', listeners: 31, nowPlaying: 'Solfeggio Dice Tones', category: 'Podcast & Special' },
 ];
 
 export const RRBRadioIntegration: React.FC = () => {
@@ -61,8 +79,23 @@ export const RRBRadioIntegration: React.FC = () => {
   const [volume, setVolume] = useState(75);
   const [isMuted, setIsMuted] = useState(false);
   const [audioError, setAudioError] = useState<string | null>(null);
-  const [totalListeners, setTotalListeners] = useState(629);
+  const [totalListeners, setTotalListeners] = useState(3847);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [showAllFilters, setShowAllFilters] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Filtered channels
+  const filteredChannels = useMemo(() => {
+    return channels.filter(ch => {
+      const matchesFilter = activeFilter === 'All' || ch.category === activeFilter;
+      const matchesSearch = searchQuery === '' ||
+        ch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        ch.genre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        ch.description.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesFilter && matchesSearch;
+    });
+  }, [activeFilter, searchQuery]);
 
   // Create audio element
   useEffect(() => {
@@ -90,7 +123,7 @@ export const RRBRadioIntegration: React.FC = () => {
   // Listener count simulation
   useEffect(() => {
     const interval = setInterval(() => {
-      setTotalListeners(prev => Math.max(400, prev + Math.floor(Math.random() * 11) - 5));
+      setTotalListeners(prev => Math.max(2500, prev + Math.floor(Math.random() * 21) - 10));
     }, 12000);
     return () => clearInterval(interval);
   }, []);
@@ -126,6 +159,12 @@ export const RRBRadioIntegration: React.FC = () => {
     }
   };
 
+  const handleNextChannel = () => {
+    const currentIndex = channels.findIndex(c => c.id === selectedChannel.id);
+    const nextChannel = channels[(currentIndex + 1) % channels.length];
+    handleChannelSelect(nextChannel);
+  };
+
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8E0D0]">
       {/* Hero Header */}
@@ -141,33 +180,37 @@ export const RRBRadioIntegration: React.FC = () => {
               <p className="text-[#E8E0D0]/60">Rockin' Rockin' Boogie • Payten Music (BMI) • Canryn Production</p>
             </div>
           </div>
-          <div className="flex items-center gap-6 text-sm text-[#E8E0D0]/50">
+          <div className="flex items-center gap-6 text-sm text-[#E8E0D0]/50 flex-wrap">
             <span className="flex items-center gap-1.5">
               <Radio className="w-4 h-4 text-[#D4A843]" /> {channels.length} Channels
             </span>
             <span className="flex items-center gap-1.5">
-              <Users className="w-4 h-4 text-[#D4A843]" /> {totalListeners} Listeners
+              <Users className="w-4 h-4 text-[#D4A843]" /> {totalListeners.toLocaleString()} Listeners
             </span>
             <span className="flex items-center gap-1.5">
               <Wifi className="w-4 h-4 text-green-500" /> 24/7 Live
             </span>
             <span className="flex items-center gap-1.5">
-              <Music className="w-4 h-4 text-[#D4A843]" /> 432 Hz Tuned
+              <Music className="w-4 h-4 text-[#D4A843]" /> 432 Hz Default
             </span>
           </div>
         </div>
       </div>
 
       {/* Now Playing Bar */}
-      <div className="bg-[#111] border-b border-[#D4A843]/10">
+      <div className="bg-[#111] border-b border-[#D4A843]/10 sticky top-0 z-20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <button
                 onClick={handlePlayPause}
                 className="w-14 h-14 rounded-full bg-[#D4A843] hover:bg-[#E8C860] transition-colors flex items-center justify-center text-[#0A0A0A] flex-shrink-0"
+                aria-label={isPlaying ? 'Pause' : 'Play'}
               >
                 {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
+              </button>
+              <button onClick={handleNextChannel} className="w-10 h-10 rounded-full bg-[#222] hover:bg-[#333] flex items-center justify-center text-[#E8E0D0]/60" aria-label="Next channel">
+                <SkipForward className="w-5 h-5" />
               </button>
               <div>
                 <div className="flex items-center gap-2">
@@ -187,7 +230,6 @@ export const RRBRadioIntegration: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* Volume */}
               <div className="flex items-center gap-2">
                 <button onClick={() => setIsMuted(!isMuted)} className="text-[#E8E0D0]/60 hover:text-[#E8E0D0]">
                   {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -207,11 +249,55 @@ export const RRBRadioIntegration: React.FC = () => {
         </div>
       </div>
 
+      {/* Search & Filter Bar */}
+      <div className="bg-[#0D0D0D] border-b border-[#D4A843]/10">
+        <div className="container mx-auto px-4 py-4">
+          {/* Search */}
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#E8E0D0]/30" />
+            <input
+              type="text"
+              placeholder="Search 42 channels by name, genre, or description..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 bg-[#111] border border-[#222] rounded-lg text-[#E8E0D0] placeholder-[#E8E0D0]/30 focus:border-[#D4A843]/50 focus:outline-none"
+            />
+          </div>
+          {/* Genre Filters */}
+          <div className="flex flex-wrap gap-2">
+            {(showAllFilters ? GENRE_FILTERS : GENRE_FILTERS.slice(0, 6)).map(filter => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                  activeFilter === filter
+                    ? 'bg-[#D4A843] text-[#0A0A0A]'
+                    : 'bg-[#111] text-[#E8E0D0]/60 border border-[#222] hover:border-[#D4A843]/30'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+            <button
+              onClick={() => setShowAllFilters(!showAllFilters)}
+              className="px-3 py-1.5 rounded-full text-xs font-medium bg-[#111] text-[#D4A843] border border-[#D4A843]/30 hover:bg-[#D4A843]/10 flex items-center gap-1"
+            >
+              {showAllFilters ? <><ChevronUp className="w-3 h-3" /> Less</> : <><ChevronDown className="w-3 h-3" /> {GENRE_FILTERS.length - 6} More</>}
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Channel Grid */}
       <div className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold text-[#D4A843] mb-6">Channels</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-[#D4A843]">
+            {activeFilter === 'All' ? 'All Channels' : activeFilter}
+            <span className="text-sm font-normal text-[#E8E0D0]/40 ml-2">({filteredChannels.length})</span>
+          </h2>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {channels.map(channel => (
+          {filteredChannels.map(channel => (
             <button
               key={channel.id}
               onClick={() => handleChannelSelect(channel)}
@@ -247,6 +333,12 @@ export const RRBRadioIntegration: React.FC = () => {
             </button>
           ))}
         </div>
+        {filteredChannels.length === 0 && (
+          <div className="text-center py-12">
+            <Radio className="w-12 h-12 text-[#E8E0D0]/20 mx-auto mb-4" />
+            <p className="text-[#E8E0D0]/40">No channels match your search. Try a different filter or keyword.</p>
+          </div>
+        )}
       </div>
 
       {/* Frequency Info */}
@@ -330,6 +422,9 @@ export const RRBRadioIntegration: React.FC = () => {
           </div>
           <p className="text-center text-xs text-[#E8E0D0]/30 mt-6">
             Payten Music (BMI) • Canryn Production • QUMUS Autonomous Engine • In Honor of Seabrun Candy Hunter
+          </p>
+          <p className="text-center text-xs text-[#E8E0D0]/20 mt-2">
+            All content is protected under applicable copyright laws. Unauthorized reproduction or distribution is prohibited.
           </p>
         </div>
       </div>

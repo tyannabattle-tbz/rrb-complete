@@ -37,7 +37,7 @@ export function SimplifiedMobileNav() {
       title: 'Media',
       items: [
         { id: 'nav-live', label: 'Live Stream', icon: Video, path: '/live' },
-        { id: 'nav-radio', label: 'RRB Radio', icon: Radio, path: '/live' },
+        { id: 'nav-radio', label: 'RRB Radio', icon: Radio, path: '/rrb-radio' },
         { id: 'nav-boogie', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
         { id: 'nav-broadcast', label: 'Broadcast', icon: Zap, path: '/broadcast-hub' },
       ],
