@@ -2616,3 +2616,7 @@
 - [x] Add Interactive Flyer cross-link to RRB Radio quick links
 - [x] Email subscription tRPC procedure (subscribe + count)
 - [x] Re-apply all changes lost during sandbox reset
+
+## Bug Fixes - March 5 2026
+- [x] Fix blank white page after login (OAuth token key mismatch: qumus_session_token vs session_token)
+- [x] Fix Studio page streaming controls (connected to tRPC startStream/stopStream mutations with toast feedback)

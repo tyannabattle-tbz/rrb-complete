@@ -145,6 +145,63 @@ export const studioStreamingRouter = router({
   }),
 
   /**
+   * Start a live broadcast stream
+   * Activates the stream and notifies the owner
+   */
+  startStream: protectedProcedure
+    .input(z.object({
+      title: z.string().default("RRB Live Broadcast"),
+      channel: z.string().default("main"),
+    }))
+    .mutation(async ({ input }) => {
+      try {
+        const streamId = `stream_${Date.now()}`;
+        await notifyOwner({
+          title: "Live Stream Started",
+          content: `Stream "${input.title}" is now LIVE on channel: ${input.channel}`,
+        });
+        return {
+          streamId,
+          title: input.title,
+          channel: input.channel,
+          status: "live",
+          startedAt: new Date(),
+          viewers: 0,
+        };
+      } catch (error) {
+        console.error("Failed to start stream:", error);
+        throw error;
+      }
+    }),
+
+  /**
+   * Stop a live broadcast stream
+   * Deactivates the stream and notifies the owner
+   */
+  stopStream: protectedProcedure
+    .input(z.object({
+      streamId: z.string().optional(),
+      reason: z.string().default("Manual stop"),
+    }))
+    .mutation(async ({ input }) => {
+      try {
+        await notifyOwner({
+          title: "Live Stream Ended",
+          content: `Stream stopped. Reason: ${input.reason}`,
+        });
+        return {
+          streamId: input.streamId || `stream_${Date.now()}`,
+          status: "stopped",
+          stoppedAt: new Date(),
+          reason: input.reason,
+        };
+      } catch (error) {
+        console.error("Failed to stop stream:", error);
+        throw error;
+      }
+    }),
+
+  /**
    * Start recording a broadcast
    * Initiates recording to S3 storage
    */

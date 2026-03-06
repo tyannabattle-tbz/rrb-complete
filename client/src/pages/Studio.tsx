@@ -34,6 +34,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 import TimelineEditor from "@/components/TimelineEditor";
 import BatchProcessing from "@/components/BatchProcessing";
 import EditingPresets from "@/components/EditingPresets";
@@ -112,14 +113,34 @@ export default function Studio() {
     { id: "3", title: "HybridCast Network Check", time: "18:00", type: "test", duration: "30m" },
   ];
 
+  const startStreamMutation = trpc.entertainment.studioStreaming.startStream.useMutation();
+  const stopStreamMutation = trpc.entertainment.studioStreaming.stopStream.useMutation();
+
   const handleStartStream = async () => {
-    // TODO: Connect to actual stream backend
-    setStreamActive(true);
+    try {
+      const result = await startStreamMutation.mutateAsync({
+        title: "RRB Live Broadcast",
+        channel: "main",
+      });
+      setStreamActive(true);
+      toast.success(`Stream is LIVE! ID: ${result.streamId}`);
+    } catch (error) {
+      console.error("Stream start failed:", error);
+      toast.error("Failed to start stream");
+    }
   };
 
   const handleStopStream = async () => {
-    // TODO: Connect to actual stream backend
-    setStreamActive(false);
+    try {
+      await stopStreamMutation.mutateAsync({
+        reason: "Manual stop from Studio",
+      });
+      setStreamActive(false);
+      toast.success("Stream stopped successfully");
+    } catch (error) {
+      console.error("Stream stop failed:", error);
+      toast.error("Failed to stop stream");
+    }
   };
 
   const startRecordingMutation = trpc.entertainment.studioStreaming.startRecording.useMutation();

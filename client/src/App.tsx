@@ -318,8 +318,12 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     if (token) {
-      // Store token in localStorage as fallback session
+      // Store token in localStorage as fallback session (must match useAuth key)
+      localStorage.setItem('session_token', token);
       localStorage.setItem('qumus_session_token', token);
+      // Set token expiry (24 hours) so useAuth doesn't clear it
+      const expiresAt = new Date().getTime() + 24 * 60 * 60 * 1000;
+      localStorage.setItem('session_token_expires', expiresAt.toString());
       // Remove token from URL to clean up address bar
       window.history.replaceState({}, document.title, window.location.pathname);
       console.log('[App] OAuth token stored in localStorage');
