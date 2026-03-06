@@ -1770,7 +1770,8 @@ var init_env = __esm({
       ownerOpenId: process.env.OWNER_OPEN_ID ?? "",
       isProduction: process.env.NODE_ENV === "production",
       forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
-      forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? ""
+      forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
+      oAuthPortalUrl: process.env.VITE_OAUTH_PORTAL_URL ?? ""
     };
   }
 });
@@ -3090,18 +3091,37 @@ function getSessionCookieOptions(req) {
   const hostname = req.hostname || "";
   const isLocalhost = LOCAL_HOSTS.has(hostname) || isIpAddress(hostname);
   const isSecure = isSecureRequest(req);
-  const secure = isSecure || isLocalhost;
+  const secure = isSecure;
   let domain = void 0;
   if (!isLocalhost && hostname) {
-    if (!hostname.startsWith(".")) {
-      const parts = hostname.split(".");
-      if (parts.length > 1) {
+    const shortTLDs = /* @__PURE__ */ new Set([
+      "com",
+      "net",
+      "org",
+      "io",
+      "dev",
+      "app",
+      "sbs",
+      "xyz",
+      "co",
+      "me",
+      "tv",
+      "fm",
+      "space",
+      "site",
+      "online",
+      "tech"
+    ]);
+    const parts = hostname.split(".");
+    if (parts.length >= 2) {
+      const lastPart = parts[parts.length - 1];
+      if (shortTLDs.has(lastPart) && parts.length === 2) {
+        domain = "." + hostname;
+      } else if (parts.length > 2) {
         domain = "." + parts.slice(-2).join(".");
       } else {
-        domain = hostname;
+        domain = "." + hostname;
       }
-    } else {
-      domain = hostname;
     }
   }
   console.log("[Cookie] Setting cookie options", {
@@ -3111,10 +3131,7 @@ function getSessionCookieOptions(req) {
     isSecure,
     secure
   });
-  let sameSite = "lax";
-  if (isSecure && !isLocalhost && domain && domain !== hostname) {
-    sameSite = "none";
-  }
+  const sameSite = "lax";
   console.log("[Cookie] Final options", {
     domain,
     sameSite,
@@ -4917,15 +4934,27 @@ function getQueryParam(req, key) {
   const value = req.query[key];
   return typeof value === "string" ? value : void 0;
 }
+function getOrigin(req) {
+  const forwardedProto = req.headers["x-forwarded-proto"];
+  let protocol = req.protocol;
+  if (forwardedProto) {
+    const proto = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto.split(",")[0];
+    protocol = proto.trim().toLowerCase();
+  }
+  const host = req.get("host") || req.hostname;
+  return `${protocol}://${host}`;
+}
 function registerOAuthRoutes(app) {
   app.get("/api/oauth/login", (req, res) => {
     try {
-      const redirectUri = `${req.protocol}://${req.get("host")}/api/oauth/callback`;
+      const origin = getOrigin(req);
+      const redirectUri = `${origin}/api/oauth/callback`;
       const state = Buffer.from(redirectUri).toString("base64");
       const loginUrl = `${ENV.oAuthPortalUrl}?client_id=${ENV.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code`;
       console.log("[OAuth] Login initiated", {
+        origin,
         redirectUri,
-        loginUrl: loginUrl.substring(0, 100)
+        loginUrl: loginUrl.substring(0, 120)
       });
       res.redirect(302, loginUrl);
     } catch (error) {
@@ -4939,7 +4968,8 @@ function registerOAuthRoutes(app) {
     console.log("[OAuth] Callback received", {
       hasCode: !!code,
       hasState: !!state,
-      hostname: req.hostname
+      hostname: req.hostname,
+      origin: getOrigin(req)
     });
     if (!code || !state) {
       console.error("[OAuth] Missing code or state");
@@ -32046,6 +32076,7 @@ async function findAvailablePort(startPort = 3e3) {
 }
 async function startServer() {
   const app = express2();
+  app.set("trust proxy", true);
   const server = createServer(app);
   app.post("/api/stripe/webhook", express2.raw({ type: "application/json" }), (req, res) => {
     handleStripeWebhook(req, res).catch((err) => {

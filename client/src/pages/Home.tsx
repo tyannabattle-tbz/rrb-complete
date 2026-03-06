@@ -1,100 +1,14 @@
-import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, Zap } from 'lucide-react';
+import { LogIn, LogOut } from 'lucide-react';
 
 export default function Home() {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const [, setLocation] = useLocation();
 
-  // Audio playback is handled by radio player component
-
-  // Show loading state
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-400">Authenticating...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show login options if not authenticated
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-        {/* SEO: Visible headings for crawlers and users */}
-        <h1 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">QUMUS Orchestration Engine</h1>
-        <h2 className="text-sm text-center text-slate-400 mb-6">Autonomous Broadcasting and Ecosystem Control by Canryn Production</h2>
-        <Card className="w-full bg-slate-800 border-slate-700">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <Zap className="w-12 h-12 text-blue-500" />
-            </div>
-            <CardTitle className="text-2xl text-white">QUMUS</CardTitle>
-            <CardDescription className="text-slate-400">
-              Autonomous Orchestration Engine
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-slate-300 text-center">
-              90%+ Autonomy • Full Ecosystem Control
-            </p>
-
-            <div className="space-y-3 pt-4">
-              <Button
-                onClick={() => {
-                  const loginUrl = new URL('/api/oauth/login', window.location.origin);
-                  window.location.href = loginUrl.toString();
-                }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                size="lg"
-              >
-                Sign In to QUMUS
-              </Button>
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-600"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-slate-800 text-slate-400">or</span>
-                </div>
-              </div>
-
-              <Button
-                onClick={() => {
-                  window.location.href = '/api/test-login';
-                }}
-                variant="outline"
-                className="w-full border-slate-600 text-slate-300 hover:bg-slate-700"
-                size="lg"
-              >
-                Test Login (Dev Mode)
-              </Button>
-            </div>
-
-            <div className="mt-6 p-3 bg-amber-900/30 border border-amber-700/50 rounded-lg flex gap-2">
-              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-              <div className="text-xs text-amber-200">
-                <p className="font-semibold">Development Mode</p>
-                <p className="mt-1">Use "Test Login" to access QUMUS Control Center without OAuth authentication.</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        </div>
-      </div>
-    );
-  }
-
-  // Authenticated user - show ecosystem dashboard
   const systems = [
     {
       id: 'qumus',
@@ -176,11 +90,27 @@ export default function Home() {
                 <p className="text-sm text-purple-300">Autonomous. Orchestrated. Yours.</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Badge variant="outline" className="border-green-500 text-green-400">
                 All Systems Online
               </Badge>
-
+              {user ? (
+                <span className="text-sm text-purple-300 hidden sm:inline">
+                  Welcome, {user.name}
+                </span>
+              ) : (
+                <Button
+                  onClick={() => {
+                    window.location.href = '/api/oauth/login';
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="border-purple-500 text-purple-300 hover:bg-purple-500/10"
+                >
+                  <LogIn className="w-4 h-4 mr-1" />
+                  Sign In
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -258,7 +188,7 @@ export default function Home() {
             <Card
               key={system.id}
               className="bg-slate-800/50 border-purple-500/20 hover:border-purple-500/50 transition-all cursor-pointer hover:shadow-lg hover:shadow-purple-500/20"
-              onClick={() => (system as any).external ? window.open(system.path, '_blank') : setLocation(system.path)}
+              onClick={() => setLocation(system.path)}
             >
               <CardHeader>
                 <div className="flex items-start justify-between mb-2">
@@ -287,11 +217,11 @@ export default function Home() {
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
-                      (system as any).external ? window.open(system.path, '_blank') : setLocation(system.path);
+                      setLocation(system.path);
                     }}
                     className={`w-full bg-gradient-to-r ${system.color} hover:opacity-90`}
                   >
-                    {(system as any).external ? 'Visit Site →' : 'Access →'}
+                    Access →
                   </Button>
                 </div>
               </CardContent>

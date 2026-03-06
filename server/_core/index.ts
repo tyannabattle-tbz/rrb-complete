@@ -33,6 +33,9 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
+  // Trust proxy headers (x-forwarded-proto, x-forwarded-for) for correct HTTPS detection
+  // Critical for OAuth redirects and cookie Secure flag behind reverse proxies on mobile
+  app.set("trust proxy", true);
   const server = createServer(app);
   
   // Stripe webhook endpoint - must be BEFORE body parser to get raw body

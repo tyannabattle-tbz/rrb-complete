@@ -10,17 +10,34 @@ function getQueryParam(req: Request, key: string): string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
+/**
+ * Get the actual origin (protocol + host) accounting for reverse proxies.
+ * Behind a proxy, req.protocol may report "http" even though the client sees "https".
+ */
+function getOrigin(req: Request): string {
+  const forwardedProto = req.headers["x-forwarded-proto"];
+  let protocol = req.protocol;
+  if (forwardedProto) {
+    const proto = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto.split(",")[0];
+    protocol = proto.trim().toLowerCase();
+  }
+  const host = req.get("host") || req.hostname;
+  return `${protocol}://${host}`;
+}
+
 export function registerOAuthRoutes(app: Express) {
   // OAuth Login Initiation Route
   app.get("/api/oauth/login", (req: Request, res: Response) => {
     try {
-      const redirectUri = `${req.protocol}://${req.get('host')}/api/oauth/callback`;
+      const origin = getOrigin(req);
+      const redirectUri = `${origin}/api/oauth/callback`;
       const state = Buffer.from(redirectUri).toString('base64');
       const loginUrl = `${ENV.oAuthPortalUrl}?client_id=${ENV.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code`;
       
       console.log("[OAuth] Login initiated", {
+        origin,
         redirectUri,
-        loginUrl: loginUrl.substring(0, 100),
+        loginUrl: loginUrl.substring(0, 120),
       });
       
       res.redirect(302, loginUrl);
@@ -39,6 +56,7 @@ export function registerOAuthRoutes(app: Express) {
       hasCode: !!code,
       hasState: !!state,
       hostname: req.hostname,
+      origin: getOrigin(req),
     });
 
     if (!code || !state) {
@@ -105,6 +123,7 @@ export function registerOAuthRoutes(app: Express) {
       console.log("[OAuth] Set-Cookie header:", setCookieHeader);
       
       // Also pass token in URL as fallback for client-side localStorage
+      // This is critical for mobile browsers where cookies may be blocked
       const redirectUrl = `/?token=${encodeURIComponent(sessionToken)}`;
       console.log("[OAuth] Callback successful, redirecting with token");
       res.redirect(302, redirectUrl);

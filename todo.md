@@ -2660,3 +2660,12 @@
 - [x] Connect games to QUMUS ecosystem (Games Hub with total score tracking, cross-links between games)
 - [x] Apply broadcast URL setup for Saturday (configurable via gear icon on /live)
 - [x] Verify Valanna file upload works (S3 upload + multimodal LLM in chatStreamingRouter)
+
+## Bug Fixes - March 6 2026
+- [x] Fix mobile login issue — login still broken/blank page on mobile devices
+  - Fixed cookie domain calculation (manuweb.sbs was setting domain to .sbs instead of .manuweb.sbs)
+  - Changed SameSite from 'none' to 'lax' for Safari ITP mobile compatibility
+  - Added trust proxy to Express for correct HTTPS detection behind reverse proxy
+  - Fixed OAuth redirect URI to use proper protocol via x-forwarded-proto
+  - Removed login gate from Home page — all content now publicly accessible
+  - Sign In button added to header for admin access

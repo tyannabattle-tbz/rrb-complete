@@ -8,4 +8,5 @@ export const ENV = {
   isProduction: process.env.NODE_ENV === "production",
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
+  oAuthPortalUrl: process.env.VITE_OAUTH_PORTAL_URL ?? "",
 };
