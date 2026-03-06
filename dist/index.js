@@ -3364,6 +3364,87 @@ var init_sdk = __esm({
   }
 });
 
+// server/storage.ts
+var storage_exports = {};
+__export(storage_exports, {
+  storageGet: () => storageGet,
+  storagePut: () => storagePut
+});
+function getStorageConfig() {
+  const baseUrl = ENV.forgeApiUrl;
+  const apiKey = ENV.forgeApiKey;
+  if (!baseUrl || !apiKey) {
+    throw new Error(
+      "Storage proxy credentials missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
+    );
+  }
+  return { baseUrl: baseUrl.replace(/\/+$/, ""), apiKey };
+}
+function buildUploadUrl(baseUrl, relKey) {
+  const url = new URL("v1/storage/upload", ensureTrailingSlash(baseUrl));
+  url.searchParams.set("path", normalizeKey(relKey));
+  return url;
+}
+async function buildDownloadUrl(baseUrl, relKey, apiKey) {
+  const downloadApiUrl = new URL(
+    "v1/storage/downloadUrl",
+    ensureTrailingSlash(baseUrl)
+  );
+  downloadApiUrl.searchParams.set("path", normalizeKey(relKey));
+  const response = await fetch(downloadApiUrl, {
+    method: "GET",
+    headers: buildAuthHeaders(apiKey)
+  });
+  return (await response.json()).url;
+}
+function ensureTrailingSlash(value) {
+  return value.endsWith("/") ? value : `${value}/`;
+}
+function normalizeKey(relKey) {
+  return relKey.replace(/^\/+/, "");
+}
+function toFormData(data, contentType, fileName) {
+  const blob = typeof data === "string" ? new Blob([data], { type: contentType }) : new Blob([data], { type: contentType });
+  const form = new FormData();
+  form.append("file", blob, fileName || "file");
+  return form;
+}
+function buildAuthHeaders(apiKey) {
+  return { Authorization: `Bearer ${apiKey}` };
+}
+async function storagePut(relKey, data, contentType = "application/octet-stream") {
+  const { baseUrl, apiKey } = getStorageConfig();
+  const key = normalizeKey(relKey);
+  const uploadUrl = buildUploadUrl(baseUrl, key);
+  const formData = toFormData(data, contentType, key.split("/").pop() ?? key);
+  const response = await fetch(uploadUrl, {
+    method: "POST",
+    headers: buildAuthHeaders(apiKey),
+    body: formData
+  });
+  if (!response.ok) {
+    const message = await response.text().catch(() => response.statusText);
+    throw new Error(
+      `Storage upload failed (${response.status} ${response.statusText}): ${message}`
+    );
+  }
+  const url = (await response.json()).url;
+  return { key, url };
+}
+async function storageGet(relKey) {
+  const { baseUrl, apiKey } = getStorageConfig();
+  const key = normalizeKey(relKey);
+  return {
+    key,
+    url: await buildDownloadUrl(baseUrl, key, apiKey)
+  };
+}
+var init_storage = __esm({
+  "server/storage.ts"() {
+    init_env();
+  }
+});
+
 // server/qumus/autonomousAgent.ts
 import { EventEmitter as EventEmitter3 } from "events";
 function getQumusAgent() {
@@ -12043,82 +12124,9 @@ var qumusOrchestrationRouter = router({
 });
 
 // server/routers/qumusFileUpload.ts
+init_storage();
 import { z as z26 } from "zod";
 import { TRPCError as TRPCError8 } from "@trpc/server";
-
-// server/storage.ts
-init_env();
-function getStorageConfig() {
-  const baseUrl = ENV.forgeApiUrl;
-  const apiKey = ENV.forgeApiKey;
-  if (!baseUrl || !apiKey) {
-    throw new Error(
-      "Storage proxy credentials missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
-    );
-  }
-  return { baseUrl: baseUrl.replace(/\/+$/, ""), apiKey };
-}
-function buildUploadUrl(baseUrl, relKey) {
-  const url = new URL("v1/storage/upload", ensureTrailingSlash(baseUrl));
-  url.searchParams.set("path", normalizeKey(relKey));
-  return url;
-}
-async function buildDownloadUrl(baseUrl, relKey, apiKey) {
-  const downloadApiUrl = new URL(
-    "v1/storage/downloadUrl",
-    ensureTrailingSlash(baseUrl)
-  );
-  downloadApiUrl.searchParams.set("path", normalizeKey(relKey));
-  const response = await fetch(downloadApiUrl, {
-    method: "GET",
-    headers: buildAuthHeaders(apiKey)
-  });
-  return (await response.json()).url;
-}
-function ensureTrailingSlash(value) {
-  return value.endsWith("/") ? value : `${value}/`;
-}
-function normalizeKey(relKey) {
-  return relKey.replace(/^\/+/, "");
-}
-function toFormData(data, contentType, fileName) {
-  const blob = typeof data === "string" ? new Blob([data], { type: contentType }) : new Blob([data], { type: contentType });
-  const form = new FormData();
-  form.append("file", blob, fileName || "file");
-  return form;
-}
-function buildAuthHeaders(apiKey) {
-  return { Authorization: `Bearer ${apiKey}` };
-}
-async function storagePut(relKey, data, contentType = "application/octet-stream") {
-  const { baseUrl, apiKey } = getStorageConfig();
-  const key = normalizeKey(relKey);
-  const uploadUrl = buildUploadUrl(baseUrl, key);
-  const formData = toFormData(data, contentType, key.split("/").pop() ?? key);
-  const response = await fetch(uploadUrl, {
-    method: "POST",
-    headers: buildAuthHeaders(apiKey),
-    body: formData
-  });
-  if (!response.ok) {
-    const message = await response.text().catch(() => response.statusText);
-    throw new Error(
-      `Storage upload failed (${response.status} ${response.statusText}): ${message}`
-    );
-  }
-  const url = (await response.json()).url;
-  return { key, url };
-}
-async function storageGet(relKey) {
-  const { baseUrl, apiKey } = getStorageConfig();
-  const key = normalizeKey(relKey);
-  return {
-    key,
-    url: await buildDownloadUrl(baseUrl, key, apiKey)
-  };
-}
-
-// server/routers/qumusFileUpload.ts
 var SUPPORTED_FILE_TYPES = {
   documents: ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
   images: ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"],
@@ -13987,30 +13995,86 @@ REMEMBER: You are not an AI assistant reading documentation. You ARE Valanna \u2
 // server/routers/chatStreamingRouter.ts
 var chatStreamingRouter = router({
   /**
-   * Stream chat responses in real-time using SSE
+   * Stream chat responses in real-time — supports text + file attachments (images, docs, audio)
    */
   streamChat: publicProcedure.input(z33.object({
     messages: z33.array(z33.object({
       role: z33.enum(["user", "assistant"]),
       content: z33.string()
     })),
-    query: z33.string()
+    query: z33.string(),
+    // Optional file attachments for multimodal input
+    attachments: z33.array(z33.object({
+      url: z33.string(),
+      // S3 URL of the uploaded file
+      mimeType: z33.string(),
+      // e.g. image/png, application/pdf, audio/mp3
+      fileName: z33.string()
+      // Original file name
+    })).optional()
   })).mutation(async ({ input, ctx }) => {
     try {
       const systemPrompt = QumusIdentitySystem.getSystemPrompt();
+      const historyMessages = input.messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      let userMessage;
+      if (input.attachments && input.attachments.length > 0) {
+        const contentParts = [];
+        if (input.query.trim()) {
+          contentParts.push({
+            type: "text",
+            text: input.query
+          });
+        }
+        for (const attachment of input.attachments) {
+          if (attachment.mimeType.startsWith("image/")) {
+            contentParts.push({
+              type: "image_url",
+              image_url: {
+                url: attachment.url,
+                detail: "auto"
+              }
+            });
+          } else if (attachment.mimeType === "application/pdf" || attachment.mimeType.startsWith("audio/") || attachment.mimeType.startsWith("video/")) {
+            contentParts.push({
+              type: "file_url",
+              file_url: {
+                url: attachment.url,
+                mime_type: attachment.mimeType
+              }
+            });
+          } else {
+            contentParts.push({
+              type: "text",
+              text: `[Attached file: ${attachment.fileName} (${attachment.mimeType})]`
+            });
+          }
+        }
+        if (!input.query.trim()) {
+          contentParts.unshift({
+            type: "text",
+            text: `Please analyze this file I've shared with you: ${input.attachments.map((a) => a.fileName).join(", ")}`
+          });
+        }
+        userMessage = {
+          role: "user",
+          content: contentParts
+        };
+      } else {
+        userMessage = {
+          role: "user",
+          content: input.query
+        };
+      }
       const messages2 = [
         {
           role: "system",
           content: systemPrompt
         },
-        ...input.messages.map((msg) => ({
-          role: msg.role,
-          content: msg.content
-        })),
-        {
-          role: "user",
-          content: input.query
-        }
+        ...historyMessages,
+        userMessage
       ];
       const response = await invokeLLM({
         messages: messages2,
@@ -14026,6 +14090,42 @@ var chatStreamingRouter = router({
         success: false,
         message: "Failed to stream response. Please try again.",
         error: error instanceof Error ? error.message : "Unknown error"
+      };
+    }
+  }),
+  /**
+   * Upload a file for Valanna chat — stores in S3 and returns URL
+   */
+  uploadChatFile: publicProcedure.input(z33.object({
+    fileName: z33.string(),
+    fileData: z33.string(),
+    // base64 encoded file data
+    mimeType: z33.string()
+  })).mutation(async ({ input }) => {
+    try {
+      const { storagePut: storagePut2 } = await Promise.resolve().then(() => (init_storage(), storage_exports));
+      const buffer = Buffer.from(input.fileData, "base64");
+      if (buffer.length > 16 * 1024 * 1024) {
+        throw new Error("File too large. Maximum size is 16MB.");
+      }
+      const fileKey = `valanna-chat/${Date.now()}-${Math.random().toString(36).substring(7)}-${input.fileName}`;
+      const { url } = await storagePut2(fileKey, buffer, input.mimeType);
+      return {
+        success: true,
+        url,
+        fileName: input.fileName,
+        mimeType: input.mimeType,
+        fileSize: buffer.length
+      };
+    } catch (error) {
+      console.error("Chat file upload error:", error);
+      return {
+        success: false,
+        url: "",
+        fileName: input.fileName,
+        mimeType: input.mimeType,
+        fileSize: 0,
+        error: error instanceof Error ? error.message : "Upload failed"
       };
     }
   }),
@@ -16367,6 +16467,7 @@ async function executeSubsystemCommand(subsystem, command, parameters) {
 }
 
 // server/audioService.ts
+init_storage();
 var AudioService = class {
   jobs = /* @__PURE__ */ new Map();
   /**
@@ -25060,6 +25161,7 @@ var adminPoliciesRouter = router({
 import { z as z68 } from "zod";
 
 // server/taskArtifactsService.ts
+init_storage();
 async function uploadTaskArtifact(taskId, userId, fileName, fileBuffer, mimeType, metadata) {
   try {
     const timestamp2 = Date.now();
@@ -25436,6 +25538,7 @@ var tasksRouter = router({
 import { z as z69 } from "zod";
 
 // server/fileStorageService.ts
+init_storage();
 async function uploadFile(userId, fileName, fileBuffer, mimeType, isPublic = false) {
   try {
     const fileKey = `${userId}/files/${Date.now()}-${Math.random().toString(36).substring(7)}-${fileName}`;
@@ -25695,6 +25798,7 @@ import { z as z70 } from "zod";
 
 // server/services/qumusIntegrationService.ts
 init_db();
+init_storage();
 import Stripe from "stripe";
 init_schema();
 var stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {

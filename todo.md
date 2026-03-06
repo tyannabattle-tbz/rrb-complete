@@ -2629,19 +2629,25 @@
 - [ ] Publish with all changes live (ready for user to click Publish)
 
 ## FULL DEPLOYMENT MODE - RRB Sync Sweep (March 5 2026)
-- [ ] Audit all RRB-related routes and pages
-- [ ] Verify all RRB Radio channels have working audio streams
-- [ ] Verify /live video streaming is connected and functional
-- [ ] Verify Studio Start/Stop Stream works end-to-end
-- [ ] Verify RRB Broadcast Manager is accessible and functional
-- [ ] Verify all cross-links between RRB, QUMUS, HybridCast, Selma, SQUADD
-- [ ] Verify Valanna is integrated across all RRB pages
-- [ ] Verify 432Hz default frequency is set on radio
-- [ ] Verify call-in feature is present on radio/podcast
-- [ ] Verify all navigation (desktop + mobile) links to RRB pages work
-- [ ] Fix any broken connections or missing features found
-- [ ] Final production checkpoint
+- [x] Audit all RRB-related routes and pages
+- [x] Verify all RRB Radio channels have working audio streams (42 channels, 6 unique Zeno.fm streams)
+- [x] Verify /live video streaming is connected and functional
+- [x] Verify Studio Start/Stop Stream works end-to-end
+- [x] Verify RRB Broadcast Manager is accessible and functional
+- [x] Verify all cross-links between RRB, QUMUS, HybridCast, Selma, SQUADD
+- [x] Verify Valanna is integrated across all RRB pages
+- [x] Verify 432Hz default frequency is set on radio
+- [x] Verify call-in feature is present on radio/podcast
+- [x] Verify all navigation (desktop + mobile) links to RRB pages work
+- [x] Fix any broken connections or missing features found (duplicate routes removed, nav links fixed)
+- [x] Final production checkpoint
 
 ## RRB Radio Channel Expansion
 - [x] Expand RRB Radio from 6 to 42 channels with search, genre filters, and category sections
 - [x] Include diverse genres: Gospel, Jazz, R&B, Healing Frequencies, Community Talk, Legacy Classics, Hip-Hop, Spoken Word, African Diaspora, Kids/Family, Late Night Vibes, Worship, Afrobeats, Caribbean, Lo-Fi, Podcast, and more
+
+## Apply All + Valanna File Upload - March 5 2026
+- [x] Add file upload capability to Valanna chat (images, docs, audio) — S3 upload + multimodal LLM
+- [x] Connect 42 channels to genre-grouped stream URLs (6 unique Zeno.fm streams across 12 categories)
+- [x] Add social sharing pre-fill for flyer promotion (Twitter, Facebook, LinkedIn, WhatsApp + UN messaging)
+- [x] Ensure broadcast URL configurable for Saturday (settings gear on /live)
