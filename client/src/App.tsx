@@ -158,6 +158,7 @@ import GamesHub from '@/pages/GamesHub';
 import WordFrequencyGame from '@/pages/WordFrequencyGame';
 import FrequencyMatchGame from '@/pages/FrequencyMatchGame';
 import RhythmRootsGame from '@/pages/RhythmRootsGame';
+import LaShanna from '@/pages/LaShanna';
 import { EventBanners } from '@/components/EventBanners';
 import ValannaVoiceAssistant from '@/components/ValannaVoiceAssistant';
 
@@ -307,6 +308,7 @@ function Router() {
       <Route path="/games/word-frequency" component={WordFrequencyGame} />
       <Route path="/games/frequency-match" component={FrequencyMatchGame} />
       <Route path="/games/rhythm-roots" component={RhythmRootsGame} />
+      <Route path="/lashanna" component={LaShanna} />
       <Route component={NotFound} />
     </Switch>
     </>

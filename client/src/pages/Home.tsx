@@ -351,19 +351,39 @@ export default function Home() {
         <h3 className="text-2xl font-bold text-white mb-8 text-center">Canryn Production & Subsidiaries</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
-            { name: "Little C", owner: "Carlos Kembrel" },
-            { name: "Sean's Music", owner: "Sean Hunter" },
-            { name: "Anna's", owner: "Tyanna & LaShanna" },
-            { name: "Jaelon Enterprises", owner: "Jaelon Hunter" },
-            { name: "Payten Music (BMI)", owner: "RRB Registration" },
+            { name: "Little C", owner: "Carlos Kembrel", link: "" },
+            { name: "Sean's Music", owner: "Sean Hunter", link: "" },
+            { name: "Anna's", owner: "Tyanna & LaShanna", link: "/lashanna" },
+            { name: "Jaelon Enterprises", owner: "Jaelon Hunter", link: "" },
+            { name: "Payten Music (BMI)", owner: "RRB Registration", link: "" },
           ].map((sub, idx) => (
-            <Card key={idx} className="bg-slate-800/50 border-purple-500/20 text-center">
+            <Card 
+              key={idx} 
+              className={`bg-slate-800/50 border-purple-500/20 text-center ${sub.link ? 'cursor-pointer hover:border-amber-500/40 transition-all' : ''}`}
+              onClick={() => sub.link && setLocation(sub.link)}
+            >
               <CardContent className="pt-4 pb-4">
                 <p className="font-semibold text-white text-sm">{sub.name}</p>
                 <p className="text-xs text-purple-300 mt-1">{sub.owner}</p>
+                {sub.link && <p className="text-xs text-amber-400 mt-1">View Page →</p>}
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Platform Partner */}
+        <div className="mt-8">
+          <h4 className="text-lg font-semibold text-white mb-4 text-center">Platform Partner</h4>
+          <Card 
+            className="bg-gradient-to-r from-cyan-950/50 to-slate-800/50 border-cyan-500/20 cursor-pointer hover:border-cyan-500/40 transition-all max-w-md mx-auto"
+            onClick={() => window.open('https://hybridcast.manus.space/', '_blank')}
+          >
+            <CardContent className="pt-4 pb-4 text-center">
+              <p className="font-semibold text-cyan-300 text-sm">⚡ HybridCast Emergency Broadcast</p>
+              <p className="text-xs text-gray-400 mt-1">v2.47.24 — 116+ Tabs — Offline-First PWA</p>
+              <p className="text-xs text-cyan-400 mt-1">Open Platform →</p>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
