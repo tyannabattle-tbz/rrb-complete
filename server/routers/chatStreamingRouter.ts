@@ -2,6 +2,7 @@ import { router, publicProcedure } from '../_core/trpc';
 import { z } from 'zod';
 import { invokeLLM } from '../_core/llm';
 import { QumusIdentitySystem } from '../_core/qumusIdentity';
+import { CandyIdentitySystem } from '../_core/candyIdentity';
 
 export const chatStreamingRouter = router({
   /**
@@ -14,6 +15,8 @@ export const chatStreamingRouter = router({
         content: z.string(),
       })),
       query: z.string(),
+      // Which AI persona to use — Valanna (default) or Candy
+      persona: z.enum(['valanna', 'candy']).default('valanna'),
       // Optional file attachments for multimodal input
       attachments: z.array(z.object({
         url: z.string(),           // S3 URL of the uploaded file
@@ -23,8 +26,10 @@ export const chatStreamingRouter = router({
     }))
     .mutation(async ({ input, ctx }) => {
       try {
-        // Use QUMUS identity system for system prompt
-        const systemPrompt = QumusIdentitySystem.getSystemPrompt();
+        // Use the selected persona's identity system for system prompt
+        const systemPrompt = input.persona === 'candy' 
+          ? CandyIdentitySystem.getSystemPrompt() 
+          : QumusIdentitySystem.getSystemPrompt();
 
         // Build message history
         const historyMessages = input.messages.map(msg => ({

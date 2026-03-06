@@ -1,6 +1,7 @@
 import { router, publicProcedure } from '../_core/trpc';
 import { z } from 'zod';
 import { QumusIdentitySystem } from '../_core/qumusIdentity';
+import { CandyIdentitySystem } from '../_core/candyIdentity';
 import { QumusOrchestrationEngine } from '../_core/qumusOrchestrationEngine';
 import { invokeLLM } from '../_core/llm';
 
@@ -12,11 +13,14 @@ export const qumusChatRouter = router({
         content: z.string(),
       })),
       query: z.string(),
+      persona: z.enum(['valanna', 'candy']).default('valanna'),
     }))
     .mutation(async ({ input }) => {
       try {
-        // Use QUMUS identity system for system prompt
-        const systemPrompt = QumusIdentitySystem.getSystemPrompt();
+        // Use the selected persona's identity system for system prompt
+        const systemPrompt = input.persona === 'candy' 
+          ? CandyIdentitySystem.getSystemPrompt() 
+          : QumusIdentitySystem.getSystemPrompt();
 
         const messages = [
           {

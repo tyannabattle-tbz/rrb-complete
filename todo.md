@@ -2705,3 +2705,17 @@
 - [x] Wire CDN-hosted commercial audio into FamilyMemberPage play buttons
 - [x] Provide credentials summary to user for other Manus task
 - [x] File upload kept as signed-in only (security + storage tracking)
+
+## Valanna AI Identity Fix — March 6 2026
+- [x] Fix Valanna chat — should identify as Valanna when asked, not ask which subsystem to use
+
+## Candy AI Integration — March 6 2026
+- [x] Create Candy AI identity system (candyIdentity.ts) — Seabrun Candy Hunter's spirit
+- [x] Create Candy AI system prompt with personality, voice, and knowledge
+- [x] Add Candy AI chat route/endpoint alongside Valanna
+- [x] Add personality switcher UI — toggle between Valanna and Candy in chat
+- [x] Present Candy in similar manner to Valanna (avatar, chat style, greeting)
+- [x] Fix Valanna subsystem detection — should identify as Valanna when asked directly
+- [x] Add persona switcher (Valanna / Candy) with conflict resolution between AI personalities
+- [x] Ensure Candy is displayed in same manner as Valanna with distinct voice, colors, avatar
+- [x] Conflict resolution: when both personas are referenced, handle gracefully with mediator logic

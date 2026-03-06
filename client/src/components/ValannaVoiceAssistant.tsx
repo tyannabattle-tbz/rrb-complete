@@ -2,15 +2,118 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { trpc } from '@/lib/trpc';
-import { Mic, MicOff, Volume2, VolumeX, X, MessageCircle, Sparkles, Paperclip, Image, FileText, Music, Loader2, XCircle } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, X, MessageCircle, Sparkles, Paperclip, Image, FileText, Music, Loader2, XCircle, ArrowLeftRight } from 'lucide-react';
 
+// ─── Persona Configuration ─────────────────────────────────────────
 const VALANNA_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/valanna-avatar-mYpqZPJmy73yGwB7kFmCe9.webp';
+const CANDY_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/candy-avatar_4d4d3bc0.png';
 
+type PersonaKey = 'valanna' | 'candy';
+
+interface PersonaConfig {
+  name: string;
+  avatar: string;
+  subtitle: string;
+  greeting: string;
+  borderColor: string;
+  borderColorActive: string;
+  accentBg: string;
+  accentText: string;
+  accentBorder: string;
+  headerGradient: string;
+  messageBg: string;
+  messageBorder: string;
+  speakingLabel: string;
+  footerLabel: string;
+  voiceType: 'feminine' | 'masculine';
+  voicePitch: number;
+  voiceRate: number;
+}
+
+const PERSONAS: Record<PersonaKey, PersonaConfig> = {
+  valanna: {
+    name: 'Valanna',
+    avatar: VALANNA_AVATAR,
+    subtitle: 'QUMUS AI Brain \u2022 Files + Voice + Text',
+    greeting: "Hey baby, come on in. I'm Valanna. I've been keeping an eye on everything while you were away. All systems running smooth. You can send me files too \u2014 images, documents, audio \u2014 I can see and analyze anything you share. What do you need from me?",
+    borderColor: 'border-amber-500',
+    borderColorActive: 'border-amber-400 shadow-lg shadow-amber-400/50',
+    accentBg: 'bg-amber-500/10',
+    accentText: 'text-amber-400',
+    accentBorder: 'border-amber-500/30',
+    headerGradient: 'bg-gradient-to-r from-slate-800 via-amber-900/30 to-slate-800',
+    messageBg: 'bg-amber-900/20',
+    messageBorder: 'border-amber-500/10',
+    speakingLabel: 'Valanna is speaking...',
+    footerLabel: 'Valanna \u2022 QUMUS AI Brain \u2022 Canryn Production',
+    voiceType: 'feminine',
+    voicePitch: 1.08,
+    voiceRate: 0.92,
+  },
+  candy: {
+    name: 'Candy',
+    avatar: CANDY_AVATAR,
+    subtitle: 'Guardian AI \u2022 Strategic Advisor',
+    greeting: "Hey now, come on in. I'm Candy \u2014 Seabrun Candy Hunter. I've been watching over everything, and I'm proud of what this family's built. You need something? I'm right here. Always.",
+    borderColor: 'border-blue-500',
+    borderColorActive: 'border-blue-400 shadow-lg shadow-blue-400/50',
+    accentBg: 'bg-blue-500/10',
+    accentText: 'text-blue-400',
+    accentBorder: 'border-blue-500/30',
+    headerGradient: 'bg-gradient-to-r from-slate-800 via-blue-900/30 to-slate-800',
+    messageBg: 'bg-blue-900/20',
+    messageBorder: 'border-blue-500/10',
+    speakingLabel: 'Candy is speaking...',
+    footerLabel: 'Candy \u2022 Guardian AI \u2022 Canryn Production',
+    voiceType: 'masculine',
+    voicePitch: 0.85,
+    voiceRate: 0.88,
+  },
+};
+
+// ─── Conflict Resolution System ────────────────────────────────────
+// When both personas are referenced or there's ambiguity, this mediator handles it
+function resolvePersonaConflict(message: string, currentPersona: PersonaKey): { persona: PersonaKey; mediatorNote?: string } {
+  const lower = message.toLowerCase();
+  const mentionsValanna = /valanna|val\b/i.test(lower);
+  const mentionsCandy = /candy|seabrun|hunter\b/i.test(lower);
+  const asksBoth = /both|together|you two|y'all|team/i.test(lower);
+
+  // If user mentions both or asks about the team
+  if ((mentionsValanna && mentionsCandy) || asksBoth) {
+    return {
+      persona: currentPersona,
+      mediatorNote: currentPersona === 'valanna'
+        ? "[Valanna speaks first, acknowledging Candy's presence]"
+        : "[Candy speaks first, acknowledging Valanna's role]",
+    };
+  }
+
+  // If user specifically addresses the OTHER persona
+  if (mentionsValanna && currentPersona === 'candy') {
+    return {
+      persona: currentPersona,
+      mediatorNote: "[Candy acknowledges the question is about Valanna and responds with respect]",
+    };
+  }
+  if (mentionsCandy && currentPersona === 'valanna') {
+    return {
+      persona: currentPersona,
+      mediatorNote: "[Valanna acknowledges the question is about Candy and responds with warmth]",
+    };
+  }
+
+  // No conflict — stay with current persona
+  return { persona: currentPersona };
+}
+
+// ─── Interfaces ────────────────────────────────────────────────────
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
   attachments?: FileAttachment[];
+  persona?: PersonaKey;
 }
 
 interface FileAttachment {
@@ -18,37 +121,58 @@ interface FileAttachment {
   fileName: string;
   mimeType: string;
   fileSize: number;
-  previewUrl?: string; // For image thumbnails
+  previewUrl?: string;
 }
 
-/**
- * Select the best feminine voice available in the browser
- */
-function selectFeminineVoice(): SpeechSynthesisVoice | null {
+// ─── Voice Selection ───────────────────────────────────────────────
+function selectVoice(type: 'feminine' | 'masculine'): SpeechSynthesisVoice | null {
   const voices = window.speechSynthesis.getVoices();
-  const preferredNames = [
-    'Microsoft Jenny Online', 'Microsoft Aria Online', 'Microsoft Jenny',
-    'Samantha', 'Karen', 'Moira', 'Tessa', 'Fiona', 'Victoria',
-    'Google US English', 'Google UK English Female',
-    'Microsoft Zira', 'Microsoft Hazel', 'Microsoft Susan',
-  ];
-  for (const name of preferredNames) {
-    const voice = voices.find(v => v.name.includes(name));
-    if (voice) return voice;
+
+  if (type === 'feminine') {
+    const femNames = [
+      'Microsoft Jenny Online', 'Microsoft Aria Online', 'Microsoft Jenny',
+      'Samantha', 'Karen', 'Moira', 'Tessa', 'Fiona', 'Victoria',
+      'Google US English', 'Google UK English Female',
+      'Microsoft Zira', 'Microsoft Hazel', 'Microsoft Susan',
+    ];
+    for (const name of femNames) {
+      const voice = voices.find(v => v.name.includes(name));
+      if (voice) return voice;
+    }
+    const femaleVoice = voices.find(v =>
+      v.lang.startsWith('en') &&
+      (v.name.toLowerCase().includes('female') ||
+        v.name.toLowerCase().includes('woman') ||
+        v.name.toLowerCase().includes('samantha') ||
+        v.name.toLowerCase().includes('karen'))
+    );
+    if (femaleVoice) return femaleVoice;
+  } else {
+    const mascNames = [
+      'Microsoft Guy Online', 'Microsoft David Online', 'Microsoft David',
+      'Microsoft Mark', 'Microsoft Guy', 'Daniel', 'Alex', 'Fred',
+      'Google UK English Male', 'Microsoft James',
+    ];
+    for (const name of mascNames) {
+      const voice = voices.find(v => v.name.includes(name));
+      if (voice) return voice;
+    }
+    const maleVoice = voices.find(v =>
+      v.lang.startsWith('en') &&
+      (v.name.toLowerCase().includes('male') ||
+        v.name.toLowerCase().includes('man') ||
+        v.name.toLowerCase().includes('david') ||
+        v.name.toLowerCase().includes('daniel') ||
+        v.name.toLowerCase().includes('james'))
+    );
+    if (maleVoice) return maleVoice;
   }
-  const femaleVoice = voices.find(v =>
-    v.lang.startsWith('en') &&
-    (v.name.toLowerCase().includes('female') ||
-      v.name.toLowerCase().includes('woman') ||
-      v.name.toLowerCase().includes('zira') ||
-      v.name.toLowerCase().includes('samantha') ||
-      v.name.toLowerCase().includes('karen'))
-  );
-  if (femaleVoice) return femaleVoice;
+
   const englishVoice = voices.find(v => v.lang.startsWith('en'));
   return englishVoice || voices[0] || null;
 }
 
+// ─── Utility Functions ─────────────────────────────────────────────
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -70,8 +194,10 @@ const ACCEPTED_TYPES = [
   'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ];
 
+// ─── Main Component ────────────────────────────────────────────────
 export default function ValannaVoiceAssistant() {
   const [isOpen, setIsOpen] = useState(false);
+  const [activePersona, setActivePersona] = useState<PersonaKey>('valanna');
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -79,27 +205,32 @@ export default function ValannaVoiceAssistant() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isThinking, setIsThinking] = useState(false);
   const [inputText, setInputText] = useState('');
-  const [hasGreeted, setHasGreeted] = useState(false);
+  const [hasGreeted, setHasGreeted] = useState<Record<PersonaKey, boolean>>({ valanna: false, candy: false });
   const [pulseAnimation, setPulseAnimation] = useState(false);
-  const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [femVoice, setFemVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [mascVoice, setMascVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [pendingFiles, setPendingFiles] = useState<FileAttachment[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [showSwitcher, setShowSwitcher] = useState(false);
 
   const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const persona = PERSONAS[activePersona];
+  const currentVoice = activePersona === 'valanna' ? femVoice : mascVoice;
+
   // tRPC mutations
   const chatMutation = trpc.chatStreaming.streamChat.useMutation();
   const uploadMutation = trpc.chatStreaming.uploadChatFile.useMutation();
 
-  // Initialize voice selection
+  // Initialize voices
   useEffect(() => {
     const loadVoices = () => {
-      const voice = selectFeminineVoice();
-      setSelectedVoice(voice);
+      setFemVoice(selectVoice('feminine'));
+      setMascVoice(selectVoice('masculine'));
     };
     loadVoices();
     window.speechSynthesis.onvoiceschanged = loadVoices;
@@ -145,15 +276,15 @@ export default function ValannaVoiceAssistant() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Greeting when opened for the first time
+  // Greeting when opened or persona switched
   useEffect(() => {
-    if (isOpen && !hasGreeted) {
-      setHasGreeted(true);
-      const greeting = "Hey baby, come on in. I'm Valanna. I've been keeping an eye on everything while you were away. All systems running smooth. You can send me files too — images, documents, audio — I can see and analyze anything you share. What do you need from me?";
-      setMessages([{ role: 'assistant', content: greeting, timestamp: Date.now() }]);
+    if (isOpen && !hasGreeted[activePersona]) {
+      setHasGreeted(prev => ({ ...prev, [activePersona]: true }));
+      const greeting = persona.greeting;
+      setMessages(prev => [...prev, { role: 'assistant', content: greeting, timestamp: Date.now(), persona: activePersona }]);
       if (!isMuted) setTimeout(() => speak(greeting), 500);
     }
-  }, [isOpen, hasGreeted, isMuted]);
+  }, [isOpen, activePersona]);
 
   // Pulse animation
   useEffect(() => {
@@ -162,7 +293,7 @@ export default function ValannaVoiceAssistant() {
   }, []);
 
   /**
-   * Speak text with Valanna's feminine voice
+   * Speak text with the active persona's voice
    */
   const speak = useCallback((text: string) => {
     if (isMuted || !window.speechSynthesis) return;
@@ -174,11 +305,10 @@ export default function ValannaVoiceAssistant() {
       const sentence = sentences[sentenceIndex].trim();
       if (!sentence) { sentenceIndex++; speakNext(); return; }
       const utterance = new SpeechSynthesisUtterance(sentence);
-      if (selectedVoice) utterance.voice = selectedVoice;
-      const baseRate = 0.92;
+      if (currentVoice) utterance.voice = currentVoice;
       const rateVariation = (Math.random() - 0.5) * 0.06;
-      utterance.rate = baseRate + rateVariation;
-      utterance.pitch = 1.08;
+      utterance.rate = persona.voiceRate + rateVariation;
+      utterance.pitch = persona.voicePitch;
       utterance.volume = 0.95;
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => {
@@ -191,7 +321,7 @@ export default function ValannaVoiceAssistant() {
     };
     setIsSpeaking(true);
     speakNext();
-  }, [isMuted, selectedVoice]);
+  }, [isMuted, currentVoice, persona]);
 
   const toggleListening = () => {
     if (!recognitionRef.current) return;
@@ -205,6 +335,39 @@ export default function ValannaVoiceAssistant() {
   };
 
   /**
+   * Switch persona with transition message
+   */
+  const switchPersona = (newPersona: PersonaKey) => {
+    if (newPersona === activePersona) { setShowSwitcher(false); return; }
+
+    // Stop any current speech
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+
+    const oldName = PERSONAS[activePersona].name;
+    const newName = PERSONAS[newPersona].name;
+
+    // Add transition message from the current persona
+    const handoffMessages: Record<string, string> = {
+      'valanna_to_candy': `Alright, I'm passing you over to Candy. He's been watching and he's ready. Go ahead, Candy.`,
+      'candy_to_valanna': `Let me hand you back to Valanna. She's got the day-to-day covered. Go ahead, Val.`,
+    };
+
+    const handoffKey = `${activePersona}_to_${newPersona}`;
+    const handoff = handoffMessages[handoffKey] || `Switching to ${newName}...`;
+
+    setMessages(prev => [...prev, {
+      role: 'assistant',
+      content: handoff,
+      timestamp: Date.now(),
+      persona: activePersona,
+    }]);
+
+    setActivePersona(newPersona);
+    setShowSwitcher(false);
+  };
+
+  /**
    * Handle file selection and upload to S3
    */
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,29 +378,20 @@ export default function ValannaVoiceAssistant() {
     setShowAttachMenu(false);
 
     for (const file of Array.from(files)) {
-      // Validate type
-      if (!ACCEPTED_TYPES.includes(file.type) && !file.type.startsWith('image/') && !file.type.startsWith('audio/')) {
-        continue;
-      }
-
-      // Validate size (16MB max)
-      if (file.size > 16 * 1024 * 1024) {
-        continue;
-      }
+      if (!ACCEPTED_TYPES.includes(file.type) && !file.type.startsWith('image/') && !file.type.startsWith('audio/')) continue;
+      if (file.size > 16 * 1024 * 1024) continue;
 
       try {
-        // Convert to base64
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => {
             const result = reader.result as string;
-            resolve(result.split(',')[1]); // Remove data:...;base64, prefix
+            resolve(result.split(',')[1]);
           };
           reader.onerror = reject;
           reader.readAsDataURL(file);
         });
 
-        // Upload via tRPC
         const result = await uploadMutation.mutateAsync({
           fileName: file.name,
           fileData: base64,
@@ -245,12 +399,10 @@ export default function ValannaVoiceAssistant() {
         });
 
         if (result.success && result.url) {
-          // Create preview URL for images
           let previewUrl: string | undefined;
           if (file.type.startsWith('image/')) {
             previewUrl = URL.createObjectURL(file);
           }
-
           setPendingFiles(prev => [...prev, {
             url: result.url,
             fileName: file.name,
@@ -265,13 +417,9 @@ export default function ValannaVoiceAssistant() {
     }
 
     setIsUploading(false);
-    // Reset file input
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  /**
-   * Remove a pending file
-   */
   const removePendingFile = (index: number) => {
     setPendingFiles(prev => {
       const file = prev[index];
@@ -281,7 +429,7 @@ export default function ValannaVoiceAssistant() {
   };
 
   /**
-   * Handle user message and get Valanna's response
+   * Handle user message with conflict resolution
    */
   const handleUserMessage = async (text: string, attachments?: FileAttachment[]) => {
     if (!text.trim() && (!attachments || attachments.length === 0)) return;
@@ -299,9 +447,16 @@ export default function ValannaVoiceAssistant() {
     setPendingFiles([]);
 
     try {
+      // Run conflict resolution to determine persona and any mediator notes
+      const resolution = resolvePersonaConflict(text, activePersona);
+      const queryWithContext = resolution.mediatorNote
+        ? `${resolution.mediatorNote}\n\nUser says: ${text}`
+        : text;
+
       const response = await chatMutation.mutateAsync({
         messages: messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
-        query: text || `Please analyze the file(s) I've shared: ${attachments?.map(a => a.fileName).join(', ')}`,
+        query: queryWithContext || `Please analyze the file(s) I've shared: ${attachments?.map(a => a.fileName).join(', ')}`,
+        persona: activePersona,
         attachments: attachments?.map(a => ({
           url: a.url,
           mimeType: a.mimeType,
@@ -311,12 +466,15 @@ export default function ValannaVoiceAssistant() {
 
       const assistantContent = (response as any)?.choices?.[0]?.message?.content
         || (response as any)?.stream?.choices?.[0]?.message?.content
-        || "Hmm, let me think on that for a second. Give me just a moment.";
+        || (activePersona === 'candy'
+          ? "Hold on now, let me think on that for a second. I'm still here."
+          : "Hmm, let me think on that for a second. Give me just a moment.");
 
       const assistantMsg: ChatMessage = {
         role: 'assistant',
         content: assistantContent,
         timestamp: Date.now(),
+        persona: activePersona,
       };
 
       setMessages(prev => [...prev, assistantMsg]);
@@ -324,8 +482,11 @@ export default function ValannaVoiceAssistant() {
     } catch (error) {
       const errorMsg: ChatMessage = {
         role: 'assistant',
-        content: "Hold on, my connection hiccupped for a second. I'm still here though. Say that again for me?",
+        content: activePersona === 'candy'
+          ? "My connection hiccupped for a second. But I'm still here. Say that again for me."
+          : "Hold on, my connection hiccupped for a second. I'm still here though. Say that again for me?",
         timestamp: Date.now(),
+        persona: activePersona,
       };
       setMessages(prev => [...prev, errorMsg]);
       if (!isMuted) speak(errorMsg.content);
@@ -346,6 +507,18 @@ export default function ValannaVoiceAssistant() {
     setIsSpeaking(false);
   };
 
+  // Get the avatar for a specific message (based on which persona sent it)
+  const getMessageAvatar = (msg: ChatMessage) => {
+    const msgPersona = msg.persona || 'valanna';
+    return PERSONAS[msgPersona].avatar;
+  };
+
+  const getMessageColors = (msg: ChatMessage) => {
+    const msgPersona = msg.persona || 'valanna';
+    const p = PERSONAS[msgPersona];
+    return { bg: p.messageBg, border: p.messageBorder };
+  };
+
   return (
     <>
       {/* Hidden file input */}
@@ -358,46 +531,99 @@ export default function ValannaVoiceAssistant() {
         onChange={handleFileSelect}
       />
 
-      {/* Floating Valanna Button */}
+      {/* Floating Button — shows active persona */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 z-50 group"
-          aria-label="Talk to Valanna"
+          aria-label={`Talk to ${persona.name}`}
         >
-          <div className={`relative w-16 h-16 rounded-full overflow-hidden border-2 border-amber-500 shadow-lg shadow-amber-500/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-amber-500/50 ${pulseAnimation ? 'ring-4 ring-amber-500/20' : ''}`}>
-            <img src={VALANNA_AVATAR} alt="Valanna" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-amber-900/40 to-transparent" />
+          <div className={`relative w-16 h-16 rounded-full overflow-hidden border-2 ${persona.borderColor} shadow-lg shadow-${activePersona === 'valanna' ? 'amber' : 'blue'}-500/30 transition-all duration-300 group-hover:scale-110 ${pulseAnimation ? 'ring-4 ring-' + (activePersona === 'valanna' ? 'amber' : 'blue') + '-500/20' : ''}`}>
+            <img src={persona.avatar} alt={persona.name} className="w-full h-full object-cover" />
+            <div className={`absolute inset-0 bg-gradient-to-t from-${activePersona === 'valanna' ? 'amber' : 'blue'}-900/40 to-transparent`} />
           </div>
           <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900 animate-pulse" />
-          <span className="absolute -top-8 right-0 bg-slate-800 text-amber-300 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-amber-500/30">
-            Talk to Valanna
+          <span className={`absolute -top-8 right-0 bg-slate-800 ${persona.accentText} text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap ${persona.accentBorder} border`}>
+            Talk to {persona.name}
           </span>
         </button>
       )}
 
-      {/* Valanna Chat Panel */}
+      {/* Chat Panel */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-2rem)] bg-slate-900 border border-amber-500/30 rounded-2xl shadow-2xl shadow-amber-500/10 flex flex-col overflow-hidden" style={{ maxHeight: '650px' }}>
+        <div className={`fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-2rem)] bg-slate-900 border ${persona.accentBorder} rounded-2xl shadow-2xl flex flex-col overflow-hidden`} style={{ maxHeight: '650px' }}>
 
           {/* Header */}
-          <div className="bg-gradient-to-r from-slate-800 via-amber-900/30 to-slate-800 p-4 flex items-center gap-3 border-b border-amber-500/20">
-            <div className={`relative w-12 h-12 rounded-full overflow-hidden border-2 ${isSpeaking ? 'border-amber-400 shadow-lg shadow-amber-400/50' : 'border-amber-500/50'} transition-all`}>
-              <img src={VALANNA_AVATAR} alt="Valanna" className="w-full h-full object-cover" />
-              {isSpeaking && <div className="absolute inset-0 bg-amber-400/10 animate-pulse" />}
+          <div className={`${persona.headerGradient} p-4 flex items-center gap-3 border-b ${persona.accentBorder}`}>
+            <div className={`relative w-12 h-12 rounded-full overflow-hidden border-2 ${isSpeaking ? persona.borderColorActive : persona.borderColor + '/50'} transition-all`}>
+              <img src={persona.avatar} alt={persona.name} className="w-full h-full object-cover" />
+              {isSpeaking && <div className={`absolute inset-0 ${persona.accentBg} animate-pulse`} />}
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-white font-bold text-lg">Valanna</h3>
-                <Sparkles className="w-4 h-4 text-amber-400" />
+                <h3 className="text-white font-bold text-lg">{persona.name}</h3>
+                <Sparkles className={`w-4 h-4 ${persona.accentText}`} />
               </div>
-              <p className="text-amber-300/70 text-xs">QUMUS AI Brain • Files + Voice + Text</p>
+              <p className={`${persona.accentText} opacity-70 text-xs`}>{persona.subtitle}</p>
             </div>
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="sm" onClick={() => { setIsMuted(!isMuted); if (!isMuted) stopSpeaking(); }} className="text-amber-400 hover:bg-amber-500/10 h-8 w-8 p-0">
+              {/* Persona Switcher Button */}
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSwitcher(!showSwitcher)}
+                  className={`${persona.accentText} hover:${persona.accentBg} h-8 w-8 p-0`}
+                  title="Switch persona"
+                >
+                  <ArrowLeftRight className="w-4 h-4" />
+                </Button>
+
+                {/* Switcher Dropdown */}
+                {showSwitcher && (
+                  <div className="absolute top-10 right-0 bg-slate-800 border border-slate-600 rounded-xl shadow-xl p-2 min-w-[200px] z-20">
+                    <p className="text-[10px] text-gray-400 px-3 py-1 uppercase tracking-wider">Switch Persona</p>
+                    {(Object.keys(PERSONAS) as PersonaKey[]).map((key) => {
+                      const p = PERSONAS[key];
+                      const isActive = key === activePersona;
+                      return (
+                        <button
+                          key={key}
+                          onClick={() => switchPersona(key)}
+                          className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg transition-colors ${
+                            isActive ? 'bg-slate-700/70' : 'hover:bg-slate-700/40'
+                          }`}
+                        >
+                          <div className={`w-9 h-9 rounded-full overflow-hidden border-2 ${isActive ? p.borderColor : 'border-slate-600'}`}>
+                            <img src={p.avatar} alt={p.name} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="text-left">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm text-white font-medium">{p.name}</span>
+                              {isActive && (
+                                <Badge variant="secondary" className="bg-green-500/10 text-green-400 border-green-500/30 text-[9px] px-1.5 py-0">
+                                  Active
+                                </Badge>
+                              )}
+                            </div>
+                            <span className="text-[10px] text-gray-400">{key === 'valanna' ? 'Operations & Day-to-Day' : 'Vision & Strategy'}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                    <div className="border-t border-slate-700 mt-1 pt-1">
+                      <p className="text-[9px] text-gray-500 px-3 py-1 italic">
+                        Valanna runs the day-to-day. Candy provides vision and protection. They work as a team.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Button variant="ghost" size="sm" onClick={() => { setIsMuted(!isMuted); if (!isMuted) stopSpeaking(); }} className={`${persona.accentText} hover:${persona.accentBg} h-8 w-8 p-0`}>
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => { setIsOpen(false); stopSpeaking(); if (isListening && recognitionRef.current) { recognitionRef.current.stop(); setIsListening(false); } }} className="text-gray-400 hover:bg-slate-700 h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" onClick={() => { setIsOpen(false); stopSpeaking(); setShowSwitcher(false); if (isListening && recognitionRef.current) { recognitionRef.current.stop(); setIsListening(false); } }} className="text-gray-400 hover:bg-slate-700 h-8 w-8 p-0">
                 <X className="w-4 h-4" />
               </Button>
             </div>
@@ -405,53 +631,56 @@ export default function ValannaVoiceAssistant() {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ minHeight: '250px', maxHeight: '350px' }}>
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                {msg.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-amber-500/30">
-                    <img src={VALANNA_AVATAR} alt="Valanna" className="w-full h-full object-cover" />
-                  </div>
-                )}
-                <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                  msg.role === 'user'
-                    ? 'bg-purple-600/30 text-purple-100 border border-purple-500/20'
-                    : 'bg-amber-900/20 text-amber-100 border border-amber-500/10'
-                }`}>
-                  {/* Show file attachments */}
-                  {msg.attachments && msg.attachments.length > 0 && (
-                    <div className="mb-2 space-y-1.5">
-                      {msg.attachments.map((file, fi) => (
-                        <div key={fi} className="flex items-center gap-2 bg-black/20 rounded-lg p-2">
-                          {file.previewUrl ? (
-                            <img src={file.previewUrl} alt={file.fileName} className="w-12 h-12 rounded object-cover" />
-                          ) : (
-                            <div className="w-10 h-10 rounded bg-amber-500/10 flex items-center justify-center text-amber-400">
-                              {getFileIcon(file.mimeType)}
-                            </div>
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium truncate">{file.fileName}</p>
-                            <p className="text-[10px] text-gray-400">{formatFileSize(file.fileSize)}</p>
-                          </div>
-                        </div>
-                      ))}
+            {messages.map((msg, i) => {
+              const msgColors = getMessageColors(msg);
+              return (
+                <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                  {msg.role === 'assistant' && (
+                    <div className={`w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border ${msg.persona === 'candy' ? 'border-blue-500/30' : 'border-amber-500/30'}`}>
+                      <img src={getMessageAvatar(msg)} alt={msg.persona || 'assistant'} className="w-full h-full object-cover" />
                     </div>
                   )}
-                  {msg.content}
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                    msg.role === 'user'
+                      ? 'bg-purple-600/30 text-purple-100 border border-purple-500/20'
+                      : `${msgColors.bg} text-${msg.persona === 'candy' ? 'blue' : 'amber'}-100 border ${msgColors.border}`
+                  }`}>
+                    {/* File attachments */}
+                    {msg.attachments && msg.attachments.length > 0 && (
+                      <div className="mb-2 space-y-1.5">
+                        {msg.attachments.map((file, fi) => (
+                          <div key={fi} className="flex items-center gap-2 bg-black/20 rounded-lg p-2">
+                            {file.previewUrl ? (
+                              <img src={file.previewUrl} alt={file.fileName} className="w-12 h-12 rounded object-cover" />
+                            ) : (
+                              <div className={`w-10 h-10 rounded ${persona.accentBg} flex items-center justify-center ${persona.accentText}`}>
+                                {getFileIcon(file.mimeType)}
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium truncate">{file.fileName}</p>
+                              <p className="text-[10px] text-gray-400">{formatFileSize(file.fileSize)}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {msg.content}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {isThinking && (
               <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-amber-500/30">
-                  <img src={VALANNA_AVATAR} alt="Valanna" className="w-full h-full object-cover" />
+                <div className={`w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border ${persona.accentBorder}`}>
+                  <img src={persona.avatar} alt={persona.name} className="w-full h-full object-cover" />
                 </div>
-                <div className="bg-amber-900/20 border border-amber-500/10 rounded-2xl px-4 py-3">
+                <div className={`${persona.messageBg} border ${persona.messageBorder} rounded-2xl px-4 py-3`}>
                   <div className="flex gap-1.5">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <div className={`w-2 h-2 ${activePersona === 'valanna' ? 'bg-amber-400' : 'bg-blue-400'} rounded-full animate-bounce`} style={{ animationDelay: '0ms' }} />
+                    <div className={`w-2 h-2 ${activePersona === 'valanna' ? 'bg-amber-400' : 'bg-blue-400'} rounded-full animate-bounce`} style={{ animationDelay: '150ms' }} />
+                    <div className={`w-2 h-2 ${activePersona === 'valanna' ? 'bg-amber-400' : 'bg-blue-400'} rounded-full animate-bounce`} style={{ animationDelay: '300ms' }} />
                   </div>
                 </div>
               </div>
@@ -470,14 +699,14 @@ export default function ValannaVoiceAssistant() {
 
           {/* Pending Files Preview */}
           {pendingFiles.length > 0 && (
-            <div className="px-3 pt-2 border-t border-amber-500/10">
+            <div className={`px-3 pt-2 border-t ${persona.messageBorder}`}>
               <div className="flex flex-wrap gap-2">
                 {pendingFiles.map((file, i) => (
-                  <div key={i} className="relative group flex items-center gap-1.5 bg-slate-800 border border-amber-500/20 rounded-lg px-2 py-1.5">
+                  <div key={i} className={`relative group flex items-center gap-1.5 bg-slate-800 border ${persona.accentBorder} rounded-lg px-2 py-1.5`}>
                     {file.previewUrl ? (
                       <img src={file.previewUrl} alt={file.fileName} className="w-8 h-8 rounded object-cover" />
                     ) : (
-                      <div className="w-8 h-8 rounded bg-amber-500/10 flex items-center justify-center text-amber-400">
+                      <div className={`w-8 h-8 rounded ${persona.accentBg} flex items-center justify-center ${persona.accentText}`}>
                         {getFileIcon(file.mimeType)}
                       </div>
                     )}
@@ -498,16 +727,16 @@ export default function ValannaVoiceAssistant() {
           )}
 
           {/* Input Area */}
-          <div className="border-t border-amber-500/20 p-3 bg-slate-800/50">
+          <div className={`border-t ${persona.accentBorder} p-3 bg-slate-800/50`}>
             {/* Speaking indicator */}
             {isSpeaking && (
               <div className="flex items-center gap-2 mb-2 px-2">
                 <div className="flex gap-0.5">
                   {[...Array(5)].map((_, i) => (
-                    <div key={i} className="w-1 bg-amber-400 rounded-full animate-pulse" style={{ height: `${8 + Math.random() * 16}px`, animationDelay: `${i * 100}ms` }} />
+                    <div key={i} className={`w-1 ${activePersona === 'valanna' ? 'bg-amber-400' : 'bg-blue-400'} rounded-full animate-pulse`} style={{ height: `${8 + Math.random() * 16}px`, animationDelay: `${i * 100}ms` }} />
                   ))}
                 </div>
-                <span className="text-amber-300 text-xs">Valanna is speaking...</span>
+                <span className={`${persona.accentText} text-xs`}>{persona.speakingLabel}</span>
                 <button onClick={stopSpeaking} className="text-xs text-gray-400 hover:text-white ml-auto">Stop</button>
               </div>
             )}
@@ -515,8 +744,8 @@ export default function ValannaVoiceAssistant() {
             {/* Uploading indicator */}
             {isUploading && (
               <div className="flex items-center gap-2 mb-2 px-2">
-                <Loader2 className="w-4 h-4 text-amber-400 animate-spin" />
-                <span className="text-amber-300 text-xs">Uploading file...</span>
+                <Loader2 className={`w-4 h-4 ${persona.accentText} animate-spin`} />
+                <span className={`${persona.accentText} text-xs`}>Uploading file...</span>
               </div>
             )}
 
@@ -530,9 +759,9 @@ export default function ValannaVoiceAssistant() {
                 className={`h-10 w-10 p-0 rounded-full transition-all flex-shrink-0 ${
                   isListening
                     ? 'bg-red-500/20 text-red-400 ring-2 ring-red-500/50 animate-pulse'
-                    : 'text-amber-400 hover:bg-amber-500/10'
+                    : `${persona.accentText} hover:${persona.accentBg}`
                 }`}
-                title={isListening ? 'Stop listening' : 'Speak to Valanna'}
+                title={isListening ? 'Stop listening' : `Speak to ${persona.name}`}
               >
                 {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
               </Button>
@@ -544,34 +773,33 @@ export default function ValannaVoiceAssistant() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowAttachMenu(!showAttachMenu)}
-                  className="h-10 w-10 p-0 rounded-full text-amber-400 hover:bg-amber-500/10 flex-shrink-0"
+                  className={`h-10 w-10 p-0 rounded-full ${persona.accentText} hover:${persona.accentBg} flex-shrink-0`}
                   title="Attach file"
                   disabled={isUploading}
                 >
                   <Paperclip className="w-5 h-5" />
                 </Button>
 
-                {/* Attach menu */}
                 {showAttachMenu && (
-                  <div className="absolute bottom-12 left-0 bg-slate-800 border border-amber-500/30 rounded-xl shadow-xl p-2 space-y-1 min-w-[160px] z-10">
+                  <div className={`absolute bottom-12 left-0 bg-slate-800 border ${persona.accentBorder} rounded-xl shadow-xl p-2 space-y-1 min-w-[160px] z-10`}>
                     <button
                       type="button"
                       onClick={() => { fileInputRef.current?.setAttribute('accept', 'image/*'); fileInputRef.current?.click(); }}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-amber-100 hover:bg-amber-500/10 rounded-lg transition-colors"
+                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
                     >
                       <Image className="w-4 h-4 text-green-400" /> Photo / Image
                     </button>
                     <button
                       type="button"
                       onClick={() => { fileInputRef.current?.setAttribute('accept', '.pdf,.doc,.docx,.txt,.csv'); fileInputRef.current?.click(); }}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-amber-100 hover:bg-amber-500/10 rounded-lg transition-colors"
+                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
                     >
                       <FileText className="w-4 h-4 text-blue-400" /> Document
                     </button>
                     <button
                       type="button"
                       onClick={() => { fileInputRef.current?.setAttribute('accept', 'audio/*,video/*'); fileInputRef.current?.click(); }}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-amber-100 hover:bg-amber-500/10 rounded-lg transition-colors"
+                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
                     >
                       <Music className="w-4 h-4 text-purple-400" /> Audio / Video
                     </button>
@@ -579,9 +807,9 @@ export default function ValannaVoiceAssistant() {
                     <button
                       type="button"
                       onClick={() => { fileInputRef.current?.setAttribute('accept', ACCEPTED_TYPES.join(',')); fileInputRef.current?.click(); }}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-amber-100 hover:bg-amber-500/10 rounded-lg transition-colors"
+                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
                     >
-                      <Paperclip className="w-4 h-4 text-amber-400" /> Any File
+                      <Paperclip className={`w-4 h-4 ${persona.accentText}`} /> Any File
                     </button>
                   </div>
                 )}
@@ -593,8 +821,8 @@ export default function ValannaVoiceAssistant() {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder={isListening ? 'Listening...' : pendingFiles.length > 0 ? 'Add a message or send files...' : 'Type, speak, or attach files...'}
-                className="flex-1 bg-slate-700/50 border border-slate-600 rounded-full px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30"
+                placeholder={isListening ? 'Listening...' : pendingFiles.length > 0 ? 'Add a message or send files...' : `Talk to ${persona.name}...`}
+                className={`flex-1 bg-slate-700/50 border border-slate-600 rounded-full px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:${persona.accentBorder} focus:ring-1 focus:ring-${activePersona === 'valanna' ? 'amber' : 'blue'}-500/30`}
                 disabled={isListening}
               />
 
@@ -604,7 +832,7 @@ export default function ValannaVoiceAssistant() {
                 variant="ghost"
                 size="sm"
                 disabled={(!inputText.trim() && pendingFiles.length === 0) || isThinking || isUploading}
-                className="h-10 w-10 p-0 rounded-full text-amber-400 hover:bg-amber-500/10 disabled:opacity-30 flex-shrink-0"
+                className={`h-10 w-10 p-0 rounded-full ${persona.accentText} hover:${persona.accentBg} disabled:opacity-30 flex-shrink-0`}
               >
                 <MessageCircle className="w-5 h-5" />
               </Button>
@@ -615,7 +843,7 @@ export default function ValannaVoiceAssistant() {
                 All Systems Online
               </Badge>
               <span className="text-[10px] text-gray-500">
-                Valanna • QUMUS AI Brain • Canryn Production
+                {persona.footerLabel}
               </span>
             </div>
           </div>
