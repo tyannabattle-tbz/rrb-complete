@@ -165,6 +165,7 @@ import Tyanna from '@/pages/Tyanna';
 import Jaelon from '@/pages/Jaelon';
 import { EventBanners } from '@/components/EventBanners';
 import ValannaVoiceAssistant from '@/components/ValannaVoiceAssistant';
+import SelmaSlideshow from '@/pages/SelmaSlideshow';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -317,6 +318,7 @@ function Router() {
       <Route path="/sean" component={Sean} />
       <Route path="/tyanna" component={Tyanna} />
       <Route path="/jaelon" component={Jaelon} />
+      <Route path="/selma-slideshow" component={SelmaSlideshow} />
       <Route component={NotFound} />
     </Switch>
     </>
@@ -340,6 +342,17 @@ function App() {
       console.log('[App] OAuth token stored in localStorage');
     }
   }, []);
+
+  // Check if we're on the slideshow page - render without any site chrome
+  const isSlideshow = typeof window !== 'undefined' && window.location.pathname === '/selma-slideshow';
+
+  if (isSlideshow) {
+    return (
+      <ErrorBoundary>
+        <SelmaSlideshow />
+      </ErrorBoundary>
+    );
+  }
 
   return (
     <ErrorBoundary>
