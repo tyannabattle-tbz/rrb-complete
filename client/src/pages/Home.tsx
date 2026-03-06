@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LogIn, LogOut } from 'lucide-react';
+import { getLoginUrl } from '@/const';
 
 export default function Home() {
   const { user } = useAuth();
@@ -101,7 +102,7 @@ export default function Home() {
               ) : (
                 <Button
                   onClick={() => {
-                    window.location.href = '/api/oauth/login';
+                    window.location.href = getLoginUrl();
                   }}
                   variant="outline"
                   size="sm"

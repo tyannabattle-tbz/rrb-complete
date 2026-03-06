@@ -32,7 +32,7 @@ export function registerOAuthRoutes(app: Express) {
       const origin = getOrigin(req);
       const redirectUri = `${origin}/api/oauth/callback`;
       const state = Buffer.from(redirectUri).toString('base64');
-      const loginUrl = `${ENV.oAuthPortalUrl}?client_id=${ENV.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&response_type=code`;
+      const loginUrl = `${ENV.oAuthPortalUrl}/app-auth?appId=${ENV.appId}&redirectUri=${encodeURIComponent(redirectUri)}&state=${state}&type=signIn`;
       
       console.log("[OAuth] Login initiated", {
         origin,

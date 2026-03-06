@@ -2669,3 +2669,7 @@
   - Fixed OAuth redirect URI to use proper protocol via x-forwarded-proto
   - Removed login gate from Home page — all content now publicly accessible
   - Sign In button added to header for admin access
+- [x] Fix Sign In button — tapping arrow opens manus.im popup showing {"message":null} instead of OAuth login portal
+  - Root cause: Sign In button was using /api/oauth/login server route which constructed wrong URL format
+  - Fix: Changed to use getLoginUrl() which builds correct Manus OAuth portal URL with /app-auth path
+  - Also fixed server-side /api/oauth/login route to use correct param names (appId, redirectUri, type=signIn)
