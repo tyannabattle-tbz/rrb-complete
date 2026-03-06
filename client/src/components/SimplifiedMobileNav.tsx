@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video } from 'lucide-react';
+import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video, Gamepad2, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavSection {
@@ -40,6 +40,13 @@ export function SimplifiedMobileNav() {
         { id: 'nav-radio', label: 'RRB Radio', icon: Radio, path: '/rrb-radio' },
         { id: 'nav-boogie', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
         { id: 'nav-broadcast', label: 'Broadcast', icon: Zap, path: '/broadcast-hub' },
+      ],
+    },
+    {
+      title: 'Play & Share',
+      items: [
+        { id: 'nav-games', label: 'Games Hub', icon: Gamepad2, path: '/games' },
+        { id: 'nav-flyer', label: 'Interactive Flyer', icon: Share2, path: '/flyer' },
       ],
     },
     {

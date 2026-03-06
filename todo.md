@@ -2651,3 +2651,12 @@
 - [x] Connect 42 channels to genre-grouped stream URLs (6 unique Zeno.fm streams across 12 categories)
 - [x] Add social sharing pre-fill for flyer promotion (Twitter, Facebook, LinkedIn, WhatsApp + UN messaging)
 - [x] Ensure broadcast URL configurable for Saturday (settings gear on /live)
+
+## Game Enhancements - March 6 2026
+- [x] Audit all existing games (except Solbones) — only Solbones existed, created 3 new games
+- [x] Add levels, progression system, and scoring to each game (7-8 levels per game, localStorage persistence)
+- [x] Add new features (power-ups in Frequency Match, combos in all games, difficulty scaling per level)
+- [x] Ensure games are accessible (ARIA labels, keyboard nav, screen reader support in all games)
+- [x] Connect games to QUMUS ecosystem (Games Hub with total score tracking, cross-links between games)
+- [x] Apply broadcast URL setup for Saturday (configurable via gear icon on /live)
+- [x] Verify Valanna file upload works (S3 upload + multimodal LLM in chatStreamingRouter)

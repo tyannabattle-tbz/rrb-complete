@@ -154,6 +154,10 @@ import SquaddGoals from '@/pages/SquaddGoals';
 import SelmaEvent from '@/pages/SelmaEvent';
 import LiveStreamPage from '@/pages/LiveStreamPage';
 import InteractiveFlyer from '@/pages/InteractiveFlyer';
+import GamesHub from '@/pages/GamesHub';
+import WordFrequencyGame from '@/pages/WordFrequencyGame';
+import FrequencyMatchGame from '@/pages/FrequencyMatchGame';
+import RhythmRootsGame from '@/pages/RhythmRootsGame';
 import { EventBanners } from '@/components/EventBanners';
 import ValannaVoiceAssistant from '@/components/ValannaVoiceAssistant';
 
@@ -299,6 +303,10 @@ function Router() {
       <Route path="/selma" component={SelmaEvent} />
       <Route path="/live" component={LiveStreamPage} />
       <Route path="/flyer" component={InteractiveFlyer} />
+      <Route path="/games" component={GamesHub} />
+      <Route path="/games/word-frequency" component={WordFrequencyGame} />
+      <Route path="/games/frequency-match" component={FrequencyMatchGame} />
+      <Route path="/games/rhythm-roots" component={RhythmRootsGame} />
       <Route component={NotFound} />
     </Switch>
     </>
