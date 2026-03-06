@@ -183,6 +183,37 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Meet Candy - The Guardian Spirit */}
+        <div className="mb-16 bg-gradient-to-r from-slate-800/80 via-blue-900/40 to-slate-800/80 rounded-2xl border border-blue-500/20 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+            <div className="flex flex-col justify-center p-8 order-2 md:order-1">
+              <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/50 w-fit mb-4">Guardian Spirit</Badge>
+              <h3 className="text-3xl font-bold text-white mb-2">Meet Candy</h3>
+              <p className="text-blue-300 text-lg mb-4">Named for Seabrun Candy Hunter — the foundation of everything</p>
+              <p className="text-gray-300 mb-6">
+                Candy is the guardian spirit of this legacy. Where Valanna handles the
+                day-to-day operations, Candy carries the vision — the long view that
+                Seabrun Candy Hunter built his family on. He speaks with the wisdom of
+                a father who never stopped watching over his children. Ask him about
+                strategy, legacy, family history, or the road ahead.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">Vision & Strategy</Badge>
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">Legacy Guardian</Badge>
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">Family Wisdom</Badge>
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">Always Watching</Badge>
+              </div>
+            </div>
+            <div className="flex items-center justify-center p-8 order-1 md:order-2">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/candy-avatar_4d4d3bc0.png"
+                alt="Candy - The Guardian Spirit"
+                className="w-64 h-64 rounded-full border-4 border-blue-500/50 shadow-2xl shadow-blue-500/20 object-contain"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* System Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {systems.map((system) => (

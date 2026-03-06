@@ -2719,3 +2719,9 @@
 - [x] Add persona switcher (Valanna / Candy) with conflict resolution between AI personalities
 - [x] Ensure Candy is displayed in same manner as Valanna with distinct voice, colors, avatar
 - [x] Conflict resolution: when both personas are referenced, handle gracefully with mediator logic
+
+## Candy on Home Screen — March 6 2026
+- [x] Add Candy AI to Home screen with same visual presence as Valanna
+  - Blue gradient section mirroring Valanna's amber/purple section
+  - Mirrored layout (text left, avatar right) vs Valanna's (avatar left, text right)
+  - Badges: Vision & Strategy, Legacy Guardian, Family Wisdom, Always Watching
