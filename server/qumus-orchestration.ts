@@ -108,6 +108,46 @@ const QUMUS_POLICIES: Record<string, QumusPolicy> = {
     triggers: ["report_requested"],
     description: "Generate compliance and audit reports",
   },
+  policy_content_scheduling: {
+    id: "policy_content_scheduling",
+    name: "Content Scheduling",
+    autonomyLevel: 90,
+    confidenceThreshold: 82,
+    triggers: ["schedule_update", "airtime_rotation", "content_queue_empty"],
+    description: "Auto-schedule broadcasts, rotate content across 7 RRB channels, manage 24/7 airtime",
+  },
+  policy_broadcast_management: {
+    id: "policy_broadcast_management",
+    name: "Broadcast Management",
+    autonomyLevel: 88,
+    confidenceThreshold: 85,
+    triggers: ["stream_health_check", "listener_spike", "channel_offline"],
+    description: "Auto-manage RRB channels, monitor stream health, handle listener spikes and failover",
+  },
+  policy_emergency_response: {
+    id: "policy_emergency_response",
+    name: "Emergency Response",
+    autonomyLevel: 75,
+    confidenceThreshold: 90,
+    triggers: ["emergency_alert", "hybridcast_activation", "disaster_detected"],
+    description: "Auto-escalate emergency alerts, trigger HybridCast PWA, coordinate disaster response",
+  },
+  policy_community_engagement: {
+    id: "policy_community_engagement",
+    name: "Community Engagement",
+    autonomyLevel: 85,
+    confidenceThreshold: 80,
+    triggers: ["content_reported", "community_health_check", "engagement_drop"],
+    description: "Auto-moderate community content, track engagement metrics, manage Sweet Miracles outreach",
+  },
+  policy_code_maintenance: {
+    id: "policy_code_maintenance",
+    name: "Code Maintenance",
+    autonomyLevel: 88,
+    confidenceThreshold: 85,
+    triggers: ["health_scan", "broken_link_detected", "dependency_vulnerability"],
+    description: "Auto-scan code health, fix broken links, monitor dependencies, ensure ecosystem integrity",
+  },
 };
 
 // ============================================================================

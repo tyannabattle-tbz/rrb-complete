@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { AlertCircle, CheckCircle, Clock, TrendingUp, Filter, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { AlertCircle, CheckCircle, Clock, TrendingUp, RefreshCw, Shield, Zap, Radio, AlertTriangle, Users, Code, Calendar, BarChart3, CreditCard, Mail, Database, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/lib/auth';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { usePolicyDecisions } from '@/hooks/useWebSocket';
 
 interface PolicyDecision {
@@ -17,93 +16,34 @@ interface PolicyDecision {
   reason: string;
 }
 
-interface HumanReviewItem {
-  id: string;
-  userId: string;
-  type: string;
-  data: any;
-  status: 'pending' | 'approved' | 'denied';
-  createdAt: Date;
-}
+// 12 QUMUS Autonomous Decision Policies
+const QUMUS_POLICIES = [
+  { id: 'payment_processing', name: 'Payment Processing', icon: CreditCard, category: 'core', autonomy: 95, status: 'active' as const, description: 'Auto-validates, reconciles, and processes payments with fraud detection' },
+  { id: 'email_notification', name: 'Email Notification', icon: Mail, category: 'core', autonomy: 100, status: 'active' as const, description: 'Auto-sends transactional emails with retry logic' },
+  { id: 'metrics_persistence', name: 'Metrics Persistence', icon: Database, category: 'core', autonomy: 100, status: 'active' as const, description: 'Auto-syncs metrics from browser to database' },
+  { id: 'access_control', name: 'Access Control', icon: Lock, category: 'core', autonomy: 100, status: 'active' as const, description: 'Auto-enforces subscription tier restrictions' },
+  { id: 'subscription_lifecycle', name: 'Subscription Lifecycle', icon: TrendingUp, category: 'core', autonomy: 95, status: 'active' as const, description: 'Auto-manages renewals, cancellations, and upgrades' },
+  { id: 'fraud_detection', name: 'Fraud Detection', icon: Shield, category: 'core', autonomy: 90, status: 'active' as const, description: 'Auto-detects and blocks fraudulent transactions' },
+  { id: 'analytics_aggregation', name: 'Analytics Aggregation', icon: BarChart3, category: 'core', autonomy: 98, status: 'active' as const, description: 'Auto-aggregates analytics and audit trails' },
+  { id: 'content_scheduling', name: 'Content Scheduling', icon: Calendar, category: 'ecosystem', autonomy: 90, status: 'active' as const, description: 'Auto-schedules broadcasts, rotates content across 7 RRB channels 24/7' },
+  { id: 'broadcast_management', name: 'Broadcast Management', icon: Radio, category: 'ecosystem', autonomy: 88, status: 'active' as const, description: 'Auto-manages channels, monitors stream health, handles failover' },
+  { id: 'emergency_response', name: 'Emergency Response', icon: AlertTriangle, category: 'ecosystem', autonomy: 75, status: 'active' as const, description: 'Auto-escalates alerts, triggers HybridCast PWA, coordinates disaster response' },
+  { id: 'community_engagement', name: 'Community Engagement', icon: Users, category: 'ecosystem', autonomy: 85, status: 'active' as const, description: 'Auto-moderates content, tracks engagement, manages Sweet Miracles outreach' },
+  { id: 'code_maintenance', name: 'Code Maintenance', icon: Code, category: 'ecosystem', autonomy: 88, status: 'active' as const, description: 'Auto-scans code health, fixes broken links, monitors dependencies' },
+];
 
 export default function AdminPoliciesDashboard() {
   const { user } = useAuth();
   const [decisions, setDecisions] = useState<PolicyDecision[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Listen for real-time policy decisions via WebSocket
   usePolicyDecisions((decision) => {
     setDecisions((prev) => [decision, ...prev.slice(0, 99)]);
   });
-  const [reviewQueue, setReviewQueue] = useState<HumanReviewItem[]>([]);
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
-  const [isLoading, setIsLoading] = useState(true);
-  const [confidenceTrends, setConfidenceTrends] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (user?.role === 'admin') {
-      loadPoliciesData();
-    }
-  }, [user]);
-
-  const loadPoliciesData = async () => {
-    setIsLoading(true);
-    try {
-      // Fetch policy decisions and review queue
-      // const data = await trpc.admin.getPolicyDecisions.useQuery();
-      // setDecisions(data.decisions);
-      // setReviewQueue(data.reviewQueue);
-      // setConfidenceTrends(data.trends);
-    } catch (error) {
-      console.error('Failed to load policies:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleApproveReview = async (reviewId: string) => {
-    try {
-      // await trpc.admin.approveReview.useMutation({ reviewId });
-      loadPoliciesData();
-    } catch (error) {
-      console.error('Failed to approve review:', error);
-    }
-  };
-
-  const handleDenyReview = async (reviewId: string, reason: string) => {
-    try {
-      // await trpc.admin.denyReview.useMutation({ reviewId, reason });
-      loadPoliciesData();
-    } catch (error) {
-      console.error('Failed to deny review:', error);
-    }
-  };
-
-  const handleOverrideDecision = async (decisionId: string, override: 'approve' | 'deny') => {
-    try {
-      // await trpc.admin.overridePolicyDecision.useMutation({ decisionId, override, reason: '' });
-      loadPoliciesData();
-    } catch (error) {
-      console.error('Failed to override decision:', error);
-    }
-  };
-
-  const getDecisionStats = () => {
-    const stats = {
-      total: decisions.length,
-      approved: decisions.filter((d) => d.decision === 'approve').length,
-      denied: decisions.filter((d) => d.decision === 'deny').length,
-      review: decisions.filter((d) => d.decision === 'review').length,
-      avgConfidence:
-        decisions.length > 0 ? (decisions.reduce((sum, d) => sum + d.confidence, 0) / decisions.length).toFixed(1) : 0,
-    };
-    return stats;
-  };
-
-  const stats = getDecisionStats();
-  const filteredDecisions =
-    selectedFilter === 'all'
-      ? decisions
-      : decisions.filter((d) => d.decision === selectedFilter || (selectedFilter === 'review' && d.requiresHumanReview));
+  const avgAutonomy = Math.round(QUMUS_POLICIES.reduce((s, p) => s + p.autonomy, 0) / QUMUS_POLICIES.length);
+  const corePolicies = QUMUS_POLICIES.filter(p => p.category === 'core');
+  const ecosystemPolicies = QUMUS_POLICIES.filter(p => p.category === 'ecosystem');
 
   if (user?.role !== 'admin') {
     return (
@@ -119,206 +59,173 @@ export default function AdminPoliciesDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Policy Monitoring Dashboard</h1>
-          <p className="text-slate-400">Monitor autonomous policy decisions and human review queue</p>
+          <h1 className="text-3xl font-bold text-white mb-1">
+            <span className="bg-gradient-to-r from-purple-400 to-amber-400 bg-clip-text text-transparent">QUMUS</span> Policy Dashboard
+          </h1>
+          <p className="text-gray-400">12 Autonomous Decision Policies — 90% QUMUS Control / 10% Human Override</p>
         </div>
         <Button
-          onClick={loadPoliciesData}
-          className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
+          onClick={() => setIsLoading(true)}
+          className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500"
         >
           <RefreshCw className="w-4 h-4 mr-2" />
           Refresh
         </Button>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card className="bg-slate-800 border-slate-700 p-4">
-          <p className="text-slate-400 text-sm mb-1">Total Decisions</p>
-          <p className="text-2xl font-bold text-white">{stats.total}</p>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="bg-gray-900/60 border-purple-500/20 p-4">
+          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Total Policies</p>
+          <p className="text-3xl font-bold text-white">{QUMUS_POLICIES.length}</p>
+          <p className="text-xs text-purple-400 mt-1">{corePolicies.length} core + {ecosystemPolicies.length} ecosystem</p>
         </Card>
-
-        <Card className="bg-slate-800 border-slate-700 p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <CheckCircle className="w-4 h-4 text-green-500" />
-            <p className="text-slate-400 text-sm">Approved</p>
-          </div>
-          <p className="text-2xl font-bold text-green-400">{stats.approved}</p>
+        <Card className="bg-gray-900/60 border-emerald-500/20 p-4">
+          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Active</p>
+          <p className="text-3xl font-bold text-emerald-400">{QUMUS_POLICIES.filter(p => p.status === 'active').length}</p>
+          <p className="text-xs text-emerald-400/70 mt-1">All systems operational</p>
         </Card>
-
-        <Card className="bg-slate-800 border-slate-700 p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <AlertCircle className="w-4 h-4 text-red-500" />
-            <p className="text-slate-400 text-sm">Denied</p>
-          </div>
-          <p className="text-2xl font-bold text-red-400">{stats.denied}</p>
+        <Card className="bg-gray-900/60 border-amber-500/20 p-4">
+          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Avg Autonomy</p>
+          <p className="text-3xl font-bold text-amber-400">{avgAutonomy}%</p>
+          <p className="text-xs text-amber-400/70 mt-1">QUMUS autonomous control</p>
         </Card>
-
-        <Card className="bg-slate-800 border-slate-700 p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Clock className="w-4 h-4 text-yellow-500" />
-            <p className="text-slate-400 text-sm">Pending Review</p>
-          </div>
-          <p className="text-2xl font-bold text-yellow-400">{stats.review}</p>
-        </Card>
-
-        <Card className="bg-slate-800 border-slate-700 p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <TrendingUp className="w-4 h-4 text-cyan-500" />
-            <p className="text-slate-400 text-sm">Avg Confidence</p>
-          </div>
-          <p className="text-2xl font-bold text-cyan-400">{stats.avgConfidence}%</p>
+        <Card className="bg-gray-900/60 border-purple-500/20 p-4">
+          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Decisions</p>
+          <p className="text-3xl font-bold text-purple-400">{decisions.length}</p>
+          <p className="text-xs text-purple-400/70 mt-1">Real-time via WebSocket</p>
         </Card>
       </div>
 
-      {/* Confidence Trends Chart */}
-      <Card className="bg-slate-800 border-slate-700 p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Policy Confidence Trends (24h)</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={confidenceTrends}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-            <XAxis stroke="#94a3b8" />
-            <YAxis stroke="#94a3b8" />
-            <Tooltip
-              contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
-              labelStyle={{ color: '#f1f5f9' }}
-            />
-            <Legend />
-            <Line type="monotone" dataKey="confidence" stroke="#06b6d4" strokeWidth={2} dot={false} />
-          </LineChart>
-        </ResponsiveContainer>
-      </Card>
-
-      {/* Policy Decision Distribution */}
-      <Card className="bg-slate-800 border-slate-700 p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Decision Distribution</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={[
-              { name: 'Approved', value: stats.approved, fill: '#10b981' },
-              { name: 'Denied', value: stats.denied, fill: '#ef4444' },
-              { name: 'Review', value: stats.review, fill: '#f59e0b' },
-            ]}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-            <XAxis stroke="#94a3b8" />
-            <YAxis stroke="#94a3b8" />
-            <Tooltip
-              contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
-              labelStyle={{ color: '#f1f5f9' }}
-            />
-            <Bar dataKey="value" fill="#06b6d4" />
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
-
-      {/* Human Review Queue */}
-      <Card className="bg-slate-800 border-slate-700 p-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Human Review Queue ({reviewQueue.length})</h2>
-
-        {reviewQueue.length === 0 ? (
-          <p className="text-slate-400 text-center py-8">No pending reviews</p>
-        ) : (
-          <div className="space-y-3">
-            {reviewQueue.map((item) => (
-              <div key={item.id} className="bg-slate-700 border border-slate-600 rounded-lg p-4">
+      {/* Core Policies */}
+      <div>
+        <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+          <Zap className="w-5 h-5 text-purple-400" />
+          Core Policies ({corePolicies.length})
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {corePolicies.map(policy => {
+            const Icon = policy.icon;
+            return (
+              <Card key={policy.id} className="bg-gray-900/60 border-purple-500/20 p-4 hover:border-purple-500/40 transition-all">
                 <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="text-white font-medium capitalize">{item.type.replace(/_/g, ' ')}</p>
-                    <p className="text-sm text-slate-400">User ID: {item.userId}</p>
-                    <p className="text-xs text-slate-500">{new Date(item.createdAt).toLocaleString()}</p>
+                  <div className="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-purple-400" />
                   </div>
-                  <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-xs font-medium border border-yellow-500/30">
-                    Pending
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    policy.status === 'active' ? 'bg-emerald-600/20 text-emerald-400' : 'bg-gray-600/20 text-gray-400'
+                  }`}>
+                    {policy.status}
                   </span>
                 </div>
-
-                <div className="bg-slate-800 rounded p-3 mb-3 text-sm text-slate-300 max-h-32 overflow-auto">
-                  <pre>{JSON.stringify(item.data, null, 2)}</pre>
+                <h3 className="text-sm font-semibold text-white mb-1">{policy.name}</h3>
+                <p className="text-xs text-gray-400 mb-3 line-clamp-2">{policy.description}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Autonomy</span>
+                  <span className="text-xs font-bold text-purple-400">{policy.autonomy}%</span>
                 </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    onClick={() => handleApproveReview(item.id)}
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => handleDenyReview(item.id, 'Manual review denial')}
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                  >
-                    Deny
-                  </Button>
+                <div className="w-full bg-gray-800 rounded-full h-1.5 mt-1">
+                  <div
+                    className="bg-gradient-to-r from-purple-600 to-purple-400 h-1.5 rounded-full transition-all"
+                    style={{ width: `${policy.autonomy}%` }}
+                  />
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
-
-      {/* Recent Policy Decisions */}
-      <Card className="bg-slate-800 border-slate-700 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">Recent Policy Decisions</h2>
-          <div className="flex gap-2">
-            {['all', 'approve', 'deny', 'review'].map((filter) => (
-              <Button
-                key={filter}
-                size="sm"
-                variant={selectedFilter === filter ? 'default' : 'outline'}
-                onClick={() => setSelectedFilter(filter)}
-                className={selectedFilter === filter ? 'bg-cyan-600' : 'border-slate-600 text-slate-300'}
-              >
-                <Filter className="w-3 h-3 mr-1" />
-                {filter.charAt(0).toUpperCase() + filter.slice(1)}
-              </Button>
-            ))}
-          </div>
+              </Card>
+            );
+          })}
         </div>
+      </div>
 
-        {filteredDecisions.length === 0 ? (
-          <p className="text-slate-400 text-center py-8">No decisions found</p>
-        ) : (
-          <div className="space-y-2 max-h-96 overflow-auto">
-            {filteredDecisions.slice(0, 20).map((decision) => (
-              <div key={decision.id} className="bg-slate-700 border border-slate-600 rounded p-3 flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    {decision.decision === 'approve' && (
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                    )}
-                    {decision.decision === 'deny' && <AlertCircle className="w-4 h-4 text-red-500" />}
-                    {decision.decision === 'review' && <Clock className="w-4 h-4 text-yellow-500" />}
-                    <p className="text-white font-medium capitalize">{decision.policyId.replace(/_/g, ' ')}</p>
+      {/* Ecosystem Policies */}
+      <div>
+        <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+          <Shield className="w-5 h-5 text-amber-400" />
+          Ecosystem Policies ({ecosystemPolicies.length})
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+          {ecosystemPolicies.map(policy => {
+            const Icon = policy.icon;
+            return (
+              <Card key={policy.id} className="bg-gray-900/60 border-amber-500/20 p-4 hover:border-amber-500/40 transition-all">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-amber-600/20 flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-amber-400" />
                   </div>
-                  <p className="text-xs text-slate-400">{decision.reason}</p>
-                  <p className="text-xs text-slate-500">{new Date(decision.timestamp).toLocaleString()}</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    policy.status === 'active' ? 'bg-emerald-600/20 text-emerald-400' : 'bg-gray-600/20 text-gray-400'
+                  }`}>
+                    {policy.status}
+                  </span>
                 </div>
+                <h3 className="text-sm font-semibold text-white mb-1">{policy.name}</h3>
+                <p className="text-xs text-gray-400 mb-3 line-clamp-2">{policy.description}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Autonomy</span>
+                  <span className="text-xs font-bold text-amber-400">{policy.autonomy}%</span>
+                </div>
+                <div className="w-full bg-gray-800 rounded-full h-1.5 mt-1">
+                  <div
+                    className="bg-gradient-to-r from-amber-600 to-amber-400 h-1.5 rounded-full transition-all"
+                    style={{ width: `${policy.autonomy}%` }}
+                  />
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
 
+      {/* Recent Decisions */}
+      <Card className="bg-gray-900/60 border-purple-500/20 p-6">
+        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <Clock className="w-5 h-5 text-purple-400" />
+          Recent Autonomous Decisions
+        </h2>
+        {decisions.length === 0 ? (
+          <div className="text-center py-8">
+            <Zap className="w-8 h-8 text-purple-400/40 mx-auto mb-2" />
+            <p className="text-gray-500 text-sm">Waiting for real-time policy decisions...</p>
+            <p className="text-gray-600 text-xs mt-1">Decisions appear here as QUMUS processes them</p>
+          </div>
+        ) : (
+          <div className="space-y-2 max-h-80 overflow-y-auto">
+            {decisions.slice(0, 20).map((d, i) => (
+              <div key={d.id || i} className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-800/40 border border-gray-700/30">
                 <div className="flex items-center gap-3">
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-cyan-400">{decision.confidence}%</p>
-                    <p className="text-xs text-slate-400 capitalize">{decision.decision}</p>
-                  </div>
-
-                  {decision.requiresHumanReview && (
-                    <Button
-                      size="sm"
-                      onClick={() => handleOverrideDecision(decision.id, 'approve')}
-                      className="bg-slate-600 hover:bg-slate-500 text-white text-xs"
-                    >
-                      Override
-                    </Button>
+                  {d.decision === 'approve' ? (
+                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  ) : d.decision === 'deny' ? (
+                    <AlertCircle className="w-4 h-4 text-red-400" />
+                  ) : (
+                    <Clock className="w-4 h-4 text-amber-400" />
                   )}
+                  <div>
+                    <span className="text-sm text-white">{d.action}</span>
+                    <span className="text-xs text-gray-500 ml-2">{d.policyId}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-purple-400 font-medium">{d.confidence}%</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    d.decision === 'approve' ? 'bg-emerald-600/20 text-emerald-400' :
+                    d.decision === 'deny' ? 'bg-red-600/20 text-red-400' :
+                    'bg-amber-600/20 text-amber-400'
+                  }`}>
+                    {d.decision}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
         )}
       </Card>
+
+      {/* Footer */}
+      <div className="text-center py-4">
+        <p className="text-xs text-gray-600">
+          QUMUS Autonomous Orchestration Engine — A Canryn Production
+        </p>
+      </div>
     </div>
   );
 }
