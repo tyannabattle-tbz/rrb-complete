@@ -2,7 +2,7 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { contentSchedule } from "../../drizzle/schema";
+import { contentSchedule, adInventory } from "../../drizzle/schema";
 import { eq, and, desc, asc, sql } from "drizzle-orm";
 
 // ─── Default 24/7 Schedule Template ─────────────────────
@@ -232,6 +232,64 @@ export const contentSchedulerRouter = router({
         throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: e.message });
       }
     }),
+
+  // Get now playing with integrated ad rotation
+  getNowPlayingWithAds: publicProcedure.query(async () => {
+    try {
+      const db = getDb();
+      const now = new Date();
+      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const currentHour = `${String(now.getHours()).padStart(2, '0')}:00`;
+      const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      const today = days[now.getDay()];
+      
+      // Get current programming
+      const programming = await db.select().from(contentSchedule)
+        .where(and(
+          eq(contentSchedule.isActive, true),
+          sql`(${contentSchedule.dayOfWeek} = ${today} OR ${contentSchedule.dayOfWeek} = 'daily')`,
+          sql`${contentSchedule.startTime} <= ${currentTime}`,
+          sql`${contentSchedule.endTime} > ${currentTime}`
+        ))
+        .orderBy(asc(contentSchedule.channelId));
+      
+      // Get active ads for current time slot
+      const activeAds = await db.select().from(adInventory)
+        .where(and(
+          eq(adInventory.active, true),
+          sql`(${adInventory.timeSlotStart} IS NULL OR ${adInventory.timeSlotStart} <= ${currentHour})`,
+          sql`(${adInventory.timeSlotEnd} IS NULL OR ${adInventory.timeSlotEnd} >= ${currentHour})`,
+        ))
+        .orderBy(desc(adInventory.rotationWeight))
+        .limit(5);
+      
+      // Find commercial slots in current programming
+      const commercialSlots = programming.filter(p => p.showType === 'commercial');
+      const regularProgramming = programming.filter(p => p.showType !== 'commercial');
+      
+      return {
+        programming: regularProgramming,
+        commercialSlots: commercialSlots.map(slot => ({
+          ...slot,
+          scheduledAds: activeAds.filter(ad => {
+            if (!ad.targetChannels || ad.targetChannels === 'all') return true;
+            return ad.targetChannels.split(',').map(t => t.trim()).includes(String(slot.channelId));
+          }).slice(0, 2),
+        })),
+        adPool: activeAds.map(ad => ({
+          id: ad.id,
+          sponsor: ad.sponsorName,
+          campaign: ad.campaignName,
+          duration: ad.durationSeconds,
+          weight: ad.rotationWeight,
+          category: ad.category,
+        })),
+        timestamp: now.toISOString(),
+      };
+    } catch {
+      return { programming: [], commercialSlots: [], adPool: [], timestamp: new Date().toISOString() };
+    }
+  }),
 
   // Get schedule stats
   getStats: publicProcedure.query(async () => {

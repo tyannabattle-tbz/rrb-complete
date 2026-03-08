@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { listenerAnalytics } from "../../drizzle/schema";
+import { listenerAnalytics, adInventory, contentSchedule } from "../../drizzle/schema";
 import { eq, desc, sql, count, and } from "drizzle-orm";
 
 /**
@@ -127,4 +127,122 @@ export const listenerAnalyticsRouter = router({
       
       return await query.limit(opts.limit);
     }),
+
+  // ─── Get hourly listener trends (last 24h) ──────────────────
+  getHourlyTrends: publicProcedure.query(async () => {
+    const db = await getDb();
+    const now = Date.now();
+    const oneDayAgo = now - 86400000;
+    
+    const hourlyData = await db.select({
+      hour: sql<string>`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`,
+      eventCount: count(),
+      uniqueSessions: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
+    })
+      .from(listenerAnalytics)
+      .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`)
+      .groupBy(sql`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`)
+      .orderBy(sql`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`);
+    
+    return hourlyData;
+  }),
+
+  // ─── Get channel engagement heatmap ──────────────────────────
+  getChannelHeatmap: publicProcedure.query(async () => {
+    const db = await getDb();
+    const now = Date.now();
+    const oneWeekAgo = now - 604800000;
+    
+    const heatmap = await db.select({
+      channelId: listenerAnalytics.channelId,
+      eventType: listenerAnalytics.eventType,
+      count: count(),
+      avgDuration: sql<number>`COALESCE(AVG(${listenerAnalytics.durationSeconds}), 0)`,
+    })
+      .from(listenerAnalytics)
+      .where(sql`${listenerAnalytics.createdAt} >= ${oneWeekAgo}`)
+      .groupBy(listenerAnalytics.channelId, listenerAnalytics.eventType)
+      .orderBy(desc(count()));
+    
+    return heatmap;
+  }),
+
+  // ─── Get engagement score per channel ────────────────────────
+  getEngagementScores: publicProcedure.query(async () => {
+    const db = await getDb();
+    const now = Date.now();
+    const oneDayAgo = now - 86400000;
+    
+    const scores = await db.select({
+      channelId: listenerAnalytics.channelId,
+      totalEvents: count(),
+      uniqueListeners: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
+      avgDuration: sql<number>`COALESCE(AVG(${listenerAnalytics.durationSeconds}), 0)`,
+      tuneIns: sql<number>`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'tune_in' THEN 1 ELSE 0 END)`,
+      tuneOuts: sql<number>`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'tune_out' THEN 1 ELSE 0 END)`,
+      adImpressions: sql<number>`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'ad_impression' THEN 1 ELSE 0 END)`,
+      aiInteractions: sql<number>`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'ai_interaction' THEN 1 ELSE 0 END)`,
+    })
+      .from(listenerAnalytics)
+      .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`)
+      .groupBy(listenerAnalytics.channelId)
+      .orderBy(desc(count()));
+    
+    // Calculate engagement score (0-100)
+    return scores.map(ch => {
+      const retentionRate = ch.tuneIns > 0 ? Math.max(0, 1 - (ch.tuneOuts / ch.tuneIns)) : 0;
+      const durationScore = Math.min(ch.avgDuration / 300, 1); // 5 min = max
+      const interactionScore = Math.min((ch.aiInteractions + ch.adImpressions) / Math.max(ch.uniqueListeners, 1), 1);
+      const engagementScore = Math.round((retentionRate * 40 + durationScore * 35 + interactionScore * 25) * 100) / 100;
+      
+      return {
+        channelId: ch.channelId,
+        uniqueListeners: ch.uniqueListeners,
+        totalEvents: ch.totalEvents,
+        avgDurationSeconds: Math.round(ch.avgDuration),
+        retentionRate: Math.round(retentionRate * 100),
+        engagementScore: Math.min(engagementScore, 100),
+        adImpressions: ch.adImpressions,
+        aiInteractions: ch.aiInteractions,
+      };
+    });
+  }),
+
+  // ─── Get ad performance metrics ──────────────────────────────
+  getAdPerformance: publicProcedure.query(async () => {
+    const db = await getDb();
+    const now = Date.now();
+    const oneDayAgo = now - 86400000;
+    
+    // Get ad impression events
+    const [adImpressions] = await db.select({ count: count() })
+      .from(listenerAnalytics)
+      .where(and(
+        eq(listenerAnalytics.eventType, 'ad_impression'),
+        sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`,
+      ));
+    
+    // Get total listener count for impression rate
+    const [totalListeners] = await db.select({
+      count: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
+    })
+      .from(listenerAnalytics)
+      .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
+    
+    // Get active ad stats
+    const [adStats] = await db.select({
+      totalAds: count(),
+      totalPlays: sql<number>`COALESCE(SUM(${adInventory.totalPlays}), 0)`,
+      totalRevenue: sql<number>`COALESCE(SUM(${adInventory.totalPlays} * ${adInventory.costPerPlayCents}), 0)`,
+    }).from(adInventory).where(eq(adInventory.active, true));
+    
+    return {
+      dailyImpressions: adImpressions?.count ?? 0,
+      uniqueListenersReached: totalListeners?.count ?? 0,
+      impressionRate: totalListeners?.count ? Math.round((adImpressions?.count ?? 0) / totalListeners.count * 100) : 0,
+      activeAds: adStats?.totalAds ?? 0,
+      totalPlaysAllTime: adStats?.totalPlays ?? 0,
+      estimatedRevenueCents: adStats?.totalRevenue ?? 0,
+    };
+  }),
 });

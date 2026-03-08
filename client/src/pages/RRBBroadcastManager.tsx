@@ -1,356 +1,266 @@
-/**
- * RRB Broadcast Manager
- * 
- * Complete broadcast management system:
- * - Schedule broadcasts 24/7
- * - Content upload and management
- * - Real-time streaming controls
- * - Broadcast templates
- * - Emergency broadcast capabilities
- */
-
 import { useState } from "react";
-import {
-  FuturisticHeader,
-  FuturisticGrid,
-  FuturisticCard,
-  FuturisticButton,
-  FuturisticSection,
-  FuturisticDivider,
-  FuturisticBadge,
-} from "@/components/FuturisticDesignSystem";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Calendar,
-  Clock,
-  Radio,
-  Upload,
-  Play,
-  Square,
-  Settings,
-  AlertCircle,
-  CheckCircle,
-  Zap,
+  Radio, Play, Square, Clock, Volume2, RefreshCw,
+  Zap, Target, Users, Activity, Settings, AlertCircle
 } from "lucide-react";
 
 export default function RRBBroadcastManager() {
-  const [activeTab, setActiveTab] = useState("schedule");
-  const [broadcastTitle, setBroadcastTitle] = useState("");
-  const [broadcastDescription, setBroadcastDescription] = useState("");
-  const [scheduleDate, setScheduleDate] = useState("");
-  const [scheduleTime, setScheduleTime] = useState("");
-  const [duration, setDuration] = useState("60");
-  const [broadcastType, setBroadcastType] = useState("regular");
-  const [contentFile, setContentFile] = useState<File | null>(null);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleScheduleBroadcast = () => {
-    console.log("Scheduling broadcast:", {
-      title: broadcastTitle,
-      date: scheduleDate,
-      time: scheduleTime,
-      duration,
-      type: broadcastType,
-    });
-  };
+  // ─── Live Data ───────────────────────────────
+  const nowPlaying = trpc.contentScheduler.getNowPlayingWithAds.useQuery(
+    undefined, { refetchInterval: 10000, queryKey: ['nowPlaying', refreshKey] }
+  );
+  const scheduleStats = trpc.contentScheduler.getStats.useQuery(
+    undefined, { refetchInterval: 30000, queryKey: ['schedStats', refreshKey] }
+  );
+  const schedule = trpc.contentScheduler.getSchedule.useQuery(
+    undefined, { refetchInterval: 60000, queryKey: ['schedule', refreshKey] }
+  );
+  const adStats = trpc.adRotation.getStats.useQuery(
+    undefined, { refetchInterval: 30000, queryKey: ['adStats', refreshKey] }
+  );
+  const productionStatus = trpc.productionIntegration.getProductionStatus.useQuery(
+    undefined, { refetchInterval: 30000, queryKey: ['prodStatus', refreshKey] }
+  );
 
-  const handleContentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setContentFile(file);
-    }
-  };
+  const np = nowPlaying.data;
+  const stats = scheduleStats.data;
+  const sched = schedule.data;
+  const ads = adStats.data;
+  const ps = productionStatus.data;
 
-  const upcomingBroadcasts = [
-    {
-      id: 1,
-      title: "Morning Motivation Mix",
-      date: "Today",
-      time: "06:00 AM",
-      duration: "2h",
-      status: "scheduled",
+  const seedMutation = trpc.contentScheduler.seedDefaultSchedule.useMutation({
+    onSuccess: () => {
+      toast({ title: "Schedule seeded", description: "Default 24/7 schedule has been created" });
+      setRefreshKey(k => k + 1);
     },
-    {
-      id: 2,
-      title: "Healing Frequencies",
-      date: "Today",
-      time: "12:00 PM",
-      duration: "1h",
-      status: "scheduled",
-    },
-    {
-      id: 3,
-      title: "Evening Vibes",
-      date: "Today",
-      time: "06:00 PM",
-      duration: "3h",
-      status: "scheduled",
-    },
-  ];
+    onError: (err) => toast({ title: "Seed failed", description: err.message, variant: "destructive" }),
+  });
 
-  const broadcastTemplates = [
-    { id: 1, name: "Morning Show", duration: "2h", description: "High energy morning content" },
-    { id: 2, name: "Meditation Session", duration: "1h", description: "Healing frequencies" },
-    { id: 3, name: "Community Spotlight", duration: "1.5h", description: "Local stories" },
-    { id: 4, name: "Music Mix", duration: "3h", description: "Curated playlist" },
-  ];
+  const startBroadcastMutation = trpc.productionIntegration.startBroadcastWithAds.useMutation({
+    onSuccess: (data) => {
+      toast({ title: "Broadcast started", description: `${data.channelName} is now live with ${data.adsQueued} ads queued` });
+      setRefreshKey(k => k + 1);
+    },
+    onError: (err) => toast({ title: "Broadcast failed", description: err.message, variant: "destructive" }),
+  });
+
+  const handleRefresh = () => setRefreshKey(k => k + 1);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-6 pt-20 md:pt-24">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <FuturisticHeader
-          title="Broadcast Manager"
-          subtitle="Schedule, manage, and broadcast 24/7 content"
-          icon={<Radio className="w-8 h-8" />}
-        />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-pink-900/30 to-slate-900">
+      {/* Header */}
+      <header className="border-b border-pink-500/20 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Radio className="w-8 h-8 text-pink-400" />
+              <div>
+                <h1 className="text-2xl font-bold text-white">RRB Broadcast Manager</h1>
+                <p className="text-sm text-pink-300">
+                  24/7 Broadcasting &bull; {stats?.activeEntries ?? 0} active programs &bull; {stats?.uniqueChannels ?? 0} channels
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className={`${ps?.isOperational ? 'border-green-500 text-green-400' : 'border-yellow-500 text-yellow-400'}`}>
+                <div className={`w-2 h-2 rounded-full mr-2 ${ps?.isOperational ? 'bg-green-400' : 'bg-yellow-400'}`} />
+                {ps?.isOperational ? 'ON AIR' : 'STANDBY'}
+              </Badge>
+              <Button onClick={handleRefresh} size="sm" variant="outline" className="border-pink-500/30 text-pink-300 hover:bg-pink-500/20">
+                <RefreshCw className={`w-4 h-4 mr-1 ${nowPlaying.isFetching ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
 
+      <main className="container mx-auto px-4 py-6 space-y-6">
         {/* Quick Stats */}
-        <FuturisticGrid columns={3}>
-          <FuturisticCard glow="cyan">
-            <div className="space-y-2">
-              <p className="text-sm text-slate-400">Scheduled Today</p>
-              <div className="text-3xl font-bold text-cyan-400">3</div>
-              <FuturisticBadge variant="success">On Track</FuturisticBadge>
-            </div>
-          </FuturisticCard>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          {[
+            { label: 'Total Programs', value: stats?.totalEntries ?? 0, icon: Radio, color: 'text-pink-400', bg: 'bg-pink-500/10' },
+            { label: 'Active Now', value: stats?.activeEntries ?? 0, icon: Play, color: 'text-green-400', bg: 'bg-green-500/10' },
+            { label: 'Channels', value: stats?.uniqueChannels ?? 0, icon: Volume2, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+            { label: 'QUMUS Managed', value: stats?.qumusManaged ?? 0, icon: Zap, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+            { label: 'Active Ads', value: ads?.activeAds ?? 0, icon: Target, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+          ].map((m, i) => (
+            <Card key={i} className={`${m.bg} border-slate-700/50`}>
+              <CardContent className="p-3 text-center">
+                <m.icon className={`w-5 h-5 mx-auto mb-1 ${m.color}`} />
+                <p className={`text-xl font-bold ${m.color}`}>{m.value}</p>
+                <p className="text-xs text-gray-400">{m.label}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-          <FuturisticCard glow="magenta">
-            <div className="space-y-2">
-              <p className="text-sm text-slate-400">Content Files</p>
-              <div className="text-3xl font-bold text-magenta-400">24</div>
-              <FuturisticBadge variant="success">Ready</FuturisticBadge>
-            </div>
-          </FuturisticCard>
-
-          <FuturisticCard glow="cyan">
-            <div className="space-y-2">
-              <p className="text-sm text-slate-400">Broadcast Hours</p>
-              <div className="text-3xl font-bold text-emerald-400">168</div>
-              <FuturisticBadge variant="success">24/7 Coverage</FuturisticBadge>
-            </div>
-          </FuturisticCard>
-        </FuturisticGrid>
-
-        <FuturisticDivider animated />
-
-        {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 md:grid-cols-5 bg-slate-800/50 border border-slate-700 rounded-lg p-1">
-            <TabsTrigger value="schedule" className="text-xs md:text-sm">
-              <Calendar size={16} className="mr-1 md:mr-2" />
-              <span className="hidden md:inline">Schedule</span>
-            </TabsTrigger>
-            <TabsTrigger value="upcoming" className="text-xs md:text-sm">
-              <Clock size={16} className="mr-1 md:mr-2" />
-              <span className="hidden md:inline">Upcoming</span>
-            </TabsTrigger>
-            <TabsTrigger value="templates" className="text-xs md:text-sm">
-              <Radio size={16} className="mr-1 md:mr-2" />
-              <span className="hidden md:inline">Templates</span>
-            </TabsTrigger>
-            <TabsTrigger value="content" className="text-xs md:text-sm">
-              <Upload size={16} className="mr-1 md:mr-2" />
-              <span className="hidden md:inline">Content</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="text-xs md:text-sm">
-              <Settings size={16} className="mr-1 md:mr-2" />
-              <span className="hidden md:inline">Settings</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Schedule Tab */}
-          <TabsContent value="schedule" className="space-y-4">
-            <FuturisticSection title="Schedule New Broadcast">
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-300">Broadcast Title</label>
-                  <Input
-                    value={broadcastTitle}
-                    onChange={(e) => setBroadcastTitle(e.target.value)}
-                    placeholder="e.g., Morning Motivation Mix"
-                    className="mt-2 bg-slate-700 border-slate-600 text-white placeholder-slate-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-slate-300">Description</label>
-                  <Textarea
-                    value={broadcastDescription}
-                    onChange={(e) => setBroadcastDescription(e.target.value)}
-                    placeholder="Describe your broadcast content..."
-                    className="mt-2 bg-slate-700 border-slate-600 text-white placeholder-slate-500"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-slate-300">Date</label>
-                    <Input
-                      type="date"
-                      value={scheduleDate}
-                      onChange={(e) => setScheduleDate(e.target.value)}
-                      className="mt-2 bg-slate-700 border-slate-600 text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-slate-300">Time</label>
-                    <Input
-                      type="time"
-                      value={scheduleTime}
-                      onChange={(e) => setScheduleTime(e.target.value)}
-                      className="mt-2 bg-slate-700 border-slate-600 text-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-slate-300">Duration (minutes)</label>
-                    <Input
-                      type="number"
-                      value={duration}
-                      onChange={(e) => setDuration(e.target.value)}
-                      placeholder="60"
-                      className="mt-2 bg-slate-700 border-slate-600 text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-slate-300">Broadcast Type</label>
-                    <Select value={broadcastType} onValueChange={setBroadcastType}>
-                      <SelectTrigger className="mt-2 bg-slate-700 border-slate-600 text-white">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-slate-700 border-slate-600">
-                        <SelectItem value="regular">Regular</SelectItem>
-                        <SelectItem value="emergency">Emergency</SelectItem>
-                        <SelectItem value="special">Special Event</SelectItem>
-                        <SelectItem value="recurring">Recurring</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <FuturisticButton
-                  onClick={handleScheduleBroadcast}
-                  variant="primary"
-                  glow
-                  className="w-full"
+        {/* Now Playing Grid */}
+        <Card className="bg-slate-800/50 border-pink-500/20">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Volume2 className="w-5 h-5 text-pink-400" />
+                  Now Playing
+                </CardTitle>
+                <CardDescription className="text-pink-300">Live programming across all channels</CardDescription>
+              </div>
+              {(!np?.programming || np.programming.length === 0) && (
+                <Button
+                  onClick={() => seedMutation.mutate()}
+                  disabled={seedMutation.isPending}
+                  size="sm"
+                  className="bg-pink-600 hover:bg-pink-700"
                 >
-                  <Calendar size={16} className="mr-2" />
-                  Schedule Broadcast
-                </FuturisticButton>
-              </div>
-            </FuturisticSection>
-          </TabsContent>
-
-          {/* Upcoming Tab */}
-          <TabsContent value="upcoming" className="space-y-4">
-            <FuturisticSection title="Upcoming Broadcasts">
-              <div className="space-y-3">
-                {upcomingBroadcasts.map((broadcast) => (
-                  <FuturisticCard key={broadcast.id} glow="cyan">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <p className="font-semibold text-white">{broadcast.title}</p>
-                        <p className="text-sm text-slate-400 mt-1">
-                          {broadcast.date} at {broadcast.time} • {broadcast.duration}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <FuturisticButton variant="secondary" size="sm">
-                          <Play size={14} />
-                        </FuturisticButton>
-                        <FuturisticButton variant="secondary" size="sm">
-                          <Settings size={14} />
-                        </FuturisticButton>
-                      </div>
-                    </div>
-                  </FuturisticCard>
-                ))}
-              </div>
-            </FuturisticSection>
-          </TabsContent>
-
-          {/* Templates Tab */}
-          <TabsContent value="templates" className="space-y-4">
-            <FuturisticSection title="Broadcast Templates">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {broadcastTemplates.map((template) => (
-                  <FuturisticCard key={template.id} glow="magenta">
-                    <div className="space-y-2">
-                      <p className="font-semibold text-white">{template.name}</p>
-                      <p className="text-sm text-slate-400">{template.description}</p>
-                      <p className="text-xs text-slate-500">Duration: {template.duration}</p>
-                      <FuturisticButton variant="secondary" className="w-full mt-2">
-                        <Radio size={14} className="mr-2" />
-                        Use Template
-                      </FuturisticButton>
-                    </div>
-                  </FuturisticCard>
-                ))}
-              </div>
-            </FuturisticSection>
-          </TabsContent>
-
-          {/* Content Tab */}
-          <TabsContent value="content" className="space-y-4">
-            <FuturisticSection title="Upload Content">
-              <div className="space-y-4">
-                <div className="border-2 border-dashed border-slate-600 rounded-lg p-8 text-center hover:border-cyan-400 transition-colors">
-                  <Upload size={32} className="mx-auto text-slate-400 mb-2" />
-                  <p className="text-slate-300 mb-2">Drag and drop your content here</p>
-                  <p className="text-sm text-slate-500 mb-4">or</p>
-                  <label>
-                    <input
-                      type="file"
-                      onChange={handleContentUpload}
-                      className="hidden"
-                      accept="audio/*,video/*"
-                    />
-                    <Button className="bg-cyan-600 hover:bg-cyan-700">
-                      <Upload size={16} className="mr-2" />
-                      Browse Files
+                  {seedMutation.isPending ? 'Seeding...' : 'Seed 24/7 Schedule'}
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {np?.programming?.map((prog: any, i: number) => (
+                <div key={i} className="p-3 rounded bg-slate-700/30 border border-slate-600/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <Badge variant="outline" className="border-pink-500/30 text-pink-300 text-xs">
+                      CH {prog.channelId}
+                    </Badge>
+                    <Badge className={`text-xs ${
+                      prog.showType === 'music' ? 'bg-purple-600' :
+                      prog.showType === 'healing' ? 'bg-green-600' :
+                      prog.showType === 'talk' ? 'bg-blue-600' :
+                      prog.showType === 'gospel' ? 'bg-amber-600' :
+                      prog.showType === 'emergency' ? 'bg-red-600' : 'bg-slate-600'
+                    }`}>{prog.showType}</Badge>
+                  </div>
+                  <p className="text-sm text-white font-medium truncate">{prog.showName}</p>
+                  <p className="text-xs text-gray-400">{prog.host || 'QUMUS Auto'}</p>
+                  <p className="text-xs text-gray-500 mt-1">{prog.startTime} - {prog.endTime}</p>
+                  {user && (
+                    <Button
+                      onClick={() => startBroadcastMutation.mutate({
+                        channelId: prog.channelId,
+                        channelName: `Channel ${prog.channelId}`,
+                        programTitle: prog.showName,
+                      })}
+                      disabled={startBroadcastMutation.isPending}
+                      size="sm"
+                      className="w-full mt-2 bg-green-600 hover:bg-green-700 text-xs"
+                    >
+                      <Play className="w-3 h-3 mr-1" />
+                      Start Broadcast
                     </Button>
-                  </label>
+                  )}
                 </div>
+              ))}
+              {(!np?.programming || np.programming.length === 0) && (
+                <div className="col-span-full text-center py-8">
+                  <Radio className="w-12 h-12 mx-auto text-gray-600 mb-3" />
+                  <p className="text-gray-400">No active programming</p>
+                  <p className="text-sm text-gray-500">Seed the default schedule to get started</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-                {contentFile && (
-                  <FuturisticCard glow="cyan">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-semibold text-white">{contentFile.name}</p>
-                        <p className="text-sm text-slate-400">
-                          {(contentFile.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
-                      </div>
-                      <CheckCircle className="text-green-400" size={24} />
+        {/* Ad Pool */}
+        {np?.adPool && np.adPool.length > 0 && (
+          <Card className="bg-slate-800/50 border-amber-500/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white flex items-center gap-2">
+                <Target className="w-5 h-5 text-amber-400" />
+                Active Ad Pool ({np.adPool.length} ads)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {np.adPool.map((ad: any) => (
+                  <div key={ad.id} className="p-3 rounded bg-slate-700/30 border border-amber-500/10">
+                    <p className="text-sm text-white font-medium truncate">{ad.sponsor}</p>
+                    <p className="text-xs text-gray-400 truncate">{ad.campaignName}</p>
+                    <div className="flex justify-between mt-2">
+                      <Badge variant="outline" className="border-amber-500/30 text-amber-300 text-xs">{ad.duration}s</Badge>
+                      <span className="text-xs text-gray-500">W:{ad.rotationWeight}</span>
                     </div>
-                  </FuturisticCard>
-                )}
+                  </div>
+                ))}
               </div>
-            </FuturisticSection>
-          </TabsContent>
+            </CardContent>
+          </Card>
+        )}
 
-          {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-4">
-            <FuturisticSection title="Broadcast Settings">
-              <p className="text-slate-400">Advanced broadcast settings coming soon...</p>
-            </FuturisticSection>
-          </TabsContent>
-        </Tabs>
-      </div>
+        {/* Full Schedule */}
+        <Card className="bg-slate-800/50 border-purple-500/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white flex items-center gap-2">
+              <Clock className="w-5 h-5 text-purple-400" />
+              Full Schedule ({sched?.length ?? 0} entries)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="max-h-96 overflow-y-auto space-y-1">
+              {sched?.slice(0, 50).map((entry: any) => (
+                <div key={entry.id} className="flex items-center justify-between p-2 rounded bg-slate-700/20 text-sm">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Badge variant="outline" className="border-purple-500/30 text-purple-300 text-xs flex-shrink-0">
+                      CH {entry.channelId}
+                    </Badge>
+                    <span className="text-white truncate">{entry.showName}</span>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-xs text-gray-400">{entry.startTime}-{entry.endTime}</span>
+                    <Badge className={`text-xs ${entry.isActive ? 'bg-green-600' : 'bg-slate-600'}`}>
+                      {entry.isActive ? 'Active' : 'Scheduled'}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+              {(!sched || sched.length === 0) && (
+                <p className="text-sm text-gray-400 text-center py-4">No schedule entries &mdash; seed the default schedule above</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Content Type Breakdown */}
+        {stats?.byType && Object.keys(stats.byType).length > 0 && (
+          <Card className="bg-slate-800/50 border-cyan-500/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white flex items-center gap-2">
+                <Activity className="w-5 h-5 text-cyan-400" />
+                Content Mix
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {Object.entries(stats.byType).map(([type, count]) => (
+                  <div key={type} className="p-3 rounded bg-slate-700/30 text-center">
+                    <p className="text-lg font-bold text-cyan-400">{count as number}</p>
+                    <p className="text-xs text-gray-400 capitalize">{type}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </main>
+
+      <footer className="border-t border-pink-500/20 bg-slate-900/50 mt-8 py-6">
+        <div className="container mx-auto px-4 text-center text-gray-400">
+          <p className="text-sm">RRB Broadcast Manager &bull; Canryn Production &bull; Powered by QUMUS</p>
+        </div>
+      </footer>
     </div>
   );
 }

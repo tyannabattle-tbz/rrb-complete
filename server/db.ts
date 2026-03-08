@@ -1601,3 +1601,19 @@ export async function getSubscriberCount() {
   const result = await db.select({ count: count() }).from(emailSubscribers).where(eq(emailSubscribers.isActive, true));
   return result[0]?.count || 0;
 }
+
+
+// ─── Agent Session Aliases (used by routers.ts agent section) ───
+export async function getAgentSessionsByUserId(userId: number) {
+  return getUserSessions(userId);
+}
+
+export async function getAgentSessionById(sessionId: number) {
+  return getAgentSession(sessionId);
+}
+
+export async function deleteAgentSession(sessionId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.delete(agentSessions).where(eq(agentSessions.id, sessionId));
+}

@@ -10,6 +10,7 @@ import { serveStatic, setupVite } from "./vite";
 import { initializeWebSocket } from "../websocket";
 import { handleStripeWebhook } from "../webhooks/stripeWebhook";
 import { activateQumus } from "../qumus/qumusActivation";
+import { startProductionIntegration } from "../services/qumusProductionIntegration";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -68,6 +69,14 @@ async function startServer() {
   // Initialize WebSocket manager
   initializeWebSocket(server);
   console.log("[WebSocket] Manager initialized");
+
+  // Start QUMUS Production Integration Engine
+  try {
+    const productionEngine = startProductionIntegration();
+    console.log("[QUMUS-PROD] Production Integration Engine activated");
+  } catch (error) {
+    console.error("[QUMUS-PROD] Failed to start:", error);
+  }
   
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
@@ -137,6 +146,36 @@ async function startServer() {
       res.json({ success: true, status });
     } catch (error) {
       res.json({ success: false, error: String(error) });
+    }
+  });
+
+  // QUMUS Production Integration Status endpoint
+  app.get("/api/qumus/production-status", (req, res) => {
+    try {
+      const { getProductionIntegration } = require("../services/qumusProductionIntegration");
+      const engine = getProductionIntegration();
+      res.json({ success: true, ...engine.getStatus() });
+    } catch (error) {
+      res.json({ success: false, error: String(error) });
+    }
+  });
+
+  // QUMUS Event Emission endpoint (for subsystems to emit events)
+  app.post("/api/qumus/emit-event", express.json(), (req, res) => {
+    try {
+      const { getProductionIntegration } = require("../services/qumusProductionIntegration");
+      const engine = getProductionIntegration();
+      const event = engine.createEvent(
+        req.body.type,
+        req.body.source || 'api',
+        req.body.data || {},
+        req.body.severity || 'info',
+        req.body.requiresHumanReview || false,
+      );
+      engine.emit(event);
+      res.json({ success: true, eventId: event.id });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
     }
   });
   

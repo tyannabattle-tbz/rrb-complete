@@ -1,236 +1,231 @@
 import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { trpc } from '@/lib/trpc';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import {
-  Mic,
-  Zap,
-  Clapperboard,
-  Settings,
-  HelpCircle,
+  Activity, Zap, Shield, RefreshCw, Clock, Radio,
+  Target, Bell, Globe, Users, Heart, AlertCircle,
+  CheckCircle, XCircle, MinusCircle
 } from 'lucide-react';
-import VoiceCommandInterface from '@/components/voice/VoiceCommandInterface';
-import BatchProcessingDashboard from '@/components/batch/BatchProcessingDashboard';
-import AIStoryboardingEngine from '@/components/storyboard/AIStoryboardingEngine';
 
-export const ProductionDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+export default function ProductionDashboard() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // ─── Live Data ───────────────────────────────
+  const productionStatus = trpc.productionIntegration.getProductionStatus.useQuery(
+    undefined, { refetchInterval: 15000, queryKey: ['prodStatus', refreshKey] }
+  );
+  const subsystemStatus = trpc.productionIntegration.getSubsystemStatus.useQuery(
+    undefined, { refetchInterval: 15000, queryKey: ['subsys', refreshKey] }
+  );
+  const eventLog = trpc.productionIntegration.getEventLog.useQuery(
+    { limit: 50 }, { refetchInterval: 15000, queryKey: ['events', refreshKey], enabled: !!user }
+  );
+
+  const emitEvent = trpc.productionIntegration.emitEvent.useMutation({
+    onSuccess: () => {
+      toast({ title: "Event emitted", description: "Production event dispatched to all subsystems" });
+      setRefreshKey(k => k + 1);
+    },
+    onError: (err) => toast({ title: "Emit failed", description: err.message, variant: "destructive" }),
+  });
+
+  const ps = productionStatus.data;
+  const ss = subsystemStatus.data;
+  const events = eventLog.data;
+
+  const handleRefresh = () => setRefreshKey(k => k + 1);
+
+  const healthyCount = ss ? Object.values(ss).filter((s: any) => s?.status === 'operational').length : 0;
+  const degradedCount = ss ? Object.values(ss).filter((s: any) => s?.status === 'degraded').length : 0;
+  const downCount = ss ? Object.values(ss).filter((s: any) => s?.status !== 'operational' && s?.status !== 'degraded').length : 0;
+  const totalSubs = ss ? Object.keys(ss).length : 0;
+
+  const StatusIcon = ({ status }: { status: string }) => {
+    if (status === 'operational') return <CheckCircle className="w-4 h-4 text-green-400" />;
+    if (status === 'degraded') return <MinusCircle className="w-4 h-4 text-yellow-400" />;
+    return <XCircle className="w-4 h-4 text-red-400" />;
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-white">Production Suite</h1>
-          <p className="text-slate-400">
-            Advanced tools for video production, batch processing, and creative planning
-          </p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="p-4 bg-slate-800 border-slate-700">
-            <div className="flex items-center gap-3">
-              <Mic className="w-8 h-8 text-blue-500" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Header */}
+      <header className="border-b border-slate-600/30 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Shield className="w-8 h-8 text-green-400" />
               <div>
-                <p className="text-xs text-slate-400">Voice Commands</p>
-                <p className="text-2xl font-bold text-white">Active</p>
+                <h1 className="text-2xl font-bold text-white">Production Status</h1>
+                <p className="text-sm text-gray-400">
+                  System health: {ps?.systemHealth ?? 0}% &bull; Autonomy: {ps?.autonomyLevel ?? 0}% &bull; {ps?.activePolicies ?? 0} policies
+                </p>
               </div>
             </div>
-          </Card>
-
-          <Card className="p-4 bg-slate-800 border-slate-700">
             <div className="flex items-center gap-3">
-              <Zap className="w-8 h-8 text-yellow-500" />
-              <div>
-                <p className="text-xs text-slate-400">Batch Processing</p>
-                <p className="text-2xl font-bold text-white">Ready</p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-4 bg-slate-800 border-slate-700">
-            <div className="flex items-center gap-3">
-              <Clapperboard className="w-8 h-8 text-purple-500" />
-              <div>
-                <p className="text-xs text-slate-400">Storyboarding</p>
-                <p className="text-2xl font-bold text-white">Ready</p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-4 bg-slate-800 border-slate-700">
-            <div className="flex items-center gap-3">
-              <Settings className="w-8 h-8 text-green-500" />
-              <div>
-                <p className="text-xs text-slate-400">System Status</p>
-                <p className="text-2xl font-bold text-white">Optimal</p>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Main Content Tabs */}
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="w-full"
-        >
-          <TabsList className="grid w-full grid-cols-4 bg-slate-800 border border-slate-700">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="voice">Voice Commands</TabsTrigger>
-            <TabsTrigger value="batch">Batch Processing</TabsTrigger>
-            <TabsTrigger value="storyboard">Storyboarding</TabsTrigger>
-          </TabsList>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
-            <Card className="p-6 bg-slate-800 border-slate-700">
-              <h2 className="text-2xl font-bold text-white mb-4">
-                Welcome to Production Suite
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Mic className="w-5 h-5 text-blue-500" />
-                    <h3 className="font-semibold text-white">Voice Commands</h3>
-                  </div>
-                  <p className="text-sm text-slate-300">
-                    Control your production workflow with natural voice commands.
-                    Generate videos, manage batches, and create storyboards hands-free.
-                  </p>
-                  <Button
-                    onClick={() => setActiveTab('voice')}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                  >
-                    Start Voice Control
-                  </Button>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-yellow-500" />
-                    <h3 className="font-semibold text-white">
-                      Batch Processing
-                    </h3>
-                  </div>
-                  <p className="text-sm text-slate-300">
-                    Process multiple videos simultaneously with intelligent queue
-                    management, priority scheduling, and real-time progress tracking.
-                  </p>
-                  <Button
-                    onClick={() => setActiveTab('batch')}
-                    className="w-full bg-yellow-600 hover:bg-yellow-700"
-                  >
-                    Manage Queues
-                  </Button>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Clapperboard className="w-5 h-5 text-purple-500" />
-                    <h3 className="font-semibold text-white">Storyboarding</h3>
-                  </div>
-                  <p className="text-sm text-slate-300">
-                    Transform scripts into visual storyboards with AI-powered scene
-                    breakdown, shot composition suggestions, and lighting recommendations.
-                  </p>
-                  <Button
-                    onClick={() => setActiveTab('storyboard')}
-                    className="w-full bg-purple-600 hover:bg-purple-700"
-                  >
-                    Create Storyboard
-                  </Button>
-                </div>
-              </div>
-            </Card>
-
-            {/* Features Grid */}
-            <Card className="p-6 bg-slate-800 border-slate-700">
-              <h3 className="text-xl font-bold text-white mb-4">Key Features</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-white">Voice Interface</h4>
-                  <ul className="text-sm text-slate-300 space-y-1">
-                    <li>✓ Real-time speech recognition</li>
-                    <li>✓ Intent parsing and execution</li>
-                    <li>✓ Command history tracking</li>
-                    <li>✓ Voice feedback system</li>
-                  </ul>
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-white">Batch System</h4>
-                  <ul className="text-sm text-slate-300 space-y-1">
-                    <li>✓ Multi-queue management</li>
-                    <li>✓ Priority scheduling</li>
-                    <li>✓ Progress tracking</li>
-                    <li>✓ Automatic retry logic</li>
-                  </ul>
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-white">Storyboarding</h4>
-                  <ul className="text-sm text-slate-300 space-y-1">
-                    <li>✓ Script parsing</li>
-                    <li>✓ Scene breakdown</li>
-                    <li>✓ Shot suggestions</li>
-                    <li>✓ PDF export</li>
-                  </ul>
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-white">Integration</h4>
-                  <ul className="text-sm text-slate-300 space-y-1">
-                    <li>✓ Real-time updates</li>
-                    <li>✓ Database persistence</li>
-                    <li>✓ Error handling</li>
-                    <li>✓ Analytics tracking</li>
-                  </ul>
-                </div>
-              </div>
-            </Card>
-          </TabsContent>
-
-          {/* Voice Commands Tab */}
-          <TabsContent value="voice">
-            <Card className="p-6 bg-slate-800 border-slate-700">
-              <VoiceCommandInterface />
-            </Card>
-          </TabsContent>
-
-          {/* Batch Processing Tab */}
-          <TabsContent value="batch">
-            <Card className="p-6 bg-slate-800 border-slate-700">
-              <BatchProcessingDashboard />
-            </Card>
-          </TabsContent>
-
-          {/* Storyboarding Tab */}
-          <TabsContent value="storyboard">
-            <Card className="p-6 bg-slate-800 border-slate-700">
-              <AIStoryboardingEngine />
-            </Card>
-          </TabsContent>
-        </Tabs>
-
-        {/* Help Section */}
-        <Card className="p-6 bg-slate-800 border-slate-700">
-          <div className="flex items-start gap-4">
-            <HelpCircle className="w-6 h-6 text-blue-500 flex-shrink-0 mt-1" />
-            <div>
-              <h3 className="font-semibold text-white mb-2">Need Help?</h3>
-              <p className="text-sm text-slate-300">
-                Each feature includes comprehensive help documentation and quick
-                start guides. Hover over any icon or button to see tooltips, or
-                visit the help tab within each feature for detailed instructions.
-              </p>
+              <Badge variant="outline" className={`${ps?.isOperational ? 'border-green-500 text-green-400' : 'border-red-500 text-red-400'}`}>
+                <div className={`w-2 h-2 rounded-full mr-2 ${ps?.isOperational ? 'bg-green-400' : 'bg-red-400'}`} />
+                {ps?.isOperational ? 'ALL SYSTEMS GO' : 'DEGRADED'}
+              </Badge>
+              <Button onClick={handleRefresh} size="sm" variant="outline" className="border-slate-500/30 text-gray-300 hover:bg-slate-500/20">
+                <RefreshCw className={`w-4 h-4 mr-1 ${productionStatus.isFetching ? 'animate-spin' : ''}`} />
+              </Button>
             </div>
           </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-6 space-y-6">
+        {/* Health Summary */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Card className="bg-green-500/10 border-green-500/20">
+            <CardContent className="p-4 text-center">
+              <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-400" />
+              <p className="text-3xl font-bold text-green-400">{healthyCount}</p>
+              <p className="text-sm text-gray-400">Operational</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-yellow-500/10 border-yellow-500/20">
+            <CardContent className="p-4 text-center">
+              <MinusCircle className="w-8 h-8 mx-auto mb-2 text-yellow-400" />
+              <p className="text-3xl font-bold text-yellow-400">{degradedCount}</p>
+              <p className="text-sm text-gray-400">Degraded</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-red-500/10 border-red-500/20">
+            <CardContent className="p-4 text-center">
+              <XCircle className="w-8 h-8 mx-auto mb-2 text-red-400" />
+              <p className="text-3xl font-bold text-red-400">{downCount}</p>
+              <p className="text-sm text-gray-400">Down</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-purple-500/10 border-purple-500/20">
+            <CardContent className="p-4 text-center">
+              <Zap className="w-8 h-8 mx-auto mb-2 text-purple-400" />
+              <p className="text-3xl font-bold text-purple-400">{ps?.activePolicies ?? 0}</p>
+              <p className="text-sm text-gray-400">QUMUS Policies</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Subsystem Detail Grid */}
+        <Card className="bg-slate-800/50 border-slate-600/30">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white flex items-center gap-2">
+              <Activity className="w-5 h-5 text-green-400" />
+              Subsystem Status ({totalSubs} systems)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {ss && Object.entries(ss).map(([key, val]: [string, any]) => (
+                <div key={key} className="flex items-center gap-3 p-3 rounded bg-slate-700/30 border border-slate-600/20">
+                  <StatusIcon status={val?.status ?? 'unknown'} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-white font-medium truncate">{key.replace(/([A-Z])/g, ' $1').trim()}</p>
+                    <p className="text-xs text-gray-400">{val?.description ?? val?.status ?? 'unknown'}</p>
+                  </div>
+                  <Badge className={`text-xs flex-shrink-0 ${
+                    val?.status === 'operational' ? 'bg-green-600' :
+                    val?.status === 'degraded' ? 'bg-yellow-600' : 'bg-red-600'
+                  }`}>{val?.status ?? 'unknown'}</Badge>
+                </div>
+              ))}
+              {!ss && Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-16 rounded bg-slate-700/20 animate-pulse" />
+              ))}
+            </div>
+          </CardContent>
         </Card>
-      </div>
+
+        {/* Database Metrics */}
+        {ps?.databaseMetrics && (
+          <Card className="bg-slate-800/50 border-blue-500/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white flex items-center gap-2">
+                <Globe className="w-5 h-5 text-blue-400" />
+                Database Metrics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="p-3 rounded bg-slate-700/30 text-center">
+                  <p className="text-xl font-bold text-blue-400">{ps.databaseMetrics.activeWebhooks}</p>
+                  <p className="text-xs text-gray-400">Active Webhooks</p>
+                </div>
+                <div className="p-3 rounded bg-slate-700/30 text-center">
+                  <p className="text-xl font-bold text-amber-400">{ps.databaseMetrics.activeAds}</p>
+                  <p className="text-xs text-gray-400">Active Ads</p>
+                </div>
+                <div className="p-3 rounded bg-slate-700/30 text-center">
+                  <p className="text-xl font-bold text-cyan-400">{ps.databaseMetrics.uniqueListeners}</p>
+                  <p className="text-xs text-gray-400">Recent Listeners</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Event Log */}
+        {user && (
+          <Card className="bg-slate-800/50 border-slate-600/30">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-gray-400" />
+                  Event Log ({events?.length ?? 0} events)
+                </CardTitle>
+                <Button
+                  onClick={() => emitEvent.mutate({
+                    type: 'system_health_check',
+                    source: 'production_dashboard',
+                    data: { triggeredBy: user.name || 'admin', timestamp: Date.now() },
+                    severity: 'info',
+                  })}
+                  disabled={emitEvent.isPending}
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Zap className="w-3 h-3 mr-1" />
+                  Emit Health Check
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="max-h-80 overflow-y-auto space-y-1">
+                {events?.map((evt: any) => (
+                  <div key={evt.id} className="flex items-center gap-3 p-2 rounded bg-slate-700/20 text-sm">
+                    <Badge className={`text-xs flex-shrink-0 ${
+                      evt.severity === 'critical' ? 'bg-red-600' :
+                      evt.severity === 'warning' ? 'bg-amber-600' : 'bg-slate-600'
+                    }`}>{evt.severity}</Badge>
+                    <span className="text-gray-300 truncate flex-1">{evt.type} &mdash; {evt.source}</span>
+                    <span className="text-xs text-gray-500 flex-shrink-0">
+                      {new Date(evt.timestamp).toLocaleTimeString()}
+                    </span>
+                  </div>
+                ))}
+                {(!events || events.length === 0) && (
+                  <p className="text-sm text-gray-400 text-center py-4">No events yet &mdash; emit a health check to start</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </main>
+
+      <footer className="border-t border-slate-600/30 bg-slate-900/50 mt-8 py-6">
+        <div className="container mx-auto px-4 text-center text-gray-400">
+          <p className="text-sm">Production Status &bull; Canryn Production &bull; QUMUS Autonomous Orchestration</p>
+        </div>
+      </footer>
     </div>
   );
-};
+}
 
-export default ProductionDashboard;
+export { ProductionDashboard };

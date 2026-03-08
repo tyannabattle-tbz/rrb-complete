@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { systemUpdates, teamNotifications, users } from "../../drizzle/schema";
+import { systemUpdates, teamNotifications, users, webhookEndpoints, webhookLogs } from "../../drizzle/schema";
 import { eq, desc, and, sql, count } from "drizzle-orm";
 import { notifyOwner } from "../_core/notification";
 
@@ -75,12 +75,84 @@ export const teamUpdatesRouter = router({
         console.error('[TeamUpdates] Owner notification failed:', e);
       }
       
+      // Auto-dispatch to all active webhook endpoints
+      let webhooksDispatched = 0;
+      try {
+        const activeWebhooks = await db.select().from(webhookEndpoints)
+          .where(eq(webhookEndpoints.isActive, 1));
+        
+        for (const endpoint of activeWebhooks) {
+          try {
+            let body: string;
+            if (endpoint.url.includes('hooks.slack.com')) {
+              body = JSON.stringify({
+                text: `*RRB Update ${input.version}*: ${input.title}`,
+                blocks: [
+                  { type: 'header', text: { type: 'plain_text', text: `RRB Update ${input.version}` } },
+                  { type: 'section', text: { type: 'mrkdwn', text: `*${input.title}*\n${input.changelog}` } },
+                  { type: 'context', elements: [{ type: 'mrkdwn', text: `Severity: ${input.severity} | Category: ${input.category}` }] },
+                ],
+              });
+            } else if (endpoint.url.includes('discord.com/api/webhooks')) {
+              body = JSON.stringify({
+                embeds: [{
+                  title: `RRB Update ${input.version}: ${input.title}`,
+                  description: input.changelog,
+                  color: input.severity === 'critical' ? 0xFF0000 : input.severity === 'major' ? 0xF59E0B : 0x8B5CF6,
+                  fields: [
+                    { name: 'Severity', value: input.severity, inline: true },
+                    { name: 'Category', value: input.category, inline: true },
+                  ],
+                  footer: { text: 'QUMUS Ecosystem — Canryn Production' },
+                  timestamp: new Date(now).toISOString(),
+                }],
+              });
+            } else {
+              body = JSON.stringify({
+                event: 'system_update',
+                version: input.version,
+                title: input.title,
+                changelog: input.changelog,
+                severity: input.severity,
+                category: input.category,
+                affectedSystems: input.affectedSystems,
+                timestamp: now,
+              });
+            }
+            
+            await fetch(endpoint.url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Webhook-Source': 'QUMUS-TeamUpdates',
+                'X-Webhook-Event': 'system_update',
+              },
+              body,
+              signal: AbortSignal.timeout(5000),
+            }).catch(() => {});
+            
+            await db.insert(webhookLogs).values({
+              webhookId: endpoint.id,
+              eventType: 'system_update',
+              payload: body,
+              statusCode: 200,
+              retryCount: 0,
+            });
+            
+            webhooksDispatched++;
+          } catch {}
+        }
+      } catch (e) {
+        console.error('[TeamUpdates] Webhook auto-dispatch failed:', e);
+      }
+      
       return {
         id: updateId,
         version: input.version,
         title: input.title,
         notifiedCount: notifications.length,
-        channels: ['in_app', 'owner_notification'],
+        webhooksDispatched,
+        channels: ['in_app', 'owner_notification', 'webhook'],
       };
     }),
 

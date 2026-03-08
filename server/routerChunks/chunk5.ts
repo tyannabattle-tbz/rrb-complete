@@ -21,6 +21,7 @@ import { teamUpdatesRouter } from '../routers/teamUpdatesRouter';
 import { adRotationRouter } from '../routers/adRotationRouter';
 import { listenerAnalyticsRouter } from '../routers/listenerAnalyticsRouter';
 import { webhookManagerRouter } from '../routers/webhookManagerRouter';
+import { productionIntegrationRouter } from '../routers/productionIntegrationRouter';
 
 export const chunk5Router = router({
   seedData: seedDataRouter,
@@ -43,4 +44,5 @@ export const chunk5Router = router({
   adRotation: adRotationRouter,
   listenerAnalytics: listenerAnalyticsRouter,
   webhookManager: webhookManagerRouter,
+  productionIntegration: productionIntegrationRouter,
 });
