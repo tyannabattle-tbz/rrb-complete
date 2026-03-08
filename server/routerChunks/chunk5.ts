@@ -14,6 +14,9 @@ import { sweetMiraclesGrantsRouter } from '../routers/sweetMiraclesGrants';
 import { newsRouter } from '../routers/newsRouter';
 import { familyTreeRouter } from '../routers/familyTreeRouter';
 import { documentationRouter } from '../routers/documentationRouter';
+import { rrbSeedDataRouter } from '../routers/rrbSeedData';
+import { contentSchedulerRouter } from '../routers/contentSchedulerRouter';
+import { rrbUpdateOrchestratorRouter } from '../routers/rrbUpdateOrchestrator';
 
 export const chunk5Router = router({
   seedData: seedDataRouter,
@@ -29,4 +32,7 @@ export const chunk5Router = router({
   news: newsRouter,
   familyTree: familyTreeRouter,
   documentation: documentationRouter,
+  rrbSeed: rrbSeedDataRouter,
+  contentScheduler: contentSchedulerRouter,
+  rrbUpdate: rrbUpdateOrchestratorRouter,
 });

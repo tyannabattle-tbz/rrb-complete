@@ -175,6 +175,8 @@ import CandyDocumentary from '@/pages/CandyDocumentary';
 import NewsPage from '@/pages/NewsPage';
 import FamilyTreePage from '@/pages/FamilyTreePage';
 import DocumentationPage from '@/pages/DocumentationPage';
+import ContentScheduler from '@/pages/ContentScheduler';
+import RRBUpdateDashboard from '@/pages/RRBUpdateDashboard';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -337,6 +339,8 @@ function Router() {
       <Route path="/news" component={NewsPage} />
       <Route path="/family" component={FamilyTreePage} />
       <Route path="/docs" component={DocumentationPage} />
+      <Route path="/scheduler" component={ContentScheduler} />
+      <Route path="/rrb-update" component={RRBUpdateDashboard} />
       <Route component={NotFound} />
     </Switch>
     </>

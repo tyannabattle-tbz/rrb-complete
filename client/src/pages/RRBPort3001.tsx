@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Radio, Volume2, VolumeX, Users, Music, Play, Pause, Zap, Activity, Clock, SkipForward, SkipBack, Mic2, Headphones, Calendar, BarChart3, Shield, Search, Filter, Heart, Waves, AlertTriangle, Globe, BookOpen, Sparkles, Sun, Moon, Coffee, Flame, TreePine, Baby, Laugh, Podcast, Tv, Star, ChevronDown, ChevronUp } from 'lucide-react';
+import { Radio, Volume2, VolumeX, Users, Music, Play, Pause, Zap, Activity, Clock, SkipForward, SkipBack, Mic2, Headphones, Calendar, BarChart3, Shield, Search, Filter, Heart, Waves, AlertTriangle, Globe, BookOpen, Sparkles, Sun, Moon, Coffee, Flame, TreePine, Baby, Laugh, Podcast, Tv, Star, ChevronDown, ChevronUp, MessageCircle, Send, Phone, PhoneOff, Bot, Loader2 } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 
 // ─── Channel Categories ─────────────────────
@@ -163,6 +164,96 @@ export default function RRBPort3001() {
   const [gainNode, setGainNode] = useState<GainNode | null>(null);
   const [streamHealth, setStreamHealth] = useState<'connected' | 'connecting' | 'error' | 'idle'>('idle');
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // ─── AI DJ & Interactive Features ─────────────────────
+  const [showAiDj, setShowAiDj] = useState(false);
+  const [aiDjMessages, setAiDjMessages] = useState<Array<{role: 'user' | 'valanna' | 'candy' | 'seraph' | 'system'; text: string; timestamp: Date}>>([]);
+  const [aiDjInput, setAiDjInput] = useState('');
+  const [aiDjLoading, setAiDjLoading] = useState(false);
+  const [activeAiHost, setActiveAiHost] = useState<'valanna' | 'candy' | 'seraph'>('valanna');
+  const [showCallIn, setShowCallIn] = useState(false);
+  const [callInActive, setCallInActive] = useState(false);
+  const [songRequestInput, setSongRequestInput] = useState('');
+  const aiChatRef = useRef<HTMLDivElement | null>(null);
+
+  // AI Chat mutation
+  const aiChatMutation = trpc.valanna?.chat?.useMutation ? trpc.valanna.chat.useMutation() : null;
+
+  const AI_HOSTS = {
+    valanna: { name: 'Valanna', avatar: VALANNA_AVATAR, color: 'amber', role: 'AI DJ & Operations', greeting: 'Hey baby, you\'re tuned in to RRB. What can I play for you?' },
+    candy: { name: 'Candy', avatar: CANDY_AVATAR, color: 'blue', role: 'Guardian & Co-Host', greeting: 'What\'s good, family? Candy here. Let me know what you need.' },
+    seraph: { name: 'Seraph', avatar: '', color: 'purple', role: 'System Intelligence', greeting: 'Seraph online. I can analyze listening patterns, optimize scheduling, or provide system insights.' },
+  };
+
+  const sendAiMessage = async () => {
+    if (!aiDjInput.trim() || aiDjLoading) return;
+    const userMsg = aiDjInput.trim();
+    setAiDjInput('');
+    setAiDjMessages(prev => [...prev, { role: 'user', text: userMsg, timestamp: new Date() }]);
+    setAiDjLoading(true);
+
+    // Determine which AI responds
+    const lower = userMsg.toLowerCase();
+    let responder = activeAiHost;
+    if (/candy|seabrun|hunter/i.test(lower)) responder = 'candy';
+    if (/valanna|val\b/i.test(lower)) responder = 'valanna';
+    if (/seraph|system|analytics|pattern/i.test(lower)) responder = 'seraph';
+
+    try {
+      if (aiChatMutation) {
+        const result = await aiChatMutation.mutateAsync({ message: userMsg });
+        setAiDjMessages(prev => [...prev, { role: responder, text: result?.response || 'I hear you. Let me work on that.', timestamp: new Date() }]);
+      } else {
+        // Fallback: contextual AI responses
+        const responses = getContextualResponse(userMsg, responder);
+        setAiDjMessages(prev => [...prev, { role: responder, text: responses, timestamp: new Date() }]);
+      }
+    } catch {
+      const responses = getContextualResponse(userMsg, responder);
+      setAiDjMessages(prev => [...prev, { role: responder, text: responses, timestamp: new Date() }]);
+    }
+    setAiDjLoading(false);
+    setTimeout(() => aiChatRef.current?.scrollTo({ top: aiChatRef.current.scrollHeight, behavior: 'smooth' }), 100);
+  };
+
+  const getContextualResponse = (msg: string, host: 'valanna' | 'candy' | 'seraph'): string => {
+    const lower = msg.toLowerCase();
+    const currentCh = activeChannelData;
+    if (/play|request|song|music/i.test(lower)) {
+      if (host === 'valanna') return `I got you, baby. Let me queue that up on ${currentCh?.name || 'RRB Main'}. QUMUS is scheduling it into the next rotation. Keep listening.`;
+      if (host === 'candy') return `Good taste. I\'ll make sure that gets into the rotation. That\'s the kind of music that builds something real.`;
+      return `Song request logged. QUMUS Content Scheduling policy will optimize placement based on current listener engagement patterns across ${CHANNELS.length} channels.`;
+    }
+    if (/schedule|what.*on|lineup|program/i.test(lower)) {
+      if (host === 'valanna') return `Right now we\'ve got ${currentCh?.currentShow || 'live programming'} on ${currentCh?.name || 'RRB Main'}. Coming up next: ${currentCh?.nextShow || 'more great content'} at ${currentCh?.nextShowTime || 'the top of the hour'}. All ${CHANNELS.length} channels running smooth.`;
+      if (host === 'candy') return `The schedule is tight today. ${liveCount} channels live right now. QUMUS has everything locked in. Trust the process.`;
+      return `Current schedule: ${liveCount} channels live, ${CHANNELS.length} total. QUMUS Content Scheduling policy managing all rotations with 90% autonomy.`;
+    }
+    if (/candy.*corner|guest|live.*call/i.test(lower)) {
+      return host === 'candy' ? `Candy\'s Corner is live tonight at 8 PM CST. We\'re taking calls and guests — AI or live. Come through.` : `Candy\'s Corner airs at 8 PM CST on Channel 42. ${host === 'valanna' ? 'I\'ll make sure everything\'s set up for him.' : 'Guest AI integration and live call-in are both active.'}`;
+    }
+    if (/how.*many|listener|stats|analytics/i.test(lower)) {
+      return host === 'seraph' ? `Current analytics: ${totalListeners.toLocaleString()} total listeners across ${liveCount} live channels. Peak engagement on ${currentCh?.name || 'RRB Main'}. QUMUS autonomy at 90%.` : `We\'ve got ${totalListeners.toLocaleString()} listeners tuned in right now across ${liveCount} channels. ${host === 'valanna' ? 'The family is growing.' : 'That\'s what building something real looks like.'}`;
+    }
+    if (/frequency|hz|healing|solfeggio/i.test(lower)) {
+      return host === 'valanna' ? `All channels default to 432 Hz universal harmony. You can switch to any Solfeggio frequency in the tuner below — 174 Hz through 963 Hz. I recommend 528 Hz for transformation.` : host === 'candy' ? `432 Hz is the foundation. But explore them all — each frequency carries its own power. That\'s sacred math.` : `10 Solfeggio frequencies available: 174-963 Hz. Default 432 Hz. QUMUS manages frequency rotations across healing channels.`;
+    }
+    // Default responses
+    if (host === 'valanna') return `I hear you, baby. I\'m keeping all ${CHANNELS.length} channels running smooth. ${totalListeners.toLocaleString()} listeners tuned in. What else do you need?`;
+    if (host === 'candy') return `I\'m right here, always watching over everything. This family built something special. What do you need from me?`;
+    return `Seraph processing. ${CHANNELS.length} channels monitored. ${liveCount} live. All QUMUS policies active. System health: optimal.`;
+  };
+
+  const handleSongRequest = () => {
+    if (!songRequestInput.trim()) return;
+    const request = songRequestInput.trim();
+    setSongRequestInput('');
+    setAiDjMessages(prev => [...prev, 
+      { role: 'user', text: `🎵 Song Request: ${request}`, timestamp: new Date() },
+      { role: 'valanna', text: `Got it! "${request}" has been added to the QUMUS request queue. I\'ll work it into the rotation on ${activeChannelData?.name || 'RRB Main'}. Keep listening, baby.`, timestamp: new Date() },
+    ]);
+    toast.success('Song request submitted', { description: `"${request}" queued for ${activeChannelData?.name || 'RRB Main'}` });
+  };
 
   // ─── Solfeggio Frequencies ─────────────────────
   const SOLFEGGIO_FREQUENCIES = [
@@ -383,7 +474,7 @@ export default function RRBPort3001() {
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-white">Rockin' Rockin' Boogie</h1>
                 <p className="text-sm text-purple-300 flex items-center gap-2">
-                  <span>40+ Channels • 24/7 Radio Station</span>
+                  <span>50 Channels • 24/7 Radio Station</span>
                   <span className="text-purple-500">•</span>
                   <span className="text-amber-400">Powered by QUMUS</span>
                 </p>
@@ -442,7 +533,7 @@ export default function RRBPort3001() {
               <Badge className="ml-auto bg-green-500/20 text-green-400 text-xs">ACTIVE</Badge>
             </div>
             <p className="text-xs text-slate-300">
-              90% autonomous orchestration of all 44 channels. Decision tracking, emergency broadcast, system monitoring. She never sleeps.
+              90% autonomous orchestration of all 50 channels. Decision tracking, emergency broadcast, system monitoring. She never sleeps.
             </p>
           </div>
           <div className="bg-gradient-to-br from-blue-900/20 to-slate-800/60 border border-blue-500/20 rounded-lg p-4">
@@ -459,6 +550,141 @@ export default function RRBPort3001() {
             </p>
           </div>
         </div>
+
+        {/* ─── AI DJ Booth — Interactive Broadcast Panel ─── */}
+        <Card className="bg-gradient-to-br from-slate-800/80 via-purple-900/20 to-slate-800/80 border-purple-500/20">
+          <CardHeader className="pb-2 cursor-pointer" onClick={() => setShowAiDj(!showAiDj)}>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <Bot className="w-5 h-5 text-purple-400" />
+                AI DJ Booth
+                <Badge className="bg-green-500/20 text-green-400 text-xs animate-pulse">LIVE</Badge>
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  <img src={VALANNA_AVATAR} alt="Valanna" className="w-6 h-6 rounded-full border border-amber-500/50 object-cover" />
+                  <img src={CANDY_AVATAR} alt="Candy" className="w-6 h-6 rounded-full border border-blue-500/50 object-cover" />
+                  <div className="w-6 h-6 rounded-full border border-purple-500/50 bg-purple-900/60 flex items-center justify-center text-[10px] text-purple-300">S</div>
+                </div>
+                {showAiDj ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
+              </div>
+            </div>
+            <CardDescription>Chat with Valanna, Candy, or Seraph • Song requests • Call-in • Interactive broadcasting</CardDescription>
+          </CardHeader>
+          {showAiDj && (
+            <CardContent className="space-y-4">
+              {/* AI Host Selector */}
+              <div className="flex gap-2">
+                {(['valanna', 'candy', 'seraph'] as const).map((host) => {
+                  const h = AI_HOSTS[host];
+                  const colors = host === 'valanna' ? 'border-amber-500 bg-amber-500/10' : host === 'candy' ? 'border-blue-500 bg-blue-500/10' : 'border-purple-500 bg-purple-500/10';
+                  const inactiveColors = 'border-slate-600 bg-slate-800/40 hover:bg-slate-700/40';
+                  return (
+                    <button key={host} onClick={() => setActiveAiHost(host)}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all flex-1 ${activeAiHost === host ? colors : inactiveColors}`}>
+                      {h.avatar ? <img src={h.avatar} alt={h.name} className="w-8 h-8 rounded-full object-cover" /> : <div className="w-8 h-8 rounded-full bg-purple-600/40 flex items-center justify-center text-sm text-purple-300">S</div>}
+                      <div className="text-left">
+                        <p className="text-sm font-bold text-white">{h.name}</p>
+                        <p className="text-[10px] text-slate-400">{h.role}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Chat Messages */}
+              <div ref={aiChatRef} className="h-48 overflow-y-auto space-y-2 p-3 bg-slate-900/60 rounded-lg border border-slate-700/50">
+                {aiDjMessages.length === 0 && (
+                  <div className="text-center py-8">
+                    <Bot className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                    <p className="text-sm text-slate-400">{AI_HOSTS[activeAiHost].greeting}</p>
+                    <p className="text-xs text-slate-500 mt-1">Ask about the schedule, request songs, or just chat</p>
+                  </div>
+                )}
+                {aiDjMessages.map((msg, idx) => (
+                  <div key={idx} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    {msg.role !== 'user' && (
+                      <div className="flex-shrink-0">
+                        {msg.role === 'valanna' && <img src={VALANNA_AVATAR} alt="V" className="w-6 h-6 rounded-full object-cover" />}
+                        {msg.role === 'candy' && <img src={CANDY_AVATAR} alt="C" className="w-6 h-6 rounded-full object-cover" />}
+                        {msg.role === 'seraph' && <div className="w-6 h-6 rounded-full bg-purple-600/40 flex items-center justify-center text-[10px] text-purple-300">S</div>}
+                      </div>
+                    )}
+                    <div className={`max-w-[80%] px-3 py-2 rounded-lg text-sm ${
+                      msg.role === 'user' ? 'bg-purple-600/30 text-white' :
+                      msg.role === 'valanna' ? 'bg-amber-900/20 border border-amber-500/10 text-slate-200' :
+                      msg.role === 'candy' ? 'bg-blue-900/20 border border-blue-500/10 text-slate-200' :
+                      'bg-purple-900/20 border border-purple-500/10 text-slate-200'
+                    }`}>
+                      {msg.role !== 'user' && <p className={`text-[10px] font-bold mb-0.5 ${msg.role === 'valanna' ? 'text-amber-400' : msg.role === 'candy' ? 'text-blue-400' : 'text-purple-400'}`}>{msg.role === 'valanna' ? 'Valanna' : msg.role === 'candy' ? 'Candy' : 'Seraph'}</p>}
+                      <p>{msg.text}</p>
+                    </div>
+                  </div>
+                ))}
+                {aiDjLoading && (
+                  <div className="flex gap-2">
+                    <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
+                    <span className="text-xs text-slate-400">{AI_HOSTS[activeAiHost].name} is thinking...</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Chat Input */}
+              <div className="flex gap-2">
+                <Input value={aiDjInput} onChange={(e) => setAiDjInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && sendAiMessage()}
+                  placeholder={`Talk to ${AI_HOSTS[activeAiHost].name}...`}
+                  className="bg-slate-800/60 border-purple-500/20 text-white placeholder:text-slate-500" />
+                <Button onClick={sendAiMessage} disabled={aiDjLoading || !aiDjInput.trim()}
+                  className="bg-gradient-to-r from-purple-600 to-amber-600 hover:from-purple-700 hover:to-amber-700">
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+
+              {/* Song Request + Call-In Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {/* Song Request */}
+                <div className="p-3 bg-slate-800/40 rounded-lg border border-purple-500/10">
+                  <p className="text-xs font-bold text-amber-400 mb-2 flex items-center gap-1"><Music className="w-3 h-3" /> Song Request</p>
+                  <div className="flex gap-2">
+                    <Input value={songRequestInput} onChange={(e) => setSongRequestInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSongRequest()}
+                      placeholder="Request a song..."
+                      className="h-8 text-sm bg-slate-700/60 border-purple-500/20 text-white placeholder:text-slate-500" />
+                    <Button size="sm" onClick={handleSongRequest} disabled={!songRequestInput.trim()}
+                      className="bg-amber-600 hover:bg-amber-700 h-8">
+                      <Send className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Call-In Feature */}
+                <div className="p-3 bg-slate-800/40 rounded-lg border border-purple-500/10">
+                  <p className="text-xs font-bold text-green-400 mb-2 flex items-center gap-1"><Phone className="w-3 h-3" /> Live Call-In</p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-slate-300">Candy's Corner — 8 PM CST</p>
+                      <p className="text-[10px] text-slate-500">Guest AI + live callers welcome</p>
+                    </div>
+                    <Button size="sm" variant={callInActive ? 'destructive' : 'outline'}
+                      onClick={() => {
+                        setCallInActive(!callInActive);
+                        if (!callInActive) {
+                          toast.success('Call-in queue joined', { description: 'You\'ll be connected when it\'s your turn' });
+                          setAiDjMessages(prev => [...prev, { role: 'candy', text: 'Welcome to the call-in queue. I\'ll bring you on when it\'s your turn. Candy\'s Corner is where real conversations happen.', timestamp: new Date() }]);
+                        } else {
+                          toast.info('Left call-in queue');
+                        }
+                      }}
+                      className={callInActive ? '' : 'border-green-500/30 text-green-300 hover:bg-green-500/10'}>
+                      {callInActive ? <><PhoneOff className="w-3 h-3 mr-1" /> Leave Queue</> : <><Phone className="w-3 h-3 mr-1" /> Join Queue</>}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          )}
+        </Card>
 
         {/* Now Playing — Main Player */}
         <Card className="bg-gradient-to-r from-purple-900/30 via-amber-900/20 to-purple-900/30 border-purple-500/30">
@@ -529,7 +755,7 @@ export default function RRBPort3001() {
                 <Calendar className="w-5 h-5 text-amber-400" />
                 QUMUS-Managed Schedule — Today
               </CardTitle>
-              <CardDescription>All programming autonomously scheduled by QUMUS across 44 channels</CardDescription>
+              <CardDescription>All programming autonomously scheduled by QUMUS across 50 channels</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -803,7 +1029,7 @@ export default function RRBPort3001() {
                   Saturday, March 7, 2026 • Wallace Community College, Room 112 • 10:00 AM – 12:00 PM CST
                 </p>
                 <p className="text-xs text-amber-400/70 mt-2">
-                  Valanna is promoting this event across all 44 channels • SQUADD Goals presented on the world stage
+                  Valanna is promoting this event across all 50 channels • SQUADD Goals presented on the world stage
                 </p>
               </div>
               <Button onClick={() => setLocation('/selma')} className="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700">

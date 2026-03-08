@@ -1937,3 +1937,22 @@ export const documentationPages = mysqlTable('documentation_pages', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+export const contentSchedule = mysqlTable("content_schedule", {
+  id: int().autoincrement().primaryKey(),
+  channelId: int('channel_id').notNull(),
+  channelName: varchar('channel_name', { length: 255 }).notNull(),
+  showName: varchar('show_name', { length: 255 }).notNull(),
+  showType: mysqlEnum('show_type', ['music', 'talk', 'podcast', 'commercial', 'healing', 'live_event', 'news', 'gospel', 'emergency']).default('music').notNull(),
+  dayOfWeek: mysqlEnum('day_of_week', ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'daily']).default('daily').notNull(),
+  startTime: varchar('start_time', { length: 10 }).notNull(),
+  endTime: varchar('end_time', { length: 10 }).notNull(),
+  description: text(),
+  host: varchar({ length: 255 }),
+  isRecurring: boolean('is_recurring').default(true).notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
+  priority: int().default(5).notNull(),
+  qumusManaged: boolean('qumus_managed').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
