@@ -177,6 +177,9 @@ import FamilyTreePage from '@/pages/FamilyTreePage';
 import DocumentationPage from '@/pages/DocumentationPage';
 import ContentScheduler from '@/pages/ContentScheduler';
 import RRBUpdateDashboard from '@/pages/RRBUpdateDashboard';
+import RRBTeamUpdates from '@/pages/RRBTeamUpdates';
+import AdManager from '@/pages/AdManager';
+import ListenerAnalyticsLive from '@/pages/ListenerAnalyticsLive';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -341,6 +344,9 @@ function Router() {
       <Route path="/docs" component={DocumentationPage} />
       <Route path="/scheduler" component={ContentScheduler} />
       <Route path="/rrb-update" component={RRBUpdateDashboard} />
+      <Route path="/rrb-team-updates" component={RRBTeamUpdates} />
+      <Route path="/ad-manager" component={AdManager} />
+      <Route path="/listener-analytics-live" component={ListenerAnalyticsLive} />
       <Route component={NotFound} />
     </Switch>
     </>

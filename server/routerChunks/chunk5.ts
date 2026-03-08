@@ -17,6 +17,9 @@ import { documentationRouter } from '../routers/documentationRouter';
 import { rrbSeedDataRouter } from '../routers/rrbSeedData';
 import { contentSchedulerRouter } from '../routers/contentSchedulerRouter';
 import { rrbUpdateOrchestratorRouter } from '../routers/rrbUpdateOrchestrator';
+import { teamUpdatesRouter } from '../routers/teamUpdatesRouter';
+import { adRotationRouter } from '../routers/adRotationRouter';
+import { listenerAnalyticsRouter } from '../routers/listenerAnalyticsRouter';
 
 export const chunk5Router = router({
   seedData: seedDataRouter,
@@ -35,4 +38,7 @@ export const chunk5Router = router({
   rrbSeed: rrbSeedDataRouter,
   contentScheduler: contentSchedulerRouter,
   rrbUpdate: rrbUpdateOrchestratorRouter,
+  teamUpdates: teamUpdatesRouter,
+  adRotation: adRotationRouter,
+  listenerAnalytics: listenerAnalyticsRouter,
 });

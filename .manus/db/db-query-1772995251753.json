@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS ad_inventory (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  sponsor_name VARCHAR(255) NOT NULL,\n  campaign_name VARCHAR(255) NOT NULL,\n  audio_url TEXT,\n  duration_seconds INT NOT NULL DEFAULT 30,\n  category ENUM('commercial', 'psa', 'promo', 'sponsor', 'community') NOT NULL DEFAULT 'commercial',\n  target_channels TEXT,\n  rotation_weight INT NOT NULL DEFAULT 1,\n  max_plays_per_hour INT DEFAULT 2,\n  time_slot_start VARCHAR(5),\n  time_slot_end VARCHAR(5),\n  active BOOLEAN NOT NULL DEFAULT TRUE,\n  total_plays INT NOT NULL DEFAULT 0,\n  budget_cents INT,\n  cost_per_play_cents INT,\n  start_date BIGINT,\n  end_date BIGINT,\n  created_at BIGINT NOT NULL,\n  updated_at BIGINT NOT NULL\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute CREATE TABLE IF NOT EXISTS ad_inventory (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  sponsor_name VARCHAR(255) NOT NULL,\n  campaign_name VARCHAR(255) NOT NULL,\n  audio_url TEXT,\n  duration_seconds INT NOT NULL DEFAULT 30,\n  category ENUM('commercial', 'psa', 'promo', 'sponsor', 'community') NOT NULL DEFAULT 'commercial',\n  target_channels TEXT,\n  rotation_weight INT NOT NULL DEFAULT 1,\n  max_plays_per_hour INT DEFAULT 2,\n  time_slot_start VARCHAR(5),\n  time_slot_end VARCHAR(5),\n  active BOOLEAN NOT NULL DEFAULT TRUE,\n  total_plays INT NOT NULL DEFAULT 0,\n  budget_cents INT,\n  cost_per_play_cents INT,\n  start_date BIGINT,\n  end_date BIGINT,\n  created_at BIGINT NOT NULL,\n  updated_at BIGINT NOT NULL\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 136
+}

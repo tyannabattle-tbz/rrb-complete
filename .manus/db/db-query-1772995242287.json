@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS team_notifications (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  update_id INT NOT NULL,\n  user_id INT,\n  channel ENUM('push', 'email', 'in_app', 'webhook', 'sms') NOT NULL DEFAULT 'in_app',\n  recipient VARCHAR(255) NOT NULL,\n  delivered BOOLEAN NOT NULL DEFAULT FALSE,\n  read_at BIGINT,\n  acknowledged_at BIGINT,\n  applied_at BIGINT,\n  error_message TEXT,\n  created_at BIGINT NOT NULL\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute CREATE TABLE IF NOT EXISTS team_notifications (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  update_id INT NOT NULL,\n  user_id INT,\n  channel ENUM('push', 'email', 'in_app', 'webhook', 'sms') NOT NULL DEFAULT 'in_app',\n  recipient VARCHAR(255) NOT NULL,\n  delivered BOOLEAN NOT NULL DEFAULT FALSE,\n  read_at BIGINT,\n  acknowledged_at BIGINT,\n  applied_at BIGINT,\n  error_message TEXT,\n  created_at BIGINT NOT NULL\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 174
+}

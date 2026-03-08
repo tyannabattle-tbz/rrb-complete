@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, foreignKey, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index, boolean } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, foreignKey, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index, boolean, bigint } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const activityLogs = mysqlTable("activity_logs", {
@@ -1955,4 +1955,78 @@ export const contentSchedule = mysqlTable("content_schedule", {
   qumusManaged: boolean('qumus_managed').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+
+// ─── RRB Team Update Delivery System ────────────────────────
+
+export const systemUpdates = mysqlTable("system_updates", {
+  id: int().autoincrement().primaryKey(),
+  version: varchar({ length: 50 }).notNull(),
+  title: varchar({ length: 255 }).notNull(),
+  changelog: text().notNull(),
+  category: mysqlEnum(['feature', 'bugfix', 'security', 'content', 'infrastructure']).default('feature').notNull(),
+  severity: mysqlEnum(['critical', 'major', 'minor', 'patch']).default('minor').notNull(),
+  status: mysqlEnum(['draft', 'published', 'deployed', 'rolled_back']).default('draft').notNull(),
+  affectedSystems: text('affected_systems'),
+  publishedBy: varchar('published_by', { length: 255 }),
+  publishedAt: bigint('published_at', { mode: 'number' }),
+  deployedAt: bigint('deployed_at', { mode: 'number' }),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+  updatedAt: bigint('updated_at', { mode: 'number' }).notNull(),
+});
+
+export const teamNotifications = mysqlTable("team_notifications", {
+  id: int().autoincrement().primaryKey(),
+  updateId: int('update_id').notNull(),
+  userId: int('user_id'),
+  channel: mysqlEnum(['push', 'email', 'in_app', 'webhook', 'sms']).default('in_app').notNull(),
+  recipient: varchar({ length: 255 }).notNull(),
+  delivered: boolean().default(false).notNull(),
+  readAt: bigint('read_at', { mode: 'number' }),
+  acknowledgedAt: bigint('acknowledged_at', { mode: 'number' }),
+  appliedAt: bigint('applied_at', { mode: 'number' }),
+  errorMessage: text('error_message'),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+});
+
+// ─── Commercial/Ad Rotation System ──────────────────────────
+
+export const adInventory = mysqlTable("ad_inventory", {
+  id: int().autoincrement().primaryKey(),
+  sponsorName: varchar('sponsor_name', { length: 255 }).notNull(),
+  campaignName: varchar('campaign_name', { length: 255 }).notNull(),
+  audioUrl: text('audio_url'),
+  durationSeconds: int('duration_seconds').default(30).notNull(),
+  category: mysqlEnum(['commercial', 'psa', 'promo', 'sponsor', 'community']).default('commercial').notNull(),
+  targetChannels: text('target_channels'),
+  rotationWeight: int('rotation_weight').default(1).notNull(),
+  maxPlaysPerHour: int('max_plays_per_hour').default(2),
+  timeSlotStart: varchar('time_slot_start', { length: 5 }),
+  timeSlotEnd: varchar('time_slot_end', { length: 5 }),
+  active: boolean().default(true).notNull(),
+  totalPlays: int('total_plays').default(0).notNull(),
+  budgetCents: int('budget_cents'),
+  costPerPlayCents: int('cost_per_play_cents'),
+  startDate: bigint('start_date', { mode: 'number' }),
+  endDate: bigint('end_date', { mode: 'number' }),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+  updatedAt: bigint('updated_at', { mode: 'number' }).notNull(),
+});
+
+// ─── Listener Analytics ─────────────────────────────────────
+
+export const listenerAnalytics = mysqlTable("listener_analytics", {
+  id: int().autoincrement().primaryKey(),
+  channelId: int('channel_id').notNull(),
+  channelName: varchar('channel_name', { length: 255 }).notNull(),
+  listenerCount: int('listener_count').default(0).notNull(),
+  peakListeners: int('peak_listeners').default(0).notNull(),
+  geoRegion: varchar('geo_region', { length: 100 }),
+  deviceType: mysqlEnum('device_type', ['desktop', 'mobile', 'tablet', 'smart_speaker', 'other']).default('desktop'),
+  sessionDurationSeconds: int('session_duration_seconds').default(0),
+  timestamp: bigint({ mode: 'number' }).notNull(),
+  hourOfDay: int('hour_of_day'),
+  dayOfWeek: int('day_of_week'),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
 });

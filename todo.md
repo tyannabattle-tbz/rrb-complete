@@ -2869,4 +2869,40 @@
 ### Phase 5: Testing
 - [x] Write vitest for orchestrator, all routers, chunk5 integration (17 tests)
 - [x] All 65 tests passing across 4 test suites
-- [ ] Save checkpoint
+- [x] Save checkpoint (d7f9f689)
+
+## RRB Team Update Delivery System — March 8, 2026
+
+### Phase 1: Team Update Delivery Infrastructure
+- [x] Create system_updates table (version, changelog, status, severity, affected_systems)
+- [x] Create team_notifications table (update_id, recipient, channel, delivered, acknowledged)
+- [x] Create ad_inventory table (sponsor, audio_url, duration, rotation_weight, target_channels)
+- [x] Create listener_analytics table (channel_id, listener_count, peak, geo, device)
+- [x] Build teamUpdatesRouter.ts — publish, getUpdates, acknowledge, dispatchWebhook, emailDigest
+- [x] Build webhook dispatcher — POST update payloads to external endpoints
+- [x] Integrate with notifyOwner for email digest delivery
+- [x] Add push notification support via VAPID for real-time team alerts
+
+### Phase 2: Team Update Dashboard
+- [x] Create RRBTeamUpdates.tsx — changelog feed, pending updates, notification preferences
+- [x] Add version history with severity badges and affected systems
+- [x] Add one-click "Acknowledge" button per update
+- [x] Add notification preferences (push, email, in-app, webhook)
+- [x] Show update status per team member (pending, acknowledged, applied)
+- [x] Add /rrb-team-updates route to App.tsx
+
+### Phase 3: Commercial/Ad Rotation System
+- [x] Build adRotationRouter.ts — CRUD for ad inventory, weighted rotation, channel targeting
+- [x] Auto-rotate ads across channels based on weight, time-of-day, and sponsor preferences
+- [x] Create AdManager.tsx admin page for managing sponsor inventory
+- [x] Add /ad-manager route to App.tsx
+
+### Phase 4: Listener Analytics Dashboard
+- [x] Build listenerAnalyticsRouter.ts — track listeners, peak hours, geo distribution
+- [x] Create ListenerAnalyticsLive.tsx with real-time stats, top channels, event breakdown
+- [x] Add /listener-analytics-live route to App.tsx
+
+### Phase 5: Testing & Deployment
+- [x] Write vitest for team updates, ad rotation, listener analytics (22 tests)
+- [x] All 70 tests passing across 4 suites
+- [ ] Save checkpoint and deliver
