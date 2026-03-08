@@ -1,5 +1,5 @@
 import { mysqlTable, varchar, text, datetime, int, boolean, json } from 'drizzle-orm/mysql-core';
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 
 // Content Calendar Posts
 export const contentCalendarPosts = mysqlTable('content_calendar_posts', {
@@ -12,8 +12,8 @@ export const contentCalendarPosts = mysqlTable('content_calendar_posts', {
   status: varchar('status', { length: 20 }).default('draft'),
   mediaUrls: json('media_urls').$type<string[]>(),
   hashtags: json('hashtags').$type<string[]>(),
-  createdAt: datetime('created_at').defaultNow(),
-  updatedAt: datetime('updated_at').defaultNow(),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: datetime('updated_at').default(sql`CURRENT_TIMESTAMP`),
   publishedAt: datetime('published_at'),
 });
 
@@ -34,8 +34,8 @@ export const bulkScheduleTemplates = mysqlTable('bulk_schedule_templates', {
   startDate: datetime('start_date').notNull(),
   endDate: datetime('end_date'),
   isActive: boolean('is_active').default(true),
-  createdAt: datetime('created_at').defaultNow(),
-  updatedAt: datetime('updated_at').defaultNow(),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: datetime('updated_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 // Platform Engagement Metrics
@@ -51,8 +51,8 @@ export const platformEngagementMetrics = mysqlTable('platform_engagement_metrics
   clicks: int('clicks').default(0),
   impressions: int('impressions').default(0),
   engagementRate: varchar('engagement_rate', { length: 50 }).default('0%'),
-  lastUpdated: datetime('last_updated').defaultNow(),
-  createdAt: datetime('created_at').defaultNow(),
+  lastUpdated: datetime('last_updated').default(sql`CURRENT_TIMESTAMP`),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 // Analytics Summary (daily/weekly/monthly)
@@ -74,7 +74,7 @@ export const analyticsSummary = mysqlTable('analytics_summary', {
     title: string;
     engagement: number;
   }>(),
-  createdAt: datetime('created_at').defaultNow(),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 // Relations

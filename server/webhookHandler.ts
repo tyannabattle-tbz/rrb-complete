@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Stripe from 'stripe';
 import { sendDonationReceipt, sendPaymentConfirmation, sendSubscriptionWelcome, sendSubscriptionRenewalReminder, sendSubscriptionCancellation } from './emailService';
 import { db } from './db';
-import { donations, payments, subscriptions } from '@/drizzle/schema';
+import { donations, payments, subscriptions } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {

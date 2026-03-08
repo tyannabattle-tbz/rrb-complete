@@ -6,7 +6,7 @@ import { existsSync, unlinkSync } from 'fs';
 import { join } from 'path';
 
 describe('Motion Generation Router', () => {
-  let caller: ReturnType<typeof createCallerFactory(appRouter)>;
+  let caller: ReturnType<ReturnType<typeof createCallerFactory>>;
   const mockUserId = 1;
   const mockUser = {
     id: mockUserId,

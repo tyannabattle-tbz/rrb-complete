@@ -20,6 +20,7 @@ import { rrbUpdateOrchestratorRouter } from '../routers/rrbUpdateOrchestrator';
 import { teamUpdatesRouter } from '../routers/teamUpdatesRouter';
 import { adRotationRouter } from '../routers/adRotationRouter';
 import { listenerAnalyticsRouter } from '../routers/listenerAnalyticsRouter';
+import { webhookManagerRouter } from '../routers/webhookManagerRouter';
 
 export const chunk5Router = router({
   seedData: seedDataRouter,
@@ -41,4 +42,5 @@ export const chunk5Router = router({
   teamUpdates: teamUpdatesRouter,
   adRotation: adRotationRouter,
   listenerAnalytics: listenerAnalyticsRouter,
+  webhookManager: webhookManagerRouter,
 });

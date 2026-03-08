@@ -1039,6 +1039,7 @@ export const webhookEndpoints = mysqlTable("webhook_endpoints", {
 	secret: varchar({ length: 255 }).notNull(),
 	isActive: int().default(1),
 	retryCount: int().default(3),
+	failureCount: int('failure_count').default(0),
 	lastTriggered: timestamp({ mode: 'string' }),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
@@ -2030,3 +2031,4 @@ export const listenerAnalytics = mysqlTable("listener_analytics", {
   dayOfWeek: int('day_of_week'),
   createdAt: bigint('created_at', { mode: 'number' }).notNull(),
 });
+

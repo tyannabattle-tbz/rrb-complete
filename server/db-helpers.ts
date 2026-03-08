@@ -12,7 +12,7 @@ import {
   reviews,
   reviewHelpfulness,
   reviewResponses,
-} from "drizzle/schema";
+} from "../drizzle/schema";
 import { eq, desc, and, sql } from "drizzle-orm";
 import { getDb } from "./db";
 

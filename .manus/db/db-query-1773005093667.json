@@ -1,0 +1,82 @@
+{
+  "query": "SELECT id, sponsor_name, campaign_name, category, rotation_weight, target_channels, active FROM ad_inventory;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, sponsor_name, campaign_name, category, rotation_weight, target_channels, active FROM ad_inventory;",
+  "rows": [
+    {
+      "id": "1",
+      "sponsor_name": "Canryn Production",
+      "campaign_name": "QUMUS Platform Launch",
+      "category": "promo",
+      "rotation_weight": "5",
+      "target_channels": "all",
+      "active": "1"
+    },
+    {
+      "id": "2",
+      "sponsor_name": "Sweet Miracles Foundation",
+      "campaign_name": "Community Giving PSA",
+      "category": "psa",
+      "rotation_weight": "4",
+      "target_channels": "all",
+      "active": "1"
+    },
+    {
+      "id": "3",
+      "sponsor_name": "RRB Radio Network",
+      "campaign_name": "50 Channel Launch",
+      "category": "promo",
+      "rotation_weight": "3",
+      "target_channels": "all",
+      "active": "1"
+    },
+    {
+      "id": "4",
+      "sponsor_name": "HybridCast Emergency",
+      "campaign_name": "Emergency Preparedness PSA",
+      "category": "psa",
+      "rotation_weight": "3",
+      "target_channels": "all",
+      "active": "1"
+    },
+    {
+      "id": "5",
+      "sponsor_name": "Solbones Game",
+      "campaign_name": "Sacred Math Dice Game",
+      "category": "promo",
+      "rotation_weight": "2",
+      "target_channels": "all",
+      "active": "1"
+    },
+    {
+      "id": "6",
+      "sponsor_name": "Local Business Spotlight",
+      "campaign_name": "Support Black-Owned Businesses",
+      "category": "community",
+      "rotation_weight": "3",
+      "target_channels": "all",
+      "active": "1"
+    },
+    {
+      "id": "7",
+      "sponsor_name": "Selma Jubilee Committee",
+      "campaign_name": "61st Bridge Crossing Jubilee",
+      "category": "community",
+      "rotation_weight": "4",
+      "target_channels": "all",
+      "active": "1"
+    },
+    {
+      "id": "8",
+      "sponsor_name": "Meditation & Wellness",
+      "campaign_name": "Healing Frequencies Awareness",
+      "category": "psa",
+      "rotation_weight": "2",
+      "target_channels": "5,6,7,8,9,10",
+      "active": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tsponsor_name\tcampaign_name\tcategory\trotation_weight\ttarget_channels\tactive\n1\tCanryn Production\tQUMUS Platform Launch\tpromo\t5\tall\t1\n2\tSweet Miracles Foundation\tCommunity Giving PSA\tpsa\t4\tall\t1\n3\tRRB Radio Network\t50 Channel Launch\tpromo\t3\tall\t1\n4\tHybridCast Emergency\tEmergency Preparedness PSA\tpsa\t3\tall\t1\n5\tSolbones Game\tSacred Math Dice Game\tpromo\t2\tall\t1\n6\tLocal Business Spotlight\tSupport Black-Owned Businesses\tcommunity\t3\tall\t1\n7\tSelma Jubilee Committee\t61st Bridge Crossing Jubilee\tcommunity\t4\tall\t1\n8\tMeditation & Wellness\tHealing Frequencies Awareness\tpsa\t2\t5,6,7,8,9,10\t1\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

@@ -146,5 +146,5 @@ describe('HybridCastService', () => {
       expect(stats).toHaveProperty('complexity');
       expect(stats.size).toBeGreaterThan(0);
     });
-  });}
+  });
 });

@@ -2905,4 +2905,45 @@
 ### Phase 5: Testing & Deployment
 - [x] Write vitest for team updates, ad rotation, listener analytics (22 tests)
 - [x] All 70 tests passing across 4 suites
-- [ ] Save checkpoint and deliver
+- [x] Save checkpoint (c2f33da7) and deliver
+
+## Apply All Follow-Ups — Database Seed, Webhooks, Ad Inventory (Mar 8 2026)
+
+### Follow-Up 1: Seed Database via Orchestrator
+- [x] Seed family_tree with 8 Hunter/Canryn members via SQL
+- [x] Seed news_articles with 7 ecosystem launch stories via SQL
+- [x] Seed documentation_pages with 7 ecosystem guides via SQL
+- [x] Seed content_schedule with 21 programming entries across key channels
+- [x] Verified all data live in database
+
+### Follow-Up 2: Webhook System for Team Notifications
+- [x] Reuse existing webhook_endpoints table (already in schema at line 1034)
+- [x] Build webhookManagerRouter.ts with CRUD, test, dispatch, logs, stats
+- [x] Create WebhookManager.tsx admin page at /webhook-manager
+- [x] Add Slack (blocks) and Discord (embeds) auto-formatting
+- [x] Add webhook test/ping functionality with delivery logging
+- [x] Add broadcast update dispatch to all active endpoints
+
+### Follow-Up 3: Sponsor Ad Inventory Seed
+- [x] Seed ad_inventory with 8 default sponsor commercials via SQL
+- [x] Set rotation weights (2-5) and channel targeting per ad
+- [x] Verify ad rotation logic selects correctly by weight
+
+### Follow-Up 4: QUMUS Full Autonomous Finalization
+- [x] Ensure QUMUS is in full listening mode and autonomous operational readiness
+- [x] Verify all 13 policies are active and executing
+- [x] Run comprehensive end-to-end verification
+- [x] Write vitest tests for webhook manager and ad rotation
+- [x] Save checkpoint
+
+### Follow-Up 5: Test Health Improvements
+- [x] Fix db-helpers.ts import path (drizzle/schema → ../drizzle/schema)
+- [x] Fix webhookHandler.ts import path (@/drizzle/schema → ../drizzle/schema)
+- [x] Fix imageGeneration.ts import path (server/storage → ../storage)
+- [x] Fix contentCalendarSchema.ts datetime().defaultNow() → datetime().default(sql`CURRENT_TIMESTAMP`)
+- [x] Fix hybridCastService.test.ts syntax error (extra closing brace)
+- [x] Fix motionGeneration.test.ts TypeScript syntax error
+- [x] Add failure_count column to webhook_endpoints table
+- [x] Write 34 new vitest tests for webhook manager and ad rotation (all passing)
+- [x] Core RRB tests: 73/73 passing across 3 test files
+- [x] Overall test suite: 75 files passing, 1977 individual tests passing

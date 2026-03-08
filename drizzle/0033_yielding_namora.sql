@@ -1,0 +1,1 @@
+ALTER TABLE `webhook_endpoints` ADD `failure_count` int DEFAULT 0;
