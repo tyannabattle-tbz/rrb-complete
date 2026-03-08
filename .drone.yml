@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: manus-agent-web-military-grade-cicd
+name: qumus-ecosystem-military-grade-cicd
 
 # Trigger conditions
 trigger:
@@ -62,12 +62,33 @@ steps:
     when:
       event: [push, pull_request]
 
-  # Step 4: Unit Tests
+  # Step 4: Unit Tests (includes QUMUS 13-Policy Verification)
   - name: unit-tests
     image: node:22.13.0
     commands:
+      - corepack enable
+      - corepack prepare pnpm@latest --activate
       - pnpm install
-      - pnpm test -- --coverage --reporters=default --reporters=junit
+      - echo "Running full test suite including QUMUS 13-policy verification..."
+      - npx vitest run --reporter=verbose
+    when:
+      event: [push, pull_request]
+
+  # Step 4b: QUMUS Ecosystem Health Check
+  - name: qumus-health-check
+    image: node:22.13.0
+    commands:
+      - corepack enable
+      - corepack prepare pnpm@latest --activate
+      - pnpm install
+      - echo "╔══════════════════════════════════════════╗"
+      - echo "║  QUMUS Ecosystem Health Check            ║"
+      - echo "║  13 Autonomous Policies Active           ║"
+      - echo "║  90%% Autonomous / 10%% Human Override   ║"
+      - echo "╚══════════════════════════════════════════╝"
+      - npx vitest run server/qumus-13-policies.test.ts --reporter=verbose
+      - npx vitest run server/qumusPolicies12.test.ts --reporter=verbose
+      - echo "✓ All QUMUS policies verified"
     when:
       event: [push, pull_request]
 
@@ -204,10 +225,15 @@ steps:
         from_secret: slack_webhook
       channel: "#deployments"
       template: |
+        ╔══════════════════════════════════════╗
+        ║ Canryn Production • QUMUS Ecosystem  ║
+        ╚══════════════════════════════════════╝
         Build {{build.number}} {{build.status}}
         Commit: {{commit.sha}}
         Author: {{commit.author}}
         Message: {{commit.message}}
+        QUMUS Policies: 13 Active
+        Autonomy: 90%%
     when:
       status: [success, failure]
 

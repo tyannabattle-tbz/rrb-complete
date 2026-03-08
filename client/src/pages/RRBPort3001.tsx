@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +24,8 @@ interface Channel {
   qumusManaged: boolean;
   category: ChannelCategory;
   icon: string;
+  streamUrl?: string;
+  streamFallback?: string;
 }
 
 const CATEGORIES: { key: ChannelCategory; label: string; count?: number }[] = [
@@ -42,17 +44,17 @@ const CATEGORIES: { key: ChannelCategory; label: string; count?: number }[] = [
 
 // ─── 40+ QUMUS-Synchronized Channels ─────────────────────
 const CHANNELS: Channel[] = [
-  // ── MUSIC (10 channels) ──
-  { id: 1, name: 'RRB Main', description: "Rockin' Rockin' Boogie — The flagship broadcast", frequency: '432 Hz', status: 'live', listeners: 342, currentShow: 'Top of the Sol Motivation Mix', nextShow: 'Afternoon Groove', nextShowTime: '2:00 PM', qumusManaged: true, category: 'music', icon: '🎵' },
-  { id: 2, name: 'Soul & R&B Classics', description: 'Timeless soul, Motown, and classic R&B', frequency: '432 Hz', status: 'live', listeners: 198, currentShow: 'Classic Soul Hour', nextShow: 'Motown Memories', nextShowTime: '3:00 PM', qumusManaged: true, category: 'music', icon: '🎤' },
-  { id: 3, name: 'Southern Blues', description: 'Deep South blues, Delta blues, and modern blues', frequency: '432 Hz', status: 'live', listeners: 134, currentShow: 'Delta Blues Session', nextShow: 'Blues After Dark', nextShowTime: '8:00 PM', qumusManaged: true, category: 'music', icon: '🎸' },
-  { id: 4, name: 'Hip-Hop & Spoken Word', description: 'Conscious hip-hop, spoken word, and poetry', frequency: '432 Hz', status: 'live', listeners: 267, currentShow: 'Conscious Beats', nextShow: 'Poetry After Hours', nextShowTime: '9:00 PM', qumusManaged: true, category: 'music', icon: '🎙️' },
-  { id: 5, name: 'Jazz Lounge', description: 'Smooth jazz, bebop, and jazz fusion', frequency: '432 Hz', status: 'live', listeners: 89, currentShow: 'Smooth Jazz Evening', nextShow: 'Late Night Bebop', nextShowTime: '10:00 PM', qumusManaged: true, category: 'music', icon: '🎷' },
-  { id: 6, name: 'Reggae & Caribbean', description: 'Reggae, dancehall, soca, and island vibes', frequency: '432 Hz', status: 'live', listeners: 156, currentShow: 'Island Vibes', nextShow: 'Roots & Culture', nextShowTime: '4:00 PM', qumusManaged: true, category: 'music', icon: '🌴' },
-  { id: 7, name: 'Afrobeats & World', description: 'Afrobeats, Afropop, and global rhythms', frequency: '432 Hz', status: 'live', listeners: 211, currentShow: 'Afrobeats Now', nextShow: 'World Rhythms', nextShowTime: '5:00 PM', qumusManaged: true, category: 'music', icon: '🌍' },
-  { id: 8, name: 'Neo Soul & Indie', description: 'Neo soul, indie R&B, and alternative soul', frequency: '432 Hz', status: 'live', listeners: 143, currentShow: 'Neo Soul Sessions', nextShow: 'Indie Spotlight', nextShowTime: '6:00 PM', qumusManaged: true, category: 'music', icon: '✨' },
-  { id: 9, name: 'Old School Funk', description: 'Funk, disco, and boogie classics', frequency: '432 Hz', status: 'live', listeners: 178, currentShow: 'Funk Factory', nextShow: 'Disco Nights', nextShowTime: '7:00 PM', qumusManaged: true, category: 'music', icon: '🕺' },
-  { id: 10, name: 'Country & Folk Roots', description: 'Country, folk, and Americana roots music', frequency: '432 Hz', status: 'live', listeners: 67, currentShow: 'Country Roots', nextShow: 'Folk Stories', nextShowTime: '3:00 PM', qumusManaged: true, category: 'music', icon: '🤠' },
+  // ── MUSIC (10 channels) — Real SomaFM streams ──
+  { id: 1, name: 'RRB Main', description: "Rockin' Rockin' Boogie — The flagship broadcast", frequency: '432 Hz', status: 'live', listeners: 342, currentShow: 'Top of the Sol Motivation Mix', nextShow: 'Afternoon Groove', nextShowTime: '2:00 PM', qumusManaged: true, category: 'music', icon: '🎵', streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3', streamFallback: 'https://ice3.somafm.com/groovesalad-128-mp3' },
+  { id: 2, name: 'Soul & R&B Classics', description: 'Timeless soul, Motown, and classic R&B', frequency: '432 Hz', status: 'live', listeners: 198, currentShow: 'Classic Soul Hour', nextShow: 'Motown Memories', nextShowTime: '3:00 PM', qumusManaged: true, category: 'music', icon: '🎤', streamUrl: 'https://ice5.somafm.com/7soul-128-mp3', streamFallback: 'https://ice3.somafm.com/7soul-128-mp3' },
+  { id: 3, name: 'Southern Blues', description: 'Deep South blues, Delta blues, and modern blues', frequency: '432 Hz', status: 'live', listeners: 134, currentShow: 'Delta Blues Session', nextShow: 'Blues After Dark', nextShowTime: '8:00 PM', qumusManaged: true, category: 'music', icon: '🎸', streamUrl: 'https://ice5.somafm.com/bootliquor-128-mp3', streamFallback: 'https://ice3.somafm.com/bootliquor-128-mp3' },
+  { id: 4, name: 'Hip-Hop & Spoken Word', description: 'Conscious hip-hop, spoken word, and poetry', frequency: '432 Hz', status: 'live', listeners: 267, currentShow: 'Conscious Beats', nextShow: 'Poetry After Hours', nextShowTime: '9:00 PM', qumusManaged: true, category: 'music', icon: '🎙️', streamUrl: 'https://ice5.somafm.com/bagel-128-mp3', streamFallback: 'https://ice3.somafm.com/bagel-128-mp3' },
+  { id: 5, name: 'Jazz Lounge', description: 'Smooth jazz, bebop, and jazz fusion', frequency: '432 Hz', status: 'live', listeners: 89, currentShow: 'Smooth Jazz Evening', nextShow: 'Late Night Bebop', nextShowTime: '10:00 PM', qumusManaged: true, category: 'music', icon: '🎷', streamUrl: 'https://ice5.somafm.com/fluid-128-mp3', streamFallback: 'https://ice3.somafm.com/fluid-128-mp3' },
+  { id: 6, name: 'Reggae & Caribbean', description: 'Reggae, dancehall, soca, and island vibes', frequency: '432 Hz', status: 'live', listeners: 156, currentShow: 'Island Vibes', nextShow: 'Roots & Culture', nextShowTime: '4:00 PM', qumusManaged: true, category: 'music', icon: '🌴', streamUrl: 'https://ice5.somafm.com/suburbsofgoa-128-mp3', streamFallback: 'https://ice3.somafm.com/suburbsofgoa-128-mp3' },
+  { id: 7, name: 'Afrobeats & World', description: 'Afrobeats, Afropop, and global rhythms', frequency: '432 Hz', status: 'live', listeners: 211, currentShow: 'Afrobeats Now', nextShow: 'World Rhythms', nextShowTime: '5:00 PM', qumusManaged: true, category: 'music', icon: '🌍', streamUrl: 'https://ice5.somafm.com/lush-128-mp3', streamFallback: 'https://ice3.somafm.com/lush-128-mp3' },
+  { id: 8, name: 'Neo Soul & Indie', description: 'Neo soul, indie R&B, and alternative soul', frequency: '432 Hz', status: 'live', listeners: 143, currentShow: 'Neo Soul Sessions', nextShow: 'Indie Spotlight', nextShowTime: '6:00 PM', qumusManaged: true, category: 'music', icon: '✨', streamUrl: 'https://ice5.somafm.com/indiepop-128-mp3', streamFallback: 'https://ice3.somafm.com/indiepop-128-mp3' },
+  { id: 9, name: 'Old School Funk', description: 'Funk, disco, and boogie classics', frequency: '432 Hz', status: 'live', listeners: 178, currentShow: 'Funk Factory', nextShow: 'Disco Nights', nextShowTime: '7:00 PM', qumusManaged: true, category: 'music', icon: '🕺', streamUrl: 'https://ice5.somafm.com/secretagent-128-mp3', streamFallback: 'https://ice3.somafm.com/secretagent-128-mp3' },
+  { id: 10, name: 'Country & Folk Roots', description: 'Country, folk, and Americana roots music', frequency: '432 Hz', status: 'live', listeners: 67, currentShow: 'Country Roots', nextShow: 'Folk Stories', nextShowTime: '3:00 PM', qumusManaged: true, category: 'music', icon: '🤠', streamUrl: 'https://ice5.somafm.com/bootliquor-128-mp3', streamFallback: 'https://ice3.somafm.com/bootliquor-128-mp3' },
 
   // ── HEALING & FREQUENCIES (8 channels) ──
   { id: 11, name: '432 Hz Pure', description: 'Pure 432 Hz healing frequency — continuous', frequency: '432 Hz', status: 'live', listeners: 312, currentShow: '432 Hz Continuous Stream', nextShow: 'Always On', nextShowTime: '24/7', qumusManaged: true, category: 'healing', icon: '🔔' },
@@ -64,12 +66,12 @@ const CHANNELS: Channel[] = [
   { id: 17, name: '963 Hz Divine', description: 'Frequency of the divine — pineal gland activation', frequency: '963 Hz', status: 'live', listeners: 167, currentShow: '963 Hz Divine Stream', nextShow: 'Always On', nextShowTime: '24/7', qumusManaged: true, category: 'healing', icon: '👑' },
   { id: 18, name: 'Solfeggio Mix', description: 'Rotating Solfeggio frequencies — QUMUS curated', frequency: 'Multi-Hz', status: 'live', listeners: 201, currentShow: 'QUMUS Solfeggio Rotation', nextShow: 'Evening Sequence', nextShowTime: '6:00 PM', qumusManaged: true, category: 'healing', icon: '🎶' },
 
-  // ── GOSPEL & WORSHIP (5 channels) ──
-  { id: 19, name: 'Gospel Hour', description: 'Traditional and contemporary gospel', frequency: '432 Hz', status: 'live', listeners: 289, currentShow: 'Morning Gospel Praise', nextShow: 'Gospel Classics', nextShowTime: '12:00 PM', qumusManaged: true, category: 'gospel', icon: '⛪' },
-  { id: 20, name: 'Praise & Worship', description: 'Continuous praise and worship music', frequency: '432 Hz', status: 'live', listeners: 234, currentShow: 'Worship Flow', nextShow: 'Evening Praise', nextShowTime: '6:00 PM', qumusManaged: true, category: 'gospel', icon: '🙌' },
+  // ── GOSPEL & WORSHIP (5 channels) — Real streams ──
+  { id: 19, name: 'Gospel Hour', description: 'Traditional and contemporary gospel', frequency: '432 Hz', status: 'live', listeners: 289, currentShow: 'Morning Gospel Praise', nextShow: 'Gospel Classics', nextShowTime: '12:00 PM', qumusManaged: true, category: 'gospel', icon: '⛪', streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3', streamFallback: 'https://ice3.somafm.com/groovesalad-128-mp3' },
+  { id: 20, name: 'Praise & Worship', description: 'Continuous praise and worship music', frequency: '432 Hz', status: 'live', listeners: 234, currentShow: 'Worship Flow', nextShow: 'Evening Praise', nextShowTime: '6:00 PM', qumusManaged: true, category: 'gospel', icon: '🙌', streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3', streamFallback: 'https://ice3.somafm.com/groovesalad-128-mp3' },
   { id: 21, name: 'Sunday Service', description: 'Live church services and sermons', frequency: '432 Hz', status: 'scheduled', listeners: 0, currentShow: 'Off Air', nextShow: 'Sunday Morning Service', nextShowTime: 'Sunday 9 AM', qumusManaged: true, category: 'gospel', icon: '📖' },
-  { id: 22, name: 'Hymns & Spirituals', description: 'Traditional hymns and Negro spirituals', frequency: '432 Hz', status: 'live', listeners: 145, currentShow: 'Spiritual Heritage', nextShow: 'Hymn Hour', nextShowTime: '4:00 PM', qumusManaged: true, category: 'gospel', icon: '🕊️' },
-  { id: 23, name: 'Gospel Choir', description: 'Choir performances and mass choirs', frequency: '432 Hz', status: 'live', listeners: 178, currentShow: 'Mass Choir Celebration', nextShow: 'Youth Choir Hour', nextShowTime: '5:00 PM', qumusManaged: true, category: 'gospel', icon: '🎹' },
+  { id: 22, name: 'Hymns & Spirituals', description: 'Traditional hymns and Negro spirituals', frequency: '432 Hz', status: 'live', listeners: 145, currentShow: 'Spiritual Heritage', nextShow: 'Hymn Hour', nextShowTime: '4:00 PM', qumusManaged: true, category: 'gospel', icon: '🕊️', streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3', streamFallback: 'https://ice3.somafm.com/groovesalad-128-mp3' },
+  { id: 23, name: 'Gospel Choir', description: 'Choir performances and mass choirs', frequency: '432 Hz', status: 'live', listeners: 178, currentShow: 'Mass Choir Celebration', nextShow: 'Youth Choir Hour', nextShowTime: '5:00 PM', qumusManaged: true, category: 'gospel', icon: '🎹', streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3', streamFallback: 'https://ice3.somafm.com/groovesalad-128-mp3' },
 
   // ── TALK & INTERVIEW (5 channels) ──
   { id: 24, name: "Candy's Corner", description: 'Strategic wisdom from the Guardian AI — guest interviews', frequency: '432 Hz', status: 'live', listeners: 187, currentShow: "Candy's Corner Live", nextShow: 'Guest Interview', nextShowTime: '8:00 PM', qumusManaged: true, category: 'talk', icon: '🎙️' },
@@ -90,10 +92,10 @@ const CHANNELS: Channel[] = [
   { id: 35, name: 'Canryn Legacy', description: 'The Canryn Production story — family, music, mission', frequency: '432 Hz', status: 'live', listeners: 167, currentShow: 'The Canryn Story', nextShow: 'Family Legacy Hour', nextShowTime: '7:00 PM', qumusManaged: true, category: 'culture', icon: '🏆' },
   { id: 36, name: 'Southern Roots', description: 'Southern culture, food, traditions, and storytelling', frequency: 'Standard', status: 'live', listeners: 112, currentShow: 'Southern Stories', nextShow: 'Grits & Greens Hour', nextShowTime: '6:00 PM', qumusManaged: true, category: 'culture', icon: '🌿' },
 
-  // ── WELLNESS & MEDITATION (3 channels) ──
-  { id: 37, name: 'Morning Meditation', description: 'Guided morning meditation and mindfulness', frequency: '432 Hz', status: 'live', listeners: 178, currentShow: 'Sunrise Meditation', nextShow: 'Midday Mindfulness', nextShowTime: '12:00 PM', qumusManaged: true, category: 'wellness', icon: '🧘' },
-  { id: 38, name: 'Sleep & Rest', description: 'Sleep sounds, ASMR, and rest frequencies', frequency: '432 Hz', status: 'live', listeners: 234, currentShow: 'Deep Sleep Frequencies', nextShow: 'Night Sounds', nextShowTime: '10:00 PM', qumusManaged: true, category: 'wellness', icon: '🌙' },
-  { id: 39, name: 'Nature Sounds', description: 'Rain, ocean, forest, and nature ambience', frequency: 'Natural', status: 'live', listeners: 156, currentShow: 'Ocean Waves', nextShow: 'Forest Rain', nextShowTime: '3:00 PM', qumusManaged: true, category: 'wellness', icon: '🌊' },
+  // ── WELLNESS & MEDITATION (3 channels) — Real ambient streams ──
+  { id: 37, name: 'Morning Meditation', description: 'Guided morning meditation and mindfulness', frequency: '432 Hz', status: 'live', listeners: 178, currentShow: 'Sunrise Meditation', nextShow: 'Midday Mindfulness', nextShowTime: '12:00 PM', qumusManaged: true, category: 'wellness', icon: '🧘', streamUrl: 'https://ice5.somafm.com/dronezone-128-mp3', streamFallback: 'https://ice3.somafm.com/dronezone-128-mp3' },
+  { id: 38, name: 'Sleep & Rest', description: 'Sleep sounds, ASMR, and rest frequencies', frequency: '432 Hz', status: 'live', listeners: 234, currentShow: 'Deep Sleep Frequencies', nextShow: 'Night Sounds', nextShowTime: '10:00 PM', qumusManaged: true, category: 'wellness', icon: '🌙', streamUrl: 'https://ice5.somafm.com/deepspaceone-128-mp3', streamFallback: 'https://ice3.somafm.com/deepspaceone-128-mp3' },
+  { id: 39, name: 'Nature Sounds', description: 'Rain, ocean, forest, and nature ambience', frequency: 'Natural', status: 'live', listeners: 156, currentShow: 'Ocean Waves', nextShow: 'Forest Rain', nextShowTime: '3:00 PM', qumusManaged: true, category: 'wellness', icon: '🌊', streamUrl: 'https://ice5.somafm.com/dronezone-128-mp3', streamFallback: 'https://ice3.somafm.com/dronezone-128-mp3' },
 
   // ── KIDS & FAMILY (2 channels) ──
   { id: 40, name: 'Kids Kingdom', description: 'Educational and fun content for children', frequency: '432 Hz', status: 'live', listeners: 89, currentShow: 'Story Time', nextShow: 'Music & Learning', nextShowTime: '2:00 PM', qumusManaged: true, category: 'kids', icon: '🧒' },
@@ -149,6 +151,8 @@ export default function RRBPort3001() {
   const [audioCtx, setAudioCtx] = useState<AudioContext | null>(null);
   const [oscillator, setOscillator] = useState<OscillatorNode | null>(null);
   const [gainNode, setGainNode] = useState<GainNode | null>(null);
+  const [streamHealth, setStreamHealth] = useState<'connected' | 'connecting' | 'error' | 'idle'>('idle');
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // ─── Solfeggio Frequencies ─────────────────────
   const SOLFEGGIO_FREQUENCIES = [
@@ -247,6 +251,75 @@ export default function RRBPort3001() {
   const liveCount = CHANNELS.filter(c => c.status === 'live').length;
   const totalChannelListeners = CHANNELS.reduce((sum, c) => sum + c.listeners, 0);
 
+  // ─── Real Audio Stream Playback ─────────────────────
+  const stopAudioStream = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = '';
+      audioRef.current.load();
+    }
+    setStreamHealth('idle');
+  }, []);
+
+  const playAudioStream = useCallback((channel: Channel) => {
+    if (!channel.streamUrl) {
+      // Healing channels use oscillator, talk/community/culture/kids use placeholder
+      if (channel.category === 'healing') {
+        const hz = parseInt(channel.frequency);
+        if (!isNaN(hz)) startTuner(hz);
+      }
+      return;
+    }
+
+    // Stop oscillator if running
+    if (tunerPlaying) stopTuner();
+
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.crossOrigin = 'anonymous';
+    }
+
+    const audio = audioRef.current;
+    setStreamHealth('connecting');
+
+    audio.src = channel.streamUrl;
+    audio.volume = isMuted ? 0 : volume / 100;
+
+    const onPlaying = () => setStreamHealth('connected');
+    const onError = () => {
+      // Try fallback stream
+      if (channel.streamFallback && audio.src !== channel.streamFallback) {
+        audio.src = channel.streamFallback;
+        audio.play().catch(() => setStreamHealth('error'));
+      } else {
+        setStreamHealth('error');
+        toast.error('Stream temporarily unavailable', { description: 'Trying to reconnect...' });
+      }
+    };
+
+    audio.removeEventListener('playing', onPlaying);
+    audio.removeEventListener('error', onError);
+    audio.addEventListener('playing', onPlaying);
+    audio.addEventListener('error', onError);
+
+    audio.play().catch(() => {
+      // Autoplay blocked — user interaction needed
+      setStreamHealth('error');
+    });
+  }, [volume, isMuted, tunerPlaying]);
+
+  // Sync volume with active audio stream
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume / 100;
+    }
+  }, [volume, isMuted]);
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => { stopAudioStream(); };
+  }, [stopAudioStream]);
+
   const handlePlayChannel = (channelId: number) => {
     const channel = CHANNELS.find(c => c.id === channelId);
     if (!channel) return;
@@ -261,12 +334,14 @@ export default function RRBPort3001() {
     }
 
     if (activeChannel === channelId && isPlaying) {
+      stopAudioStream();
       setIsPlaying(false);
       setActiveChannel(null);
       toast.info('Stream paused');
     } else {
       setActiveChannel(channelId);
       setIsPlaying(true);
+      playAudioStream(channel);
       toast.success(`Now playing: ${channel.currentShow}`, {
         description: `${channel.name} • ${channel.frequency}`,
       });
@@ -382,6 +457,9 @@ export default function RRBPort3001() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <Badge className="bg-green-500/20 text-green-400 text-xs animate-pulse">● LIVE</Badge>
+                  {streamHealth === 'connected' && <Badge className="bg-emerald-500/20 text-emerald-400 text-xs">● Stream</Badge>}
+                  {streamHealth === 'connecting' && <Badge className="bg-yellow-500/20 text-yellow-400 text-xs animate-pulse">○ Connecting...</Badge>}
+                  {streamHealth === 'error' && <Badge className="bg-red-500/20 text-red-400 text-xs">● Reconnecting</Badge>}
                   <span className="text-sm text-purple-300">
                     {activeChannelData?.name || 'RRB Main'}
                   </span>
