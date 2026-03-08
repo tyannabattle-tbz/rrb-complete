@@ -211,6 +211,13 @@
       "when": 1772758935358,
       "tag": "0029_puzzling_korath",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "5",
+      "when": 1772992971413,
+      "tag": "0030_quick_captain_stacy",
+      "breakpoints": true
     }
   ]
 }

@@ -1888,3 +1888,52 @@ export const emailSubscribers = mysqlTable('email_subscribers', {
   subscribedAt: timestamp('subscribed_at').defaultNow(),
   isActive: boolean('is_active').default(true),
 });
+
+
+// ── RRB Ecosystem: News Articles ──
+export const newsArticles = mysqlTable('news_articles', {
+  id: int('id').autoincrement().primaryKey(),
+  title: varchar('title', { length: 500 }).notNull(),
+  slug: varchar('slug', { length: 500 }).notNull(),
+  summary: text('summary'),
+  content: text('content'),
+  category: varchar('category', { length: 100 }).default('general'),
+  source: varchar('source', { length: 255 }),
+  sourceUrl: varchar('source_url', { length: 1000 }),
+  imageUrl: varchar('image_url', { length: 1000 }),
+  isBreaking: boolean('is_breaking').default(false),
+  isFeatured: boolean('is_featured').default(false),
+  authorId: int('author_id'),
+  publishedAt: timestamp('published_at').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+// ── RRB Ecosystem: Family Tree ──
+export const familyTree = mysqlTable('family_tree', {
+  id: int('id').autoincrement().primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  nickname: varchar('nickname', { length: 255 }),
+  relationship: varchar('relationship', { length: 255 }),
+  birthYear: int('birth_year'),
+  deathYear: int('death_year'),
+  bio: text('bio'),
+  imageUrl: varchar('image_url', { length: 1000 }),
+  parentId: int('parent_id'),
+  generation: int('generation').default(0),
+  isKeyFigure: boolean('is_key_figure').default(false),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// ── RRB Ecosystem: Documentation Pages ──
+export const documentationPages = mysqlTable('documentation_pages', {
+  id: int('id').autoincrement().primaryKey(),
+  title: varchar('title', { length: 500 }).notNull(),
+  slug: varchar('slug', { length: 500 }).notNull(),
+  content: text('content'),
+  category: varchar('category', { length: 100 }).default('general'),
+  sortOrder: int('sort_order').default(0),
+  isPublished: boolean('is_published').default(true),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});

@@ -107,6 +107,16 @@ const CHANNELS: Channel[] = [
 
   // ── EMERGENCY (1 channel) ──
   { id: 44, name: 'Emergency Broadcast', description: 'HybridCast integration — always ready', frequency: 'Multi-Band', status: 'standby', listeners: 0, currentShow: 'Standby Mode', nextShow: 'Activated on Alert', nextShowTime: 'On Demand', qumusManaged: true, category: 'emergency', icon: '🚨' },
+
+  // ── OPERATOR CHANNELS (3 channels) — Canryn Production entities ──
+  { id: 45, name: 'Canryn Productions', description: 'Official Canryn Production content — corporate broadcasts', frequency: '432 Hz', status: 'live', listeners: 78, currentShow: 'Canryn Weekly Update', nextShow: 'Production Notes', nextShowTime: '5:00 PM', qumusManaged: true, category: 'community', icon: '🎬' },
+  { id: 46, name: 'Proof Vault Radio', description: 'Evidence and documentation broadcasts — legacy preservation', frequency: '432 Hz', status: 'live', listeners: 56, currentShow: 'Evidence Review', nextShow: 'Archive Deep Dive', nextShowTime: '7:00 PM', qumusManaged: true, category: 'culture', icon: '🔐' },
+  { id: 47, name: 'QMunity Voices', description: 'Community-submitted content and grassroots stories', frequency: '432 Hz', status: 'live', listeners: 134, currentShow: 'QMunity Hour', nextShow: 'Grassroots Stories', nextShowTime: '6:00 PM', qumusManaged: true, category: 'community', icon: '👥' },
+
+  // ── STREAM CHANNELS (3 channels) — Focus, Ambient, Productivity ──
+  { id: 48, name: 'Focus & Productivity', description: 'Concentration-enhancing frequencies and ambient focus music', frequency: '741 Hz', status: 'live', listeners: 189, currentShow: 'Deep Focus Session', nextShow: 'Productivity Flow', nextShowTime: '24/7', qumusManaged: true, category: 'wellness', icon: '🎯', streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3', streamFallback: 'https://ice3.somafm.com/groovesalad-128-mp3' },
+  { id: 49, name: 'Ambient Soundscapes', description: 'Atmospheric ambient textures and sonic landscapes', frequency: '432 Hz', status: 'live', listeners: 145, currentShow: 'Sonic Landscapes', nextShow: 'Atmospheric Drift', nextShowTime: '24/7', qumusManaged: true, category: 'wellness', icon: '🌿', streamUrl: 'https://ice5.somafm.com/dronezone-128-mp3', streamFallback: 'https://ice3.somafm.com/dronezone-128-mp3' },
+  { id: 50, name: 'Conference & Summit', description: 'Live conference coverage, summits, and keynote broadcasts', frequency: 'Standard', status: 'scheduled', listeners: 0, currentShow: 'Off Air', nextShow: 'Next Summit TBA', nextShowTime: 'Coming Soon', qumusManaged: true, category: 'special', icon: '🎓' },
 ];
 
 const SCHEDULE = [

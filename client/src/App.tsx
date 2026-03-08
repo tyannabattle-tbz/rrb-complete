@@ -166,6 +166,15 @@ import Jaelon from '@/pages/Jaelon';
 import { EventBanners } from '@/components/EventBanners';
 import ValannaVoiceAssistant from '@/components/ValannaVoiceAssistant';
 import SelmaSlideshow from '@/pages/SelmaSlideshow';
+import CandyArchive from '@/pages/CandyArchive';
+import CandyWhoWasCandy from '@/pages/CandyWhoWasCandy';
+import CandyRRBSessions from '@/pages/CandyRRBSessions';
+import CandyTimeline from '@/pages/CandyTimeline';
+import CandyEvidenceMap from '@/pages/CandyEvidenceMap';
+import CandyDocumentary from '@/pages/CandyDocumentary';
+import NewsPage from '@/pages/NewsPage';
+import FamilyTreePage from '@/pages/FamilyTreePage';
+import DocumentationPage from '@/pages/DocumentationPage';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -319,6 +328,15 @@ function Router() {
       <Route path="/tyanna" component={Tyanna} />
       <Route path="/jaelon" component={Jaelon} />
       <Route path="/selma-slideshow" component={SelmaSlideshow} />
+      <Route path="/archive" component={CandyArchive} />
+      <Route path="/archive/who-was-candy" component={CandyWhoWasCandy} />
+      <Route path="/archive/rrb-sessions" component={CandyRRBSessions} />
+      <Route path="/archive/timeline" component={CandyTimeline} />
+      <Route path="/archive/evidence-map" component={CandyEvidenceMap} />
+      <Route path="/archive/documentary" component={CandyDocumentary} />
+      <Route path="/news" component={NewsPage} />
+      <Route path="/family" component={FamilyTreePage} />
+      <Route path="/docs" component={DocumentationPage} />
       <Route component={NotFound} />
     </Switch>
     </>

@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `family_tree` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `name` varchar(255) NOT NULL,\n  `nickname` varchar(255),\n  `relationship` varchar(255),\n  `birth_year` int,\n  `death_year` int,\n  `bio` text,\n  `image_url` varchar(1000),\n  `parent_id` int,\n  `generation` int DEFAULT 0,\n  `is_key_figure` boolean DEFAULT false,\n  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute CREATE TABLE IF NOT EXISTS `family_tree` (\n  `id` int AUTO_INCREMENT PRIMARY KEY,\n  `name` varchar(255) NOT NULL,\n  `nickname` varchar(255),\n  `relationship` varchar(255),\n  `birth_year` int,\n  `death_year` int,\n  `bio` text,\n  `image_url` varchar(1000),\n  `parent_id` int,\n  `generation` int DEFAULT 0,\n  `is_key_figure` boolean DEFAULT false,\n  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 118
+}
