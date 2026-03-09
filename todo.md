@@ -3311,3 +3311,15 @@
 - [x] QUMUS: 16/16 subsystems healthy, 10 policies active
 - [x] Database: 50 channels, 5,279 listeners, 8,400 analytics rows, 208K+ autonomous decisions
 - [x] All fake/hardcoded data eliminated from entire codebase
+
+## UN Campaign Launch Commercials - March 17th (COMPLETED)
+- [x] Generate 12 commercial scripts for UN NGO CSW70 campaign launch
+- [x] Created commercialCampaignService with genre-targeted rotation engine
+- [x] Commercial rotation service with 45s auto-rotate and 2min refresh
+- [x] Built CommercialBanner component on LiveStreamPage with countdown, DJ intros, script display
+- [x] Wired into QUMUS via AutomationEngine at 40% insertion rate (up from 15%)
+- [x] Commercial management UI: getAllCommercials, getRotationStats, recordImpression endpoints
+- [x] AI DJ intro generation via generateCommercialDjIntro mutation (Valanna, Seraph, Candy)
+- [x] All 12 commercials target specific channel genres across all 50 channels
+- [x] Campaign: From Selma to the United Nations, SQUADD Goals, Ghana Partnership, Sweet Miracles, Elder Protection, HybridCast, RRB Bumper, Voice for the Voiceless, Tech Showcase, CTA Closer
+- [x] 25 tests passing, 0 TypeScript errors, 0 browser errors, QUMUS 16/16 healthy

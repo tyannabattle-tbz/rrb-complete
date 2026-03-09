@@ -17,6 +17,7 @@ import { dailyStatusReportService } from '../_core/dailyStatusReport';
 import { getPlatformStats } from '../_core/realtimeStats';
 import { z } from 'zod';
 import { generateChannelIntro, generateShowTransition, getCurrentDjInfo, getDailySchedule } from '../_core/aiDjService';
+import { commercialEngine, UN_CAMPAIGN_COMMERCIALS, generateCommercialIntro, seedCommercialsToDb } from '../_core/commercialCampaignService';
 import { getDb } from '../db';
 import { sql } from 'drizzle-orm';
 
@@ -309,4 +310,84 @@ export const ecosystemIntegrationRouter = router({
       return [];
     }
   }),
+
+  // ─── Commercial Campaign Endpoints ─────────────────────────────────────
+
+  /**
+   * Get the next commercial for a channel based on genre targeting and rotation
+   */
+  getNextCommercial: publicProcedure
+    .input(z.object({ channelGenre: z.string().optional() }).optional())
+    .query(({ input }) => {
+      const genre = input?.channelGenre || 'Community';
+      const commercial = commercialEngine.getNextCommercial(genre);
+      if (!commercial) return null;
+      return {
+        ...commercial,
+        plays: 0,
+        lastPlayed: null,
+      };
+    }),
+
+  /**
+   * Get all campaign commercials with play stats
+   */
+  getAllCommercials: publicProcedure.query(() => {
+    return commercialEngine.getAllCommercials();
+  }),
+
+  /**
+   * Get commercial rotation stats
+   */
+  getCommercialRotationStats: publicProcedure.query(() => {
+    return commercialEngine.getRotationStats();
+  }),
+
+  /**
+   * Generate an AI DJ intro for a commercial break
+   */
+  generateCommercialDjIntro: publicProcedure
+    .input(z.object({
+      commercialId: z.string(),
+      djPersonality: z.enum(['valanna', 'seraph', 'candy']).optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const commercial = UN_CAMPAIGN_COMMERCIALS.find(c => c.id === input.commercialId);
+      if (!commercial) return { intro: 'Coming up next on RRB Radio...' };
+      const dj = input.djPersonality || commercial.djVoice;
+      const intro = await generateCommercialIntro(commercial, dj);
+      return { intro, dj, commercial: commercial.title };
+    }),
+
+  /**
+   * Seed commercials to database
+   */
+  seedCommercials: protectedProcedure.mutation(async () => {
+    const count = await seedCommercialsToDb();
+    return { seeded: count };
+  }),
+
+  /**
+   * Record a commercial impression (played to a listener)
+   */
+  recordCommercialImpression: publicProcedure
+    .input(z.object({
+      commercialId: z.string(),
+      channelName: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      try {
+        const db = await getDb();
+        // Find the commercial in the DB and increment impressions
+        await db.execute(sql`
+          UPDATE commercials SET impressions = impressions + 1 
+          WHERE title IN (
+            SELECT title FROM (SELECT title FROM commercials WHERE file_url LIKE ${`%${input.commercialId}%`}) AS t
+          )
+        `);
+        return { success: true };
+      } catch {
+        return { success: false };
+      }
+    }),
 });

@@ -651,6 +651,9 @@ export default function LiveStreamPage() {
               </div>
             )}
 
+            {/* UN Campaign Commercial Banner */}
+            <CommercialBanner channelGenre={activeChannel?.genre || 'Community'} />
+
             {/* Stream Info */}
             <div className="mt-4 p-4 bg-[#111] rounded-lg border border-[#222]">
               <div className="flex items-start justify-between">
@@ -827,6 +830,178 @@ export default function LiveStreamPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Commercial Break Banner Component ─────────────────────────────────────
+function CommercialBanner({ channelGenre }: { channelGenre: string }) {
+  const [showCommercial, setShowCommercial] = useState(true);
+  const [currentCommercialIdx, setCurrentCommercialIdx] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [djIntro, setDjIntro] = useState<string | null>(null);
+
+  // Fetch next commercial based on channel genre
+  const { data: commercial } = trpc.ecosystemIntegration.getNextCommercial.useQuery(
+    { channelGenre },
+    { refetchInterval: 120000 } // Rotate every 2 minutes
+  );
+
+  // Fetch all commercials for the campaign library view
+  const { data: allCommercials } = trpc.ecosystemIntegration.getAllCommercials.useQuery(undefined, {
+    staleTime: 300000,
+  });
+
+  // Fetch rotation stats
+  const { data: rotationStats } = trpc.ecosystemIntegration.getCommercialRotationStats.useQuery(undefined, {
+    staleTime: 60000,
+  });
+
+  // Record impression
+  const recordImpression = trpc.ecosystemIntegration.recordCommercialImpression.useMutation();
+
+  // Generate DJ intro for commercial
+  const djIntroMutation = trpc.ecosystemIntegration.generateCommercialDjIntro.useMutation();
+
+  // Auto-rotate through commercials
+  useEffect(() => {
+    if (!allCommercials || allCommercials.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentCommercialIdx(prev => (prev + 1) % allCommercials.length);
+    }, 45000); // Rotate every 45 seconds
+    return () => clearInterval(interval);
+  }, [allCommercials]);
+
+  // Record impression when commercial is shown
+  useEffect(() => {
+    if (commercial && showCommercial) {
+      recordImpression.mutate({ commercialId: commercial.id, channelName: channelGenre });
+    }
+  }, [commercial?.id]);
+
+  const displayCommercial = allCommercials?.[currentCommercialIdx] || commercial;
+  if (!displayCommercial || !showCommercial) return null;
+
+  // Calculate days until March 17
+  const launchDate = new Date('2026-03-17T00:00:00');
+  const now = new Date();
+  const daysUntil = Math.max(0, Math.ceil((launchDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+
+  const djColors: Record<string, string> = {
+    valanna: 'from-purple-500 to-violet-600',
+    seraph: 'from-blue-500 to-cyan-600',
+    candy: 'from-amber-500 to-orange-600',
+  };
+
+  return (
+    <div className="mt-4">
+      {/* Campaign Countdown Banner */}
+      <div className="p-4 bg-gradient-to-r from-[#8B1A1A]/30 via-[#D4A843]/20 to-[#1A3A5C]/30 rounded-lg border border-[#D4A843]/30">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="text-xs font-bold text-red-400 uppercase tracking-wider">Campaign Commercial</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <span className="text-2xl font-black text-[#D4A843]">{daysUntil}</span>
+              <span className="text-xs text-[#E8E0D0]/50 ml-1">days until launch</span>
+            </div>
+            <button
+              onClick={() => setShowCommercial(false)}
+              className="text-[#E8E0D0]/30 hover:text-[#E8E0D0]/60 text-xs"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        {/* Commercial Content */}
+        <div className="flex items-start gap-3">
+          <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${djColors[displayCommercial.djVoice] || djColors.valanna} flex items-center justify-center flex-shrink-0`}>
+            <Mic className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-sm font-bold text-[#D4A843]">{displayCommercial.title}</span>
+              <Badge className={`text-xs ${
+                displayCommercial.category === 'promo' ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' :
+                displayCommercial.category === 'psa' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+                displayCommercial.category === 'bumper' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                displayCommercial.category === 'countdown' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
+                displayCommercial.category === 'testimonial' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                'bg-[#D4A843]/20 text-[#D4A843] border-[#D4A843]/30'
+              }`}>{displayCommercial.category}</Badge>
+              <span className="text-xs text-[#E8E0D0]/30">{displayCommercial.duration}s</span>
+            </div>
+            <p className={`text-sm text-[#E8E0D0]/70 leading-relaxed ${isExpanded ? '' : 'line-clamp-3'}`}>
+              {displayCommercial.script}
+            </p>
+            <div className="flex items-center gap-3 mt-2">
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-xs text-[#D4A843] hover:text-[#E8C860]"
+              >
+                {isExpanded ? 'Show less' : 'Read full script'}
+              </button>
+              <span className="text-xs text-[#E8E0D0]/30">
+                Voice: <span className={`font-medium ${
+                  displayCommercial.djVoice === 'valanna' ? 'text-purple-400' :
+                  displayCommercial.djVoice === 'seraph' ? 'text-blue-400' :
+                  'text-amber-400'
+                }`}>{displayCommercial.djVoice}</span>
+              </span>
+              <button
+                onClick={() => {
+                  djIntroMutation.mutate(
+                    { commercialId: displayCommercial.id },
+                    { onSuccess: (data) => setDjIntro(data.intro) }
+                  );
+                }}
+                className="text-xs text-[#D4A843]/60 hover:text-[#D4A843] flex items-center gap-1"
+              >
+                <Sparkles className="w-3 h-3" /> Generate DJ intro
+              </button>
+            </div>
+            {djIntro && (
+              <div className="mt-2 p-2 bg-[#0A0A0A]/50 rounded border border-[#D4A843]/10">
+                <p className="text-xs text-[#E8E0D0]/60 italic">"{djIntro}"</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Campaign CTA */}
+        <div className="mt-3 flex items-center justify-between">
+          <div className="flex items-center gap-4 text-xs text-[#E8E0D0]/40">
+            <span>UN NGO CSW70 • March 17, 2026</span>
+            <span>In Partnership with Ghana</span>
+            {rotationStats && <span>{rotationStats.activeCommercials} commercials in rotation</span>}
+          </div>
+          <Button
+            size="sm"
+            className="bg-[#D4A843] text-[#0A0A0A] hover:bg-[#E8C860] text-xs"
+            onClick={() => window.open('/squadd', '_blank')}
+          >
+            <ArrowRight className="w-3.5 h-3.5 mr-1" /> View SQUADD Goals
+          </Button>
+        </div>
+
+        {/* Commercial Navigation Dots */}
+        {allCommercials && allCommercials.length > 1 && (
+          <div className="flex items-center justify-center gap-1.5 mt-3">
+            {allCommercials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentCommercialIdx(i)}
+                className={`w-1.5 h-1.5 rounded-full transition-all ${
+                  i === currentCommercialIdx ? 'bg-[#D4A843] w-4' : 'bg-[#E8E0D0]/20 hover:bg-[#E8E0D0]/40'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

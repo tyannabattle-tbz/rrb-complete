@@ -1,4 +1,6 @@
 import { ContentScheduler } from './contentScheduler';
+import { commercialEngine, UN_CAMPAIGN_COMMERCIALS } from './_core/commercialCampaignService';
+import { stateOfStudio } from './_core/stateOfStudio';
 import { notifyOwner } from './notification';
 
 /**
@@ -25,7 +27,7 @@ export class AutomationEngine {
     this.config = {
       enabled: config.enabled ?? true,
       checkInterval: config.checkInterval ?? 60000, // 1 minute
-      commercialInsertionRate: config.commercialInsertionRate ?? 15, // 15% of slots
+      commercialInsertionRate: config.commercialInsertionRate ?? 40, // 40% for UN campaign launch (was 15%)
       fallbackContent: config.fallbackContent ?? '',
     };
   }
@@ -125,22 +127,39 @@ export class AutomationEngine {
         console.log(`[AutomationEngine] Queued content: ${nextContent.title}`);
       }
 
-      // Check if commercial should be inserted
+      // Check if commercial should be inserted — prioritize UN campaign commercials
       if (Math.random() * 100 < this.config.commercialInsertionRate) {
-        const commercial = await ContentScheduler.getNextCommercial();
-
-        if (commercial) {
+        // Try UN campaign commercial first (priority during launch period)
+        const campaignCommercial = commercialEngine.getNextCommercial('Community');
+        if (campaignCommercial) {
           this.nextContentQueue.push({
-            id: commercial.id,
-            title: commercial.title,
-            duration: commercial.duration,
-            fileUrl: commercial.fileUrl,
+            id: campaignCommercial.id,
+            title: campaignCommercial.title,
+            duration: campaignCommercial.duration,
+            fileUrl: `campaign://${campaignCommercial.id}`,
             queuedAt: now,
             type: 'commercial',
           });
-
-          console.log(`[AutomationEngine] Inserted commercial: ${commercial.title}`);
-          await ContentScheduler.updateCommercialPlayCount(commercial.id);
+          console.log(`[AutomationEngine] UN Campaign commercial: ${campaignCommercial.title} (${campaignCommercial.duration}s)`);
+          // Log as QUMUS autonomous decision
+          try {
+            await stateOfStudio.recordAutonomousDecision();
+          } catch {}
+        } else {
+          // Fall back to regular commercials from DB
+          const commercial = await ContentScheduler.getNextCommercial();
+          if (commercial) {
+            this.nextContentQueue.push({
+              id: commercial.id,
+              title: commercial.title,
+              duration: commercial.duration,
+              fileUrl: commercial.fileUrl,
+              queuedAt: now,
+              type: 'commercial',
+            });
+            console.log(`[AutomationEngine] Inserted commercial: ${commercial.title}`);
+            await ContentScheduler.updateCommercialPlayCount(commercial.id);
+          }
         }
       }
 
