@@ -840,6 +840,52 @@ function CommercialBanner({ channelGenre }: { channelGenre: string }) {
   const [currentCommercialIdx, setCurrentCommercialIdx] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [djIntro, setDjIntro] = useState<string | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [autoPlay, setAutoPlay] = useState(false);
+  const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  // Voice configuration for DJ personalities using Web Speech API
+  const getDjVoiceConfig = useCallback((djName: string) => {
+    const voices = window.speechSynthesis?.getVoices() || [];
+    const femaleVoices = voices.filter(v => /female|woman|zira|samantha|victoria|karen|moira|fiona/i.test(v.name));
+    const maleVoices = voices.filter(v => /male|man|david|james|daniel|alex|fred|thomas/i.test(v.name));
+    const anyVoice = voices[0] || null;
+    switch (djName) {
+      case 'valanna': return { voice: femaleVoices[0] || anyVoice, rate: 0.92, pitch: 1.05 };
+      case 'seraph': return { voice: maleVoices[0] || anyVoice, rate: 0.88, pitch: 0.85 };
+      case 'candy': return { voice: femaleVoices[1] || femaleVoices[0] || anyVoice, rate: 1.05, pitch: 1.15 };
+      default: return { voice: anyVoice, rate: 1.0, pitch: 1.0 };
+    }
+  }, []);
+
+  const speakCommercial = useCallback((text: string, djName: string) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    const config = getDjVoiceConfig(djName);
+    if (config.voice) utterance.voice = config.voice;
+    utterance.rate = config.rate;
+    utterance.pitch = config.pitch;
+    utterance.volume = 0.8;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    speechRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  }, [getDjVoiceConfig]);
+
+  const stopSpeaking = useCallback(() => {
+    window.speechSynthesis?.cancel();
+    setIsSpeaking(false);
+  }, []);
+
+  // Preload voices
+  useEffect(() => {
+    window.speechSynthesis?.getVoices();
+    const handler = () => window.speechSynthesis?.getVoices();
+    window.speechSynthesis?.addEventListener('voiceschanged', handler);
+    return () => window.speechSynthesis?.removeEventListener('voiceschanged', handler);
+  }, []);
 
   // Fetch next commercial based on channel genre
   const { data: commercial } = trpc.ecosystemIntegration.getNextCommercial.useQuery(
@@ -880,6 +926,15 @@ function CommercialBanner({ channelGenre }: { channelGenre: string }) {
   }, [commercial?.id]);
 
   const displayCommercial = allCommercials?.[currentCommercialIdx] || commercial;
+
+  // Auto-play commercial audio when it rotates
+  useEffect(() => {
+    if (autoPlay && displayCommercial) {
+      speakCommercial(displayCommercial.script, displayCommercial.djVoice);
+    }
+    return () => { if (autoPlay) stopSpeaking(); };
+  }, [currentCommercialIdx, autoPlay, displayCommercial?.id]);
+
   if (!displayCommercial || !showCommercial) return null;
 
   // Calculate days until March 17
@@ -953,14 +1008,35 @@ function CommercialBanner({ channelGenre }: { channelGenre: string }) {
               </span>
               <button
                 onClick={() => {
+                  if (isSpeaking) {
+                    stopSpeaking();
+                  } else {
+                    speakCommercial(displayCommercial.script, displayCommercial.djVoice);
+                  }
+                }}
+                className={`text-xs flex items-center gap-1 ${isSpeaking ? 'text-red-400 hover:text-red-300' : 'text-[#D4A843]/60 hover:text-[#D4A843]'}`}
+              >
+                {isSpeaking ? <><VolumeX className="w-3 h-3" /> Stop</> : <><Volume2 className="w-3 h-3" /> Listen</>}
+              </button>
+              <button
+                onClick={() => setAutoPlay(!autoPlay)}
+                className={`text-xs flex items-center gap-1 ${autoPlay ? 'text-green-400' : 'text-[#E8E0D0]/30 hover:text-[#E8E0D0]/50'}`}
+              >
+                <Radio className="w-3 h-3" /> {autoPlay ? 'Auto ON' : 'Auto OFF'}
+              </button>
+              <button
+                onClick={() => {
                   djIntroMutation.mutate(
                     { commercialId: displayCommercial.id },
-                    { onSuccess: (data) => setDjIntro(data.intro) }
+                    { onSuccess: (data) => {
+                      setDjIntro(data.intro);
+                      speakCommercial(data.intro, displayCommercial.djVoice);
+                    }}
                   );
                 }}
                 className="text-xs text-[#D4A843]/60 hover:text-[#D4A843] flex items-center gap-1"
               >
-                <Sparkles className="w-3 h-3" /> Generate DJ intro
+                <Sparkles className="w-3 h-3" /> DJ Intro
               </button>
             </div>
             {djIntro && (

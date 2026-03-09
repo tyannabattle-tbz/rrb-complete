@@ -187,6 +187,8 @@ import { OnboardingTour } from '@/components/OnboardingTour';
 import RRBConferenceHub from '@/pages/RRBConferenceHub';
 import QumusCommandConsole from '@/pages/QumusCommandConsole';
 import StreamAnalytics from '@/pages/StreamAnalytics';
+import CommercialAnalytics from '@/pages/CommercialAnalytics';
+import SocialMediaKit from '@/pages/SocialMediaKit';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -360,6 +362,8 @@ function Router() {
       <Route path="/conference" component={RRBConferenceHub} />
       <Route path="/command-console" component={QumusCommandConsole} />
       <Route path="/stream-analytics" component={StreamAnalytics} />
+      <Route path="/commercial-analytics" component={CommercialAnalytics} />
+      <Route path="/social-media-kit" component={SocialMediaKit} />
       <Route component={NotFound} />
     </Switch>
     </>

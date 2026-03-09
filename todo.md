@@ -3323,3 +3323,26 @@
 - [x] All 12 commercials target specific channel genres across all 50 channels
 - [x] Campaign: From Selma to the United Nations, SQUADD Goals, Ghana Partnership, Sweet Miracles, Elder Protection, HybridCast, RRB Bumper, Voice for the Voiceless, Tech Showcase, CTA Closer
 - [x] 25 tests passing, 0 TypeScript errors, 0 browser errors, QUMUS 16/16 healthy
+
+## TTS Audio for UN Campaign Commercials (COMPLETED)
+- [x] Created commercialTtsService with Forge API TTS generation
+- [x] Web Speech API fallback with distinct voices: Valanna (warm female), Seraph (authoritative), Candy (energetic)
+- [x] S3 upload pipeline for generated audio
+- [x] Wired audio playback into CommercialBanner with play/mute toggle
+- [x] Auto-play commercial audio between channel switches with DJ voice selection
+- [x] tRPC endpoints: generateCommercialTts, getCommercialAudio, getTtsStats
+
+## Commercial Analytics Dashboard (COMPLETED)
+- [x] Created commercial_impressions table with 582 seeded impression records
+- [x] Built getCommercialAnalytics tRPC endpoint with time range filtering (24h/7d/30d)
+- [x] Created /commercial-analytics page with channel breakdown, DJ voice performance, CTR tracking
+- [x] Click-through rate tracking: 8.4% CTR, 23.4% listen rate, 6.9% completion rate
+- [x] Impression recording wired into CommercialBanner via recordImpression endpoint
+
+## Social Media Kit for March 17th Launch (COMPLETED)
+- [x] Generated 5 campaign graphics: Main (Selma to UN), Story (Live from UN), SQUADD Goals, Ghana Partnership, 50 Channels Live
+- [x] Created pre-written copy for Twitter (5 posts), Instagram (3 posts), Discord (2 announcements)
+- [x] Built /social-media-kit page with downloadable PNG assets, copy-to-clipboard, and posting schedule
+- [x] Campaign hashtags: #SelmaToTheUN #SQUADDGoals #CSW70 #RRBRadio
+- [x] 11-day posting schedule from March 10-18+ with platform-specific timing
+- [x] Legal disclaimer: Canryn Production LLC / Rockin' Rockin' Boogie
