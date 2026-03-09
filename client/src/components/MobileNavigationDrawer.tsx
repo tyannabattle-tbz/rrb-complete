@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { X, Home, Radio, Music, Zap, Heart, BarChart3, MessageSquare, MapPin, Globe, Mic, Settings } from 'lucide-react';
+import { X, Home, Radio, Music, Zap, Heart, BarChart3, MessageSquare, MapPin, Globe, Mic, Settings, Monitor, Headphones, Calendar, Eye, Gamepad2, BookOpen, Shield, Bell, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
@@ -21,22 +21,40 @@ export function MobileNavigationDrawer() {
 
   const qumusNavItems: NavItem[] = [
     { label: 'Home', icon: Home, path: '/', section: 'qumus' },
-    { label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard', section: 'qumus' },
-    { label: 'Chat', icon: MessageSquare, path: '/qumus-chat', section: 'qumus' },
-    { label: 'GPS Map', icon: MapPin, path: '/gps-radar', section: 'qumus' },
+    { label: 'QUMUS Control', icon: Monitor, path: '/qumus', section: 'qumus' },
+    { label: 'AI Chat', icon: MessageSquare, path: '/qumus-chat', section: 'qumus' },
+    { label: 'RRB Radio', icon: Music, path: '/rrb-radio', section: 'qumus' },
+    { label: 'HybridCast', icon: Radio, path: '/hybridcast', section: 'qumus' },
+    { label: 'Production Studio', icon: Headphones, path: '/studio', section: 'qumus' },
+    { label: 'Convention Hub', icon: Calendar, path: '/convention-hub', section: 'qumus' },
+    { label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub', section: 'qumus' },
+    { label: 'Live Stream', icon: Eye, path: '/live', section: 'qumus' },
+    { label: 'Sweet Miracles', icon: Heart, path: '/donate', section: 'qumus' },
+    { label: 'Ecosystem', icon: Globe, path: '/ecosystem-dashboard', section: 'qumus' },
+    { label: 'Analytics', icon: BarChart3, path: '/listener-analytics', section: 'qumus' },
+    { label: 'Games', icon: Gamepad2, path: '/games', section: 'qumus' },
+    { label: 'Legacy', icon: BookOpen, path: '/legacy', section: 'qumus' },
+    { label: 'Canryn Production', icon: Shield, path: '/canryn', section: 'qumus' },
+    { label: 'GPS Radar', icon: MapPin, path: '/gps-radar', section: 'qumus' },
   ];
 
   const rrbNavItems: NavItem[] = [
     { label: 'Home', icon: Home, path: '/', section: 'rrb' },
     { label: 'RRB Radio', icon: Radio, path: '/rrb-radio', section: 'rrb' },
-    { label: 'Live Stream', icon: Globe, path: '/live', section: 'rrb' },
+    { label: 'Live Stream', icon: Eye, path: '/live', section: 'rrb' },
+    { label: 'Production Studio', icon: Headphones, path: '/studio', section: 'rrb' },
+    { label: 'Convention Hub', icon: Calendar, path: '/convention-hub', section: 'rrb' },
     { label: 'Music Library', icon: Music, path: '/music', section: 'rrb' },
     { label: 'Podcasts', icon: Mic, path: '/podcasts', section: 'rrb' },
-    { label: 'Solbones Game', icon: Zap, path: '/solbones', section: 'rrb' },
-    { label: 'Donations', icon: Heart, path: '/donate', section: 'rrb' },
+    { label: 'Solbones Game', icon: Gamepad2, path: '/solbones', section: 'rrb' },
+    { label: 'Sweet Miracles', icon: Heart, path: '/donate', section: 'rrb' },
+    { label: 'Legacy', icon: BookOpen, path: '/legacy', section: 'rrb' },
+    { label: 'AI Chat', icon: MessageSquare, path: '/qumus-chat', section: 'rrb' },
   ];
 
   const sharedNavItems: NavItem[] = [
+    { label: 'Notifications', icon: Bell, path: '/notifications', section: 'shared' },
+    { label: 'Documentation', icon: FileText, path: '/docs', section: 'shared' },
     { label: 'Settings', icon: Settings, path: '/settings', section: 'shared' },
   ];
 

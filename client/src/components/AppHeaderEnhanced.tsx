@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon, Map as MapIcon } from 'lucide-react';
+import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon, Map as MapIcon, Shield, Users, Gamepad2, BookOpen, Globe, Headphones, Monitor, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -57,17 +57,20 @@ export function AppHeaderEnhanced() {
 
   const navItems = [
     { id: 'nav-0', label: 'Home', icon: Home, path: '/', action: () => navigate('/') },
-    { id: 'nav-1', label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard', action: () => navigate('/comprehensive-dashboard') },
+    { id: 'nav-1', label: 'QUMUS', icon: Monitor, path: '/qumus', action: () => navigate('/qumus') },
     { id: 'nav-2', label: 'Chat', icon: MessageSquare, path: '/qumus-chat', action: () => navigate('/qumus-chat') },
-    { id: 'nav-3', label: 'GPS Map', icon: MapPin, path: '/gps-radar', action: () => navigate('/gps-radar') },
+    { id: 'nav-3', label: 'RRB Radio', icon: Music, path: '/rrb-radio', action: () => navigate('/rrb-radio') },
     { id: 'nav-4', label: 'HybridCast', icon: Radio, path: '/hybridcast', action: () => setShowHybridCastTabs(!showHybridCastTabs) },
-    { id: 'nav-5', label: 'RRB Radio', icon: Music, path: '/live', action: () => navigate('/live') },
-    { id: 'nav-6', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub', action: () => navigate('/broadcast-hub') },
-    { id: 'nav-7', label: 'Mobile Studio', icon: Music, path: '/mobile-studio', action: () => navigate('/mobile-studio') },
-    { id: 'nav-8', label: 'Broadcast Monitor', icon: Eye, path: '/broadcast-monitoring', action: () => navigate('/broadcast-monitoring') },
-    { id: 'nav-9', label: 'Recommendations', icon: TrendingUp, path: '/recommendations', action: () => navigate('/recommendations') },
-    { id: 'nav-10', label: 'Impact', icon: Heart, path: '/impact-dashboard', action: () => navigate('/impact-dashboard') },
-    { id: 'nav-11', label: 'Selma Event', icon: MapPin, path: '/selma', action: () => navigate('/selma') },
+    { id: 'nav-5', label: 'Studio', icon: Headphones, path: '/studio', action: () => navigate('/studio') },
+    { id: 'nav-6', label: 'Conventions', icon: Calendar, path: '/convention-hub', action: () => navigate('/convention-hub') },
+    { id: 'nav-7', label: 'Broadcast', icon: Zap, path: '/broadcast-hub', action: () => navigate('/broadcast-hub') },
+    { id: 'nav-8', label: 'Live Stream', icon: Eye, path: '/live', action: () => navigate('/live') },
+    { id: 'nav-9', label: 'Donate', icon: Heart, path: '/donate', action: () => navigate('/donate') },
+    { id: 'nav-10', label: 'Ecosystem', icon: Globe, path: '/ecosystem-dashboard', action: () => navigate('/ecosystem-dashboard') },
+    { id: 'nav-11', label: 'Games', icon: Gamepad2, path: '/games', action: () => navigate('/games') },
+    { id: 'nav-12', label: 'Legacy', icon: BookOpen, path: '/legacy', action: () => navigate('/legacy') },
+    { id: 'nav-13', label: 'GPS Map', icon: MapPin, path: '/gps-radar', action: () => navigate('/gps-radar') },
+    { id: 'nav-14', label: 'Selma Event', icon: MapPin, path: '/selma', action: () => navigate('/selma') },
   ];
 
   return (

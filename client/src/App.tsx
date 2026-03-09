@@ -238,7 +238,7 @@ function Router() {
       <Route path="/qumus-chat" component={QumusChatPage} />
       <Route path="/radio-station" component={RadioStation} />
       <Route path="/rrb-radio" component={RRBRadioIntegration} />
-      <Route path="/studio" component={StudioSuite} />
+      <Route path="/studio-suite" component={StudioSuite} />
       <Route path="/media-library" component={MediaLibrary} />
       <Route path="/podcasts" component={PodcastPage} />
       <Route path="/listener-analytics" component={ListenerAnalyticsDashboard} />
@@ -351,7 +351,7 @@ function Router() {
       <Route path="/ad-manager" component={AdManager} />
       <Route path="/listener-analytics-live" component={ListenerAnalyticsLive} />
       <Route path="/webhook-manager" component={WebhookManager} />
-      <Route path="/studio-control-room" component={StudioControlRoom} />
+      <Route path="/studio" component={StudioControlRoom} />
       <Route path="/convention-hub" component={ConventionHub} />
       <Route component={NotFound} />
     </Switch>

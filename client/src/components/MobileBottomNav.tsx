@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, Link } from 'wouter';
-import { Home, BarChart3, MessageSquare, Settings, Search, Radio, Heart, Zap, Globe, Menu } from 'lucide-react';
+import { Home, BarChart3, MessageSquare, Settings, Search, Radio, Heart, Zap, Globe, Menu, Headphones, Music, Calendar, Gamepad2, BookOpen, Monitor, Eye, MapPin } from 'lucide-react';
 
 interface NavItem {
   id: string;
@@ -15,11 +15,18 @@ export function MobileBottomNav() {
 
   const navItems: (NavItem & { external?: boolean })[] = [
     { id: 'nav-home', label: 'Home', icon: Home, path: '/' },
-    { id: 'nav-tasks', label: 'Tasks', icon: Zap, path: '/agent' },
-    { id: 'nav-rrb', label: 'Radio', icon: Radio, path: 'https://www.rockinrockinboogie.com', external: true },
+    { id: 'nav-qumus', label: 'QUMUS', icon: Monitor, path: '/qumus' },
+    { id: 'nav-radio', label: 'Radio', icon: Music, path: '/rrb-radio' },
+    { id: 'nav-studio', label: 'Studio', icon: Headphones, path: '/studio' },
     { id: 'nav-donate', label: 'Donate', icon: Heart, path: '/donate' },
-    { id: 'nav-broadcast', label: 'Broadcast', icon: Globe, path: 'https://www.hybridcast.sbs', external: true },
-    { id: 'nav-analytics', label: 'Analytics', icon: BarChart3, path: '/agent' },
+    { id: 'nav-chat', label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
+    { id: 'nav-live', label: 'Live', icon: Eye, path: '/live' },
+    { id: 'nav-hybridcast', label: 'HybridCast', icon: Radio, path: '/hybridcast' },
+    { id: 'nav-conventions', label: 'Events', icon: Calendar, path: '/convention-hub' },
+    { id: 'nav-ecosystem', label: 'Ecosystem', icon: Globe, path: '/ecosystem-dashboard' },
+    { id: 'nav-games', label: 'Games', icon: Gamepad2, path: '/games' },
+    { id: 'nav-legacy', label: 'Legacy', icon: BookOpen, path: '/legacy' },
+    { id: 'nav-gps', label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
     { id: 'nav-settings', label: 'Settings', icon: Settings, path: '/settings' },
   ];
 

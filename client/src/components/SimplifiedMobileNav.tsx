@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video, Gamepad2, Share2 } from 'lucide-react';
+import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavSection {
@@ -22,38 +22,45 @@ export function SimplifiedMobileNav() {
       title: 'Core',
       items: [
         { id: 'nav-home', label: 'Home', icon: Home, path: '/' },
-        { id: 'nav-chat', label: 'Chat', icon: MessageSquare, path: '/qumus-chat' },
-        { id: 'nav-search', label: 'Search', icon: Search, path: '/search' },
+        { id: 'nav-qumus', label: 'QUMUS Control', icon: Monitor, path: '/qumus' },
+        { id: 'nav-chat', label: 'AI Chat', icon: MessageSquare, path: '/qumus-chat' },
+        { id: 'nav-ecosystem', label: 'Ecosystem', icon: Globe, path: '/ecosystem-dashboard' },
       ],
     },
     {
-      title: 'Events',
+      title: 'Media & Broadcasting',
       items: [
+        { id: 'nav-radio', label: 'RRB Radio', icon: Radio, path: '/rrb-radio' },
+        { id: 'nav-live', label: 'Live Stream', icon: Eye, path: '/live' },
+        { id: 'nav-studio', label: 'Production Studio', icon: Headphones, path: '/studio' },
+        { id: 'nav-broadcast', label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub' },
+        { id: 'nav-hybridcast', label: 'HybridCast', icon: Radio, path: '/hybridcast' },
+      ],
+    },
+    {
+      title: 'Events & Community',
+      items: [
+        { id: 'nav-conventions', label: 'Convention Hub', icon: Calendar, path: '/convention-hub' },
         { id: 'nav-selma', label: 'Selma Jubilee', icon: MapPin, path: '/selma' },
         { id: 'nav-squadd', label: 'SQUADD Goals', icon: Globe, path: '/squadd' },
+        { id: 'nav-donate', label: 'Sweet Miracles', icon: Heart, path: '/donate' },
       ],
     },
     {
-      title: 'Media',
-      items: [
-        { id: 'nav-live', label: 'Live Stream', icon: Video, path: '/live' },
-        { id: 'nav-radio', label: 'RRB Radio', icon: Radio, path: '/rrb-radio' },
-        { id: 'nav-boogie', label: 'Rockin Boogie', icon: Music, path: '/rockin-boogie' },
-        { id: 'nav-broadcast', label: 'Broadcast', icon: Zap, path: '/broadcast-hub' },
-      ],
-    },
-    {
-      title: 'Play & Share',
+      title: 'Play & Explore',
       items: [
         { id: 'nav-games', label: 'Games Hub', icon: Gamepad2, path: '/games' },
-        { id: 'nav-flyer', label: 'Interactive Flyer', icon: Share2, path: '/flyer' },
+        { id: 'nav-legacy', label: 'Legacy', icon: BookOpen, path: '/legacy' },
+        { id: 'nav-music', label: 'Music Library', icon: Music, path: '/music' },
+        { id: 'nav-gps', label: 'GPS Radar', icon: MapPin, path: '/gps-radar' },
       ],
     },
     {
-      title: 'Account',
+      title: 'Management',
       items: [
-        { id: 'nav-dashboard', label: 'Dashboard', icon: BarChart3, path: '/comprehensive-dashboard' },
-        { id: 'nav-impact', label: 'Impact', icon: Heart, path: '/impact-dashboard' },
+        { id: 'nav-canryn', label: 'Canryn Production', icon: Shield, path: '/canryn' },
+        { id: 'nav-analytics', label: 'Analytics', icon: BarChart3, path: '/listener-analytics' },
+        { id: 'nav-notifications', label: 'Notifications', icon: Bell, path: '/notifications' },
         { id: 'nav-settings', label: 'Settings', icon: Settings, path: '/settings' },
       ],
     },

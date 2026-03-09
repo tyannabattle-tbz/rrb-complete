@@ -21,15 +21,33 @@ import {
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Monitor, MessageSquare, Music, Radio, Headphones, Calendar, Zap, Eye, Heart, Globe, Gamepad2, BookOpen, MapPin, Settings, Shield, BarChart3, FileText, Bell } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Page 1", path: "/" },
+  { icon: LayoutDashboard, label: "Home", path: "/" },
+  { icon: Monitor, label: "QUMUS Control", path: "/qumus" },
+  { icon: MessageSquare, label: "AI Chat", path: "/qumus-chat" },
+  { icon: Music, label: "RRB Radio", path: "/rrb-radio" },
+  { icon: Radio, label: "HybridCast", path: "/hybridcast" },
+  { icon: Headphones, label: "Production Studio", path: "/studio" },
+  { icon: Calendar, label: "Convention Hub", path: "/convention-hub" },
+  { icon: Zap, label: "Broadcast Hub", path: "/broadcast-hub" },
+  { icon: Eye, label: "Live Stream", path: "/live" },
+  { icon: Heart, label: "Sweet Miracles", path: "/donate" },
+  { icon: Globe, label: "Ecosystem", path: "/ecosystem-dashboard" },
+  { icon: BarChart3, label: "Analytics", path: "/listener-analytics" },
+  { icon: Gamepad2, label: "Games", path: "/games" },
+  { icon: BookOpen, label: "Legacy", path: "/legacy" },
+  { icon: Shield, label: "Canryn Production", path: "/canryn" },
+  { icon: MapPin, label: "GPS Radar", path: "/gps-radar" },
   { icon: Users, label: "Community", path: "/community" },
+  { icon: FileText, label: "Documentation", path: "/docs" },
+  { icon: Bell, label: "Notifications", path: "/notifications" },
+  { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

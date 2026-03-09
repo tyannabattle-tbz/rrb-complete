@@ -80,7 +80,7 @@ export default function Home() {
       description: 'Video/podcast studio with multi-platform guest panels. Host live shows with guests from YouTube, Twitch, and more.',
       features: ['Guest Panels', 'Multi-Platform', 'Live Recording', 'Stream Integration'],
       color: 'from-violet-600 to-fuchsia-600',
-      path: '/studio-control-room',
+      path: '/studio',
       status: 'Active',
     },
     {
