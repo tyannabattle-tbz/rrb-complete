@@ -151,6 +151,7 @@ import { Toaster } from 'sonner';
 import { BreadcrumbNavigation } from '@/components/BreadcrumbNavigation';
 import { MobileNavigationDrawer } from '@/components/MobileNavigationDrawer';
 import SquaddGoals from '@/pages/SquaddGoals';
+import SquaddMemberProfile from '@/pages/SquaddMemberProfile';
 import SelmaEvent from '@/pages/SelmaEvent';
 import LiveStreamPage from '@/pages/LiveStreamPage';
 import InteractiveFlyer from '@/pages/InteractiveFlyer';
@@ -329,6 +330,7 @@ function Router() {
       <Route path="/commands" component={CommandCenterPage} />
       <Route path="/health" component={SystemHealthPage} />
       <Route path="/squadd" component={SquaddGoals} />
+      <Route path="/squadd/:slug" component={SquaddMemberProfile} />
       <Route path="/selma" component={SelmaEvent} />
       <Route path="/live" component={LiveStreamPage} />
       <Route path="/flyer" component={InteractiveFlyer} />

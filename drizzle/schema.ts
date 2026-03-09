@@ -2189,3 +2189,41 @@ export const socialMediaPosts = mysqlTable("social_media_posts", {
   createdAt: bigint('created_at', { mode: 'number' }).notNull(),
   updatedAt: bigint('updated_at', { mode: 'number' }).notNull(),
 });
+
+// SQUADD Goals Members - Individual profiles for the 7 mission area leaders
+export const squaddMembers = mysqlTable("squadd_members", {
+  id: int().primaryKey().autoincrement(),
+  name: varchar({ length: 255 }).notNull(),
+  title: varchar({ length: 255 }).notNull(),
+  organization: varchar({ length: 255 }),
+  missionArea: varchar('mission_area', { length: 100 }).notNull(),
+  missionIcon: varchar('mission_icon', { length: 50 }).notNull(),
+  bio: text().notNull(),
+  quote: text(),
+  email: varchar({ length: 255 }),
+  photoUrl: text('photo_url'),
+  focusAreas: json('focus_areas').$type<string[]>(),
+  achievements: json().$type<string[]>(),
+  slug: varchar({ length: 100 }).notNull(),
+  displayOrder: int('display_order').default(0),
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+  updatedAt: bigint('updated_at', { mode: 'number' }).notNull(),
+});
+
+// Fundraising Goals - Campaign-specific donation targets with progress tracking
+export const fundraisingGoals = mysqlTable("fundraising_goals", {
+  id: int().primaryKey().autoincrement(),
+  title: varchar({ length: 255 }).notNull(),
+  description: text().notNull(),
+  targetAmount: decimal('target_amount', { precision: 12, scale: 2 }).notNull(),
+  currentAmount: decimal('current_amount', { precision: 12, scale: 2 }).default('0').notNull(),
+  currency: varchar({ length: 10 }).default('USD').notNull(),
+  campaign: varchar({ length: 255 }).notNull(),
+  startDate: bigint('start_date', { mode: 'number' }).notNull(),
+  endDate: bigint('end_date', { mode: 'number' }),
+  donorCount: int('donor_count').default(0),
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+  updatedAt: bigint('updated_at', { mode: 'number' }).notNull(),
+});

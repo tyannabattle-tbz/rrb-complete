@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Heart, Shield, Users, Globe, Repeat } from 'lucide-react';
+import { Check, Heart, Shield, Users, Globe, Repeat, Target, TrendingUp, Calendar } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 
 interface DonationTier {
   id: string;
@@ -130,6 +131,9 @@ export function DonationCheckout() {
             Your donation helps protect legacies and empower communities.
           </p>
         </div>
+
+        {/* Fundraising Goal Tracker */}
+        <FundraisingGoalTracker />
 
         {/* Recurring Toggle */}
         <div className="flex justify-center mb-8">
@@ -302,6 +306,92 @@ export function DonationCheckout() {
           </p>
         </div>
       </div>
+    </div>
+  );
+}
+
+function FundraisingGoalTracker() {
+  const { data: goals, isLoading } = trpc.squaddGoals.getFundraisingGoals.useQuery();
+
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto mb-10">
+        <div className="h-48 bg-gray-900/60 border border-purple-500/20 rounded-2xl animate-pulse" />
+      </div>
+    );
+  }
+
+  const goal = goals?.[0];
+  if (!goal) return null;
+
+  const target = parseFloat(goal.targetAmount);
+  const current = parseFloat(goal.currentAmount);
+  const percentage = target > 0 ? Math.min((current / target) * 100, 100) : 0;
+  const remaining = target - current;
+  const daysLeft = goal.endDate ? Math.max(0, Math.ceil((goal.endDate - Date.now()) / (1000 * 60 * 60 * 24))) : null;
+
+  return (
+    <div className="max-w-3xl mx-auto mb-10">
+      <Card className="bg-gray-900/60 border-purple-500/20 overflow-hidden">
+        <div className="h-1 bg-gradient-to-r from-purple-600 via-amber-500 to-purple-600" />
+        <div className="p-6 md:p-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 rounded-lg bg-amber-500/10">
+              <Target className="w-5 h-5 text-amber-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">{goal.title}</h3>
+              <p className="text-sm text-gray-400">{goal.campaign === 'selma-to-un-csw70' ? 'Selma to UN CSW70 Campaign' : goal.campaign}</p>
+            </div>
+          </div>
+
+          <p className="text-sm text-gray-300 mb-6 leading-relaxed">{goal.description}</p>
+
+          {/* Progress Bar */}
+          <div className="mb-4">
+            <div className="flex justify-between items-end mb-2">
+              <div>
+                <span className="text-3xl font-bold text-white">${current.toLocaleString()}</span>
+                <span className="text-gray-400 ml-2">of ${target.toLocaleString()} goal</span>
+              </div>
+              <span className="text-lg font-bold text-amber-400">{percentage.toFixed(1)}%</span>
+            </div>
+            <div className="w-full h-4 bg-gray-800 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-purple-600 via-amber-500 to-amber-400 transition-all duration-1000 ease-out relative"
+                style={{ width: `${Math.max(percentage, 2)}%` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Row */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-3 bg-gray-800/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <TrendingUp className="w-4 h-4 text-green-400" />
+              </div>
+              <div className="text-lg font-bold text-white">${remaining.toLocaleString()}</div>
+              <div className="text-xs text-gray-400">Still Needed</div>
+            </div>
+            <div className="text-center p-3 bg-gray-800/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Users className="w-4 h-4 text-purple-400" />
+              </div>
+              <div className="text-lg font-bold text-white">{goal.donorCount}</div>
+              <div className="text-xs text-gray-400">Donors</div>
+            </div>
+            <div className="text-center p-3 bg-gray-800/50 rounded-lg">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Calendar className="w-4 h-4 text-amber-400" />
+              </div>
+              <div className="text-lg font-bold text-white">{daysLeft !== null ? daysLeft : '--'}</div>
+              <div className="text-xs text-gray-400">Days Left</div>
+            </div>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }

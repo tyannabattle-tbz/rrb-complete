@@ -3419,3 +3419,26 @@
 - [x] Auth test passes (1/1)
 - [x] All API endpoints return 200
 - [ ] Publish and verify on deployed domain
+
+## Test Live Radio on Deployed Domain (NEEDS PUBLISH)
+- [x] Dev server verified: stream proxy returns 200 with audio/mpeg
+- [x] Dev server verified: /live page loads with all 52 channels
+- [ ] Deployed domain needs publish to include latest code (activeChannel fix + proxy)
+- [ ] Post-publish: test audio playback on manuweb.sbs/live
+
+## SQUADD Goals Individual Profile Pages (COMPLETED)
+- [x] Create database schema for squadd_members with name, title, org, mission area, bio, quote, email, focus areas, achievements, slug
+- [x] Seed 7 SQUADD women profiles: Elder Protection, Agriculture, Housing, Media, Disability, Legal Justice, Technology
+- [x] Create tRPC endpoints: getMembers, getMemberBySlug, getFundraisingGoals
+- [x] Build individual profile page (SquaddMemberProfile.tsx) with hero, quote, about, focus areas, achievements, CTA
+- [x] Add SquaddMemberCards component to SquaddGoals.tsx with colored gradient icons per mission area
+- [x] Add routes for /squadd and /squadd/:slug in App.tsx
+- [x] Verified: all 7 member cards render, profile pages load with full data
+
+## Sweet Miracles Donation Goal Tracker (COMPLETED)
+- [x] Create fundraising_goals database table with target/current amount, title, description, campaign, donor count, dates
+- [x] Seed UN CSW70 Trip & Presentation Fund goal ($15,000 target)
+- [x] Create tRPC endpoint getFundraisingGoals in squaddGoalsRouter
+- [x] Build FundraisingGoalTracker component with animated progress bar, stats (Still Needed, Donors, Days Left)
+- [x] Add donation goal tracker to DonationCheckout page above donation tiers
+- [x] Verified: goal tracker renders with $0/$15,000, 8 days left, campaign tagline included

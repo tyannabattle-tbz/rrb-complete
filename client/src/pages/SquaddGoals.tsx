@@ -1,13 +1,87 @@
 import React, { useRef } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
+import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Globe, Shield, Radio, Wifi, Heart, Users, ArrowRight,
-  Zap, MapPin, Calendar, Mail, ExternalLink, ChevronRight
+  Zap, MapPin, Calendar, Mail, ExternalLink, ChevronRight,
+  Leaf, Home, Accessibility, Scale, Cpu
 } from 'lucide-react';
+
+const iconMap: Record<string, React.ReactNode> = {
+  Shield: <Shield className="w-6 h-6" />,
+  Leaf: <Leaf className="w-6 h-6" />,
+  Home: <Home className="w-6 h-6" />,
+  Radio: <Radio className="w-6 h-6" />,
+  Accessibility: <Accessibility className="w-6 h-6" />,
+  Scale: <Scale className="w-6 h-6" />,
+  Cpu: <Cpu className="w-6 h-6" />,
+};
+
+const missionColors: Record<string, string> = {
+  'Elder Protection & Technology': 'from-amber-600 to-yellow-500',
+  'Agriculture & Environmental Justice': 'from-green-600 to-emerald-500',
+  'Community Development & Housing': 'from-blue-600 to-cyan-500',
+  'Media & Communications Justice': 'from-pink-600 to-rose-500',
+  'Disability Rights & Advocacy': 'from-purple-600 to-violet-500',
+  'Elder Protection & Legal Justice': 'from-red-700 to-orange-500',
+  'Justice & Technology Innovation': 'from-indigo-600 to-blue-500',
+};
+
+function SquaddMemberCards() {
+  const { data: members, isLoading } = trpc.squaddGoals.getMembers.useQuery();
+  const [, setLocation] = useLocation();
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        {[...Array(7)].map((_, i) => (
+          <div key={i} className="h-48 bg-[#111111] border border-[#D4A843]/10 rounded-lg animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!members || members.length === 0) return null;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      {members.map((member) => {
+        const gradient = missionColors[member.missionArea] || 'from-amber-600 to-yellow-500';
+        const icon = iconMap[member.missionIcon] || <Shield className="w-6 h-6" />;
+        return (
+          <Card
+            key={member.id}
+            className="bg-[#111111] border-[#D4A843]/20 hover:border-[#D4A843]/40 transition-all cursor-pointer group"
+            onClick={() => setLocation(`/squadd/${member.slug}`)}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4 mb-4">
+                <div className={`flex-shrink-0 w-12 h-12 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-white`}>
+                  {icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-bold text-[#E8E0D0] group-hover:text-[#D4A843] transition-colors">{member.name}</h3>
+                  <p className="text-xs text-[#D4A843]">{member.title}</p>
+                </div>
+              </div>
+              <Badge className={`bg-gradient-to-r ${gradient} text-white border-0 text-xs mb-3`}>
+                {member.missionArea}
+              </Badge>
+              <p className="text-sm text-[#E8E0D0]/60 line-clamp-3">{member.bio?.substring(0, 120)}...</p>
+              <div className="mt-4 flex items-center text-[#D4A843] text-sm font-semibold group-hover:translate-x-1 transition-transform">
+                View Profile <ChevronRight className="w-4 h-4 ml-1" />
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function SquaddGoals() {
   const [, setLocation] = useLocation();
@@ -263,6 +337,21 @@ export default function SquaddGoals() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* SQUADD Members - Individual Profiles */}
+      <section className="border-t border-[#D4A843]/10 bg-[#0D0D0D]">
+        <div className="container mx-auto px-4 py-20">
+          <div className="text-center mb-12">
+            <Badge className="bg-[#D4A843]/10 text-[#D4A843] border-[#D4A843]/30 mb-4">THE COALITION</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#D4A843] mb-4">Meet the SQUADD</h2>
+            <p className="text-[#E8E0D0]/60 max-w-2xl mx-auto">
+              Seven mission areas. Seven pillars of justice. Each led by advocates who refuse to be silent.
+            </p>
+          </div>
+
+          <SquaddMemberCards />
         </div>
       </section>
 

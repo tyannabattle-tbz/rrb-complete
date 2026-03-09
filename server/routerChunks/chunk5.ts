@@ -24,6 +24,7 @@ import { webhookManagerRouter } from '../routers/webhookManagerRouter';
 import { productionIntegrationRouter } from '../routers/productionIntegrationRouter';
 import { studioRouter } from '../routers/studioRouter';
 import { conventionRouter } from '../routers/conventionRouter';
+import { squaddGoalsRouter } from '../routers/squaddGoalsRouter';
 
 export const chunk5Router = router({
   seedData: seedDataRouter,
@@ -49,4 +50,5 @@ export const chunk5Router = router({
   productionIntegration: productionIntegrationRouter,
   studio: studioRouter,
   convention: conventionRouter,
+  squaddGoals: squaddGoalsRouter,
 });
