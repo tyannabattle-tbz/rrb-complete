@@ -2032,3 +2032,143 @@ export const listenerAnalytics = mysqlTable("listener_analytics", {
   createdAt: bigint('created_at', { mode: 'number' }).notNull(),
 });
 
+
+
+// ═══════════════════════════════════════════════════════════════
+// VIDEO/PODCAST PRODUCTION STUDIO + GLOBAL CONVENTIONS
+// ═══════════════════════════════════════════════════════════════
+
+// ─── Studio Sessions ────────────────────────────────────────
+export const studioSessions = mysqlTable("studio_sessions", {
+  id: int().autoincrement().primaryKey(),
+  title: varchar({ length: 500 }).notNull(),
+  description: text(),
+  hostUserId: int('host_user_id').references(() => users.id),
+  sessionType: mysqlEnum('session_type', ['podcast', 'live_show', 'interview', 'panel', 'workshop', 'convention_panel', 'recording']).default('podcast').notNull(),
+  status: mysqlEnum('status', ['draft', 'scheduled', 'greenroom', 'live', 'recording', 'ended', 'archived']).default('draft').notNull(),
+  scheduledAt: bigint('scheduled_at', { mode: 'number' }),
+  startedAt: bigint('started_at', { mode: 'number' }),
+  endedAt: bigint('ended_at', { mode: 'number' }),
+  maxGuests: int('max_guests').default(8),
+  isPublic: boolean('is_public').default(true),
+  streamPlatforms: json('stream_platforms'), // ["youtube", "twitch", "custom_rtmp"]
+  streamKeys: json('stream_keys'), // encrypted platform stream keys
+  recordingEnabled: boolean('recording_enabled').default(true),
+  recordingUrl: text('recording_url'), // S3 URL after archival
+  thumbnailUrl: text('thumbnail_url'),
+  tags: json('tags'), // ["tech", "music", "interview"]
+  conventionId: int('convention_id'), // links to convention if part of one
+  breakoutRoomId: int('breakout_room_id'),
+  viewerCount: int('viewer_count').default(0),
+  peakViewers: int('peak_viewers').default(0),
+  joinCode: varchar('join_code', { length: 20 }), // unique code for guests to join
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+  updatedAt: bigint('updated_at', { mode: 'number' }).notNull(),
+});
+
+// ─── Studio Guests ──────────────────────────────────────────
+export const studioGuests = mysqlTable("studio_guests", {
+  id: int().autoincrement().primaryKey(),
+  sessionId: int('session_id').notNull().references(() => studioSessions.id, { onDelete: "cascade" }),
+  userId: int('user_id').references(() => users.id),
+  guestName: varchar('guest_name', { length: 255 }).notNull(),
+  guestEmail: varchar('guest_email', { length: 255 }),
+  guestAvatar: text('guest_avatar'),
+  platform: mysqlEnum('platform', ['internal', 'youtube', 'twitch', 'zoom', 'discord', 'twitter_spaces', 'custom']).default('internal').notNull(),
+  platformHandle: varchar('platform_handle', { length: 255 }),
+  role: mysqlEnum('role', ['host', 'co_host', 'panelist', 'guest', 'moderator', 'speaker', 'attendee']).default('guest').notNull(),
+  status: mysqlEnum('status', ['invited', 'accepted', 'declined', 'waiting', 'connected', 'on_air', 'muted', 'disconnected']).default('invited').notNull(),
+  inviteToken: varchar('invite_token', { length: 64 }),
+  joinedAt: bigint('joined_at', { mode: 'number' }),
+  leftAt: bigint('left_at', { mode: 'number' }),
+  isMuted: boolean('is_muted').default(false),
+  isVideoOn: boolean('is_video_on').default(true),
+  isScreenSharing: boolean('is_screen_sharing').default(false),
+  speakingOrder: int('speaking_order'),
+  bio: text(),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+});
+
+// ─── Conventions ────────────────────────────────────────────
+export const conventions = mysqlTable("conventions", {
+  id: int().autoincrement().primaryKey(),
+  title: varchar({ length: 500 }).notNull(),
+  subtitle: varchar({ length: 500 }),
+  description: text(),
+  hostUserId: int('host_user_id').references(() => users.id),
+  status: mysqlEnum('status', ['draft', 'announced', 'registration_open', 'active', 'day_of', 'ended', 'archived']).default('draft').notNull(),
+  startDate: bigint('start_date', { mode: 'number' }).notNull(),
+  endDate: bigint('end_date', { mode: 'number' }).notNull(),
+  timezone: varchar({ length: 50 }).default('America/New_York'),
+  maxAttendees: int('max_attendees').default(500),
+  currentAttendees: int('current_attendees').default(0),
+  isVirtual: boolean('is_virtual').default(true),
+  isHybrid: boolean('is_hybrid').default(false),
+  venueInfo: text('venue_info'),
+  bannerUrl: text('banner_url'),
+  logoUrl: text('logo_url'),
+  websiteUrl: text('website_url'),
+  registrationFee: decimal('registration_fee', { precision: 10, scale: 2 }).default('0.00'),
+  stripeProductId: varchar('stripe_product_id', { length: 255 }),
+  tags: json('tags'), // ["tech", "music", "community"]
+  sponsors: json('sponsors'), // [{name, logo, tier}]
+  socialLinks: json('social_links'), // {twitter, discord, youtube}
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+  updatedAt: bigint('updated_at', { mode: 'number' }).notNull(),
+});
+
+// ─── Convention Sessions (Breakout Rooms, Panels, Workshops) ─
+export const conventionSessions = mysqlTable("convention_sessions", {
+  id: int().autoincrement().primaryKey(),
+  conventionId: int('convention_id').notNull().references(() => conventions.id, { onDelete: "cascade" }),
+  studioSessionId: int('studio_session_id').references(() => studioSessions.id),
+  title: varchar({ length: 500 }).notNull(),
+  description: text(),
+  sessionType: mysqlEnum('session_type', ['keynote', 'panel', 'workshop', 'breakout', 'networking', 'performance', 'qa', 'fireside_chat']).default('panel').notNull(),
+  track: varchar({ length: 100 }), // "Main Stage", "Tech Track", "Music Track"
+  room: varchar({ length: 100 }), // virtual room name
+  startTime: bigint('start_time', { mode: 'number' }).notNull(),
+  endTime: bigint('end_time', { mode: 'number' }).notNull(),
+  maxParticipants: int('max_participants').default(50),
+  currentParticipants: int('current_participants').default(0),
+  speakers: json('speakers'), // [{name, bio, avatar, platform}]
+  isRecorded: boolean('is_recorded').default(true),
+  recordingUrl: text('recording_url'),
+  status: mysqlEnum('status', ['scheduled', 'live', 'ended', 'cancelled']).default('scheduled').notNull(),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+});
+
+// ─── Convention Attendees ───────────────────────────────────
+export const conventionAttendees = mysqlTable("convention_attendees", {
+  id: int().autoincrement().primaryKey(),
+  conventionId: int('convention_id').notNull().references(() => conventions.id, { onDelete: "cascade" }),
+  userId: int('user_id').references(() => users.id),
+  name: varchar({ length: 255 }).notNull(),
+  email: varchar({ length: 255 }).notNull(),
+  role: mysqlEnum('role', ['attendee', 'speaker', 'panelist', 'moderator', 'vip', 'sponsor', 'organizer']).default('attendee').notNull(),
+  ticketType: mysqlEnum('ticket_type', ['free', 'general', 'vip', 'speaker', 'sponsor']).default('free').notNull(),
+  registrationStatus: mysqlEnum('registration_status', ['pending', 'confirmed', 'checked_in', 'cancelled', 'refunded']).default('pending').notNull(),
+  stripePaymentIntentId: varchar('stripe_payment_intent_id', { length: 255 }),
+  checkedInAt: bigint('checked_in_at', { mode: 'number' }),
+  platform: varchar({ length: 100 }), // how they're connecting
+  avatarUrl: text('avatar_url'),
+  bio: text(),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+});
+
+// ─── Studio Recordings Archive ──────────────────────────────
+export const studioRecordings = mysqlTable("studio_recordings", {
+  id: int().autoincrement().primaryKey(),
+  sessionId: int('session_id').notNull().references(() => studioSessions.id, { onDelete: "cascade" }),
+  title: varchar({ length: 500 }).notNull(),
+  description: text(),
+  recordingUrl: text('recording_url').notNull(), // S3 URL
+  thumbnailUrl: text('thumbnail_url'),
+  durationSeconds: int('duration_seconds').default(0),
+  fileSizeMb: decimal('file_size_mb', { precision: 10, scale: 2 }),
+  format: mysqlEnum('format', ['mp4', 'mp3', 'wav', 'webm', 'mkv']).default('mp4'),
+  isPublished: boolean('is_published').default(false),
+  viewCount: int('view_count').default(0),
+  tags: json('tags'),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+});

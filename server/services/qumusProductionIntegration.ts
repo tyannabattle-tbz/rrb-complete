@@ -29,6 +29,10 @@ export type QumusEventType =
   | 'emergency.activated' | 'emergency.deactivated' | 'emergency.test'
   | 'donation.received' | 'donation.goal_reached' | 'donation.campaign_created'
   | 'qumus.decision_made' | 'qumus.policy_triggered' | 'qumus.health_check'
+  | 'studio.session_created' | 'studio.session_started' | 'studio.session_ended'
+  | 'studio.guest_joined' | 'studio.guest_left' | 'studio.recording_started'
+  | 'convention.created' | 'convention.registration_opened' | 'convention.started'
+  | 'convention.session_live' | 'convention.attendee_registered' | 'convention.ended'
   | 'system.startup' | 'system.error' | 'system.recovery';
 
 export interface QumusEvent {
@@ -77,7 +81,7 @@ class QumusProductionIntegration {
       'listener-analytics', 'team-updates', 'broadcast-scheduler',
       'content-scheduler', 'hybridcast', 'sweet-miracles',
       'email-service', 'stripe-payments', 'valanna-chat',
-      'candy-archive', 'seraph-ai',
+      'candy-archive', 'seraph-ai', 'production-studio', 'convention-hub',
     ];
 
     for (const name of subsystems) {
@@ -231,6 +235,74 @@ class QumusProductionIntegration {
           await this.postTeamUpdate(
             `Content published: "${event.data.title}" on ${event.data.platform || 'all platforms'}`,
             'content'
+          );
+        }
+      },
+    });
+
+    // 9. Studio events → Guest coordination + Recording + Webhooks
+    this.registerHandler({
+      eventTypes: ['studio.session_created', 'studio.session_started', 'studio.session_ended', 'studio.guest_joined', 'studio.guest_left', 'studio.recording_started'],
+      priority: 1,
+      handler: async (event) => {
+        console.log(`[QUMUS-PROD] Studio event: ${event.type}`, event.data);
+        await this.dispatchToWebhooks(event);
+        if (event.type === 'studio.session_started') {
+          await this.postTeamUpdate(
+            `Studio session LIVE: "${event.data.title}" with ${event.data.guestCount || 0} guests`,
+            'studio'
+          );
+          await notifyOwner({
+            title: 'Studio Session Started',
+            content: `"${event.data.title}" is now live with ${event.data.guestCount || 0} guests. Type: ${event.data.sessionType || 'podcast'}`,
+          });
+        }
+        if (event.type === 'studio.guest_joined') {
+          await this.postTeamUpdate(
+            `Guest joined studio: ${event.data.guestName} (${event.data.platform || 'direct'})`,
+            'studio'
+          );
+        }
+        if (event.type === 'studio.session_ended') {
+          await this.postTeamUpdate(
+            `Studio session ended: "${event.data.title}" — Duration: ${event.data.duration || 'unknown'}`,
+            'studio'
+          );
+        }
+      },
+    });
+
+    // 10. Convention events → Attendee management + Notifications + Webhooks
+    this.registerHandler({
+      eventTypes: ['convention.created', 'convention.registration_opened', 'convention.started', 'convention.session_live', 'convention.attendee_registered', 'convention.ended'],
+      priority: 1,
+      handler: async (event) => {
+        console.log(`[QUMUS-PROD] Convention event: ${event.type}`, event.data);
+        await this.dispatchToWebhooks(event);
+        if (event.type === 'convention.started') {
+          await this.postTeamUpdate(
+            `CONVENTION LIVE: "${event.data.title}" — ${event.data.attendeeCount || 0} attendees registered`,
+            'convention'
+          );
+          await notifyOwner({
+            title: 'Convention Started!',
+            content: `"${event.data.title}" is now live with ${event.data.attendeeCount || 0} registered attendees.`,
+          });
+        }
+        if (event.type === 'convention.attendee_registered') {
+          const count = event.data.totalAttendees || 0;
+          // Notify at milestones: 50, 100, 250, 500, 1000
+          if ([50, 100, 250, 500, 1000].includes(count)) {
+            await notifyOwner({
+              title: `Convention Milestone: ${count} Attendees!`,
+              content: `"${event.data.conventionTitle}" has reached ${count} registered attendees!`,
+            });
+          }
+        }
+        if (event.type === 'convention.session_live') {
+          await this.postTeamUpdate(
+            `Convention session LIVE: "${event.data.sessionTitle}" in ${event.data.track || 'Main Stage'}`,
+            'convention'
           );
         }
       },

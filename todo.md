@@ -3037,3 +3037,44 @@
 - [x] Floating button shows overlapping triple avatars in conference mode
 - [x] Header updates to show "Conference" title with "Valanna · Seraph · Candy" subtitle
 - [x] 0 TypeScript errors, QUMUS health check passing
+
+## Video/Podcast Production Studio + Global Conventions
+
+### Phase 1: Database Schema & Architecture
+- [x] Created studio_sessions table (title, type, status, host, platforms, stream keys, max guests)
+- [x] Created studio_guests table (name, email, platform, invite status, role, join token)
+- [x] Created conventions table (name, dates, description, capacity, status, registration)
+- [x] Created convention_sessions table (breakout rooms, panels, workshops, tracks, speakers)
+- [x] Created convention_attendees table (registration, role, access level, check-in)
+- [x] Created studio_recordings table (archive, S3 URLs, metadata, duration, size)
+
+### Phase 2: Backend — Studio & Convention tRPC Routers
+- [x] Created studioRouter with 10 procedures (CRUD, guest management, streaming, recording)
+- [x] Created conventionRouter with 10 procedures (CRUD, sessions, attendees, analytics)
+- [x] Added multi-platform streaming integration (YouTube, Twitch, custom RTMP)
+- [x] Added guest invite system with unique join tokens and waiting room
+- [x] Added recording/archival pipeline with S3 storage
+- [x] Wired to QUMUS with studio + convention event handlers (handlers 9 & 10)
+
+### Phase 3: Frontend — Studio Control Room
+- [x] Built Studio Control Room page with live panel grid view (6 guest slots)
+- [x] Built guest management panel (invite, admit, mute, remove)
+- [x] Built streaming controls (go live, platform selection, quality settings)
+- [x] Built recording controls (start/stop, archive management)
+- [x] Built chat/greenroom for pre-show coordination
+- [x] Added to Home dashboard as "Production Studio" card
+
+### Phase 4: Frontend — Convention Hosting
+- [x] Built Convention Hub with upcoming/active/past conventions
+- [x] Built Convention Detail with schedule, speakers, breakout rooms
+- [x] Built Attendee Registration flow with role selection
+- [x] Built Breakout Room view with topic-based sessions
+- [x] Built Convention Analytics (attendance, engagement, feedback)
+- [x] Added to Home dashboard as "Convention Hub" card
+
+### Phase 5: QUMUS Integration
+- [x] Wired QUMUS autonomous scheduling for studio sessions (event handler 9)
+- [x] Added QUMUS guest coordination policy (guest_joined/left events)
+- [x] Connected convention scheduling to QUMUS (event handler 10 with milestone notifications)
+- [x] Added 16 subsystem connections (up from 14) including production-studio + convention-hub
+- [x] All 67 RRB tests passing, 0 TypeScript errors, QUMUS 16/16 subsystems healthy

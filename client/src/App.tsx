@@ -181,6 +181,8 @@ import RRBTeamUpdates from '@/pages/RRBTeamUpdates';
 import AdManager from '@/pages/AdManager';
 import ListenerAnalyticsLive from '@/pages/ListenerAnalyticsLive';
 import WebhookManager from '@/pages/WebhookManager';
+import StudioControlRoom from '@/pages/StudioControlRoom';
+import ConventionHub from '@/pages/ConventionHub';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -349,6 +351,8 @@ function Router() {
       <Route path="/ad-manager" component={AdManager} />
       <Route path="/listener-analytics-live" component={ListenerAnalyticsLive} />
       <Route path="/webhook-manager" component={WebhookManager} />
+      <Route path="/studio-control-room" component={StudioControlRoom} />
+      <Route path="/convention-hub" component={ConventionHub} />
       <Route component={NotFound} />
     </Switch>
     </>

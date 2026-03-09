@@ -15,11 +15,11 @@ var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc13) => {
+var __copyProps = (to, from, except, desc15) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc13 = __getOwnPropDesc(from, key)) || desc13.enumerable });
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc15 = __getOwnPropDesc(from, key)) || desc15.enumerable });
   }
   return to;
 };
@@ -39,7 +39,7 @@ var init_const = __esm({
 // drizzle/schema.ts
 import { mysqlTable, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index, boolean, bigint } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog, contentCalendarPosts, bulkScheduleTemplates, platformEngagementMetrics, analyticsSummary, customStations, stationTemplates, stationContentSources, stationPlaybackHistory, userStationPreferences, stationSharing, stationAnalytics, emailSubscribers, newsArticles, familyTree, documentationPages, contentSchedule, systemUpdates, teamNotifications, adInventory, listenerAnalytics;
+var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog, contentCalendarPosts, bulkScheduleTemplates, platformEngagementMetrics, analyticsSummary, customStations, stationTemplates, stationContentSources, stationPlaybackHistory, userStationPreferences, stationSharing, stationAnalytics, emailSubscribers, newsArticles, familyTree, documentationPages, contentSchedule, systemUpdates, teamNotifications, adInventory, listenerAnalytics, studioSessions, studioGuests, conventions, conventionSessions, conventionAttendees, studioRecordings;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
     activityLogs = mysqlTable("activity_logs", {
@@ -1876,6 +1876,143 @@ var init_schema = __esm({
       timestamp: bigint({ mode: "number" }).notNull(),
       hourOfDay: int("hour_of_day"),
       dayOfWeek: int("day_of_week"),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    studioSessions = mysqlTable("studio_sessions", {
+      id: int().autoincrement().primaryKey(),
+      title: varchar({ length: 500 }).notNull(),
+      description: text(),
+      hostUserId: int("host_user_id").references(() => users.id),
+      sessionType: mysqlEnum("session_type", ["podcast", "live_show", "interview", "panel", "workshop", "convention_panel", "recording"]).default("podcast").notNull(),
+      status: mysqlEnum("status", ["draft", "scheduled", "greenroom", "live", "recording", "ended", "archived"]).default("draft").notNull(),
+      scheduledAt: bigint("scheduled_at", { mode: "number" }),
+      startedAt: bigint("started_at", { mode: "number" }),
+      endedAt: bigint("ended_at", { mode: "number" }),
+      maxGuests: int("max_guests").default(8),
+      isPublic: boolean("is_public").default(true),
+      streamPlatforms: json("stream_platforms"),
+      // ["youtube", "twitch", "custom_rtmp"]
+      streamKeys: json("stream_keys"),
+      // encrypted platform stream keys
+      recordingEnabled: boolean("recording_enabled").default(true),
+      recordingUrl: text("recording_url"),
+      // S3 URL after archival
+      thumbnailUrl: text("thumbnail_url"),
+      tags: json("tags"),
+      // ["tech", "music", "interview"]
+      conventionId: int("convention_id"),
+      // links to convention if part of one
+      breakoutRoomId: int("breakout_room_id"),
+      viewerCount: int("viewer_count").default(0),
+      peakViewers: int("peak_viewers").default(0),
+      joinCode: varchar("join_code", { length: 20 }),
+      // unique code for guests to join
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
+    studioGuests = mysqlTable("studio_guests", {
+      id: int().autoincrement().primaryKey(),
+      sessionId: int("session_id").notNull().references(() => studioSessions.id, { onDelete: "cascade" }),
+      userId: int("user_id").references(() => users.id),
+      guestName: varchar("guest_name", { length: 255 }).notNull(),
+      guestEmail: varchar("guest_email", { length: 255 }),
+      guestAvatar: text("guest_avatar"),
+      platform: mysqlEnum("platform", ["internal", "youtube", "twitch", "zoom", "discord", "twitter_spaces", "custom"]).default("internal").notNull(),
+      platformHandle: varchar("platform_handle", { length: 255 }),
+      role: mysqlEnum("role", ["host", "co_host", "panelist", "guest", "moderator", "speaker", "attendee"]).default("guest").notNull(),
+      status: mysqlEnum("status", ["invited", "accepted", "declined", "waiting", "connected", "on_air", "muted", "disconnected"]).default("invited").notNull(),
+      inviteToken: varchar("invite_token", { length: 64 }),
+      joinedAt: bigint("joined_at", { mode: "number" }),
+      leftAt: bigint("left_at", { mode: "number" }),
+      isMuted: boolean("is_muted").default(false),
+      isVideoOn: boolean("is_video_on").default(true),
+      isScreenSharing: boolean("is_screen_sharing").default(false),
+      speakingOrder: int("speaking_order"),
+      bio: text(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    conventions = mysqlTable("conventions", {
+      id: int().autoincrement().primaryKey(),
+      title: varchar({ length: 500 }).notNull(),
+      subtitle: varchar({ length: 500 }),
+      description: text(),
+      hostUserId: int("host_user_id").references(() => users.id),
+      status: mysqlEnum("status", ["draft", "announced", "registration_open", "active", "day_of", "ended", "archived"]).default("draft").notNull(),
+      startDate: bigint("start_date", { mode: "number" }).notNull(),
+      endDate: bigint("end_date", { mode: "number" }).notNull(),
+      timezone: varchar({ length: 50 }).default("America/New_York"),
+      maxAttendees: int("max_attendees").default(500),
+      currentAttendees: int("current_attendees").default(0),
+      isVirtual: boolean("is_virtual").default(true),
+      isHybrid: boolean("is_hybrid").default(false),
+      venueInfo: text("venue_info"),
+      bannerUrl: text("banner_url"),
+      logoUrl: text("logo_url"),
+      websiteUrl: text("website_url"),
+      registrationFee: decimal("registration_fee", { precision: 10, scale: 2 }).default("0.00"),
+      stripeProductId: varchar("stripe_product_id", { length: 255 }),
+      tags: json("tags"),
+      // ["tech", "music", "community"]
+      sponsors: json("sponsors"),
+      // [{name, logo, tier}]
+      socialLinks: json("social_links"),
+      // {twitter, discord, youtube}
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
+    conventionSessions = mysqlTable("convention_sessions", {
+      id: int().autoincrement().primaryKey(),
+      conventionId: int("convention_id").notNull().references(() => conventions.id, { onDelete: "cascade" }),
+      studioSessionId: int("studio_session_id").references(() => studioSessions.id),
+      title: varchar({ length: 500 }).notNull(),
+      description: text(),
+      sessionType: mysqlEnum("session_type", ["keynote", "panel", "workshop", "breakout", "networking", "performance", "qa", "fireside_chat"]).default("panel").notNull(),
+      track: varchar({ length: 100 }),
+      // "Main Stage", "Tech Track", "Music Track"
+      room: varchar({ length: 100 }),
+      // virtual room name
+      startTime: bigint("start_time", { mode: "number" }).notNull(),
+      endTime: bigint("end_time", { mode: "number" }).notNull(),
+      maxParticipants: int("max_participants").default(50),
+      currentParticipants: int("current_participants").default(0),
+      speakers: json("speakers"),
+      // [{name, bio, avatar, platform}]
+      isRecorded: boolean("is_recorded").default(true),
+      recordingUrl: text("recording_url"),
+      status: mysqlEnum("status", ["scheduled", "live", "ended", "cancelled"]).default("scheduled").notNull(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    conventionAttendees = mysqlTable("convention_attendees", {
+      id: int().autoincrement().primaryKey(),
+      conventionId: int("convention_id").notNull().references(() => conventions.id, { onDelete: "cascade" }),
+      userId: int("user_id").references(() => users.id),
+      name: varchar({ length: 255 }).notNull(),
+      email: varchar({ length: 255 }).notNull(),
+      role: mysqlEnum("role", ["attendee", "speaker", "panelist", "moderator", "vip", "sponsor", "organizer"]).default("attendee").notNull(),
+      ticketType: mysqlEnum("ticket_type", ["free", "general", "vip", "speaker", "sponsor"]).default("free").notNull(),
+      registrationStatus: mysqlEnum("registration_status", ["pending", "confirmed", "checked_in", "cancelled", "refunded"]).default("pending").notNull(),
+      stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
+      checkedInAt: bigint("checked_in_at", { mode: "number" }),
+      platform: varchar({ length: 100 }),
+      // how they're connecting
+      avatarUrl: text("avatar_url"),
+      bio: text(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    studioRecordings = mysqlTable("studio_recordings", {
+      id: int().autoincrement().primaryKey(),
+      sessionId: int("session_id").notNull().references(() => studioSessions.id, { onDelete: "cascade" }),
+      title: varchar({ length: 500 }).notNull(),
+      description: text(),
+      recordingUrl: text("recording_url").notNull(),
+      // S3 URL
+      thumbnailUrl: text("thumbnail_url"),
+      durationSeconds: int("duration_seconds").default(0),
+      fileSizeMb: decimal("file_size_mb", { precision: 10, scale: 2 }),
+      format: mysqlEnum("format", ["mp4", "mp3", "wav", "webm", "mkv"]).default("mp4"),
+      isPublished: boolean("is_published").default(false),
+      viewCount: int("view_count").default(0),
+      tags: json("tags"),
       createdAt: bigint("created_at", { mode: "number" }).notNull()
     });
   }
@@ -4105,7 +4242,9 @@ var init_qumusProductionIntegration = __esm({
           "stripe-payments",
           "valanna-chat",
           "candy-archive",
-          "seraph-ai"
+          "seraph-ai",
+          "production-studio",
+          "convention-hub"
         ];
         for (const name of subsystems) {
           this.subsystemStatus[name] = {
@@ -4240,6 +4379,69 @@ var init_qumusProductionIntegration = __esm({
               await this.postTeamUpdate(
                 `Content published: "${event.data.title}" on ${event.data.platform || "all platforms"}`,
                 "content"
+              );
+            }
+          }
+        });
+        this.registerHandler({
+          eventTypes: ["studio.session_created", "studio.session_started", "studio.session_ended", "studio.guest_joined", "studio.guest_left", "studio.recording_started"],
+          priority: 1,
+          handler: async (event) => {
+            console.log(`[QUMUS-PROD] Studio event: ${event.type}`, event.data);
+            await this.dispatchToWebhooks(event);
+            if (event.type === "studio.session_started") {
+              await this.postTeamUpdate(
+                `Studio session LIVE: "${event.data.title}" with ${event.data.guestCount || 0} guests`,
+                "studio"
+              );
+              await notifyOwner({
+                title: "Studio Session Started",
+                content: `"${event.data.title}" is now live with ${event.data.guestCount || 0} guests. Type: ${event.data.sessionType || "podcast"}`
+              });
+            }
+            if (event.type === "studio.guest_joined") {
+              await this.postTeamUpdate(
+                `Guest joined studio: ${event.data.guestName} (${event.data.platform || "direct"})`,
+                "studio"
+              );
+            }
+            if (event.type === "studio.session_ended") {
+              await this.postTeamUpdate(
+                `Studio session ended: "${event.data.title}" \u2014 Duration: ${event.data.duration || "unknown"}`,
+                "studio"
+              );
+            }
+          }
+        });
+        this.registerHandler({
+          eventTypes: ["convention.created", "convention.registration_opened", "convention.started", "convention.session_live", "convention.attendee_registered", "convention.ended"],
+          priority: 1,
+          handler: async (event) => {
+            console.log(`[QUMUS-PROD] Convention event: ${event.type}`, event.data);
+            await this.dispatchToWebhooks(event);
+            if (event.type === "convention.started") {
+              await this.postTeamUpdate(
+                `CONVENTION LIVE: "${event.data.title}" \u2014 ${event.data.attendeeCount || 0} attendees registered`,
+                "convention"
+              );
+              await notifyOwner({
+                title: "Convention Started!",
+                content: `"${event.data.title}" is now live with ${event.data.attendeeCount || 0} registered attendees.`
+              });
+            }
+            if (event.type === "convention.attendee_registered") {
+              const count6 = event.data.totalAttendees || 0;
+              if ([50, 100, 250, 500, 1e3].includes(count6)) {
+                await notifyOwner({
+                  title: `Convention Milestone: ${count6} Attendees!`,
+                  content: `"${event.data.conventionTitle}" has reached ${count6} registered attendees!`
+                });
+              }
+            }
+            if (event.type === "convention.session_live") {
+              await this.postTeamUpdate(
+                `Convention session LIVE: "${event.data.sessionTitle}" in ${event.data.track || "Main Stage"}`,
+                "convention"
               );
             }
           }
@@ -6065,7 +6267,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z88 } from "zod";
+import { z as z90 } from "zod";
 import { TRPCError as TRPCError18 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -16155,6 +16357,515 @@ Instructions: ${input.instructions || "Stand by for updates"}`
   })
 });
 
+// server/routers/studioRouter.ts
+import { z as z41 } from "zod";
+init_db();
+init_schema();
+import { eq as eq17, desc as desc10, and as and12, sql as sql10 } from "drizzle-orm";
+import crypto2 from "crypto";
+function generateJoinCode() {
+  return crypto2.randomBytes(5).toString("hex").toUpperCase();
+}
+function generateInviteToken() {
+  return crypto2.randomBytes(32).toString("hex");
+}
+var studioRouter = router({
+  // ─── Session CRUD ──────────────────────────────────────
+  createSession: protectedProcedure.input(z41.object({
+    title: z41.string().min(1).max(500),
+    description: z41.string().optional(),
+    sessionType: z41.enum(["podcast", "live_show", "interview", "panel", "workshop", "convention_panel", "recording"]).default("podcast"),
+    scheduledAt: z41.number().optional(),
+    maxGuests: z41.number().min(1).max(50).default(8),
+    isPublic: z41.boolean().default(true),
+    streamPlatforms: z41.array(z41.string()).optional(),
+    recordingEnabled: z41.boolean().default(true),
+    tags: z41.array(z41.string()).optional(),
+    conventionId: z41.number().optional()
+  })).mutation(async ({ input, ctx }) => {
+    const now = Date.now();
+    const joinCode = generateJoinCode();
+    const db2 = await getDb();
+    const [result2] = await db2.insert(studioSessions).values({
+      title: input.title,
+      description: input.description || null,
+      hostUserId: ctx.user.id,
+      sessionType: input.sessionType,
+      status: input.scheduledAt ? "scheduled" : "draft",
+      scheduledAt: input.scheduledAt || null,
+      maxGuests: input.maxGuests,
+      isPublic: input.isPublic,
+      streamPlatforms: input.streamPlatforms || null,
+      recordingEnabled: input.recordingEnabled,
+      tags: input.tags || null,
+      conventionId: input.conventionId || null,
+      joinCode,
+      viewerCount: 0,
+      peakViewers: 0,
+      createdAt: now,
+      updatedAt: now
+    });
+    await db2.insert(studioGuests).values({
+      sessionId: result2.insertId,
+      userId: ctx.user.id,
+      guestName: ctx.user.name || "Host",
+      guestEmail: ctx.user.email || null,
+      platform: "internal",
+      role: "host",
+      status: "connected",
+      createdAt: now
+    });
+    return { id: result2.insertId, joinCode };
+  }),
+  getSessions: protectedProcedure.input(z41.object({
+    status: z41.enum(["draft", "scheduled", "greenroom", "live", "recording", "ended", "archived"]).optional(),
+    limit: z41.number().min(1).max(100).default(20)
+  }).optional()).query(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    const conditions = [eq17(studioSessions.hostUserId, ctx.user.id)];
+    if (input?.status) conditions.push(eq17(studioSessions.status, input.status));
+    const sessions = await db2.select().from(studioSessions).where(and12(...conditions)).orderBy(desc10(studioSessions.createdAt)).limit(input?.limit || 20);
+    return sessions;
+  }),
+  getSession: publicProcedure.input(z41.object({ id: z41.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const [session] = await db2.select().from(studioSessions).where(eq17(studioSessions.id, input.id));
+    if (!session) throw new Error("Session not found");
+    const guests = await db2.select().from(studioGuests).where(eq17(studioGuests.sessionId, input.id));
+    return { ...session, guests };
+  }),
+  updateSessionStatus: protectedProcedure.input(z41.object({
+    id: z41.number(),
+    status: z41.enum(["draft", "scheduled", "greenroom", "live", "recording", "ended", "archived"])
+  })).mutation(async ({ input }) => {
+    const now = Date.now();
+    const db2 = await getDb();
+    const updates = { status: input.status, updatedAt: now };
+    if (input.status === "live") updates.startedAt = now;
+    if (input.status === "ended") updates.endedAt = now;
+    await db2.update(studioSessions).set(updates).where(eq17(studioSessions.id, input.id));
+    return { success: true };
+  }),
+  goLive: protectedProcedure.input(z41.object({ sessionId: z41.number() })).mutation(async ({ input }) => {
+    const now = Date.now();
+    const db2 = await getDb();
+    await db2.update(studioSessions).set({
+      status: "live",
+      startedAt: now,
+      updatedAt: now
+    }).where(eq17(studioSessions.id, input.sessionId));
+    await db2.update(studioGuests).set({ status: "on_air" }).where(and12(
+      eq17(studioGuests.sessionId, input.sessionId),
+      eq17(studioGuests.status, "connected")
+    ));
+    return { success: true, startedAt: now };
+  }),
+  endSession: protectedProcedure.input(z41.object({ sessionId: z41.number() })).mutation(async ({ input }) => {
+    const now = Date.now();
+    const db2 = await getDb();
+    await db2.update(studioSessions).set({
+      status: "ended",
+      endedAt: now,
+      updatedAt: now
+    }).where(eq17(studioSessions.id, input.sessionId));
+    await db2.update(studioGuests).set({ status: "disconnected", leftAt: now }).where(eq17(studioGuests.sessionId, input.sessionId));
+    return { success: true, endedAt: now };
+  }),
+  // ─── Guest Management ──────────────────────────────────
+  inviteGuest: protectedProcedure.input(z41.object({
+    sessionId: z41.number(),
+    guestName: z41.string().min(1),
+    guestEmail: z41.string().email().optional(),
+    platform: z41.enum(["internal", "youtube", "twitch", "zoom", "discord", "twitter_spaces", "custom"]).default("internal"),
+    platformHandle: z41.string().optional(),
+    role: z41.enum(["host", "co_host", "panelist", "guest", "moderator", "speaker", "attendee"]).default("guest"),
+    bio: z41.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const inviteToken = generateInviteToken();
+    const now = Date.now();
+    const [result2] = await db2.insert(studioGuests).values({
+      sessionId: input.sessionId,
+      guestName: input.guestName,
+      guestEmail: input.guestEmail || null,
+      platform: input.platform,
+      platformHandle: input.platformHandle || null,
+      role: input.role,
+      status: "invited",
+      inviteToken,
+      bio: input.bio || null,
+      createdAt: now
+    });
+    return { id: result2.insertId, inviteToken };
+  }),
+  getGuests: publicProcedure.input(z41.object({ sessionId: z41.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    return db2.select().from(studioGuests).where(eq17(studioGuests.sessionId, input.sessionId)).orderBy(studioGuests.speakingOrder);
+  }),
+  updateGuestStatus: protectedProcedure.input(z41.object({
+    guestId: z41.number(),
+    status: z41.enum(["invited", "accepted", "declined", "waiting", "connected", "on_air", "muted", "disconnected"])
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const updates = { status: input.status };
+    if (input.status === "connected" || input.status === "on_air") updates.joinedAt = Date.now();
+    if (input.status === "disconnected") updates.leftAt = Date.now();
+    if (input.status === "muted") updates.isMuted = true;
+    if (input.status === "on_air") updates.isMuted = false;
+    await db2.update(studioGuests).set(updates).where(eq17(studioGuests.id, input.guestId));
+    return { success: true };
+  }),
+  admitGuest: protectedProcedure.input(z41.object({ guestId: z41.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.update(studioGuests).set({
+      status: "connected",
+      joinedAt: Date.now()
+    }).where(eq17(studioGuests.id, input.guestId));
+    return { success: true };
+  }),
+  removeGuest: protectedProcedure.input(z41.object({ guestId: z41.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.update(studioGuests).set({
+      status: "disconnected",
+      leftAt: Date.now()
+    }).where(eq17(studioGuests.id, input.guestId));
+    return { success: true };
+  }),
+  toggleMute: protectedProcedure.input(z41.object({ guestId: z41.number(), muted: z41.boolean() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.update(studioGuests).set({
+      isMuted: input.muted,
+      status: input.muted ? "muted" : "on_air"
+    }).where(eq17(studioGuests.id, input.guestId));
+    return { success: true };
+  }),
+  reorderGuests: protectedProcedure.input(z41.object({
+    sessionId: z41.number(),
+    guestOrder: z41.array(z41.object({ guestId: z41.number(), order: z41.number() }))
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    for (const item of input.guestOrder) {
+      await db2.update(studioGuests).set({ speakingOrder: item.order }).where(eq17(studioGuests.id, item.guestId));
+    }
+    return { success: true };
+  }),
+  joinViaCode: publicProcedure.input(z41.object({
+    joinCode: z41.string(),
+    guestName: z41.string().min(1),
+    platform: z41.enum(["internal", "youtube", "twitch", "zoom", "discord", "twitter_spaces", "custom"]).default("internal")
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const [session] = await db2.select().from(studioSessions).where(eq17(studioSessions.joinCode, input.joinCode));
+    if (!session) throw new Error("Invalid join code");
+    if (session.status === "ended" || session.status === "archived") throw new Error("Session has ended");
+    const now = Date.now();
+    const [result2] = await db2.insert(studioGuests).values({
+      sessionId: session.id,
+      guestName: input.guestName,
+      platform: input.platform,
+      role: "guest",
+      status: "waiting",
+      createdAt: now
+    });
+    return { guestId: result2.insertId, sessionId: session.id, sessionTitle: session.title };
+  }),
+  // ─── Recordings ────────────────────────────────────────
+  getRecordings: protectedProcedure.input(z41.object({
+    sessionId: z41.number().optional(),
+    limit: z41.number().min(1).max(100).default(20)
+  }).optional()).query(async ({ input }) => {
+    const db2 = await getDb();
+    if (input?.sessionId) {
+      return db2.select().from(studioRecordings).where(eq17(studioRecordings.sessionId, input.sessionId)).orderBy(desc10(studioRecordings.createdAt)).limit(input.limit);
+    }
+    return db2.select().from(studioRecordings).orderBy(desc10(studioRecordings.createdAt)).limit(input?.limit || 20);
+  }),
+  createRecording: protectedProcedure.input(z41.object({
+    sessionId: z41.number(),
+    title: z41.string(),
+    recordingUrl: z41.string(),
+    thumbnailUrl: z41.string().optional(),
+    durationSeconds: z41.number().optional(),
+    format: z41.enum(["mp4", "mp3", "wav", "webm", "mkv"]).default("mp4"),
+    tags: z41.array(z41.string()).optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const [result2] = await db2.insert(studioRecordings).values({
+      sessionId: input.sessionId,
+      title: input.title,
+      recordingUrl: input.recordingUrl,
+      thumbnailUrl: input.thumbnailUrl || null,
+      durationSeconds: input.durationSeconds || 0,
+      format: input.format,
+      tags: input.tags || null,
+      isPublished: false,
+      viewCount: 0,
+      createdAt: Date.now()
+    });
+    return { id: result2.insertId };
+  }),
+  publishRecording: protectedProcedure.input(z41.object({ recordingId: z41.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.update(studioRecordings).set({ isPublished: true }).where(eq17(studioRecordings.id, input.recordingId));
+    return { success: true };
+  }),
+  // ─── Studio Stats ─────────────────────────────────────
+  getStudioStats: protectedProcedure.query(async ({ ctx }) => {
+    const db2 = await getDb();
+    const [sessionStats] = await db2.select({
+      total: sql10`COUNT(*)`,
+      live: sql10`SUM(CASE WHEN status = 'live' THEN 1 ELSE 0 END)`,
+      scheduled: sql10`SUM(CASE WHEN status = 'scheduled' THEN 1 ELSE 0 END)`,
+      archived: sql10`SUM(CASE WHEN status IN ('ended', 'archived') THEN 1 ELSE 0 END)`,
+      totalViewers: sql10`COALESCE(SUM(viewer_count), 0)`,
+      peakViewers: sql10`COALESCE(MAX(peak_viewers), 0)`
+    }).from(studioSessions).where(eq17(studioSessions.hostUserId, ctx.user.id));
+    const [recordingStats] = await db2.select({
+      total: sql10`COUNT(*)`,
+      published: sql10`SUM(CASE WHEN is_published = true THEN 1 ELSE 0 END)`,
+      totalViews: sql10`COALESCE(SUM(view_count), 0)`
+    }).from(studioRecordings);
+    return {
+      sessions: sessionStats,
+      recordings: recordingStats
+    };
+  })
+});
+
+// server/routers/conventionRouter.ts
+import { z as z42 } from "zod";
+init_db();
+init_schema();
+import { eq as eq18, desc as desc11, and as and13, sql as sql11 } from "drizzle-orm";
+var conventionRouter = router({
+  // ─── Convention CRUD ───────────────────────────────────
+  createConvention: protectedProcedure.input(z42.object({
+    title: z42.string().min(1).max(500),
+    subtitle: z42.string().optional(),
+    description: z42.string().optional(),
+    startDate: z42.number(),
+    endDate: z42.number(),
+    timezone: z42.string().default("America/New_York"),
+    maxAttendees: z42.number().min(1).default(500),
+    isVirtual: z42.boolean().default(true),
+    isHybrid: z42.boolean().default(false),
+    venueInfo: z42.string().optional(),
+    registrationFee: z42.string().default("0.00"),
+    tags: z42.array(z42.string()).optional(),
+    sponsors: z42.array(z42.object({
+      name: z42.string(),
+      logo: z42.string().optional(),
+      tier: z42.enum(["platinum", "gold", "silver", "bronze"])
+    })).optional(),
+    socialLinks: z42.object({
+      twitter: z42.string().optional(),
+      discord: z42.string().optional(),
+      youtube: z42.string().optional()
+    }).optional()
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    const now = Date.now();
+    const [result2] = await db2.insert(conventions).values({
+      title: input.title,
+      subtitle: input.subtitle || null,
+      description: input.description || null,
+      hostUserId: ctx.user.id,
+      status: "draft",
+      startDate: input.startDate,
+      endDate: input.endDate,
+      timezone: input.timezone,
+      maxAttendees: input.maxAttendees,
+      currentAttendees: 0,
+      isVirtual: input.isVirtual,
+      isHybrid: input.isHybrid,
+      venueInfo: input.venueInfo || null,
+      registrationFee: input.registrationFee,
+      tags: input.tags || null,
+      sponsors: input.sponsors || null,
+      socialLinks: input.socialLinks || null,
+      createdAt: now,
+      updatedAt: now
+    });
+    return { id: result2.insertId };
+  }),
+  getConventions: publicProcedure.input(z42.object({
+    status: z42.enum(["draft", "announced", "registration_open", "active", "day_of", "ended", "archived"]).optional(),
+    limit: z42.number().min(1).max(50).default(20)
+  }).optional()).query(async ({ input }) => {
+    const db2 = await getDb();
+    if (input?.status) {
+      return db2.select().from(conventions).where(eq18(conventions.status, input.status)).orderBy(desc11(conventions.startDate)).limit(input.limit);
+    }
+    return db2.select().from(conventions).orderBy(desc11(conventions.startDate)).limit(input?.limit || 20);
+  }),
+  getConvention: publicProcedure.input(z42.object({ id: z42.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const [convention] = await db2.select().from(conventions).where(eq18(conventions.id, input.id));
+    if (!convention) throw new Error("Convention not found");
+    const sessions = await db2.select().from(conventionSessions).where(eq18(conventionSessions.conventionId, input.id)).orderBy(conventionSessions.startTime);
+    const [attendeeStats] = await db2.select({
+      total: sql11`COUNT(*)`,
+      confirmed: sql11`SUM(CASE WHEN registration_status = 'confirmed' THEN 1 ELSE 0 END)`,
+      checkedIn: sql11`SUM(CASE WHEN registration_status = 'checked_in' THEN 1 ELSE 0 END)`,
+      speakers: sql11`SUM(CASE WHEN role = 'speaker' THEN 1 ELSE 0 END)`,
+      vips: sql11`SUM(CASE WHEN role = 'vip' THEN 1 ELSE 0 END)`
+    }).from(conventionAttendees).where(eq18(conventionAttendees.conventionId, input.id));
+    return { ...convention, sessions, attendeeStats };
+  }),
+  updateConventionStatus: protectedProcedure.input(z42.object({
+    id: z42.number(),
+    status: z42.enum(["draft", "announced", "registration_open", "active", "day_of", "ended", "archived"])
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.update(conventions).set({
+      status: input.status,
+      updatedAt: Date.now()
+    }).where(eq18(conventions.id, input.id));
+    return { success: true };
+  }),
+  // ─── Convention Sessions ───────────────────────────────
+  addSession: protectedProcedure.input(z42.object({
+    conventionId: z42.number(),
+    title: z42.string().min(1),
+    description: z42.string().optional(),
+    sessionType: z42.enum(["keynote", "panel", "workshop", "breakout", "networking", "performance", "qa", "fireside_chat"]).default("panel"),
+    track: z42.string().optional(),
+    room: z42.string().optional(),
+    startTime: z42.number(),
+    endTime: z42.number(),
+    maxParticipants: z42.number().default(50),
+    speakers: z42.array(z42.object({
+      name: z42.string(),
+      bio: z42.string().optional(),
+      avatar: z42.string().optional(),
+      platform: z42.string().optional()
+    })).optional(),
+    isRecorded: z42.boolean().default(true)
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const now = Date.now();
+    const [studioResult] = await db2.insert(studioSessions).values({
+      title: input.title,
+      description: input.description || null,
+      sessionType: "convention_panel",
+      status: "scheduled",
+      scheduledAt: input.startTime,
+      maxGuests: input.maxParticipants,
+      isPublic: true,
+      recordingEnabled: input.isRecorded,
+      conventionId: input.conventionId,
+      joinCode: Math.random().toString(36).substring(2, 12).toUpperCase(),
+      viewerCount: 0,
+      peakViewers: 0,
+      createdAt: now,
+      updatedAt: now
+    });
+    const [result2] = await db2.insert(conventionSessions).values({
+      conventionId: input.conventionId,
+      studioSessionId: studioResult.insertId,
+      title: input.title,
+      description: input.description || null,
+      sessionType: input.sessionType,
+      track: input.track || null,
+      room: input.room || null,
+      startTime: input.startTime,
+      endTime: input.endTime,
+      maxParticipants: input.maxParticipants,
+      currentParticipants: 0,
+      speakers: input.speakers || null,
+      isRecorded: input.isRecorded,
+      status: "scheduled",
+      createdAt: now
+    });
+    return { id: result2.insertId, studioSessionId: studioResult.insertId };
+  }),
+  getConventionSessions: publicProcedure.input(z42.object({
+    conventionId: z42.number(),
+    track: z42.string().optional()
+  })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const conditions = [eq18(conventionSessions.conventionId, input.conventionId)];
+    if (input.track) conditions.push(eq18(conventionSessions.track, input.track));
+    return db2.select().from(conventionSessions).where(and13(...conditions)).orderBy(conventionSessions.startTime);
+  }),
+  updateSessionStatus: protectedProcedure.input(z42.object({
+    sessionId: z42.number(),
+    status: z42.enum(["scheduled", "live", "ended", "cancelled"])
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.update(conventionSessions).set({ status: input.status }).where(eq18(conventionSessions.id, input.sessionId));
+    return { success: true };
+  }),
+  // ─── Attendee Registration ─────────────────────────────
+  registerAttendee: publicProcedure.input(z42.object({
+    conventionId: z42.number(),
+    name: z42.string().min(1),
+    email: z42.string().email(),
+    role: z42.enum(["attendee", "speaker", "panelist", "moderator", "vip", "sponsor", "organizer"]).default("attendee"),
+    ticketType: z42.enum(["free", "general", "vip", "speaker", "sponsor"]).default("free"),
+    platform: z42.string().optional(),
+    bio: z42.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const [convention] = await db2.select().from(conventions).where(eq18(conventions.id, input.conventionId));
+    if (!convention) throw new Error("Convention not found");
+    if (convention.currentAttendees >= convention.maxAttendees) throw new Error("Convention is at capacity");
+    const now = Date.now();
+    const [result2] = await db2.insert(conventionAttendees).values({
+      conventionId: input.conventionId,
+      name: input.name,
+      email: input.email,
+      role: input.role,
+      ticketType: input.ticketType,
+      registrationStatus: input.ticketType === "free" ? "confirmed" : "pending",
+      platform: input.platform || null,
+      bio: input.bio || null,
+      createdAt: now
+    });
+    await db2.update(conventions).set({
+      currentAttendees: sql11`current_attendees + 1`,
+      updatedAt: now
+    }).where(eq18(conventions.id, input.conventionId));
+    return { id: result2.insertId, status: input.ticketType === "free" ? "confirmed" : "pending" };
+  }),
+  getAttendees: protectedProcedure.input(z42.object({
+    conventionId: z42.number(),
+    role: z42.enum(["attendee", "speaker", "panelist", "moderator", "vip", "sponsor", "organizer"]).optional()
+  })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const conditions = [eq18(conventionAttendees.conventionId, input.conventionId)];
+    if (input.role) conditions.push(eq18(conventionAttendees.role, input.role));
+    return db2.select().from(conventionAttendees).where(and13(...conditions)).orderBy(desc11(conventionAttendees.createdAt));
+  }),
+  checkInAttendee: protectedProcedure.input(z42.object({ attendeeId: z42.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.update(conventionAttendees).set({
+      registrationStatus: "checked_in",
+      checkedInAt: Date.now()
+    }).where(eq18(conventionAttendees.id, input.attendeeId));
+    return { success: true };
+  }),
+  // ─── Convention Stats ──────────────────────────────────
+  getConventionStats: protectedProcedure.query(async ({ ctx }) => {
+    const db2 = await getDb();
+    const [stats] = await db2.select({
+      total: sql11`COUNT(*)`,
+      active: sql11`SUM(CASE WHEN status IN ('active', 'day_of') THEN 1 ELSE 0 END)`,
+      upcoming: sql11`SUM(CASE WHEN status IN ('announced', 'registration_open') THEN 1 ELSE 0 END)`,
+      past: sql11`SUM(CASE WHEN status IN ('ended', 'archived') THEN 1 ELSE 0 END)`,
+      totalAttendees: sql11`COALESCE(SUM(current_attendees), 0)`
+    }).from(conventions).where(eq18(conventions.hostUserId, ctx.user.id));
+    return stats;
+  }),
+  // ─── Get Tracks for a Convention ───────────────────────
+  getTracks: publicProcedure.input(z42.object({ conventionId: z42.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const sessions = await db2.select({ track: conventionSessions.track }).from(conventionSessions).where(eq18(conventionSessions.conventionId, input.conventionId));
+    const tracks = [...new Set(sessions.map((s) => s.track).filter(Boolean))];
+    return tracks;
+  })
+});
+
 // server/routerChunks/chunk5.ts
 var chunk5Router = router({
   seedData: seedDataRouter,
@@ -16177,11 +16888,13 @@ var chunk5Router = router({
   adRotation: adRotationRouter,
   listenerAnalytics: listenerAnalyticsRouter,
   webhookManager: webhookManagerRouter,
-  productionIntegration: productionIntegrationRouter
+  productionIntegration: productionIntegrationRouter,
+  studio: studioRouter,
+  convention: conventionRouter
 });
 
 // server/routers/itunesPodcasts.ts
-import { z as z41 } from "zod";
+import { z as z43 } from "zod";
 
 // server/services/itunesService.ts
 import axios2 from "axios";
@@ -16372,9 +17085,9 @@ var itunesPodcastsRouter = router({
    * Search for podcasts by query
    */
   search: publicProcedure.input(
-    z41.object({
-      query: z41.string().min(1).max(200),
-      limit: z41.number().int().min(1).max(200).default(20)
+    z43.object({
+      query: z43.string().min(1).max(200),
+      limit: z43.number().int().min(1).max(200).default(20)
     })
   ).mutation(async ({ input }) => {
     try {
@@ -16401,9 +17114,9 @@ var itunesPodcastsRouter = router({
    * Get top podcasts
    */
   getTop: publicProcedure.input(
-    z41.object({
-      limit: z41.number().int().min(1).max(200).default(20),
-      genreId: z41.number().int().default(26)
+    z43.object({
+      limit: z43.number().int().min(1).max(200).default(20),
+      genreId: z43.number().int().default(26)
       // 26 = Podcasts
     })
   ).query(async ({ input }) => {
@@ -16431,8 +17144,8 @@ var itunesPodcastsRouter = router({
    * Get podcast details by collection ID
    */
   getDetails: publicProcedure.input(
-    z41.object({
-      collectionId: z41.number().int().positive()
+    z43.object({
+      collectionId: z43.number().int().positive()
     })
   ).query(async ({ input }) => {
     try {
@@ -16463,9 +17176,9 @@ var itunesPodcastsRouter = router({
    * Search for podcasts by artist
    */
   searchByArtist: publicProcedure.input(
-    z41.object({
-      artistName: z41.string().min(1).max(200),
-      limit: z41.number().int().min(1).max(200).default(20)
+    z43.object({
+      artistName: z43.string().min(1).max(200),
+      limit: z43.number().int().min(1).max(200).default(20)
     })
   ).query(async ({ input }) => {
     try {
@@ -16548,7 +17261,7 @@ var itunesPodcastsRouter = router({
 });
 
 // server/routers/chatStreamingRouter.ts
-import { z as z42 } from "zod";
+import { z as z44 } from "zod";
 
 // server/_core/llm.ts
 init_env();
@@ -17353,21 +18066,21 @@ var chatStreamingRouter = router({
   /**
    * Stream chat responses in real-time — supports text + file attachments (images, docs, audio)
    */
-  streamChat: publicProcedure.input(z42.object({
-    messages: z42.array(z42.object({
-      role: z42.enum(["user", "assistant"]),
-      content: z42.string()
+  streamChat: publicProcedure.input(z44.object({
+    messages: z44.array(z44.object({
+      role: z44.enum(["user", "assistant"]),
+      content: z44.string()
     })),
-    query: z42.string(),
+    query: z44.string(),
     // Which AI persona to use — Valanna (default), Candy, or Seraph
-    persona: z42.enum(["valanna", "candy", "seraph"]).default("valanna"),
+    persona: z44.enum(["valanna", "candy", "seraph"]).default("valanna"),
     // Optional file attachments for multimodal input
-    attachments: z42.array(z42.object({
-      url: z42.string(),
+    attachments: z44.array(z44.object({
+      url: z44.string(),
       // S3 URL of the uploaded file
-      mimeType: z42.string(),
+      mimeType: z44.string(),
       // e.g. image/png, application/pdf, audio/mp3
-      fileName: z42.string()
+      fileName: z44.string()
       // Original file name
     })).optional()
   })).mutation(async ({ input, ctx }) => {
@@ -17454,11 +18167,11 @@ var chatStreamingRouter = router({
   /**
    * Upload a file for Valanna chat — stores in S3 and returns URL
    */
-  uploadChatFile: publicProcedure.input(z42.object({
-    fileName: z42.string(),
-    fileData: z42.string(),
+  uploadChatFile: publicProcedure.input(z44.object({
+    fileName: z44.string(),
+    fileData: z44.string(),
     // base64 encoded file data
-    mimeType: z42.string()
+    mimeType: z44.string()
   })).mutation(async ({ input }) => {
     try {
       const { storagePut: storagePut2 } = await Promise.resolve().then(() => (init_storage(), storage_exports));
@@ -17491,17 +18204,17 @@ var chatStreamingRouter = router({
    * Conference Mode — All three AIs respond to the same message in sequence
    * Each AI sees the other AIs' responses so they can build on each other
    */
-  conferenceChat: publicProcedure.input(z42.object({
-    messages: z42.array(z42.object({
-      role: z42.enum(["user", "assistant"]),
-      content: z42.string(),
-      persona: z42.string().optional()
+  conferenceChat: publicProcedure.input(z44.object({
+    messages: z44.array(z44.object({
+      role: z44.enum(["user", "assistant"]),
+      content: z44.string(),
+      persona: z44.string().optional()
     })),
-    query: z42.string(),
-    attachments: z42.array(z42.object({
-      url: z42.string(),
-      mimeType: z42.string(),
-      fileName: z42.string()
+    query: z44.string(),
+    attachments: z44.array(z44.object({
+      url: z44.string(),
+      mimeType: z44.string(),
+      fileName: z44.string()
     })).optional()
   })).mutation(async ({ input }) => {
     try {
@@ -17572,18 +18285,18 @@ var chatStreamingRouter = router({
 });
 
 // server/routers/locationSharingRouter.ts
-import { z as z43 } from "zod";
+import { z as z45 } from "zod";
 var sharedLocations = /* @__PURE__ */ new Map();
 var locationSharingRouter = router({
   /**
    * Share current location with team members
    */
-  shareLocation: protectedProcedure.input(z43.object({
-    latitude: z43.number(),
-    longitude: z43.number(),
-    accuracy: z43.number(),
-    teamMemberIds: z43.array(z43.string()),
-    label: z43.string().optional()
+  shareLocation: protectedProcedure.input(z45.object({
+    latitude: z45.number(),
+    longitude: z45.number(),
+    accuracy: z45.number(),
+    teamMemberIds: z45.array(z45.string()),
+    label: z45.string().optional()
   })).mutation(async ({ input, ctx }) => {
     try {
       const locationId = `loc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -17646,8 +18359,8 @@ var locationSharingRouter = router({
   /**
    * Get location history for current user
    */
-  getLocationHistory: protectedProcedure.input(z43.object({
-    limit: z43.number().default(50)
+  getLocationHistory: protectedProcedure.input(z45.object({
+    limit: z45.number().default(50)
   })).query(async ({ input, ctx }) => {
     try {
       const history = Array.from(sharedLocations.values()).filter((loc) => loc.userId === ctx.user.id).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, input.limit);
@@ -17667,8 +18380,8 @@ var locationSharingRouter = router({
   /**
    * Delete a shared location
    */
-  deleteSharedLocation: protectedProcedure.input(z43.object({
-    locationId: z43.string()
+  deleteSharedLocation: protectedProcedure.input(z45.object({
+    locationId: z45.string()
   })).mutation(async ({ input, ctx }) => {
     try {
       const location = sharedLocations.get(input.locationId);
@@ -17694,10 +18407,10 @@ var locationSharingRouter = router({
   /**
    * Get nearby shared locations
    */
-  getNearbyLocations: publicProcedure.input(z43.object({
-    latitude: z43.number(),
-    longitude: z43.number(),
-    radiusKm: z43.number().default(10)
+  getNearbyLocations: publicProcedure.input(z45.object({
+    latitude: z45.number(),
+    longitude: z45.number(),
+    radiusKm: z45.number().default(10)
   })).query(async ({ input }) => {
     try {
       const toRad = (deg) => deg * Math.PI / 180;
@@ -17728,7 +18441,7 @@ var locationSharingRouter = router({
 });
 
 // server/routers/fileAnalysisRouter.ts
-import { z as z44 } from "zod";
+import { z as z46 } from "zod";
 
 // server/_core/voiceTranscription.ts
 init_env();
@@ -17865,11 +18578,11 @@ var fileAnalysisRouter = router({
   /**
    * Analyze uploaded file and extract content
    */
-  analyzeFile: protectedProcedure.input(z44.object({
-    fileUrl: z44.string(),
-    fileName: z44.string(),
-    mimeType: z44.string(),
-    fileSize: z44.number()
+  analyzeFile: protectedProcedure.input(z46.object({
+    fileUrl: z46.string(),
+    fileName: z46.string(),
+    mimeType: z46.string(),
+    fileSize: z46.number()
   })).mutation(async ({ input }) => {
     try {
       const analysis = {
@@ -17968,11 +18681,11 @@ ${analysis.content.substring(0, 2e3)}`
   /**
    * Extract text from multiple files
    */
-  extractBatchContent: protectedProcedure.input(z44.object({
-    files: z44.array(z44.object({
-      fileUrl: z44.string(),
-      fileName: z44.string(),
-      mimeType: z44.string()
+  extractBatchContent: protectedProcedure.input(z46.object({
+    files: z46.array(z46.object({
+      fileUrl: z46.string(),
+      fileName: z46.string(),
+      mimeType: z46.string()
     }))
   })).mutation(async ({ input }) => {
     try {
@@ -18013,8 +18726,8 @@ ${analysis.content.substring(0, 2e3)}`
   /**
    * Get analysis history
    */
-  getAnalysisHistory: protectedProcedure.input(z44.object({
-    limit: z44.number().default(20)
+  getAnalysisHistory: protectedProcedure.input(z46.object({
+    limit: z46.number().default(20)
   })).query(async () => {
     try {
       return {
@@ -18033,7 +18746,7 @@ ${analysis.content.substring(0, 2e3)}`
 });
 
 // server/routers/dashboardRouter.ts
-import { z as z45 } from "zod";
+import { z as z47 } from "zod";
 var dashboardRouter = router({
   /**
    * Get dashboard metrics
@@ -18065,8 +18778,8 @@ var dashboardRouter = router({
   /**
    * Get activity data for charts
    */
-  getActivityData: publicProcedure.input(z45.object({
-    timeRange: z45.enum(["24h", "7d", "30d"]).default("24h")
+  getActivityData: publicProcedure.input(z47.object({
+    timeRange: z47.enum(["24h", "7d", "30d"]).default("24h")
   })).query(async ({ input }) => {
     try {
       const data = [];
@@ -18173,9 +18886,9 @@ var dashboardRouter = router({
   /**
    * Export dashboard data
    */
-  exportDashboardData: protectedProcedure.input(z45.object({
-    format: z45.enum(["json", "csv", "pdf"]).default("json"),
-    includeCharts: z45.boolean().default(true)
+  exportDashboardData: protectedProcedure.input(z47.object({
+    format: z47.enum(["json", "csv", "pdf"]).default("json"),
+    includeCharts: z47.boolean().default(true)
   })).mutation(async ({ input }) => {
     try {
       const data = {
@@ -18272,7 +18985,7 @@ var dashboardRouter = router({
 });
 
 // server/routers/broadcastRouter.ts
-import { z as z46 } from "zod";
+import { z as z48 } from "zod";
 var BROADCASTS = [
   {
     id: "1",
@@ -18360,7 +19073,7 @@ var broadcastRouter = router({
     };
   }),
   // Get broadcast details
-  getBroadcast: protectedProcedure.input(z46.object({ id: z46.string() })).query(async ({ input }) => {
+  getBroadcast: protectedProcedure.input(z48.object({ id: z48.string() })).query(async ({ input }) => {
     const broadcast = BROADCASTS.find((b) => b.id === input.id);
     if (!broadcast) {
       return { success: false, error: "Broadcast not found" };
@@ -18368,7 +19081,7 @@ var broadcastRouter = router({
     return { success: true, data: broadcast };
   }),
   // Delete broadcast
-  deleteBroadcast: protectedProcedure.input(z46.object({ id: z46.string() })).mutation(async ({ input }) => {
+  deleteBroadcast: protectedProcedure.input(z48.object({ id: z48.string() })).mutation(async ({ input }) => {
     const index2 = BROADCASTS.findIndex((b) => b.id === input.id);
     if (index2 === -1) {
       return { success: false, error: "Broadcast not found" };
@@ -18384,7 +19097,7 @@ var broadcastRouter = router({
     };
   }),
   // Get chat room details
-  getChatRoom: protectedProcedure.input(z46.object({ id: z46.string() })).query(async ({ input }) => {
+  getChatRoom: protectedProcedure.input(z48.object({ id: z48.string() })).query(async ({ input }) => {
     const room = CHAT_ROOMS.find((r) => r.id === input.id);
     if (!room) {
       return { success: false, error: "Chat room not found" };
@@ -18399,7 +19112,7 @@ var broadcastRouter = router({
     };
   }),
   // Resolve flagged content
-  resolveFlaggedContent: protectedProcedure.input(z46.object({ id: z46.string() })).mutation(async ({ input }) => {
+  resolveFlaggedContent: protectedProcedure.input(z48.object({ id: z48.string() })).mutation(async ({ input }) => {
     const content = FLAGGED_CONTENT.find((c) => c.id === input.id);
     if (!content) {
       return { success: false, error: "Flagged content not found" };
@@ -18459,17 +19172,17 @@ var broadcastRouter = router({
 });
 
 // server/routers/hybridcastSyncRouter.ts
-import { z as z47 } from "zod";
-var broadcastSchema = z47.object({
-  id: z47.string(),
-  title: z47.string(),
-  content: z47.string(),
-  severity: z47.enum(["low", "medium", "high", "critical"]),
-  channels: z47.array(z47.string()),
-  timestamp: z47.number(),
-  deliveryStatus: z47.enum(["pending", "sent", "delivered", "failed"]),
-  viewerCount: z47.number(),
-  engagementRate: z47.number()
+import { z as z49 } from "zod";
+var broadcastSchema = z49.object({
+  id: z49.string(),
+  title: z49.string(),
+  content: z49.string(),
+  severity: z49.enum(["low", "medium", "high", "critical"]),
+  channels: z49.array(z49.string()),
+  timestamp: z49.number(),
+  deliveryStatus: z49.enum(["pending", "sent", "delivered", "failed"]),
+  viewerCount: z49.number(),
+  engagementRate: z49.number()
 });
 var broadcasts2 = [];
 var syncLog = [];
@@ -18517,10 +19230,10 @@ var hybridcastSyncRouter = router({
   }),
   // Get all synced broadcasts
   getBroadcasts: protectedProcedure.input(
-    z47.object({
-      limit: z47.number().default(10),
-      offset: z47.number().default(0),
-      severity: z47.enum(["low", "medium", "high", "critical"]).optional()
+    z49.object({
+      limit: z49.number().default(10),
+      offset: z49.number().default(0),
+      severity: z49.enum(["low", "medium", "high", "critical"]).optional()
     })
   ).query(async ({ input }) => {
     let filtered = broadcasts2;
@@ -18536,7 +19249,7 @@ var hybridcastSyncRouter = router({
     };
   }),
   // Get broadcast by ID
-  getBroadcast: protectedProcedure.input(z47.object({ id: z47.string() })).query(async ({ input }) => {
+  getBroadcast: protectedProcedure.input(z49.object({ id: z49.string() })).query(async ({ input }) => {
     const broadcast = broadcasts2.find((b) => b.id === input.id);
     if (!broadcast) {
       throw new Error(`Broadcast not found: ${input.id}`);
@@ -18545,11 +19258,11 @@ var hybridcastSyncRouter = router({
   }),
   // Update broadcast delivery status
   updateDeliveryStatus: protectedProcedure.input(
-    z47.object({
-      broadcastId: z47.string(),
-      status: z47.enum(["pending", "sent", "delivered", "failed"]),
-      viewerCount: z47.number().optional(),
-      engagementRate: z47.number().optional()
+    z49.object({
+      broadcastId: z49.string(),
+      status: z49.enum(["pending", "sent", "delivered", "failed"]),
+      viewerCount: z49.number().optional(),
+      engagementRate: z49.number().optional()
     })
   ).mutation(async ({ input }) => {
     const broadcast = broadcasts2.find((b) => b.id === input.broadcastId);
@@ -18573,9 +19286,9 @@ var hybridcastSyncRouter = router({
   }),
   // Get sync history
   getSyncHistory: protectedProcedure.input(
-    z47.object({
-      limit: z47.number().default(20),
-      offset: z47.number().default(0)
+    z49.object({
+      limit: z49.number().default(20),
+      offset: z49.number().default(0)
     })
   ).query(async ({ input }) => {
     const total = syncLog.length;
@@ -18615,7 +19328,7 @@ var hybridcastSyncRouter = router({
     };
   }),
   // Clear old broadcasts (maintenance)
-  clearOldBroadcasts: protectedProcedure.input(z47.object({ olderThanHours: z47.number().default(24) })).mutation(async ({ input, ctx }) => {
+  clearOldBroadcasts: protectedProcedure.input(z49.object({ olderThanHours: z49.number().default(24) })).mutation(async ({ input, ctx }) => {
     const cutoffTime = Date.now() - input.olderThanHours * 60 * 60 * 1e3;
     const beforeCount = broadcasts2.length;
     const filtered = broadcasts2.filter((b) => b.timestamp > cutoffTime);
@@ -18636,7 +19349,7 @@ var hybridcastSyncRouter = router({
 });
 
 // server/routers/solbonesRouter.ts
-import { z as z48 } from "zod";
+import { z as z50 } from "zod";
 import { TRPCError as TRPCError13 } from "@trpc/server";
 var gameSessions = /* @__PURE__ */ new Map();
 var playerStats = /* @__PURE__ */ new Map();
@@ -18719,8 +19432,8 @@ var solbonesRouter = router({
   /**
    * Start a new game session
    */
-  startGame: protectedProcedure.input(z48.object({
-    playerNames: z48.array(z48.string()).min(1).max(9)
+  startGame: protectedProcedure.input(z50.object({
+    playerNames: z50.array(z50.string()).min(1).max(9)
   })).mutation(async ({ ctx, input }) => {
     const sessionId = `game-${Date.now()}`;
     const session = {
@@ -18749,13 +19462,13 @@ var solbonesRouter = router({
   /**
    * Roll dice and score
    */
-  rollDice: protectedProcedure.input(z48.object({
-    sessionId: z48.string(),
-    die1: z48.number().min(1).max(6),
-    die2: z48.number().min(1).max(6),
-    die3: z48.number().min(1).max(6),
-    frequencyDie: z48.enum(["red", "purple", "blue"]).optional(),
-    useTally: z48.boolean().default(false)
+  rollDice: protectedProcedure.input(z50.object({
+    sessionId: z50.string(),
+    die1: z50.number().min(1).max(6),
+    die2: z50.number().min(1).max(6),
+    die3: z50.number().min(1).max(6),
+    frequencyDie: z50.enum(["red", "purple", "blue"]).optional(),
+    useTally: z50.boolean().default(false)
   })).mutation(async ({ ctx, input }) => {
     const session = gameSessions.get(input.sessionId);
     if (!session) {
@@ -18805,8 +19518,8 @@ var solbonesRouter = router({
   /**
    * End current player's turn
    */
-  endTurn: protectedProcedure.input(z48.object({
-    sessionId: z48.string()
+  endTurn: protectedProcedure.input(z50.object({
+    sessionId: z50.string()
   })).mutation(async ({ ctx, input }) => {
     const session = gameSessions.get(input.sessionId);
     if (!session) {
@@ -18835,8 +19548,8 @@ var solbonesRouter = router({
   /**
    * Get game state
    */
-  getGameState: publicProcedure.input(z48.object({
-    sessionId: z48.string()
+  getGameState: publicProcedure.input(z50.object({
+    sessionId: z50.string()
   })).query(async ({ input }) => {
     const session = gameSessions.get(input.sessionId);
     if (!session) {
@@ -18859,8 +19572,8 @@ var solbonesRouter = router({
   /**
    * Get player statistics
    */
-  getPlayerStats: publicProcedure.input(z48.object({
-    playerId: z48.string()
+  getPlayerStats: publicProcedure.input(z50.object({
+    playerId: z50.string()
   })).query(async ({ input }) => {
     let stats = playerStats.get(input.playerId);
     if (!stats) {
@@ -18881,9 +19594,9 @@ var solbonesRouter = router({
   /**
    * Get leaderboard
    */
-  getLeaderboard: publicProcedure.input(z48.object({
-    sortBy: z48.enum(["totalScore", "highestScore", "averageScore", "gamesWon"]).default("totalScore"),
-    limit: z48.number().default(10)
+  getLeaderboard: publicProcedure.input(z50.object({
+    sortBy: z50.enum(["totalScore", "highestScore", "averageScore", "gamesWon"]).default("totalScore"),
+    limit: z50.number().default(10)
   })).query(async () => {
     const stats = Array.from(playerStats.values());
     stats.sort((a, b) => {
@@ -18916,8 +19629,8 @@ var solbonesRouter = router({
   /**
    * Join tournament
    */
-  joinTournament: protectedProcedure.input(z48.object({
-    tournamentId: z48.string()
+  joinTournament: protectedProcedure.input(z50.object({
+    tournamentId: z50.string()
   })).mutation(async ({ ctx, input }) => {
     const tournament = tournaments.find((t2) => t2.id === input.tournamentId);
     if (!tournament) {
@@ -18992,13 +19705,13 @@ var solbonesRouter = router({
 });
 
 // server/routers/clientPortalRouter.ts
-import { z as z49 } from "zod";
+import { z as z51 } from "zod";
 
 // server/db-helpers.ts
 init_db();
 init_schema();
 init_db();
-import { eq as eq17, desc as desc10, and as and12, sql as sql10 } from "drizzle-orm";
+import { eq as eq19, desc as desc12, and as and14, sql as sql12 } from "drizzle-orm";
 var drizzleDb = null;
 async function getDatabase() {
   if (!drizzleDb) {
@@ -19009,7 +19722,7 @@ async function getDatabase() {
 async function getOrCreateClientProfile(userId, email) {
   const database2 = await getDatabase();
   if (!database2) throw new Error("Database not available");
-  const existing = await database2.select().from(clientProfiles).where(eq17(clientProfiles.userId, userId));
+  const existing = await database2.select().from(clientProfiles).where(eq19(clientProfiles.userId, userId));
   if (existing.length > 0) {
     return existing[0];
   }
@@ -19018,13 +19731,13 @@ async function getOrCreateClientProfile(userId, email) {
     fullName: "Client",
     email
   });
-  return database2.select().from(clientProfiles).where(eq17(clientProfiles.userId, userId));
+  return database2.select().from(clientProfiles).where(eq19(clientProfiles.userId, userId));
 }
 async function updateClientProfile(userId, updates) {
-  return database.update(clientProfiles).set(updates).where(eq17(clientProfiles.userId, userId));
+  return database.update(clientProfiles).set(updates).where(eq19(clientProfiles.userId, userId));
 }
 async function getClientProfile(userId) {
-  return database.select().from(clientProfiles).where(eq17(clientProfiles.userId, userId));
+  return database.select().from(clientProfiles).where(eq19(clientProfiles.userId, userId));
 }
 async function recordDonation(userId, amount, purpose, transactionId) {
   return database.insert(clientDonationHistory).values({
@@ -19036,7 +19749,7 @@ async function recordDonation(userId, amount, purpose, transactionId) {
   });
 }
 async function getDonationHistory(userId) {
-  return database.select().from(clientDonationHistory).where(eq17(clientDonationHistory.userId, userId)).orderBy(desc10(clientDonationHistory.createdAt));
+  return database.select().from(clientDonationHistory).where(eq19(clientDonationHistory.userId, userId)).orderBy(desc12(clientDonationHistory.createdAt));
 }
 async function recordContentUpload(userId, title, contentUrl, contentType, fileSize, duration) {
   return database.insert(clientContentUploads).values({
@@ -19050,7 +19763,7 @@ async function recordContentUpload(userId, title, contentUrl, contentType, fileS
   });
 }
 async function getClientContentUploads(userId) {
-  return database.select().from(clientContentUploads).where(eq17(clientContentUploads.userId, userId)).orderBy(desc10(clientContentUploads.createdAt));
+  return database.select().from(clientContentUploads).where(eq19(clientContentUploads.userId, userId)).orderBy(desc12(clientContentUploads.createdAt));
 }
 async function createReview(userId, rating, title, content, category = "general") {
   return database.insert(reviews).values({
@@ -19064,33 +19777,33 @@ async function createReview(userId, rating, title, content, category = "general"
   });
 }
 async function getReviews(limit = 10, offset = 0) {
-  return database.select().from(reviews).where(eq17(reviews.status, "approved")).orderBy(desc10(reviews.createdAt)).limit(limit).offset(offset);
+  return database.select().from(reviews).where(eq19(reviews.status, "approved")).orderBy(desc12(reviews.createdAt)).limit(limit).offset(offset);
 }
 async function getReviewsByCategory(category, limit = 10) {
   return database.select().from(reviews).where(
-    and12(
-      eq17(reviews.status, "approved"),
-      eq17(reviews.category, category)
+    and14(
+      eq19(reviews.status, "approved"),
+      eq19(reviews.category, category)
     )
-  ).orderBy(desc10(reviews.createdAt)).limit(limit);
+  ).orderBy(desc12(reviews.createdAt)).limit(limit);
 }
 async function getReviewById(reviewId) {
-  return database.select().from(reviews).where(eq17(reviews.id, reviewId));
+  return database.select().from(reviews).where(eq19(reviews.id, reviewId));
 }
 async function recordReviewHelpfulness(reviewId, userId, isHelpful) {
   const database2 = await getDatabase();
   if (!database2) throw new Error("Database not available");
   const existing = await database2.select().from(reviewHelpfulness).where(
-    and12(
-      eq17(reviewHelpfulness.reviewId, reviewId),
-      eq17(reviewHelpfulness.userId, userId)
+    and14(
+      eq19(reviewHelpfulness.reviewId, reviewId),
+      eq19(reviewHelpfulness.userId, userId)
     )
   );
   if (existing.length > 0) {
     return database2.update(reviewHelpfulness).set({ isHelpful: isHelpful ? 1 : 0 }).where(
-      and12(
-        eq17(reviewHelpfulness.reviewId, reviewId),
-        eq17(reviewHelpfulness.userId, userId)
+      and14(
+        eq19(reviewHelpfulness.reviewId, reviewId),
+        eq19(reviewHelpfulness.userId, userId)
       )
     );
   }
@@ -19102,16 +19815,16 @@ async function recordReviewHelpfulness(reviewId, userId, isHelpful) {
 }
 async function getReviewHelpfulnessStats(reviewId) {
   const stats = await (void 0)({
-    helpful: sql10`SUM(CASE WHEN is_helpful = 1 THEN 1 ELSE 0 END)`,
-    notHelpful: sql10`SUM(CASE WHEN is_helpful = 0 THEN 1 ELSE 0 END)`
-  }).from(reviewHelpfulness).where(eq17(reviewHelpfulness.reviewId, reviewId));
+    helpful: sql12`SUM(CASE WHEN is_helpful = 1 THEN 1 ELSE 0 END)`,
+    notHelpful: sql12`SUM(CASE WHEN is_helpful = 0 THEN 1 ELSE 0 END)`
+  }).from(reviewHelpfulness).where(eq19(reviewHelpfulness.reviewId, reviewId));
   return stats[0];
 }
 async function getAverageRating() {
   const result2 = await (void 0)({
-    average: sql10`AVG(rating)`,
-    count: sql10`COUNT(*)`
-  }).from(reviews).where(eq17(reviews.status, "approved"));
+    average: sql12`AVG(rating)`,
+    count: sql12`COUNT(*)`
+  }).from(reviews).where(eq19(reviews.status, "approved"));
   return result2[0];
 }
 async function addReviewResponse(reviewId, responderId, response) {
@@ -19122,7 +19835,7 @@ async function addReviewResponse(reviewId, responderId, response) {
   });
 }
 async function getReviewResponses(reviewId) {
-  return database.select().from(reviewResponses).where(eq17(reviewResponses.reviewId, reviewId)).orderBy(desc10(reviewResponses.createdAt));
+  return database.select().from(reviewResponses).where(eq19(reviewResponses.reviewId, reviewId)).orderBy(desc12(reviewResponses.createdAt));
 }
 
 // server/routers/clientPortalRouter.ts
@@ -19142,12 +19855,12 @@ var clientPortalRouter = router({
     return profile[0] || null;
   }),
   // Update client profile
-  updateProfile: protectedProcedure.input(z49.object({
-    fullName: z49.string().optional(),
-    phone: z49.string().optional(),
-    bio: z49.string().optional(),
-    profilePicture: z49.string().optional(),
-    preferences: z49.record(z49.any()).optional()
+  updateProfile: protectedProcedure.input(z51.object({
+    fullName: z51.string().optional(),
+    phone: z51.string().optional(),
+    bio: z51.string().optional(),
+    profilePicture: z51.string().optional(),
+    preferences: z51.record(z51.any()).optional()
   })).mutation(async ({ ctx, input }) => {
     if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
     await updateClientProfile(ctx.user.id, input);
@@ -19159,10 +19872,10 @@ var clientPortalRouter = router({
     return getDonationHistory(ctx.user.id);
   }),
   // Record a donation
-  recordDonation: protectedProcedure.input(z49.object({
-    amount: z49.number().positive(),
-    purpose: z49.string().optional(),
-    transactionId: z49.string().optional()
+  recordDonation: protectedProcedure.input(z51.object({
+    amount: z51.number().positive(),
+    purpose: z51.string().optional(),
+    transactionId: z51.string().optional()
   })).mutation(async ({ ctx, input }) => {
     if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
     const result2 = await recordDonation(
@@ -19187,12 +19900,12 @@ var clientPortalRouter = router({
     return getClientContentUploads(ctx.user.id);
   }),
   // Record content upload
-  recordContentUpload: protectedProcedure.input(z49.object({
-    title: z49.string().min(1),
-    contentUrl: z49.string().url(),
-    contentType: z49.enum(["audio", "video", "document", "image"]),
-    fileSize: z49.number().optional(),
-    duration: z49.number().optional()
+  recordContentUpload: protectedProcedure.input(z51.object({
+    title: z51.string().min(1),
+    contentUrl: z51.string().url(),
+    contentType: z51.enum(["audio", "video", "document", "image"]),
+    fileSize: z51.number().optional(),
+    duration: z51.number().optional()
   })).mutation(async ({ ctx, input }) => {
     if (!ctx.user) throw new TRPCError14({ code: "UNAUTHORIZED" });
     await recordContentUpload(
@@ -19233,15 +19946,15 @@ var clientPortalRouter = router({
 });
 
 // server/routers/reviewRouter.ts
-import { z as z50 } from "zod";
+import { z as z52 } from "zod";
 import { TRPCError as TRPCError15 } from "@trpc/server";
 var reviewRouter = router({
   // Create a new review
-  createReview: protectedProcedure.input(z50.object({
-    rating: z50.number().min(1).max(5),
-    title: z50.string().min(5).max(255),
-    content: z50.string().min(10),
-    category: z50.enum([
+  createReview: protectedProcedure.input(z52.object({
+    rating: z52.number().min(1).max(5),
+    title: z52.string().min(5).max(255),
+    content: z52.string().min(10),
+    category: z52.enum([
       "content_quality",
       "user_experience",
       "platform_features",
@@ -19260,11 +19973,11 @@ var reviewRouter = router({
     return { success: true, reviewId: result2.insertId };
   }),
   // Get all approved reviews
-  getReviews: publicProcedure.input(z50.object({
-    limit: z50.number().default(10),
-    offset: z50.number().default(0),
-    category: z50.string().optional(),
-    sortBy: z50.enum(["recent", "helpful", "rating"]).default("recent")
+  getReviews: publicProcedure.input(z52.object({
+    limit: z52.number().default(10),
+    offset: z52.number().default(0),
+    category: z52.string().optional(),
+    sortBy: z52.enum(["recent", "helpful", "rating"]).default("recent")
   })).query(async ({ input }) => {
     if (input.category) {
       return getReviewsByCategory(input.category, input.limit);
@@ -19272,7 +19985,7 @@ var reviewRouter = router({
     return getReviews(input.limit, input.offset);
   }),
   // Get single review with responses
-  getReview: publicProcedure.input(z50.number()).query(async ({ input }) => {
+  getReview: publicProcedure.input(z52.number()).query(async ({ input }) => {
     const review = await getReviewById(input);
     if (review.length === 0) {
       throw new TRPCError15({ code: "NOT_FOUND" });
@@ -19286,9 +19999,9 @@ var reviewRouter = router({
     };
   }),
   // Mark review as helpful/not helpful
-  markHelpful: protectedProcedure.input(z50.object({
-    reviewId: z50.number(),
-    isHelpful: z50.boolean()
+  markHelpful: protectedProcedure.input(z52.object({
+    reviewId: z52.number(),
+    isHelpful: z52.boolean()
   })).mutation(async ({ ctx, input }) => {
     if (!ctx.user) throw new TRPCError15({ code: "UNAUTHORIZED" });
     await recordReviewHelpfulness(
@@ -19299,9 +20012,9 @@ var reviewRouter = router({
     return { success: true };
   }),
   // Add response to review (admin/owner only)
-  addResponse: protectedProcedure.input(z50.object({
-    reviewId: z50.number(),
-    response: z50.string().min(10)
+  addResponse: protectedProcedure.input(z52.object({
+    reviewId: z52.number(),
+    response: z52.string().min(10)
   })).mutation(async ({ ctx, input }) => {
     if (!ctx.user) throw new TRPCError15({ code: "UNAUTHORIZED" });
     const review = await getReviewById(input.reviewId);
@@ -19323,7 +20036,7 @@ var reviewRouter = router({
     return getAverageRating();
   }),
   // Get reviews by category with stats
-  getByCategory: publicProcedure.input(z50.string()).query(async ({ input }) => {
+  getByCategory: publicProcedure.input(z52.string()).query(async ({ input }) => {
     return getReviewsByCategory(input, 20);
   }),
   // Get user's own reviews
@@ -19334,7 +20047,7 @@ var reviewRouter = router({
 });
 
 // server/routers/meditation.ts
-import { z as z51 } from "zod";
+import { z as z53 } from "zod";
 var MEDITATION_SESSIONS = [
   {
     id: "med_001",
@@ -19469,7 +20182,7 @@ var meditationRouter = router({
   /**
    * Start a meditation session
    */
-  startSession: protectedProcedure.input(z51.object({ sessionId: z51.string() })).mutation(async ({ ctx, input }) => {
+  startSession: protectedProcedure.input(z53.object({ sessionId: z53.string() })).mutation(async ({ ctx, input }) => {
     try {
       const session = MEDITATION_SESSIONS.find((s) => s.id === input.sessionId);
       if (!session) {
@@ -19497,10 +20210,10 @@ var meditationRouter = router({
    * Complete a meditation session and track progress
    */
   completeSession: protectedProcedure.input(
-    z51.object({
-      sessionId: z51.string(),
-      minutesCompleted: z51.number(),
-      rating: z51.number().min(1).max(5).optional()
+    z53.object({
+      sessionId: z53.string(),
+      minutesCompleted: z53.number(),
+      rating: z53.number().min(1).max(5).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -19577,7 +20290,7 @@ var meditationRouter = router({
   /**
    * Toggle favorite status for a session
    */
-  toggleFavorite: protectedProcedure.input(z51.object({ sessionId: z51.string() })).mutation(async ({ ctx, input }) => {
+  toggleFavorite: protectedProcedure.input(z53.object({ sessionId: z53.string() })).mutation(async ({ ctx, input }) => {
     try {
       const session = MEDITATION_SESSIONS.find((s) => s.id === input.sessionId);
       if (!session) {
@@ -19603,7 +20316,7 @@ var meditationRouter = router({
   /**
    * Get sessions by category
    */
-  getByCategory: protectedProcedure.input(z51.object({ category: z51.string() })).query(async ({ ctx, input }) => {
+  getByCategory: protectedProcedure.input(z53.object({ category: z53.string() })).query(async ({ ctx, input }) => {
     try {
       const filtered = MEDITATION_SESSIONS.filter(
         (s) => s.category === input.category
@@ -19622,13 +20335,13 @@ var meditationRouter = router({
 });
 
 // server/routers/commandExecutionRouter.ts
-import { z as z52 } from "zod";
+import { z as z54 } from "zod";
 var commandExecutionRouter = router({
-  executeCommand: protectedProcedure.input(z52.object({ userMessage: z52.string() })).mutation(async ({ input }) => {
+  executeCommand: protectedProcedure.input(z54.object({ userMessage: z54.string() })).mutation(async ({ input }) => {
     const command = parseCommand(input.userMessage);
     return { success: true, command };
   }),
-  getSuggestions: protectedProcedure.input(z52.object({ message: z52.string() })).query(async ({ input }) => {
+  getSuggestions: protectedProcedure.input(z54.object({ message: z54.string() })).query(async ({ input }) => {
     return { suggestions: generateSuggestions(input.message) };
   })
 });
@@ -19683,17 +20396,17 @@ function generateSuggestions(message) {
 }
 
 // server/routers/qumusCommandRouter.ts
-import { z as z53 } from "zod";
+import { z as z55 } from "zod";
 import { randomUUID as randomUUID2 } from "crypto";
 var uuid = () => randomUUID2();
 var decisions2 = [];
 var qumusCommandRouter = router({
   // Execute command across any subsystem
   executeCommand: protectedProcedure.input(
-    z53.object({
-      command: z53.string(),
-      subsystem: z53.enum(["HybridCast", "Rockin Rockin Boogie", "Sweet Miracles", "Canryn"]),
-      parameters: z53.record(z53.any()).optional()
+    z55.object({
+      command: z55.string(),
+      subsystem: z55.enum(["HybridCast", "Rockin Rockin Boogie", "Sweet Miracles", "Canryn"]),
+      parameters: z55.record(z55.any()).optional()
     })
   ).mutation(async ({ input, ctx }) => {
     const commandId = uuid();
@@ -19734,7 +20447,7 @@ var qumusCommandRouter = router({
     };
   }),
   // Approve pending command
-  approveCommand: protectedProcedure.input(z53.object({ decisionId: z53.string() })).mutation(async ({ input, ctx }) => {
+  approveCommand: protectedProcedure.input(z55.object({ decisionId: z55.string() })).mutation(async ({ input, ctx }) => {
     const decision = decisions2.find((d) => d.id === input.decisionId);
     if (!decision) {
       throw new Error("Decision not found");
@@ -19754,7 +20467,7 @@ var qumusCommandRouter = router({
     };
   }),
   // Get decision history
-  getDecisions: protectedProcedure.input(z53.object({ limit: z53.number().default(50) }).optional()).query(({ input }) => {
+  getDecisions: protectedProcedure.input(z55.object({ limit: z55.number().default(50) }).optional()).query(({ input }) => {
     return decisions2.slice(-input?.limit || 50);
   }),
   // Get system status
@@ -19783,7 +20496,7 @@ var qumusCommandRouter = router({
     };
   }),
   // Get command suggestions
-  getSuggestions: protectedProcedure.input(z53.object({ subsystem: z53.string(), input: z53.string() })).query(({ input }) => {
+  getSuggestions: protectedProcedure.input(z55.object({ subsystem: z55.string(), input: z55.string() })).query(({ input }) => {
     const suggestions = {
       "HybridCast": [
         "broadcast emergency alert",
@@ -20101,13 +20814,13 @@ var AudioService = class {
 var audioService = new AudioService();
 
 // server/routers/audioRouter.ts
-import { z as z54 } from "zod";
+import { z as z56 } from "zod";
 var audioRouter = router({
   // Transcribe audio
-  transcribe: protectedProcedure.input(z54.object({
-    audioUrl: z54.string().url(),
-    language: z54.string().optional(),
-    prompt: z54.string().optional()
+  transcribe: protectedProcedure.input(z56.object({
+    audioUrl: z56.string().url(),
+    language: z56.string().optional(),
+    prompt: z56.string().optional()
   })).mutation(async ({ input }) => {
     return await audioService.transcribeAudio(
       input.audioUrl,
@@ -20116,10 +20829,10 @@ var audioRouter = router({
     );
   }),
   // Generate audio from text
-  generate: protectedProcedure.input(z54.object({
-    text: z54.string(),
-    voice: z54.enum(["male", "female"]).default("female"),
-    speed: z54.number().min(0.5).max(2).default(1)
+  generate: protectedProcedure.input(z56.object({
+    text: z56.string(),
+    voice: z56.enum(["male", "female"]).default("female"),
+    speed: z56.number().min(0.5).max(2).default(1)
   })).mutation(async ({ input }) => {
     return await audioService.generateAudio(
       input.text,
@@ -20128,9 +20841,9 @@ var audioRouter = router({
     );
   }),
   // Upload audio
-  upload: protectedProcedure.input(z54.object({
-    filename: z54.string(),
-    mimeType: z54.string().default("audio/mpeg")
+  upload: protectedProcedure.input(z56.object({
+    filename: z56.string(),
+    mimeType: z56.string().default("audio/mpeg")
   })).mutation(async ({ input }) => {
     return {
       success: true,
@@ -20138,27 +20851,27 @@ var audioRouter = router({
     };
   }),
   // Get audio metadata
-  getMetadata: publicProcedure.input(z54.object({
-    audioUrl: z54.string().url()
+  getMetadata: publicProcedure.input(z56.object({
+    audioUrl: z56.string().url()
   })).query(async ({ input }) => {
     return await audioService.getAudioMetadata(input.audioUrl);
   }),
   // Mix audio tracks
-  mix: protectedProcedure.input(z54.object({
-    tracks: z54.array(z54.object({
-      url: z54.string().url(),
-      volume: z54.number().min(0).max(1),
-      startTime: z54.number().min(0)
+  mix: protectedProcedure.input(z56.object({
+    tracks: z56.array(z56.object({
+      url: z56.string().url(),
+      volume: z56.number().min(0).max(1),
+      startTime: z56.number().min(0)
     })),
-    outputFormat: z54.enum(["mp3", "wav"]).default("mp3")
+    outputFormat: z56.enum(["mp3", "wav"]).default("mp3")
   })).mutation(async ({ input }) => {
     return await audioService.mixAudio(input.tracks, input.outputFormat);
   }),
   // Apply audio effect
-  applyEffect: protectedProcedure.input(z54.object({
-    audioUrl: z54.string().url(),
-    effect: z54.enum(["reverb", "echo", "normalize", "compress", "equalize"]),
-    params: z54.record(z54.any()).optional()
+  applyEffect: protectedProcedure.input(z56.object({
+    audioUrl: z56.string().url(),
+    effect: z56.enum(["reverb", "echo", "normalize", "compress", "equalize"]),
+    params: z56.record(z56.any()).optional()
   })).mutation(async ({ input }) => {
     return await audioService.applyEffect(
       input.audioUrl,
@@ -20167,15 +20880,15 @@ var audioRouter = router({
     );
   }),
   // Create processing job
-  createJob: protectedProcedure.input(z54.object({
-    type: z54.enum(["transcribe", "generate", "mix", "effect", "export"]),
-    inputUrl: z54.string().url()
+  createJob: protectedProcedure.input(z56.object({
+    type: z56.enum(["transcribe", "generate", "mix", "effect", "export"]),
+    inputUrl: z56.string().url()
   })).mutation(async ({ input }) => {
     return audioService.createJob(input.type, input.inputUrl);
   }),
   // Get job status
-  getJob: protectedProcedure.input(z54.object({
-    jobId: z54.string()
+  getJob: protectedProcedure.input(z56.object({
+    jobId: z56.string()
   })).query(async ({ input }) => {
     return audioService.getJob(input.jobId);
   }),
@@ -20184,15 +20897,15 @@ var audioRouter = router({
     return audioService.getAllJobs();
   }),
   // Get jobs by status
-  getJobsByStatus: protectedProcedure.input(z54.object({
-    status: z54.enum(["pending", "processing", "completed", "failed"])
+  getJobsByStatus: protectedProcedure.input(z56.object({
+    status: z56.enum(["pending", "processing", "completed", "failed"])
   })).query(async ({ input }) => {
     return audioService.getJobsByStatus(input.status);
   })
 });
 
 // server/routers/qumusAutonomousEntityRouter.ts
-import { z as z55 } from "zod";
+import { z as z57 } from "zod";
 import { TRPCError as TRPCError16 } from "@trpc/server";
 var autonomousEntities = /* @__PURE__ */ new Map();
 var autonomousDecisions2 = [];
@@ -20201,10 +20914,10 @@ var qumusAutonomousEntityRouter = router({
   /**
    * Initialize QUMUS as an autonomous entity
    */
-  initializeEntity: protectedProcedure.input(z55.object({
-    name: z55.string(),
-    operationalDomains: z55.array(z55.string()),
-    decisionAuthority: z55.array(z55.string())
+  initializeEntity: protectedProcedure.input(z57.object({
+    name: z57.string(),
+    operationalDomains: z57.array(z57.string()),
+    decisionAuthority: z57.array(z57.string())
   })).mutation(async ({ input, ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new TRPCError16({ code: "FORBIDDEN", message: "Only admins can initialize autonomous entities" });
@@ -20230,7 +20943,7 @@ var qumusAutonomousEntityRouter = router({
   /**
    * Get autonomous entity status
    */
-  getEntityStatus: publicProcedure.input(z55.object({ entityId: z55.string() })).query(async ({ input }) => {
+  getEntityStatus: publicProcedure.input(z57.object({ entityId: z57.string() })).query(async ({ input }) => {
     const entity = autonomousEntities.get(input.entityId);
     if (!entity) {
       throw new TRPCError16({ code: "NOT_FOUND", message: "Autonomous entity not found" });
@@ -20244,9 +20957,9 @@ var qumusAutonomousEntityRouter = router({
   /**
    * Activate autonomous mode (increase autonomy level)
    */
-  activateAutonomousMode: protectedProcedure.input(z55.object({
-    entityId: z55.string(),
-    targetAutonomyLevel: z55.number().min(0).max(100)
+  activateAutonomousMode: protectedProcedure.input(z57.object({
+    entityId: z57.string(),
+    targetAutonomyLevel: z57.number().min(0).max(100)
   })).mutation(async ({ input, ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new TRPCError16({ code: "FORBIDDEN", message: "Only admins can activate autonomous mode" });
@@ -20269,12 +20982,12 @@ var qumusAutonomousEntityRouter = router({
   /**
    * Create self-governance policy
    */
-  createGovernancePolicy: protectedProcedure.input(z55.object({
-    entityId: z55.string(),
-    name: z55.string(),
-    rules: z55.array(z55.string()),
-    constraints: z55.array(z55.string()),
-    autonomyThreshold: z55.number().min(0).max(100)
+  createGovernancePolicy: protectedProcedure.input(z57.object({
+    entityId: z57.string(),
+    name: z57.string(),
+    rules: z57.array(z57.string()),
+    constraints: z57.array(z57.string()),
+    autonomyThreshold: z57.number().min(0).max(100)
   })).mutation(async ({ input, ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new TRPCError16({ code: "FORBIDDEN", message: "Only admins can create governance policies" });
@@ -20303,13 +21016,13 @@ var qumusAutonomousEntityRouter = router({
   /**
    * Execute autonomous decision
    */
-  executeAutonomousDecision: protectedProcedure.input(z55.object({
-    entityId: z55.string(),
-    domain: z55.string(),
-    decision: z55.string(),
-    reasoning: z55.string(),
-    confidence: z55.number().min(0).max(1),
-    impact: z55.enum(["low", "medium", "high", "critical"])
+  executeAutonomousDecision: protectedProcedure.input(z57.object({
+    entityId: z57.string(),
+    domain: z57.string(),
+    decision: z57.string(),
+    reasoning: z57.string(),
+    confidence: z57.number().min(0).max(1),
+    impact: z57.enum(["low", "medium", "high", "critical"])
   })).mutation(async ({ input, ctx }) => {
     const entity = autonomousEntities.get(input.entityId);
     if (!entity) {
@@ -20352,10 +21065,10 @@ var qumusAutonomousEntityRouter = router({
   /**
    * Get autonomous decisions
    */
-  getAutonomousDecisions: publicProcedure.input(z55.object({
-    entityId: z55.string(),
-    domain: z55.string().optional(),
-    limit: z55.number().default(50)
+  getAutonomousDecisions: publicProcedure.input(z57.object({
+    entityId: z57.string(),
+    domain: z57.string().optional(),
+    limit: z57.number().default(50)
   })).query(async ({ input }) => {
     const entity = autonomousEntities.get(input.entityId);
     if (!entity) {
@@ -20375,7 +21088,7 @@ var qumusAutonomousEntityRouter = router({
   /**
    * Get governance policies
    */
-  getGovernancePolicies: publicProcedure.input(z55.object({ entityId: z55.string() })).query(async ({ input }) => {
+  getGovernancePolicies: publicProcedure.input(z57.object({ entityId: z57.string() })).query(async ({ input }) => {
     const entity = autonomousEntities.get(input.entityId);
     if (!entity) {
       throw new TRPCError16({ code: "NOT_FOUND", message: "Autonomous entity not found" });
@@ -20389,7 +21102,7 @@ var qumusAutonomousEntityRouter = router({
   /**
    * Get entity analytics
    */
-  getEntityAnalytics: publicProcedure.input(z55.object({ entityId: z55.string() })).query(async ({ input }) => {
+  getEntityAnalytics: publicProcedure.input(z57.object({ entityId: z57.string() })).query(async ({ input }) => {
     const entity = autonomousEntities.get(input.entityId);
     if (!entity) {
       throw new TRPCError16({ code: "NOT_FOUND", message: "Autonomous entity not found" });
@@ -20417,10 +21130,10 @@ var qumusAutonomousEntityRouter = router({
   /**
    * Approve or reject autonomous decision (for human oversight)
    */
-  reviewAutonomousDecision: protectedProcedure.input(z55.object({
-    decisionId: z55.string(),
-    approved: z55.boolean(),
-    feedback: z55.string().optional()
+  reviewAutonomousDecision: protectedProcedure.input(z57.object({
+    decisionId: z57.string(),
+    approved: z57.boolean(),
+    feedback: z57.string().optional()
   })).mutation(async ({ input, ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new TRPCError16({ code: "FORBIDDEN", message: "Only admins can review decisions" });
@@ -20439,7 +21152,7 @@ var qumusAutonomousEntityRouter = router({
 });
 
 // server/routers/qumusAutonomousScalingRouter.ts
-import { z as z56 } from "zod";
+import { z as z58 } from "zod";
 import { TRPCError as TRPCError17 } from "@trpc/server";
 var scalingMetrics = [];
 var optimizationActions = [];
@@ -20448,13 +21161,13 @@ var qumusAutonomousScalingRouter = router({
   /**
    * Record scaling metrics
    */
-  recordMetrics: protectedProcedure.input(z56.object({
-    entityId: z56.string(),
-    cpuUsage: z56.number().min(0).max(100),
-    memoryUsage: z56.number().min(0).max(100),
-    requestsPerSecond: z56.number().min(0),
-    averageResponseTime: z56.number().min(0),
-    errorRate: z56.number().min(0).max(100)
+  recordMetrics: protectedProcedure.input(z58.object({
+    entityId: z58.string(),
+    cpuUsage: z58.number().min(0).max(100),
+    memoryUsage: z58.number().min(0).max(100),
+    requestsPerSecond: z58.number().min(0),
+    averageResponseTime: z58.number().min(0),
+    errorRate: z58.number().min(0).max(100)
   })).mutation(async ({ input }) => {
     const metrics2 = {
       timestamp: Date.now(),
@@ -20476,7 +21189,7 @@ var qumusAutonomousScalingRouter = router({
   /**
    * Get current performance metrics
    */
-  getCurrentMetrics: publicProcedure.input(z56.object({ entityId: z56.string() })).query(async () => {
+  getCurrentMetrics: publicProcedure.input(z58.object({ entityId: z58.string() })).query(async () => {
     if (scalingMetrics.length === 0) {
       return {
         metrics: null,
@@ -20504,10 +21217,10 @@ var qumusAutonomousScalingRouter = router({
   /**
    * Execute autonomous scaling decision
    */
-  executeScalingDecision: protectedProcedure.input(z56.object({
-    entityId: z56.string(),
-    type: z56.enum(["scale_up", "scale_down", "cache_optimization", "query_optimization", "load_balancing"]),
-    reason: z56.string()
+  executeScalingDecision: protectedProcedure.input(z58.object({
+    entityId: z58.string(),
+    type: z58.enum(["scale_up", "scale_down", "cache_optimization", "query_optimization", "load_balancing"]),
+    reason: z58.string()
   })).mutation(async ({ input, ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new TRPCError17({ code: "FORBIDDEN", message: "Only admins can execute scaling decisions" });
@@ -20539,9 +21252,9 @@ var qumusAutonomousScalingRouter = router({
   /**
    * Get optimization history
    */
-  getOptimizationHistory: publicProcedure.input(z56.object({
-    entityId: z56.string(),
-    limit: z56.number().default(50)
+  getOptimizationHistory: publicProcedure.input(z58.object({
+    entityId: z58.string(),
+    limit: z58.number().default(50)
   })).query(async ({ input }) => {
     const actions = optimizationActions.filter((a) => a.entityId === input.entityId).sort((a, b) => b.executedAt - a.executedAt).slice(0, input.limit);
     const successCount = actions.filter((a) => a.result === "success").length;
@@ -20556,10 +21269,10 @@ var qumusAutonomousScalingRouter = router({
   /**
    * Record learning pattern
    */
-  recordLearningPattern: protectedProcedure.input(z56.object({
-    entityId: z56.string(),
-    pattern: z56.string(),
-    confidence: z56.number().min(0).max(1)
+  recordLearningPattern: protectedProcedure.input(z58.object({
+    entityId: z58.string(),
+    pattern: z58.string(),
+    confidence: z58.number().min(0).max(1)
   })).mutation(async ({ input }) => {
     const recordId = `learning_${input.pattern}_${Date.now()}`;
     const record = {
@@ -20581,9 +21294,9 @@ var qumusAutonomousScalingRouter = router({
   /**
    * Get learning records
    */
-  getLearningRecords: publicProcedure.input(z56.object({
-    entityId: z56.string(),
-    minConfidence: z56.number().default(0.5)
+  getLearningRecords: publicProcedure.input(z58.object({
+    entityId: z58.string(),
+    minConfidence: z58.number().default(0.5)
   })).query(async ({ input }) => {
     const records = Array.from(learningRecords.values()).filter((r) => r.entityId === input.entityId && r.confidence >= input.minConfidence).sort((a, b) => b.confidence - a.confidence);
     const averageConfidence = records.length > 0 ? records.reduce((sum2, r) => sum2 + r.confidence, 0) / records.length : 0;
@@ -20601,7 +21314,7 @@ var qumusAutonomousScalingRouter = router({
   /**
    * Get autonomous scaling recommendations
    */
-  getScalingRecommendations: publicProcedure.input(z56.object({ entityId: z56.string() })).query(async ({ input }) => {
+  getScalingRecommendations: publicProcedure.input(z58.object({ entityId: z58.string() })).query(async ({ input }) => {
     if (scalingMetrics.length === 0) {
       return {
         recommendations: [],
@@ -20634,9 +21347,9 @@ var qumusAutonomousScalingRouter = router({
   /**
    * Apply learning to optimization
    */
-  applyLearningToOptimization: protectedProcedure.input(z56.object({
-    entityId: z56.string(),
-    patternId: z56.string()
+  applyLearningToOptimization: protectedProcedure.input(z58.object({
+    entityId: z58.string(),
+    patternId: z58.string()
   })).mutation(async ({ input, ctx }) => {
     if (ctx.user.role !== "admin") {
       throw new TRPCError17({ code: "FORBIDDEN", message: "Only admins can apply learning" });
@@ -20656,7 +21369,7 @@ var qumusAutonomousScalingRouter = router({
 });
 
 // server/routers/qumusChatRouter.ts
-import { z as z57 } from "zod";
+import { z as z59 } from "zod";
 
 // server/_core/qumusOrchestrationEngine.ts
 var QumusOrchestrationEngine = class {
@@ -20988,13 +21701,13 @@ QumusOrchestrationEngine.initialize();
 
 // server/routers/qumusChatRouter.ts
 var qumusChatRouter = router({
-  chat: publicProcedure.input(z57.object({
-    messages: z57.array(z57.object({
-      role: z57.enum(["user", "assistant"]),
-      content: z57.string()
+  chat: publicProcedure.input(z59.object({
+    messages: z59.array(z59.object({
+      role: z59.enum(["user", "assistant"]),
+      content: z59.string()
     })),
-    query: z57.string(),
-    persona: z57.enum(["valanna", "candy", "seraph"]).default("valanna")
+    query: z59.string(),
+    persona: z59.enum(["valanna", "candy", "seraph"]).default("valanna")
   })).mutation(async ({ input }) => {
     try {
       const systemPrompt = input.persona === "candy" ? CandyIdentitySystem.getSystemPrompt() : input.persona === "seraph" ? SeraphIdentitySystem.getSystemPrompt() : QumusIdentitySystem.getSystemPrompt();
@@ -21099,10 +21812,10 @@ var qumusChatRouter = router({
 });
 
 // server/routers/socialSharingRouter.ts
-import { z as z59 } from "zod";
+import { z as z61 } from "zod";
 
 // server/services/socialSharingService.ts
-import { z as z58 } from "zod";
+import { z as z60 } from "zod";
 var SocialSharingService = class {
   /**
    * Generate Twitter/X share URL
@@ -21239,12 +21952,12 @@ ${content.url}`;
     return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encoded}`;
   }
 };
-var ShareContentSchema = z58.object({
-  title: z58.string().min(1).max(200),
-  description: z58.string().min(1).max(500),
-  url: z58.string().url(),
-  imageUrl: z58.string().url().optional(),
-  hashtags: z58.array(z58.string()).optional()
+var ShareContentSchema = z60.object({
+  title: z60.string().min(1).max(200),
+  description: z60.string().min(1).max(500),
+  url: z60.string().url(),
+  imageUrl: z60.string().url().optional(),
+  hashtags: z60.array(z60.string()).optional()
 });
 
 // server/routers/socialSharingRouter.ts
@@ -21317,8 +22030,8 @@ var socialSharingRouter = router({
   /**
    * Generate QR code for URL
    */
-  getQRCode: publicProcedure.input(z59.object({
-    url: z59.string().url()
+  getQRCode: publicProcedure.input(z61.object({
+    url: z61.string().url()
   })).query(({ input }) => {
     return {
       qrCodeUrl: SocialSharingService.generateQRCodeUrl(input.url),
@@ -21342,11 +22055,11 @@ var socialSharingRouter = router({
   /**
    * Track share event (for analytics)
    */
-  trackShare: protectedProcedure.input(z59.object({
-    platform: z59.string(),
-    contentId: z59.string(),
-    contentType: z59.string(),
-    timestamp: z59.number()
+  trackShare: protectedProcedure.input(z61.object({
+    platform: z61.string(),
+    contentId: z61.string(),
+    contentType: z61.string(),
+    timestamp: z61.number()
   })).mutation(({ input, ctx }) => {
     console.log(`Share tracked: ${input.platform} - ${input.contentId} by ${ctx.user.id}`);
     return {
@@ -21358,8 +22071,8 @@ var socialSharingRouter = router({
   /**
    * Get share statistics
    */
-  getShareStats: protectedProcedure.input(z59.object({
-    contentId: z59.string()
+  getShareStats: protectedProcedure.input(z61.object({
+    contentId: z61.string()
   })).query(({ input }) => {
     return {
       contentId: input.contentId,
@@ -21377,10 +22090,10 @@ var socialSharingRouter = router({
 });
 
 // server/routers/userPreferenceSyncRouter.ts
-import { z as z61 } from "zod";
+import { z as z63 } from "zod";
 
 // server/services/userPreferenceSyncService.ts
-import { z as z60 } from "zod";
+import { z as z62 } from "zod";
 var UserPreferenceSyncService = class {
   static conflictResolutionStrategies = {
     // Latest write wins
@@ -21578,26 +22291,26 @@ var UserPreferenceSyncService = class {
     return Array.from(favoriteMap.values());
   }
 };
-var UserPreferenceSchema = z60.object({
-  userId: z60.string(),
-  key: z60.string(),
-  value: z60.any(),
-  deviceId: z60.string(),
-  timestamp: z60.number(),
-  syncedAt: z60.number().optional()
+var UserPreferenceSchema = z62.object({
+  userId: z62.string(),
+  key: z62.string(),
+  value: z62.any(),
+  deviceId: z62.string(),
+  timestamp: z62.number(),
+  syncedAt: z62.number().optional()
 });
-var PlaybackPositionSchema = z60.object({
-  contentId: z60.string(),
-  position: z60.number(),
-  duration: z60.number(),
-  deviceId: z60.string(),
-  timestamp: z60.number()
+var PlaybackPositionSchema = z62.object({
+  contentId: z62.string(),
+  position: z62.number(),
+  duration: z62.number(),
+  deviceId: z62.string(),
+  timestamp: z62.number()
 });
-var UserFavoriteSchema = z60.object({
-  contentId: z60.string(),
-  contentType: z60.enum(["podcast", "song", "station", "playlist"]),
-  deviceId: z60.string(),
-  timestamp: z60.number()
+var UserFavoriteSchema = z62.object({
+  contentId: z62.string(),
+  contentType: z62.enum(["podcast", "song", "station", "playlist"]),
+  deviceId: z62.string(),
+  timestamp: z62.number()
 });
 
 // server/routers/userPreferenceSyncRouter.ts
@@ -21605,10 +22318,10 @@ var userPreferenceSyncRouter = router({
   /**
    * Sync preferences across devices
    */
-  syncPreferences: protectedProcedure.input(z61.object({
-    deviceId: z61.string(),
-    preferences: z61.array(UserPreferenceSchema),
-    lastSyncTime: z61.number()
+  syncPreferences: protectedProcedure.input(z63.object({
+    deviceId: z63.string(),
+    preferences: z63.array(UserPreferenceSchema),
+    lastSyncTime: z63.number()
   })).mutation(async ({ input, ctx }) => {
     const validPrefs = input.preferences.filter(
       (p) => UserPreferenceSyncService.validatePreference(p)
@@ -21623,9 +22336,9 @@ var userPreferenceSyncRouter = router({
   /**
    * Get preferences for device
    */
-  getPreferences: protectedProcedure.input(z61.object({
-    deviceId: z61.string(),
-    keys: z61.array(z61.string()).optional()
+  getPreferences: protectedProcedure.input(z63.object({
+    deviceId: z63.string(),
+    keys: z63.array(z63.string()).optional()
   })).query(async ({ input, ctx }) => {
     return {
       deviceId: input.deviceId,
@@ -21636,10 +22349,10 @@ var userPreferenceSyncRouter = router({
   /**
    * Update preference
    */
-  updatePreference: protectedProcedure.input(z61.object({
-    deviceId: z61.string(),
-    key: z61.string(),
-    value: z61.any()
+  updatePreference: protectedProcedure.input(z63.object({
+    deviceId: z63.string(),
+    key: z63.string(),
+    value: z63.any()
   })).mutation(async ({ input, ctx }) => {
     const preference = {
       userId: ctx.user.id,
@@ -21659,11 +22372,11 @@ var userPreferenceSyncRouter = router({
   /**
    * Track playback position
    */
-  trackPlaybackPosition: protectedProcedure.input(z61.object({
-    contentId: z61.string(),
-    position: z61.number(),
-    duration: z61.number(),
-    deviceId: z61.string()
+  trackPlaybackPosition: protectedProcedure.input(z63.object({
+    contentId: z63.string(),
+    position: z63.number(),
+    duration: z63.number(),
+    deviceId: z63.string()
   })).mutation(async ({ input, ctx }) => {
     const position = UserPreferenceSyncService.trackPlaybackPosition(
       input.contentId,
@@ -21679,8 +22392,8 @@ var userPreferenceSyncRouter = router({
   /**
    * Get playback positions for content
    */
-  getPlaybackPositions: protectedProcedure.input(z61.object({
-    contentId: z61.string()
+  getPlaybackPositions: protectedProcedure.input(z63.object({
+    contentId: z63.string()
   })).query(async ({ input, ctx }) => {
     return {
       contentId: input.contentId,
@@ -21691,8 +22404,8 @@ var userPreferenceSyncRouter = router({
   /**
    * Get optimal resume position
    */
-  getOptimalResumePosition: protectedProcedure.input(z61.object({
-    contentId: z61.string()
+  getOptimalResumePosition: protectedProcedure.input(z63.object({
+    contentId: z63.string()
   })).query(async ({ input, ctx }) => {
     return {
       contentId: input.contentId,
@@ -21704,10 +22417,10 @@ var userPreferenceSyncRouter = router({
   /**
    * Add favorite
    */
-  addFavorite: protectedProcedure.input(z61.object({
-    contentId: z61.string(),
-    contentType: z61.enum(["podcast", "song", "station", "playlist"]),
-    deviceId: z61.string()
+  addFavorite: protectedProcedure.input(z63.object({
+    contentId: z63.string(),
+    contentType: z63.enum(["podcast", "song", "station", "playlist"]),
+    deviceId: z63.string()
   })).mutation(async ({ input, ctx }) => {
     const favorite = {
       contentId: input.contentId,
@@ -21723,9 +22436,9 @@ var userPreferenceSyncRouter = router({
   /**
    * Remove favorite
    */
-  removeFavorite: protectedProcedure.input(z61.object({
-    contentId: z61.string(),
-    contentType: z61.enum(["podcast", "song", "station", "playlist"])
+  removeFavorite: protectedProcedure.input(z63.object({
+    contentId: z63.string(),
+    contentType: z63.enum(["podcast", "song", "station", "playlist"])
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -21735,8 +22448,8 @@ var userPreferenceSyncRouter = router({
   /**
    * Get all favorites
    */
-  getFavorites: protectedProcedure.input(z61.object({
-    contentType: z61.enum(["podcast", "song", "station", "playlist"]).optional()
+  getFavorites: protectedProcedure.input(z63.object({
+    contentType: z63.enum(["podcast", "song", "station", "playlist"]).optional()
   })).query(async ({ input, ctx }) => {
     return {
       favorites: [],
@@ -21746,9 +22459,9 @@ var userPreferenceSyncRouter = router({
   /**
    * Sync favorites across devices
    */
-  syncFavorites: protectedProcedure.input(z61.object({
-    deviceId: z61.string(),
-    favorites: z61.array(UserFavoriteSchema)
+  syncFavorites: protectedProcedure.input(z63.object({
+    deviceId: z63.string(),
+    favorites: z63.array(UserFavoriteSchema)
   })).mutation(async ({ input, ctx }) => {
     const synced = UserPreferenceSyncService.syncFavorites(input.favorites, []);
     return {
@@ -21760,8 +22473,8 @@ var userPreferenceSyncRouter = router({
   /**
    * Get sync status
    */
-  getSyncStatus: protectedProcedure.input(z61.object({
-    deviceId: z61.string()
+  getSyncStatus: protectedProcedure.input(z63.object({
+    deviceId: z63.string()
   })).query(async ({ input, ctx }) => {
     return {
       deviceId: input.deviceId,
@@ -21783,9 +22496,9 @@ var userPreferenceSyncRouter = router({
   /**
    * Merge preferences from multiple sources
    */
-  mergePreferences: protectedProcedure.input(z61.object({
-    preferences: z61.array(UserPreferenceSchema),
-    strategy: z61.enum(["lastWriteWins", "playbackPosition", "mergeFavorites"]).optional()
+  mergePreferences: protectedProcedure.input(z63.object({
+    preferences: z63.array(UserPreferenceSchema),
+    strategy: z63.enum(["lastWriteWins", "playbackPosition", "mergeFavorites"]).optional()
   })).mutation(async ({ input, ctx }) => {
     const merged = UserPreferenceSyncService.mergePreferences(
       input.preferences,
@@ -21800,9 +22513,9 @@ var userPreferenceSyncRouter = router({
   /**
    * Detect conflicts
    */
-  detectConflicts: protectedProcedure.input(z61.object({
-    localPreferences: z61.array(UserPreferenceSchema),
-    remotePreferences: z61.array(UserPreferenceSchema)
+  detectConflicts: protectedProcedure.input(z63.object({
+    localPreferences: z63.array(UserPreferenceSchema),
+    remotePreferences: z63.array(UserPreferenceSchema)
   })).query(async ({ input, ctx }) => {
     const localMap = new Map(input.localPreferences.map((p) => [p.key, p]));
     const remoteMap = new Map(input.remotePreferences.map((p) => [p.key, p]));
@@ -21815,16 +22528,16 @@ var userPreferenceSyncRouter = router({
   /**
    * Resolve conflicts
    */
-  resolveConflicts: protectedProcedure.input(z61.object({
-    conflicts: z61.array(z61.object({
-      key: z61.string(),
-      localValue: z61.any(),
-      remoteValue: z61.any(),
-      localTimestamp: z61.number(),
-      remoteTimestamp: z61.number(),
-      resolution: z61.enum(["local", "remote", "merge"])
+  resolveConflicts: protectedProcedure.input(z63.object({
+    conflicts: z63.array(z63.object({
+      key: z63.string(),
+      localValue: z63.any(),
+      remoteValue: z63.any(),
+      localTimestamp: z63.number(),
+      remoteTimestamp: z63.number(),
+      resolution: z63.enum(["local", "remote", "merge"])
     })),
-    strategy: z61.enum(["lastWriteWins", "playbackPosition", "mergeFavorites"]).optional()
+    strategy: z63.enum(["lastWriteWins", "playbackPosition", "mergeFavorites"]).optional()
   })).mutation(async ({ input, ctx }) => {
     const resolved = UserPreferenceSyncService.resolveConflicts(
       input.conflicts,
@@ -21839,7 +22552,7 @@ var userPreferenceSyncRouter = router({
 });
 
 // server/routers/spotifyRouter.ts
-import { z as z62 } from "zod";
+import { z as z64 } from "zod";
 import axios3 from "axios";
 var SPOTIFY_API_BASE = "https://api.spotify.com/v1";
 var RRB_CHANNELS = [
@@ -21895,7 +22608,7 @@ var spotifyRouter = router({
     }));
   }),
   // Get channel details with current playlist
-  getChannelDetails: publicProcedure.input(z62.object({ channelId: z62.number() })).query(async ({ input }) => {
+  getChannelDetails: publicProcedure.input(z64.object({ channelId: z64.number() })).query(async ({ input }) => {
     const channel = RRB_CHANNELS.find((c) => c.id === input.channelId);
     if (!channel) throw new Error("Channel not found");
     try {
@@ -21918,7 +22631,7 @@ var spotifyRouter = router({
     }
   }),
   // Search tracks across all channels
-  searchTracks: publicProcedure.input(z62.object({ query: z62.string() })).query(async ({ input }) => {
+  searchTracks: publicProcedure.input(z64.object({ query: z64.string() })).query(async ({ input }) => {
     try {
       const accessToken = await getSpotifyAccessToken();
       const response = await axios3.get(
@@ -21958,21 +22671,21 @@ var spotifyRouter = router({
     };
   }),
   // Track listener (protected - requires auth)
-  trackListener: protectedProcedure.input(z62.object({ channelId: z62.number() })).mutation(async ({ input, ctx }) => {
+  trackListener: protectedProcedure.input(z64.object({ channelId: z64.number() })).mutation(async ({ input, ctx }) => {
     console.log(`[Spotify] User ${ctx.user.id} listening to channel ${input.channelId}`);
     return { success: true };
   })
 });
 
 // server/routers/youtubeRouter.ts
-import { z as z63 } from "zod";
+import { z as z65 } from "zod";
 import axios4 from "axios";
 var YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
 var youtubeRouter = router({
   // Search YouTube for RRB content
-  searchVideos: publicProcedure.input(z63.object({
-    query: z63.string(),
-    maxResults: z63.number().default(20)
+  searchVideos: publicProcedure.input(z65.object({
+    query: z65.string(),
+    maxResults: z65.number().default(20)
   })).query(async ({ input }) => {
     const apiKey = process.env.YOUTUBE_API_KEY;
     if (!apiKey) throw new Error("YouTube API key not configured");
@@ -22000,7 +22713,7 @@ var youtubeRouter = router({
     }
   }),
   // Get video details
-  getVideoDetails: publicProcedure.input(z63.object({ videoId: z63.string() })).query(async ({ input }) => {
+  getVideoDetails: publicProcedure.input(z65.object({ videoId: z65.string() })).query(async ({ input }) => {
     const apiKey = process.env.YOUTUBE_API_KEY;
     if (!apiKey) throw new Error("YouTube API key not configured");
     try {
@@ -22032,9 +22745,9 @@ var youtubeRouter = router({
     }
   }),
   // Get RRB channel videos
-  getRRBChannelVideos: publicProcedure.input(z63.object({
-    channelId: z63.string(),
-    maxResults: z63.number().default(20)
+  getRRBChannelVideos: publicProcedure.input(z65.object({
+    channelId: z65.string(),
+    maxResults: z65.number().default(20)
   })).query(async ({ input }) => {
     const apiKey = process.env.YOUTUBE_API_KEY;
     if (!apiKey) throw new Error("YouTube API key not configured");
@@ -22062,15 +22775,15 @@ var youtubeRouter = router({
     }
   }),
   // Track video view (protected)
-  trackVideoView: protectedProcedure.input(z63.object({ videoId: z63.string() })).mutation(async ({ input, ctx }) => {
+  trackVideoView: protectedProcedure.input(z65.object({ videoId: z65.string() })).mutation(async ({ input, ctx }) => {
     console.log(`[YouTube] User ${ctx.user.id} viewed video ${input.videoId}`);
     return { success: true, timestamp: /* @__PURE__ */ new Date() };
   }),
   // Save video to user library (protected)
-  saveVideo: protectedProcedure.input(z63.object({
-    videoId: z63.string(),
-    title: z63.string(),
-    thumbnail: z63.string()
+  saveVideo: protectedProcedure.input(z65.object({
+    videoId: z65.string(),
+    title: z65.string(),
+    thumbnail: z65.string()
   })).mutation(async ({ input, ctx }) => {
     console.log(`[YouTube] User ${ctx.user.id} saved video ${input.videoId}`);
     return { success: true, savedAt: /* @__PURE__ */ new Date() };
@@ -22078,54 +22791,54 @@ var youtubeRouter = router({
 });
 
 // server/routers/ecosystem.ts
-import { z as z64 } from "zod";
+import { z as z66 } from "zod";
 var broadcastsRouter = router({
-  create: protectedProcedure.input(z64.object({
-    system: z64.enum(["qumus", "rrb", "hybridcast"]),
-    title: z64.string(),
-    description: z64.string().optional(),
-    content: z64.string().optional(),
-    startTime: z64.date(),
-    endTime: z64.date().optional(),
-    channels: z64.array(z64.string()).optional(),
-    isEmergency: z64.boolean().default(false)
+  create: protectedProcedure.input(z66.object({
+    system: z66.enum(["qumus", "rrb", "hybridcast"]),
+    title: z66.string(),
+    description: z66.string().optional(),
+    content: z66.string().optional(),
+    startTime: z66.date(),
+    endTime: z66.date().optional(),
+    channels: z66.array(z66.string()).optional(),
+    isEmergency: z66.boolean().default(false)
   })).mutation(async ({ ctx, input }) => {
     return { id: 1, success: true };
   }),
-  getBySystem: publicProcedure.input(z64.object({
-    system: z64.enum(["qumus", "rrb", "hybridcast"]),
-    status: z64.enum(["scheduled", "live", "completed", "cancelled"]).optional(),
-    limit: z64.number().default(20)
+  getBySystem: publicProcedure.input(z66.object({
+    system: z66.enum(["qumus", "rrb", "hybridcast"]),
+    status: z66.enum(["scheduled", "live", "completed", "cancelled"]).optional(),
+    limit: z66.number().default(20)
   })).query(async ({ input }) => {
     return [];
   }),
-  updateStatus: protectedProcedure.input(z64.object({
-    broadcastId: z64.number(),
-    status: z64.enum(["scheduled", "live", "completed", "cancelled"])
+  updateStatus: protectedProcedure.input(z66.object({
+    broadcastId: z66.number(),
+    status: z66.enum(["scheduled", "live", "completed", "cancelled"])
   })).mutation(async ({ input }) => {
     return { success: true };
   })
 });
 var listenersRouter = router({
-  join: publicProcedure.input(z64.object({
-    broadcastId: z64.number(),
-    userId: z64.number().optional(),
-    sessionId: z64.string()
+  join: publicProcedure.input(z66.object({
+    broadcastId: z66.number(),
+    userId: z66.number().optional(),
+    sessionId: z66.string()
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  leave: publicProcedure.input(z64.object({
-    listenerId: z64.number()
+  leave: publicProcedure.input(z66.object({
+    listenerId: z66.number()
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  getActive: publicProcedure.input(z64.object({
-    broadcastId: z64.number()
+  getActive: publicProcedure.input(z66.object({
+    broadcastId: z66.number()
   })).query(async ({ input }) => {
     return [];
   }),
-  getAnalytics: publicProcedure.input(z64.object({
-    broadcastId: z64.number()
+  getAnalytics: publicProcedure.input(z66.object({
+    broadcastId: z66.number()
   })).query(async ({ input }) => {
     return {
       totalListeners: 0,
@@ -22135,22 +22848,22 @@ var listenersRouter = router({
   })
 });
 var donationsRouter = router({
-  create: protectedProcedure.input(z64.object({
-    broadcastId: z64.number().optional(),
-    amount: z64.number(),
-    currency: z64.enum(["USD", "EUR", "GBP"]).default("USD"),
-    purpose: z64.string().optional()
+  create: protectedProcedure.input(z66.object({
+    broadcastId: z66.number().optional(),
+    amount: z66.number(),
+    currency: z66.enum(["USD", "EUR", "GBP"]).default("USD"),
+    purpose: z66.string().optional()
   })).mutation(async ({ ctx, input }) => {
     return { success: true };
   }),
-  getByBroadcast: publicProcedure.input(z64.object({
-    broadcastId: z64.number()
+  getByBroadcast: publicProcedure.input(z66.object({
+    broadcastId: z66.number()
   })).query(async ({ input }) => {
     return [];
   }),
-  getAnalytics: publicProcedure.input(z64.object({
-    system: z64.enum(["qumus", "rrb", "hybridcast"]),
-    period: z64.enum(["day", "week", "month"]).default("month")
+  getAnalytics: publicProcedure.input(z66.object({
+    system: z66.enum(["qumus", "rrb", "hybridcast"]),
+    period: z66.enum(["day", "week", "month"]).default("month")
   })).query(async ({ input }) => {
     return {
       totalDonations: 0,
@@ -22160,72 +22873,72 @@ var donationsRouter = router({
   })
 });
 var metricsRouter = router({
-  record: protectedProcedure.input(z64.object({
-    system: z64.enum(["qumus", "rrb", "hybridcast"]),
-    activeListeners: z64.number(),
-    totalBroadcasts: z64.number(),
-    totalDonations: z64.number(),
-    uptime: z64.number(),
-    cpuUsage: z64.number().optional(),
-    memoryUsage: z64.number().optional(),
-    bandwidth: z64.number().optional()
+  record: protectedProcedure.input(z66.object({
+    system: z66.enum(["qumus", "rrb", "hybridcast"]),
+    activeListeners: z66.number(),
+    totalBroadcasts: z66.number(),
+    totalDonations: z66.number(),
+    uptime: z66.number(),
+    cpuUsage: z66.number().optional(),
+    memoryUsage: z66.number().optional(),
+    bandwidth: z66.number().optional()
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  getLatest: publicProcedure.input(z64.object({
-    system: z64.enum(["qumus", "rrb", "hybridcast"])
+  getLatest: publicProcedure.input(z66.object({
+    system: z66.enum(["qumus", "rrb", "hybridcast"])
   })).query(async ({ input }) => {
     return null;
   }),
-  getHistory: publicProcedure.input(z64.object({
-    system: z64.enum(["qumus", "rrb", "hybridcast"]),
-    hours: z64.number().default(24)
+  getHistory: publicProcedure.input(z66.object({
+    system: z66.enum(["qumus", "rrb", "hybridcast"]),
+    hours: z66.number().default(24)
   })).query(async ({ input }) => {
     return [];
   })
 });
 var autonomousRouter = router({
-  logDecision: protectedProcedure.input(z64.object({
-    policy: z64.string(),
-    system: z64.enum(["qumus", "rrb", "hybridcast"]),
-    action: z64.string(),
-    reasoning: z64.string().optional(),
-    autonomyLevel: z64.number().default(90)
+  logDecision: protectedProcedure.input(z66.object({
+    policy: z66.string(),
+    system: z66.enum(["qumus", "rrb", "hybridcast"]),
+    action: z66.string(),
+    reasoning: z66.string().optional(),
+    autonomyLevel: z66.number().default(90)
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  getHistory: publicProcedure.input(z64.object({
-    system: z64.enum(["qumus", "rrb", "hybridcast"]),
-    limit: z64.number().default(50)
+  getHistory: publicProcedure.input(z66.object({
+    system: z66.enum(["qumus", "rrb", "hybridcast"]),
+    limit: z66.number().default(50)
   })).query(async ({ input }) => {
     return [];
   }),
-  override: protectedProcedure.input(z64.object({
-    decisionId: z64.number(),
-    reason: z64.string()
+  override: protectedProcedure.input(z66.object({
+    decisionId: z66.number(),
+    reason: z66.string()
   })).mutation(async ({ input }) => {
     return { success: true };
   })
 });
 var commandsRouter = router({
-  send: protectedProcedure.input(z64.object({
-    sourceSystem: z64.enum(["qumus", "rrb", "hybridcast"]),
-    targetSystem: z64.enum(["qumus", "rrb", "hybridcast"]),
-    command: z64.string(),
-    parameters: z64.record(z64.any()).optional()
+  send: protectedProcedure.input(z66.object({
+    sourceSystem: z66.enum(["qumus", "rrb", "hybridcast"]),
+    targetSystem: z66.enum(["qumus", "rrb", "hybridcast"]),
+    command: z66.string(),
+    parameters: z66.record(z66.any()).optional()
   })).mutation(async ({ input }) => {
     return { success: true };
   }),
-  getStatus: publicProcedure.input(z64.object({
-    commandId: z64.string()
+  getStatus: publicProcedure.input(z66.object({
+    commandId: z66.string()
   })).query(async ({ input }) => {
     return null;
   }),
-  updateResult: protectedProcedure.input(z64.object({
-    commandId: z64.string(),
-    status: z64.enum(["pending", "executing", "completed", "failed"]),
-    result: z64.record(z64.any()).optional(),
-    errorMessage: z64.string().optional()
+  updateResult: protectedProcedure.input(z66.object({
+    commandId: z66.string(),
+    status: z66.enum(["pending", "executing", "completed", "failed"]),
+    result: z66.record(z66.any()).optional(),
+    errorMessage: z66.string().optional()
   })).mutation(async ({ input }) => {
     return { success: true };
   })
@@ -22234,31 +22947,31 @@ var radioRouter = router({
   getAll: publicProcedure.query(async () => {
     return [];
   }),
-  getById: publicProcedure.input(z64.object({
-    id: z64.number()
+  getById: publicProcedure.input(z66.object({
+    id: z66.number()
   })).query(async ({ input }) => {
     return [];
   }),
-  updateListeners: protectedProcedure.input(z64.object({
-    channelId: z64.number(),
-    count: z64.number()
+  updateListeners: protectedProcedure.input(z66.object({
+    channelId: z66.number(),
+    count: z66.number()
   })).mutation(async ({ input }) => {
     return { success: true };
   })
 });
 var auditRouter = router({
-  log: protectedProcedure.input(z64.object({
-    system: z64.enum(["qumus", "rrb", "hybridcast"]),
-    action: z64.string(),
-    resourceType: z64.string().optional(),
-    resourceId: z64.string().optional(),
-    changes: z64.record(z64.any()).optional()
+  log: protectedProcedure.input(z66.object({
+    system: z66.enum(["qumus", "rrb", "hybridcast"]),
+    action: z66.string(),
+    resourceType: z66.string().optional(),
+    resourceId: z66.string().optional(),
+    changes: z66.record(z66.any()).optional()
   })).mutation(async ({ ctx, input }) => {
     return { success: true };
   }),
-  getLog: publicProcedure.input(z64.object({
-    system: z64.enum(["qumus", "rrb", "hybridcast"]),
-    limit: z64.number().default(100)
+  getLog: publicProcedure.input(z66.object({
+    system: z66.enum(["qumus", "rrb", "hybridcast"]),
+    limit: z66.number().default(100)
   })).query(async ({ input }) => {
     return [];
   })
@@ -22275,10 +22988,10 @@ var ecosystemRouter = router({
 });
 
 // server/routers/offlinePlaylistRouter.ts
-import { z as z66 } from "zod";
+import { z as z68 } from "zod";
 
 // server/services/offlinePlaylistService.ts
-import { z as z65 } from "zod";
+import { z as z67 } from "zod";
 var OfflinePlaylistService = class {
   /**
    * Create a new offline playlist
@@ -22502,30 +23215,30 @@ var OfflinePlaylistService = class {
     }
   }
 };
-var OfflinePlaylistSchema = z65.object({
-  id: z65.string(),
-  userId: z65.string(),
-  name: z65.string(),
-  description: z65.string().optional(),
-  items: z65.array(z65.object({
-    id: z65.string(),
-    contentId: z65.string(),
-    contentType: z65.enum(["podcast", "song", "audiobook"]),
-    title: z65.string(),
-    artist: z65.string().optional(),
-    duration: z65.number(),
-    fileSize: z65.number(),
-    fileUrl: z65.string().url(),
-    localPath: z65.string().optional(),
-    downloadedAt: z65.number().optional(),
-    isDownloaded: z65.boolean(),
-    downloadProgress: z65.number().optional()
+var OfflinePlaylistSchema = z67.object({
+  id: z67.string(),
+  userId: z67.string(),
+  name: z67.string(),
+  description: z67.string().optional(),
+  items: z67.array(z67.object({
+    id: z67.string(),
+    contentId: z67.string(),
+    contentType: z67.enum(["podcast", "song", "audiobook"]),
+    title: z67.string(),
+    artist: z67.string().optional(),
+    duration: z67.number(),
+    fileSize: z67.number(),
+    fileUrl: z67.string().url(),
+    localPath: z67.string().optional(),
+    downloadedAt: z67.number().optional(),
+    isDownloaded: z67.boolean(),
+    downloadProgress: z67.number().optional()
   })),
-  createdAt: z65.number(),
-  updatedAt: z65.number(),
-  totalSize: z65.number(),
-  isDownloading: z65.boolean().optional(),
-  downloadProgress: z65.number().optional()
+  createdAt: z67.number(),
+  updatedAt: z67.number(),
+  totalSize: z67.number(),
+  isDownloading: z67.boolean().optional(),
+  downloadProgress: z67.number().optional()
 });
 
 // server/routers/offlinePlaylistRouter.ts
@@ -22533,9 +23246,9 @@ var offlinePlaylistRouter = router({
   /**
    * Create new offline playlist
    */
-  createPlaylist: protectedProcedure.input(z66.object({
-    name: z66.string().min(1).max(100),
-    description: z66.string().max(500).optional()
+  createPlaylist: protectedProcedure.input(z68.object({
+    name: z68.string().min(1).max(100),
+    description: z68.string().max(500).optional()
   })).mutation(async ({ input, ctx }) => {
     const playlist = OfflinePlaylistService.createPlaylist(
       ctx.user.id,
@@ -22559,8 +23272,8 @@ var offlinePlaylistRouter = router({
   /**
    * Get playlist by ID
    */
-  getPlaylist: protectedProcedure.input(z66.object({
-    playlistId: z66.string()
+  getPlaylist: protectedProcedure.input(z68.object({
+    playlistId: z68.string()
   })).query(async ({ input, ctx }) => {
     return {
       playlist: null
@@ -22569,15 +23282,15 @@ var offlinePlaylistRouter = router({
   /**
    * Add item to playlist
    */
-  addItemToPlaylist: protectedProcedure.input(z66.object({
-    playlistId: z66.string(),
-    contentId: z66.string(),
-    contentType: z66.enum(["podcast", "song", "audiobook"]),
-    title: z66.string(),
-    artist: z66.string().optional(),
-    duration: z66.number(),
-    fileSize: z66.number(),
-    fileUrl: z66.string().url()
+  addItemToPlaylist: protectedProcedure.input(z68.object({
+    playlistId: z68.string(),
+    contentId: z68.string(),
+    contentType: z68.enum(["podcast", "song", "audiobook"]),
+    title: z68.string(),
+    artist: z68.string().optional(),
+    duration: z68.number(),
+    fileSize: z68.number(),
+    fileUrl: z68.string().url()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -22587,9 +23300,9 @@ var offlinePlaylistRouter = router({
   /**
    * Remove item from playlist
    */
-  removeItemFromPlaylist: protectedProcedure.input(z66.object({
-    playlistId: z66.string(),
-    itemId: z66.string()
+  removeItemFromPlaylist: protectedProcedure.input(z68.object({
+    playlistId: z68.string(),
+    itemId: z68.string()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -22599,12 +23312,12 @@ var offlinePlaylistRouter = router({
   /**
    * Update item download status
    */
-  updateItemDownloadStatus: protectedProcedure.input(z66.object({
-    playlistId: z66.string(),
-    itemId: z66.string(),
-    isDownloaded: z66.boolean(),
-    downloadProgress: z66.number().min(0).max(100).optional(),
-    localPath: z66.string().optional()
+  updateItemDownloadStatus: protectedProcedure.input(z68.object({
+    playlistId: z68.string(),
+    itemId: z68.string(),
+    isDownloaded: z68.boolean(),
+    downloadProgress: z68.number().min(0).max(100).optional(),
+    localPath: z68.string().optional()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -22614,8 +23327,8 @@ var offlinePlaylistRouter = router({
   /**
    * Check storage quota
    */
-  checkStorageQuota: protectedProcedure.input(z66.object({
-    requiredSize: z66.number()
+  checkStorageQuota: protectedProcedure.input(z68.object({
+    requiredSize: z68.number()
   })).query(async ({ input, ctx }) => {
     return {
       sufficient: true,
@@ -22638,8 +23351,8 @@ var offlinePlaylistRouter = router({
   /**
    * Create download job
    */
-  createDownloadJob: protectedProcedure.input(z66.object({
-    playlistId: z66.string()
+  createDownloadJob: protectedProcedure.input(z68.object({
+    playlistId: z68.string()
   })).mutation(async ({ input, ctx }) => {
     const job = OfflinePlaylistService.createDownloadJob(input.playlistId);
     return {
@@ -22650,8 +23363,8 @@ var offlinePlaylistRouter = router({
   /**
    * Get download job status
    */
-  getDownloadJobStatus: protectedProcedure.input(z66.object({
-    jobId: z66.string()
+  getDownloadJobStatus: protectedProcedure.input(z68.object({
+    jobId: z68.string()
   })).query(async ({ input, ctx }) => {
     return {
       job: null
@@ -22660,8 +23373,8 @@ var offlinePlaylistRouter = router({
   /**
    * Get playlist statistics
    */
-  getPlaylistStats: protectedProcedure.input(z66.object({
-    playlistId: z66.string()
+  getPlaylistStats: protectedProcedure.input(z68.object({
+    playlistId: z68.string()
   })).query(async ({ input, ctx }) => {
     return {
       totalItems: 0,
@@ -22676,9 +23389,9 @@ var offlinePlaylistRouter = router({
   /**
    * Sync playlist with server
    */
-  syncPlaylist: protectedProcedure.input(z66.object({
-    playlistId: z66.string(),
-    lastSyncTime: z66.number()
+  syncPlaylist: protectedProcedure.input(z68.object({
+    playlistId: z68.string(),
+    lastSyncTime: z68.number()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -22690,9 +23403,9 @@ var offlinePlaylistRouter = router({
   /**
    * Clean up old downloaded items
    */
-  cleanupOldItems: protectedProcedure.input(z66.object({
-    playlistId: z66.string(),
-    maxAge: z66.number().optional()
+  cleanupOldItems: protectedProcedure.input(z68.object({
+    playlistId: z68.string(),
+    maxAge: z68.number().optional()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -22702,8 +23415,8 @@ var offlinePlaylistRouter = router({
   /**
    * Export playlist
    */
-  exportPlaylist: protectedProcedure.input(z66.object({
-    playlistId: z66.string()
+  exportPlaylist: protectedProcedure.input(z68.object({
+    playlistId: z68.string()
   })).query(async ({ input, ctx }) => {
     return {
       data: "",
@@ -22713,9 +23426,9 @@ var offlinePlaylistRouter = router({
   /**
    * Import playlist
    */
-  importPlaylist: protectedProcedure.input(z66.object({
-    name: z66.string(),
-    data: z66.string()
+  importPlaylist: protectedProcedure.input(z68.object({
+    name: z68.string(),
+    data: z68.string()
   })).mutation(async ({ input, ctx }) => {
     const playlist = OfflinePlaylistService.importPlaylist(ctx.user.id, input.data);
     if (!playlist) {
@@ -22729,9 +23442,9 @@ var offlinePlaylistRouter = router({
   /**
    * Estimate download time
    */
-  estimateDownloadTime: protectedProcedure.input(z66.object({
-    totalSize: z66.number(),
-    networkSpeed: z66.number().optional()
+  estimateDownloadTime: protectedProcedure.input(z68.object({
+    totalSize: z68.number(),
+    networkSpeed: z68.number().optional()
   })).query(async ({ input, ctx }) => {
     const seconds = OfflinePlaylistService.estimateDownloadTime(
       input.totalSize,
@@ -22747,8 +23460,8 @@ var offlinePlaylistRouter = router({
   /**
    * Delete playlist
    */
-  deletePlaylist: protectedProcedure.input(z66.object({
-    playlistId: z66.string()
+  deletePlaylist: protectedProcedure.input(z68.object({
+    playlistId: z68.string()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -22758,10 +23471,10 @@ var offlinePlaylistRouter = router({
   /**
    * Update playlist metadata
    */
-  updatePlaylist: protectedProcedure.input(z66.object({
-    playlistId: z66.string(),
-    name: z66.string().optional(),
-    description: z66.string().optional()
+  updatePlaylist: protectedProcedure.input(z68.object({
+    playlistId: z68.string(),
+    name: z68.string().optional(),
+    description: z68.string().optional()
   })).mutation(async ({ input, ctx }) => {
     return {
       success: true,
@@ -22771,7 +23484,7 @@ var offlinePlaylistRouter = router({
 });
 
 // server/routers/agentNetworkRouter.ts
-import { z as z67 } from "zod";
+import { z as z69 } from "zod";
 
 // server/services/agentNetworkService.ts
 import { createHash, randomBytes } from "crypto";
@@ -23194,7 +23907,7 @@ var AgentNetworkService = class extends EventEmitter2 {
 // server/services/agentRegistryService.ts
 init_db();
 init_schema();
-import { eq as eq18, and as and13, gte as gte2, lte } from "drizzle-orm";
+import { eq as eq20, and as and15, gte as gte2, lte } from "drizzle-orm";
 var AgentRegistryService = class {
   /**
    * Register agent in central registry
@@ -23203,7 +23916,7 @@ var AgentRegistryService = class {
     try {
       const db2 = await getDb();
       if (!db2) throw new Error("Database not initialized");
-      const existingAgent = await db2.select().from(agents).where(eq18(agents.agentId, agentData.agentId)).limit(1);
+      const existingAgent = await db2.select().from(agents).where(eq20(agents.agentId, agentData.agentId)).limit(1);
       if (existingAgent.length > 0) {
         await db2.update(agents).set({
           name: agentData.name,
@@ -23215,7 +23928,7 @@ var AgentRegistryService = class {
           trustScore: agentData.trustScore,
           lastSeen: /* @__PURE__ */ new Date(),
           metadata: agentData.metadata ? JSON.stringify(agentData.metadata) : null
-        }).where(eq18(agents.agentId, agentData.agentId));
+        }).where(eq20(agents.agentId, agentData.agentId));
       } else {
         await db2.insert(agents).values({
           agentId: agentData.agentId,
@@ -23292,7 +24005,7 @@ var AgentRegistryService = class {
     try {
       const db2 = await getDb();
       if (!db2) throw new Error("Database not initialized");
-      const result2 = await db2.select().from(agents).where(eq18(agents.agentId, agentId)).limit(1);
+      const result2 = await db2.select().from(agents).where(eq20(agents.agentId, agentId)).limit(1);
       if (result2.length === 0) {
         return null;
       }
@@ -23328,9 +24041,9 @@ var AgentRegistryService = class {
       const connectionId = `${sourceAgentId}-${targetAgentId}`;
       const now = /* @__PURE__ */ new Date();
       const existingConnection = await db2.select().from(agentConnections).where(
-        and13(
-          eq18(agentConnections.sourceAgentId, sourceAgentId),
-          eq18(agentConnections.targetAgentId, targetAgentId)
+        and15(
+          eq20(agentConnections.sourceAgentId, sourceAgentId),
+          eq20(agentConnections.targetAgentId, targetAgentId)
         )
       ).limit(1);
       if (existingConnection.length > 0) {
@@ -23338,9 +24051,9 @@ var AgentRegistryService = class {
           status,
           lastCommunication: now
         }).where(
-          and13(
-            eq18(agentConnections.sourceAgentId, sourceAgentId),
-            eq18(agentConnections.targetAgentId, targetAgentId)
+          and15(
+            eq20(agentConnections.sourceAgentId, sourceAgentId),
+            eq20(agentConnections.targetAgentId, targetAgentId)
           )
         );
       } else {
@@ -23379,7 +24092,7 @@ var AgentRegistryService = class {
     try {
       const db2 = await getDb();
       if (!db2) throw new Error("Database not initialized");
-      const results = await db2.select().from(agentConnections).where(eq18(agentConnections.sourceAgentId, agentId));
+      const results = await db2.select().from(agentConnections).where(eq20(agentConnections.sourceAgentId, agentId));
       return results.map((conn) => ({
         connectionId: conn.connectionId,
         sourceAgentId: conn.sourceAgentId,
@@ -23405,7 +24118,7 @@ var AgentRegistryService = class {
       if (!db2) throw new Error("Database not initialized");
       await db2.update(agents).set({
         trustScore: Math.max(0, Math.min(100, trustScore))
-      }).where(eq18(agents.agentId, agentId));
+      }).where(eq20(agents.agentId, agentId));
     } catch (error) {
       console.error("Error updating trust score:", error);
       throw error;
@@ -23421,7 +24134,7 @@ var AgentRegistryService = class {
       await db2.update(agents).set({
         uptime: Math.max(0, Math.min(100, uptime)),
         lastSeen: /* @__PURE__ */ new Date()
-      }).where(eq18(agents.agentId, agentId));
+      }).where(eq20(agents.agentId, agentId));
     } catch (error) {
       console.error("Error updating uptime:", error);
       throw error;
@@ -23436,7 +24149,7 @@ var AgentRegistryService = class {
       if (agent) {
         await db.update(agents).set({
           messageCount: agent.messageCount + count6
-        }).where(eq18(agents.agentId, agentId));
+        }).where(eq20(agents.agentId, agentId));
       }
     } catch (error) {
       console.error("Error incrementing message count:", error);
@@ -23513,12 +24226,12 @@ var agentNetworkRouter = router({
    * Register this agent in the network
    */
   registerAgent: protectedProcedure.input(
-    z67.object({
-      name: z67.string(),
-      description: z67.string(),
-      capabilities: z67.array(z67.string()),
-      autonomyLevel: z67.number().min(0).max(100),
-      metadata: z67.record(z67.any()).optional()
+    z69.object({
+      name: z69.string(),
+      description: z69.string(),
+      capabilities: z69.array(z69.string()),
+      autonomyLevel: z69.number().min(0).max(100),
+      metadata: z69.record(z69.any()).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -23554,11 +24267,11 @@ var agentNetworkRouter = router({
    * Discover agents in the network
    */
   discoverAgents: publicProcedure.input(
-    z67.object({
-      capabilities: z67.array(z67.string()).optional(),
-      minAutonomy: z67.number().min(0).max(100).optional(),
-      maxAutonomy: z67.number().min(0).max(100).optional(),
-      limit: z67.number().min(1).max(100).default(20)
+    z69.object({
+      capabilities: z69.array(z69.string()).optional(),
+      minAutonomy: z69.number().min(0).max(100).optional(),
+      maxAutonomy: z69.number().min(0).max(100).optional(),
+      limit: z69.number().min(1).max(100).default(20)
     })
   ).query(async ({ input }) => {
     try {
@@ -23586,8 +24299,8 @@ var agentNetworkRouter = router({
    * Connect to another agent
    */
   connectToAgent: protectedProcedure.input(
-    z67.object({
-      agentId: z67.string()
+    z69.object({
+      agentId: z69.string()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -23620,14 +24333,14 @@ var agentNetworkRouter = router({
    * Send message to another agent
    */
   sendMessage: protectedProcedure.input(
-    z67.object({
-      toAgentId: z67.string(),
-      type: z67.enum(["query", "command", "notification"]),
-      payload: z67.record(z67.any()),
-      priority: z67.enum(["low", "normal", "high", "critical"]).default("normal"),
-      encrypted: z67.boolean().default(true),
-      requiresResponse: z67.boolean().default(false),
-      responseTimeout: z67.number().optional()
+    z69.object({
+      toAgentId: z69.string(),
+      type: z69.enum(["query", "command", "notification"]),
+      payload: z69.record(z69.any()),
+      priority: z69.enum(["low", "normal", "high", "critical"]).default("normal"),
+      encrypted: z69.boolean().default(true),
+      requiresResponse: z69.boolean().default(false),
+      responseTimeout: z69.number().optional()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -23707,8 +24420,8 @@ var agentNetworkRouter = router({
    * Get top agents by trust score
    */
   getTopAgents: publicProcedure.input(
-    z67.object({
-      limit: z67.number().min(1).max(50).default(10)
+    z69.object({
+      limit: z69.number().min(1).max(50).default(10)
     })
   ).query(async ({ input }) => {
     try {
@@ -23736,8 +24449,8 @@ var agentNetworkRouter = router({
    * Get agent connections
    */
   getConnections: protectedProcedure.input(
-    z67.object({
-      agentId: z67.string().optional()
+    z69.object({
+      agentId: z69.string().optional()
     })
   ).query(async ({ input }) => {
     try {
@@ -23766,8 +24479,8 @@ var agentNetworkRouter = router({
    * Disconnect from an agent
    */
   disconnectFromAgent: protectedProcedure.input(
-    z67.object({
-      agentId: z67.string()
+    z69.object({
+      agentId: z69.string()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -23813,9 +24526,9 @@ var agentNetworkRouter = router({
    * Update agent trust level
    */
   updateTrustLevel: protectedProcedure.input(
-    z67.object({
-      agentId: z67.string(),
-      trustLevel: z67.number().min(0).max(100)
+    z69.object({
+      agentId: z69.string(),
+      trustLevel: z69.number().min(0).max(100)
     })
   ).mutation(async ({ input }) => {
     try {
@@ -23833,13 +24546,13 @@ var agentNetworkRouter = router({
 });
 
 // server/routers/seamlessAgentConnectionRouter.ts
-import { z as z68 } from "zod";
+import { z as z70 } from "zod";
 
 // server/services/seamlessAgentConnectionService.ts
 init_schema();
 init_db();
-import { eq as eq19, and as and14, or } from "drizzle-orm";
-import crypto2 from "crypto";
+import { eq as eq21, and as and16, or } from "drizzle-orm";
+import crypto3 from "crypto";
 var SeamlessAgentConnectionService = class {
   /**
    * Discover agents by capabilities
@@ -23848,7 +24561,7 @@ var SeamlessAgentConnectionService = class {
     try {
       const database2 = getDb();
       const agents_list = await database2.query.agents.findMany({
-        where: and14(
+        where: and16(
           or(
             ...capabilities.map(
               (cap) => (
@@ -23875,7 +24588,7 @@ var SeamlessAgentConnectionService = class {
     try {
       const database2 = getDb();
       const agent = await database2.query.agents.findFirst({
-        where: eq19(agents.id, agentId)
+        where: eq21(agents.id, agentId)
       });
       if (!agent) return null;
       return {
@@ -23903,7 +24616,7 @@ var SeamlessAgentConnectionService = class {
    */
   async initiateConnectionRequest(sourceAgentId, targetAgentId, purpose, capabilities) {
     try {
-      const requestId = `conn-${Date.now()}-${crypto2.randomBytes(8).toString("hex")}`;
+      const requestId = `conn-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
       const now = /* @__PURE__ */ new Date();
       const expiresAt = new Date(now.getTime() + 5 * 60 * 1e3);
       const request = {
@@ -23928,8 +24641,8 @@ var SeamlessAgentConnectionService = class {
    */
   async acceptConnectionRequest(requestId, targetAgentId) {
     try {
-      const encryptionKey = crypto2.randomBytes(32).toString("hex");
-      const channelId = `ch-${Date.now()}-${crypto2.randomBytes(8).toString("hex")}`;
+      const encryptionKey = crypto3.randomBytes(32).toString("hex");
+      const channelId = `ch-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
       const now = /* @__PURE__ */ new Date();
       const channel = {
         channelId,
@@ -23967,7 +24680,7 @@ var SeamlessAgentConnectionService = class {
    */
   async sendUnifiedMessage(channelId, sourceAgentId, targetAgentId, messageType, payload, encrypt = true) {
     try {
-      const messageId = `msg-${Date.now()}-${crypto2.randomBytes(8).toString("hex")}`;
+      const messageId = `msg-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
       const now = /* @__PURE__ */ new Date();
       const message = {
         messageId,
@@ -24026,8 +24739,8 @@ var SeamlessAgentConnectionService = class {
       const database2 = getDb();
       const channels = await database2.query.agentConnections.findMany({
         where: or(
-          eq19(agentConnections.sourceAgentId, agentId),
-          eq19(agentConnections.targetAgentId, agentId)
+          eq21(agentConnections.sourceAgentId, agentId),
+          eq21(agentConnections.targetAgentId, agentId)
         )
       });
       return channels;
@@ -24056,7 +24769,7 @@ var SeamlessAgentConnectionService = class {
       const results = await Promise.all(
         targetAgentIds.map(async (targetId) => {
           try {
-            const messageId = `msg-${Date.now()}-${crypto2.randomBytes(4).toString("hex")}`;
+            const messageId = `msg-${Date.now()}-${crypto3.randomBytes(4).toString("hex")}`;
             console.log(`Broadcasting to ${targetId}: ${messageId}`);
             return { agentId: targetId, status: "sent" };
           } catch (error) {
@@ -24113,7 +24826,7 @@ var SeamlessAgentConnectionService = class {
    */
   async establishCrossPlatformConnection(sourceAgentId, targetAgentId, platforms) {
     try {
-      const connectionId = `xp-${Date.now()}-${crypto2.randomBytes(8).toString("hex")}`;
+      const connectionId = `xp-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
       const connection = {
         connectionId,
         platforms,
@@ -24144,7 +24857,7 @@ var SeamlessAgentConnectionService = class {
   async handleConnectionFailure(channelId, error) {
     try {
       console.log(`Connection failure on channel ${channelId}: ${error}`);
-      const newChannelId = `ch-recovery-${Date.now()}-${crypto2.randomBytes(8).toString("hex")}`;
+      const newChannelId = `ch-recovery-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
       console.log(`Recovery attempted, new channel: ${newChannelId}`);
       return {
         recovered: true,
@@ -24177,10 +24890,10 @@ var seamlessAgentConnectionRouter = router({
    * Discover agents by capabilities
    */
   discoverAgents: publicProcedure.input(
-    z68.object({
-      capabilities: z68.array(z68.string()),
-      platforms: z68.array(z68.string()).optional(),
-      minTrustScore: z68.number().default(50)
+    z70.object({
+      capabilities: z70.array(z70.string()),
+      platforms: z70.array(z70.string()).optional(),
+      minTrustScore: z70.number().default(50)
     })
   ).query(async ({ input }) => {
     return await seamlessAgentConnectionService.discoverAgents(
@@ -24192,17 +24905,17 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Get agent profile
    */
-  getAgentProfile: publicProcedure.input(z68.object({ agentId: z68.string() })).query(async ({ input }) => {
+  getAgentProfile: publicProcedure.input(z70.object({ agentId: z70.string() })).query(async ({ input }) => {
     return await seamlessAgentConnectionService.getAgentProfile(input.agentId);
   }),
   /**
    * Initiate connection request
    */
   initiateConnectionRequest: protectedProcedure.input(
-    z68.object({
-      targetAgentId: z68.string(),
-      purpose: z68.string(),
-      capabilities: z68.array(z68.string())
+    z70.object({
+      targetAgentId: z70.string(),
+      purpose: z70.string(),
+      capabilities: z70.array(z70.string())
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.initiateConnectionRequest(
@@ -24216,8 +24929,8 @@ var seamlessAgentConnectionRouter = router({
    * Accept connection request
    */
   acceptConnectionRequest: protectedProcedure.input(
-    z68.object({
-      requestId: z68.string()
+    z70.object({
+      requestId: z70.string()
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.acceptConnectionRequest(input.requestId, ctx.user.id.toString());
@@ -24226,9 +24939,9 @@ var seamlessAgentConnectionRouter = router({
    * Reject connection request
    */
   rejectConnectionRequest: protectedProcedure.input(
-    z68.object({
-      requestId: z68.string(),
-      reason: z68.string()
+    z70.object({
+      requestId: z70.string(),
+      reason: z70.string()
     })
   ).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.rejectConnectionRequest(input.requestId, input.reason);
@@ -24237,12 +24950,12 @@ var seamlessAgentConnectionRouter = router({
    * Send unified message
    */
   sendUnifiedMessage: protectedProcedure.input(
-    z68.object({
-      channelId: z68.string(),
-      targetAgentId: z68.string(),
-      messageType: z68.enum(["request", "response", "notification", "broadcast"]),
-      payload: z68.record(z68.any()),
-      encrypt: z68.boolean().default(true)
+    z70.object({
+      channelId: z70.string(),
+      targetAgentId: z70.string(),
+      messageType: z70.enum(["request", "response", "notification", "broadcast"]),
+      payload: z70.record(z70.any()),
+      encrypt: z70.boolean().default(true)
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.sendUnifiedMessage(
@@ -24258,13 +24971,13 @@ var seamlessAgentConnectionRouter = router({
    * Receive unified message
    */
   receiveUnifiedMessage: protectedProcedure.input(
-    z68.object({
-      messageId: z68.string(),
-      sourceAgentId: z68.string(),
-      channelId: z68.string(),
-      messageType: z68.enum(["request", "response", "notification", "broadcast"]),
-      payload: z68.record(z68.any()),
-      encrypted: z68.boolean()
+    z70.object({
+      messageId: z70.string(),
+      sourceAgentId: z70.string(),
+      channelId: z70.string(),
+      messageType: z70.enum(["request", "response", "notification", "broadcast"]),
+      payload: z70.record(z70.any()),
+      encrypted: z70.boolean()
     })
   ).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.receiveUnifiedMessage({
@@ -24282,7 +24995,7 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Acknowledge message delivery
    */
-  acknowledgeMessage: protectedProcedure.input(z68.object({ messageId: z68.string() })).mutation(async ({ input }) => {
+  acknowledgeMessage: protectedProcedure.input(z70.object({ messageId: z70.string() })).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.acknowledgeMessage(input.messageId);
   }),
   /**
@@ -24294,17 +25007,17 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Close secure channel
    */
-  closeChannel: protectedProcedure.input(z68.object({ channelId: z68.string() })).mutation(async ({ input }) => {
+  closeChannel: protectedProcedure.input(z70.object({ channelId: z70.string() })).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.closeChannel(input.channelId);
   }),
   /**
    * Broadcast message to multiple agents
    */
   broadcastMessage: protectedProcedure.input(
-    z68.object({
-      targetAgentIds: z68.array(z68.string()),
-      messageType: z68.string(),
-      payload: z68.record(z68.any())
+    z70.object({
+      targetAgentIds: z70.array(z70.string()),
+      messageType: z70.string(),
+      payload: z70.record(z70.any())
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.broadcastMessage(
@@ -24323,16 +25036,16 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Monitor connection health
    */
-  monitorConnectionHealth: protectedProcedure.input(z68.object({ channelId: z68.string() })).query(async ({ input }) => {
+  monitorConnectionHealth: protectedProcedure.input(z70.object({ channelId: z70.string() })).query(async ({ input }) => {
     return await seamlessAgentConnectionService.monitorConnectionHealth(input.channelId);
   }),
   /**
    * Establish cross-platform connection
    */
   establishCrossPlatformConnection: protectedProcedure.input(
-    z68.object({
-      targetAgentId: z68.string(),
-      platforms: z68.array(z68.string())
+    z70.object({
+      targetAgentId: z70.string(),
+      platforms: z70.array(z70.string())
     })
   ).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.establishCrossPlatformConnection(
@@ -24344,16 +25057,16 @@ var seamlessAgentConnectionRouter = router({
   /**
    * Sync agent state across platforms
    */
-  syncAgentState: protectedProcedure.input(z68.object({ platforms: z68.array(z68.string()) })).mutation(async ({ input, ctx }) => {
+  syncAgentState: protectedProcedure.input(z70.object({ platforms: z70.array(z70.string()) })).mutation(async ({ input, ctx }) => {
     return await seamlessAgentConnectionService.syncAgentState(ctx.user.id.toString(), input.platforms);
   }),
   /**
    * Handle connection failure and recovery
    */
   handleConnectionFailure: protectedProcedure.input(
-    z68.object({
-      channelId: z68.string(),
-      error: z68.string()
+    z70.object({
+      channelId: z70.string(),
+      error: z70.string()
     })
   ).mutation(async ({ input }) => {
     return await seamlessAgentConnectionService.handleConnectionFailure(input.channelId, input.error);
@@ -24368,24 +25081,24 @@ var seamlessAgentConnectionRouter = router({
 
 // server/routers/videoProductionWorkflowRouter.ts
 init_db();
-import { z as z69 } from "zod";
-var videoProductionSchema = z69.object({
-  videoId: z69.string(),
-  title: z69.string(),
-  description: z69.string().optional(),
-  duration: z69.number(),
-  generatedAt: z69.date(),
-  videoUrl: z69.string(),
-  thumbnailUrl: z69.string().optional(),
-  metadata: z69.record(z69.any()).optional()
+import { z as z71 } from "zod";
+var videoProductionSchema = z71.object({
+  videoId: z71.string(),
+  title: z71.string(),
+  description: z71.string().optional(),
+  duration: z71.number(),
+  generatedAt: z71.date(),
+  videoUrl: z71.string(),
+  thumbnailUrl: z71.string().optional(),
+  metadata: z71.record(z71.any()).optional()
 });
-var broadcastScheduleSchema = z69.object({
-  videoId: z69.string(),
-  rrbRadioStationId: z69.string(),
-  scheduledTime: z69.date(),
-  priority: z69.enum(["low", "medium", "high"]).optional(),
-  autoRepeat: z69.boolean().optional(),
-  repeatInterval: z69.string().optional()
+var broadcastScheduleSchema = z71.object({
+  videoId: z71.string(),
+  rrbRadioStationId: z71.string(),
+  scheduledTime: z71.date(),
+  priority: z71.enum(["low", "medium", "high"]).optional(),
+  autoRepeat: z71.boolean().optional(),
+  repeatInterval: z71.string().optional()
   // cron expression
 });
 var videoProductionWorkflowRouter = router({
@@ -24393,7 +25106,7 @@ var videoProductionWorkflowRouter = router({
   registerGeneratedVideo: protectedProcedure.input(videoProductionSchema).mutation(async ({ ctx, input }) => {
     try {
       const videoRecord = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq26 }) => eq26(videos2.id, input.videoId)
+        where: (videos2, { eq: eq28 }) => eq28(videos2.id, input.videoId)
       });
       if (!videoRecord) {
         await (void 0)(void 0).values({
@@ -24421,10 +25134,10 @@ var videoProductionWorkflowRouter = router({
     }
   }),
   // Get video production status
-  getVideoStatus: protectedProcedure.input(z69.object({ videoId: z69.string() })).query(async ({ input }) => {
+  getVideoStatus: protectedProcedure.input(z71.object({ videoId: z71.string() })).query(async ({ input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq26 }) => eq26(videos2.id, input.videoId)
+        where: (videos2, { eq: eq28 }) => eq28(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -24446,7 +25159,7 @@ var videoProductionWorkflowRouter = router({
   scheduleForRRBRadio: protectedProcedure.input(broadcastScheduleSchema).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq26 }) => eq26(videos2.id, input.videoId)
+        where: (videos2, { eq: eq28 }) => eq28(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -24479,13 +25192,13 @@ var videoProductionWorkflowRouter = router({
     }
   }),
   // Get all scheduled broadcasts for RRB Radio
-  getScheduledBroadcasts: protectedProcedure.input(z69.object({ stationId: z69.string().optional() })).query(async ({ ctx, input }) => {
+  getScheduledBroadcasts: protectedProcedure.input(z71.object({ stationId: z71.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcastSchedules.findMany({
-        where: (schedules, { eq: eq26, and: and18 }) => input.stationId ? and18(
-          eq26(schedules.createdBy, String(ctx.user.id)),
-          eq26(schedules.stationId, input.stationId)
-        ) : eq26(schedules.createdBy, String(ctx.user.id))
+        where: (schedules, { eq: eq28, and: and20 }) => input.stationId ? and20(
+          eq28(schedules.createdBy, String(ctx.user.id)),
+          eq28(schedules.stationId, input.stationId)
+        ) : eq28(schedules.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         scheduleId: broadcast.id,
@@ -24503,14 +25216,14 @@ var videoProductionWorkflowRouter = router({
   }),
   // Trigger immediate broadcast to RRB Radio
   broadcastNow: protectedProcedure.input(
-    z69.object({
-      videoId: z69.string(),
-      rrbRadioStationId: z69.string()
+    z71.object({
+      videoId: z71.string(),
+      rrbRadioStationId: z71.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq26 }) => eq26(videos2.id, input.videoId)
+        where: (videos2, { eq: eq28 }) => eq28(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -24539,13 +25252,13 @@ var videoProductionWorkflowRouter = router({
     }
   }),
   // Get broadcast history
-  getBroadcastHistory: protectedProcedure.input(z69.object({ videoId: z69.string().optional() })).query(async ({ ctx, input }) => {
+  getBroadcastHistory: protectedProcedure.input(z71.object({ videoId: z71.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq26, and: and18 }) => input.videoId ? and18(
-          eq26(broadcasts5.createdBy, String(ctx.user.id)),
-          eq26(broadcasts5.videoId, input.videoId)
-        ) : eq26(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq28, and: and20 }) => input.videoId ? and20(
+          eq28(broadcasts5.createdBy, String(ctx.user.id)),
+          eq28(broadcasts5.videoId, input.videoId)
+        ) : eq28(broadcasts5.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         broadcastId: broadcast.id,
@@ -24565,10 +25278,10 @@ var videoProductionWorkflowRouter = router({
   getWorkflowStats: protectedProcedure.query(async ({ ctx }) => {
     try {
       const videos2 = await (void 0).videos.findMany({
-        where: (videos3, { eq: eq26 }) => eq26(videos3.userId, String(ctx.user.id))
+        where: (videos3, { eq: eq28 }) => eq28(videos3.userId, String(ctx.user.id))
       });
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq26 }) => eq26(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq28 }) => eq28(broadcasts5.createdBy, String(ctx.user.id))
       });
       const statusCounts = {
         generated: videos2.filter((v) => v.status === "generated").length,
@@ -24975,7 +25688,7 @@ var RRBRadioService = class {
 var rrbRadioService = new RRBRadioService();
 
 // server/routers/qumusOrchestrationRouter.ts
-import { z as z70 } from "zod";
+import { z as z72 } from "zod";
 var qumusOrchestrationRouter2 = router({
   /**
    * Get Canryn ecosystem configuration
@@ -25019,9 +25732,9 @@ var qumusOrchestrationRouter2 = router({
    * Update subsidiary status (requires protection)
    */
   updateSubsidiaryStatus: protectedProcedure.input(
-    z70.object({
-      subsidiaryId: z70.string(),
-      status: z70.enum(["active", "inactive", "maintenance"])
+    z72.object({
+      subsidiaryId: z72.string(),
+      status: z72.enum(["active", "inactive", "maintenance"])
     })
   ).mutation(async ({ input }) => {
     const success = canrynEcosystem.updateSubsidiaryStatus(
@@ -25040,9 +25753,9 @@ var qumusOrchestrationRouter2 = router({
    * Update autonomy level
    */
   updateAutonomyLevel: protectedProcedure.input(
-    z70.object({
-      subsidiaryId: z70.string(),
-      level: z70.number().min(0).max(100)
+    z72.object({
+      subsidiaryId: z72.string(),
+      level: z72.number().min(0).max(100)
     })
   ).mutation(async ({ input }) => {
     const success = canrynEcosystem.updateAutonomyLevel(
@@ -25060,14 +25773,14 @@ var qumusOrchestrationRouter2 = router({
   /**
    * Enable human override
    */
-  enableHumanOverride: protectedProcedure.input(z70.object({ subsidiaryId: z70.string() })).mutation(async ({ input }) => {
+  enableHumanOverride: protectedProcedure.input(z72.object({ subsidiaryId: z72.string() })).mutation(async ({ input }) => {
     const success = canrynEcosystem.enableHumanOverride(input.subsidiaryId);
     return { success };
   }),
   /**
    * Disable human override (autonomous mode)
    */
-  disableHumanOverride: protectedProcedure.input(z70.object({ subsidiaryId: z70.string() })).mutation(async ({ input }) => {
+  disableHumanOverride: protectedProcedure.input(z72.object({ subsidiaryId: z72.string() })).mutation(async ({ input }) => {
     const success = canrynEcosystem.disableHumanOverride(input.subsidiaryId);
     return { success };
   }),
@@ -25075,15 +25788,15 @@ var qumusOrchestrationRouter2 = router({
    * Schedule video broadcast on RRB Radio
    */
   scheduleRRBBroadcast: protectedProcedure.input(
-    z70.object({
-      title: z70.string(),
-      description: z70.string(),
-      videoUrl: z70.string(),
-      stationId: z70.string(),
-      scheduledTime: z70.date(),
-      duration: z70.number(),
-      quality: z70.enum(["480p", "720p", "1080p", "4K"]),
-      bitrate: z70.number()
+    z72.object({
+      title: z72.string(),
+      description: z72.string(),
+      videoUrl: z72.string(),
+      stationId: z72.string(),
+      scheduledTime: z72.date(),
+      duration: z72.number(),
+      quality: z72.enum(["480p", "720p", "1080p", "4K"]),
+      bitrate: z72.number()
     })
   ).mutation(async ({ input }) => {
     const broadcastId = await rrbRadioService.scheduleBroadcast({
@@ -25105,26 +25818,26 @@ var qumusOrchestrationRouter2 = router({
   /**
    * Get RRB Radio broadcasts
    */
-  getRRBBroadcasts: publicProcedure.input(z70.object({ stationId: z70.string() })).query(async ({ input }) => {
+  getRRBBroadcasts: publicProcedure.input(z72.object({ stationId: z72.string() })).query(async ({ input }) => {
     return await rrbRadioService.listBroadcasts(input.stationId);
   }),
   /**
    * Get upcoming broadcasts
    */
-  getUpcomingBroadcasts: publicProcedure.input(z70.object({ limit: z70.number().default(10) })).query(async ({ input }) => {
+  getUpcomingBroadcasts: publicProcedure.input(z72.object({ limit: z72.number().default(10) })).query(async ({ input }) => {
     return await rrbRadioService.getUpcomingBroadcasts(input.limit);
   }),
   /**
    * Start broadcast
    */
-  startBroadcast: protectedProcedure.input(z70.object({ broadcastId: z70.string() })).mutation(async ({ input }) => {
+  startBroadcast: protectedProcedure.input(z72.object({ broadcastId: z72.string() })).mutation(async ({ input }) => {
     const success = await rrbRadioService.startBroadcast(input.broadcastId);
     return { success };
   }),
   /**
    * End broadcast
    */
-  endBroadcast: protectedProcedure.input(z70.object({ broadcastId: z70.string() })).mutation(async ({ input }) => {
+  endBroadcast: protectedProcedure.input(z72.object({ broadcastId: z72.string() })).mutation(async ({ input }) => {
     const success = await rrbRadioService.endBroadcast(input.broadcastId);
     return { success };
   }),
@@ -25138,9 +25851,9 @@ var qumusOrchestrationRouter2 = router({
    * Get or create RRB station
    */
   getOrCreateStation: protectedProcedure.input(
-    z70.object({
-      stationId: z70.string(),
-      name: z70.string()
+    z72.object({
+      stationId: z72.string(),
+      name: z72.string()
     })
   ).mutation(async ({ input }) => {
     return await rrbRadioService.getOrCreateStation(
@@ -25159,14 +25872,14 @@ var qumusOrchestrationRouter2 = router({
    * From generation → production → RRB Radio broadcast
    */
   orchestrateVideoWorkflow: protectedProcedure.input(
-    z70.object({
-      videoId: z70.string(),
-      title: z70.string(),
-      description: z70.string(),
-      videoUrl: z70.string(),
-      stationId: z70.string(),
-      scheduledTime: z70.date(),
-      automationEnabled: z70.boolean().default(true)
+    z72.object({
+      videoId: z72.string(),
+      title: z72.string(),
+      description: z72.string(),
+      videoUrl: z72.string(),
+      stationId: z72.string(),
+      scheduledTime: z72.date(),
+      automationEnabled: z72.boolean().default(true)
     })
   ).mutation(async ({ input, ctx }) => {
     console.log("[Qumus] Orchestrating video workflow");
@@ -25950,7 +26663,7 @@ ${report.recommendations.map((r) => `- ${r}`).join("\n")}
 var dailyStatusReportService = new DailyStatusReportService();
 
 // server/routers/ecosystemIntegrationRouter.ts
-import { z as z71 } from "zod";
+import { z as z73 } from "zod";
 var ecosystemIntegrationRouter = router({
   /**
    * Get current ecosystem integration status
@@ -25992,9 +26705,9 @@ var ecosystemIntegrationRouter = router({
    * Update stream frequency (protected)
    */
   updateStreamFrequency: protectedProcedure.input(
-    z71.object({
-      streamId: z71.string(),
-      frequency: z71.number()
+    z73.object({
+      streamId: z73.string(),
+      frequency: z73.number()
     })
   ).mutation(async ({ input }) => {
     const success = audioStreamingService.updateStreamFrequency(
@@ -26007,8 +26720,8 @@ var ecosystemIntegrationRouter = router({
    * Trigger emergency broadcast (protected)
    */
   triggerEmergencyBroadcast: protectedProcedure.input(
-    z71.object({
-      message: z71.string()
+    z73.object({
+      message: z73.string()
     })
   ).mutation(async ({ input }) => {
     const success = await ecosystemIntegration.triggerEmergencyBroadcast(
@@ -26040,9 +26753,9 @@ var ecosystemIntegrationRouter = router({
    * Update system status (protected)
    */
   updateSystemStatus: protectedProcedure.input(
-    z71.object({
-      system: z71.enum(["qumus", "rrb", "hybridCast", "canryn", "sweetMiracles"]),
-      updates: z71.record(z71.any())
+    z73.object({
+      system: z73.enum(["qumus", "rrb", "hybridCast", "canryn", "sweetMiracles"]),
+      updates: z73.record(z73.any())
     })
   ).mutation(async ({ input }) => {
     ecosystemIntegration.updateSystemStatus(input.system, input.updates);
@@ -26072,8 +26785,8 @@ var ecosystemIntegrationRouter = router({
    * Get metrics history (protected)
    */
   getMetricsHistory: protectedProcedure.input(
-    z71.object({
-      limit: z71.number().optional()
+    z73.object({
+      limit: z73.number().optional()
     })
   ).query(async ({ input }) => {
     return stateOfStudio.getMetricsHistory(input.limit);
@@ -26102,8 +26815,8 @@ var ecosystemIntegrationRouter = router({
    * Check system health
    */
   checkSystemHealth: publicProcedure.input(
-    z71.object({
-      system: z71.enum(["qumus", "rrb", "hybridCast", "canryn", "sweetMiracles"])
+    z73.object({
+      system: z73.enum(["qumus", "rrb", "hybridCast", "canryn", "sweetMiracles"])
     })
   ).query(async ({ input }) => {
     const isHealthy = ecosystemIntegration.checkSystemHealth(input.system);
@@ -26118,14 +26831,14 @@ var ecosystemIntegrationRouter = router({
   /**
    * Update legacy status (protected)
    */
-  updateLegacyStatus: protectedProcedure.input(z71.record(z71.any())).mutation(async ({ input }) => {
+  updateLegacyStatus: protectedProcedure.input(z73.record(z73.any())).mutation(async ({ input }) => {
     stateOfStudio.updateLegacyStatus(input);
     return { success: true };
   })
 });
 
 // server/mapArsenal.ts
-import { z as z72 } from "zod";
+import { z as z74 } from "zod";
 var mapArsenalRouter = router({
   // Get all tactical assets
   getAssets: publicProcedure.query(async () => {
@@ -26324,11 +27037,11 @@ var mapArsenalRouter = router({
   }),
   // Create incident report
   createIncident: publicProcedure.input(
-    z72.object({
-      type: z72.enum(["threat", "emergency", "alert", "info"]),
-      location: z72.object({ lat: z72.number(), lng: z72.number() }),
-      severity: z72.enum(["low", "medium", "high", "critical"]),
-      description: z72.string()
+    z74.object({
+      type: z74.enum(["threat", "emergency", "alert", "info"]),
+      location: z74.object({ lat: z74.number(), lng: z74.number() }),
+      severity: z74.enum(["low", "medium", "high", "critical"]),
+      description: z74.string()
     })
   ).mutation(async ({ input }) => {
     return {
@@ -26340,9 +27053,9 @@ var mapArsenalRouter = router({
   }),
   // Update asset status
   updateAssetStatus: publicProcedure.input(
-    z72.object({
-      assetId: z72.string(),
-      status: z72.enum(["active", "idle", "warning", "critical"])
+    z74.object({
+      assetId: z74.string(),
+      status: z74.enum(["active", "idle", "warning", "critical"])
     })
   ).mutation(async ({ input }) => {
     return {
@@ -26353,13 +27066,13 @@ var mapArsenalRouter = router({
   }),
   // Get route optimization
   optimizeRoute: publicProcedure.input(
-    z72.object({
-      origin: z72.object({ lat: z72.number(), lng: z72.number() }),
-      destination: z72.object({ lat: z72.number(), lng: z72.number() }),
-      constraints: z72.object({
-        maxDistance: z72.number().optional(),
-        maxTime: z72.number().optional(),
-        avoidZones: z72.array(z72.object({ lat: z72.number(), lng: z72.number() })).optional()
+    z74.object({
+      origin: z74.object({ lat: z74.number(), lng: z74.number() }),
+      destination: z74.object({ lat: z74.number(), lng: z74.number() }),
+      constraints: z74.object({
+        maxDistance: z74.number().optional(),
+        maxTime: z74.number().optional(),
+        avoidZones: z74.array(z74.object({ lat: z74.number(), lng: z74.number() })).optional()
       }).optional()
     })
   ).mutation(async ({ input }) => {
@@ -26390,7 +27103,7 @@ var mapArsenalRouter = router({
 });
 
 // server/qumusAutonomousFinalization.ts
-import { z as z73 } from "zod";
+import { z as z75 } from "zod";
 var autonomousPolicies = {
   // 1. Broadcast Management Policy
   broadcastManagement: {
@@ -26485,9 +27198,9 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Initialize Qumus as autonomous entity
    */
-  initializeAutonomous: protectedProcedure.input(z73.object({
-    autonomyLevel: z73.number().min(0.5).max(1).optional(),
-    policies: z73.array(z73.string()).optional()
+  initializeAutonomous: protectedProcedure.input(z75.object({
+    autonomyLevel: z75.number().min(0.5).max(1).optional(),
+    policies: z75.array(z75.string()).optional()
   })).mutation(async ({ ctx, input }) => {
     if (ctx.user?.role !== "admin") {
       throw new Error("Only administrators can initialize Qumus");
@@ -26530,7 +27243,7 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Get specific policy details
    */
-  getPolicy: publicProcedure.input(z73.object({ policyId: z73.string() })).query(async ({ input }) => {
+  getPolicy: publicProcedure.input(z75.object({ policyId: z75.string() })).query(async ({ input }) => {
     const policy = Object.values(autonomousPolicies).find(
       (p) => p.id === input.policyId
     );
@@ -26542,10 +27255,10 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Trigger autonomous decision
    */
-  triggerDecision: protectedProcedure.input(z73.object({
-    policyId: z73.string(),
-    trigger: z73.string(),
-    context: z73.record(z73.any()).optional()
+  triggerDecision: protectedProcedure.input(z75.object({
+    policyId: z75.string(),
+    trigger: z75.string(),
+    context: z75.record(z75.any()).optional()
   })).mutation(async ({ ctx, input }) => {
     const policy = Object.values(autonomousPolicies).find(
       (p) => p.id === input.policyId
@@ -26569,9 +27282,9 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Get autonomous decision history
    */
-  getDecisionHistory: protectedProcedure.input(z73.object({
-    limit: z73.number().min(1).max(100).default(50),
-    policyFilter: z73.string().optional()
+  getDecisionHistory: protectedProcedure.input(z75.object({
+    limit: z75.number().min(1).max(100).default(50),
+    policyFilter: z75.string().optional()
   })).query(async ({ input }) => {
     const decisions3 = Array.from({ length: input.limit }, (_, i) => ({
       id: `decision-${Date.now() - i * 1e3}`,
@@ -26589,10 +27302,10 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Override autonomous decision (human intervention)
    */
-  overrideDecision: protectedProcedure.input(z73.object({
-    decisionId: z73.string(),
-    newAction: z73.string(),
-    reason: z73.string()
+  overrideDecision: protectedProcedure.input(z75.object({
+    decisionId: z75.string(),
+    newAction: z75.string(),
+    reason: z75.string()
   })).mutation(async ({ ctx, input }) => {
     if (ctx.user?.role !== "admin") {
       throw new Error("Only administrators can override decisions");
@@ -26637,9 +27350,9 @@ var qumusAutonomousFinalizationRouter = router({
   /**
    * Finalize Qumus for production deployment
    */
-  finalizeProduction: protectedProcedure.input(z73.object({
-    environment: z73.enum(["development", "staging", "production"]),
-    confirmFinal: z73.boolean()
+  finalizeProduction: protectedProcedure.input(z75.object({
+    environment: z75.enum(["development", "staging", "production"]),
+    confirmFinal: z75.boolean()
   })).mutation(async ({ ctx, input }) => {
     if (ctx.user?.role !== "admin") {
       throw new Error("Only administrators can finalize production");
@@ -26669,17 +27382,17 @@ init_qumusActivation();
 init_ecosystemController();
 init_planningEngine();
 init_memorySystem();
-import { z as z74 } from "zod";
+import { z as z76 } from "zod";
 var autonomousTaskRouter = router({
   /**
    * Submit a task for autonomous execution
    */
   submitTask: protectedProcedure.input(
-    z74.object({
-      goal: z74.string().describe("The goal or task description"),
-      steps: z74.array(z74.string()).optional().describe("Optional steps to execute"),
-      priority: z74.number().min(1).max(10).default(5).describe("Task priority (1-10)"),
-      constraints: z74.array(z74.string()).optional().describe("Constraints or requirements")
+    z76.object({
+      goal: z76.string().describe("The goal or task description"),
+      steps: z76.array(z76.string()).optional().describe("Optional steps to execute"),
+      priority: z76.number().min(1).max(10).default(5).describe("Task priority (1-10)"),
+      constraints: z76.array(z76.string()).optional().describe("Constraints or requirements")
     })
   ).mutation(async ({ input, ctx }) => {
     try {
@@ -26710,11 +27423,11 @@ var autonomousTaskRouter = router({
    * Submit an ecosystem command (RRB, HybridCast, Canryn, Sweet Miracles)
    */
   submitEcosystemCommand: protectedProcedure.input(
-    z74.object({
-      target: z74.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-      action: z74.string(),
-      params: z74.record(z74.any()),
-      priority: z74.number().min(1).max(10).default(5)
+    z76.object({
+      target: z76.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+      action: z76.string(),
+      params: z76.record(z76.any()),
+      priority: z76.number().min(1).max(10).default(5)
     })
   ).mutation(async ({ input, ctx }) => {
     try {
@@ -26769,11 +27482,11 @@ var autonomousTaskRouter = router({
    * Create an autonomous goal
    */
   createGoal: protectedProcedure.input(
-    z74.object({
-      description: z74.string(),
-      priority: z74.number().min(1).max(10).default(5),
-      constraints: z74.array(z74.string()).optional(),
-      deadline: z74.date().optional()
+    z76.object({
+      description: z76.string(),
+      priority: z76.number().min(1).max(10).default(5),
+      constraints: z76.array(z76.string()).optional(),
+      deadline: z76.date().optional()
     })
   ).mutation(async ({ input, ctx }) => {
     try {
@@ -26805,7 +27518,7 @@ var autonomousTaskRouter = router({
   /**
    * Generate a plan for a goal
    */
-  generatePlan: protectedProcedure.input(z74.object({ goalId: z74.string() })).mutation(async ({ input }) => {
+  generatePlan: protectedProcedure.input(z76.object({ goalId: z76.string() })).mutation(async ({ input }) => {
     try {
       const planning = getPlanningEngine();
       const plan = planning.generatePlan(input.goalId);
@@ -26831,7 +27544,7 @@ var autonomousTaskRouter = router({
   /**
    * Execute a plan
    */
-  executePlan: protectedProcedure.input(z74.object({ planId: z74.string() })).mutation(async ({ input, ctx }) => {
+  executePlan: protectedProcedure.input(z76.object({ planId: z76.string() })).mutation(async ({ input, ctx }) => {
     try {
       const planning = getPlanningEngine();
       const result2 = await planning.executePlan(input.planId);
@@ -26892,7 +27605,7 @@ var autonomousTaskRouter = router({
   /**
    * Get memory facts
    */
-  getMemoryFacts: protectedProcedure.input(z74.object({ search: z74.string().optional() })).query(async ({ input }) => {
+  getMemoryFacts: protectedProcedure.input(z76.object({ search: z76.string().optional() })).query(async ({ input }) => {
     try {
       const memory = getMemorySystem();
       if (input.search) {
@@ -26943,9 +27656,9 @@ var autonomousTaskRouter = router({
    * Get ecosystem command history
    */
   getCommandHistory: protectedProcedure.input(
-    z74.object({
-      target: z74.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]).optional(),
-      limit: z74.number().min(1).max(100).default(20)
+    z76.object({
+      target: z76.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]).optional(),
+      limit: z76.number().min(1).max(100).default(20)
     })
   ).query(async ({ input }) => {
     try {
@@ -27011,7 +27724,7 @@ var autonomousTaskRouter = router({
 // server/services/taskExecutionEngine.ts
 init_db();
 init_schema();
-import { eq as eq20, and as and15 } from "drizzle-orm";
+import { eq as eq22, and as and17 } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 var TaskExecutionEngine = class {
   executingTasks = /* @__PURE__ */ new Map();
@@ -27070,10 +27783,10 @@ var TaskExecutionEngine = class {
     try {
       const db2 = await getDb();
       if (!db2) return null;
-      const task = await db2.select().from(autonomousTasks).where(eq20(autonomousTasks.id, taskId)).limit(1);
+      const task = await db2.select().from(autonomousTasks).where(eq22(autonomousTasks.id, taskId)).limit(1);
       if (!task || task.length === 0) return null;
       const t2 = task[0];
-      const steps = await db2.select().from(taskSteps).where(eq20(taskSteps.taskId, taskId));
+      const steps = await db2.select().from(taskSteps).where(eq22(taskSteps.taskId, taskId));
       const completedSteps = steps.filter((s) => s.status === "completed").length;
       const progress = steps.length > 0 ? Math.round(completedSteps / steps.length * 100) : 0;
       return {
@@ -27097,9 +27810,9 @@ var TaskExecutionEngine = class {
       const db2 = await getDb();
       if (!db2) return 0;
       const result2 = await db2.select().from(autonomousTasks).where(
-        and15(
-          eq20(autonomousTasks.status, "executing"),
-          eq20(autonomousTasks.status, "queued")
+        and17(
+          eq22(autonomousTasks.status, "executing"),
+          eq22(autonomousTasks.status, "queued")
         )
       );
       return result2.length;
@@ -27115,10 +27828,10 @@ var TaskExecutionEngine = class {
     try {
       const db2 = await getDb();
       if (!db2) return { activeTaskCount: 0, queuedTaskCount: 0, successRate: 0, averageExecutionTime: 0, totalTasksProcessed: 0, failedTaskCount: 0 };
-      const executing = await db2.select().from(autonomousTasks).where(eq20(autonomousTasks.status, "executing"));
-      const queued = await db2.select().from(autonomousTasks).where(eq20(autonomousTasks.status, "queued"));
-      const completed = await db2.select().from(autonomousTasks).where(eq20(autonomousTasks.status, "completed"));
-      const failed = await db2.select().from(autonomousTasks).where(eq20(autonomousTasks.status, "failed"));
+      const executing = await db2.select().from(autonomousTasks).where(eq22(autonomousTasks.status, "executing"));
+      const queued = await db2.select().from(autonomousTasks).where(eq22(autonomousTasks.status, "queued"));
+      const completed = await db2.select().from(autonomousTasks).where(eq22(autonomousTasks.status, "completed"));
+      const failed = await db2.select().from(autonomousTasks).where(eq22(autonomousTasks.status, "failed"));
       const total = completed.length + failed.length;
       const successRate = total > 0 ? completed.length / total * 100 : 0;
       const avgExecutionTime = completed.length > 0 ? completed.reduce((sum2, t2) => sum2 + (t2.executionTime || 0), 0) / completed.length : 0;
@@ -27178,13 +27891,13 @@ var TaskExecutionEngine = class {
       await db2.update(autonomousTasks).set({
         status: "executing",
         startedAt: (/* @__PURE__ */ new Date()).toISOString()
-      }).where(eq20(autonomousTasks.id, taskId));
+      }).where(eq22(autonomousTasks.id, taskId));
       await db2.insert(taskExecutionLog).values({
         taskId,
         eventType: "started",
         timestamp: (/* @__PURE__ */ new Date()).toISOString()
       });
-      const taskResult = await db2.select().from(autonomousTasks).where(eq20(autonomousTasks.id, taskId)).limit(1);
+      const taskResult = await db2.select().from(autonomousTasks).where(eq22(autonomousTasks.id, taskId)).limit(1);
       if (!taskResult || taskResult.length === 0) {
         throw new Error("Task not found");
       }
@@ -27194,7 +27907,7 @@ var TaskExecutionEngine = class {
         throw new Error(`Task rejected by policy: ${policyDecision.reasoning}`);
       }
       if (policyDecision.decision === "requires_review") {
-        await db2.update(autonomousTasks).set({ status: "queued" }).where(eq20(autonomousTasks.id, taskId));
+        await db2.update(autonomousTasks).set({ status: "queued" }).where(eq22(autonomousTasks.id, taskId));
         await db2.insert(taskExecutionLog).values({
           taskId,
           eventType: "requires_review",
@@ -27203,19 +27916,19 @@ var TaskExecutionEngine = class {
         });
         return;
       }
-      const steps = await db2.select().from(taskSteps).where(eq20(taskSteps.taskId, taskId));
+      const steps = await db2.select().from(taskSteps).where(eq22(taskSteps.taskId, taskId));
       let result2 = { goal: task.goal, policyDecision };
       if (steps.length > 0) {
         for (const step of steps) {
           try {
-            await db2.update(taskSteps).set({ status: "executing", startedAt: (/* @__PURE__ */ new Date()).toISOString() }).where(eq20(taskSteps.id, step.id));
+            await db2.update(taskSteps).set({ status: "executing", startedAt: (/* @__PURE__ */ new Date()).toISOString() }).where(eq22(taskSteps.id, step.id));
             const stepResult = await this.executeStep(step.description, task.goal);
             await db2.update(taskSteps).set({
               status: "completed",
               result: JSON.stringify(stepResult),
               completedAt: (/* @__PURE__ */ new Date()).toISOString(),
               executionTime: Date.now() - startTime
-            }).where(eq20(taskSteps.id, step.id));
+            }).where(eq22(taskSteps.id, step.id));
             await db2.insert(taskExecutionLog).values({
               taskId,
               eventType: "step_completed",
@@ -27228,7 +27941,7 @@ var TaskExecutionEngine = class {
               status: "failed",
               error: String(error),
               completedAt: (/* @__PURE__ */ new Date()).toISOString()
-            }).where(eq20(taskSteps.id, step.id));
+            }).where(eq22(taskSteps.id, step.id));
             throw error;
           }
         }
@@ -27241,7 +27954,7 @@ var TaskExecutionEngine = class {
         result: JSON.stringify(result2),
         completedAt: (/* @__PURE__ */ new Date()).toISOString(),
         executionTime
-      }).where(eq20(autonomousTasks.id, taskId));
+      }).where(eq22(autonomousTasks.id, taskId));
       await db2.insert(taskExecutionLog).values({
         taskId,
         eventType: "completed",
@@ -27259,7 +27972,7 @@ var TaskExecutionEngine = class {
           error: String(error),
           completedAt: (/* @__PURE__ */ new Date()).toISOString(),
           executionTime
-        }).where(eq20(autonomousTasks.id, taskId));
+        }).where(eq22(autonomousTasks.id, taskId));
         await db2.insert(taskExecutionLog).values({
           taskId,
           eventType: "failed",
@@ -27402,7 +28115,7 @@ var taskExecutionEngine = new TaskExecutionEngine();
 // server/services/ecosystemExecutor.ts
 init_db();
 init_schema();
-import { eq as eq21 } from "drizzle-orm";
+import { eq as eq23 } from "drizzle-orm";
 import { v4 as uuidv42 } from "uuid";
 var EcosystemExecutor = class {
   commandQueue = [];
@@ -27442,7 +28155,7 @@ var EcosystemExecutor = class {
     try {
       const db2 = await getDb();
       if (!db2) return null;
-      const cmd = await db2.select().from(ecosystemCommands).where(eq21(ecosystemCommands.id, commandId)).limit(1);
+      const cmd = await db2.select().from(ecosystemCommands).where(eq23(ecosystemCommands.id, commandId)).limit(1);
       if (!cmd || cmd.length === 0) return null;
       const c = cmd[0];
       return {
@@ -27465,7 +28178,7 @@ var EcosystemExecutor = class {
     try {
       const db2 = await getDb();
       if (!db2) return null;
-      const status = await db2.select().from(ecosystemStatus).where(eq21(ecosystemStatus.entity, target)).limit(1);
+      const status = await db2.select().from(ecosystemStatus).where(eq23(ecosystemStatus.entity, target)).limit(1);
       if (status && status.length > 0) {
         return {
           entity: status[0].entity,
@@ -27533,7 +28246,7 @@ var EcosystemExecutor = class {
     try {
       const db2 = await getDb();
       if (!db2) throw new Error("Database connection failed");
-      const cmdResult = await db2.select().from(ecosystemCommands).where(eq21(ecosystemCommands.id, commandId)).limit(1);
+      const cmdResult = await db2.select().from(ecosystemCommands).where(eq23(ecosystemCommands.id, commandId)).limit(1);
       if (!cmdResult || cmdResult.length === 0) {
         throw new Error("Command not found");
       }
@@ -27541,7 +28254,7 @@ var EcosystemExecutor = class {
       await db2.update(ecosystemCommands).set({
         status: "executing",
         executedAt: (/* @__PURE__ */ new Date()).toISOString()
-      }).where(eq21(ecosystemCommands.id, commandId));
+      }).where(eq23(ecosystemCommands.id, commandId));
       let result2;
       switch (cmd.target) {
         case "rrb":
@@ -27565,7 +28278,7 @@ var EcosystemExecutor = class {
         result: JSON.stringify(result2),
         executionTime,
         updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-      }).where(eq21(ecosystemCommands.id, commandId));
+      }).where(eq23(ecosystemCommands.id, commandId));
       await this.updateEntityStatus(cmd.target, true);
       console.log(`[EcosystemExecutor] Command ${commandId} completed in ${executionTime}ms`);
     } catch (error) {
@@ -27576,8 +28289,8 @@ var EcosystemExecutor = class {
         error: String(error),
         executionTime,
         updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-      }).where(eq21(ecosystemCommands.id, commandId));
-      const cmd = await db.select().from(ecosystemCommands).where(eq21(ecosystemCommands.id, commandId)).limit(1);
+      }).where(eq23(ecosystemCommands.id, commandId));
+      const cmd = await db.select().from(ecosystemCommands).where(eq23(ecosystemCommands.id, commandId)).limit(1);
       if (cmd && cmd.length > 0) {
         await this.updateEntityStatus(cmd[0].target, false);
       }
@@ -27590,7 +28303,7 @@ var EcosystemExecutor = class {
     try {
       const db2 = await getDb();
       if (!db2) return;
-      const current = await db2.select().from(ecosystemStatus).where(eq21(ecosystemStatus.entity, target)).limit(1);
+      const current = await db2.select().from(ecosystemStatus).where(eq23(ecosystemStatus.entity, target)).limit(1);
       if (current && current.length > 0) {
         const c = current[0];
         const total = (c.commandsProcessed || 0) + 1;
@@ -27601,7 +28314,7 @@ var EcosystemExecutor = class {
           failureRate: Math.round(failureRate * 100) / 100,
           lastHeartbeat: (/* @__PURE__ */ new Date()).toISOString(),
           updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-        }).where(eq21(ecosystemStatus.entity, target));
+        }).where(eq23(ecosystemStatus.entity, target));
       }
     } catch (error) {
       console.error("[EcosystemExecutor] Error updating entity status:", error);
@@ -27663,7 +28376,7 @@ var EcosystemExecutor = class {
 var ecosystemExecutor = new EcosystemExecutor();
 
 // server/routers/payments.ts
-import { z as z75 } from "zod";
+import { z as z77 } from "zod";
 
 // server/qumusPolicies.ts
 async function paymentProcessingPolicy(context) {
@@ -27975,12 +28688,12 @@ var paymentsRouter = router({
    * Process a payment with full policy evaluation
    */
   processPayment: protectedProcedure.input(
-    z75.object({
-      amount: z75.number().positive(),
-      currency: z75.string().default("USD"),
-      paymentMethod: z75.string(),
-      description: z75.string(),
-      metadata: z75.record(z75.any()).optional()
+    z77.object({
+      amount: z77.number().positive(),
+      currency: z77.string().default("USD"),
+      paymentMethod: z77.string(),
+      description: z77.string(),
+      metadata: z77.record(z77.any()).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     const policyContext = {
@@ -28077,9 +28790,9 @@ var paymentsRouter = router({
    * Create a subscription with policy evaluation
    */
   createSubscription: protectedProcedure.input(
-    z75.object({
-      tier: z75.enum(["free", "ar_pro", "voice_training", "enterprise"]),
-      billingCycle: z75.enum(["monthly", "yearly"]).default("monthly")
+    z77.object({
+      tier: z77.enum(["free", "ar_pro", "voice_training", "enterprise"]),
+      billingCycle: z77.enum(["monthly", "yearly"]).default("monthly")
     })
   ).mutation(async ({ ctx, input }) => {
     const tierPricing = {
@@ -28168,9 +28881,9 @@ var paymentsRouter = router({
    * Get payment history with policy context
    */
   getPaymentHistory: protectedProcedure.input(
-    z75.object({
-      limit: z75.number().default(50),
-      offset: z75.number().default(0)
+    z77.object({
+      limit: z77.number().default(50),
+      offset: z77.number().default(0)
     })
   ).query(async ({ ctx, input }) => {
     const payments2 = await db.query(
@@ -28187,9 +28900,9 @@ var paymentsRouter = router({
    * Get policy decisions for a user
    */
   getPolicyDecisions: protectedProcedure.input(
-    z75.object({
-      action: z75.string().optional(),
-      limit: z75.number().default(50)
+    z77.object({
+      action: z77.string().optional(),
+      limit: z77.number().default(50)
     })
   ).query(async ({ ctx, input }) => {
     let query2 = "SELECT * FROM policy_decisions WHERE userId = ?";
@@ -28212,10 +28925,10 @@ var paymentsRouter = router({
    * Override a policy decision (admin only)
    */
   overridePolicyDecision: protectedProcedure.input(
-    z75.object({
-      decisionId: z75.string(),
-      override: z75.enum(["approve", "deny"]),
-      reason: z75.string()
+    z77.object({
+      decisionId: z77.string(),
+      override: z77.enum(["approve", "deny"]),
+      reason: z77.string()
     })
   ).mutation(async ({ ctx, input }) => {
     if (ctx.user.role !== "admin") {
@@ -28242,19 +28955,19 @@ async function processStripePayment(amount, currency, metadata) {
 }
 
 // server/routers/adminPolicies.ts
-import { z as z76 } from "zod";
+import { z as z78 } from "zod";
 var adminPoliciesRouter = router({
   /**
    * Get all policy decisions with optional filtering
    */
   getPolicyDecisions: adminProcedure.input(
-    z76.object({
-      limit: z76.number().default(50),
-      offset: z76.number().default(0),
-      policyId: z76.string().optional(),
-      decision: z76.enum(["approve", "deny", "review"]).optional(),
-      startDate: z76.date().optional(),
-      endDate: z76.date().optional()
+    z78.object({
+      limit: z78.number().default(50),
+      offset: z78.number().default(0),
+      policyId: z78.string().optional(),
+      decision: z78.enum(["approve", "deny", "review"]).optional(),
+      startDate: z78.date().optional(),
+      endDate: z78.date().optional()
     })
   ).query(async ({ input }) => {
     try {
@@ -28324,10 +29037,10 @@ var adminPoliciesRouter = router({
    * Get human review queue
    */
   getHumanReviewQueue: adminProcedure.input(
-    z76.object({
-      limit: z76.number().default(50),
-      offset: z76.number().default(0),
-      status: z76.enum(["pending", "approved", "denied"]).optional()
+    z78.object({
+      limit: z78.number().default(50),
+      offset: z78.number().default(0),
+      status: z78.enum(["pending", "approved", "denied"]).optional()
     })
   ).query(async ({ input }) => {
     try {
@@ -28427,9 +29140,9 @@ var adminPoliciesRouter = router({
    * Approve human review
    */
   approveReview: adminProcedure.input(
-    z76.object({
-      reviewId: z76.string(),
-      notes: z76.string().optional()
+    z78.object({
+      reviewId: z78.string(),
+      notes: z78.string().optional()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -28454,9 +29167,9 @@ var adminPoliciesRouter = router({
    * Deny human review
    */
   denyReview: adminProcedure.input(
-    z76.object({
-      reviewId: z76.string(),
-      reason: z76.string()
+    z78.object({
+      reviewId: z78.string(),
+      reason: z78.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -28481,10 +29194,10 @@ var adminPoliciesRouter = router({
    * Override policy decision
    */
   overridePolicyDecision: adminProcedure.input(
-    z76.object({
-      decisionId: z76.string(),
-      override: z76.enum(["approve", "deny"]),
-      reason: z76.string()
+    z78.object({
+      decisionId: z78.string(),
+      override: z78.enum(["approve", "deny"]),
+      reason: z78.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -28524,10 +29237,10 @@ var adminPoliciesRouter = router({
    * Get policy audit trail
    */
   getAuditTrail: adminProcedure.input(
-    z76.object({
-      limit: z76.number().default(100),
-      offset: z76.number().default(0),
-      adminId: z76.number().optional()
+    z78.object({
+      limit: z78.number().default(100),
+      offset: z78.number().default(0),
+      adminId: z78.number().optional()
     })
   ).query(async ({ input }) => {
     try {
@@ -28590,7 +29303,7 @@ var adminPoliciesRouter = router({
 });
 
 // server/routers/tasks.ts
-import { z as z77 } from "zod";
+import { z as z79 } from "zod";
 
 // server/taskArtifactsService.ts
 init_storage();
@@ -28676,12 +29389,12 @@ var tasksRouter = router({
    * Submit autonomous task
    */
   submitTask: protectedProcedure.input(
-    z77.object({
-      goal: z77.string().min(10).max(5e3),
-      priority: z77.number().min(1).max(10),
-      persona: z77.enum(["analytical", "creative", "aggressive", "conservative"]).optional(),
-      attachments: z77.array(z77.object({ fileKey: z77.string(), fileName: z77.string() })).optional(),
-      metadata: z77.record(z77.any()).optional()
+    z79.object({
+      goal: z79.string().min(10).max(5e3),
+      priority: z79.number().min(1).max(10),
+      persona: z79.enum(["analytical", "creative", "aggressive", "conservative"]).optional(),
+      attachments: z79.array(z79.object({ fileKey: z79.string(), fileName: z79.string() })).optional(),
+      metadata: z79.record(z79.any()).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -28756,8 +29469,8 @@ var tasksRouter = router({
    * Execute task (autonomous)
    */
   executeTask: protectedProcedure.input(
-    z77.object({
-      taskId: z77.string()
+    z79.object({
+      taskId: z79.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -28827,7 +29540,7 @@ var tasksRouter = router({
   /**
    * Get task status
    */
-  getTaskStatus: protectedProcedure.input(z77.object({ taskId: z77.string() })).query(async ({ ctx, input }) => {
+  getTaskStatus: protectedProcedure.input(z79.object({ taskId: z79.string() })).query(async ({ ctx, input }) => {
     try {
       const tasks = await db.query("SELECT * FROM tasks WHERE id = ? AND userId = ?", [
         input.taskId,
@@ -28858,10 +29571,10 @@ var tasksRouter = router({
    * Get task history
    */
   getTaskHistory: protectedProcedure.input(
-    z77.object({
-      limit: z77.number().default(50),
-      offset: z77.number().default(0),
-      status: z77.enum(["pending", "queued", "executing", "completed", "failed", "denied"]).optional()
+    z79.object({
+      limit: z79.number().default(50),
+      offset: z79.number().default(0),
+      status: z79.enum(["pending", "queued", "executing", "completed", "failed", "denied"]).optional()
     })
   ).query(async ({ ctx, input }) => {
     try {
@@ -28906,7 +29619,7 @@ var tasksRouter = router({
   /**
    * Cancel task
    */
-  cancelTask: protectedProcedure.input(z77.object({ taskId: z77.string(), reason: z77.string().optional() })).mutation(async ({ ctx, input }) => {
+  cancelTask: protectedProcedure.input(z79.object({ taskId: z79.string(), reason: z79.string().optional() })).mutation(async ({ ctx, input }) => {
     try {
       const tasks = await db.query("SELECT * FROM tasks WHERE id = ? AND userId = ?", [
         input.taskId,
@@ -28967,7 +29680,7 @@ var tasksRouter = router({
 });
 
 // server/routers/files.ts
-import { z as z78 } from "zod";
+import { z as z80 } from "zod";
 
 // server/fileStorageService.ts
 init_storage();
@@ -29129,11 +29842,11 @@ var filesRouter = router({
    * Upload a file to cloud storage
    */
   upload: protectedProcedure.input(
-    z78.object({
-      fileName: z78.string(),
-      fileBuffer: z78.instanceof(Buffer),
-      mimeType: z78.string(),
-      isPublic: z78.boolean().optional()
+    z80.object({
+      fileName: z80.string(),
+      fileBuffer: z80.instanceof(Buffer),
+      mimeType: z80.string(),
+      isPublic: z80.boolean().optional()
     })
   ).mutation(async ({ ctx, input }) => {
     return uploadFile(
@@ -29148,9 +29861,9 @@ var filesRouter = router({
    * Download a file with presigned URL
    */
   download: protectedProcedure.input(
-    z78.object({
-      fileId: z78.string(),
-      expiresIn: z78.number().optional()
+    z80.object({
+      fileId: z80.string(),
+      expiresIn: z80.number().optional()
     })
   ).query(async ({ ctx, input }) => {
     return downloadFile(ctx.user.id, input.fileId, input.expiresIn);
@@ -29159,9 +29872,9 @@ var filesRouter = router({
    * List user's files with pagination
    */
   list: protectedProcedure.input(
-    z78.object({
-      limit: z78.number().default(50),
-      offset: z78.number().default(0)
+    z80.object({
+      limit: z80.number().default(50),
+      offset: z80.number().default(0)
     })
   ).query(async ({ ctx, input }) => {
     return listUserFiles(ctx.user.id, input.limit, input.offset);
@@ -29169,7 +29882,7 @@ var filesRouter = router({
   /**
    * Delete a file
    */
-  delete: protectedProcedure.input(z78.object({ fileId: z78.string() })).mutation(async ({ ctx, input }) => {
+  delete: protectedProcedure.input(z80.object({ fileId: z80.string() })).mutation(async ({ ctx, input }) => {
     await deleteFile(ctx.user.id, input.fileId);
     return { success: true };
   }),
@@ -29177,9 +29890,9 @@ var filesRouter = router({
    * Share a file with expiring link
    */
   share: protectedProcedure.input(
-    z78.object({
-      fileId: z78.string(),
-      expiresInHours: z78.number().default(24)
+    z80.object({
+      fileId: z80.string(),
+      expiresInHours: z80.number().default(24)
     })
   ).mutation(async ({ ctx, input }) => {
     return shareFile(ctx.user.id, input.fileId, input.expiresInHours);
@@ -29194,9 +29907,9 @@ var filesRouter = router({
    * Get file access audit trail
    */
   getAuditTrail: protectedProcedure.input(
-    z78.object({
-      fileId: z78.string(),
-      limit: z78.number().default(100)
+    z80.object({
+      fileId: z80.string(),
+      limit: z80.number().default(100)
     })
   ).query(async ({ ctx, input }) => {
     return getFileAuditTrail(parseInt(input.fileId), input.limit);
@@ -29205,8 +29918,8 @@ var filesRouter = router({
    * Bulk download files as ZIP
    */
   bulkDownload: protectedProcedure.input(
-    z78.object({
-      fileIds: z78.array(z78.string())
+    z80.object({
+      fileIds: z80.array(z80.string())
     })
   ).mutation(async ({ ctx, input }) => {
     return {
@@ -29217,7 +29930,7 @@ var filesRouter = router({
   /**
    * Search files by name
    */
-  search: protectedProcedure.input(z78.object({ query: z78.string() })).query(async ({ ctx, input }) => {
+  search: protectedProcedure.input(z80.object({ query: z80.string() })).query(async ({ ctx, input }) => {
     const { files: files2 } = await listUserFiles(ctx.user.id, 1e3);
     return files2.filter(
       (f) => f.fileName.toLowerCase().includes(input.query.toLowerCase())
@@ -29226,7 +29939,7 @@ var filesRouter = router({
 });
 
 // server/routers/qumusFullStackRouter.ts
-import { z as z79 } from "zod";
+import { z as z81 } from "zod";
 
 // server/services/qumusIntegrationService.ts
 init_db();
@@ -29728,17 +30441,17 @@ var qumusWebSocketManager = new QumusWebSocketManager();
 // server/routers/qumusFullStackRouter.ts
 init_db();
 init_schema();
-import { eq as eq22 } from "drizzle-orm";
+import { eq as eq24 } from "drizzle-orm";
 var qumusFullStackRouter = router({
   /**
    * Submit a new autonomous task
    */
   submitTask: protectedProcedure.input(
-    z79.object({
-      goal: z79.string().min(1, "Goal is required"),
-      priority: z79.number().int().min(1).max(10).optional().default(5),
-      steps: z79.array(z79.string()).optional(),
-      constraints: z79.array(z79.string()).optional()
+    z81.object({
+      goal: z81.string().min(1, "Goal is required"),
+      priority: z81.number().int().min(1).max(10).optional().default(5),
+      steps: z81.array(z81.string()).optional(),
+      constraints: z81.array(z81.string()).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     const taskId = await taskExecutionEngine.submitTask({
@@ -29757,7 +30470,7 @@ var qumusFullStackRouter = router({
   /**
    * Get task status with real-time updates
    */
-  getTaskStatus: protectedProcedure.input(z79.object({ taskId: z79.string() })).query(async ({ input }) => {
+  getTaskStatus: protectedProcedure.input(z81.object({ taskId: z81.string() })).query(async ({ input }) => {
     const status = await taskExecutionEngine.getTaskStatus(input.taskId);
     return status || { error: "Task not found" };
   }),
@@ -29775,7 +30488,7 @@ var qumusFullStackRouter = router({
     try {
       const db2 = await getDb();
       if (!db2) return [];
-      const tasks = await db2.select().from(autonomousTasks).where(eq22(autonomousTasks.userId, ctx.user.id));
+      const tasks = await db2.select().from(autonomousTasks).where(eq24(autonomousTasks.userId, ctx.user.id));
       return tasks.map((task) => ({
         id: task.id,
         goal: task.goal,
@@ -29792,11 +30505,11 @@ var qumusFullStackRouter = router({
   /**
    * Get task execution logs
    */
-  getTaskLogs: protectedProcedure.input(z79.object({ taskId: z79.string() })).query(async ({ input }) => {
+  getTaskLogs: protectedProcedure.input(z81.object({ taskId: z81.string() })).query(async ({ input }) => {
     try {
       const db2 = await getDb();
       if (!db2) return [];
-      const logs = await db2.select().from(taskExecutionLog).where(eq22(taskExecutionLog.taskId, input.taskId));
+      const logs = await db2.select().from(taskExecutionLog).where(eq24(taskExecutionLog.taskId, input.taskId));
       return logs;
     } catch (error) {
       console.error("[QumusRouter] Error getting task logs:", error);
@@ -29807,11 +30520,11 @@ var qumusFullStackRouter = router({
    * Process Stripe payment for task
    */
   processPayment: protectedProcedure.input(
-    z79.object({
-      taskId: z79.string(),
-      amount: z79.number().positive(),
-      currency: z79.string().default("USD"),
-      description: z79.string()
+    z81.object({
+      taskId: z81.string(),
+      amount: z81.number().positive(),
+      currency: z81.string().default("USD"),
+      description: z81.string()
     })
   ).mutation(async ({ ctx, input }) => {
     try {
@@ -29837,11 +30550,11 @@ var qumusFullStackRouter = router({
    * Send email notification
    */
   sendNotification: protectedProcedure.input(
-    z79.object({
-      taskId: z79.string(),
-      to: z79.string().email(),
-      subject: z79.string(),
-      body: z79.string()
+    z81.object({
+      taskId: z81.string(),
+      to: z81.string().email(),
+      subject: z81.string(),
+      body: z81.string()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -29866,11 +30579,11 @@ var qumusFullStackRouter = router({
    * Upload file to S3
    */
   uploadFile: protectedProcedure.input(
-    z79.object({
-      taskId: z79.string(),
-      fileName: z79.string(),
-      fileBuffer: z79.instanceof(Buffer),
-      mimeType: z79.string()
+    z81.object({
+      taskId: z81.string(),
+      fileName: z81.string(),
+      fileBuffer: z81.instanceof(Buffer),
+      mimeType: z81.string()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -29895,11 +30608,11 @@ var qumusFullStackRouter = router({
    * Execute webhook
    */
   executeWebhook: protectedProcedure.input(
-    z79.object({
-      taskId: z79.string(),
-      url: z79.string().url(),
-      method: z79.enum(["GET", "POST", "PUT", "DELETE"]).default("POST"),
-      body: z79.record(z79.any()).optional()
+    z81.object({
+      taskId: z81.string(),
+      url: z81.string().url(),
+      method: z81.enum(["GET", "POST", "PUT", "DELETE"]).default("POST"),
+      body: z81.record(z81.any()).optional()
     })
   ).mutation(async ({ input }) => {
     try {
@@ -29929,7 +30642,7 @@ var qumusFullStackRouter = router({
   /**
    * Subscribe to task events (for WebSocket)
    */
-  subscribeToTask: protectedProcedure.input(z79.object({ taskId: z79.string() })).mutation(async ({ input }) => {
+  subscribeToTask: protectedProcedure.input(z81.object({ taskId: z81.string() })).mutation(async ({ input }) => {
     return {
       success: true,
       message: `Subscribed to task ${input.taskId}`
@@ -29948,15 +30661,15 @@ var qumusFullStackRouter = router({
    * Get task execution history
    */
   getExecutionHistory: protectedProcedure.input(
-    z79.object({
-      limit: z79.number().default(50),
-      offset: z79.number().default(0)
+    z81.object({
+      limit: z81.number().default(50),
+      offset: z81.number().default(0)
     })
   ).query(async ({ ctx, input }) => {
     try {
       const db2 = await getDb();
       if (!db2) return [];
-      const tasks = await db2.select().from(autonomousTasks).where(eq22(autonomousTasks.userId, ctx.user.id));
+      const tasks = await db2.select().from(autonomousTasks).where(eq24(autonomousTasks.userId, ctx.user.id));
       return tasks.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(input.offset, input.offset + input.limit).map((task) => ({
         id: task.id,
         goal: task.goal,
@@ -29975,14 +30688,14 @@ var qumusFullStackRouter = router({
   /**
    * Cancel a task
    */
-  cancelTask: protectedProcedure.input(z79.object({ taskId: z79.string() })).mutation(async ({ input }) => {
+  cancelTask: protectedProcedure.input(z81.object({ taskId: z81.string() })).mutation(async ({ input }) => {
     try {
       const db2 = await getDb();
       if (!db2) throw new Error("Database connection failed");
       await db2.update(autonomousTasks).set({
         status: "cancelled",
         updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-      }).where(eq22(autonomousTasks.id, input.taskId));
+      }).where(eq24(autonomousTasks.id, input.taskId));
       await db2.insert(taskExecutionLog).values({
         taskId: input.taskId,
         eventType: "cancelled",
@@ -30003,11 +30716,11 @@ var qumusFullStackRouter = router({
   /**
    * Retry a failed task
    */
-  retryTask: protectedProcedure.input(z79.object({ taskId: z79.string() })).mutation(async ({ ctx, input }) => {
+  retryTask: protectedProcedure.input(z81.object({ taskId: z81.string() })).mutation(async ({ ctx, input }) => {
     try {
       const db2 = await getDb();
       if (!db2) throw new Error("Database connection failed");
-      const originalTask = await db2.select().from(autonomousTasks).where(eq22(autonomousTasks.id, input.taskId)).limit(1);
+      const originalTask = await db2.select().from(autonomousTasks).where(eq24(autonomousTasks.id, input.taskId)).limit(1);
       if (!originalTask || originalTask.length === 0) {
         throw new Error("Task not found");
       }
@@ -30052,7 +30765,7 @@ var qumusFullStackRouter = router({
 });
 
 // server/routers/rrbUnifiedRouter.ts
-import { z as z80 } from "zod";
+import { z as z82 } from "zod";
 
 // server/config/offlineConfig.ts
 import path from "path";
@@ -31060,10 +31773,10 @@ var rrbUnifiedRouter = router({
     getChannels: publicProcedure.query(async () => {
       return await rrbRadioService2.getAllChannels();
     }),
-    getChannel: publicProcedure.input(z80.object({ channelId: z80.number() })).query(async ({ input }) => {
+    getChannel: publicProcedure.input(z82.object({ channelId: z82.number() })).query(async ({ input }) => {
       return await rrbRadioService2.getChannel(input.channelId);
     }),
-    getChannelStats: publicProcedure.input(z80.object({ channelId: z80.number() })).query(async ({ input }) => {
+    getChannelStats: publicProcedure.input(z82.object({ channelId: z82.number() })).query(async ({ input }) => {
       return await rrbRadioService2.getChannelStats(input.channelId);
     }),
     getActiveBroadcasts: publicProcedure.query(async () => {
@@ -31072,7 +31785,7 @@ var rrbUnifiedRouter = router({
     getSystemHealth: publicProcedure.query(async () => {
       return await rrbRadioService2.getSystemHealth();
     }),
-    generateAutoSchedule: protectedProcedure.input(z80.object({ channelId: z80.number(), daysAhead: z80.number().default(7) })).mutation(async ({ input }) => {
+    generateAutoSchedule: protectedProcedure.input(z82.object({ channelId: z82.number(), daysAhead: z82.number().default(7) })).mutation(async ({ input }) => {
       return await rrbRadioService2.generateAutoSchedule(input.channelId, input.daysAhead);
     })
   }),
@@ -31084,10 +31797,10 @@ var rrbUnifiedRouter = router({
     getSessions: publicProcedure.query(async () => {
       return await healingFrequenciesService.getSessions();
     }),
-    getSession: publicProcedure.input(z80.object({ id: z80.string() })).query(async ({ input }) => {
+    getSession: publicProcedure.input(z82.object({ id: z82.string() })).query(async ({ input }) => {
       return await healingFrequenciesService.getSession(input.id);
     }),
-    generateBinauralBeat: publicProcedure.input(z80.object({ frequency: z80.number(), duration: z80.number() })).query(async ({ input }) => {
+    generateBinauralBeat: publicProcedure.input(z82.object({ frequency: z82.number(), duration: z82.number() })).query(async ({ input }) => {
       return await healingFrequenciesService.generateBinauralBeat(
         input.frequency,
         input.duration
@@ -31096,27 +31809,27 @@ var rrbUnifiedRouter = router({
   }),
   // ==================== SOLBONES GAME ====================
   solbones: router({
-    createGame: publicProcedure.input(z80.object({ players: z80.array(z80.string()), aiCount: z80.number().default(0) })).mutation(async ({ input }) => {
+    createGame: publicProcedure.input(z82.object({ players: z82.array(z82.string()), aiCount: z82.number().default(0) })).mutation(async ({ input }) => {
       return await solbonesGameService.createGame(input.players, input.aiCount);
     }),
-    rollDice: publicProcedure.input(z80.object({ gameId: z80.string() })).mutation(async ({ input }) => {
+    rollDice: publicProcedure.input(z82.object({ gameId: z82.string() })).mutation(async ({ input }) => {
       return await solbonesGameService.rollDice(input.gameId);
     }),
-    getGameState: publicProcedure.input(z80.object({ gameId: z80.string() })).query(async ({ input }) => {
+    getGameState: publicProcedure.input(z82.object({ gameId: z82.string() })).query(async ({ input }) => {
       return await solbonesGameService.getGameState(input.gameId);
     }),
-    endGame: publicProcedure.input(z80.object({ gameId: z80.string() })).mutation(async ({ input }) => {
+    endGame: publicProcedure.input(z82.object({ gameId: z82.string() })).mutation(async ({ input }) => {
       return await solbonesGameService.endGame(input.gameId);
     })
   }),
   // ==================== EMERGENCY BROADCAST ====================
   emergency: router({
     createAlert: protectedProcedure.input(
-      z80.object({
-        title: z80.string(),
-        message: z80.string(),
-        severity: z80.enum(["low", "medium", "high", "critical"]),
-        channels: z80.array(z80.number())
+      z82.object({
+        title: z82.string(),
+        message: z82.string(),
+        severity: z82.enum(["low", "medium", "high", "critical"]),
+        channels: z82.array(z82.number())
       })
     ).mutation(async ({ input }) => {
       return await hybridcastEmergencyService.createAlert(
@@ -31129,17 +31842,17 @@ var rrbUnifiedRouter = router({
     getActiveAlerts: publicProcedure.query(async () => {
       return await hybridcastEmergencyService.getActiveAlerts();
     }),
-    broadcastAlert: protectedProcedure.input(z80.object({ alertId: z80.string() })).mutation(async ({ input }) => {
+    broadcastAlert: protectedProcedure.input(z82.object({ alertId: z82.string() })).mutation(async ({ input }) => {
       return await hybridcastEmergencyService.broadcastAlert(input.alertId);
     })
   }),
   // ==================== SWEET MIRACLES DONATIONS ====================
   donations: router({
     createDonation: publicProcedure.input(
-      z80.object({
-        amount: z80.number().positive(),
-        donorEmail: z80.string().email(),
-        message: z80.string().optional()
+      z82.object({
+        amount: z82.number().positive(),
+        donorEmail: z82.string().email(),
+        message: z82.string().optional()
       })
     ).mutation(async ({ input }) => {
       return await sweetMiraclesDonationService.createDonation(
@@ -31164,13 +31877,13 @@ var rrbUnifiedRouter = router({
       return await merchandiseShopService.getProducts();
     }),
     createOrder: protectedProcedure.input(
-      z80.object({
-        products: z80.array(z80.object({ productId: z80.number(), quantity: z80.number() }))
+      z82.object({
+        products: z82.array(z82.object({ productId: z82.number(), quantity: z82.number() }))
       })
     ).mutation(async ({ input }) => {
       return await merchandiseShopService.createOrder(input.products);
     }),
-    getOrder: publicProcedure.input(z80.object({ orderId: z80.string() })).query(async ({ input }) => {
+    getOrder: publicProcedure.input(z82.object({ orderId: z82.string() })).query(async ({ input }) => {
       return await merchandiseShopService.getOrder(input.orderId);
     })
   }),
@@ -31200,7 +31913,7 @@ var rrbUnifiedRouter = router({
 });
 
 // server/routers/search.ts
-import { z as z81 } from "zod";
+import { z as z83 } from "zod";
 var searchIndex = [
   {
     id: "1",
@@ -31285,10 +31998,10 @@ var searchIndex = [
 ];
 var searchRouter = router({
   search: publicProcedure.input(
-    z81.object({
-      query: z81.string().min(1).max(100),
-      category: z81.enum(["all", "rrb", "qumus"]).optional().default("all"),
-      limit: z81.number().min(1).max(50).optional().default(10)
+    z83.object({
+      query: z83.string().min(1).max(100),
+      category: z83.enum(["all", "rrb", "qumus"]).optional().default("all"),
+      limit: z83.number().min(1).max(50).optional().default(10)
     })
   ).query(({ input }) => {
     const { query: query2, category, limit } = input;
@@ -31331,7 +32044,7 @@ var searchRouter = router({
     };
   }),
   // Get search suggestions based on partial query
-  getSuggestions: publicProcedure.input(z81.object({ query: z81.string().min(1).max(50) })).query(({ input }) => {
+  getSuggestions: publicProcedure.input(z83.object({ query: z83.string().min(1).max(50) })).query(({ input }) => {
     const { query: query2 } = input;
     const searchTerm = query2.toLowerCase();
     const suggestions = searchIndex.filter(
@@ -31348,17 +32061,17 @@ var searchRouter = router({
 // server/routers/contentCalendarRouter.ts
 init_schema();
 init_db();
-import { z as z82 } from "zod";
-import { eq as eq23, and as and16, gte as gte3, lte as lte3 } from "drizzle-orm";
+import { z as z84 } from "zod";
+import { eq as eq25, and as and18, gte as gte3, lte as lte3 } from "drizzle-orm";
 var contentCalendarRouter = router({
   // Create a new post
-  createPost: protectedProcedure.input(z82.object({
-    title: z82.string().min(1).max(255),
-    content: z82.string().min(1),
-    scheduledTime: z82.date(),
-    platforms: z82.array(z82.enum(["twitter", "youtube", "facebook", "instagram"])),
-    mediaUrls: z82.array(z82.string()).optional(),
-    hashtags: z82.array(z82.string()).optional()
+  createPost: protectedProcedure.input(z84.object({
+    title: z84.string().min(1).max(255),
+    content: z84.string().min(1),
+    scheduledTime: z84.date(),
+    platforms: z84.array(z84.enum(["twitter", "youtube", "facebook", "instagram"])),
+    mediaUrls: z84.array(z84.string()).optional(),
+    hashtags: z84.array(z84.string()).optional()
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
@@ -31375,15 +32088,15 @@ var contentCalendarRouter = router({
     return { success: true, postId: post[0] };
   }),
   // Get calendar posts for a date range
-  getPostsByDateRange: protectedProcedure.input(z82.object({
-    startDate: z82.date(),
-    endDate: z82.date()
+  getPostsByDateRange: protectedProcedure.input(z84.object({
+    startDate: z84.date(),
+    endDate: z84.date()
   })).query(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
     const posts = await db2.select().from(contentCalendarPosts).where(
-      and16(
-        eq23(contentCalendarPosts.userId, ctx.user.id.toString()),
+      and18(
+        eq25(contentCalendarPosts.userId, ctx.user.id.toString()),
         gte3(contentCalendarPosts.scheduledTime, input.startDate),
         lte3(contentCalendarPosts.scheduledTime, input.endDate)
       )
@@ -31391,31 +32104,31 @@ var contentCalendarRouter = router({
     return posts;
   }),
   // Update post (drag-and-drop reschedule)
-  updatePostSchedule: protectedProcedure.input(z82.object({
-    postId: z82.number(),
-    newScheduledTime: z82.date()
+  updatePostSchedule: protectedProcedure.input(z84.object({
+    postId: z84.number(),
+    newScheduledTime: z84.date()
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
     await db2.update(contentCalendarPosts).set({ scheduledTime: input.newScheduledTime, updatedAt: /* @__PURE__ */ new Date() }).where(
-      and16(
-        eq23(contentCalendarPosts.id, input.postId),
-        eq23(contentCalendarPosts.userId, ctx.user.id.toString())
+      and18(
+        eq25(contentCalendarPosts.id, input.postId),
+        eq25(contentCalendarPosts.userId, ctx.user.id.toString())
       )
     );
     return { success: true };
   }),
   // Bulk schedule posts
-  bulkSchedulePosts: protectedProcedure.input(z82.object({
-    posts: z82.array(z82.object({
-      title: z82.string(),
-      content: z82.string(),
-      platforms: z82.array(z82.enum(["twitter", "youtube", "facebook", "instagram"])),
-      mediaUrls: z82.array(z82.string()).optional(),
-      hashtags: z82.array(z82.string()).optional()
+  bulkSchedulePosts: protectedProcedure.input(z84.object({
+    posts: z84.array(z84.object({
+      title: z84.string(),
+      content: z84.string(),
+      platforms: z84.array(z84.enum(["twitter", "youtube", "facebook", "instagram"])),
+      mediaUrls: z84.array(z84.string()).optional(),
+      hashtags: z84.array(z84.string()).optional()
     })),
-    startDate: z82.date(),
-    interval: z82.enum(["hourly", "daily", "weekly"])
+    startDate: z84.date(),
+    interval: z84.enum(["hourly", "daily", "weekly"])
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
@@ -31444,30 +32157,30 @@ var contentCalendarRouter = router({
     return { success: true, count: createdPosts.length };
   }),
   // Get engagement metrics for a post
-  getPostMetrics: protectedProcedure.input(z82.object({ postId: z82.number() })).query(async ({ input }) => {
+  getPostMetrics: protectedProcedure.input(z84.object({ postId: z84.number() })).query(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const metrics2 = await db2.select().from(platformEngagementMetrics).where(eq23(platformEngagementMetrics.postId, input.postId));
+    const metrics2 = await db2.select().from(platformEngagementMetrics).where(eq25(platformEngagementMetrics.postId, input.postId));
     return metrics2;
   }),
   // Update engagement metrics (called by webhook/scheduler)
-  updateEngagementMetrics: publicProcedure.input(z82.object({
-    postId: z82.number(),
-    platform: z82.enum(["twitter", "youtube", "facebook", "instagram"]),
-    externalPostId: z82.string(),
-    likes: z82.number().optional(),
-    shares: z82.number().optional(),
-    comments: z82.number().optional(),
-    views: z82.number().optional(),
-    clicks: z82.number().optional(),
-    impressions: z82.number().optional()
+  updateEngagementMetrics: publicProcedure.input(z84.object({
+    postId: z84.number(),
+    platform: z84.enum(["twitter", "youtube", "facebook", "instagram"]),
+    externalPostId: z84.string(),
+    likes: z84.number().optional(),
+    shares: z84.number().optional(),
+    comments: z84.number().optional(),
+    views: z84.number().optional(),
+    clicks: z84.number().optional(),
+    impressions: z84.number().optional()
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
     const existing = await db2.select().from(platformEngagementMetrics).where(
-      and16(
-        eq23(platformEngagementMetrics.postId, input.postId),
-        eq23(platformEngagementMetrics.platform, input.platform)
+      and18(
+        eq25(platformEngagementMetrics.postId, input.postId),
+        eq25(platformEngagementMetrics.platform, input.platform)
       )
     );
     if (existing.length > 0) {
@@ -31482,7 +32195,7 @@ var contentCalendarRouter = router({
         impressions: input.impressions || 0,
         engagementRate,
         lastUpdated: /* @__PURE__ */ new Date()
-      }).where(eq23(platformEngagementMetrics.id, existing[0].id));
+      }).where(eq25(platformEngagementMetrics.id, existing[0].id));
     } else {
       const totalEngagement = (input.likes || 0) + (input.shares || 0) + (input.comments || 0);
       const engagementRate = input.impressions ? (totalEngagement / input.impressions * 100).toFixed(2) + "%" : "0%";
@@ -31502,38 +32215,38 @@ var contentCalendarRouter = router({
     return { success: true };
   }),
   // Get analytics summary for user
-  getAnalyticsSummary: protectedProcedure.input(z82.object({
-    platform: z82.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional(),
-    period: z82.enum(["daily", "weekly", "monthly"]).optional(),
-    startDate: z82.date().optional(),
-    endDate: z82.date().optional()
+  getAnalyticsSummary: protectedProcedure.input(z84.object({
+    platform: z84.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional(),
+    period: z84.enum(["daily", "weekly", "monthly"]).optional(),
+    startDate: z84.date().optional(),
+    endDate: z84.date().optional()
   })).query(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    let query2 = db2.select().from(analyticsSummary).where(eq23(analyticsSummary.userId, ctx.user.id.toString()));
+    let query2 = db2.select().from(analyticsSummary).where(eq25(analyticsSummary.userId, ctx.user.id.toString()));
     if (input.platform && input.platform !== "all") {
-      query2 = query2.where(eq23(analyticsSummary.platform, input.platform));
+      query2 = query2.where(eq25(analyticsSummary.platform, input.platform));
     }
     if (input.period) {
-      query2 = query2.where(eq23(analyticsSummary.period, input.period));
+      query2 = query2.where(eq25(analyticsSummary.period, input.period));
     }
     const results = await query2;
     return results;
   }),
   // Create bulk schedule template
-  createBulkTemplate: protectedProcedure.input(z82.object({
-    name: z82.string().min(1).max(255),
-    description: z82.string().optional(),
-    posts: z82.array(z82.object({
-      title: z82.string(),
-      content: z82.string(),
-      platforms: z82.array(z82.enum(["twitter", "youtube", "facebook", "instagram"])),
-      mediaUrls: z82.array(z82.string()).optional(),
-      hashtags: z82.array(z82.string()).optional()
+  createBulkTemplate: protectedProcedure.input(z84.object({
+    name: z84.string().min(1).max(255),
+    description: z84.string().optional(),
+    posts: z84.array(z84.object({
+      title: z84.string(),
+      content: z84.string(),
+      platforms: z84.array(z84.enum(["twitter", "youtube", "facebook", "instagram"])),
+      mediaUrls: z84.array(z84.string()).optional(),
+      hashtags: z84.array(z84.string()).optional()
     })),
-    schedulePattern: z82.enum(["daily", "weekly", "biweekly", "monthly"]),
-    startDate: z82.date(),
-    endDate: z82.date().optional()
+    schedulePattern: z84.enum(["daily", "weekly", "biweekly", "monthly"]),
+    startDate: z84.date(),
+    endDate: z84.date().optional()
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
@@ -31553,7 +32266,7 @@ var contentCalendarRouter = router({
   getBulkTemplates: protectedProcedure.query(async ({ ctx }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const templates = await db2.select().from(bulkScheduleTemplates).where(eq23(bulkScheduleTemplates.userId, ctx.user.id.toString()));
+    const templates = await db2.select().from(bulkScheduleTemplates).where(eq25(bulkScheduleTemplates.userId, ctx.user.id.toString()));
     return templates;
   })
 });
@@ -31561,18 +32274,18 @@ var contentCalendarRouter = router({
 // server/routers/customStationBuilder.ts
 init_db();
 init_schema();
-import { z as z83 } from "zod";
-import { eq as eq24, and as and17 } from "drizzle-orm";
-var ContentTypeEnum = z83.enum(["talk", "music", "news", "meditation", "healing", "entertainment", "educational", "sports", "comedy", "mixed"]);
+import { z as z85 } from "zod";
+import { eq as eq26, and as and19 } from "drizzle-orm";
+var ContentTypeEnum = z85.enum(["talk", "music", "news", "meditation", "healing", "entertainment", "educational", "sports", "comedy", "mixed"]);
 var customStationBuilderRouter = router({
   // Create a custom station
-  createStation: protectedProcedure.input(z83.object({
-    name: z83.string().min(1).max(255),
-    description: z83.string().optional(),
-    contentTypes: z83.array(ContentTypeEnum).min(1),
-    icon: z83.string().optional(),
-    color: z83.string().optional(),
-    isPublic: z83.boolean().default(false)
+  createStation: protectedProcedure.input(z85.object({
+    name: z85.string().min(1).max(255),
+    description: z85.string().optional(),
+    contentTypes: z85.array(ContentTypeEnum).min(1),
+    icon: z85.string().optional(),
+    color: z85.string().optional(),
+    isPublic: z85.boolean().default(false)
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
@@ -31591,14 +32304,14 @@ var customStationBuilderRouter = router({
   getUserStations: protectedProcedure.query(async ({ ctx }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const stations = await db2.select().from(customStations).where(eq24(customStations.userId, ctx.user.id.toString()));
+    const stations = await db2.select().from(customStations).where(eq26(customStations.userId, ctx.user.id.toString()));
     return stations;
   }),
   // Get a specific station
-  getStation: protectedProcedure.input(z83.object({ stationId: z83.number() })).query(async ({ ctx, input }) => {
+  getStation: protectedProcedure.input(z85.object({ stationId: z85.number() })).query(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const station = await db2.select().from(customStations).where(eq24(customStations.id, input.stationId));
+    const station = await db2.select().from(customStations).where(eq26(customStations.id, input.stationId));
     if (!station.length) throw new Error("Station not found");
     if (station[0].userId !== ctx.user.id.toString() && !station[0].isPublic) {
       throw new Error("Unauthorized");
@@ -31606,34 +32319,34 @@ var customStationBuilderRouter = router({
     return station[0];
   }),
   // Update station
-  updateStation: protectedProcedure.input(z83.object({
-    stationId: z83.number(),
-    name: z83.string().optional(),
-    description: z83.string().optional(),
-    contentTypes: z83.array(ContentTypeEnum).optional(),
-    icon: z83.string().optional(),
-    color: z83.string().optional(),
-    isPublic: z83.boolean().optional()
+  updateStation: protectedProcedure.input(z85.object({
+    stationId: z85.number(),
+    name: z85.string().optional(),
+    description: z85.string().optional(),
+    contentTypes: z85.array(ContentTypeEnum).optional(),
+    icon: z85.string().optional(),
+    color: z85.string().optional(),
+    isPublic: z85.boolean().optional()
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
     const { stationId, ...updateData } = input;
     await db2.update(customStations).set({ ...updateData, updatedAt: /* @__PURE__ */ new Date() }).where(
-      and17(
-        eq24(customStations.id, stationId),
-        eq24(customStations.userId, ctx.user.id.toString())
+      and19(
+        eq26(customStations.id, stationId),
+        eq26(customStations.userId, ctx.user.id.toString())
       )
     );
     return { success: true };
   }),
   // Delete station
-  deleteStation: protectedProcedure.input(z83.object({ stationId: z83.number() })).mutation(async ({ ctx, input }) => {
+  deleteStation: protectedProcedure.input(z85.object({ stationId: z85.number() })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
     await db2.delete(customStations).where(
-      and17(
-        eq24(customStations.id, input.stationId),
-        eq24(customStations.userId, ctx.user.id.toString())
+      and19(
+        eq26(customStations.id, input.stationId),
+        eq26(customStations.userId, ctx.user.id.toString())
       )
     );
     return { success: true };
@@ -31642,17 +32355,17 @@ var customStationBuilderRouter = router({
   getTemplates: publicProcedure.query(async () => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const templates = await db2.select().from(stationTemplates).where(eq24(stationTemplates.isActive, true));
+    const templates = await db2.select().from(stationTemplates).where(eq26(stationTemplates.isActive, true));
     return templates;
   }),
   // Create station from template
-  createFromTemplate: protectedProcedure.input(z83.object({
-    templateId: z83.number(),
-    customName: z83.string().optional()
+  createFromTemplate: protectedProcedure.input(z85.object({
+    templateId: z85.number(),
+    customName: z85.string().optional()
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const template = await db2.select().from(stationTemplates).where(eq24(stationTemplates.id, input.templateId));
+    const template = await db2.select().from(stationTemplates).where(eq26(stationTemplates.id, input.templateId));
     if (!template.length) throw new Error("Template not found");
     const t2 = template[0];
     const result2 = await db2.insert(customStations).values({
@@ -31666,15 +32379,15 @@ var customStationBuilderRouter = router({
     return { success: true, stationId: result2[0] };
   }),
   // Add content source to station
-  addContentSource: protectedProcedure.input(z83.object({
-    stationId: z83.number(),
+  addContentSource: protectedProcedure.input(z85.object({
+    stationId: z85.number(),
     contentType: ContentTypeEnum,
-    sourceUrl: z83.string().url(),
-    priority: z83.number().optional().default(1)
+    sourceUrl: z85.string().url(),
+    priority: z85.number().optional().default(1)
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const station = await db2.select().from(customStations).where(eq24(customStations.id, input.stationId));
+    const station = await db2.select().from(customStations).where(eq26(customStations.id, input.stationId));
     if (!station.length || station[0].userId !== ctx.user.id.toString()) {
       throw new Error("Unauthorized");
     }
@@ -31687,20 +32400,20 @@ var customStationBuilderRouter = router({
     return { success: true, sourceId: result2[0] };
   }),
   // Get station content sources
-  getContentSources: protectedProcedure.input(z83.object({ stationId: z83.number() })).query(async ({ input }) => {
+  getContentSources: protectedProcedure.input(z85.object({ stationId: z85.number() })).query(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const sources = await db2.select().from(stationContentSources).where(eq24(stationContentSources.stationId, input.stationId));
+    const sources = await db2.select().from(stationContentSources).where(eq26(stationContentSources.stationId, input.stationId));
     return sources;
   }),
   // Update playback history (what's currently playing)
-  updatePlayback: protectedProcedure.input(z83.object({
-    stationId: z83.number(),
+  updatePlayback: protectedProcedure.input(z85.object({
+    stationId: z85.number(),
     contentType: ContentTypeEnum,
-    title: z83.string(),
-    description: z83.string().optional(),
-    duration: z83.number().optional(),
-    listeners: z83.number().optional()
+    title: z85.string(),
+    description: z85.string().optional(),
+    duration: z85.number().optional(),
+    listeners: z85.number().optional()
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
@@ -31716,30 +32429,30 @@ var customStationBuilderRouter = router({
     return { success: true, playbackId: result2[0] };
   }),
   // Get current playback
-  getCurrentPlayback: publicProcedure.input(z83.object({ stationId: z83.number() })).query(async ({ input }) => {
+  getCurrentPlayback: publicProcedure.input(z85.object({ stationId: z85.number() })).query(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const history = await db2.select().from(stationPlaybackHistory).where(eq24(stationPlaybackHistory.stationId, input.stationId));
+    const history = await db2.select().from(stationPlaybackHistory).where(eq26(stationPlaybackHistory.stationId, input.stationId));
     if (history.length > 0) {
       return history[history.length - 1];
     }
     return null;
   }),
   // Add station to favorites
-  toggleFavorite: protectedProcedure.input(z83.object({
-    stationId: z83.number(),
-    isFavorite: z83.boolean()
+  toggleFavorite: protectedProcedure.input(z85.object({
+    stationId: z85.number(),
+    isFavorite: z85.boolean()
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
     const existing = await db2.select().from(userStationPreferences).where(
-      and17(
-        eq24(userStationPreferences.userId, ctx.user.id.toString()),
-        eq24(userStationPreferences.stationId, input.stationId)
+      and19(
+        eq26(userStationPreferences.userId, ctx.user.id.toString()),
+        eq26(userStationPreferences.stationId, input.stationId)
       )
     );
     if (existing.length > 0) {
-      await db2.update(userStationPreferences).set({ isFavorite: input.isFavorite }).where(eq24(userStationPreferences.id, existing[0].id));
+      await db2.update(userStationPreferences).set({ isFavorite: input.isFavorite }).where(eq26(userStationPreferences.id, existing[0].id));
     } else {
       await db2.insert(userStationPreferences).values({
         userId: ctx.user.id.toString(),
@@ -31754,22 +32467,22 @@ var customStationBuilderRouter = router({
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
     const favorites = await db2.select().from(userStationPreferences).where(
-      and17(
-        eq24(userStationPreferences.userId, ctx.user.id.toString()),
-        eq24(userStationPreferences.isFavorite, true)
+      and19(
+        eq26(userStationPreferences.userId, ctx.user.id.toString()),
+        eq26(userStationPreferences.isFavorite, true)
       )
     );
     return favorites;
   }),
   // Share station with another user
-  shareStation: protectedProcedure.input(z83.object({
-    stationId: z83.number(),
-    sharedWithUserId: z83.string(),
-    permission: z83.enum(["view", "edit", "admin"]).optional().default("view")
+  shareStation: protectedProcedure.input(z85.object({
+    stationId: z85.number(),
+    sharedWithUserId: z85.string(),
+    permission: z85.enum(["view", "edit", "admin"]).optional().default("view")
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const station = await db2.select().from(customStations).where(eq24(customStations.id, input.stationId));
+    const station = await db2.select().from(customStations).where(eq26(customStations.id, input.stationId));
     if (!station.length || station[0].userId !== ctx.user.id.toString()) {
       throw new Error("Unauthorized");
     }
@@ -31782,24 +32495,24 @@ var customStationBuilderRouter = router({
     return { success: true, sharingId: result2[0] };
   }),
   // Get station analytics
-  getAnalytics: protectedProcedure.input(z83.object({
-    stationId: z83.number(),
-    days: z83.number().optional().default(7)
+  getAnalytics: protectedProcedure.input(z85.object({
+    stationId: z85.number(),
+    days: z85.number().optional().default(7)
   })).query(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const analytics = await db2.select().from(stationAnalytics).where(eq24(stationAnalytics.stationId, input.stationId));
+    const analytics = await db2.select().from(stationAnalytics).where(eq26(stationAnalytics.stationId, input.stationId));
     return analytics;
   }),
   // Browse public stations
-  browsePublicStations: publicProcedure.input(z83.object({
-    contentType: z83.string().optional(),
-    limit: z83.number().optional().default(20),
-    offset: z83.number().optional().default(0)
+  browsePublicStations: publicProcedure.input(z85.object({
+    contentType: z85.string().optional(),
+    limit: z85.number().optional().default(20),
+    offset: z85.number().optional().default(0)
   })).query(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const stations = await db2.select().from(customStations).where(eq24(customStations.isPublic, true));
+    const stations = await db2.select().from(customStations).where(eq26(customStations.isPublic, true));
     let filtered = stations;
     if (input.contentType) {
       filtered = stations.filter(
@@ -31809,21 +32522,21 @@ var customStationBuilderRouter = router({
     return filtered.slice(input.offset, input.offset + input.limit);
   }),
   // Get current playback for a station
-  getCurrentPlayback: publicProcedure.input(z83.object({ stationId: z83.number() })).query(async ({ input }) => {
+  getCurrentPlayback: publicProcedure.input(z85.object({ stationId: z85.number() })).query(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const history = await db2.select().from(stationPlaybackHistory).where(eq24(stationPlaybackHistory.stationId, input.stationId));
+    const history = await db2.select().from(stationPlaybackHistory).where(eq26(stationPlaybackHistory.stationId, input.stationId));
     if (history.length === 0) return null;
     return history[history.length - 1];
   }),
   // Validate content matches station type
-  validateContent: publicProcedure.input(z83.object({
-    stationId: z83.number(),
+  validateContent: publicProcedure.input(z85.object({
+    stationId: z85.number(),
     contentType: ContentTypeEnum
   })).query(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const station = await db2.select().from(customStations).where(eq24(customStations.id, input.stationId));
+    const station = await db2.select().from(customStations).where(eq26(customStations.id, input.stationId));
     if (!station.length) {
       return { isValid: false, reason: "Station not found" };
     }
@@ -31837,22 +32550,22 @@ var customStationBuilderRouter = router({
     };
   }),
   // Get all content sources for a station
-  getContentSources: protectedProcedure.input(z83.object({ stationId: z83.number() })).query(async ({ input }) => {
+  getContentSources: protectedProcedure.input(z85.object({ stationId: z85.number() })).query(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const sources = await db2.select().from(stationContentSources).where(eq24(stationContentSources.stationId, input.stationId));
+    const sources = await db2.select().from(stationContentSources).where(eq26(stationContentSources.stationId, input.stationId));
     return sources.sort((a, b) => (b.priority || 0) - (a.priority || 0));
   }),
   // Sync station content (ensure what's displayed matches what's playing)
-  syncContent: protectedProcedure.input(z83.object({ stationId: z83.number() })).mutation(async ({ input }) => {
+  syncContent: protectedProcedure.input(z85.object({ stationId: z85.number() })).mutation(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const playback = await db2.select().from(stationPlaybackHistory).where(eq24(stationPlaybackHistory.stationId, input.stationId));
+    const playback = await db2.select().from(stationPlaybackHistory).where(eq26(stationPlaybackHistory.stationId, input.stationId));
     if (!playback.length) {
       return { synced: false, reason: "No playback history" };
     }
     const latest = playback[playback.length - 1];
-    const station = await db2.select().from(customStations).where(eq24(customStations.id, input.stationId));
+    const station = await db2.select().from(customStations).where(eq26(customStations.id, input.stationId));
     if (!station.length) {
       return { synced: false, reason: "Station not found" };
     }
@@ -31873,7 +32586,7 @@ var customStationBuilderRouter = router({
   getListeningStats: protectedProcedure.query(async ({ ctx }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const preferences = await db2.select().from(userStationPreferences).where(eq24(userStationPreferences.userId, ctx.user.id));
+    const preferences = await db2.select().from(userStationPreferences).where(eq26(userStationPreferences.userId, ctx.user.id));
     const totalListenTime = preferences.reduce(
       (sum2, p) => sum2 + (p.totalListenTime || 0),
       0
@@ -31888,17 +32601,17 @@ var customStationBuilderRouter = router({
     };
   }),
   // Get most listened stations
-  getMostListenedStations: protectedProcedure.input(z83.object({ limit: z83.number().default(10) })).query(async ({ ctx, input }) => {
+  getMostListenedStations: protectedProcedure.input(z85.object({ limit: z85.number().default(10) })).query(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const stations = await db2.select().from(userStationPreferences).where(eq24(userStationPreferences.userId, ctx.user.id));
+    const stations = await db2.select().from(userStationPreferences).where(eq26(userStationPreferences.userId, ctx.user.id));
     return stations.sort((a, b) => (b.totalListenTime || 0) - (a.totalListenTime || 0)).slice(0, input.limit);
   }),
   // Get recently listened stations
-  getRecentlyListenedStations: protectedProcedure.input(z83.object({ limit: z83.number().default(10) })).query(async ({ ctx, input }) => {
+  getRecentlyListenedStations: protectedProcedure.input(z85.object({ limit: z85.number().default(10) })).query(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const stations = await db2.select().from(userStationPreferences).where(eq24(userStationPreferences.userId, ctx.user.id));
+    const stations = await db2.select().from(userStationPreferences).where(eq26(userStationPreferences.userId, ctx.user.id));
     return stations.sort((a, b) => {
       const aTime = new Date(a.lastListenedAt || 0).getTime();
       const bTime = new Date(b.lastListenedAt || 0).getTime();
@@ -31906,13 +32619,13 @@ var customStationBuilderRouter = router({
     }).slice(0, input.limit);
   }),
   // Update last listened time
-  updateLastListened: protectedProcedure.input(z83.object({ stationId: z83.number() })).mutation(async ({ ctx, input }) => {
+  updateLastListened: protectedProcedure.input(z85.object({ stationId: z85.number() })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
     const existing = await db2.select().from(userStationPreferences).where(
-      and17(
-        eq24(userStationPreferences.userId, ctx.user.id),
-        eq24(userStationPreferences.stationId, input.stationId)
+      and19(
+        eq26(userStationPreferences.userId, ctx.user.id),
+        eq26(userStationPreferences.stationId, input.stationId)
       )
     );
     if (existing.length > 0) {
@@ -31920,9 +32633,9 @@ var customStationBuilderRouter = router({
         lastListenedAt: /* @__PURE__ */ new Date(),
         updatedAt: /* @__PURE__ */ new Date()
       }).where(
-        and17(
-          eq24(userStationPreferences.userId, ctx.user.id),
-          eq24(userStationPreferences.stationId, input.stationId)
+        and19(
+          eq26(userStationPreferences.userId, ctx.user.id),
+          eq26(userStationPreferences.stationId, input.stationId)
         )
       );
     } else {
@@ -31937,13 +32650,13 @@ var customStationBuilderRouter = router({
     return { success: true };
   }),
   // Add listen time
-  addListenTime: protectedProcedure.input(z83.object({ stationId: z83.number(), seconds: z83.number() })).mutation(async ({ ctx, input }) => {
+  addListenTime: protectedProcedure.input(z85.object({ stationId: z85.number(), seconds: z85.number() })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
     const existing = await db2.select().from(userStationPreferences).where(
-      and17(
-        eq24(userStationPreferences.userId, ctx.user.id),
-        eq24(userStationPreferences.stationId, input.stationId)
+      and19(
+        eq26(userStationPreferences.userId, ctx.user.id),
+        eq26(userStationPreferences.stationId, input.stationId)
       )
     );
     if (existing.length > 0) {
@@ -31952,9 +32665,9 @@ var customStationBuilderRouter = router({
         totalListenTime: newTotalTime,
         updatedAt: /* @__PURE__ */ new Date()
       }).where(
-        and17(
-          eq24(userStationPreferences.userId, ctx.user.id),
-          eq24(userStationPreferences.stationId, input.stationId)
+        and19(
+          eq26(userStationPreferences.userId, ctx.user.id),
+          eq26(userStationPreferences.stationId, input.stationId)
         )
       );
     } else {
@@ -31971,7 +32684,7 @@ var customStationBuilderRouter = router({
   exportPreferences: protectedProcedure.query(async ({ ctx }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database connection failed");
-    const preferences = await db2.select().from(userStationPreferences).where(eq24(userStationPreferences.userId, ctx.user.id));
+    const preferences = await db2.select().from(userStationPreferences).where(eq26(userStationPreferences.userId, ctx.user.id));
     return {
       userId: ctx.user.id,
       exportedAt: /* @__PURE__ */ new Date(),
@@ -31979,12 +32692,12 @@ var customStationBuilderRouter = router({
     };
   }),
   // Import preferences
-  importPreferences: protectedProcedure.input(z83.object({
-    preferences: z83.array(z83.object({
-      stationId: z83.number(),
-      isFavorite: z83.boolean(),
-      lastListenedAt: z83.date().optional(),
-      totalListenTime: z83.number()
+  importPreferences: protectedProcedure.input(z85.object({
+    preferences: z85.array(z85.object({
+      stationId: z85.number(),
+      isFavorite: z85.boolean(),
+      lastListenedAt: z85.date().optional(),
+      totalListenTime: z85.number()
     }))
   })).mutation(async ({ ctx, input }) => {
     const db2 = await getDb();
@@ -32008,7 +32721,7 @@ var customStationBuilderRouter = router({
 });
 
 // server/routers/advancedSchedulingRouter.ts
-import { z as z84 } from "zod";
+import { z as z86 } from "zod";
 
 // server/services/advancedScheduling.ts
 var AdvancedSchedulingService = class {
@@ -32319,13 +33032,13 @@ var advancedScheduling_default = AdvancedSchedulingService;
 var advancedSchedulingRouter = router({
   // Create a post template
   createTemplate: protectedProcedure.input(
-    z84.object({
-      name: z84.string(),
-      description: z84.string().optional(),
-      contentType: z84.string(),
-      contentBody: z84.string(),
-      mediaUrls: z84.array(z84.string()).optional(),
-      tags: z84.array(z84.string()).optional()
+    z86.object({
+      name: z86.string(),
+      description: z86.string().optional(),
+      contentType: z86.string(),
+      contentBody: z86.string(),
+      mediaUrls: z86.array(z86.string()).optional(),
+      tags: z86.array(z86.string()).optional()
     })
   ).mutation(async ({ ctx, input }) => {
     const template = await advancedScheduling_default.createTemplate({
@@ -32342,10 +33055,10 @@ var advancedSchedulingRouter = router({
   }),
   // Get optimal posting times
   getOptimalPostingTimes: protectedProcedure.input(
-    z84.object({
-      stationId: z84.number(),
-      contentType: z84.string(),
-      historicalDays: z84.number().optional().default(30)
+    z86.object({
+      stationId: z86.number(),
+      contentType: z86.string(),
+      historicalDays: z86.number().optional().default(30)
     })
   ).query(async ({ ctx, input }) => {
     const times = await advancedScheduling_default.getOptimalPostingTimes(
@@ -32358,12 +33071,12 @@ var advancedSchedulingRouter = router({
   }),
   // Create A/B test
   createABTest: protectedProcedure.input(
-    z84.object({
-      stationId: z84.number(),
-      testName: z84.string(),
-      controlVersion: z84.string(),
-      testVersion: z84.string(),
-      endDate: z84.date()
+    z86.object({
+      stationId: z86.number(),
+      testName: z86.string(),
+      controlVersion: z86.string(),
+      testVersion: z86.string(),
+      endDate: z86.date()
     })
   ).mutation(async ({ ctx, input }) => {
     const test = await advancedScheduling_default.createABTest({
@@ -32380,17 +33093,17 @@ var advancedSchedulingRouter = router({
     return tests;
   }),
   // Get A/B test results
-  getABTestResults: protectedProcedure.input(z84.object({ testId: z84.number() })).query(async ({ input }) => {
+  getABTestResults: protectedProcedure.input(z86.object({ testId: z86.number() })).query(async ({ input }) => {
     const results = await advancedScheduling_default.getABTestResults(input.testId);
     return results;
   }),
   // Schedule a post
   schedulePost: protectedProcedure.input(
-    z84.object({
-      stationId: z84.number(),
-      content: z84.string(),
-      platforms: z84.array(z84.string()),
-      useOptimalTiming: z84.boolean().optional().default(true)
+    z86.object({
+      stationId: z86.number(),
+      content: z86.string(),
+      platforms: z86.array(z86.string()),
+      useOptimalTiming: z86.boolean().optional().default(true)
     })
   ).mutation(async ({ ctx, input }) => {
     const post = await advancedScheduling_default.schedulePost(
@@ -32404,10 +33117,10 @@ var advancedSchedulingRouter = router({
   }),
   // Get scheduled posts
   getScheduledPosts: protectedProcedure.input(
-    z84.object({
-      stationId: z84.number(),
-      startDate: z84.date().optional(),
-      endDate: z84.date().optional()
+    z86.object({
+      stationId: z86.number(),
+      startDate: z86.date().optional(),
+      endDate: z86.date().optional()
     })
   ).query(async ({ input }) => {
     const posts = await advancedScheduling_default.getScheduledPosts(
@@ -32423,7 +33136,7 @@ var advancedSchedulingRouter = router({
     return analytics;
   }),
   // Get content recommendations
-  getContentRecommendations: protectedProcedure.input(z84.object({ stationId: z84.number() })).query(async ({ ctx, input }) => {
+  getContentRecommendations: protectedProcedure.input(z86.object({ stationId: z86.number() })).query(async ({ ctx, input }) => {
     const recommendations = await advancedScheduling_default.getContentRecommendations(
       ctx.user.id,
       input.stationId
@@ -32433,7 +33146,7 @@ var advancedSchedulingRouter = router({
 });
 
 // server/routers/engagementWebhooksRouter.ts
-import { z as z85 } from "zod";
+import { z as z87 } from "zod";
 
 // server/services/engagementWebhooks.ts
 var EngagementWebhooksService = class {
@@ -32708,31 +33421,31 @@ var engagementWebhooks_default = EngagementWebhooksService;
 // server/routers/engagementWebhooksRouter.ts
 var engagementWebhooksRouter = router({
   // Get real-time metrics
-  getRealTimeMetrics: protectedProcedure.input(z85.object({ stationId: z85.number() })).query(async ({ input }) => {
+  getRealTimeMetrics: protectedProcedure.input(z87.object({ stationId: z87.number() })).query(async ({ input }) => {
     const metrics2 = await engagementWebhooks_default.getRealTimeMetrics(input.stationId);
     return metrics2;
   }),
   // Get aggregated metrics
-  getAggregatedMetrics: protectedProcedure.input(z85.object({ stationId: z85.number() })).query(async ({ input }) => {
+  getAggregatedMetrics: protectedProcedure.input(z87.object({ stationId: z87.number() })).query(async ({ input }) => {
     const metrics2 = await engagementWebhooks_default.getAggregatedMetrics(input.stationId);
     return metrics2;
   }),
   // Get anomaly alerts
-  getAnomalyAlerts: protectedProcedure.input(z85.object({ stationId: z85.number() })).query(async ({ input }) => {
+  getAnomalyAlerts: protectedProcedure.input(z87.object({ stationId: z87.number() })).query(async ({ input }) => {
     const alerts2 = await engagementWebhooks_default.getAnomalyAlerts(input.stationId);
     return alerts2;
   }),
   // Acknowledge alert
-  acknowledgeAlert: protectedProcedure.input(z85.object({ alertId: z85.number() })).mutation(async ({ input }) => {
+  acknowledgeAlert: protectedProcedure.input(z87.object({ alertId: z87.number() })).mutation(async ({ input }) => {
     const result2 = await engagementWebhooks_default.acknowledgeAlert(input.alertId);
     return { success: result2 };
   }),
   // Get engagement trend
   getEngagementTrend: protectedProcedure.input(
-    z85.object({
-      stationId: z85.number(),
-      platform: z85.string(),
-      days: z85.number().optional().default(7)
+    z87.object({
+      stationId: z87.number(),
+      platform: z87.string(),
+      days: z87.number().optional().default(7)
     })
   ).query(async ({ input }) => {
     const trend = await engagementWebhooks_default.getEngagementTrend(
@@ -32743,18 +33456,18 @@ var engagementWebhooksRouter = router({
     return trend;
   }),
   // Get platform comparison
-  getPlatformComparison: protectedProcedure.input(z85.object({ stationId: z85.number() })).query(async ({ input }) => {
+  getPlatformComparison: protectedProcedure.input(z87.object({ stationId: z87.number() })).query(async ({ input }) => {
     const comparison = await engagementWebhooks_default.getPlatformComparison(input.stationId);
     return comparison;
   }),
   // Handle webhook event (public endpoint)
   handleWebhookEvent: publicProcedure.input(
-    z85.object({
-      platform: z85.enum(["twitter", "youtube", "facebook", "instagram"]),
-      eventType: z85.enum(["like", "share", "comment", "view", "follow"]),
-      stationId: z85.number(),
-      userId: z85.string().optional(),
-      metadata: z85.record(z85.any()).optional()
+    z87.object({
+      platform: z87.enum(["twitter", "youtube", "facebook", "instagram"]),
+      eventType: z87.enum(["like", "share", "comment", "view", "follow"]),
+      stationId: z87.number(),
+      userId: z87.string().optional(),
+      metadata: z87.record(z87.any()).optional()
     })
   ).mutation(async ({ input }) => {
     const result2 = await engagementWebhooks_default.handleWebhookEvent({
@@ -32775,7 +33488,7 @@ var engagementWebhooksRouter = router({
 });
 
 // server/routers/callInRouter.ts
-import { z as z86 } from "zod";
+import { z as z88 } from "zod";
 
 // server/services/callInSystem.ts
 var CallInSystemService = class {
@@ -33080,13 +33793,13 @@ var callInSystem_default = CallInSystemService;
 var callInRouter = router({
   // Submit a call request
   submitCallRequest: publicProcedure.input(
-    z86.object({
-      stationId: z86.number(),
-      callerId: z86.string(),
-      callerName: z86.string(),
-      callerEmail: z86.string().email(),
-      topic: z86.string(),
-      question: z86.string()
+    z88.object({
+      stationId: z88.number(),
+      callerId: z88.string(),
+      callerName: z88.string(),
+      callerEmail: z88.string().email(),
+      topic: z88.string(),
+      question: z88.string()
     })
   ).mutation(async ({ input }) => {
     const result2 = await callInSystem_default.submitCallRequest({
@@ -33102,30 +33815,30 @@ var callInRouter = router({
     return result2;
   }),
   // Get call queue
-  getCallQueue: protectedProcedure.input(z86.object({ stationId: z86.number() })).query(async ({ input }) => {
+  getCallQueue: protectedProcedure.input(z88.object({ stationId: z88.number() })).query(async ({ input }) => {
     const queue = callInSystem_default.getCallQueue(input.stationId);
     return queue;
   }),
   // Get next call
-  getNextCall: protectedProcedure.input(z86.object({ stationId: z86.number() })).mutation(async ({ input }) => {
+  getNextCall: protectedProcedure.input(z88.object({ stationId: z88.number() })).mutation(async ({ input }) => {
     const call = callInSystem_default.getNextCall(input.stationId);
     return call;
   }),
   // Get active call
-  getActiveCall: protectedProcedure.input(z86.object({ stationId: z86.number() })).query(async ({ input }) => {
+  getActiveCall: protectedProcedure.input(z88.object({ stationId: z88.number() })).query(async ({ input }) => {
     const call = callInSystem_default.getActiveCall(input.stationId);
     return call;
   }),
   // End current call
-  endCall: protectedProcedure.input(z86.object({ stationId: z86.number() })).mutation(async ({ input }) => {
+  endCall: protectedProcedure.input(z88.object({ stationId: z88.number() })).mutation(async ({ input }) => {
     const result2 = callInSystem_default.endCall(input.stationId);
     return { success: result2 };
   }),
   // Get call screening suggestions
   getCallScreeningSuggestions: protectedProcedure.input(
-    z86.object({
-      stationId: z86.number(),
-      topic: z86.string()
+    z88.object({
+      stationId: z88.number(),
+      topic: z88.string()
     })
   ).query(async ({ input }) => {
     const suggestions = await callInSystem_default.getCallScreeningSuggestions(
@@ -33135,39 +33848,39 @@ var callInRouter = router({
     return suggestions;
   }),
   // Get call statistics
-  getCallStatistics: protectedProcedure.input(z86.object({ stationId: z86.number() })).query(async ({ input }) => {
+  getCallStatistics: protectedProcedure.input(z88.object({ stationId: z88.number() })).query(async ({ input }) => {
     const stats = callInSystem_default.getCallStatistics(input.stationId);
     return stats;
   }),
   // Get call history
   getCallHistory: protectedProcedure.input(
-    z86.object({
-      stationId: z86.number(),
-      limit: z86.number().optional().default(20)
+    z88.object({
+      stationId: z88.number(),
+      limit: z88.number().optional().default(20)
     })
   ).query(async ({ input }) => {
     const history = callInSystem_default.getCallHistory(input.stationId, input.limit);
     return history;
   }),
   // Initialize call-in system
-  initializeCallInSystem: protectedProcedure.input(z86.object({ stationId: z86.number() })).mutation(async ({ input }) => {
+  initializeCallInSystem: protectedProcedure.input(z88.object({ stationId: z88.number() })).mutation(async ({ input }) => {
     const result2 = callInSystem_default.initializeCallInSystem(input.stationId);
     return { success: result2 };
   }),
   // Get mobile game status
-  getMobileGameStatus: protectedProcedure.input(z86.object({ stationId: z86.number() })).query(async ({ input }) => {
+  getMobileGameStatus: protectedProcedure.input(z88.object({ stationId: z88.number() })).query(async ({ input }) => {
     const status = callInSystem_default.getMobileGameStatus(input.stationId);
     return status;
   }),
   // Get caller feedback
-  getCallerFeedback: protectedProcedure.input(z86.object({ callId: z86.number() })).query(async ({ input }) => {
+  getCallerFeedback: protectedProcedure.input(z88.object({ callId: z88.number() })).query(async ({ input }) => {
     const feedback = await callInSystem_default.getCallerFeedback(input.callId);
     return feedback;
   })
 });
 
 // server/routers/advancedFeaturesRouter.ts
-import { z as z87 } from "zod";
+import { z as z89 } from "zod";
 
 // server/services/multiRegionFailover.ts
 init_db();
@@ -34116,8 +34829,8 @@ var advancedFeaturesRouter = router({
      * Get failover history
      */
     getHistory: publicProcedure.input(
-      z87.object({
-        limit: z87.number().optional().default(50)
+      z89.object({
+        limit: z89.number().optional().default(50)
       })
     ).query(async ({ input }) => {
       return getFailoverHistory(input.limit);
@@ -34126,8 +34839,8 @@ var advancedFeaturesRouter = router({
      * Manually trigger failover (admin only)
      */
     manualFailover: protectedProcedure.input(
-      z87.object({
-        targetRegionId: z87.string()
+      z89.object({
+        targetRegionId: z89.string()
       })
     ).mutation(async ({ input, ctx }) => {
       if (ctx.user?.role !== "admin") {
@@ -34173,8 +34886,8 @@ var advancedFeaturesRouter = router({
      * Get content performance
      */
     getContentPerformance: publicProcedure.input(
-      z87.object({
-        limit: z87.number().optional().default(10)
+      z89.object({
+        limit: z89.number().optional().default(10)
       })
     ).query(async ({ input }) => {
       return analyticsService.getContentPerformance(input.limit);
@@ -34195,8 +34908,8 @@ var advancedFeaturesRouter = router({
      * Generate comprehensive report
      */
     generateReport: publicProcedure.input(
-      z87.object({
-        period: z87.enum(["daily", "weekly", "monthly", "yearly"]).optional().default("monthly")
+      z89.object({
+        period: z89.enum(["daily", "weekly", "monthly", "yearly"]).optional().default("monthly")
       })
     ).query(async ({ input }) => {
       return generateAnalyticsReport(input.period);
@@ -34205,8 +34918,8 @@ var advancedFeaturesRouter = router({
      * Export report as JSON
      */
     exportJSON: publicProcedure.input(
-      z87.object({
-        period: z87.enum(["daily", "weekly", "monthly", "yearly"]).optional().default("monthly")
+      z89.object({
+        period: z89.enum(["daily", "weekly", "monthly", "yearly"]).optional().default("monthly")
       })
     ).query(async ({ input }) => {
       const report = await generateAnalyticsReport(input.period);
@@ -34216,8 +34929,8 @@ var advancedFeaturesRouter = router({
      * Export report as CSV
      */
     exportCSV: publicProcedure.input(
-      z87.object({
-        period: z87.enum(["daily", "weekly", "monthly", "yearly"]).optional().default("monthly")
+      z89.object({
+        period: z89.enum(["daily", "weekly", "monthly", "yearly"]).optional().default("monthly")
       })
     ).query(async ({ input }) => {
       const report = await generateAnalyticsReport(input.period);
@@ -34230,9 +34943,9 @@ var advancedFeaturesRouter = router({
      * Get content recommendations for a listener
      */
     getContentRecommendations: protectedProcedure.input(
-      z87.object({
-        listenerId: z87.string(),
-        limit: z87.number().optional().default(5)
+      z89.object({
+        listenerId: z89.string(),
+        limit: z89.number().optional().default(5)
       })
     ).query(async ({ input }) => {
       const mockListener = {
@@ -34259,8 +34972,8 @@ var advancedFeaturesRouter = router({
      * Get optimal posting times
      */
     getOptimalPostingTimes: publicProcedure.input(
-      z87.object({
-        contentType: z87.string()
+      z89.object({
+        contentType: z89.string()
       })
     ).query(async ({ input }) => {
       return getOptimalPostingTimes(input.contentType);
@@ -34269,8 +34982,8 @@ var advancedFeaturesRouter = router({
      * Get station variation recommendations
      */
     getStationVariations: publicProcedure.input(
-      z87.object({
-        currentConfig: z87.record(z87.string(), z87.number()).optional()
+      z89.object({
+        currentConfig: z89.record(z89.string(), z89.number()).optional()
       })
     ).query(async ({ input }) => {
       const config = input.currentConfig || {
@@ -34285,8 +34998,8 @@ var advancedFeaturesRouter = router({
      * Predict churn risk
      */
     predictChurnRisk: protectedProcedure.input(
-      z87.object({
-        listenerId: z87.string()
+      z89.object({
+        listenerId: z89.string()
       })
     ).query(async ({ input }) => {
       const mockListener = {
@@ -34310,9 +35023,9 @@ var advancedFeaturesRouter = router({
      * Get A/B test recommendations
      */
     getABTestRecommendations: publicProcedure.input(
-      z87.object({
-        variant1: z87.record(z87.any()),
-        variant2: z87.record(z87.any())
+      z89.object({
+        variant1: z89.record(z89.any()),
+        variant2: z89.record(z89.any())
       })
     ).query(async ({ input }) => {
       return aiRecommendationsEngine.getABTestRecommendations(input.variant1, input.variant2);
@@ -34337,11 +35050,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z88.object({
-        goal: z88.string().min(1, "Goal is required"),
-        priority: z88.number().int().min(1).max(10).optional().default(5),
-        steps: z88.array(z88.string()).optional(),
-        constraints: z88.array(z88.string()).optional()
+      z90.object({
+        goal: z90.string().min(1, "Goal is required"),
+        priority: z90.number().int().min(1).max(10).optional().default(5),
+        steps: z90.array(z90.string()).optional(),
+        constraints: z90.array(z90.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -34353,7 +35066,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z88.object({ taskId: z88.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z90.object({ taskId: z90.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -34363,11 +35076,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z88.object({
-        target: z88.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z88.string().min(1, "Action is required"),
-        params: z88.record(z88.any()).optional().default({}),
-        priority: z88.number().int().min(1).max(10).optional().default(5)
+      z90.object({
+        target: z90.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z90.string().min(1, "Action is required"),
+        params: z90.record(z90.any()).optional().default({}),
+        priority: z90.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -34379,10 +35092,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z88.object({ commandId: z88.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z90.object({ commandId: z90.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z88.object({ target: z88.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z90.object({ target: z90.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -34477,12 +35190,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z88.object({
-      sessionName: z88.string().min(1),
-      systemPrompt: z88.string().optional(),
-      temperature: z88.number().min(0).max(100).optional(),
-      model: z88.string().optional(),
-      maxSteps: z88.number().min(1).optional()
+    createSession: protectedProcedure.input(z90.object({
+      sessionName: z90.string().min(1),
+      systemPrompt: z90.string().optional(),
+      temperature: z90.number().min(0).max(100).optional(),
+      model: z90.string().optional(),
+      maxSteps: z90.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError18({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -34503,7 +35216,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z88.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z90.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError18({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -34512,7 +35225,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z88.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z90.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError18({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -34554,9 +35267,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z88.object({
-      dateRange: z88.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z88.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z90.object({
+      dateRange: z90.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z90.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -34567,24 +35280,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z88.object({
-      dateRange: z88.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z90.object({
+      dateRange: z90.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z88.object({
-      dateRange: z88.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z90.object({
+      dateRange: z90.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z88.object({
-      email: z88.string().email(),
-      name: z88.string().optional(),
-      source: z88.string().optional(),
-      language: z88.string().optional()
+    subscribe: publicProcedure.input(z90.object({
+      email: z90.string().email(),
+      name: z90.string().optional(),
+      source: z90.string().optional(),
+      language: z90.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
@@ -34964,7 +35677,7 @@ init_db();
 init_schema();
 init_notification();
 import Stripe2 from "stripe";
-import { eq as eq25 } from "drizzle-orm";
+import { eq as eq27 } from "drizzle-orm";
 
 // server/services/notificationService.ts
 init_db();
@@ -35287,7 +36000,7 @@ async function handlePaymentSucceeded(paymentIntent) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const user = await db2.select().from(users).where(eq25(users.id, parseInt(clientRefId))).limit(1);
+    const user = await db2.select().from(users).where(eq27(users.id, parseInt(clientRefId))).limit(1);
     if (user.length > 0) {
       await db2.insert(payments).values({
         userId: user[0].id,
@@ -35335,12 +36048,12 @@ async function handleSubscriptionUpdated(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq25(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq27(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq25(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq27(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       if (subscription.items.data.length > 0) {
@@ -35375,12 +36088,12 @@ async function handleSubscriptionCancelled(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq25(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq27(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq25(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq27(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Cancelled subscription for user ${user.id}`);
@@ -35403,12 +36116,12 @@ async function handleInvoicePaid(invoice) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq25(payments.stripePaymentIntentId, invoice.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq27(payments.stripePaymentIntentId, invoice.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for invoice ${invoice.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq25(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq27(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       await db2.insert(donations).values({
@@ -35438,12 +36151,12 @@ async function handleChargeRefunded(charge) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq25(payments.stripePaymentIntentId, charge.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq27(payments.stripePaymentIntentId, charge.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for charge ${charge.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq25(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq27(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Recorded refund: $${amount} for user ${user.id}`);

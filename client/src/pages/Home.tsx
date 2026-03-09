@@ -74,6 +74,24 @@ export default function Home() {
       path: '/live',
       status: 'Active',
     },
+    {
+      id: 'studio',
+      title: '🎬 Production Studio',
+      description: 'Video/podcast studio with multi-platform guest panels. Host live shows with guests from YouTube, Twitch, and more.',
+      features: ['Guest Panels', 'Multi-Platform', 'Live Recording', 'Stream Integration'],
+      color: 'from-violet-600 to-fuchsia-600',
+      path: '/studio-control-room',
+      status: 'Active',
+    },
+    {
+      id: 'convention',
+      title: '🌐 Convention Hub',
+      description: 'Host global virtual conventions within the ecosystem. Multi-track sessions, breakout rooms, and attendee management.',
+      features: ['Virtual Events', 'Breakout Rooms', 'Multi-Track', 'Global Reach'],
+      color: 'from-indigo-600 to-blue-600',
+      path: '/convention-hub',
+      status: 'Active',
+    },
   ];
 
   return (
