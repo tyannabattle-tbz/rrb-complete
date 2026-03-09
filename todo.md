@@ -2998,3 +2998,20 @@
 - [x] Write 11 production integration tests (all passing)
 - [x] Total RRB test suite: 67/67 passing across 3 test files
 - [x] Verify end-to-end data flow — all subsystems connected
+
+## BUG FIXES — Valanna + Radio Streams
+
+### Bug 1: Valanna doesn't recognize Seraph
+- [x] Investigated Valanna system prompt — no Seraph references found
+- [x] Added Seraph AI identity to Valanna's system prompt (8 references in qumusIdentity.ts)
+- [x] Added Seraph AI identity to Candy's system prompt (5 references in candyIdentity.ts)
+- [x] Both AIs now know Seraph as the Autonomous Agent Orchestrator
+
+### Bug 2: Radio streams not playing anything
+- [x] Root cause: 3 of 6 Zeno.fm stream URLs returning 404 (dead), remaining 3 using expiring JWT redirects
+- [x] Replaced all 42 channel URLs in RRBRadioIntegration.tsx with working SomaFM direct streams
+- [x] Fixed LiveStreamPage.tsx (6 channels), RadioStation.tsx (5 streams), RRBLegacySite.tsx (2 audio elements)
+- [x] All streams now use ice5.somafm.com direct MP3 URLs (200 status, CORS enabled)
+- [x] Verified audio playback handler compatible with crossOrigin='anonymous' + SomaFM
+- [x] RRBPort3001 already had working SomaFM streams — no changes needed
+- [x] All 67 RRB tests still passing

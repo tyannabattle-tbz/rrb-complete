@@ -25,34 +25,34 @@ export default function RadioStation() {
   // Real audio streams with working URLs
   const sampleStreams: StreamConfig[] = [
     {
-      url: 'https://stream.rockinrockinboogie.com/live',
-      name: 'RockinRockinBoogie Live',
-      genre: 'Rock/Pop',
-      bitrate: '320 kbps',
+      url: 'https://ice5.somafm.com/groovesalad-128-mp3',
+      name: 'RRB Main Broadcast',
+      genre: 'Mixed/Community',
+      bitrate: '128 kbps',
     },
     {
-      url: 'https://stream.rockinrockinboogie.com/classics',
-      name: 'RRB Classics',
-      genre: 'Classic Rock',
-      bitrate: '256 kbps',
+      url: 'https://ice5.somafm.com/sonicuniverse-128-mp3',
+      name: 'RRB Legacy Classics',
+      genre: 'Soul/R&B Classics',
+      bitrate: '128 kbps',
     },
     {
-      url: 'https://stream.rockinrockinboogie.com/indie',
-      name: 'RRB Indie Mix',
-      genre: 'Indie/Alternative',
-      bitrate: '192 kbps',
+      url: 'https://ice5.somafm.com/7soul-128-mp3',
+      name: 'RRB Soul & R&B',
+      genre: 'Soul/R&B',
+      bitrate: '128 kbps',
     },
     {
-      url: 'https://stream.rockinrockinboogie.com/jazz',
+      url: 'https://ice5.somafm.com/fluid-128-mp3',
       name: 'RRB Jazz Lounge',
       genre: 'Jazz',
-      bitrate: '256 kbps',
+      bitrate: '128 kbps',
     },
     {
-      url: 'https://stream.rockinrockinboogie.com/electronic',
-      name: 'RRB Electronic',
-      genre: 'Electronic/EDM',
-      bitrate: '320 kbps',
+      url: 'https://ice5.somafm.com/dronezone-128-mp3',
+      name: 'RRB Healing Frequencies',
+      genre: 'Meditation/Ambient',
+      bitrate: '128 kbps',
     },
   ];
 

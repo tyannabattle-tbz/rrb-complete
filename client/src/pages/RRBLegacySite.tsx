@@ -15,7 +15,7 @@ export default function RRBLegacySite() {
   // Auto-play audio on page load with low volume
   useEffect(() => {
     if (!audioStarted) {
-      const audio = new Audio('https://stream.rockinrockinboogie.com/live');
+      const audio = new Audio('https://ice5.somafm.com/groovesalad-128-mp3');
       audio.volume = 0.2; // Low volume (20%)
       audio.play().catch(err => {
         console.log('Auto-play prevented by browser policy:', err);
@@ -112,7 +112,7 @@ export default function RRBLegacySite() {
               </Button>
               <Button
                 onClick={() => {
-                  const audio = new Audio('https://stream.rockinrockinboogie.com/live');
+                  const audio = new Audio('https://ice5.somafm.com/groovesalad-128-mp3');
                   audio.volume = 0.2;
                   audio.play();
                 }}
