@@ -41,14 +41,31 @@ function setStreamUrl(url: string): void {
   } catch (e) {}
 }
 
-// Simulated live chat messages
-const initialMessages = [
-  { id: 1, user: 'CommunityVoice', message: 'Love the healing frequencies today!', time: '2m ago', avatar: '🎵' },
-  { id: 2, user: 'SelmaPride', message: 'Ready for the Jubilee!', time: '5m ago', avatar: '✊' },
-  { id: 3, user: 'GhanaConnect', message: 'Greetings from Accra! SQUADD Goals!', time: '8m ago', avatar: '🌍' },
-  { id: 4, user: 'SweetMiracles', message: 'A Voice for the Voiceless', time: '12m ago', avatar: '💝' },
-  { id: 5, user: 'Valanna', message: "Hey family! I'm watching over all the streams tonight. Everything's running smooth.", time: '15m ago', avatar: '🤖' },
-];
+/**
+ * Returns a proxied URL for HTTP streams when running on HTTPS.
+ * HTTPS streams pass through directly. HTTP streams are routed through
+ * our server-side proxy at /api/stream-proxy to avoid mixed-content blocking.
+ */
+function getProxiedStreamUrl(streamUrl: string): string {
+  if (!streamUrl) return streamUrl;
+  // If the stream is already HTTPS, use it directly
+  if (streamUrl.startsWith('https://')) return streamUrl;
+  // If we're on HTTPS, proxy HTTP streams through our server
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+    return `/api/stream-proxy?url=${encodeURIComponent(streamUrl)}`;
+  }
+  // On HTTP (local dev), use directly
+  return streamUrl;
+}
+
+// DJ avatar/color mapping
+const djStyles: Record<string, { avatar: string; color: string }> = {
+  dj_valanna: { avatar: '💜', color: 'text-purple-400' },
+  dj_seraph: { avatar: '⚡', color: 'text-blue-400' },
+  dj_candy: { avatar: '🍬', color: 'text-pink-400' },
+  system: { avatar: '📡', color: 'text-yellow-400' },
+  user: { avatar: '👤', color: 'text-[#D4A843]' },
+};
 
 export default function LiveStreamPage() {
   const { user } = useAuth();
@@ -59,7 +76,6 @@ export default function LiveStreamPage() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeChannelId, setActiveChannelId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'video' | 'radio' | 'podcast'>('radio');
-  const [chatMessages, setChatMessages] = useState(initialMessages);
   const [newMessage, setNewMessage] = useState('');
   const [showChat, setShowChat] = useState(true);
   const [audioError, setAudioError] = useState<string | null>(null);
@@ -193,7 +209,7 @@ export default function LiveStreamPage() {
     if (audioRef.current && activeTab === 'radio' && activeChannel?.streamUrl) {
       const wasPlaying = isPlaying;
       audioRef.current.pause();
-      audioRef.current.src = activeChannel.streamUrl;
+      audioRef.current.src = getProxiedStreamUrl(activeChannel.streamUrl);
       if (wasPlaying) {
         audioRef.current.play().catch(() => {
           setAudioError('Tap play to start streaming');
@@ -210,6 +226,16 @@ export default function LiveStreamPage() {
     }
   }, [volume, isMuted]);
 
+  // Fetch real chat messages from DB
+  const channelNameForChat = activeChannel?.name || 'RRB Gospel Hour';
+  const { data: chatMessages, refetch: refetchChat } = trpc.ecosystemIntegration.getChatMessages.useQuery(
+    { channelName: channelNameForChat, limit: 50 },
+    { refetchInterval: 5000, enabled: showChat }
+  );
+  const sendChatMutation = trpc.ecosystemIntegration.sendChatMessage.useMutation({
+    onSuccess: () => refetchChat(),
+  });
+
   // Auto-scroll chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -223,7 +249,7 @@ export default function LiveStreamPage() {
         recordTuneOut(activeChannel);
       } else {
         setAudioError(null);
-        audioRef.current.src = activeChannel.streamUrl;
+        audioRef.current.src = getProxiedStreamUrl(activeChannel.streamUrl);
         audioRef.current.play().then(() => {
           setIsPlaying(true);
           recordTuneIn(activeChannel);
@@ -239,16 +265,14 @@ export default function LiveStreamPage() {
 
   const handleSendMessage = useCallback(() => {
     if (!newMessage.trim()) return;
-    const msg = {
-      id: Date.now(),
-      user: user?.name || 'Guest',
+    sendChatMutation.mutate({
+      channelId: activeChannel?.id || 0,
+      channelName: channelNameForChat,
+      userName: user?.name || 'Guest',
       message: newMessage.trim(),
-      time: 'now',
-      avatar: '👤',
-    };
-    setChatMessages(prev => [...prev, msg]);
+    });
     setNewMessage('');
-  }, [newMessage, user]);
+  }, [newMessage, user, activeChannel, channelNameForChat, sendChatMutation]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement && videoRef.current) {
@@ -739,20 +763,25 @@ export default function LiveStreamPage() {
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-3 space-y-3 max-h-[400px] lg:max-h-[500px]">
-                  {chatMessages.map(msg => (
-                    <div key={msg.id} className="flex items-start gap-2">
-                      <div className="text-lg flex-shrink-0">{msg.avatar}</div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className={`text-xs font-semibold ${msg.user === 'Valanna' ? 'text-purple-400' : 'text-[#D4A843]'}`}>
-                            {msg.user}
-                          </span>
-                          <span className="text-xs text-[#E8E0D0]/30">{msg.time}</span>
+                  {(chatMessages || []).map((msg: any) => {
+                    const style = djStyles[msg.messageType] || djStyles.user;
+                    const timeAgo = msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                    return (
+                      <div key={msg.id} className="flex items-start gap-2">
+                        <div className="text-lg flex-shrink-0">{style.avatar}</div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs font-semibold ${style.color}`}>
+                              {msg.userName}
+                            </span>
+                            {msg.isAiGenerated ? <Badge variant="outline" className="text-[8px] px-1 py-0 border-purple-500/30 text-purple-400">AI</Badge> : null}
+                            <span className="text-xs text-[#E8E0D0]/30">{timeAgo}</span>
+                          </div>
+                          <p className="text-sm text-[#E8E0D0]/80 break-words">{msg.message}</p>
                         </div>
-                        <p className="text-sm text-[#E8E0D0]/80 break-words">{msg.message}</p>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   <div ref={chatEndRef} />
                 </div>
 

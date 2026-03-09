@@ -27261,7 +27261,7 @@ var UN_CAMPAIGN_COMMERCIALS = [
     title: "From Selma to the United Nations",
     category: "promo",
     djVoice: "candy",
-    script: `From the red clay roads of Selma, Alabama... to the halls of the United Nations in New York City. On March 17th, 2026, Canryn Production and Sweet Miracles present the SQUADD Goals \u2014 Sisters Questing Unapologetically After Divine Destiny \u2014 at the UN NGO CSW70, in partnership with Ghana. Seven women. Seven missions. Agriculture. Law advocacy. Disability rights. Elder protection. Environmental justice. Families of murder victims. And the technology that connects them all. This is not just a presentation. This is a movement. From Selma to Ghana to the World \u2014 no voice will ever be silenced again. Visit SQUADD Goals at manuweb.sbs to join the movement. Canryn Production. A Voice for the Voiceless.`,
+    script: `From the red clay roads of Selma, Alabama... to the halls of the United Nations in New York City. Sweet Miracles and Rockin' Rockin' Boogie \u2014 building the bridge across the world. On March 17th, 2026, Canryn Production and Sweet Miracles present the SQUADD Goals \u2014 Sisters Questing Unapologetically After Divine Destiny \u2014 at the UN NGO CSW70, in partnership with Ghana. Seven women. Seven missions. Agriculture. Law advocacy. Disability rights. Elder protection. Environmental justice. Families of murder victims. And the technology that connects them all. This is not just a presentation. This is a movement. Sweet Miracles and Rockin' Rockin' Boogie bring the bridge across the world \u2014 no voice will ever be silenced again. Visit SQUADD Goals at manuweb.sbs to join the movement. Canryn Production. A Voice for the Voiceless.`,
     duration: 60,
     priority: 10,
     targetChannelGenres: ["Gospel", "Soul", "Jazz", "R&B", "Talk", "Community", "Hip-Hop"],
@@ -27274,7 +27274,7 @@ var UN_CAMPAIGN_COMMERCIALS = [
     title: "8 Days Until the UN \u2014 Countdown",
     category: "countdown",
     djVoice: "valanna",
-    script: `The countdown is on. In just days, the SQUADD Coalition takes the stage at the United Nations NGO CSW70 \u2014 in partnership with Ghana. March 17th, 2026. Seven sisters. One mission. From elder protection to environmental justice, from agriculture to law advocacy \u2014 this is where Selma meets the world stage. Sweet Miracles and Canryn Production are bringing the fight to the biggest platform on earth. Are you ready? Visit manuweb.sbs for details. The world is watching.`,
+    script: `The countdown is on. In just days, the SQUADD Coalition takes the stage at the United Nations NGO CSW70 \u2014 in partnership with Ghana. March 17th, 2026. Seven sisters. One mission. Sweet Miracles and Rockin' Rockin' Boogie \u2014 building the bridge across the world. From elder protection to environmental justice, from agriculture to law advocacy \u2014 this is where Selma meets the world stage. Are you ready? Visit manuweb.sbs for details. The world is watching.`,
     duration: 30,
     priority: 9,
     targetChannelGenres: ["Gospel", "Soul", "Jazz", "R&B", "Talk", "Community", "Hip-Hop", "Funk", "Rock"],
@@ -27339,7 +27339,7 @@ var UN_CAMPAIGN_COMMERCIALS = [
     title: "RRB Radio \u2014 50 Channels, One Mission",
     category: "bumper",
     djVoice: "seraph",
-    script: `You're listening to Rockin' Rockin' Boogie Radio \u2014 50 channels strong. Powered by QUMUS. Built by Canryn Production. March 17th \u2014 we take it to the United Nations. Stay tuned.`,
+    script: `You're listening to Rockin' Rockin' Boogie Radio \u2014 50 channels strong. Sweet Miracles and Rockin' Rockin' Boogie \u2014 building the bridge across the world. Powered by QUMUS. Built by Canryn Production. March 17th \u2014 we take it to the United Nations. Stay tuned.`,
     duration: 15,
     priority: 10,
     targetChannelGenres: ["Gospel", "Soul", "Jazz", "R&B", "Hip-Hop", "Funk", "Rock", "Blues", "Afrobeat", "World", "Reggae", "Electronic", "Lo-Fi", "Classical", "Healing", "Meditation", "Community", "Talk"],
@@ -27365,7 +27365,7 @@ var UN_CAMPAIGN_COMMERCIALS = [
     title: "A Voice for the Voiceless",
     category: "testimonial",
     djVoice: "valanna",
-    script: `LaShanna Hunter \u2014 a mother, an advocate, a force of nature. She built Sweet Miracles to give a voice to those who had none. She created Canryn Production to amplify that voice to the world. And on March 17th, 2026, she takes that voice to the United Nations \u2014 in partnership with Ghana \u2014 to present the SQUADD Goals. Agriculture. Law. Disability. Elder protection. Environment. Justice. Technology. Seven pillars. One mission. A voice for the voiceless. Join us at manuweb.sbs.`,
+    script: `LaShanna Hunter \u2014 a mother, an advocate, a force of nature. She built Sweet Miracles to give a voice to those who had none. She created Canryn Production to amplify that voice to the world. And on March 17th, 2026, she takes that voice to the United Nations \u2014 in partnership with Ghana \u2014 to present the SQUADD Goals. Agriculture. Law. Disability. Elder protection. Environment. Justice. Technology. Seven pillars. One mission. Sweet Miracles and Rockin' Rockin' Boogie \u2014 building the bridge across the world. A voice for the voiceless. Join us at manuweb.sbs.`,
     duration: 30,
     priority: 9,
     targetChannelGenres: ["Gospel", "Soul", "Jazz", "R&B", "Talk", "Community", "Hip-Hop", "Blues"],
@@ -27378,7 +27378,7 @@ var UN_CAMPAIGN_COMMERCIALS = [
     title: "Selma to the UN \u2014 The Bridge",
     category: "bumper",
     djVoice: "candy",
-    script: `Selma taught us to march. Ghana showed us our roots. And on March 17th, the United Nations will hear our voice. The SQUADD Coalition. Canryn Production. Sweet Miracles. From the bridge in Selma to the world stage. We are unstoppable. manuweb.sbs.`,
+    script: `Selma taught us to march. Ghana showed us our roots. And on March 17th, the United Nations will hear our voice. Sweet Miracles and Rockin' Rockin' Boogie \u2014 building the bridge across the world. The SQUADD Coalition. Canryn Production. From the bridge in Selma to the world stage. We are unstoppable. manuweb.sbs.`,
     duration: 20,
     priority: 9,
     targetChannelGenres: ["Gospel", "Soul", "Jazz", "R&B", "Hip-Hop", "Funk", "Rock", "Blues", "Community", "Talk"],
@@ -27404,7 +27404,7 @@ var UN_CAMPAIGN_COMMERCIALS = [
     title: "March 17th \u2014 Be There",
     category: "bumper",
     djVoice: "valanna",
-    script: `March 17th, 2026. The United Nations. SQUADD Goals. In partnership with Ghana. Canryn Production and Sweet Miracles. Be part of history. manuweb.sbs. A voice for the voiceless.`,
+    script: `March 17th, 2026. The United Nations. SQUADD Goals. In partnership with Ghana. Sweet Miracles and Rockin' Rockin' Boogie \u2014 building the bridge across the world. Canryn Production. Be part of history. manuweb.sbs. A voice for the voiceless.`,
     duration: 15,
     priority: 10,
     targetChannelGenres: ["Gospel", "Soul", "Jazz", "R&B", "Hip-Hop", "Funk", "Rock", "Blues", "Afrobeat", "World", "Reggae", "Electronic", "Lo-Fi", "Classical", "Healing", "Meditation", "Community", "Talk"],
@@ -28149,6 +28149,80 @@ var ecosystemIntegrationRouter = router({
         byChannel: [],
         byDj: []
       };
+    }
+  }),
+  // ── Radio Chat ──────────────────────────────────────────
+  getChatMessages: publicProcedure.input(z73.object({ channelName: z73.string(), limit: z73.number().optional() })).query(async ({ input }) => {
+    try {
+      const db2 = await getDb();
+      const limit = input.limit || 50;
+      const rows = await db2.execute(
+        sql17`SELECT id, channelId, channelName, userName, userAvatar, message, messageType, isAiGenerated, createdAt
+              FROM radio_chat_messages
+              WHERE channelName = ${input.channelName} OR channelId = 0
+              ORDER BY createdAt DESC LIMIT ${limit}`
+      );
+      const messages2 = Array.isArray(rows[0]) ? rows[0] : rows;
+      return messages2.reverse();
+    } catch (err) {
+      console.error("[RadioChat] getChatMessages error:", err);
+      return [];
+    }
+  }),
+  sendChatMessage: publicProcedure.input(z73.object({
+    channelId: z73.number(),
+    channelName: z73.string(),
+    userName: z73.string(),
+    message: z73.string().min(1).max(500)
+  })).mutation(async ({ input }) => {
+    try {
+      const db2 = await getDb();
+      await db2.execute(
+        sql17`INSERT INTO radio_chat_messages (channelId, channelName, userName, message, messageType, isAiGenerated)
+              VALUES (${input.channelId}, ${input.channelName}, ${input.userName}, ${input.message}, 'user', false)`
+      );
+      if (Math.random() < 0.3) {
+        const hour = (/* @__PURE__ */ new Date()).getHours();
+        const djName = hour >= 6 && hour < 14 ? "DJ Valanna" : hour >= 14 && hour < 18 ? "DJ Seraph" : "DJ Candy";
+        const djType = hour >= 6 && hour < 14 ? "dj_valanna" : hour >= 14 && hour < 18 ? "dj_seraph" : "dj_candy";
+        const responses = [
+          `Love that energy, ${input.userName}! Keep vibing with us.`,
+          `Thanks for tuning in, ${input.userName}! You're part of the RRB family now.`,
+          `${input.userName}, great to have you here! What do you want to hear next?`,
+          `Shoutout to ${input.userName} in the chat! The airwaves belong to all of us.`,
+          `${input.userName}, you're making this broadcast special. Stay locked in!`
+        ];
+        const response = responses[Math.floor(Math.random() * responses.length)];
+        await db2.execute(
+          sql17`INSERT INTO radio_chat_messages (channelId, channelName, userName, message, messageType, isAiGenerated)
+                VALUES (${input.channelId}, ${input.channelName}, ${djName}, ${response}, ${djType}, true)`
+        );
+      }
+      return { success: true };
+    } catch (err) {
+      console.error("[RadioChat] sendChatMessage error:", err);
+      return { success: false };
+    }
+  }),
+  getChatStats: publicProcedure.query(async () => {
+    try {
+      const db2 = await getDb();
+      const rows = await db2.execute(
+        sql17`SELECT COUNT(*) as total,
+            SUM(CASE WHEN isAiGenerated = 1 THEN 1 ELSE 0 END) as aiMessages,
+            SUM(CASE WHEN isAiGenerated = 0 THEN 1 ELSE 0 END) as userMessages,
+            COUNT(DISTINCT userName) as uniqueUsers
+            FROM radio_chat_messages`
+      );
+      const data = Array.isArray(rows[0]?.[0]) ? rows[0][0] : rows[0];
+      return {
+        totalMessages: Number(data?.total || 0),
+        aiMessages: Number(data?.aiMessages || 0),
+        userMessages: Number(data?.userMessages || 0),
+        uniqueUsers: Number(data?.uniqueUsers || 0)
+      };
+    } catch (err) {
+      return { totalMessages: 0, aiMessages: 0, userMessages: 0, uniqueUsers: 0 };
     }
   })
 });
@@ -37488,6 +37562,66 @@ async function handleChargeRefunded(charge) {
 
 // server/_core/index.ts
 init_qumusActivation();
+
+// server/audioStreamProxy.ts
+import http from "http";
+function registerAudioStreamProxy(app) {
+  app.get("/api/stream-proxy", async (req, res) => {
+    const streamUrl = req.query.url;
+    if (!streamUrl) {
+      return res.status(400).json({ error: "Missing url parameter" });
+    }
+    if (!streamUrl.startsWith("http://")) {
+      return res.status(400).json({ error: "Only HTTP streams can be proxied" });
+    }
+    try {
+      const url = new URL(streamUrl);
+      console.log(`[Stream Proxy] Proxying: ${url.hostname}${url.pathname}`);
+    } catch {
+      return res.status(400).json({ error: "Invalid URL" });
+    }
+    try {
+      const proxyReq = http.get(streamUrl, {
+        headers: {
+          "User-Agent": "RRB-Radio/1.0",
+          "Accept": "*/*",
+          "Icy-MetaData": "0"
+        },
+        timeout: 1e4
+      }, (proxyRes) => {
+        const contentType = proxyRes.headers["content-type"] || "audio/mpeg";
+        res.setHeader("Content-Type", contentType);
+        res.setHeader("Cache-Control", "no-cache, no-store");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Transfer-Encoding", "chunked");
+        proxyRes.pipe(res);
+        req.on("close", () => {
+          proxyRes.destroy();
+        });
+      });
+      proxyReq.on("error", (err) => {
+        console.error(`[Stream Proxy] Error: ${err.message}`);
+        if (!res.headersSent) {
+          res.status(502).json({ error: "Stream unavailable" });
+        }
+      });
+      proxyReq.on("timeout", () => {
+        proxyReq.destroy();
+        if (!res.headersSent) {
+          res.status(504).json({ error: "Stream timeout" });
+        }
+      });
+    } catch (error) {
+      console.error("[Stream Proxy] Error:", error);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Proxy error" });
+      }
+    }
+  });
+  console.log("[Stream Proxy] Audio stream proxy registered at /api/stream-proxy");
+}
+
+// server/_core/index.ts
 init_qumusProductionIntegration();
 init_const();
 function isPortAvailable(port) {
@@ -37642,6 +37776,7 @@ async function startServer() {
       res.status(500).json({ error: String(error) });
     }
   });
+  registerAudioStreamProxy(app);
   app.use(
     "/api/trpc",
     createExpressMiddleware({

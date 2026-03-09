@@ -518,4 +518,87 @@ export const ecosystemIntegrationRouter = router({
         };
       }
     }),
+
+  // ── Radio Chat ──────────────────────────────────────────
+  getChatMessages: publicProcedure
+    .input(z.object({ channelName: z.string(), limit: z.number().optional() }))
+    .query(async ({ input }) => {
+      try {
+        const db = await getDb();
+        const limit = input.limit || 50;
+        const rows = (await db.execute(
+          sql`SELECT id, channelId, channelName, userName, userAvatar, message, messageType, isAiGenerated, createdAt
+              FROM radio_chat_messages
+              WHERE channelName = ${input.channelName} OR channelId = 0
+              ORDER BY createdAt DESC LIMIT ${limit}`
+        ) as any);
+        const messages = (Array.isArray(rows[0]) ? rows[0] : rows) as any[];
+        return messages.reverse();
+      } catch (err) {
+        console.error('[RadioChat] getChatMessages error:', err);
+        return [];
+      }
+    }),
+
+  sendChatMessage: publicProcedure
+    .input(z.object({
+      channelId: z.number(),
+      channelName: z.string(),
+      userName: z.string(),
+      message: z.string().min(1).max(500),
+    }))
+    .mutation(async ({ input }) => {
+      try {
+        const db = await getDb();
+        await db.execute(
+          sql`INSERT INTO radio_chat_messages (channelId, channelName, userName, message, messageType, isAiGenerated)
+              VALUES (${input.channelId}, ${input.channelName}, ${input.userName}, ${input.message}, 'user', false)`
+        );
+
+        // 30% chance AI DJ responds
+        if (Math.random() < 0.3) {
+          const hour = new Date().getHours();
+          const djName = hour >= 6 && hour < 14 ? 'DJ Valanna' : hour >= 14 && hour < 18 ? 'DJ Seraph' : 'DJ Candy';
+          const djType = hour >= 6 && hour < 14 ? 'dj_valanna' : hour >= 14 && hour < 18 ? 'dj_seraph' : 'dj_candy';
+          const responses = [
+            `Love that energy, ${input.userName}! Keep vibing with us.`,
+            `Thanks for tuning in, ${input.userName}! You're part of the RRB family now.`,
+            `${input.userName}, great to have you here! What do you want to hear next?`,
+            `Shoutout to ${input.userName} in the chat! The airwaves belong to all of us.`,
+            `${input.userName}, you're making this broadcast special. Stay locked in!`,
+          ];
+          const response = responses[Math.floor(Math.random() * responses.length)];
+          await db.execute(
+            sql`INSERT INTO radio_chat_messages (channelId, channelName, userName, message, messageType, isAiGenerated)
+                VALUES (${input.channelId}, ${input.channelName}, ${djName}, ${response}, ${djType}, true)`
+          );
+        }
+        return { success: true };
+      } catch (err) {
+        console.error('[RadioChat] sendChatMessage error:', err);
+        return { success: false };
+      }
+    }),
+
+  getChatStats: publicProcedure.query(async () => {
+    try {
+      const db = await getDb();
+      const rows = (await db.execute(
+        sql`SELECT COUNT(*) as total,
+            SUM(CASE WHEN isAiGenerated = 1 THEN 1 ELSE 0 END) as aiMessages,
+            SUM(CASE WHEN isAiGenerated = 0 THEN 1 ELSE 0 END) as userMessages,
+            COUNT(DISTINCT userName) as uniqueUsers
+            FROM radio_chat_messages`
+      ) as any);
+      const data = (Array.isArray(rows[0]?.[0]) ? rows[0][0] : rows[0]) as any;
+      return {
+        totalMessages: Number(data?.total || 0),
+        aiMessages: Number(data?.aiMessages || 0),
+        userMessages: Number(data?.userMessages || 0),
+        uniqueUsers: Number(data?.uniqueUsers || 0),
+      };
+    } catch (err) {
+      return { totalMessages: 0, aiMessages: 0, userMessages: 0, uniqueUsers: 0 };
+    }
+  }),
 });

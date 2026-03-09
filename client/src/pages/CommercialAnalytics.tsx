@@ -68,7 +68,8 @@ export default function CommercialAnalytics() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-[#D4A843]">Commercial Analytics</h1>
-              <p className="text-sm text-[#E8E0D0]/50 mt-1">UN NGO CSW70 Campaign Performance • March 17, 2026</p>
+              <p className="text-sm text-[#E8E0D0]/50 mt-1">Sweet Miracles & Rockin' Rockin' Boogie — Building the Bridge Across the World</p>
+              <p className="text-xs text-[#E8E0D0]/30 mt-0.5">UN NGO CSW70 Campaign Performance • March 17, 2026</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">

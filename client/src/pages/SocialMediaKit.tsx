@@ -61,9 +61,9 @@ const SOCIAL_COPY = {
       title: 'Launch Announcement',
       text: `From Selma to the United Nations. March 17, 2026.
 
-Rockin' Rockin' Boogie is bringing SQUADD Goals to the world stage at UN CSW70.
+Sweet Miracles and Rockin' Rockin' Boogie — Building the Bridge Across the World.
 
-50 channels. 24/7 live coverage. History in the making.
+SQUADD Goals at UN CSW70. 50 channels. 24/7 live coverage. History in the making.
 
 Tune in: [LINK]
 
@@ -103,7 +103,9 @@ Your AI DJs Valanna, Seraph & Candy are ready. Are you?
 
 From Selma to the United Nations — LIVE NOW.
 
-Rockin' Rockin' Boogie is broadcasting from UN CSW70 across 50 channels.
+Sweet Miracles and Rockin' Rockin' Boogie — Building the Bridge Across the World.
+
+50 channels broadcasting from UN CSW70.
 
 Gospel. Jazz. Hip-Hop. Soul. Healing Frequencies. All live. All day.
 
@@ -133,7 +135,7 @@ Donate: [LINK]
       title: 'Main Announcement Post',
       text: `FROM SELMA TO THE UNITED NATIONS 🌍
 
-March 17, 2026 marks a historic moment. Rockin' Rockin' Boogie is bringing our SQUADD Goals campaign to the world stage at UN CSW70 in New York City.
+March 17, 2026 marks a historic moment. Sweet Miracles and Rockin' Rockin' Boogie — Building the Bridge Across the World. SQUADD Goals at UN CSW70 in New York City.
 
 What are SQUADD Goals?
 S — Sustainable Development
@@ -265,7 +267,8 @@ export default function SocialMediaKit() {
               <Megaphone className="h-6 w-6 text-amber-400" />
               <div>
                 <h1 className="text-xl font-bold">UN Campaign Social Media Kit</h1>
-                <p className="text-sm text-gray-400">From Selma to the United Nations — March 17, 2026</p>
+                <p className="text-sm text-amber-400/80">Sweet Miracles & Rockin' Rockin' Boogie — Building the Bridge Across the World</p>
+                <p className="text-xs text-gray-500">From Selma to the United Nations — March 17, 2026</p>
               </div>
             </div>
             <Badge variant="outline" className="border-amber-500/50 text-amber-400 text-lg px-4 py-1">
@@ -494,6 +497,45 @@ export default function SocialMediaKit() {
               <Button size="sm" variant="outline" className="border-blue-500/50 text-blue-400" onClick={() => window.location.href = '/selma-jubilee'}>
                 View Campaign
               </Button>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Campaign Video */}
+        <section>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Globe className="h-5 w-5 text-amber-400" />
+            Campaign Video
+          </h2>
+          <p className="text-gray-400 mb-4">Official promotional video for the UN CSW70 campaign launch. Share across all platforms.</p>
+          <Card className="bg-gray-900/80 border-amber-500/20 overflow-hidden">
+            <CardContent className="p-0">
+              <video
+                controls
+                className="w-full aspect-video"
+                poster="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/frame3-bridge-theme-v2-MD2HJ9zFDZMH44DK8wTL28.webp"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-UN-Campaign-Building-The-Bridge-Across-The-World_697e578a.mp4"
+              />
+              <div className="p-4">
+                <h3 className="font-bold text-amber-400 text-lg">Sweet Miracles & Rockin' Rockin' Boogie — Building the Bridge Across the World</h3>
+                <p className="text-sm text-gray-400 mt-1">32-second campaign video • From Selma to the United Nations • March 17, 2026</p>
+                <div className="flex gap-2 mt-3">
+                  <Button size="sm" variant="outline" className="border-amber-500/50 text-amber-400" onClick={() => {
+                    const a = document.createElement('a');
+                    a.href = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-UN-Campaign-Building-The-Bridge-Across-The-World_697e578a.mp4';
+                    a.download = 'RRB-UN-Campaign-Building-The-Bridge-Across-The-World.mp4';
+                    a.click();
+                  }}>
+                    <Download className="h-4 w-4 mr-1" /> Download Video
+                  </Button>
+                  <Button size="sm" variant="outline" className="border-purple-500/50 text-purple-400" onClick={() => {
+                    navigator.clipboard.writeText('https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-UN-Campaign-Building-The-Bridge-Across-The-World_697e578a.mp4');
+                    toast({ title: 'Video URL copied!' });
+                  }}>
+                    <Copy className="h-4 w-4 mr-1" /> Copy Link
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </section>

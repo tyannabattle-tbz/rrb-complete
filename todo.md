@@ -3346,3 +3346,31 @@
 - [x] Campaign hashtags: #SelmaToTheUN #SQUADDGoals #CSW70 #RRBRadio
 - [x] 11-day posting schedule from March 10-18+ with platform-specific timing
 - [x] Legal disclaimer: Canryn Production LLC / Rockin' Rockin' Boogie
+
+## Live Listener Chat on /live Page (COMPLETED)
+- [x] Create chat message schema in database
+- [x] Build tRPC endpoints for sending/receiving chat messages
+- [x] Add chat sidebar to LiveStreamPage with real-time polling
+- [x] Wire AI DJ auto-responses from Valanna/Seraph/Candy
+- [x] Show listener count and active chatters per channel
+
+## HTTPS Radio Stream Compatibility (COMPLETED)
+- [x] Test all 50 channel stream URLs for HTTPS compatibility
+- [x] Build server-side audio stream proxy at /api/audio-proxy for HTTP streams on HTTPS domain
+- [x] Add getProxiedStreamUrl() helper to LiveStreamPage for automatic HTTP→proxy routing
+- [x] Verify audio playback on deployed domain
+
+## UN Campaign Launch Video (COMPLETED)
+- [x] Script the campaign video: From Selma to the United Nations
+- [x] Generate 5 key frame images (Selma bridge, UN building, Bridge Across World UN map, SQUADD Goals, Voice for the Voiceless)
+- [x] Generate 4 video shots with AI video generation and concatenate into 32-second campaign video
+- [x] Upload to S3 CDN and integrate into Social Media Kit page
+- [x] Add video player with download and copy link buttons
+
+## Bridge Across the World Campaign Theme (COMPLETED)
+- [x] Update 6 commercial scripts with "Sweet Miracles & Rockin' Rockin' Boogie — Building the Bridge Across the World" tagline
+- [x] Update Commercial Analytics page header with campaign tagline
+- [x] Update Social Media Kit header with campaign tagline
+- [x] Update 3 social media posts (Twitter launch, Twitter launch day, Instagram main) with tagline
+- [x] Campaign video features UN-style world map with golden bridge from Africa to Americas
+- [x] A Voice for the Voiceless + SQUADD Goals + Ghana partnership = the bridge
