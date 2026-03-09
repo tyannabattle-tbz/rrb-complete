@@ -1006,15 +1006,24 @@ export default function RRBPort3001() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           <Button onClick={() => setLocation('/qumus')} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 h-12">
-            <Zap className="w-5 h-5 mr-2" /> QUMUS Dashboard
+            <Zap className="w-5 h-5 mr-2" /> QUMUS
+          </Button>
+          <Button onClick={() => setLocation('/conference')} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 h-12">
+            📹 Conference Hub
+          </Button>
+          <Button onClick={() => setLocation('/video-production')} className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 h-12">
+            🎬 Video Studio
+          </Button>
+          <Button onClick={() => setLocation('/live')} className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 h-12">
+            📡 Live Stream
           </Button>
           <Button onClick={() => window.open('https://www.hybridcast.sbs', '_blank')} className="w-full bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700 h-12">
-            🚨 HybridCast Emergency
+            🚨 HybridCast
           </Button>
-          <Button onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')} className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 h-12">
-            <Music className="w-5 h-5 mr-2" /> RRB Website
+          <Button onClick={() => window.open('https://www.rockinrockinboogie.com', '_blank')} className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 h-12">
+            <Music className="w-5 h-5 mr-2" /> RRB Site
           </Button>
         </div>
 

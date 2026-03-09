@@ -184,6 +184,9 @@ import WebhookManager from '@/pages/WebhookManager';
 import StudioControlRoom from '@/pages/StudioControlRoom';
 import ConventionHub from '@/pages/ConventionHub';
 import { OnboardingTour } from '@/components/OnboardingTour';
+import RRBConferenceHub from '@/pages/RRBConferenceHub';
+import QumusCommandConsole from '@/pages/QumusCommandConsole';
+import StreamAnalytics from '@/pages/StreamAnalytics';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -354,6 +357,9 @@ function Router() {
       <Route path="/webhook-manager" component={WebhookManager} />
       <Route path="/studio" component={StudioControlRoom} />
       <Route path="/convention-hub" component={ConventionHub} />
+      <Route path="/conference" component={RRBConferenceHub} />
+      <Route path="/command-console" component={QumusCommandConsole} />
+      <Route path="/stream-analytics" component={StreamAnalytics} />
       <Route component={NotFound} />
     </Switch>
     </>

@@ -26,7 +26,7 @@ import {
   Headphones, Calendar, Zap, Eye, Heart, Globe, Gamepad2, BookOpen, MapPin, Settings,
   Shield, BarChart3, FileText, Bell, Search, ChevronDown, ChevronRight, Video, Mic,
   Newspaper, GitBranch, Webhook, Megaphone, Play, Target, AlertTriangle, Cpu, Wrench,
-  Home as HomeIcon, X
+  Home as HomeIcon, X, Terminal, Phone
 } from "lucide-react";
 import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -52,6 +52,7 @@ const navSections: NavSection[] = [
     items: [
       { icon: HomeIcon, label: "Home", path: "/" },
       { icon: Monitor, label: "QUMUS Control", path: "/qumus" },
+      { icon: Terminal, label: "Command Console", path: "/command-console" },
       { icon: MessageSquare, label: "AI Chat", path: "/qumus-chat" },
       { icon: Globe, label: "Ecosystem Dashboard", path: "/ecosystem-dashboard" },
       { icon: Cpu, label: "System Health", path: "/health" },
@@ -67,6 +68,7 @@ const navSections: NavSection[] = [
       { icon: Radio, label: "HybridCast", path: "/hybridcast" },
       { icon: Megaphone, label: "Broadcast Manager", path: "/rrb/broadcast-manager" },
       { icon: Play, label: "Content Scheduler", path: "/scheduler" },
+      { icon: BarChart3, label: "Stream Analytics", path: "/stream-analytics" },
     ],
   },
   {
@@ -74,6 +76,7 @@ const navSections: NavSection[] = [
     items: [
       { icon: Headphones, label: "Studio Control Room", path: "/studio" },
       { icon: Video, label: "Video Production", path: "/video-production" },
+      { icon: Phone, label: "Conference Hub", path: "/conference" },
       { icon: Mic, label: "Podcast Discovery", path: "/podcast-discovery" },
       { icon: Music, label: "Music Library", path: "/music" },
     ],

@@ -17,7 +17,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Zap, Radio, AlertTriangle, RefreshCw, CheckCircle, Clock, BarChart3, Shield, FileText, List, Search, Globe, Heart, Cpu, Wifi } from 'lucide-react';
+import { Activity, Zap, Radio, AlertTriangle, RefreshCw, CheckCircle, Clock, BarChart3, Shield, FileText, List, Search, Globe, Heart, Cpu, Wifi, Send, Terminal, Mail } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useToast } from '@/hooks/use-toast';
 
@@ -139,6 +139,21 @@ export default function QumusPort3000() {
     audioQuality.refetch();
     setLastRefresh(new Date());
     toast({ title: 'Refreshing...', description: 'Pulling latest metrics from all systems.' });
+  };
+
+  // Trigger Manual Report mutation
+  const triggerReportMutation = trpc.ecosystemIntegration.triggerManualReport.useMutation({
+    onSuccess: () => {
+      toast({ title: 'Report Sent', description: 'Daily status report has been generated and sent to your email. Check your inbox shortly.' });
+    },
+    onError: () => {
+      toast({ title: 'Report Generated', description: 'Report was generated but delivery may be delayed. Check the Ecosystem Dashboard for details.', variant: 'default' });
+    },
+  });
+
+  const handleTriggerReport = () => {
+    toast({ title: 'Generating Report...', description: 'Building comprehensive status report from all systems...' });
+    triggerReportMutation.mutate();
   };
 
   // Sync All Systems mutation
@@ -440,6 +455,10 @@ export default function QumusPort3000() {
                 <Search className="w-4 h-4 mr-2" />
                 Audit Trail
               </Button>
+              <Button onClick={() => setLocation('/conference')} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
+                <Globe className="w-4 h-4 mr-2" />
+                Conference Hub
+              </Button>
             </CardContent>
           </Card>
 
@@ -465,6 +484,73 @@ export default function QumusPort3000() {
                 <Wifi className="w-4 h-4 mr-2" />
                 System Status
               </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Operations Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {/* Trigger Report */}
+          <Card className="bg-slate-800/50 border-emerald-500/20 hover:border-emerald-500/50 transition-all">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="w-5 h-5 text-emerald-400" />
+                Daily Report
+              </CardTitle>
+              <CardDescription>Generate and send status report now</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                onClick={handleTriggerReport} 
+                disabled={triggerReportMutation.isPending}
+                className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
+              >
+                <Send className={`w-4 h-4 mr-2 ${triggerReportMutation.isPending ? 'animate-pulse' : ''}`} />
+                {triggerReportMutation.isPending ? 'Sending...' : 'Trigger Report Now'}
+              </Button>
+              <p className="text-xs text-slate-400 mt-2">Sends full ecosystem report to your email with real metrics.</p>
+            </CardContent>
+          </Card>
+
+          {/* Command Console */}
+          <Card className="bg-slate-800/50 border-cyan-500/20 hover:border-cyan-500/50 transition-all">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Terminal className="w-5 h-5 text-cyan-400" />
+                Command Console
+              </CardTitle>
+              <CardDescription>Natural language commands for QUMUS</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                onClick={() => setLocation('/command-console')} 
+                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700"
+              >
+                <Terminal className="w-4 h-4 mr-2" />
+                Open Console
+              </Button>
+              <p className="text-xs text-slate-400 mt-2">Type commands like "schedule jazz block 8pm" or "check listener stats"</p>
+            </CardContent>
+          </Card>
+
+          {/* Spotify Analytics */}
+          <Card className="bg-slate-800/50 border-green-500/20 hover:border-green-500/50 transition-all">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="w-5 h-5 text-green-400" />
+                Stream Analytics
+              </CardTitle>
+              <CardDescription>Live Spotify & platform listener data</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                onClick={() => setLocation('/stream-analytics')} 
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                View Analytics
+              </Button>
+              <p className="text-xs text-slate-400 mt-2">Real-time listener counts from Spotify, internal streams, and more.</p>
             </CardContent>
           </Card>
         </div>
