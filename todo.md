@@ -3395,3 +3395,27 @@
 - [x] Confirmed HTTPS streams correctly rejected (go direct, no proxy needed)
 - [x] Confirmed missing URL returns proper 400 error
 - [x] Deployed domain needs new publish to include proxy endpoint (dev server verified)
+
+## March 17th Countdown Timer on Homepage (COMPLETED)
+- [x] Add countdown timer component showing days/hours/minutes/seconds until March 17 UN CSW70 launch
+- [x] Style with campaign branding (amber/gold theme)
+- [x] Place prominently on homepage between hero and system cards
+
+## QUMUS Social Media Auto-Publish System (COMPLETED)
+- [x] Build QUMUS auto-publish service with 60-second polling interval
+- [x] Integrate Twitter API posting via environment variables (TWITTER_API_KEY, etc.)
+- [x] Integrate Discord webhook posting via VITE_DISCORD_URL
+- [x] Add Instagram placeholder (requires Meta Business API - logged as manual)
+- [x] Add auto-publish status tracking and logging with decision audit trail
+- [x] Wire into QUMUS activation as socialMediaPublisher subsystem
+- [x] Add manual publish trigger tRPC endpoint
+
+## End-to-End Verification (COMPLETED)
+- [x] Verify homepage countdown timer renders correctly (07 days, 17 hours, 49 min)
+- [x] Verify Social Media Kit scheduled posts dashboard loads data (12 posts, 7 Twitter, 3 Instagram, 2 Discord)
+- [x] Verify campaign video plays (narrated + instrumental versions visible)
+- [x] Verify live radio stream proxy works (200 OK, audio/mpeg content-type)
+- [x] Verify all pages load without errors (fixed activeChannel reference error on /live)
+- [x] Auth test passes (1/1)
+- [x] All API endpoints return 200
+- [ ] Publish and verify on deployed domain

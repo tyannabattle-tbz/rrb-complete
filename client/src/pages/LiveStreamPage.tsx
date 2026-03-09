@@ -152,17 +152,6 @@ export default function LiveStreamPage() {
     sessionStartRef.current = 0;
   }, [recordEvent, deviceType]);
 
-  // Record on page unload
-  useEffect(() => {
-    const handleUnload = () => {
-      if (isPlaying && activeChannel) {
-        recordTuneOut(activeChannel);
-      }
-    };
-    window.addEventListener('beforeunload', handleUnload);
-    return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [isPlaying, activeChannel, recordTuneOut]);
-
   // Set initial active channel when data loads
   useEffect(() => {
     if (channels && channels.length > 0 && activeChannelId === null) {
@@ -176,6 +165,17 @@ export default function LiveStreamPage() {
     if (!channels) return null;
     return channels.find(c => c.id === activeChannelId) || channels[0] || null;
   }, [channels, activeChannelId]);
+
+  // Record on page unload
+  useEffect(() => {
+    const handleUnload = () => {
+      if (isPlaying && activeChannel) {
+        recordTuneOut(activeChannel);
+      }
+    };
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
+  }, [isPlaying, activeChannel, recordTuneOut]);
 
   const channelColor = useMemo(() => {
     if (!activeChannel) return 'from-purple-600 to-blue-600';

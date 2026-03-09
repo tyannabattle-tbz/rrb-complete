@@ -9,6 +9,7 @@ import { getToolRegistry } from "./toolRegistry";
 import { getMemorySystem } from "./memorySystem";
 import { getPlanningEngine } from "./planningEngine";
 import { getEcosystemController } from "./ecosystemController";
+import { startSocialMediaPublisher } from "../socialMediaPublisher";
 
 export interface QumusConfig {
   maxConcurrentTasks: number;
@@ -77,6 +78,14 @@ export class QumusActivation {
 
       // Step 7: Start monitoring
       await this.startMonitoring();
+
+      // Step 8: Start social media auto-publisher
+      startSocialMediaPublisher();
+      this.agent.registerPolicy('social_media_publishing', async (context: any) => {
+        const { checkAndPublishScheduledPosts } = await import('../socialMediaPublisher');
+        const results = await checkAndPublishScheduledPosts();
+        return { success: true, postsProcessed: results.length, results };
+      });
 
       this.isActive = true;
       console.log("[QUMUS] ✅ ACTIVATION COMPLETE - System is fully autonomous");

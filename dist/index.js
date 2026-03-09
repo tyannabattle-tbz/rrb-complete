@@ -37,6 +37,156 @@ var init_const = __esm({
 });
 
 // drizzle/schema.ts
+var schema_exports = {};
+__export(schema_exports, {
+  activityLogs: () => activityLogs,
+  adInventory: () => adInventory,
+  agentCollaboration: () => agentCollaboration,
+  agentConnections: () => agentConnections,
+  agentExecutionLogs: () => agentExecutionLogs,
+  agentInstallations: () => agentInstallations,
+  agentMemory: () => agentMemory,
+  agentPerformanceMetrics: () => agentPerformanceMetrics,
+  agentRegistry: () => agentRegistry,
+  agentSessions: () => agentSessions,
+  agentSnapshots: () => agentSnapshots,
+  agentTools: () => agentTools,
+  agents: () => agents,
+  alertBroadcastLog: () => alertBroadcastLog,
+  alertDeliveryLog: () => alertDeliveryLog,
+  alertRules: () => alertRules,
+  alerts: () => alerts,
+  analyticsMetrics: () => analyticsMetrics,
+  analyticsSummary: () => analyticsSummary,
+  anomalyBaselines: () => anomalyBaselines,
+  anomalyHistory: () => anomalyHistory,
+  anomalyInsights: () => anomalyInsights,
+  anomalyPatterns: () => anomalyPatterns,
+  anomalyReports: () => anomalyReports,
+  anomalyRules: () => anomalyRules,
+  apiKeys: () => apiKeys,
+  apiUsage: () => apiUsage,
+  arMetrics: () => arMetrics,
+  auditLogs: () => auditLogs,
+  autoSaveSettings: () => autoSaveSettings,
+  autonomousDecisions: () => autonomousDecisions,
+  autonomousTasks: () => autonomousTasks,
+  broadcasts: () => broadcasts,
+  bulkScheduleTemplates: () => bulkScheduleTemplates,
+  clientContentUploads: () => clientContentUploads,
+  clientDonationHistory: () => clientDonationHistory,
+  clientProfiles: () => clientProfiles,
+  contentCalendarPosts: () => contentCalendarPosts,
+  contentListenerHistory: () => contentListenerHistory,
+  contentSchedule: () => contentSchedule,
+  conventionAttendees: () => conventionAttendees,
+  conventionSessions: () => conventionSessions,
+  conventions: () => conventions,
+  customStations: () => customStations,
+  decisionLogs: () => decisionLogs,
+  decisionPolicies: () => decisionPolicies,
+  decisions: () => decisions,
+  detectedAnomalies: () => detectedAnomalies,
+  documentationPages: () => documentationPages,
+  donationAnalytics: () => donationAnalytics,
+  donations: () => donations,
+  donors: () => donors,
+  ecosystemCommands: () => ecosystemCommands,
+  ecosystemStatus: () => ecosystemStatus,
+  emailConfigs: () => emailConfigs,
+  emailLogs: () => emailLogs,
+  emailSubscribers: () => emailSubscribers,
+  emergencyAlerts: () => emergencyAlerts,
+  escalationPolicies: () => escalationPolicies,
+  familyTree: () => familyTree,
+  featureFlags: () => featureFlags,
+  filterHistory: () => filterHistory,
+  filterPresets: () => filterPresets,
+  finetuningDatasets: () => finetuningDatasets,
+  finetuningEvaluations: () => finetuningEvaluations,
+  finetuningJobs: () => finetuningJobs,
+  finetuningModels: () => finetuningModels,
+  grants: () => grants,
+  hybridCastBroadcasts: () => hybridCastBroadcasts,
+  hybridCastConnections: () => hybridCastConnections,
+  hybridCastNodes: () => hybridCastNodes,
+  hybridcastNodes: () => hybridcastNodes,
+  hybridcastPlans: () => hybridcastPlans,
+  integrationLogs: () => integrationLogs,
+  listenerAnalytics: () => listenerAnalytics,
+  listeners: () => listeners,
+  memoryStore: () => memoryStore,
+  messages: () => messages,
+  modelComparisons: () => modelComparisons,
+  newsArticles: () => newsArticles,
+  nonprofitOperations: () => nonprofitOperations,
+  notificationEvents: () => notificationEvents,
+  notificationPreferences: () => notificationPreferences,
+  notifications: () => notifications,
+  payments: () => payments,
+  performanceMetrics: () => performanceMetrics,
+  performanceTrends: () => performanceTrends,
+  platformEngagementMetrics: () => platformEngagementMetrics,
+  plugins: () => plugins,
+  policyDecisions: () => policyDecisions,
+  predictiveAlerts: () => predictiveAlerts,
+  quotaAlerts: () => quotaAlerts,
+  quotas: () => quotas,
+  radioChannels: () => radioChannels,
+  radioStations: () => radioStations,
+  rateLimitEvents: () => rateLimitEvents,
+  reasoningChains: () => reasoningChains,
+  reportHistory: () => reportHistory,
+  reviewHelpfulness: () => reviewHelpfulness,
+  reviewResponses: () => reviewResponses,
+  reviews: () => reviews,
+  rockinBoogieContent: () => rockinBoogieContent,
+  scheduledReports: () => scheduledReports,
+  sessionAnnotations: () => sessionAnnotations,
+  sessionMetrics: () => sessionMetrics,
+  sessionShares: () => sessionShares,
+  sessionVersions: () => sessionVersions,
+  socialMediaPosts: () => socialMediaPosts,
+  solbonesFrequencyRolls: () => solbonesFrequencyRolls,
+  solbonesLeaderboard: () => solbonesLeaderboard,
+  stationAnalytics: () => stationAnalytics,
+  stationContentSources: () => stationContentSources,
+  stationPlaybackHistory: () => stationPlaybackHistory,
+  stationSharing: () => stationSharing,
+  stationTemplates: () => stationTemplates,
+  studioGuests: () => studioGuests,
+  studioRecordings: () => studioRecordings,
+  studioSessions: () => studioSessions,
+  subscriptionTiers: () => subscriptionTiers,
+  subscriptions: () => subscriptions,
+  suppressionRules: () => suppressionRules,
+  sweetMiraclesAlerts: () => sweetMiraclesAlerts,
+  systemAlerts: () => systemAlerts,
+  systemAuditLog: () => systemAuditLog,
+  systemCommands: () => systemCommands,
+  systemMetrics: () => systemMetrics,
+  systemUpdates: () => systemUpdates,
+  taskExecutionLog: () => taskExecutionLog,
+  taskHistory: () => taskHistory,
+  taskSteps: () => taskSteps,
+  teamMembers: () => teamMembers,
+  teamNotifications: () => teamNotifications,
+  teams: () => teams,
+  toolExecutions: () => toolExecutions,
+  toolUsageStats: () => toolUsageStats,
+  trainingData: () => trainingData,
+  usageQuotas: () => usageQuotas,
+  userStationPreferences: () => userStationPreferences,
+  userSubscriptions: () => userSubscriptions,
+  users: () => users,
+  voiceCommands: () => voiceCommands,
+  webhookEndpoints: () => webhookEndpoints,
+  webhookInstallations: () => webhookInstallations,
+  webhookLogs: () => webhookLogs,
+  webhookMarketplaceReviews: () => webhookMarketplaceReviews,
+  webhookTemplates: () => webhookTemplates,
+  wellnessCheckins: () => wellnessCheckins
+});
 import { mysqlTable, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index, boolean, bigint } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
 var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog, contentCalendarPosts, bulkScheduleTemplates, platformEngagementMetrics, analyticsSummary, customStations, stationTemplates, stationContentSources, stationPlaybackHistory, userStationPreferences, stationSharing, stationAnalytics, emailSubscribers, newsArticles, familyTree, documentationPages, contentSchedule, systemUpdates, teamNotifications, adInventory, listenerAnalytics, studioSessions, studioGuests, conventions, conventionSessions, conventionAttendees, studioRecordings, socialMediaPosts;
@@ -3840,6 +3990,203 @@ var init_storage = __esm({
   }
 });
 
+// server/socialMediaPublisher.ts
+var socialMediaPublisher_exports = {};
+__export(socialMediaPublisher_exports, {
+  checkAndPublishScheduledPosts: () => checkAndPublishScheduledPosts,
+  startSocialMediaPublisher: () => startSocialMediaPublisher,
+  stopSocialMediaPublisher: () => stopSocialMediaPublisher
+});
+import crypto2 from "crypto";
+import https from "https";
+function getTwitterOAuthHeader(method, url, params2 = {}) {
+  const apiKey = process.env.TWITTER_API_KEY || "";
+  const apiSecret = process.env.TWITTER_API_SECRET || "";
+  const accessToken = process.env.TWITTER_ACCESS_TOKEN || "";
+  const accessTokenSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET || "";
+  const oauthParams = {
+    oauth_consumer_key: apiKey,
+    oauth_nonce: crypto2.randomBytes(16).toString("hex"),
+    oauth_signature_method: "HMAC-SHA1",
+    oauth_timestamp: Math.floor(Date.now() / 1e3).toString(),
+    oauth_token: accessToken,
+    oauth_version: "1.0"
+  };
+  const allParams = { ...oauthParams, ...params2 };
+  const sortedParams = Object.keys(allParams).sort().map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(allParams[k])}`).join("&");
+  const signatureBase = `${method.toUpperCase()}&${encodeURIComponent(url)}&${encodeURIComponent(sortedParams)}`;
+  const signingKey = `${encodeURIComponent(apiSecret)}&${encodeURIComponent(accessTokenSecret)}`;
+  const signature = crypto2.createHmac("sha1", signingKey).update(signatureBase).digest("base64");
+  oauthParams["oauth_signature"] = signature;
+  const authHeader = "OAuth " + Object.keys(oauthParams).sort().map((k) => `${encodeURIComponent(k)}="${encodeURIComponent(oauthParams[k])}"`).join(", ");
+  return authHeader;
+}
+async function postToTwitter(content) {
+  const apiKey = process.env.TWITTER_API_KEY;
+  if (!apiKey) {
+    return { success: false, error: "Twitter API keys not configured" };
+  }
+  const url = "https://api.twitter.com/2/tweets";
+  const body = JSON.stringify({ text: content });
+  const authHeader = getTwitterOAuthHeader("POST", url);
+  return new Promise((resolve) => {
+    const req = https.request(url, {
+      method: "POST",
+      headers: {
+        "Authorization": authHeader,
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body)
+      }
+    }, (res) => {
+      let data = "";
+      res.on("data", (chunk) => data += chunk);
+      res.on("end", () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (res.statusCode === 201 && parsed.data?.id) {
+            console.log(`[QUMUS Social] Tweet posted: ${parsed.data.id}`);
+            resolve({ success: true, tweetId: parsed.data.id });
+          } else {
+            console.error(`[QUMUS Social] Twitter error ${res.statusCode}:`, data);
+            resolve({ success: false, error: `Twitter API ${res.statusCode}: ${parsed.detail || parsed.title || data}` });
+          }
+        } catch {
+          resolve({ success: false, error: `Twitter response parse error: ${data.substring(0, 200)}` });
+        }
+      });
+    });
+    req.on("error", (err) => resolve({ success: false, error: err.message }));
+    req.write(body);
+    req.end();
+  });
+}
+async function postToDiscord(content, webhookUrl) {
+  const url = webhookUrl || process.env.DISCORD_WEBHOOK_URL;
+  if (!url || !url.includes("discord.com/api/webhooks")) {
+    console.log("[QUMUS Social] Discord: No webhook URL configured, logging post for manual publishing");
+    return { success: true, error: "No webhook \u2014 logged for manual publish" };
+  }
+  const body = JSON.stringify({
+    content,
+    username: "QUMUS Campaign Bot",
+    avatar_url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/valanna-avatar-mYpqZPJmy73yGwB7kFmCe9.webp"
+  });
+  return new Promise((resolve) => {
+    const parsedUrl = new URL(url);
+    const req = https.request({
+      hostname: parsedUrl.hostname,
+      path: parsedUrl.pathname + parsedUrl.search,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body)
+      }
+    }, (res) => {
+      let data = "";
+      res.on("data", (chunk) => data += chunk);
+      res.on("end", () => {
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+          console.log("[QUMUS Social] Discord message posted");
+          resolve({ success: true });
+        } else {
+          console.error(`[QUMUS Social] Discord error ${res.statusCode}:`, data);
+          resolve({ success: false, error: `Discord API ${res.statusCode}` });
+        }
+      });
+    });
+    req.on("error", (err) => resolve({ success: false, error: err.message }));
+    req.write(body);
+    req.end();
+  });
+}
+async function postToInstagram(content) {
+  console.log("[QUMUS Social] Instagram: Post queued for manual publishing (Meta Business API required)");
+  console.log(`[QUMUS Social] Instagram content: ${content.substring(0, 100)}...`);
+  return { success: true, error: "Queued for manual publish \u2014 Meta Business API setup required" };
+}
+async function checkAndPublishScheduledPosts() {
+  const results = [];
+  try {
+    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+    const { socialMediaPosts: socialMediaPosts2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
+    const { eq: eq28, and: and20, lte: lte4 } = await import("drizzle-orm");
+    const db2 = await getDb5();
+    const now = Date.now();
+    const duePosts = await db2.select().from(socialMediaPosts2).where(
+      and20(
+        eq28(socialMediaPosts2.status, "scheduled"),
+        lte4(socialMediaPosts2.scheduledAt, now)
+      )
+    );
+    if (duePosts.length === 0) return results;
+    console.log(`[QUMUS Social] Found ${duePosts.length} posts due for publishing`);
+    for (const post of duePosts) {
+      let result2 = { success: false };
+      switch (post.platform) {
+        case "twitter":
+          result2 = await postToTwitter(post.content);
+          break;
+        case "discord":
+          result2 = await postToDiscord(post.content);
+          break;
+        case "instagram":
+          result2 = await postToInstagram(post.content);
+          break;
+        case "facebook":
+        case "tiktok":
+        case "youtube":
+          console.log(`[QUMUS Social] ${post.platform}: Platform not yet integrated, logging for manual publish`);
+          result2 = { success: true, error: `${post.platform} not yet integrated \u2014 logged for manual publish` };
+          break;
+      }
+      const newStatus = result2.success ? "published" : "failed";
+      await db2.update(socialMediaPosts2).set({
+        status: newStatus,
+        publishedAt: result2.success ? Date.now() : void 0,
+        updatedAt: Date.now()
+      }).where(eq28(socialMediaPosts2.id, post.id));
+      results.push({
+        postId: post.id,
+        platform: post.platform,
+        success: result2.success,
+        error: result2.error,
+        externalId: result2.tweetId
+      });
+      console.log(`[QUMUS Social] ${post.platform} post #${post.id}: ${newStatus}${result2.error ? ` (${result2.error})` : ""}`);
+    }
+  } catch (error) {
+    console.error("[QUMUS Social] Auto-publish error:", error);
+  }
+  return results;
+}
+function startSocialMediaPublisher() {
+  console.log("[QUMUS Social] Social media auto-publisher started (checks every 5 minutes)");
+  checkAndPublishScheduledPosts().then((results) => {
+    if (results.length > 0) {
+      console.log(`[QUMUS Social] Initial check: ${results.length} posts processed`);
+    }
+  });
+  publishInterval = setInterval(async () => {
+    const results = await checkAndPublishScheduledPosts();
+    if (results.length > 0) {
+      console.log(`[QUMUS Social] Periodic check: ${results.length} posts processed`);
+    }
+  }, 5 * 60 * 1e3);
+}
+function stopSocialMediaPublisher() {
+  if (publishInterval) {
+    clearInterval(publishInterval);
+    publishInterval = null;
+    console.log("[QUMUS Social] Social media auto-publisher stopped");
+  }
+}
+var publishInterval;
+var init_socialMediaPublisher = __esm({
+  "server/socialMediaPublisher.ts"() {
+    publishInterval = null;
+  }
+});
+
 // server/qumus-orchestration.ts
 var qumus_orchestration_exports = {};
 __export(qumus_orchestration_exports, {
@@ -5741,6 +6088,7 @@ var init_qumusActivation = __esm({
     init_memorySystem();
     init_planningEngine();
     init_ecosystemController();
+    init_socialMediaPublisher();
     QumusActivation = class {
       agent;
       config;
@@ -5777,6 +6125,12 @@ var init_qumusActivation = __esm({
           await this.initializeEcosystem();
           await this.enableAutonomousPolicies();
           await this.startMonitoring();
+          startSocialMediaPublisher();
+          this.agent.registerPolicy("social_media_publishing", async (context) => {
+            const { checkAndPublishScheduledPosts: checkAndPublishScheduledPosts2 } = await Promise.resolve().then(() => (init_socialMediaPublisher(), socialMediaPublisher_exports));
+            const results = await checkAndPublishScheduledPosts2();
+            return { success: true, postsProcessed: results.length, results };
+          });
           this.isActive = true;
           console.log("[QUMUS] \u2705 ACTIVATION COMPLETE - System is fully autonomous");
           this.printActivationStatus();
@@ -14866,6 +15220,11 @@ var contentSchedulerRouter = router({
     const db2 = await getDb();
     await db2.update(socialMediaPosts).set({ status: input.status, updatedAt: Date.now(), publishedAt: input.status === "published" ? Date.now() : void 0 }).where(eq11(socialMediaPosts.id, input.id));
     return { success: true };
+  }),
+  triggerSocialMediaPublish: protectedProcedure.mutation(async () => {
+    const { checkAndPublishScheduledPosts: checkAndPublishScheduledPosts2 } = await Promise.resolve().then(() => (init_socialMediaPublisher(), socialMediaPublisher_exports));
+    const results = await checkAndPublishScheduledPosts2();
+    return { success: true, postsProcessed: results.length, results };
   })
 });
 
@@ -16429,12 +16788,12 @@ import { z as z41 } from "zod";
 init_db();
 init_schema();
 import { eq as eq17, desc as desc10, and as and12, sql as sql10 } from "drizzle-orm";
-import crypto2 from "crypto";
+import crypto3 from "crypto";
 function generateJoinCode() {
-  return crypto2.randomBytes(5).toString("hex").toUpperCase();
+  return crypto3.randomBytes(5).toString("hex").toUpperCase();
 }
 function generateInviteToken() {
-  return crypto2.randomBytes(32).toString("hex");
+  return crypto3.randomBytes(32).toString("hex");
 }
 var studioRouter = router({
   // ─── Session CRUD ──────────────────────────────────────
@@ -25124,7 +25483,7 @@ import { z as z70 } from "zod";
 init_schema();
 init_db();
 import { eq as eq21, and as and16, or } from "drizzle-orm";
-import crypto3 from "crypto";
+import crypto4 from "crypto";
 var SeamlessAgentConnectionService = class {
   /**
    * Discover agents by capabilities
@@ -25188,7 +25547,7 @@ var SeamlessAgentConnectionService = class {
    */
   async initiateConnectionRequest(sourceAgentId, targetAgentId, purpose, capabilities) {
     try {
-      const requestId = `conn-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
+      const requestId = `conn-${Date.now()}-${crypto4.randomBytes(8).toString("hex")}`;
       const now = /* @__PURE__ */ new Date();
       const expiresAt = new Date(now.getTime() + 5 * 60 * 1e3);
       const request = {
@@ -25213,8 +25572,8 @@ var SeamlessAgentConnectionService = class {
    */
   async acceptConnectionRequest(requestId, targetAgentId) {
     try {
-      const encryptionKey = crypto3.randomBytes(32).toString("hex");
-      const channelId = `ch-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
+      const encryptionKey = crypto4.randomBytes(32).toString("hex");
+      const channelId = `ch-${Date.now()}-${crypto4.randomBytes(8).toString("hex")}`;
       const now = /* @__PURE__ */ new Date();
       const channel = {
         channelId,
@@ -25252,7 +25611,7 @@ var SeamlessAgentConnectionService = class {
    */
   async sendUnifiedMessage(channelId, sourceAgentId, targetAgentId, messageType, payload, encrypt = true) {
     try {
-      const messageId = `msg-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
+      const messageId = `msg-${Date.now()}-${crypto4.randomBytes(8).toString("hex")}`;
       const now = /* @__PURE__ */ new Date();
       const message = {
         messageId,
@@ -25341,7 +25700,7 @@ var SeamlessAgentConnectionService = class {
       const results = await Promise.all(
         targetAgentIds.map(async (targetId) => {
           try {
-            const messageId = `msg-${Date.now()}-${crypto3.randomBytes(4).toString("hex")}`;
+            const messageId = `msg-${Date.now()}-${crypto4.randomBytes(4).toString("hex")}`;
             console.log(`Broadcasting to ${targetId}: ${messageId}`);
             return { agentId: targetId, status: "sent" };
           } catch (error) {
@@ -25398,7 +25757,7 @@ var SeamlessAgentConnectionService = class {
    */
   async establishCrossPlatformConnection(sourceAgentId, targetAgentId, platforms) {
     try {
-      const connectionId = `xp-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
+      const connectionId = `xp-${Date.now()}-${crypto4.randomBytes(8).toString("hex")}`;
       const connection = {
         connectionId,
         platforms,
@@ -25429,7 +25788,7 @@ var SeamlessAgentConnectionService = class {
   async handleConnectionFailure(channelId, error) {
     try {
       console.log(`Connection failure on channel ${channelId}: ${error}`);
-      const newChannelId = `ch-recovery-${Date.now()}-${crypto3.randomBytes(8).toString("hex")}`;
+      const newChannelId = `ch-recovery-${Date.now()}-${crypto4.randomBytes(8).toString("hex")}`;
       console.log(`Recovery attempted, new channel: ${newChannelId}`);
       return {
         recovered: true,

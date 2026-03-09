@@ -377,4 +377,11 @@ export const contentSchedulerRouter = router({
         .where(eq(socialMediaPosts.id, input.id));
       return { success: true };
     }),
+
+  triggerSocialMediaPublish: protectedProcedure
+    .mutation(async () => {
+      const { checkAndPublishScheduledPosts } = await import('../socialMediaPublisher');
+      const results = await checkAndPublishScheduledPosts();
+      return { success: true, postsProcessed: results.length, results };
+    }),
 });

@@ -1,10 +1,76 @@
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { LogIn, LogOut } from 'lucide-react';
+import { LogIn, LogOut, Globe, Zap } from 'lucide-react';
 import { getLoginUrl } from '@/const';
+
+// March 17, 2026 10:00 AM EST — UN CSW70 Launch
+const LAUNCH_DATE = new Date('2026-03-17T10:00:00-05:00').getTime();
+
+function CountdownTimer() {
+  const [timeLeft, setTimeLeft] = useState(getTimeLeft());
+
+  function getTimeLeft() {
+    const diff = Math.max(0, LAUNCH_DATE - Date.now());
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+      total: diff,
+    };
+  }
+
+  useEffect(() => {
+    const timer = setInterval(() => setTimeLeft(getTimeLeft()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  if (timeLeft.total <= 0) {
+    return (
+      <div className="text-center py-6">
+        <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full text-black font-bold text-xl animate-pulse">
+          <Zap className="h-6 w-6" /> LIVE NOW at the United Nations CSW70 <Zap className="h-6 w-6" />
+        </div>
+      </div>
+    );
+  }
+
+  const units = [
+    { label: 'DAYS', value: timeLeft.days },
+    { label: 'HOURS', value: timeLeft.hours },
+    { label: 'MINUTES', value: timeLeft.minutes },
+    { label: 'SECONDS', value: timeLeft.seconds },
+  ];
+
+  return (
+    <div className="mb-16 bg-gradient-to-r from-amber-900/30 via-orange-900/20 to-amber-900/30 rounded-2xl border border-amber-500/30 p-8 text-center">
+      <div className="flex items-center justify-center gap-2 mb-2">
+        <Globe className="h-5 w-5 text-amber-400" />
+        <span className="text-amber-400 text-sm font-semibold uppercase tracking-widest">UN CSW70 Launch Countdown</span>
+        <Globe className="h-5 w-5 text-amber-400" />
+      </div>
+      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+        Sweet Miracles & Rockin' Rockin' Boogie
+      </h3>
+      <p className="text-amber-300/80 mb-6 text-lg">Building the Bridge Across the World &mdash; March 17, 2026</p>
+      <div className="flex justify-center gap-4 md:gap-6 mb-6">
+        {units.map((u) => (
+          <div key={u.label} className="flex flex-col items-center">
+            <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center bg-black/40 border border-amber-500/40 rounded-xl">
+              <span className="text-3xl md:text-4xl font-bold text-amber-400 tabular-nums">{String(u.value).padStart(2, '0')}</span>
+            </div>
+            <span className="text-[10px] md:text-xs text-amber-400/60 mt-1 font-semibold tracking-wider">{u.label}</span>
+          </div>
+        ))}
+      </div>
+      <p className="text-gray-400 text-sm">SQUADD Goals &bull; A Voice for the Voiceless &bull; A Canryn Production</p>
+    </div>
+  );
+}
 
 export default function Home() {
   const { user } = useAuth();
@@ -169,6 +235,9 @@ export default function Home() {
             </Button>
           </div>
         </div>
+
+        {/* UN CSW70 Launch Countdown */}
+        <CountdownTimer />
 
         {/* Meet Valanna - The QUMUS AI Brain */}
         <div className="mb-16 bg-gradient-to-r from-slate-800/80 via-purple-900/40 to-slate-800/80 rounded-2xl border border-amber-500/20 overflow-hidden">
