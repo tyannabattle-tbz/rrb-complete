@@ -36,7 +36,7 @@ interface QumusOrchestrationData {
  * Sync RRB Radio stations with QUMUS Core
  */
 export async function syncRRBWithQumus(): Promise<SyncStatus> {
-  const db = getDb();
+  const db = await getDb();
   const startTime = Date.now();
   let itemsSynced = 0;
   let itemsFailed = 0;
@@ -89,7 +89,7 @@ export async function syncRRBWithQumus(): Promise<SyncStatus> {
  * Sync QUMUS orchestration data with RRB Radio
  */
 export async function syncQumusWithRRB(): Promise<SyncStatus> {
-  const db = getDb();
+  const db = await getDb();
   let itemsSynced = 0;
   let itemsFailed = 0;
 
@@ -192,7 +192,7 @@ export async function validateSync(): Promise<{
   discrepancies: string[];
   lastValidSync: Date | null;
 }> {
-  const db = getDb();
+  const db = await getDb();
   const discrepancies: string[] = [];
 
   try {
@@ -243,7 +243,7 @@ export async function getSyncMetrics(): Promise<{
   averageSyncAge: number;
   lastSyncTime: Date | null;
 }> {
-  const db = getDb();
+  const db = await getDb();
 
   try {
     const stations = await db.query.customStations.findMany({

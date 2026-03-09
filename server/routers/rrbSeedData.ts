@@ -44,7 +44,7 @@ const DOCS_SEED = [
 export const rrbSeedDataRouter = router({
   // ── Seed All Data ──
   seedAll: protectedProcedure.mutation(async ({ ctx }) => {
-    const db = getDb();
+    const db = await getDb();
     const results = { familyTree: 0, news: 0, docs: 0, errors: [] as string[] };
 
     // Seed Family Tree
@@ -111,7 +111,7 @@ export const rrbSeedDataRouter = router({
 
   // ── Check Seed Status ──
   status: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
     const [familyCount] = await db.select({ count: sql<number>`count(*)` }).from(familyTree);
     const [newsCount] = await db.select({ count: sql<number>`count(*)` }).from(newsArticles);
     const [docsCount] = await db.select({ count: sql<number>`count(*)` }).from(documentationPages);

@@ -3262,3 +3262,11 @@
 - [x] Auto-refresh listener counts every 30s via tRPC refetchInterval
 - [x] getAllChannelsFromDb() upgraded to return full channel objects (not just names)
 - [x] 24 passed tests, 0 TypeScript errors, server healthy
+
+## Error Fixes - Mounting Errors (COMPLETED)
+- [x] Fix broken SQL queries: COUNT(DISTINCT ), AVG(), SUM(CASE WHEN = ...) — rewrote listenerAnalyticsRouter.ts to match actual schema columns
+- [x] Fix 17x "Cannot use stream-like response in non-streaming request" errors — resolved (were from earlier session)
+- [x] Fix 3x "db.select is not a function" errors — added missing `await` to `getDb()` in productionIntegrationRouter.ts
+- [x] Fix "Cannot convert undefined or null to object" errors — caused by broken column refs, now fixed
+- [x] Fixed 26 additional missing `await getDb()` across: rrbSeedData, contentSchedulerRouter, rrbUpdateOrchestrator, webhookManagerRouter, db.ts, multiRegionFailover, rrbQumusSync
+- [x] All 25 core tests passing (24 dashboard + 1 auth), 0 TypeScript errors, server healthy

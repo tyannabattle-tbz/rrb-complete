@@ -3297,7 +3297,7 @@ async function generateVideoFromDescription(params2) {
   }
 }
 async function subscribeEmail(email, name, source, language) {
-  const db2 = getDb();
+  const db2 = await getDb();
   try {
     await db2.insert(emailSubscribers).values({
       email: email.toLowerCase().trim(),
@@ -3314,7 +3314,7 @@ async function subscribeEmail(email, name, source, language) {
   }
 }
 async function getSubscriberCount() {
-  const db2 = getDb();
+  const db2 = await getDb();
   const result2 = await db2.select({ count: count() }).from(emailSubscribers).where(eq2(emailSubscribers.isActive, true));
   return result2[0]?.count || 0;
 }
@@ -14467,7 +14467,7 @@ All AI assistants are activated and engaged across all systems. They sound human
 var rrbSeedDataRouter = router({
   // ── Seed All Data ──
   seedAll: protectedProcedure.mutation(async ({ ctx }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
     const results = { familyTree: 0, news: 0, docs: 0, errors: [] };
     try {
       for (const member of FAMILY_SEED) {
@@ -14526,7 +14526,7 @@ var rrbSeedDataRouter = router({
   }),
   // ── Check Seed Status ──
   status: publicProcedure.query(async () => {
-    const db2 = getDb();
+    const db2 = await getDb();
     const [familyCount] = await db2.select({ count: sql2`count(*)` }).from(familyTree);
     const [newsCount] = await db2.select({ count: sql2`count(*)` }).from(newsArticles);
     const [docsCount] = await db2.select({ count: sql2`count(*)` }).from(documentationPages);
@@ -14599,7 +14599,7 @@ var contentSchedulerRouter = router({
     activeOnly: z35.boolean().optional().default(true)
   }).optional()).query(async ({ input }) => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       let query2 = db2.select().from(contentSchedule);
       const conditions = [];
       if (input?.channelId) conditions.push(eq11(contentSchedule.channelId, input.channelId));
@@ -14617,7 +14617,7 @@ var contentSchedulerRouter = router({
   // Get today's schedule (what's on now across all channels)
   getTodaySchedule: publicProcedure.query(async () => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
       const today = days[(/* @__PURE__ */ new Date()).getDay()];
       const results = await db2.select().from(contentSchedule).where(and7(
@@ -14632,7 +14632,7 @@ var contentSchedulerRouter = router({
   // Get what's playing now (current time slot across all channels)
   getNowPlaying: publicProcedure.query(async () => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const now = /* @__PURE__ */ new Date();
       const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
       const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -14651,7 +14651,7 @@ var contentSchedulerRouter = router({
   // Seed the default 24/7 schedule (admin only)
   seedDefaultSchedule: protectedProcedure.mutation(async () => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       await db2.delete(contentSchedule);
       for (const entry of DEFAULT_SCHEDULE_TEMPLATE) {
         await db2.insert(contentSchedule).values({
@@ -14689,7 +14689,7 @@ var contentSchedulerRouter = router({
     priority: z35.number().optional().default(5)
   })).mutation(async ({ input }) => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       await db2.insert(contentSchedule).values({
         ...input,
         description: input.description || null,
@@ -14715,7 +14715,7 @@ var contentSchedulerRouter = router({
     priority: z35.number().optional()
   })).mutation(async ({ input }) => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const { id, ...updates } = input;
       await db2.update(contentSchedule).set(updates).where(eq11(contentSchedule.id, id));
       return { success: true };
@@ -14726,7 +14726,7 @@ var contentSchedulerRouter = router({
   // Delete a schedule entry
   deleteEntry: protectedProcedure.input(z35.object({ id: z35.number() })).mutation(async ({ input }) => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       await db2.delete(contentSchedule).where(eq11(contentSchedule.id, input.id));
       return { success: true };
     } catch (e) {
@@ -14736,7 +14736,7 @@ var contentSchedulerRouter = router({
   // Get now playing with integrated ad rotation
   getNowPlayingWithAds: publicProcedure.query(async () => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const now = /* @__PURE__ */ new Date();
       const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
       const currentHour = `${String(now.getHours()).padStart(2, "0")}:00`;
@@ -14781,7 +14781,7 @@ var contentSchedulerRouter = router({
   // Get schedule stats
   getStats: publicProcedure.query(async () => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const all = await db2.select().from(contentSchedule);
       const active = all.filter((s) => s.isActive);
       const byType = {};
@@ -14866,7 +14866,7 @@ var rrbUpdateOrchestratorRouter = router({
     const startTime = Date.now();
     const results = [];
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const tables = await db2.execute(sql4`SHOW TABLES`);
       const tableNames = tables.map((t2) => Object.values(t2)[0]);
       const requiredTables = ["news_articles", "family_tree", "documentation_pages", "content_schedule"];
@@ -14885,7 +14885,7 @@ var rrbUpdateOrchestratorRouter = router({
       results.push({ step: "Database Verification", status: "error", message: e.message });
     }
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const existing = await db2.execute(sql4`SELECT COUNT(*) as count FROM family_tree`);
       const count6 = existing[0]?.count || 0;
       if (count6 === 0) {
@@ -14900,7 +14900,7 @@ var rrbUpdateOrchestratorRouter = router({
       results.push({ step: "Family Tree Seed", status: "error", message: e.message });
     }
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const existing = await db2.execute(sql4`SELECT COUNT(*) as count FROM news_articles`);
       const count6 = existing[0]?.count || 0;
       if (count6 === 0) {
@@ -14915,7 +14915,7 @@ var rrbUpdateOrchestratorRouter = router({
       results.push({ step: "News Articles Seed", status: "error", message: e.message });
     }
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const existing = await db2.execute(sql4`SELECT COUNT(*) as count FROM documentation_pages`);
       const count6 = existing[0]?.count || 0;
       if (count6 === 0) {
@@ -14930,7 +14930,7 @@ var rrbUpdateOrchestratorRouter = router({
       results.push({ step: "Documentation Seed", status: "error", message: e.message });
     }
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const existing = await db2.execute(sql4`SELECT COUNT(*) as count FROM content_schedule`);
       const count6 = existing[0]?.count || 0;
       if (count6 === 0) {
@@ -14985,7 +14985,7 @@ var rrbUpdateOrchestratorRouter = router({
   healthCheck: publicProcedure.query(async () => {
     const checks = {};
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       for (const table of ["news_articles", "family_tree", "documentation_pages", "content_schedule"]) {
         try {
           const result2 = await db2.execute(sql4.raw(`SELECT COUNT(*) as count FROM ${table}`));
@@ -15018,7 +15018,7 @@ var rrbUpdateOrchestratorRouter = router({
   // ─── Get Update Status ─────────────────────────────────
   getStatus: publicProcedure.query(async () => {
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const counts = {};
       for (const table of ["news_articles", "family_tree", "documentation_pages", "content_schedule"]) {
         try {
@@ -15563,22 +15563,27 @@ import { eq as eq14, desc as desc7, sql as sql7, count as count4, and as and10 }
 var listenerAnalyticsRouter = router({
   // ─── Record a listener event ──────────────────────────────
   recordEvent: publicProcedure.input(z38.object({
-    sessionId: z38.string(),
     channelId: z38.number(),
-    eventType: z38.enum(["tune_in", "tune_out", "channel_switch", "ad_impression", "ai_interaction", "song_request"]),
-    durationSeconds: z38.number().optional(),
-    metadata: z38.string().optional()
+    channelName: z38.string().optional(),
+    listenerCount: z38.number().default(1),
+    peakListeners: z38.number().optional(),
+    geoRegion: z38.string().optional(),
+    deviceType: z38.enum(["desktop", "mobile", "tablet", "smart_speaker", "other"]).default("desktop"),
+    sessionDurationSeconds: z38.number().optional()
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
     const now = Date.now();
     const [result2] = await db2.insert(listenerAnalytics).values({
-      sessionId: input.sessionId,
       channelId: input.channelId,
-      eventType: input.eventType,
-      durationSeconds: input.durationSeconds || null,
-      metadata: input.metadata || null,
-      region: null,
-      device: null,
+      channelName: input.channelName || `Channel ${input.channelId}`,
+      listenerCount: input.listenerCount,
+      peakListeners: input.peakListeners || input.listenerCount,
+      geoRegion: input.geoRegion || null,
+      deviceType: input.deviceType,
+      sessionDurationSeconds: input.sessionDurationSeconds || 0,
+      timestamp: now,
+      hourOfDay: (/* @__PURE__ */ new Date()).getHours(),
+      dayOfWeek: (/* @__PURE__ */ new Date()).getDay(),
       createdAt: now
     });
     return { id: result2.insertId, recorded: true };
@@ -15591,27 +15596,27 @@ var listenerAnalyticsRouter = router({
     const oneDayAgo = now - 864e5;
     const [hourlyEvents] = await db2.select({ count: count4() }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneHourAgo}`);
     const [dailyEvents] = await db2.select({ count: count4() }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
-    const [uniqueSessions] = await db2.select({
-      count: sql7`COUNT(DISTINCT ${listenerAnalytics.sessionId})`
+    const [totalListeners] = await db2.select({
+      count: sql7`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
     }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     const topChannels = await db2.select({
       channelId: listenerAnalytics.channelId,
       eventCount: count4()
     }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.channelId).orderBy(desc7(count4())).limit(10);
     const eventBreakdown = await db2.select({
-      eventType: listenerAnalytics.eventType,
+      eventType: listenerAnalytics.deviceType,
       count: count4()
-    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.eventType);
+    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.deviceType);
     const [avgDuration] = await db2.select({
-      avg: sql7`COALESCE(AVG(${listenerAnalytics.durationSeconds}), 0)`
+      avg: sql7`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`
     }).from(listenerAnalytics).where(and10(
       sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`,
-      sql7`${listenerAnalytics.durationSeconds} IS NOT NULL`
+      sql7`${listenerAnalytics.sessionDurationSeconds} > 0`
     ));
     return {
       hourlyEvents: hourlyEvents?.count || 0,
       dailyEvents: dailyEvents?.count || 0,
-      uniqueSessions: uniqueSessions?.count || 0,
+      uniqueSessions: totalListeners?.count || 0,
       avgSessionDurationSeconds: Math.round(avgDuration?.avg || 0),
       topChannels,
       eventBreakdown
@@ -15620,8 +15625,7 @@ var listenerAnalyticsRouter = router({
   // ─── Get recent events ────────────────────────────────────
   getRecentEvents: publicProcedure.input(z38.object({
     limit: z38.number().min(1).max(100).default(50),
-    channelId: z38.number().optional(),
-    eventType: z38.string().optional()
+    channelId: z38.number().optional()
   }).optional()).query(async ({ input }) => {
     const db2 = await getDb();
     const opts = input || { limit: 50 };
@@ -15639,7 +15643,7 @@ var listenerAnalyticsRouter = router({
     const hourlyData = await db2.select({
       hour: sql7`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`,
       eventCount: count4(),
-      uniqueSessions: sql7`COUNT(DISTINCT ${listenerAnalytics.sessionId})`
+      totalListeners: sql7`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
     }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(sql7`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`).orderBy(sql7`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`);
     return hourlyData;
   }),
@@ -15650,10 +15654,10 @@ var listenerAnalyticsRouter = router({
     const oneWeekAgo = now - 6048e5;
     const heatmap = await db2.select({
       channelId: listenerAnalytics.channelId,
-      eventType: listenerAnalytics.eventType,
+      deviceType: listenerAnalytics.deviceType,
       count: count4(),
-      avgDuration: sql7`COALESCE(AVG(${listenerAnalytics.durationSeconds}), 0)`
-    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneWeekAgo}`).groupBy(listenerAnalytics.channelId, listenerAnalytics.eventType).orderBy(desc7(count4()));
+      avgDuration: sql7`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`
+    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneWeekAgo}`).groupBy(listenerAnalytics.channelId, listenerAnalytics.deviceType).orderBy(desc7(count4()));
     return heatmap;
   }),
   // ─── Get engagement score per channel ────────────────────────
@@ -15664,27 +15668,24 @@ var listenerAnalyticsRouter = router({
     const scores = await db2.select({
       channelId: listenerAnalytics.channelId,
       totalEvents: count4(),
-      uniqueListeners: sql7`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
-      avgDuration: sql7`COALESCE(AVG(${listenerAnalytics.durationSeconds}), 0)`,
-      tuneIns: sql7`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'tune_in' THEN 1 ELSE 0 END)`,
-      tuneOuts: sql7`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'tune_out' THEN 1 ELSE 0 END)`,
-      adImpressions: sql7`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'ad_impression' THEN 1 ELSE 0 END)`,
-      aiInteractions: sql7`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'ai_interaction' THEN 1 ELSE 0 END)`
+      totalListeners: sql7`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`,
+      avgDuration: sql7`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`,
+      peakListeners: sql7`COALESCE(MAX(${listenerAnalytics.peakListeners}), 0)`
     }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.channelId).orderBy(desc7(count4()));
     return scores.map((ch) => {
-      const retentionRate = ch.tuneIns > 0 ? Math.max(0, 1 - ch.tuneOuts / ch.tuneIns) : 0;
       const durationScore = Math.min(ch.avgDuration / 300, 1);
-      const interactionScore = Math.min((ch.aiInteractions + ch.adImpressions) / Math.max(ch.uniqueListeners, 1), 1);
-      const engagementScore = Math.round((retentionRate * 40 + durationScore * 35 + interactionScore * 25) * 100) / 100;
+      const listenerScore = Math.min(ch.totalListeners / 100, 1);
+      const engagementScore = Math.round((durationScore * 50 + listenerScore * 50) * 100) / 100;
       return {
         channelId: ch.channelId,
-        uniqueListeners: ch.uniqueListeners,
+        uniqueListeners: ch.totalListeners,
         totalEvents: ch.totalEvents,
         avgDurationSeconds: Math.round(ch.avgDuration),
-        retentionRate: Math.round(retentionRate * 100),
+        peakListeners: ch.peakListeners,
         engagementScore: Math.min(engagementScore, 100),
-        adImpressions: ch.adImpressions,
-        aiInteractions: ch.aiInteractions
+        retentionRate: 0,
+        adImpressions: 0,
+        aiInteractions: 0
       };
     });
   }),
@@ -15693,12 +15694,9 @@ var listenerAnalyticsRouter = router({
     const db2 = await getDb();
     const now = Date.now();
     const oneDayAgo = now - 864e5;
-    const [adImpressions] = await db2.select({ count: count4() }).from(listenerAnalytics).where(and10(
-      eq14(listenerAnalytics.eventType, "ad_impression"),
-      sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`
-    ));
+    const [dailyListeners] = await db2.select({ count: count4() }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     const [totalListeners] = await db2.select({
-      count: sql7`COUNT(DISTINCT ${listenerAnalytics.sessionId})`
+      count: sql7`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
     }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     const [adStats] = await db2.select({
       totalAds: count4(),
@@ -15706,9 +15704,9 @@ var listenerAnalyticsRouter = router({
       totalRevenue: sql7`COALESCE(SUM(${adInventory.totalPlays} * ${adInventory.costPerPlayCents}), 0)`
     }).from(adInventory).where(eq14(adInventory.active, true));
     return {
-      dailyImpressions: adImpressions?.count ?? 0,
+      dailyImpressions: dailyListeners?.count ?? 0,
       uniqueListenersReached: totalListeners?.count ?? 0,
-      impressionRate: totalListeners?.count ? Math.round((adImpressions?.count ?? 0) / totalListeners.count * 100) : 0,
+      impressionRate: totalListeners?.count ? Math.round((dailyListeners?.count ?? 0) / Math.max(totalListeners.count, 1) * 100) : 0,
       activeAds: adStats?.totalAds ?? 0,
       totalPlaysAllTime: adStats?.totalPlays ?? 0,
       estimatedRevenueCents: adStats?.totalRevenue ?? 0
@@ -15724,7 +15722,7 @@ import { eq as eq15, desc as desc8, sql as sql8 } from "drizzle-orm";
 var webhookManagerRouter = router({
   // ── List all webhook endpoints ──
   list: protectedProcedure.query(async () => {
-    const db2 = getDb();
+    const db2 = await getDb();
     const endpoints = await db2.select().from(webhookEndpoints).orderBy(desc8(webhookEndpoints.createdAt));
     return endpoints;
   }),
@@ -15735,7 +15733,7 @@ var webhookManagerRouter = router({
     secret: z39.string().optional(),
     platform: z39.string().optional()
   })).mutation(async ({ input }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
     const secret = input.secret || `whsec_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
     await db2.insert(webhookEndpoints).values({
       userId: 1,
@@ -15750,13 +15748,13 @@ var webhookManagerRouter = router({
   }),
   // ── Remove a webhook endpoint ──
   remove: protectedProcedure.input(z39.object({ id: z39.number() })).mutation(async ({ input }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
     await db2.delete(webhookEndpoints).where(eq15(webhookEndpoints.id, input.id));
     return { success: true };
   }),
   // ── Toggle webhook active status ──
   toggle: protectedProcedure.input(z39.object({ id: z39.number() })).mutation(async ({ input }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
     const [endpoint] = await db2.select().from(webhookEndpoints).where(eq15(webhookEndpoints.id, input.id));
     if (!endpoint) throw new Error("Webhook not found");
     await db2.update(webhookEndpoints).set({ isActive: endpoint.isActive ? 0 : 1 }).where(eq15(webhookEndpoints.id, input.id));
@@ -15764,7 +15762,7 @@ var webhookManagerRouter = router({
   }),
   // ── Test a webhook endpoint ──
   test: protectedProcedure.input(z39.object({ id: z39.number() })).mutation(async ({ input }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
     const [endpoint] = await db2.select().from(webhookEndpoints).where(eq15(webhookEndpoints.id, input.id));
     if (!endpoint) throw new Error("Webhook not found");
     const testPayload = {
@@ -15823,7 +15821,7 @@ var webhookManagerRouter = router({
     severity: z39.string().optional(),
     affectedSystems: z39.string().optional()
   })).mutation(async ({ input }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
     const activeEndpoints = await db2.select().from(webhookEndpoints).where(eq15(webhookEndpoints.isActive, 1));
     const payload = {
       event: input.event,
@@ -15938,13 +15936,13 @@ ${input.changelog || "No changelog provided."}`
   }),
   // ── Get recent webhook logs ──
   logs: protectedProcedure.input(z39.object({ limit: z39.number().optional().default(50) })).query(async ({ input }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
     const logs = await db2.select().from(webhookLogs).orderBy(desc8(webhookLogs.createdAt)).limit(input.limit);
     return logs;
   }),
   // ── Get webhook stats ──
   stats: publicProcedure.query(async () => {
-    const db2 = getDb();
+    const db2 = await getDb();
     const [totalEndpoints] = await db2.select({ count: sql8`count(*)` }).from(webhookEndpoints);
     const [activeEndpoints] = await db2.select({ count: sql8`count(*)` }).from(webhookEndpoints).where(eq15(webhookEndpoints.isActive, 1));
     const [totalLogs] = await db2.select({ count: sql8`count(*)` }).from(webhookLogs);
@@ -16000,11 +15998,11 @@ var productionIntegrationRouter = router({
   getProductionStatus: publicProcedure.query(async () => {
     const engine = getProductionIntegration();
     const status = engine.getStatus();
-    const db2 = getDb();
+    const db2 = await getDb();
     const [webhookCount] = await db2.select({ count: count5() }).from(webhookEndpoints).where(eq16(webhookEndpoints.isActive, 1));
     const [adCount] = await db2.select({ count: count5() }).from(adInventory).where(eq16(adInventory.active, true));
     const [recentListeners] = await db2.select({
-      count: sql9`COUNT(DISTINCT ${listenerAnalytics.sessionId})`
+      count: sql9`COUNT(*)`
     }).from(listenerAnalytics);
     return {
       ...status,
@@ -16054,7 +16052,7 @@ var productionIntegrationRouter = router({
     programTitle: z40.string()
   })).mutation(async ({ input }) => {
     const engine = getProductionIntegration();
-    const db2 = getDb();
+    const db2 = await getDb();
     const broadcastEvent = engine.createEvent("broadcast.started", "broadcast-scheduler", {
       channelId: input.channelId,
       channelName: input.channelName,
@@ -16121,28 +16119,30 @@ var productionIntegrationRouter = router({
     metadata: z40.string().optional()
   })).mutation(async ({ input }) => {
     const engine = getProductionIntegration();
-    const db2 = getDb();
+    const db2 = await getDb();
     const now = Date.now();
     await db2.insert(listenerAnalytics).values({
-      sessionId: input.sessionId,
       channelId: input.channelId,
-      eventType: input.eventType,
-      durationSeconds: input.durationSeconds || null,
-      metadata: input.metadata || null,
-      region: null,
-      device: null,
+      channelName: `Channel ${input.channelId}`,
+      listenerCount: 1,
+      peakListeners: 1,
+      geoRegion: null,
+      deviceType: "desktop",
+      sessionDurationSeconds: input.durationSeconds || 0,
+      timestamp: now,
+      hourOfDay: (/* @__PURE__ */ new Date()).getHours(),
+      dayOfWeek: (/* @__PURE__ */ new Date()).getDay(),
       createdAt: now
     });
     const eventType = input.eventType === "tune_in" ? "listener.joined" : input.eventType === "tune_out" ? "listener.left" : "listener.joined";
     const listenerEvent = engine.createEvent(eventType, "listener-analytics", {
-      sessionId: input.sessionId,
       channelId: input.channelId,
       eventType: input.eventType,
       durationSeconds: input.durationSeconds
     });
     await engine.emit(listenerEvent);
     const [currentListeners] = await db2.select({
-      count: sql9`COUNT(DISTINCT ${listenerAnalytics.sessionId})`
+      count: sql9`SUM(${listenerAnalytics.listenerCount})`
     }).from(listenerAnalytics).where(sql9`${listenerAnalytics.createdAt} > ${now - 36e5}`);
     const listenerCount = currentListeners?.count ?? 0;
     const milestones = [10, 25, 50, 100, 250, 500, 1e3];
@@ -16167,7 +16167,7 @@ var productionIntegrationRouter = router({
     dispatchWebhooks: z40.boolean().default(true)
   })).mutation(async ({ ctx, input }) => {
     const engine = getProductionIntegration();
-    const db2 = getDb();
+    const db2 = await getDb();
     const now = Date.now();
     const [result2] = await db2.insert(systemUpdates).values({
       version: input.version,
@@ -16320,12 +16320,12 @@ Instructions: ${input.instructions || "Stand by for updates"}`
   // ─── Get Unified Dashboard Data ─────────────────────────────
   getUnifiedDashboard: publicProcedure.query(async () => {
     const engine = getProductionIntegration();
-    const db2 = getDb();
+    const db2 = await getDb();
     const now = Date.now();
     const oneHourAgo = now - 36e5;
     const status = engine.getStatus();
     const [listeners2] = await db2.select({
-      count: sql9`COUNT(DISTINCT ${listenerAnalytics.sessionId})`
+      count: sql9`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
     }).from(listenerAnalytics).where(sql9`${listenerAnalytics.createdAt} > ${oneHourAgo}`);
     const [ads] = await db2.select({ count: count5() }).from(adInventory).where(eq16(adInventory.active, true));
     const [webhooks] = await db2.select({ count: count5() }).from(webhookEndpoints).where(eq16(webhookEndpoints.isActive, 1));
@@ -34358,7 +34358,7 @@ var MultiRegionFailoverService = class {
   async verifyDataConsistency(regionId) {
     console.log(`[Failover] Verifying data consistency for region ${regionId}...`);
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       const primaryChecksum = await this.getDataChecksum(this.currentPrimaryRegion);
       const secondaryChecksum = await this.getDataChecksum(regionId);
       const isConsistent = primaryChecksum === secondaryChecksum;
@@ -34406,7 +34406,7 @@ var MultiRegionFailoverService = class {
     let itemsSynced = 0;
     let itemsFailed = 0;
     try {
-      const db2 = getDb();
+      const db2 = await getDb();
       itemsSynced = 1e3;
       itemsFailed = 0;
       const duration = Date.now() - startTime;

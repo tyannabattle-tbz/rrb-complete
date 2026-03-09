@@ -96,7 +96,7 @@ export const rrbUpdateOrchestratorRouter = router({
 
     // Step 1: Verify database tables
     try {
-      const db = getDb();
+      const db = await getDb();
       const tables = await db.execute(sql`SHOW TABLES`);
       const tableNames = (tables as any[]).map((t: any) => Object.values(t)[0]);
       const requiredTables = ['news_articles', 'family_tree', 'documentation_pages', 'content_schedule'];
@@ -119,7 +119,7 @@ export const rrbUpdateOrchestratorRouter = router({
 
     // Step 2: Seed family tree data
     try {
-      const db = getDb();
+      const db = await getDb();
       const existing = await db.execute(sql`SELECT COUNT(*) as count FROM family_tree`);
       const count = (existing as any)[0]?.count || 0;
       
@@ -137,7 +137,7 @@ export const rrbUpdateOrchestratorRouter = router({
 
     // Step 3: Seed news articles
     try {
-      const db = getDb();
+      const db = await getDb();
       const existing = await db.execute(sql`SELECT COUNT(*) as count FROM news_articles`);
       const count = (existing as any)[0]?.count || 0;
       
@@ -155,7 +155,7 @@ export const rrbUpdateOrchestratorRouter = router({
 
     // Step 4: Seed documentation pages
     try {
-      const db = getDb();
+      const db = await getDb();
       const existing = await db.execute(sql`SELECT COUNT(*) as count FROM documentation_pages`);
       const count = (existing as any)[0]?.count || 0;
       
@@ -173,7 +173,7 @@ export const rrbUpdateOrchestratorRouter = router({
 
     // Step 5: Populate 24/7 content schedule
     try {
-      const db = getDb();
+      const db = await getDb();
       const existing = await db.execute(sql`SELECT COUNT(*) as count FROM content_schedule`);
       const count = (existing as any)[0]?.count || 0;
       
@@ -239,7 +239,7 @@ export const rrbUpdateOrchestratorRouter = router({
     const checks: Record<string, any> = {};
     
     try {
-      const db = getDb();
+      const db = await getDb();
       
       // Check each table
       for (const table of ['news_articles', 'family_tree', 'documentation_pages', 'content_schedule']) {
@@ -278,7 +278,7 @@ export const rrbUpdateOrchestratorRouter = router({
   // ─── Get Update Status ─────────────────────────────────
   getStatus: publicProcedure.query(async () => {
     try {
-      const db = getDb();
+      const db = await getDb();
       const counts: Record<string, number> = {};
       
       for (const table of ['news_articles', 'family_tree', 'documentation_pages', 'content_schedule']) {

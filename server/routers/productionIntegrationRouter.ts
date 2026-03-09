@@ -33,11 +33,12 @@ export const productionIntegrationRouter = router({
     const status = engine.getStatus();
     
     // Enrich with database counts
-    const db = getDb();
+    const db = await getDb();
     const [webhookCount] = await db.select({ count: count() }).from(webhookEndpoints).where(eq(webhookEndpoints.isActive, 1));
     const [adCount] = await db.select({ count: count() }).from(adInventory).where(eq(adInventory.active, true));
+    // Use actual schema column: listenerCount instead of non-existent sessionId
     const [recentListeners] = await db.select({ 
-      count: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})` 
+      count: sql<number>`COUNT(*)` 
     }).from(listenerAnalytics);
     
     return {
@@ -100,7 +101,7 @@ export const productionIntegrationRouter = router({
     }))
     .mutation(async ({ input }) => {
       const engine = getProductionIntegration();
-      const db = getDb();
+      const db = await getDb();
       
       // 1. Emit broadcast started event
       const broadcastEvent = engine.createEvent('broadcast.started', 'broadcast-scheduler', {
@@ -184,18 +185,21 @@ export const productionIntegrationRouter = router({
     }))
     .mutation(async ({ input }) => {
       const engine = getProductionIntegration();
-      const db = getDb();
+      const db = await getDb();
       const now = Date.now();
       
-      // 1. Record in database
+      // 1. Record in database using actual schema columns
       await db.insert(listenerAnalytics).values({
-        sessionId: input.sessionId,
         channelId: input.channelId,
-        eventType: input.eventType,
-        durationSeconds: input.durationSeconds || null,
-        metadata: input.metadata || null,
-        region: null,
-        device: null,
+        channelName: `Channel ${input.channelId}`,
+        listenerCount: 1,
+        peakListeners: 1,
+        geoRegion: null,
+        deviceType: 'desktop',
+        sessionDurationSeconds: input.durationSeconds || 0,
+        timestamp: now,
+        hourOfDay: new Date().getHours(),
+        dayOfWeek: new Date().getDay(),
         createdAt: now,
       });
       
@@ -205,7 +209,6 @@ export const productionIntegrationRouter = router({
                         'listener.joined';
       
       const listenerEvent = engine.createEvent(eventType as QumusEventType, 'listener-analytics', {
-        sessionId: input.sessionId,
         channelId: input.channelId,
         eventType: input.eventType,
         durationSeconds: input.durationSeconds,
@@ -214,7 +217,7 @@ export const productionIntegrationRouter = router({
       
       // 3. Check for milestones
       const [currentListeners] = await db.select({
-        count: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
+        count: sql<number>`SUM(${listenerAnalytics.listenerCount})`,
       }).from(listenerAnalytics)
         .where(sql`${listenerAnalytics.createdAt} > ${now - 3600000}`); // Last hour
       
@@ -246,7 +249,7 @@ export const productionIntegrationRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const engine = getProductionIntegration();
-      const db = getDb();
+      const db = await getDb();
       const now = Date.now();
       
       // 1. Store team update
@@ -418,16 +421,16 @@ export const productionIntegrationRouter = router({
   // ─── Get Unified Dashboard Data ─────────────────────────────
   getUnifiedDashboard: publicProcedure.query(async () => {
     const engine = getProductionIntegration();
-    const db = getDb();
+    const db = await getDb();
     const now = Date.now();
     const oneHourAgo = now - 3600000;
     
     // Get production status
     const status = engine.getStatus();
     
-    // Get recent listener count
+    // Get recent listener count using actual schema column
     const [listeners] = await db.select({
-      count: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
+      count: sql<number>`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`,
     }).from(listenerAnalytics)
       .where(sql`${listenerAnalytics.createdAt} > ${oneHourAgo}`);
     

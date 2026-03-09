@@ -193,7 +193,7 @@ class MultiRegionFailoverService {
     console.log(`[Failover] Verifying data consistency for region ${regionId}...`);
 
     try {
-      const db = getDb();
+      const db = await getDb();
 
       // Get checksums from both regions
       const primaryChecksum = await this.getDataChecksum(this.currentPrimaryRegion);
@@ -259,7 +259,7 @@ class MultiRegionFailoverService {
     let itemsFailed = 0;
 
     try {
-      const db = getDb();
+      const db = await getDb();
 
       // Get all data from primary region
       // Resync to target region

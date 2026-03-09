@@ -11,7 +11,7 @@ import { eq, desc, sql } from "drizzle-orm";
 export const webhookManagerRouter = router({
   // ── List all webhook endpoints ──
   list: protectedProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
     const endpoints = await db.select().from(webhookEndpoints).orderBy(desc(webhookEndpoints.createdAt));
     return endpoints;
   }),
@@ -25,7 +25,7 @@ export const webhookManagerRouter = router({
       platform: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       const secret = input.secret || `whsec_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
       
       await db.insert(webhookEndpoints).values({
@@ -44,7 +44,7 @@ export const webhookManagerRouter = router({
   remove: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       await db.delete(webhookEndpoints).where(eq(webhookEndpoints.id, input.id));
       return { success: true };
     }),
@@ -53,7 +53,7 @@ export const webhookManagerRouter = router({
   toggle: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [endpoint] = await db.select().from(webhookEndpoints).where(eq(webhookEndpoints.id, input.id));
       if (!endpoint) throw new Error("Webhook not found");
       
@@ -68,7 +68,7 @@ export const webhookManagerRouter = router({
   test: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       const [endpoint] = await db.select().from(webhookEndpoints).where(eq(webhookEndpoints.id, input.id));
       if (!endpoint) throw new Error("Webhook not found");
 
@@ -143,7 +143,7 @@ export const webhookManagerRouter = router({
       affectedSystems: z.string().optional(),
     }))
     .mutation(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       const activeEndpoints = await db.select().from(webhookEndpoints)
         .where(eq(webhookEndpoints.isActive, 1));
 
@@ -280,7 +280,7 @@ export const webhookManagerRouter = router({
   logs: protectedProcedure
     .input(z.object({ limit: z.number().optional().default(50) }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
       const logs = await db.select().from(webhookLogs)
         .orderBy(desc(webhookLogs.createdAt))
         .limit(input.limit);
@@ -289,7 +289,7 @@ export const webhookManagerRouter = router({
 
   // ── Get webhook stats ──
   stats: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
     const [totalEndpoints] = await db.select({ count: sql<number>`count(*)` }).from(webhookEndpoints);
     const [activeEndpoints] = await db.select({ count: sql<number>`count(*)` }).from(webhookEndpoints).where(eq(webhookEndpoints.isActive, 1));
     const [totalLogs] = await db.select({ count: sql<number>`count(*)` }).from(webhookLogs);

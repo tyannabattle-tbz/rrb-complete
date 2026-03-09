@@ -1579,7 +1579,7 @@ export async function generateVideoFromDescription(params: {
 
 // ─── Email Subscriber Helpers ───
 export async function subscribeEmail(email: string, name?: string, source?: string, language?: string) {
-  const db = getDb();
+  const db = await getDb();
   try {
     await db.insert(emailSubscribers).values({
       email: email.toLowerCase().trim(),
@@ -1597,7 +1597,7 @@ export async function subscribeEmail(email: string, name?: string, source?: stri
 }
 
 export async function getSubscriberCount() {
-  const db = getDb();
+  const db = await getDb();
   const result = await db.select({ count: count() }).from(emailSubscribers).where(eq(emailSubscribers.isActive, true));
   return result[0]?.count || 0;
 }

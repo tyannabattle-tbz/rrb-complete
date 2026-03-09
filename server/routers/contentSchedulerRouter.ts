@@ -75,7 +75,7 @@ export const contentSchedulerRouter = router({
     }).optional())
     .query(async ({ input }) => {
       try {
-        const db = getDb();
+        const db = await getDb();
         let query = db.select().from(contentSchedule);
         const conditions = [];
         if (input?.channelId) conditions.push(eq(contentSchedule.channelId, input.channelId));
@@ -95,7 +95,7 @@ export const contentSchedulerRouter = router({
   // Get today's schedule (what's on now across all channels)
   getTodaySchedule: publicProcedure.query(async () => {
     try {
-      const db = getDb();
+      const db = await getDb();
       const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
       const today = days[new Date().getDay()];
       
@@ -114,7 +114,7 @@ export const contentSchedulerRouter = router({
   // Get what's playing now (current time slot across all channels)
   getNowPlaying: publicProcedure.query(async () => {
     try {
-      const db = getDb();
+      const db = await getDb();
       const now = new Date();
       const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
       const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -137,7 +137,7 @@ export const contentSchedulerRouter = router({
   // Seed the default 24/7 schedule (admin only)
   seedDefaultSchedule: protectedProcedure.mutation(async () => {
     try {
-      const db = getDb();
+      const db = await getDb();
       // Clear existing schedule
       await db.delete(contentSchedule);
       
@@ -182,7 +182,7 @@ export const contentSchedulerRouter = router({
     }))
     .mutation(async ({ input }) => {
       try {
-        const db = getDb();
+        const db = await getDb();
         await db.insert(contentSchedule).values({
           ...input,
           description: input.description || null,
@@ -211,7 +211,7 @@ export const contentSchedulerRouter = router({
     }))
     .mutation(async ({ input }) => {
       try {
-        const db = getDb();
+        const db = await getDb();
         const { id, ...updates } = input;
         await db.update(contentSchedule).set(updates).where(eq(contentSchedule.id, id));
         return { success: true };
@@ -225,7 +225,7 @@ export const contentSchedulerRouter = router({
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       try {
-        const db = getDb();
+        const db = await getDb();
         await db.delete(contentSchedule).where(eq(contentSchedule.id, input.id));
         return { success: true };
       } catch (e: any) {
@@ -236,7 +236,7 @@ export const contentSchedulerRouter = router({
   // Get now playing with integrated ad rotation
   getNowPlayingWithAds: publicProcedure.query(async () => {
     try {
-      const db = getDb();
+      const db = await getDb();
       const now = new Date();
       const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
       const currentHour = `${String(now.getHours()).padStart(2, '0')}:00`;
@@ -294,7 +294,7 @@ export const contentSchedulerRouter = router({
   // Get schedule stats
   getStats: publicProcedure.query(async () => {
     try {
-      const db = getDb();
+      const db = await getDb();
       const all = await db.select().from(contentSchedule);
       const active = all.filter(s => s.isActive);
       const byType: Record<string, number> = {};

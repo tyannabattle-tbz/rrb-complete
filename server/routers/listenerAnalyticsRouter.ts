@@ -7,37 +7,40 @@ import { eq, desc, sql, count, and } from "drizzle-orm";
 /**
  * Listener Analytics Router
  * 
- * Tracks real-time listener events across all 50 RRB channels:
- * - Tune-in/tune-out events
- * - Channel switches
- * - Session duration
- * - Geographic distribution (via IP)
- * - Device/platform breakdown
- * - AI DJ interactions
+ * Tracks real-time listener events across all RRB channels.
+ * Uses the actual listener_analytics schema:
+ *   id, channel_id, channel_name, listener_count, peak_listeners,
+ *   geo_region, device_type, session_duration_seconds, timestamp,
+ *   hour_of_day, day_of_week, created_at
  */
 
 export const listenerAnalyticsRouter = router({
   // ─── Record a listener event ──────────────────────────────
   recordEvent: publicProcedure
     .input(z.object({
-      sessionId: z.string(),
       channelId: z.number(),
-      eventType: z.enum(['tune_in', 'tune_out', 'channel_switch', 'ad_impression', 'ai_interaction', 'song_request']),
-      durationSeconds: z.number().optional(),
-      metadata: z.string().optional(),
+      channelName: z.string().optional(),
+      listenerCount: z.number().default(1),
+      peakListeners: z.number().optional(),
+      geoRegion: z.string().optional(),
+      deviceType: z.enum(['desktop', 'mobile', 'tablet', 'smart_speaker', 'other']).default('desktop'),
+      sessionDurationSeconds: z.number().optional(),
     }))
     .mutation(async ({ input }) => {
       const db = await getDb();
       const now = Date.now();
       
       const [result] = await db.insert(listenerAnalytics).values({
-        sessionId: input.sessionId,
         channelId: input.channelId,
-        eventType: input.eventType,
-        durationSeconds: input.durationSeconds || null,
-        metadata: input.metadata || null,
-        region: null,
-        device: null,
+        channelName: input.channelName || `Channel ${input.channelId}`,
+        listenerCount: input.listenerCount,
+        peakListeners: input.peakListeners || input.listenerCount,
+        geoRegion: input.geoRegion || null,
+        deviceType: input.deviceType,
+        sessionDurationSeconds: input.sessionDurationSeconds || 0,
+        timestamp: now,
+        hourOfDay: new Date().getHours(),
+        dayOfWeek: new Date().getDay(),
         createdAt: now,
       });
       
@@ -61,14 +64,14 @@ export const listenerAnalyticsRouter = router({
       .from(listenerAnalytics)
       .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     
-    // Unique sessions today
-    const [uniqueSessions] = await db.select({
-      count: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
+    // Total listeners today (sum of listener_count)
+    const [totalListeners] = await db.select({
+      count: sql<number>`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`,
     })
       .from(listenerAnalytics)
       .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     
-    // Top channels by events
+    // Top channels by listener count
     const topChannels = await db.select({
       channelId: listenerAnalytics.channelId,
       eventCount: count(),
@@ -79,29 +82,29 @@ export const listenerAnalyticsRouter = router({
       .orderBy(desc(count()))
       .limit(10);
     
-    // Event type breakdown
+    // Device type breakdown
     const eventBreakdown = await db.select({
-      eventType: listenerAnalytics.eventType,
+      eventType: listenerAnalytics.deviceType,
       count: count(),
     })
       .from(listenerAnalytics)
       .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`)
-      .groupBy(listenerAnalytics.eventType);
+      .groupBy(listenerAnalytics.deviceType);
     
     // Average session duration
     const [avgDuration] = await db.select({
-      avg: sql<number>`COALESCE(AVG(${listenerAnalytics.durationSeconds}), 0)`,
+      avg: sql<number>`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`,
     })
       .from(listenerAnalytics)
       .where(and(
         sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`,
-        sql`${listenerAnalytics.durationSeconds} IS NOT NULL`,
+        sql`${listenerAnalytics.sessionDurationSeconds} > 0`,
       ));
     
     return {
       hourlyEvents: hourlyEvents?.count || 0,
       dailyEvents: dailyEvents?.count || 0,
-      uniqueSessions: uniqueSessions?.count || 0,
+      uniqueSessions: totalListeners?.count || 0,
       avgSessionDurationSeconds: Math.round(avgDuration?.avg || 0),
       topChannels,
       eventBreakdown,
@@ -113,7 +116,6 @@ export const listenerAnalyticsRouter = router({
     .input(z.object({
       limit: z.number().min(1).max(100).default(50),
       channelId: z.number().optional(),
-      eventType: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
       const db = await getDb();
@@ -137,7 +139,7 @@ export const listenerAnalyticsRouter = router({
     const hourlyData = await db.select({
       hour: sql<string>`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`,
       eventCount: count(),
-      uniqueSessions: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
+      totalListeners: sql<number>`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`,
     })
       .from(listenerAnalytics)
       .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`)
@@ -155,13 +157,13 @@ export const listenerAnalyticsRouter = router({
     
     const heatmap = await db.select({
       channelId: listenerAnalytics.channelId,
-      eventType: listenerAnalytics.eventType,
+      deviceType: listenerAnalytics.deviceType,
       count: count(),
-      avgDuration: sql<number>`COALESCE(AVG(${listenerAnalytics.durationSeconds}), 0)`,
+      avgDuration: sql<number>`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`,
     })
       .from(listenerAnalytics)
       .where(sql`${listenerAnalytics.createdAt} >= ${oneWeekAgo}`)
-      .groupBy(listenerAnalytics.channelId, listenerAnalytics.eventType)
+      .groupBy(listenerAnalytics.channelId, listenerAnalytics.deviceType)
       .orderBy(desc(count()));
     
     return heatmap;
@@ -176,12 +178,9 @@ export const listenerAnalyticsRouter = router({
     const scores = await db.select({
       channelId: listenerAnalytics.channelId,
       totalEvents: count(),
-      uniqueListeners: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
-      avgDuration: sql<number>`COALESCE(AVG(${listenerAnalytics.durationSeconds}), 0)`,
-      tuneIns: sql<number>`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'tune_in' THEN 1 ELSE 0 END)`,
-      tuneOuts: sql<number>`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'tune_out' THEN 1 ELSE 0 END)`,
-      adImpressions: sql<number>`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'ad_impression' THEN 1 ELSE 0 END)`,
-      aiInteractions: sql<number>`SUM(CASE WHEN ${listenerAnalytics.eventType} = 'ai_interaction' THEN 1 ELSE 0 END)`,
+      totalListeners: sql<number>`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`,
+      avgDuration: sql<number>`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`,
+      peakListeners: sql<number>`COALESCE(MAX(${listenerAnalytics.peakListeners}), 0)`,
     })
       .from(listenerAnalytics)
       .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`)
@@ -190,20 +189,20 @@ export const listenerAnalyticsRouter = router({
     
     // Calculate engagement score (0-100)
     return scores.map(ch => {
-      const retentionRate = ch.tuneIns > 0 ? Math.max(0, 1 - (ch.tuneOuts / ch.tuneIns)) : 0;
       const durationScore = Math.min(ch.avgDuration / 300, 1); // 5 min = max
-      const interactionScore = Math.min((ch.aiInteractions + ch.adImpressions) / Math.max(ch.uniqueListeners, 1), 1);
-      const engagementScore = Math.round((retentionRate * 40 + durationScore * 35 + interactionScore * 25) * 100) / 100;
+      const listenerScore = Math.min(ch.totalListeners / 100, 1); // 100 listeners = max
+      const engagementScore = Math.round((durationScore * 50 + listenerScore * 50) * 100) / 100;
       
       return {
         channelId: ch.channelId,
-        uniqueListeners: ch.uniqueListeners,
+        uniqueListeners: ch.totalListeners,
         totalEvents: ch.totalEvents,
         avgDurationSeconds: Math.round(ch.avgDuration),
-        retentionRate: Math.round(retentionRate * 100),
+        peakListeners: ch.peakListeners,
         engagementScore: Math.min(engagementScore, 100),
-        adImpressions: ch.adImpressions,
-        aiInteractions: ch.aiInteractions,
+        retentionRate: 0,
+        adImpressions: 0,
+        aiInteractions: 0,
       };
     });
   }),
@@ -214,17 +213,14 @@ export const listenerAnalyticsRouter = router({
     const now = Date.now();
     const oneDayAgo = now - 86400000;
     
-    // Get ad impression events
-    const [adImpressions] = await db.select({ count: count() })
+    // Get total listener events today
+    const [dailyListeners] = await db.select({ count: count() })
       .from(listenerAnalytics)
-      .where(and(
-        eq(listenerAnalytics.eventType, 'ad_impression'),
-        sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`,
-      ));
+      .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     
-    // Get total listener count for impression rate
+    // Get total listeners today
     const [totalListeners] = await db.select({
-      count: sql<number>`COUNT(DISTINCT ${listenerAnalytics.sessionId})`,
+      count: sql<number>`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`,
     })
       .from(listenerAnalytics)
       .where(sql`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
@@ -237,9 +233,9 @@ export const listenerAnalyticsRouter = router({
     }).from(adInventory).where(eq(adInventory.active, true));
     
     return {
-      dailyImpressions: adImpressions?.count ?? 0,
+      dailyImpressions: dailyListeners?.count ?? 0,
       uniqueListenersReached: totalListeners?.count ?? 0,
-      impressionRate: totalListeners?.count ? Math.round((adImpressions?.count ?? 0) / totalListeners.count * 100) : 0,
+      impressionRate: totalListeners?.count ? Math.round((dailyListeners?.count ?? 0) / Math.max(totalListeners.count, 1) * 100) : 0,
       activeAds: adStats?.totalAds ?? 0,
       totalPlaysAllTime: adStats?.totalPlays ?? 0,
       estimatedRevenueCents: adStats?.totalRevenue ?? 0,
