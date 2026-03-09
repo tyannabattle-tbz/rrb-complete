@@ -183,6 +183,7 @@ import ListenerAnalyticsLive from '@/pages/ListenerAnalyticsLive';
 import WebhookManager from '@/pages/WebhookManager';
 import StudioControlRoom from '@/pages/StudioControlRoom';
 import ConventionHub from '@/pages/ConventionHub';
+import { OnboardingTour } from '@/components/OnboardingTour';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -424,6 +425,9 @@ function App() {
             
             {/* Valanna - QUMUS AI Brain Voice Assistant */}
             <ValannaVoiceAssistant />
+            
+            {/* Getting Started Onboarding Tour */}
+            <OnboardingTour />
           </TooltipProvider>
         </PresetProvider>
       </ThemeProvider>

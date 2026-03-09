@@ -3093,3 +3093,11 @@
 - [x] Fix any stale references, broken imports, or dead links
 - [x] Run full test suite — 67/67 RRB tests passing, 0 TypeScript errors
 - [x] Save production checkpoint
+
+## Navigation & Onboarding Improvements
+- [x] Add search/filter to DashboardLayout sidebar with quick-search input (Ctrl+K shortcut)
+- [x] Add collapsible section toggles to sidebar navigation groups (10 sections, state persisted)
+- [x] Build Getting Started onboarding tour with interactive walkthrough overlay (8 steps)
+- [x] Guide users through QUMUS Control, AI Chat, Radio, Studio, Conventions, Ecosystem, Sweet Miracles, Games
+- [x] Verify all navigation links route correctly — 0 TypeScript errors, 91/91 tests passing
+- [x] Fix any broken or dead navigation links found during verification
