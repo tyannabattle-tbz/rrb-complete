@@ -3026,3 +3026,14 @@
 - [x] Add Seraph avatar to RRBPort3001 AI DJ host config
 - [x] Fix all hardcoded two-persona color references to support violet theme
 - [x] Seraph chat interface accessible via persona switcher in voice assistant
+
+## Conference Mode — AI Trinity Chat
+- [x] Create backend conferenceChat procedure (queries all 3 AIs in sequence, each seeing prior responses)
+- [x] Add conference system prompt that makes each AI aware they're in a group conversation
+- [x] Add "Conference" button in persona switcher dropdown with Users icon
+- [x] Render multi-AI responses with distinct avatars, name labels, and colors per message
+- [x] Add conference-specific opening messages from all three AIs
+- [x] Conference thinking indicator shows all three avatars with tri-color bouncing dots
+- [x] Floating button shows overlapping triple avatars in conference mode
+- [x] Header updates to show "Conference" title with "Valanna · Seraph · Candy" subtitle
+- [x] 0 TypeScript errors, QUMUS health check passing

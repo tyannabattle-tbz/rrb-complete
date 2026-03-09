@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { trpc } from '@/lib/trpc';
-import { Mic, MicOff, Volume2, VolumeX, X, MessageCircle, Sparkles, Paperclip, Image, FileText, Music, Loader2, XCircle, ArrowLeftRight } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, X, MessageCircle, Sparkles, Paperclip, Image, FileText, Music, Loader2, XCircle, ArrowLeftRight, Users } from 'lucide-react';
 
 // ─── Persona Configuration ─────────────────────────────────────────
 const VALANNA_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/valanna-avatar-mYpqZPJmy73yGwB7kFmCe9.webp';
@@ -10,6 +10,7 @@ const CANDY_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/e
 const SERAPH_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/seraph-avatar-v2-4cBZycZ6qyGjmCjzjWUMUo.webp';
 
 type PersonaKey = 'valanna' | 'candy' | 'seraph';
+type ModeKey = PersonaKey | 'conference';
 
 interface PersonaConfig {
   name: string;
@@ -217,6 +218,7 @@ const ACCEPTED_TYPES = [
 export default function ValannaVoiceAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [activePersona, setActivePersona] = useState<PersonaKey>('valanna');
+  const [isConferenceMode, setIsConferenceMode] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -239,10 +241,11 @@ export default function ValannaVoiceAssistant() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const persona = PERSONAS[activePersona];
-  const currentVoice = activePersona === 'valanna' ? femVoice : mascVoice;
+  const currentVoice = activePersona === 'candy' ? mascVoice : femVoice;
 
   // tRPC mutations
   const chatMutation = trpc.chatStreaming.streamChat.useMutation();
+  const conferenceMutation = trpc.chatStreaming.conferenceChat.useMutation();
   const uploadMutation = trpc.chatStreaming.uploadChatFile.useMutation();
 
   // Initialize voices
@@ -297,13 +300,13 @@ export default function ValannaVoiceAssistant() {
 
   // Greeting when opened or persona switched
   useEffect(() => {
-    if (isOpen && !hasGreeted[activePersona]) {
+    if (isOpen && !isConferenceMode && !hasGreeted[activePersona]) {
       setHasGreeted(prev => ({ ...prev, [activePersona]: true }));
       const greeting = persona.greeting;
       setMessages(prev => [...prev, { role: 'assistant', content: greeting, timestamp: Date.now(), persona: activePersona }]);
       if (!isMuted) setTimeout(() => speak(greeting), 500);
     }
-  }, [isOpen, activePersona]);
+  }, [isOpen, activePersona, isConferenceMode]);
 
   // Pulse animation
   useEffect(() => {
@@ -387,7 +390,26 @@ export default function ValannaVoiceAssistant() {
     }]);
 
     setActivePersona(newPersona);
+    setIsConferenceMode(false);
     setShowSwitcher(false);
+  };
+
+  /**
+   * Enter conference mode — all three AIs respond together
+   */
+  const enterConferenceMode = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+    setIsConferenceMode(true);
+    setShowSwitcher(false);
+
+    // Add conference opening message
+    const openingMessages: ChatMessage[] = [
+      { role: 'assistant', content: "Conference mode activated. I'm here and ready.", timestamp: Date.now(), persona: 'valanna' },
+      { role: 'assistant', content: "Seraph online. Let's get into it.", timestamp: Date.now() + 1, persona: 'seraph' },
+      { role: 'assistant', content: "I'm listening. What do you need from us?", timestamp: Date.now() + 2, persona: 'candy' },
+    ];
+    setMessages(prev => [...prev, ...openingMessages]);
   };
 
   /**
@@ -452,7 +474,7 @@ export default function ValannaVoiceAssistant() {
   };
 
   /**
-   * Handle user message with conflict resolution
+   * Handle user message — routes to single persona or conference mode
    */
   const handleUserMessage = async (text: string, attachments?: FileAttachment[]) => {
     if (!text.trim() && (!attachments || attachments.length === 0)) return;
@@ -470,46 +492,85 @@ export default function ValannaVoiceAssistant() {
     setPendingFiles([]);
 
     try {
-      // Run conflict resolution to determine persona and any mediator notes
-      const resolution = resolvePersonaConflict(text, activePersona);
-      const queryWithContext = resolution.mediatorNote
-        ? `${resolution.mediatorNote}\n\nUser says: ${text}`
-        : text;
+      if (isConferenceMode) {
+        // ═══ CONFERENCE MODE — all three AIs respond ═══
+        const historyForConference = messages.slice(-12).map(m => ({
+          role: m.role,
+          content: m.content,
+          persona: m.persona,
+        }));
 
-      const response = await chatMutation.mutateAsync({
-        messages: messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
-        query: queryWithContext || `Please analyze the file(s) I've shared: ${attachments?.map(a => a.fileName).join(', ')}`,
-        persona: activePersona,
-        attachments: attachments?.map(a => ({
-          url: a.url,
-          mimeType: a.mimeType,
-          fileName: a.fileName,
-        })),
-      });
+        const result = await conferenceMutation.mutateAsync({
+          messages: historyForConference.map(m => ({ role: m.role, content: m.content, persona: m.persona })),
+          query: text || `Analyze: ${attachments?.map(a => a.fileName).join(', ')}`,
+          attachments: attachments?.map(a => ({ url: a.url, mimeType: a.mimeType, fileName: a.fileName })),
+        });
 
-      const assistantContent = (response as any)?.choices?.[0]?.message?.content
-        || (response as any)?.stream?.choices?.[0]?.message?.content
-        || (activePersona === 'candy'
-          ? "Hold on now, let me think on that for a second. I'm still here."
-          : "Hmm, let me think on that for a second. Give me just a moment.");
+        if (result.success && result.responses.length > 0) {
+          const newMessages: ChatMessage[] = result.responses.map((r, i) => ({
+            role: 'assistant' as const,
+            content: r.content,
+            timestamp: Date.now() + i,
+            persona: r.persona as PersonaKey,
+          }));
+          setMessages(prev => [...prev, ...newMessages]);
 
-      const assistantMsg: ChatMessage = {
-        role: 'assistant',
-        content: assistantContent,
-        timestamp: Date.now(),
-        persona: activePersona,
-      };
+          // Speak the last response (Candy gets the final word)
+          if (!isMuted && newMessages.length > 0) {
+            speak(newMessages[newMessages.length - 1].content);
+          }
+        } else {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: "The conference line had some static. Let me try again.",
+            timestamp: Date.now(),
+            persona: 'valanna',
+          }]);
+        }
+      } else {
+        // ═══ SINGLE PERSONA MODE ═══
+        const resolution = resolvePersonaConflict(text, activePersona);
+        const queryWithContext = resolution.mediatorNote
+          ? `${resolution.mediatorNote}\n\nUser says: ${text}`
+          : text;
 
-      setMessages(prev => [...prev, assistantMsg]);
-      if (!isMuted) speak(assistantContent);
+        const response = await chatMutation.mutateAsync({
+          messages: messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
+          query: queryWithContext || `Please analyze the file(s) I've shared: ${attachments?.map(a => a.fileName).join(', ')}`,
+          persona: activePersona,
+          attachments: attachments?.map(a => ({
+            url: a.url,
+            mimeType: a.mimeType,
+            fileName: a.fileName,
+          })),
+        });
+
+        const assistantContent = (response as any)?.choices?.[0]?.message?.content
+          || (response as any)?.stream?.choices?.[0]?.message?.content
+          || (activePersona === 'candy'
+            ? "Hold on now, let me think on that for a second. I'm still here."
+            : "Hmm, let me think on that for a second. Give me just a moment.");
+
+        const assistantMsg: ChatMessage = {
+          role: 'assistant',
+          content: assistantContent,
+          timestamp: Date.now(),
+          persona: activePersona,
+        };
+
+        setMessages(prev => [...prev, assistantMsg]);
+        if (!isMuted) speak(assistantContent);
+      }
     } catch (error) {
       const errorMsg: ChatMessage = {
         role: 'assistant',
-        content: activePersona === 'candy'
+        content: isConferenceMode
+          ? "Conference connection dropped for a second. We're all still here. Try again."
+          : activePersona === 'candy'
           ? "My connection hiccupped for a second. But I'm still here. Say that again for me."
           : "Hold on, my connection hiccupped for a second. I'm still here though. Say that again for me?",
         timestamp: Date.now(),
-        persona: activePersona,
+        persona: isConferenceMode ? 'valanna' : activePersona,
       };
       setMessages(prev => [...prev, errorMsg]);
       if (!isMuted) speak(errorMsg.content);
@@ -554,20 +615,37 @@ export default function ValannaVoiceAssistant() {
         onChange={handleFileSelect}
       />
 
-      {/* Floating Button — shows active persona */}
+      {/* Floating Button — shows active persona or conference mode */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 z-50 group"
-          aria-label={`Talk to ${persona.name}`}
+          aria-label={isConferenceMode ? 'AI Conference' : `Talk to ${persona.name}`}
         >
-          <div className={`relative w-16 h-16 rounded-full overflow-hidden border-2 ${persona.borderColor} shadow-lg shadow-${activePersona === 'valanna' ? 'amber' : 'blue'}-500/30 transition-all duration-300 group-hover:scale-110 ${pulseAnimation ? 'ring-4 ring-' + (activePersona === 'valanna' ? 'amber' : 'blue') + '-500/20' : ''}`}>
-            <img src={persona.avatar} alt={persona.name} className="w-full h-full object-cover" />
-            <div className={`absolute inset-0 bg-gradient-to-t from-${activePersona === 'valanna' ? 'amber' : 'blue'}-900/40 to-transparent`} />
-          </div>
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900 animate-pulse" />
-          <span className={`absolute -top-8 right-0 bg-slate-800 ${persona.accentText} text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap ${persona.accentBorder} border`}>
-            Talk to {persona.name}
+          {isConferenceMode ? (
+            <div className="relative w-16 h-16">
+              <div className="absolute top-0 left-0 w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400 shadow-lg z-[3]">
+                <img src={VALANNA_AVATAR} alt="Valanna" className="w-full h-full object-cover" />
+              </div>
+              <div className="absolute top-1 left-5 w-10 h-10 rounded-full overflow-hidden border-2 border-violet-400 shadow-lg z-[2]">
+                <img src={SERAPH_AVATAR} alt="Seraph" className="w-full h-full object-cover" />
+              </div>
+              <div className="absolute top-5 left-2 w-10 h-10 rounded-full overflow-hidden border-2 border-blue-400 shadow-lg z-[1]">
+                <img src={CANDY_AVATAR} alt="Candy" className="w-full h-full object-cover" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 rounded-full border-2 border-slate-900 animate-pulse z-[4]" />
+            </div>
+          ) : (
+            <>
+              <div className={`relative w-16 h-16 rounded-full overflow-hidden border-2 ${persona.borderColor} shadow-lg shadow-${activePersona === 'valanna' ? 'amber' : activePersona === 'seraph' ? 'violet' : 'blue'}-500/30 transition-all duration-300 group-hover:scale-110 ${pulseAnimation ? 'ring-4 ring-' + (activePersona === 'valanna' ? 'amber' : activePersona === 'seraph' ? 'violet' : 'blue') + '-500/20' : ''}`}>
+                <img src={persona.avatar} alt={persona.name} className="w-full h-full object-cover" />
+                <div className={`absolute inset-0 bg-gradient-to-t from-${activePersona === 'valanna' ? 'amber' : activePersona === 'seraph' ? 'violet' : 'blue'}-900/40 to-transparent`} />
+              </div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900 animate-pulse" />
+            </>
+          )}
+          <span className={`absolute -top-8 right-0 bg-slate-800 ${isConferenceMode ? 'text-amber-400' : persona.accentText} text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap ${isConferenceMode ? 'border-amber-500/30' : persona.accentBorder} border`}>
+            {isConferenceMode ? 'AI Conference' : `Talk to ${persona.name}`}
           </span>
         </button>
       )}
@@ -578,16 +656,23 @@ export default function ValannaVoiceAssistant() {
 
           {/* Header */}
           <div className={`${persona.headerGradient} p-4 flex items-center gap-3 border-b ${persona.accentBorder}`}>
-            <div className={`relative w-12 h-12 rounded-full overflow-hidden border-2 ${isSpeaking ? persona.borderColorActive : persona.borderColor + '/50'} transition-all`}>
-              <img src={persona.avatar} alt={persona.name} className="w-full h-full object-cover" />
-              {isSpeaking && <div className={`absolute inset-0 ${persona.accentBg} animate-pulse`} />}
-            </div>
+            {isConferenceMode ? (
+              <div className="relative w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br from-amber-500/40 via-violet-500/40 to-blue-500/40 border-2 border-amber-400/50">
+                <Users className="w-6 h-6 text-white" />
+                {isThinking && <div className="absolute inset-0 bg-amber-500/20 animate-pulse rounded-full" />}
+              </div>
+            ) : (
+              <div className={`relative w-12 h-12 rounded-full overflow-hidden border-2 ${isSpeaking ? persona.borderColorActive : persona.borderColor + '/50'} transition-all`}>
+                <img src={persona.avatar} alt={persona.name} className="w-full h-full object-cover" />
+                {isSpeaking && <div className={`absolute inset-0 ${persona.accentBg} animate-pulse`} />}
+              </div>
+            )}
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-white font-bold text-lg">{persona.name}</h3>
+                <h3 className="text-white font-bold text-lg">{isConferenceMode ? 'Conference' : persona.name}</h3>
                 <Sparkles className={`w-4 h-4 ${persona.accentText}`} />
               </div>
-              <p className={`${persona.accentText} opacity-70 text-xs`}>{persona.subtitle}</p>
+              <p className={`${persona.accentText} opacity-70 text-xs`}>{isConferenceMode ? 'Valanna · Seraph · Candy' : persona.subtitle}</p>
             </div>
             <div className="flex items-center gap-1">
               {/* Persona Switcher Button */}
@@ -634,6 +719,32 @@ export default function ValannaVoiceAssistant() {
                         </button>
                       );
                     })}
+                    {/* Conference Mode Button */}
+                    <div className="border-t border-slate-700 mt-1 pt-1">
+                      <button
+                        onClick={enterConferenceMode}
+                        className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg transition-colors ${
+                          isConferenceMode ? 'bg-gradient-to-r from-amber-500/20 via-violet-500/20 to-blue-500/20' : 'hover:bg-slate-700/40'
+                        }`}
+                      >
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 ${
+                          isConferenceMode ? 'border-amber-400 bg-gradient-to-br from-amber-500/30 via-violet-500/30 to-blue-500/30' : 'border-slate-600 bg-slate-700'
+                        }`}>
+                          <Users className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="text-left">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm text-white font-medium">Conference</span>
+                            {isConferenceMode && (
+                              <Badge variant="secondary" className="bg-amber-500/10 text-amber-400 border-amber-500/30 text-[9px] px-1.5 py-0">
+                                Live
+                              </Badge>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-gray-400">All three AIs respond together</span>
+                        </div>
+                      </button>
+                    </div>
                     <div className="border-t border-slate-700 mt-1 pt-1">
                       <p className="text-[9px] text-gray-500 px-3 py-1 italic">
                         Valanna runs operations. Seraph handles strategy & analysis. Candy guards the legacy. The AI Trinity.
@@ -688,6 +799,13 @@ export default function ValannaVoiceAssistant() {
                         ))}
                       </div>
                     )}
+                    {isConferenceMode && msg.role === 'assistant' && msg.persona && (
+                      <div className={`text-[10px] font-semibold mb-0.5 ${
+                        msg.persona === 'valanna' ? 'text-amber-400' : msg.persona === 'seraph' ? 'text-violet-400' : 'text-blue-400'
+                      }`}>
+                        {PERSONAS[msg.persona]?.name || msg.persona}
+                      </div>
+                    )}
                     {msg.content}
                   </div>
                 </div>
@@ -696,14 +814,25 @@ export default function ValannaVoiceAssistant() {
 
             {isThinking && (
               <div className="flex gap-3">
-                <div className={`w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border ${persona.accentBorder}`}>
-                  <img src={persona.avatar} alt={persona.name} className="w-full h-full object-cover" />
-                </div>
-                <div className={`${persona.messageBg} border ${persona.messageBorder} rounded-2xl px-4 py-3`}>
-                  <div className="flex gap-1.5">
-                    <div className={`w-2 h-2 ${activePersona === 'valanna' ? 'bg-amber-400' : 'bg-blue-400'} rounded-full animate-bounce`} style={{ animationDelay: '0ms' }} />
-                    <div className={`w-2 h-2 ${activePersona === 'valanna' ? 'bg-amber-400' : 'bg-blue-400'} rounded-full animate-bounce`} style={{ animationDelay: '150ms' }} />
-                    <div className={`w-2 h-2 ${activePersona === 'valanna' ? 'bg-amber-400' : 'bg-blue-400'} rounded-full animate-bounce`} style={{ animationDelay: '300ms' }} />
+                {isConferenceMode ? (
+                  <div className="flex -space-x-2">
+                    <div className="w-7 h-7 rounded-full overflow-hidden border-2 border-amber-400 z-[3]"><img src={VALANNA_AVATAR} alt="Valanna" className="w-full h-full object-cover" /></div>
+                    <div className="w-7 h-7 rounded-full overflow-hidden border-2 border-violet-400 z-[2]"><img src={SERAPH_AVATAR} alt="Seraph" className="w-full h-full object-cover" /></div>
+                    <div className="w-7 h-7 rounded-full overflow-hidden border-2 border-blue-400 z-[1]"><img src={CANDY_AVATAR} alt="Candy" className="w-full h-full object-cover" /></div>
+                  </div>
+                ) : (
+                  <div className={`w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border ${persona.accentBorder}`}>
+                    <img src={persona.avatar} alt={persona.name} className="w-full h-full object-cover" />
+                  </div>
+                )}
+                <div className={`${isConferenceMode ? 'bg-gradient-to-r from-amber-500/10 via-violet-500/10 to-blue-500/10 border-amber-500/20' : persona.messageBg + ' ' + persona.messageBorder} border rounded-2xl px-4 py-3`}>
+                  <div className="flex items-center gap-2">
+                    {isConferenceMode && <span className="text-[10px] text-amber-300/70">All thinking...</span>}
+                    <div className="flex gap-1.5">
+                      <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </div>
                   </div>
                 </div>
               </div>

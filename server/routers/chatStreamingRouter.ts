@@ -184,6 +184,92 @@ export const chatStreamingRouter = router({
     }),
 
   /**
+   * Conference Mode — All three AIs respond to the same message in sequence
+   * Each AI sees the other AIs' responses so they can build on each other
+   */
+  conferenceChat: publicProcedure
+    .input(z.object({
+      messages: z.array(z.object({
+        role: z.enum(['user', 'assistant']),
+        content: z.string(),
+        persona: z.string().optional(),
+      })),
+      query: z.string(),
+      attachments: z.array(z.object({
+        url: z.string(),
+        mimeType: z.string(),
+        fileName: z.string(),
+      })).optional(),
+    }))
+    .mutation(async ({ input }) => {
+      try {
+        const personas = [
+          { key: 'valanna', name: 'Valanna', getPrompt: () => QumusIdentitySystem.getSystemPrompt() },
+          { key: 'seraph', name: 'Seraph', getPrompt: () => SeraphIdentitySystem.getSystemPrompt() },
+          { key: 'candy', name: 'Candy', getPrompt: () => CandyIdentitySystem.getSystemPrompt() },
+        ];
+
+        const conferenceContext = `\n\n[CONFERENCE MODE] You are in a live conference call with the other two AIs. The user asked a question and all three of you are responding in turn. Keep your response focused and concise (2-4 sentences). Don't repeat what the others said — add your unique perspective. Address the others by name when building on their points. Be natural, like a real conversation.`;
+
+        // Build the user message (may be multimodal)
+        let userContent: any = input.query;
+        if (input.attachments && input.attachments.length > 0) {
+          const parts: any[] = [];
+          if (input.query.trim()) parts.push({ type: 'text', text: input.query });
+          for (const att of input.attachments) {
+            if (att.mimeType.startsWith('image/')) {
+              parts.push({ type: 'image_url', image_url: { url: att.url, detail: 'auto' } });
+            } else if (att.mimeType === 'application/pdf' || att.mimeType.startsWith('audio/') || att.mimeType.startsWith('video/')) {
+              parts.push({ type: 'file_url', file_url: { url: att.url, mime_type: att.mimeType } });
+            } else {
+              parts.push({ type: 'text', text: `[Attached: ${att.fileName}]` });
+            }
+          }
+          if (!input.query.trim()) parts.unshift({ type: 'text', text: `Analyze: ${input.attachments.map(a => a.fileName).join(', ')}` });
+          userContent = parts;
+        }
+
+        // Build shared conversation history
+        const sharedHistory = input.messages.map(msg => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.persona && msg.role === 'assistant'
+            ? `[${msg.persona}]: ${msg.content}`
+            : msg.content,
+        }));
+
+        const responses: Array<{ persona: string; name: string; content: string }> = [];
+
+        // Query each AI in sequence, each seeing the previous responses
+        for (const ai of personas) {
+          const priorInThisRound = responses.map(r => ({
+            role: 'assistant' as const,
+            content: `[${r.name}]: ${r.content}`,
+          }));
+
+          const messages = [
+            { role: 'system' as const, content: ai.getPrompt() + conferenceContext },
+            ...sharedHistory,
+            { role: 'user' as const, content: userContent },
+            ...priorInThisRound,
+          ];
+
+          const response = await invokeLLM({ messages });
+          const content = (response as any)?.choices?.[0]?.message?.content || `${ai.name} is thinking...`;
+          responses.push({ persona: ai.key, name: ai.name, content });
+        }
+
+        return { success: true, responses };
+      } catch (error) {
+        console.error('Conference chat error:', error);
+        return {
+          success: false,
+          responses: [],
+          error: error instanceof Error ? error.message : 'Conference failed',
+        };
+      }
+    }),
+
+  /**
    * Get streaming status
    */
   getStreamStatus: publicProcedure.query(async () => {
