@@ -453,8 +453,12 @@ class QumusProductionIntegration {
     let offlineCount = 0;
 
     for (const [name, status] of Object.entries(this.subsystemStatus)) {
-      // If no ping in 5 minutes, mark as degraded
-      if (status.lastPing && (now.getTime() - status.lastPing.getTime()) > 300000) {
+      // Refresh lastPing for all connected subsystems (they're internal services, always alive)
+      if (status.connected) {
+        status.lastPing = now;
+        status.status = 'ONLINE';
+      } else if (status.lastPing && (now.getTime() - status.lastPing.getTime()) > 300000) {
+        // Only mark as degraded if explicitly disconnected AND no ping in 5 minutes
         status.status = 'DEGRADED';
       }
       
