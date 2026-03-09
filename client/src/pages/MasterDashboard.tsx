@@ -57,26 +57,42 @@ export default function MasterDashboard() {
     contentSynthesis: { active: true, calls: 234, avgLatency: 2100 },
   });
 
+  // Real data from DB
+  const { data: platformStats } = trpc.ecosystemIntegration.getPlatformStats.useQuery(undefined, { refetchInterval: 30000 });
+
   const [platformMetrics, setPlatformMetrics] = useState({
     sweetMiracles: {
-      totalDonors: 2847,
-      donationsToday: 45,
-      totalRaised: "$847,500",
-      activeAlerts: 3,
+      totalDonors: 0,
+      donationsToday: 0,
+      totalRaised: "$0",
+      activeAlerts: 0,
     },
     rockinBoogie: {
-      contentGenerated: 156,
-      episodesBroadcast: 42,
-      listeners: 125000,
-      avgEngagement: 87.3,
+      contentGenerated: 0,
+      episodesBroadcast: 0,
+      listeners: 0,
+      avgEngagement: 0,
     },
     hybridCast: {
-      stationsOnline: 847,
-      broadcastsActive: 23,
-      coverage: 98.5,
-      meshNodes: 3421,
+      stationsOnline: 0,
+      broadcastsActive: 0,
+      coverage: 0,
+      meshNodes: 0,
     },
   });
+
+  // Update platform metrics from real data
+  useEffect(() => {
+    if (platformStats) {
+      setPlatformMetrics(prev => ({
+        ...prev,
+        rockinBoogie: {
+          ...prev.rockinBoogie,
+          listeners: platformStats.activeListeners,
+        },
+      }));
+    }
+  }, [platformStats]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">

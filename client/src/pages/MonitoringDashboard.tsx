@@ -26,6 +26,7 @@ import {
   AlertTriangle as AlertIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trpc } from '@/lib/trpc';
 
 /**
  * Real-Time Monitoring & Analytics Dashboard
@@ -44,26 +45,43 @@ export default function MonitoringDashboard() {
     activePolicies: 8,
   });
 
+  // Real data from DB
+  const { data: platformStats } = trpc.ecosystemIntegration.getPlatformStats.useQuery(undefined, { refetchInterval: 30000 });
+
   const [platformMetrics, setPlatformMetrics] = useState({
     sweetMiracles: {
-      donationsPerHour: 12,
-      avgDonationAmount: 250,
-      donorRetention: 94.2,
-      campaignEngagement: 87.5,
+      donationsPerHour: 0,
+      avgDonationAmount: 0,
+      donorRetention: 0,
+      campaignEngagement: 0,
     },
     rockinBoogie: {
-      contentPerDay: 8,
-      listenersPerHour: 5000,
-      avgSessionDuration: 24,
-      shareRate: 12.3,
+      contentPerDay: 0,
+      listenersPerHour: 0,
+      avgSessionDuration: 0,
+      shareRate: 0,
     },
     hybridCast: {
-      broadcastsPerDay: 15,
-      networkCoverage: 98.5,
-      meshNodeHealth: 99.2,
-      avgLatency: 45,
+      broadcastsPerDay: 0,
+      networkCoverage: 0,
+      meshNodeHealth: 0,
+      avgLatency: 0,
     },
   });
+
+  // Update from real data
+  useEffect(() => {
+    if (platformStats) {
+      setPlatformMetrics(prev => ({
+        ...prev,
+        rockinBoogie: {
+          ...prev.rockinBoogie,
+          listenersPerHour: platformStats.activeListeners,
+          avgSessionDuration: Math.round(platformStats.avgSessionDurationSeconds / 60),
+        },
+      }));
+    }
+  }, [platformStats]);
 
   const [policyMetrics, setPolicyMetrics] = useState([
     { name: "DonorOutreachPolicy", executions: 245, avgLatency: 150, errorRate: 0.5, status: "optimal" },

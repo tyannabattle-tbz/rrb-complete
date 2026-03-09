@@ -14,9 +14,17 @@ import { ecosystemIntegration } from '../_core/ecosystemIntegration';
 import { stateOfStudio } from '../_core/stateOfStudio';
 import { audioStreamingService } from '../_core/audioStreamingService';
 import { dailyStatusReportService } from '../_core/dailyStatusReport';
+import { getPlatformStats } from '../_core/realtimeStats';
 import { z } from 'zod';
 
 export const ecosystemIntegrationRouter = router({
+  /**
+   * Get centralized platform stats — single source of truth for all listener/channel metrics
+   */
+  getPlatformStats: publicProcedure.query(async () => {
+    return getPlatformStats();
+  }),
+
   /**
    * Get current ecosystem integration status
    */

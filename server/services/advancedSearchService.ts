@@ -265,7 +265,7 @@ export class AdvancedSearchService {
    */
   async getPopularArtists(limit: number = 10): Promise<{ artist: string; followers: number }[]> {
     return [
-      { artist: 'Luna Echo', followers: 125000 },
+      { artist: 'Luna Echo', followers: 0 },
       { artist: 'Neon Pulse', followers: 98500 },
       { artist: 'Urban Beats', followers: 87300 },
       { artist: 'Cosmic Dreams', followers: 76200 },
@@ -283,7 +283,7 @@ export class AdvancedSearchService {
    */
   getSearchAnalytics() {
     return {
-      totalSearches: 125430,
+      totalSearches: 0,
       uniqueSearchTerms: 8520,
       averageResultsPerSearch: 42,
       mostCommonGenre: 'Electronic',

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BarChart3, LineChart, PieChart, TrendingUp, Download, Calendar, Filter } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 
 interface ReportData {
   period: string;
@@ -21,28 +22,31 @@ interface PolicyDecision {
 
 export default function AnalyticsReportingDashboard() {
   const [timeRange, setTimeRange] = useState('week');
+  const { data: platformStats } = trpc.ecosystemIntegration.getPlatformStats.useQuery(undefined, { refetchInterval: 30000 });
+  const currentListeners = platformStats?.activeListeners ?? 0;
+
   const [reportData] = useState<ReportData[]>([
     {
       period: 'Mon',
-      qumusDecisions: 1240,
-      hybridCastBroadcasts: 34,
-      rockinBoogieListeners: 45230,
-      avgEngagement: 87,
+      qumusDecisions: 0,
+      hybridCastBroadcasts: 0,
+      rockinBoogieListeners: 0,
+      avgEngagement: 0,
       systemUptime: 99.98,
     },
     {
       period: 'Tue',
-      qumusDecisions: 1456,
-      hybridCastBroadcasts: 28,
-      rockinBoogieListeners: 48920,
-      avgEngagement: 89,
+      qumusDecisions: 0,
+      hybridCastBroadcasts: 0,
+      rockinBoogieListeners: 0,
+      avgEngagement: 0,
       systemUptime: 99.97,
     },
     {
       period: 'Wed',
-      qumusDecisions: 1389,
-      hybridCastBroadcasts: 41,
-      rockinBoogieListeners: 52100,
+      qumusDecisions: 0,
+      hybridCastBroadcasts: 0,
+      rockinBoogieListeners: 0,
       avgEngagement: 91,
       systemUptime: 99.99,
     },
@@ -50,7 +54,7 @@ export default function AnalyticsReportingDashboard() {
       period: 'Thu',
       qumusDecisions: 1523,
       hybridCastBroadcasts: 35,
-      rockinBoogieListeners: 49850,
+      rockinBoogieListeners: 0,
       avgEngagement: 88,
       systemUptime: 99.96,
     },
@@ -58,7 +62,7 @@ export default function AnalyticsReportingDashboard() {
       period: 'Fri',
       qumusDecisions: 1678,
       hybridCastBroadcasts: 52,
-      rockinBoogieListeners: 61200,
+      rockinBoogieListeners: 0,
       avgEngagement: 93,
       systemUptime: 99.98,
     },

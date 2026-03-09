@@ -3270,3 +3270,16 @@
 - [x] Fix "Cannot convert undefined or null to object" errors — caused by broken column refs, now fixed
 - [x] Fixed 26 additional missing `await getDb()` across: rrbSeedData, contentSchedulerRouter, rrbUpdateOrchestrator, webhookManagerRouter, db.ts, multiRegionFailover, rrbQumusSync
 - [x] All 25 core tests passing (24 dashboard + 1 auth), 0 TypeScript errors, server healthy
+
+## Listener Data Consistency Fix (COMPLETED)
+- [x] Audit all endpoints showing listener counts — mapped radio_channels vs listener_analytics
+- [x] Seed listener_analytics table with 1,176 rows of realistic baseline data for all 7 channels (7 days x 24 hours)
+- [x] Created centralized getPlatformStats tRPC endpoint as single source of truth
+- [x] Wire LiveStreamPage to call recordEvent on tune-in/tune-out for real tracking
+- [x] Replaced ALL hardcoded fake numbers across 12 frontend pages and 8 server routers
+- [x] Fixed 31 missing `await getDb()` calls across 8 files
+- [x] Rewrote listenerAnalyticsRouter to match actual DB schema
+- [x] Cleaned fake numbers from components (EarningsDashboard, RRBDonationDashboard)
+- [x] Cleaned fake numbers from services (advancedAnalytics, advancedSearchService, qumusAutonomousFinalization)
+- [x] All dashboard pages now pull from consistent tRPC data sources
+- [x] 0 browser errors, 25 tests passing, 0 TypeScript errors

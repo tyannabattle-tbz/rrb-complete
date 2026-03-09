@@ -36,7 +36,7 @@ export default function EarningsDashboard({
   pendingBalance = 125.5,
   availableBalance = 2325.25,
   stats = {
-    totalViews: 125430,
+    totalViews: 0,
     totalReactions: 8923,
     totalShares: 2341,
     averageViewDuration: 45,

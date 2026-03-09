@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Radio, Music, Heart, Gamepad2, Zap, Shield, Headphones, Mic, BarChart3, Settings, Play, Pause, Volume2, Users, TrendingUp } from 'lucide-react';
+import { Radio, Music, Heart, Gamepad2, Zap, Shield, Headphones, Mic, BarChart3, Settings, Play, Pause, Volume2, Users, TrendingUp, Loader2 } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,34 +12,27 @@ export default function RRBEcosystemDashboard() {
   const [activeChannel, setActiveChannel] = useState(1);
   const [isPlaying, setIsPlaying] = useState(true);
   const [volume, setVolume] = useState(70);
-  const [listenerCount, setListenerCount] = useState(45230);
 
-  // Simulate real-time listener updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setListenerCount(prev => prev + Math.floor(Math.random() * 100 - 50));
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  // Pull real data from DB via tRPC
+  const { data: platformStats } = trpc.ecosystemIntegration.getPlatformStats.useQuery(undefined, { refetchInterval: 30000 });
 
-  const channels = [
-    { id: 1, name: 'Main Stream', frequency: '432 Hz', listeners: 12450, status: 'live' },
-    { id: 2, name: 'Meditation', frequency: '528 Hz', listeners: 8320, status: 'live' },
-    { id: 3, name: 'Healing', frequency: '396 Hz', listeners: 6890, status: 'live' },
-    { id: 4, name: 'Legacy Stories', frequency: '741 Hz', listeners: 5670, status: 'live' },
-    { id: 5, name: 'Community', frequency: '639 Hz', listeners: 4230, status: 'live' },
-    { id: 6, name: 'Podcasts', frequency: '852 Hz', listeners: 3450, status: 'live' },
-    { id: 7, name: 'Music Archive', frequency: '174 Hz', listeners: 2890, status: 'live' },
-    { id: 8, name: 'Emergency Broadcast', frequency: '285 Hz', listeners: 1230, status: 'standby' },
-  ];
+  const listenerCount = platformStats?.activeListeners ?? 0;
+
+  const channels = (platformStats?.channels ?? []).map((ch: any) => ({
+    id: ch.id,
+    name: ch.name,
+    frequency: `${ch.frequency} Hz`,
+    listeners: ch.currentListeners,
+    status: ch.status === 'active' ? 'live' : 'standby',
+  }));
 
   const ecosystemSystems = [
     {
       icon: Radio,
-      title: '41-Channel Radio',
+      title: `${platformStats?.totalChannels ?? 7}-Channel Radio`,
       description: '24/7 broadcasting with Solfeggio frequencies',
       status: 'active',
-      metrics: '45K+ listeners',
+      metrics: `${listenerCount.toLocaleString()} listeners`,
       color: 'from-pink-600 to-orange-600',
     },
     {
@@ -54,7 +48,7 @@ export default function RRBEcosystemDashboard() {
       title: 'Solbones Game',
       description: 'Sacred math dice game with frequencies',
       status: 'active',
-      metrics: '1,200 players',
+      metrics: '0 players',
       color: 'from-blue-600 to-cyan-600',
     },
     {
@@ -62,7 +56,7 @@ export default function RRBEcosystemDashboard() {
       title: 'Sweet Miracles',
       description: 'Nonprofit donations & community support',
       status: 'active',
-      metrics: '$125K raised',
+      metrics: '$0 raised',
       color: 'from-red-600 to-pink-600',
     },
     {
@@ -78,7 +72,7 @@ export default function RRBEcosystemDashboard() {
       title: 'Meditation Hub',
       description: 'Healing frequencies & guided sessions',
       status: 'active',
-      metrics: '8K+ sessions',
+      metrics: '0 sessions',
       color: 'from-green-600 to-teal-600',
     },
     {
@@ -86,7 +80,7 @@ export default function RRBEcosystemDashboard() {
       title: 'Podcast Network',
       description: 'YouTube integration & archive',
       status: 'active',
-      metrics: '240 episodes',
+      metrics: '0 episodes',
       color: 'from-indigo-600 to-purple-600',
     },
     {
@@ -94,7 +88,7 @@ export default function RRBEcosystemDashboard() {
       title: 'Studio Suite',
       description: 'Production & content creation',
       status: 'active',
-      metrics: '15 studios',
+      metrics: '0 studios',
       color: 'from-orange-600 to-red-600',
     },
   ];
@@ -360,7 +354,7 @@ export default function RRBEcosystemDashboard() {
                           <div className="flex-1 bg-slate-700 rounded-full h-2">
                             <div
                               className="bg-gradient-to-r from-pink-600 to-orange-600 h-2 rounded-full"
-                              style={{ width: `${(ch.listeners / 12450) * 100}%` }}
+                              style={{ width: `${channels.length > 0 ? (ch.listeners / Math.max(...channels.map((c: any) => c.listeners), 1)) * 100 : 0}%` }}
                             ></div>
                           </div>
                           <div className="text-sm text-pink-300 w-20 text-right">{ch.listeners.toLocaleString()}</div>

@@ -74,6 +74,58 @@ export default function LiveStreamPage() {
     refetchInterval: 30000, // Refresh every 30s for live listener counts
   });
 
+  // Record listener events to DB
+  const recordEvent = trpc.listenerAnalytics.recordEvent.useMutation();
+  const sessionStartRef = useRef<number>(0);
+
+  // Detect device type
+  const deviceType = useMemo(() => {
+    if (typeof navigator === 'undefined') return 'desktop' as const;
+    const ua = navigator.userAgent;
+    if (/tablet|ipad/i.test(ua)) return 'tablet' as const;
+    if (/mobile|android|iphone/i.test(ua)) return 'mobile' as const;
+    return 'desktop' as const;
+  }, []);
+
+  // Record tune-in event
+  const recordTuneIn = useCallback((channel: any) => {
+    if (!channel) return;
+    sessionStartRef.current = Date.now();
+    recordEvent.mutate({
+      channelId: channel.id,
+      channelName: channel.name,
+      listenerCount: 1,
+      deviceType,
+    });
+  }, [recordEvent, deviceType]);
+
+  // Record tune-out event with session duration
+  const recordTuneOut = useCallback((channel: any) => {
+    if (!channel || !sessionStartRef.current) return;
+    const duration = Math.round((Date.now() - sessionStartRef.current) / 1000);
+    if (duration > 5) { // Only record if listened for more than 5 seconds
+      recordEvent.mutate({
+        channelId: channel.id,
+        channelName: channel.name,
+        listenerCount: 1,
+        sessionDurationSeconds: duration,
+        deviceType,
+      });
+    }
+    sessionStartRef.current = 0;
+  }, [recordEvent, deviceType]);
+
+  // Record on page unload
+  useEffect(() => {
+    const handleUnload = () => {
+      if (isPlaying && activeChannel) {
+        recordTuneOut(activeChannel);
+      }
+    };
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
+  }, [isPlaying, activeChannel, recordTuneOut]);
+
   // Set initial active channel when data loads
   useEffect(() => {
     if (channels && channels.length > 0 && activeChannelId === null) {
@@ -147,11 +199,13 @@ export default function LiveStreamPage() {
       if (isPlaying) {
         audioRef.current.pause();
         setIsPlaying(false);
+        recordTuneOut(activeChannel);
       } else {
         setAudioError(null);
         audioRef.current.src = activeChannel.streamUrl;
         audioRef.current.play().then(() => {
           setIsPlaying(true);
+          recordTuneIn(activeChannel);
         }).catch(() => {
           setAudioError('Unable to connect to stream. Please try again.');
           setIsPlaying(false);

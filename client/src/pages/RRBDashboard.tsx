@@ -10,6 +10,7 @@
  */
 
 import { useState } from "react";
+import { trpc } from '@/lib/trpc';
 import {
   FuturisticHeader,
   FuturisticGrid,
@@ -37,14 +38,16 @@ import {
 export default function RRBDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Mock data - will be replaced with tRPC queries
+  // Real data from DB via tRPC
+  const { data: platformStats } = trpc.ecosystemIntegration.getPlatformStats.useQuery(undefined, { refetchInterval: 30000 });
+
   const stats = {
-    activeListeners: 2847,
-    totalDonations: 15420,
-    broadcastsScheduled: 12,
-    averageEngagement: 87.5,
-    totalReach: 125000,
-    impactScore: 94,
+    activeListeners: platformStats?.activeListeners ?? 0,
+    totalDonations: 0,
+    broadcastsScheduled: 0,
+    averageEngagement: 0,
+    totalReach: platformStats?.totalListenersAllTime ?? 0,
+    impactScore: 0,
   };
 
   const recentBroadcasts = [

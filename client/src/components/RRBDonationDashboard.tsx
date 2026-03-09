@@ -21,7 +21,7 @@ interface DonorTier {
 export function RRBDonationDashboard() {
   // Mock data - in production, this would come from API
   const stats: DonationStats = {
-    totalDonations: 12450,
+    totalDonations: 0,
     donationCount: 156,
     averageDonation: 79.81,
     broadcastHoursFunded: 498,

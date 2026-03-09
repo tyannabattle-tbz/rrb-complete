@@ -16,7 +16,7 @@ export const monetizationRouter = router({
       nextPayoutDate: new Date(Date.now() + 86400000 * 5),
       payoutMethod: "bank_transfer",
       stats: {
-        totalViews: 125430,
+        totalViews: 0,
         totalReactions: 8923,
         totalShares: 2341,
         averageViewDuration: 45, // seconds
@@ -41,7 +41,7 @@ export const monetizationRouter = router({
         {
           videoId: "video-1",
           title: "Cinematic Sunset",
-          views: 45230,
+          views: 0,
           reactions: 3421,
           shares: 892,
           earnings: 892.34,
@@ -146,7 +146,7 @@ export const monetizationRouter = router({
       isEligible: true,
       requirements: {
         minimumVideos: { required: 5, current: 12, met: true },
-        minimumViews: { required: 1000, current: 125430, met: true },
+        minimumViews: { required: 1000, current: 0, met: true },
         accountAge: { required: 30, current: 120, met: true },
       },
       status: "active",

@@ -140,7 +140,7 @@ class AdvancedAnalyticsService {
 
     try {
       // Placeholder implementation
-      const totalEngagements = 12450;
+      const totalEngagements = 0;
       const views = 45000;
 
       return {
@@ -167,7 +167,7 @@ class AdvancedAnalyticsService {
     console.log('[Analytics] Calculating revenue metrics...');
 
     try {
-      const totalRevenue = 125000;
+      const totalRevenue = 0;
       const activeUsers = 3850;
 
       return {
@@ -187,7 +187,7 @@ class AdvancedAnalyticsService {
         monthlyRevenueTrend: [
           { month: 'January', revenue: 95000 },
           { month: 'February', revenue: 105000 },
-          { month: 'March', revenue: 125000 },
+          { month: 'March', revenue: 0 },
         ],
       };
     } catch (error) {

@@ -10514,7 +10514,7 @@ var studioStreamingRouter = router({
           time: "14:00",
           type: "music",
           duration: "2h",
-          listeners: 1250,
+          listeners: 0,
           status: "live"
         },
         {
@@ -12801,7 +12801,7 @@ var seedDataRouter = router({
         frequency: "101.5 FM",
         genre: "Pop/Rock",
         status: "active",
-        currentListeners: 12450,
+        currentListeners: 0,
         totalListeners: 45e3,
         streamUrl: "https://stream.rockinboogie.com/morning-drive"
       },
@@ -12811,7 +12811,7 @@ var seedDataRouter = router({
         frequency: "102.3 FM",
         genre: "News/Talk",
         status: "active",
-        currentListeners: 8320,
+        currentListeners: 0,
         totalListeners: 28e3,
         streamUrl: "https://stream.rockinboogie.com/tech-talk"
       },
@@ -12821,7 +12821,7 @@ var seedDataRouter = router({
         frequency: "103.1 FM",
         genre: "Jazz",
         status: "active",
-        currentListeners: 5430,
+        currentListeners: 0,
         totalListeners: 12920,
         streamUrl: "https://stream.rockinboogie.com/jazz"
       }
@@ -12852,7 +12852,7 @@ var seedDataRouter = router({
           severity: "medium",
           broadcastChannelIds: JSON.stringify([channelIds[0]]),
           status: "completed",
-          recipients: 12450,
+          recipients: 0,
           deliveryRate: "98.5",
           scheduledFor: new Date(Date.now() - 18e5)
         },
@@ -12910,7 +12910,7 @@ var seedDataRouter = router({
           title: "Morning Drive Show",
           type: "radio",
           duration: "3h",
-          listeners: 12450,
+          listeners: 0,
           rating: "4.6",
           status: "active",
           schedule: "Daily 6AM-9AM",
@@ -12925,7 +12925,7 @@ var seedDataRouter = router({
           title: "Tech Talk Daily",
           type: "podcast",
           duration: "1h",
-          listeners: 8320,
+          listeners: 0,
           rating: "4.7",
           status: "active",
           schedule: "Daily 2PM",
@@ -20401,6 +20401,120 @@ function generateSuggestions(message) {
 // server/routers/qumusCommandRouter.ts
 import { z as z55 } from "zod";
 import { randomUUID as randomUUID2 } from "crypto";
+
+// server/_core/realtimeStats.ts
+init_db();
+import { sql as sql13 } from "drizzle-orm";
+function extractRows(result2) {
+  if (Array.isArray(result2) && Array.isArray(result2[0])) {
+    return result2[0];
+  }
+  return Array.isArray(result2) ? result2 : [];
+}
+async function getPlatformStats() {
+  const db2 = await getDb();
+  const now = Date.now();
+  const oneHourAgo = now - 36e5;
+  const oneDayAgo = now - 864e5;
+  const channelRows = extractRows(
+    await db2.execute(
+      sql13`SELECT id, name, genre, frequency, currentListeners, totalListeners, status, streamUrl 
+          FROM radio_channels WHERE status = 'active' ORDER BY currentListeners DESC`
+    )
+  );
+  const channels = channelRows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    genre: r.genre || "General",
+    frequency: r.frequency || 432,
+    currentListeners: Number(r.currentListeners) || 0,
+    totalListeners: Number(r.totalListeners) || 0,
+    status: r.status,
+    streamUrl: r.streamUrl || null
+  }));
+  const activeListeners = channels.reduce((sum2, ch) => sum2 + ch.currentListeners, 0);
+  const totalListenersAllTime = channels.reduce((sum2, ch) => sum2 + ch.totalListeners, 0);
+  const activeChannels = channels.filter((ch) => ch.status === "active").length;
+  const hourlyRows = extractRows(
+    await db2.execute(
+      sql13`SELECT COUNT(*) as cnt FROM listener_analytics WHERE created_at >= ${oneHourAgo}`
+    )
+  );
+  const hourlyEvents = Number(hourlyRows[0]?.cnt) || 0;
+  const dailyRows = extractRows(
+    await db2.execute(
+      sql13`SELECT COUNT(*) as cnt FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
+    )
+  );
+  const dailyEvents = Number(dailyRows[0]?.cnt) || 0;
+  const sessionRows = extractRows(
+    await db2.execute(
+      sql13`SELECT COALESCE(SUM(listener_count), 0) as total FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
+    )
+  );
+  const uniqueSessions = Number(sessionRows[0]?.total) || 0;
+  const peakRows = extractRows(
+    await db2.execute(
+      sql13`SELECT COALESCE(MAX(peak_listeners), 0) as peak FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
+    )
+  );
+  const peakListenersToday = Number(peakRows[0]?.peak) || 0;
+  const avgRows = extractRows(
+    await db2.execute(
+      sql13`SELECT COALESCE(AVG(session_duration_seconds), 0) as avg_dur FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
+    )
+  );
+  const avgSessionDurationSeconds = Math.round(Number(avgRows[0]?.avg_dur) || 0);
+  const topChannelRows = extractRows(
+    await db2.execute(
+      sql13`SELECT channel_id as channelId, channel_name as channelName, SUM(listener_count) as listeners 
+          FROM listener_analytics WHERE created_at >= ${oneDayAgo} 
+          GROUP BY channel_id, channel_name ORDER BY listeners DESC LIMIT 7`
+    )
+  );
+  const topChannels = topChannelRows.map((r) => ({
+    channelId: Number(r.channelId),
+    channelName: r.channelName,
+    listeners: Number(r.listeners) || 0
+  }));
+  const deviceRows = extractRows(
+    await db2.execute(
+      sql13`SELECT device_type as device, COUNT(*) as cnt FROM listener_analytics 
+          WHERE created_at >= ${oneDayAgo} GROUP BY device_type ORDER BY cnt DESC`
+    )
+  );
+  const deviceBreakdown = deviceRows.map((r) => ({
+    device: r.device || "unknown",
+    count: Number(r.cnt) || 0
+  }));
+  const regionRows = extractRows(
+    await db2.execute(
+      sql13`SELECT geo_region as region, COUNT(*) as cnt FROM listener_analytics 
+          WHERE created_at >= ${oneDayAgo} GROUP BY geo_region ORDER BY cnt DESC`
+    )
+  );
+  const regionBreakdown = regionRows.map((r) => ({
+    region: r.region || "Unknown",
+    count: Number(r.cnt) || 0
+  }));
+  return {
+    activeListeners,
+    totalListenersAllTime,
+    activeChannels,
+    totalChannels: channels.length,
+    peakListenersToday,
+    avgSessionDurationSeconds,
+    hourlyEvents,
+    dailyEvents,
+    uniqueSessions,
+    topChannels,
+    deviceBreakdown,
+    regionBreakdown,
+    channels
+  };
+}
+
+// server/routers/qumusCommandRouter.ts
 var uuid = () => randomUUID2();
 var decisions2 = [];
 var qumusCommandRouter = router({
@@ -20475,15 +20589,16 @@ var qumusCommandRouter = router({
   }),
   // Get system status
   getSystemStatus: protectedProcedure.query(async () => {
+    const stats = await getPlatformStats();
     return {
       hybridcast: {
         status: "online",
-        listeners: 1250,
+        listeners: stats.activeListeners,
         uptime: "99.8%"
       },
       rockinboogie: {
         status: "online",
-        activeStreams: 8,
+        activeStreams: stats.activeChannels,
         uptime: "99.9%"
       },
       sweetmiracles: {
@@ -20559,7 +20674,7 @@ async function executeSubsystemCommand(subsystem, command, parameters) {
       "broadcast emergency alert": {
         success: true,
         message: "Emergency alert broadcast to all listeners",
-        data: { broadcastId: uuid(), listeners: 1250 }
+        data: { broadcastId: uuid(), listeners: 0 }
       },
       "send weather update": {
         success: true,
@@ -22559,7 +22674,7 @@ import { z as z64 } from "zod";
 import axios3 from "axios";
 
 // server/_core/audioStreamingService.ts
-import { sql as sql13 } from "drizzle-orm";
+import { sql as sql14 } from "drizzle-orm";
 var _getDb = null;
 async function getDb2() {
   if (!_getDb) {
@@ -22568,7 +22683,7 @@ async function getDb2() {
   }
   return _getDb();
 }
-function extractRows(result2) {
+function extractRows2(result2) {
   if (!result2) return [];
   if (Array.isArray(result2) && result2.length >= 1 && Array.isArray(result2[0])) {
     return result2[0];
@@ -22640,9 +22755,9 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return [];
       const result2 = await db2.execute(
-        sql13`SELECT id, name, frequency, genre, status, currentListeners, totalListeners, streamUrl FROM radio_channels WHERE status = 'active' ORDER BY id`
+        sql14`SELECT id, name, frequency, genre, status, currentListeners, totalListeners, streamUrl FROM radio_channels WHERE status = 'active' ORDER BY id`
       );
-      const rows = extractRows(result2);
+      const rows = extractRows2(result2);
       return rows.map((row, index2) => ({
         streamId: `stream-${row.id || index2}`,
         channel: row.name || `Channel ${index2 + 1}`,
@@ -22666,9 +22781,9 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql13`SELECT COALESCE(SUM(currentListeners), 0) as total FROM radio_channels WHERE status = 'active'`
+        sql14`SELECT COALESCE(SUM(currentListeners), 0) as total FROM radio_channels WHERE status = 'active'`
       );
-      const rows = extractRows(result2);
+      const rows = extractRows2(result2);
       return Number(rows?.[0]?.total) || 0;
     } catch (error) {
       console.error("[Audio Streaming] Listener count query failed:", error);
@@ -22683,9 +22798,9 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql13`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'active'`
+        sql14`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'active'`
       );
-      const rows = extractRows(result2);
+      const rows = extractRows2(result2);
       return Number(rows?.[0]?.cnt) || 0;
     } catch (error) {
       return 0;
@@ -22699,9 +22814,9 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return [];
       const result2 = await db2.execute(
-        sql13`SELECT id, name, genre, frequency, streamUrl, metadata, currentListeners, totalListeners, status FROM radio_channels WHERE status = 'active' ORDER BY name`
+        sql14`SELECT id, name, genre, frequency, streamUrl, metadata, currentListeners, totalListeners, status FROM radio_channels WHERE status = 'active' ORDER BY name`
       );
-      const rows = extractRows(result2);
+      const rows = extractRows2(result2);
       return rows.map((r) => ({
         id: r.id,
         name: r.name,
@@ -22726,7 +22841,7 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return;
       await db2.execute(
-        sql13`UPDATE radio_channels SET currentListeners = currentListeners + 1, totalListeners = totalListeners + 1 WHERE id = ${channelId}`
+        sql14`UPDATE radio_channels SET currentListeners = currentListeners + 1, totalListeners = totalListeners + 1 WHERE id = ${channelId}`
       );
     } catch (error) {
       console.error("[Audio Streaming] recordListenerJoin failed:", error);
@@ -22740,7 +22855,7 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return;
       await db2.execute(
-        sql13`UPDATE radio_channels SET currentListeners = GREATEST(currentListeners - 1, 0) WHERE id = ${channelId}`
+        sql14`UPDATE radio_channels SET currentListeners = GREATEST(currentListeners - 1, 0) WHERE id = ${channelId}`
       );
     } catch (error) {
       console.error("[Audio Streaming] recordListenerLeave failed:", error);
@@ -22825,9 +22940,9 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return [];
       const result2 = await db2.execute(
-        sql13`SELECT id, title, description, start_time, end_time, status, type, autonomous_scheduling FROM broadcast_schedules ORDER BY start_time`
+        sql14`SELECT id, title, description, start_time, end_time, status, type, autonomous_scheduling FROM broadcast_schedules ORDER BY start_time`
       );
-      return extractRows(result2);
+      return extractRows2(result2);
     } catch (error) {
       return [];
     }
@@ -26309,7 +26424,7 @@ var qumusOrchestrationRouter2 = router({
 });
 
 // server/_core/stateOfStudio.ts
-import { sql as sql14 } from "drizzle-orm";
+import { sql as sql15 } from "drizzle-orm";
 var _getDb2 = null;
 async function getDb3() {
   if (!_getDb2) {
@@ -26318,7 +26433,7 @@ async function getDb3() {
   }
   return _getDb2();
 }
-function extractRows2(result2) {
+function extractRows3(result2) {
   if (!result2) return [];
   if (Array.isArray(result2) && result2.length >= 1 && Array.isArray(result2[0])) {
     return result2[0];
@@ -26352,9 +26467,9 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql14`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE result = 'success'`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE result = 'success'`
       );
-      const rows = extractRows2(result2);
+      const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
     } catch {
       return 0;
@@ -26365,9 +26480,9 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql14`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE result = 'escalated' OR autonomous_flag = 0`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE result = 'escalated' OR autonomous_flag = 0`
       );
-      const rows = extractRows2(result2);
+      const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
     } catch {
       return 0;
@@ -26378,9 +26493,9 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql14`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions`
       );
-      const rows = extractRows2(result2);
+      const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
     } catch {
       return 0;
@@ -26391,9 +26506,9 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql14`SELECT COUNT(*) as total, SUM(CASE WHEN result = 'success' THEN 1 ELSE 0 END) as successful FROM qumus_autonomous_actions`
+        sql15`SELECT COUNT(*) as total, SUM(CASE WHEN result = 'success' THEN 1 ELSE 0 END) as successful FROM qumus_autonomous_actions`
       );
-      const rows = extractRows2(result2);
+      const rows = extractRows3(result2);
       const total = Number(rows?.[0]?.total) || 0;
       const successful = Number(rows?.[0]?.successful) || 0;
       if (total === 0) return 0;
@@ -26407,9 +26522,9 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql14`SELECT COUNT(*) as cnt FROM qumus_core_policies WHERE enabled = 1`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_core_policies WHERE enabled = 1`
       );
-      const rows = extractRows2(result2);
+      const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
     } catch {
       return 0;
@@ -26420,9 +26535,9 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return [];
       const result2 = await db2.execute(
-        sql14`SELECT policy_id, name, policy_type, autonomy_level, enabled FROM qumus_core_policies WHERE enabled = 1`
+        sql15`SELECT policy_id, name, policy_type, autonomy_level, enabled FROM qumus_core_policies WHERE enabled = 1`
       );
-      return extractRows2(result2);
+      return extractRows3(result2);
     } catch {
       return [];
     }
@@ -26432,9 +26547,9 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql14`SELECT COUNT(*) as cnt FROM ecosystem_commands`
+        sql15`SELECT COUNT(*) as cnt FROM ecosystem_commands`
       );
-      const rows = extractRows2(result2);
+      const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
     } catch {
       return 0;
@@ -26445,9 +26560,9 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql14`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE status = 'pending' OR status = 'processing'`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE status = 'pending' OR status = 'processing'`
       );
-      const rows = extractRows2(result2);
+      const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
     } catch {
       return 0;
@@ -26458,9 +26573,9 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return { total: 0, avgSuccessRate: 0 };
       const result2 = await db2.execute(
-        sql14`SELECT COUNT(*) as total, AVG(successRate) as avgRate FROM policy_decisions`
+        sql15`SELECT COUNT(*) as total, AVG(successRate) as avgRate FROM policy_decisions`
       );
-      const rows = extractRows2(result2);
+      const rows = extractRows3(result2);
       return {
         total: Number(rows?.[0]?.total) || 0,
         avgSuccessRate: Math.round(parseFloat(rows?.[0]?.avgRate || "0") * 100) / 100
@@ -26474,12 +26589,12 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return { autonomous: 0, human: 0 };
       const result2 = await db2.execute(
-        sql14`SELECT COUNT(*) as total,
+        sql15`SELECT COUNT(*) as total,
           SUM(CASE WHEN autonomous_flag = 1 THEN 1 ELSE 0 END) as autonomous,
           SUM(CASE WHEN autonomous_flag = 0 THEN 1 ELSE 0 END) as human
         FROM qumus_autonomous_actions`
       );
-      const rows = extractRows2(result2);
+      const rows = extractRows3(result2);
       const total = Number(rows?.[0]?.total) || 0;
       if (total === 0) return { autonomous: 0, human: 0 };
       return {
@@ -26496,7 +26611,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return;
       await db2.execute(
-        sql14`INSERT INTO qumus_autonomous_actions (decision_id, action_type, policy_id, input, output, status, result, autonomous_flag, confidence, execution_time, timestamp) 
+        sql15`INSERT INTO qumus_autonomous_actions (decision_id, action_type, policy_id, input, output, status, result, autonomous_flag, confidence, execution_time, timestamp) 
         VALUES (CONCAT('dec_', UNIX_TIMESTAMP()), 'system_decision', 'policy_performance_alert', '{}', '{"result":"auto_executed"}', 'completed', 'success', 1, 95.00, 150, NOW())`
       );
     } catch (error) {
@@ -26508,7 +26623,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return;
       await db2.execute(
-        sql14`INSERT INTO qumus_autonomous_actions (decision_id, action_type, policy_id, input, output, status, result, autonomous_flag, confidence, execution_time, timestamp) 
+        sql15`INSERT INTO qumus_autonomous_actions (decision_id, action_type, policy_id, input, output, status, result, autonomous_flag, confidence, execution_time, timestamp) 
         VALUES (CONCAT('dec_', UNIX_TIMESTAMP()), 'human_override', 'policy_content_moderation', '{}', '{"result":"escalated"}', 'escalated', 'escalated', 0, 45.00, 0, NOW())`
       );
     } catch (error) {
@@ -26624,7 +26739,7 @@ async function getDb4() {
   }
   return _getDb3();
 }
-function extractRows3(result2) {
+function extractRows4(result2) {
   if (!result2) return [];
   if (Array.isArray(result2) && result2.length >= 1 && Array.isArray(result2[0])) {
     return result2[0];
@@ -26656,10 +26771,10 @@ var EcosystemIntegration = class {
         db2.execute("SELECT COUNT(*) as total FROM qumus_core_policies WHERE enabled = 1"),
         db2.execute("SELECT COUNT(*) as total FROM donations")
       ]);
-      const actionRows = extractRows3(actionResult);
-      const channelRows = extractRows3(channelResult);
-      const policyRows = extractRows3(policyResult);
-      const projectRows = extractRows3(projectResult);
+      const actionRows = extractRows4(actionResult);
+      const channelRows = extractRows4(channelResult);
+      const policyRows = extractRows4(policyResult);
+      const projectRows = extractRows4(projectResult);
       const totalActions = Number(actionRows?.[0]?.total || 0);
       const totalChannels = Number(channelRows?.[0]?.total || 0);
       const totalListeners = Number(channelRows?.[0]?.listeners || 0);
@@ -26668,7 +26783,7 @@ var EcosystemIntegration = class {
       const recentResult = await db2.execute(
         "SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)"
       );
-      const recentRows = extractRows3(recentResult);
+      const recentRows = extractRows4(recentResult);
       const recentCount = Number(recentRows?.[0]?.cnt || 0);
       const decisionsPerMinute = Math.round(recentCount / 60 * 100) / 100;
       return {
@@ -26815,7 +26930,7 @@ var EcosystemIntegration = class {
           SUM(CASE WHEN autonomous_flag = 0 THEN 1 ELSE 0 END) as human
         FROM qumus_autonomous_actions`
       );
-      const rows = extractRows3(result2);
+      const rows = extractRows4(result2);
       const row = rows?.[0];
       const total = Number(row?.total || 0);
       if (total === 0) return { autonomous: 90, human: 10 };
@@ -27007,6 +27122,12 @@ var dailyStatusReportService = new DailyStatusReportService();
 // server/routers/ecosystemIntegrationRouter.ts
 import { z as z73 } from "zod";
 var ecosystemIntegrationRouter = router({
+  /**
+   * Get centralized platform stats — single source of truth for all listener/channel metrics
+   */
+  getPlatformStats: publicProcedure.query(async () => {
+    return getPlatformStats();
+  }),
   /**
    * Get current ecosystem integration status
    */
@@ -27685,7 +27806,7 @@ var qumusAutonomousFinalizationRouter = router({
       operationalMetrics: {
         broadcastViewers: 1250,
         contentRecommendations: 847,
-        fundraisingTotal: 125e3,
+        fundraisingTotal: 0,
         droneDeliveries: 342,
         mapIncidents: 12
       },
@@ -34539,7 +34660,7 @@ var AdvancedAnalyticsService = class {
   async getEngagementMetrics() {
     console.log("[Analytics] Calculating engagement metrics...");
     try {
-      const totalEngagements = 12450;
+      const totalEngagements = 0;
       const views = 45e3;
       return {
         totalEngagements,
@@ -34566,7 +34687,7 @@ var AdvancedAnalyticsService = class {
   async getRevenueMetrics() {
     console.log("[Analytics] Calculating revenue metrics...");
     try {
-      const totalRevenue = 125e3;
+      const totalRevenue = 0;
       const activeUsers = 3850;
       return {
         totalRevenue,
@@ -34586,7 +34707,7 @@ var AdvancedAnalyticsService = class {
         monthlyRevenueTrend: [
           { month: "January", revenue: 95e3 },
           { month: "February", revenue: 105e3 },
-          { month: "March", revenue: 125e3 }
+          { month: "March", revenue: 0 }
         ]
       };
     } catch (error) {

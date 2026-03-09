@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'wouter';
+import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -24,16 +25,20 @@ interface Campaign {
 }
 
 export default function GrowthCampaigns() {
+  // Real data from DB
+  const { data: platformStats } = trpc.ecosystemIntegration.getPlatformStats.useQuery(undefined, { refetchInterval: 30000 });
+  const totalListeners = platformStats?.totalListenersAllTime ?? 0;
+
   const [campaigns, setCampaigns] = useState<Campaign[]>([
     {
       id: 'campaign-1',
       name: 'Spring Listener Growth',
-      description: 'Target 5000 new listeners in Q1',
+      description: 'Grow RRB Radio listener base',
       type: 'listener_acquisition',
       status: 'active',
-      target_listeners: 5000,
-      current_listeners: 2847,
-      progress: 57,
+      target_listeners: Math.max(totalListeners * 2, 100),
+      current_listeners: totalListeners,
+      progress: Math.min(99, Math.round((totalListeners / Math.max(totalListeners * 2, 100)) * 100)),
       start_date: Date.now() - 30 * 24 * 60 * 60 * 1000,
       end_date: Date.now() + 30 * 24 * 60 * 60 * 1000,
     },
@@ -43,9 +48,9 @@ export default function GrowthCampaigns() {
       description: 'Keep existing listeners engaged',
       type: 'retention',
       status: 'active',
-      target_listeners: 2500,
-      current_listeners: 2340,
-      progress: 94,
+      target_listeners: Math.max(totalListeners, 50),
+      current_listeners: platformStats?.activeListeners ?? 0,
+      progress: 0,
       start_date: Date.now() - 60 * 24 * 60 * 60 * 1000,
       end_date: Date.now() + 15 * 24 * 60 * 60 * 1000,
     },

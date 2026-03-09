@@ -11,7 +11,7 @@ export function AdminAnalyticsDashboard() {
 
   // Mock data for analytics
   const analyticsData = {
-    totalTokensUsed: 1250000,
+    totalTokensUsed: 0,
     totalSessions: 342,
     activeUsers: 87,
     totalCost: 2450.50,

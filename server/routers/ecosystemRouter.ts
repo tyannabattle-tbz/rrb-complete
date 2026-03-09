@@ -1,6 +1,7 @@
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { getPlatformStats } from "../_core/realtimeStats";
 
 /**
  * ECOSYSTEM ROUTER - Comprehensive feature management
@@ -38,16 +39,18 @@ export const ecosystemRouter = router({
 
     // Get all campaigns
     list: publicProcedure.query(async () => {
+      const stats = await getPlatformStats();
+      const totalListeners = stats.totalListenersAllTime;
       return [
         {
           id: "campaign-1",
           name: "Spring Listener Growth",
-          description: "Target 5000 new listeners in Q1",
+          description: `Grow RRB Radio listener base`,
           type: "listener_acquisition",
           status: "active",
-          target_listeners: 5000,
-          current_listeners: 2847,
-          progress: 57,
+          target_listeners: Math.max(totalListeners * 2, 100),
+          current_listeners: totalListeners,
+          progress: Math.min(99, Math.round((totalListeners / Math.max(totalListeners * 2, 100)) * 100)),
           start_date: Date.now() - 30 * 24 * 60 * 60 * 1000,
           end_date: Date.now() + 30 * 24 * 60 * 60 * 1000,
         },
@@ -450,7 +453,7 @@ export const ecosystemRouter = router({
       return {
         campaigns: {
           active: 3,
-          total_reach: 12500,
+          total_reach: 0,
           engagement_rate: 68.5,
         },
         community: {

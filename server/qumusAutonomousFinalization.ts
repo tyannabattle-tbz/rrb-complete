@@ -278,7 +278,7 @@ export const qumusAutonomousFinalizationRouter = router({
       operationalMetrics: {
         broadcastViewers: 1250,
         contentRecommendations: 847,
-        fundraisingTotal: 125000,
+        fundraisingTotal: 0,
         droneDeliveries: 342,
         mapIncidents: 12,
       },

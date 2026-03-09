@@ -71,7 +71,7 @@ export const studioStreamingRouter = router({
             time: "14:00",
             type: "music",
             duration: "2h",
-            listeners: 1250,
+            listeners: 0,
             status: "live",
           },
           {

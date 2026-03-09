@@ -1,6 +1,7 @@
 import { router, protectedProcedure } from '../_core/trpc';
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
+import { getPlatformStats } from '../_core/realtimeStats';
 
 const uuid = () => randomUUID();
 
@@ -115,15 +116,16 @@ export const qumusCommandRouter = router({
 
   // Get system status
   getSystemStatus: protectedProcedure.query(async () => {
+    const stats = await getPlatformStats();
     return {
       hybridcast: {
         status: 'online',
-        listeners: 1250,
+        listeners: stats.activeListeners,
         uptime: '99.8%',
       },
       rockinboogie: {
         status: 'online',
-        activeStreams: 8,
+        activeStreams: stats.activeChannels,
         uptime: '99.9%',
       },
       sweetmiracles: {
@@ -220,7 +222,7 @@ async function executeSubsystemCommand(
       'broadcast emergency alert': {
         success: true,
         message: 'Emergency alert broadcast to all listeners',
-        data: { broadcastId: uuid(), listeners: 1250 },
+        data: { broadcastId: uuid(), listeners: 0 },
       },
       'send weather update': {
         success: true,
