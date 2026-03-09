@@ -3374,3 +3374,24 @@
 - [x] Update 3 social media posts (Twitter launch, Twitter launch day, Instagram main) with tagline
 - [x] Campaign video features UN-style world map with golden bridge from Africa to Americas
 - [x] A Voice for the Voiceless + SQUADD Goals + Ghana partnership = the bridge
+
+## Campaign Video Voiceover (COMPLETED)
+- [x] Generate Valanna voiceover (warm, soulful gospel tone) for opening and bridge message
+- [x] Generate Candy voiceover (bold, energetic) for SQUADD Goals and finale call to action
+- [x] Concatenate Valanna + Candy voiceovers with pause, overlay onto campaign video
+- [x] Upload narrated video to CDN
+- [x] Update Social Media Kit with narrated (primary) and instrumental (secondary) video versions
+
+## Social Media Post Scheduling via QUMUS (COMPLETED)
+- [x] Create social_media_posts database table with platform, content, scheduledAt, status, campaign fields
+- [x] Seed 12 posts: 7 Twitter, 3 Instagram, 2 Discord across March 10-18 campaign window
+- [x] Create tRPC endpoints: getSocialMediaPosts, getSocialMediaStats, updateSocialMediaPostStatus
+- [x] Add ScheduledPostsDashboard component to Social Media Kit page with stats and post timeline
+- [x] All posts tagged to 'selma-to-un-csw70' campaign, QUMUS managed
+
+## Live Radio Stream Proxy Testing (COMPLETED)
+- [x] Verified /api/stream-proxy endpoint returns 200 with Content-Type: audio/mpeg
+- [x] Tested 3 different Zeno.fm HTTP streams — all proxied successfully
+- [x] Confirmed HTTPS streams correctly rejected (go direct, no proxy needed)
+- [x] Confirmed missing URL returns proper 400 error
+- [x] Deployed domain needs new publish to include proxy endpoint (dev server verified)

@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Share2, Download, Copy, Calendar, Twitter, Instagram, MessageCircle, Globe, Radio, Megaphone } from 'lucide-react';
+import { Share2, Download, Copy, Calendar, Twitter, Instagram, MessageCircle, Globe, Radio, Megaphone, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const CAMPAIGN_GRAPHICS = [
   {
@@ -243,6 +244,136 @@ const POSTING_SCHEDULE = [
   { date: 'March 17 Eve', platform: 'Instagram', action: 'Day 1 recap story + listener stats', type: 'Story' },
   { date: 'March 18+', platform: 'All', action: 'Daily highlights, listener milestones, DJ moments', type: 'Ongoing' },
 ];
+
+const PLATFORM_ICONS: Record<string, React.ReactNode> = {
+  twitter: <Twitter className="h-4 w-4" />,
+  instagram: <Instagram className="h-4 w-4" />,
+  discord: <MessageCircle className="h-4 w-4" />,
+  facebook: <Globe className="h-4 w-4" />,
+  tiktok: <Radio className="h-4 w-4" />,
+  youtube: <Globe className="h-4 w-4" />,
+};
+
+const PLATFORM_COLORS: Record<string, string> = {
+  twitter: 'text-blue-400 bg-blue-500/10',
+  instagram: 'text-pink-400 bg-pink-500/10',
+  discord: 'text-indigo-400 bg-indigo-500/10',
+  facebook: 'text-blue-500 bg-blue-600/10',
+  tiktok: 'text-white bg-gray-700/50',
+  youtube: 'text-red-400 bg-red-500/10',
+};
+
+function ScheduledPostsDashboard() {
+  const { data: posts } = trpc.contentScheduler.getSocialMediaPosts.useQuery();
+  const { data: stats } = trpc.contentScheduler.getSocialMediaStats.useQuery();
+
+  const formatDate = (ts: number) => {
+    const d = new Date(ts);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+  const formatTime = (ts: number) => {
+    const d = new Date(ts);
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  };
+
+  const now = Date.now();
+  const upcoming = posts?.filter(p => p.status === 'scheduled' && p.scheduledAt > now) || [];
+  const past = posts?.filter(p => p.scheduledAt <= now || p.status === 'published') || [];
+
+  return (
+    <section>
+      <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+        <Calendar className="h-5 w-5 text-amber-400" />
+        Scheduled Posts — QUMUS Managed
+      </h2>
+      <p className="text-gray-400 mb-4">12 posts scheduled across Twitter, Instagram, and Discord for the March 10-18 campaign window. All managed by QUMUS.</p>
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <Card className="bg-gray-900/60 border-gray-700/30">
+          <CardContent className="p-3 text-center">
+            <p className="text-2xl font-bold text-amber-400">{stats?.totalPosts || 0}</p>
+            <p className="text-xs text-gray-400">Total Posts</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-gray-900/60 border-gray-700/30">
+          <CardContent className="p-3 text-center">
+            <p className="text-2xl font-bold text-blue-400">{stats?.byPlatform?.twitter || 0}</p>
+            <p className="text-xs text-gray-400">Twitter</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-gray-900/60 border-gray-700/30">
+          <CardContent className="p-3 text-center">
+            <p className="text-2xl font-bold text-pink-400">{stats?.byPlatform?.instagram || 0}</p>
+            <p className="text-xs text-gray-400">Instagram</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-gray-900/60 border-gray-700/30">
+          <CardContent className="p-3 text-center">
+            <p className="text-2xl font-bold text-indigo-400">{stats?.byPlatform?.discord || 0}</p>
+            <p className="text-xs text-gray-400">Discord</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Upcoming Posts */}
+      <div className="space-y-2 mb-4">
+        <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Upcoming ({upcoming.length})</h3>
+        {upcoming.map((post) => (
+          <Card key={post.id} className="bg-gray-900/40 border-gray-700/20">
+            <CardContent className="p-3">
+              <div className="flex items-start gap-3">
+                <div className={`p-2 rounded ${PLATFORM_COLORS[post.platform] || 'bg-gray-700/30 text-gray-400'}`}>
+                  {PLATFORM_ICONS[post.platform] || <Globe className="h-4 w-4" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge variant="outline" className="text-xs border-amber-500/30 text-amber-400">
+                      <Clock className="h-3 w-3 mr-1" />
+                      {formatDate(post.scheduledAt)} at {formatTime(post.scheduledAt)}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs border-gray-600 text-gray-400">{post.platform}</Badge>
+                    <Badge variant="outline" className="text-xs border-gray-600 text-gray-400">{post.postType}</Badge>
+                  </div>
+                  <p className="text-sm text-gray-300 line-clamp-2">{post.content}</p>
+                  {post.hashtags && <p className="text-xs text-amber-400/70 mt-1">{post.hashtags}</p>}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Past/Published Posts */}
+      {past.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Past ({past.length})</h3>
+          {past.map((post) => (
+            <Card key={post.id} className="bg-gray-900/20 border-gray-800/20 opacity-60">
+              <CardContent className="p-3">
+                <div className="flex items-start gap-3">
+                  <div className={`p-2 rounded ${PLATFORM_COLORS[post.platform] || 'bg-gray-700/30 text-gray-400'}`}>
+                    {PLATFORM_ICONS[post.platform] || <Globe className="h-4 w-4" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge variant="outline" className="text-xs border-green-500/30 text-green-400">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        {post.status === 'published' ? 'Published' : formatDate(post.scheduledAt)}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs border-gray-700 text-gray-500">{post.platform}</Badge>
+                    </div>
+                    <p className="text-sm text-gray-500 line-clamp-2">{post.content}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
 
 export default function SocialMediaKit() {
   const { toast } = useToast();
@@ -501,14 +632,55 @@ export default function SocialMediaKit() {
           </Card>
         </section>
 
+        {/* Scheduled Posts Dashboard */}
+        <ScheduledPostsDashboard />
+
         {/* Campaign Video */}
         <section>
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
             <Globe className="h-5 w-5 text-amber-400" />
             Campaign Video
           </h2>
-          <p className="text-gray-400 mb-4">Official promotional video for the UN CSW70 campaign launch. Share across all platforms.</p>
-          <Card className="bg-gray-900/80 border-amber-500/20 overflow-hidden">
+          <p className="text-gray-400 mb-4">Official promotional videos for the UN CSW70 campaign launch. Narrated by AI DJs Valanna & Candy. Share across all platforms.</p>
+          
+          {/* Narrated Version - Valanna & Candy */}
+          <Card className="bg-gray-900/80 border-amber-500/20 overflow-hidden mb-4">
+            <CardContent className="p-0">
+              <video
+                controls
+                className="w-full aspect-video"
+                poster="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/frame3-bridge-theme-v2-MD2HJ9zFDZMH44DK8wTL28.webp"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-Campaign-Narrated-Valanna-Candy_2630011e.mp4"
+              />
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="bg-amber-500/20 text-amber-400 text-xs font-bold px-2 py-0.5 rounded">NARRATED</span>
+                  <span className="text-xs text-purple-400">Voiced by Valanna & Candy</span>
+                </div>
+                <h3 className="font-bold text-amber-400 text-lg">Sweet Miracles & Rockin' Rockin' Boogie — Building the Bridge Across the World</h3>
+                <p className="text-sm text-gray-400 mt-1">32-second narrated campaign video • From Selma to the United Nations • March 17, 2026</p>
+                <div className="flex gap-2 mt-3">
+                  <Button size="sm" variant="outline" className="border-amber-500/50 text-amber-400" onClick={() => {
+                    const a = document.createElement('a');
+                    a.href = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-Campaign-Narrated-Valanna-Candy_2630011e.mp4';
+                    a.download = 'RRB-Campaign-Narrated-Valanna-Candy.mp4';
+                    a.click();
+                  }}>
+                    <Download className="h-4 w-4 mr-1" /> Download Narrated
+                  </Button>
+                  <Button size="sm" variant="outline" className="border-purple-500/50 text-purple-400" onClick={() => {
+                    navigator.clipboard.writeText('https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-Campaign-Narrated-Valanna-Candy_2630011e.mp4');
+                    toast({ title: 'Narrated video URL copied!' });
+                  }}>
+                    <Copy className="h-4 w-4 mr-1" /> Copy Link
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Instrumental Version */}
+          <Card className="bg-gray-900/60 border-gray-700/30 overflow-hidden">
             <CardContent className="p-0">
               <video
                 controls
@@ -517,20 +689,23 @@ export default function SocialMediaKit() {
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-UN-Campaign-Building-The-Bridge-Across-The-World_697e578a.mp4"
               />
               <div className="p-4">
-                <h3 className="font-bold text-amber-400 text-lg">Sweet Miracles & Rockin' Rockin' Boogie — Building the Bridge Across the World</h3>
-                <p className="text-sm text-gray-400 mt-1">32-second campaign video • From Selma to the United Nations • March 17, 2026</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="bg-gray-700/50 text-gray-300 text-xs font-bold px-2 py-0.5 rounded">INSTRUMENTAL</span>
+                </div>
+                <h3 className="font-bold text-gray-300 text-lg">Campaign Video — Instrumental Version</h3>
+                <p className="text-sm text-gray-500 mt-1">Music-only version for background playback or custom voiceover overlay</p>
                 <div className="flex gap-2 mt-3">
-                  <Button size="sm" variant="outline" className="border-amber-500/50 text-amber-400" onClick={() => {
+                  <Button size="sm" variant="outline" className="border-gray-600/50 text-gray-400" onClick={() => {
                     const a = document.createElement('a');
                     a.href = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-UN-Campaign-Building-The-Bridge-Across-The-World_697e578a.mp4';
-                    a.download = 'RRB-UN-Campaign-Building-The-Bridge-Across-The-World.mp4';
+                    a.download = 'RRB-UN-Campaign-Instrumental.mp4';
                     a.click();
                   }}>
-                    <Download className="h-4 w-4 mr-1" /> Download Video
+                    <Download className="h-4 w-4 mr-1" /> Download Instrumental
                   </Button>
-                  <Button size="sm" variant="outline" className="border-purple-500/50 text-purple-400" onClick={() => {
+                  <Button size="sm" variant="outline" className="border-gray-600/50 text-gray-400" onClick={() => {
                     navigator.clipboard.writeText('https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-UN-Campaign-Building-The-Bridge-Across-The-World_697e578a.mp4');
-                    toast({ title: 'Video URL copied!' });
+                    toast({ title: 'Instrumental video URL copied!' });
                   }}>
                     <Copy className="h-4 w-4 mr-1" /> Copy Link
                   </Button>

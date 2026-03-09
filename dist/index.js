@@ -39,7 +39,7 @@ var init_const = __esm({
 // drizzle/schema.ts
 import { mysqlTable, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index, boolean, bigint } from "drizzle-orm/mysql-core";
 import { sql } from "drizzle-orm";
-var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog, contentCalendarPosts, bulkScheduleTemplates, platformEngagementMetrics, analyticsSummary, customStations, stationTemplates, stationContentSources, stationPlaybackHistory, userStationPreferences, stationSharing, stationAnalytics, emailSubscribers, newsArticles, familyTree, documentationPages, contentSchedule, systemUpdates, teamNotifications, adInventory, listenerAnalytics, studioSessions, studioGuests, conventions, conventionSessions, conventionAttendees, studioRecordings;
+var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog, contentCalendarPosts, bulkScheduleTemplates, platformEngagementMetrics, analyticsSummary, customStations, stationTemplates, stationContentSources, stationPlaybackHistory, userStationPreferences, stationSharing, stationAnalytics, emailSubscribers, newsArticles, familyTree, documentationPages, contentSchedule, systemUpdates, teamNotifications, adInventory, listenerAnalytics, studioSessions, studioGuests, conventions, conventionSessions, conventionAttendees, studioRecordings, socialMediaPosts;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
     activityLogs = mysqlTable("activity_logs", {
@@ -2014,6 +2014,21 @@ var init_schema = __esm({
       viewCount: int("view_count").default(0),
       tags: json("tags"),
       createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    socialMediaPosts = mysqlTable("social_media_posts", {
+      id: int().autoincrement().primaryKey(),
+      platform: mysqlEnum("platform", ["twitter", "instagram", "discord", "facebook", "tiktok", "youtube"]).notNull(),
+      postType: mysqlEnum("post_type", ["text", "image", "video", "story", "reel", "announcement"]).default("text").notNull(),
+      content: text().notNull(),
+      mediaUrl: text("media_url"),
+      hashtags: text(),
+      scheduledAt: bigint("scheduled_at", { mode: "number" }).notNull(),
+      publishedAt: bigint("published_at", { mode: "number" }),
+      status: mysqlEnum("status", ["draft", "scheduled", "published", "failed", "cancelled"]).default("scheduled").notNull(),
+      campaign: varchar({ length: 255 }).default("selma-to-un-csw70"),
+      qumusManaged: boolean("qumus_managed").default(true).notNull(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
     });
   }
 });
@@ -14802,6 +14817,55 @@ var contentSchedulerRouter = router({
     } catch {
       return { totalEntries: 0, activeEntries: 0, uniqueChannels: 0, byType: {}, byChannel: {}, qumusManaged: 0, hosts: [] };
     }
+  }),
+  // ─── Social Media Scheduled Posts ─────────────────────
+  getSocialMediaPosts: publicProcedure.input(z35.object({
+    platform: z35.enum(["twitter", "instagram", "discord", "facebook", "tiktok", "youtube"]).optional(),
+    status: z35.enum(["draft", "scheduled", "published", "failed", "cancelled"]).optional(),
+    campaign: z35.string().optional()
+  }).optional()).query(async ({ input }) => {
+    try {
+      const db2 = await getDb();
+      const conditions = [];
+      if (input?.platform) conditions.push(eq11(socialMediaPosts.platform, input.platform));
+      if (input?.status) conditions.push(eq11(socialMediaPosts.status, input.status));
+      if (input?.campaign) conditions.push(eq11(socialMediaPosts.campaign, input.campaign));
+      let query2 = db2.select().from(socialMediaPosts);
+      if (conditions.length > 0) {
+        return await query2.where(and7(...conditions)).orderBy(asc2(socialMediaPosts.scheduledAt));
+      }
+      return await query2.orderBy(asc2(socialMediaPosts.scheduledAt));
+    } catch {
+      return [];
+    }
+  }),
+  getSocialMediaStats: publicProcedure.query(async () => {
+    try {
+      const db2 = await getDb();
+      const all = await db2.select().from(socialMediaPosts);
+      const byPlatform = {};
+      const byStatus = {};
+      for (const post of all) {
+        byPlatform[post.platform] = (byPlatform[post.platform] || 0) + 1;
+        byStatus[post.status] = (byStatus[post.status] || 0) + 1;
+      }
+      return {
+        totalPosts: all.length,
+        byPlatform,
+        byStatus,
+        nextScheduled: all.filter((p) => p.status === "scheduled").sort((a, b) => a.scheduledAt - b.scheduledAt)[0] || null
+      };
+    } catch {
+      return { totalPosts: 0, byPlatform: {}, byStatus: {}, nextScheduled: null };
+    }
+  }),
+  updateSocialMediaPostStatus: protectedProcedure.input(z35.object({
+    id: z35.number(),
+    status: z35.enum(["draft", "scheduled", "published", "failed", "cancelled"])
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.update(socialMediaPosts).set({ status: input.status, updatedAt: Date.now(), publishedAt: input.status === "published" ? Date.now() : void 0 }).where(eq11(socialMediaPosts.id, input.id));
+    return { success: true };
   })
 });
 

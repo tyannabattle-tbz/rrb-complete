@@ -2,7 +2,7 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { contentSchedule, adInventory } from "../../drizzle/schema";
+import { contentSchedule, adInventory, socialMediaPosts } from "../../drizzle/schema";
 import { eq, and, desc, asc, sql } from "drizzle-orm";
 
 // ─── Default 24/7 Schedule Template ─────────────────────
@@ -318,4 +318,63 @@ export const contentSchedulerRouter = router({
       return { totalEntries: 0, activeEntries: 0, uniqueChannels: 0, byType: {}, byChannel: {}, qumusManaged: 0, hosts: [] };
     }
   }),
+
+  // ─── Social Media Scheduled Posts ─────────────────────
+  getSocialMediaPosts: publicProcedure
+    .input(z.object({
+      platform: z.enum(['twitter', 'instagram', 'discord', 'facebook', 'tiktok', 'youtube']).optional(),
+      status: z.enum(['draft', 'scheduled', 'published', 'failed', 'cancelled']).optional(),
+      campaign: z.string().optional(),
+    }).optional())
+    .query(async ({ input }) => {
+      try {
+        const db = await getDb();
+        const conditions: any[] = [];
+        if (input?.platform) conditions.push(eq(socialMediaPosts.platform, input.platform));
+        if (input?.status) conditions.push(eq(socialMediaPosts.status, input.status));
+        if (input?.campaign) conditions.push(eq(socialMediaPosts.campaign, input.campaign));
+        
+        let query = db.select().from(socialMediaPosts);
+        if (conditions.length > 0) {
+          return await query.where(and(...conditions)).orderBy(asc(socialMediaPosts.scheduledAt));
+        }
+        return await query.orderBy(asc(socialMediaPosts.scheduledAt));
+      } catch {
+        return [];
+      }
+    }),
+
+  getSocialMediaStats: publicProcedure.query(async () => {
+    try {
+      const db = await getDb();
+      const all = await db.select().from(socialMediaPosts);
+      const byPlatform: Record<string, number> = {};
+      const byStatus: Record<string, number> = {};
+      for (const post of all) {
+        byPlatform[post.platform] = (byPlatform[post.platform] || 0) + 1;
+        byStatus[post.status] = (byStatus[post.status] || 0) + 1;
+      }
+      return {
+        totalPosts: all.length,
+        byPlatform,
+        byStatus,
+        nextScheduled: all.filter(p => p.status === 'scheduled').sort((a, b) => a.scheduledAt - b.scheduledAt)[0] || null,
+      };
+    } catch {
+      return { totalPosts: 0, byPlatform: {}, byStatus: {}, nextScheduled: null };
+    }
+  }),
+
+  updateSocialMediaPostStatus: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      status: z.enum(['draft', 'scheduled', 'published', 'failed', 'cancelled']),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      await db.update(socialMediaPosts)
+        .set({ status: input.status, updatedAt: Date.now(), publishedAt: input.status === 'published' ? Date.now() : undefined })
+        .where(eq(socialMediaPosts.id, input.id));
+      return { success: true };
+    }),
 });

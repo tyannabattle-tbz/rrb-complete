@@ -2172,3 +2172,20 @@ export const studioRecordings = mysqlTable("studio_recordings", {
   tags: json('tags'),
   createdAt: bigint('created_at', { mode: 'number' }).notNull(),
 });
+
+// ─── Social Media Scheduled Posts ────────────────────────────
+export const socialMediaPosts = mysqlTable("social_media_posts", {
+  id: int().autoincrement().primaryKey(),
+  platform: mysqlEnum('platform', ['twitter', 'instagram', 'discord', 'facebook', 'tiktok', 'youtube']).notNull(),
+  postType: mysqlEnum('post_type', ['text', 'image', 'video', 'story', 'reel', 'announcement']).default('text').notNull(),
+  content: text().notNull(),
+  mediaUrl: text('media_url'),
+  hashtags: text(),
+  scheduledAt: bigint('scheduled_at', { mode: 'number' }).notNull(),
+  publishedAt: bigint('published_at', { mode: 'number' }),
+  status: mysqlEnum('status', ['draft', 'scheduled', 'published', 'failed', 'cancelled']).default('scheduled').notNull(),
+  campaign: varchar({ length: 255 }).default('selma-to-un-csw70'),
+  qumusManaged: boolean('qumus_managed').default(true).notNull(),
+  createdAt: bigint('created_at', { mode: 'number' }).notNull(),
+  updatedAt: bigint('updated_at', { mode: 'number' }).notNull(),
+});
