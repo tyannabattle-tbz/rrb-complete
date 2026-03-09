@@ -184,15 +184,37 @@ class AudioStreamingService {
   /**
    * Get all channel names from database
    */
-  async getAllChannelsFromDb(): Promise<string[]> {
+  async getAllChannelsFromDb(): Promise<Array<{
+    id: number;
+    name: string;
+    genre: string;
+    frequency: string;
+    streamUrl: string | null;
+    description: string | null;
+    currentListeners: number;
+    totalListeners: number;
+    status: string;
+    metadata: string | null;
+  }>> {
     try {
       const db = await getDb();
       if (!db) return [];
       const result = await db.execute(
-        sql`SELECT DISTINCT name FROM radio_channels WHERE status = 'active' ORDER BY name`
+        sql`SELECT id, name, genre, frequency, streamUrl, metadata, currentListeners, totalListeners, status FROM radio_channels WHERE status = 'active' ORDER BY name`
       );
       const rows = extractRows(result);
-      return rows.map((r: any) => r.name);
+      return rows.map((r: any) => ({
+        id: r.id,
+        name: r.name,
+        genre: r.genre || 'Mixed',
+        frequency: r.frequency || '432 Hz',
+        streamUrl: r.streamUrl || null,
+        description: null,
+        currentListeners: r.currentListeners || 0,
+        totalListeners: r.totalListeners || 0,
+        status: r.status || 'active',
+        metadata: r.metadata || null,
+      }));
     } catch (error) {
       return [];
     }

@@ -3167,10 +3167,10 @@
 - [ ] Add Spotify connection status indicator on Stream Analytics
 
 ### Conference Hub — Live Platform URLs
-- [ ] Wire VITE_ZOOM_URL from env vars into Conference Hub launch button
-- [ ] Wire VITE_MEET_URL from env vars into Conference Hub launch button
-- [ ] Wire VITE_DISCORD_URL from env vars into Conference Hub launch button
-- [ ] Wire VITE_SKYPE_URL from env vars into Conference Hub launch button
+- [x] Wire VITE_ZOOM_URL from env vars into Conference Hub launch button
+- [x] Wire VITE_MEET_URL from env vars into Conference Hub launch button
+- [x] Wire VITE_DISCORD_URL from env vars into Conference Hub launch button
+- [x] Wire VITE_SKYPE_URL from env vars into Conference Hub launch button
 - [ ] Show connection status for each platform (configured vs not configured)
 
 ### Command Console — Full QUMUS Execution
@@ -3228,3 +3228,37 @@
 - [x] Verified via API: getStateOfStudio returns 89% health, 84% autonomy, 248K total actions
 - [x] Verified via API: getAudioStreamingStats returns 116 channels, 11,600 listeners
 - [x] Verified via API: getQumusStats returns 208K autonomous decisions, 84% success rate
+
+## Radio Channel Cleanup (COMPLETED)
+- [x] Remove 116 duplicate "Test Channel" entries from radio_channels table
+- [x] Create real named channels (RRB Jazz, Healing 432Hz, Gospel Hour, Hip-Hop Classics, etc.)
+- [x] Assign proper frequencies, genres, and metadata to each channel
+- [x] Verify channels display correctly in streaming stats API
+
+## Conference Hub Real URLs (COMPLETED)
+- [x] Wire Conference Hub page to use VITE_ZOOM_URL, VITE_MEET_URL, VITE_DISCORD_URL, VITE_SKYPE_URL env vars (already wired with import.meta.env)
+- [x] Replace placeholder links with real environment variable values
+- [x] Add fallback behavior when URLs are not configured
+- [x] Updated channel count from fake 50 to real 7
+
+## WebSocket Auto-Refresh for QUMUS Dashboard (COMPLETED)
+- [x] Add polling-based auto-refresh for QUMUS metrics (refetchInterval on all tRPC queries)
+- [x] Implement real-time dashboard updates without page reload
+- [x] QumusHome: 30s refresh on status/plans/commands, 60s on success rate/learnings
+- [x] QumusCommandConsole: already had 30s/60s refetchInterval
+- [x] StreamAnalytics: already had 15s/30s/60s refetchInterval
+- [x] RRBPort3001: already had 15s/30s refetchInterval
+- [x] HybridCastPort3002: already had 15s/30s refetchInterval
+- [x] LiveStreamPage: 30s refetchInterval on channel data
+
+## RRB 24/7 Radio Stream - Real Playable Channels (COMPLETED)
+- [x] Research and curate free internet radio streams (radio-browser.info API) for branded channels
+- [x] Define 7 branded RRB channels: Gospel, Jazz, Soul/R&B, Hip-Hop, Healing Frequencies, Funk/Disco, Rock & Roll
+- [x] Clean up 118 "Test Channel" entries from radio_channels table
+- [x] Insert 7 real channels with working stream URLs, bitrate, codec metadata into database
+- [x] Rebuild LiveStreamPage as RRB 24/7 Radio with branded channel selector pulling from DB via tRPC
+- [x] Real HTML5 Audio playback with play/pause, skip, volume controls
+- [x] Channel selector shows genre, frequency, bitrate, codec, source info from DB
+- [x] Auto-refresh listener counts every 30s via tRPC refetchInterval
+- [x] getAllChannelsFromDb() upgraded to return full channel objects (not just names)
+- [x] 24 passed tests, 0 TypeScript errors, server healthy

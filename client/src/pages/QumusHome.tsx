@@ -101,13 +101,23 @@ export default function QumusHome() {
   const [showRRBDonations, setShowRRBDonations] = useState(false);
 
   // tRPC queries
-  const statusQuery = trpc.autonomousTask.getStatus.useQuery();
-  const activePlansQuery = trpc.autonomousTask.getActivePlans.useQuery();
+  const statusQuery = trpc.autonomousTask.getStatus.useQuery(undefined, {
+    refetchInterval: 30000, // Auto-refresh every 30s
+  });
+  const activePlansQuery = trpc.autonomousTask.getActivePlans.useQuery(undefined, {
+    refetchInterval: 30000,
+  });
   const commandHistoryQuery = trpc.autonomousTask.getCommandHistory.useQuery({
     limit: 10,
+  }, {
+    refetchInterval: 30000,
   });
-  const successRateQuery = trpc.autonomousTask.getSuccessRate.useQuery();
-  const learningsQuery = trpc.autonomousTask.getLearnings.useQuery();
+  const successRateQuery = trpc.autonomousTask.getSuccessRate.useQuery(undefined, {
+    refetchInterval: 60000, // Refresh every 60s
+  });
+  const learningsQuery = trpc.autonomousTask.getLearnings.useQuery(undefined, {
+    refetchInterval: 60000,
+  });
 
   // tRPC mutations
   const submitTaskMutation = trpc.autonomousTask.submitTask.useMutation({

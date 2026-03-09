@@ -22699,10 +22699,21 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return [];
       const result2 = await db2.execute(
-        sql13`SELECT DISTINCT name FROM radio_channels WHERE status = 'active' ORDER BY name`
+        sql13`SELECT id, name, genre, frequency, streamUrl, metadata, currentListeners, totalListeners, status FROM radio_channels WHERE status = 'active' ORDER BY name`
       );
       const rows = extractRows(result2);
-      return rows.map((r) => r.name);
+      return rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        genre: r.genre || "Mixed",
+        frequency: r.frequency || "432 Hz",
+        streamUrl: r.streamUrl || null,
+        description: null,
+        currentListeners: r.currentListeners || 0,
+        totalListeners: r.totalListeners || 0,
+        status: r.status || "active",
+        metadata: r.metadata || null
+      }));
     } catch (error) {
       return [];
     }
