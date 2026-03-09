@@ -1,0 +1,61 @@
+{
+  "query": "SHOW TABLES LIKE '%decision%'; SHOW TABLES LIKE '%command%'; SHOW TABLES LIKE '%listener%'; SHOW TABLES LIKE '%broadcast%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SHOW TABLES LIKE '%decision%'; SHOW TABLES LIKE '%command%'; SHOW TABLES LIKE '%listener%'; SHOW TABLES LIKE '%broadcast%';",
+  "rows": [
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "autonomousDecisions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "policy_decisions"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "qumus_decision_logs"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%command%)"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "broadcast_chat_commands"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "ecosystem_commands"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "systemCommands"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%listener%)"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "content_listener_history"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "listener_analytics"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "listeners"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%broadcast%)"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "alert_broadcast_log"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "broadcast_audit_log"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "broadcast_chat_commands"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "broadcast_schedules"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)": "broadcasts"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%decision%)\nautonomousDecisions\npolicy_decisions\nqumus_decision_logs\nTables_in_eSHiAmKDzW4pqcyH7Ttb7c (%command%)\nbroadcast_chat_commands\necosystem_commands\nsystemCommands\nTables_in_eSHiAmKDzW4pqcyH7Ttb7c (%listener%)\ncontent_listener_history\nlistener_analytics\nlisteners\nTables_in_eSHiAmKDzW4pqcyH7Ttb7c (%broadcast%)\nalert_broadcast_log\nbroadcast_audit_log\nbroadcast_chat_commands\nbroadcast_schedules\nbroadcasts\n",
+  "stderr": "",
+  "execution_time_ms": 64
+}

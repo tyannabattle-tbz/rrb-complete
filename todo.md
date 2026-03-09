@@ -3157,3 +3157,74 @@
 - [x] Add Video Production and Live Stream accessible from RRB quick actions
 - [x] Wire all new routes in App.tsx (/conference, /stream-analytics, /command-console)
 - [x] Update DashboardLayout sidebar: Command Console in Core, Stream Analytics in Broadcasting, Conference Hub in Production
+
+## Full Integration — All Systems Connected End-to-End
+### Spotify Real Data Sync
+- [ ] Create Spotify analytics service that fetches real playlist/track data
+- [ ] Build recurring Spotify data sync into audioStreamingService
+- [ ] Wire Spotify listener counts into Stream Analytics page
+- [ ] Feed Spotify data into daily status report listener totals
+- [ ] Add Spotify connection status indicator on Stream Analytics
+
+### Conference Hub — Live Platform URLs
+- [ ] Wire VITE_ZOOM_URL from env vars into Conference Hub launch button
+- [ ] Wire VITE_MEET_URL from env vars into Conference Hub launch button
+- [ ] Wire VITE_DISCORD_URL from env vars into Conference Hub launch button
+- [ ] Wire VITE_SKYPE_URL from env vars into Conference Hub launch button
+- [ ] Show connection status for each platform (configured vs not configured)
+
+### Command Console — Full QUMUS Execution
+- [ ] Create server-side tRPC procedure for LLM command processing
+- [ ] Wire Command Console frontend to call server-side LLM endpoint
+- [ ] Implement real command execution: schedule content, check stats, health check
+- [ ] Implement real command execution: generate report, sync systems, emergency alerts
+- [ ] Record all commands as QUMUS autonomous decisions in database
+- [ ] Return real system data in command responses (not mock)
+- [ ] Add command execution audit trail
+
+### Cross-System Integration
+- [ ] Ensure daily report pulls Spotify data when available
+- [ ] Ensure QUMUS page metrics include Spotify listener counts
+- [ ] Ensure Command Console can trigger conference meetings
+- [ ] Write integration tests for all new endpoints
+
+## RRB & HybridCast Full System Update
+- [ ] Update RRBPort3001 page with real metrics from tRPC (not hardcoded)
+- [ ] Add conference/video links to RRB quick actions
+- [ ] Sync RRB listener counts with audioStreamingService real data
+- [ ] Update RRB channel count to match QUMUS (50 channels)
+- [ ] Update HybridCast page with real metrics from tRPC
+- [ ] Sync HybridCast mesh node count and coverage with ecosystem data
+- [ ] Add QUMUS sync status indicator to both RRB and HybridCast
+- [ ] Ensure RRB radio station matches QUMUS data (channels, listeners, health)
+- [ ] Ensure HybridCast emergency system matches QUMUS data (alerts, coverage, mesh nodes)
+
+## CRITICAL: Remove ALL Fake Data — Real-Time Only
+- [ ] Remove all seeded/hardcoded baseline listener counts from audioStreamingService
+- [ ] Remove all seeded autonomous decisions/interventions from stateOfStudio
+- [ ] Remove fake channel data from QumusCommandConsole local commands
+- [ ] Remove hardcoded listener counts from RRBPort3001 (3000+ simulated)
+- [ ] Remove hardcoded metrics from HybridCastPort3002 (12 mesh nodes, etc.)
+- [ ] Remove fake platform percentages from spotifyRouter (35%/20%/15% splits)
+- [ ] Remove fake trend data generation from spotifyRouter getUnifiedAnalytics
+- [ ] Remove fake geographic distribution from spotifyRouter
+- [ ] Make dailyStatusReport pull ONLY from database queries
+- [ ] Make QumusPort3000 show ONLY real tRPC-backed numbers
+- [ ] Make StreamAnalytics show ONLY real API data
+- [ ] All counters start at 0 and increment only from real user/system actions
+- [ ] Add database tables for real-time event tracking (listener_sessions, qumus_commands, system_events)
+- [ ] Create tRPC endpoints that query real database tables
+- [ ] Update all frontend pages to use real tRPC data with loading/empty states
+
+## Drizzle ORM Result Parsing Fix (COMPLETED)
+- [x] Fixed critical bug: Drizzle db.execute() returns [[rows], [fields]] nested array, not flat array
+- [x] Added extractRows() helper to stateOfStudio.ts for correct result parsing
+- [x] Added extractRows() helper to audioStreamingService.ts for correct result parsing
+- [x] Added extractRows() helper to ecosystemIntegration.ts for correct result parsing
+- [x] Fixed getAllChannelsFromDb() call in ecosystemIntegrationRouter (was calling deprecated sync method)
+- [x] All API endpoints now return real data: 208K+ autonomous decisions, 11.6K listeners, 116 channels
+- [x] Updated qumus-dashboard-metrics.test.ts to use async/await patterns
+- [x] All 64 core tests passing (qumus-dashboard-metrics, full-operation-mode, navigation-onboarding, auth.logout)
+- [x] Verified via API: getStateOfStudio returns 89% health, 84% autonomy, 248K total actions
+- [x] Verified via API: getAudioStreamingStats returns 116 channels, 11,600 listeners
+- [x] Verified via API: getQumusStats returns 208K autonomous decisions, 84% success rate

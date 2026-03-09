@@ -150,7 +150,7 @@ export default function RRBPort3001() {
   const [activeChannel, setActiveChannel] = useState<number | null>(null);
   const [volume, setVolume] = useState(75);
   const [isMuted, setIsMuted] = useState(false);
-  const [totalListeners, setTotalListeners] = useState(4287);
+  const [totalListeners, setTotalListeners] = useState(0);
   const [showSchedule, setShowSchedule] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ChannelCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -320,16 +320,20 @@ export default function RRBPort3001() {
     };
   }, []);
 
-  // Simulate QUMUS-managed listener fluctuation
+  // ─── Real-time data from database via tRPC ─────────────────────
+  const { data: streamStats } = trpc.ecosystemIntegration.getAudioStreamingStats.useQuery(undefined, {
+    refetchInterval: 15000,
+  });
+  const { data: qumusStatsData } = trpc.ecosystemIntegration.getQumusStats.useQuery(undefined, {
+    refetchInterval: 30000,
+  });
+
+  // Update totalListeners from real database data
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTotalListeners(prev => {
-        const delta = Math.floor(Math.random() * 40) - 20;
-        return Math.max(3000, prev + delta);
-      });
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    if (streamStats?.totalListeners !== undefined) {
+      setTotalListeners(streamStats.totalListeners);
+    }
+  }, [streamStats]);
 
   const filteredChannels = useMemo(() => {
     let channels = CHANNELS;
@@ -350,7 +354,8 @@ export default function RRBPort3001() {
   const displayedChannels = showAllChannels ? filteredChannels : filteredChannels.slice(0, 12);
 
   const liveCount = CHANNELS.filter(c => c.status === 'live').length;
-  const totalChannelListeners = CHANNELS.reduce((sum, c) => sum + c.listeners, 0);
+  const totalChannelListeners = streamStats?.totalListeners ?? totalListeners;
+  const realAutonomy = qumusStatsData?.autonomyLevel ?? 90;
 
   // ─── Real Audio Stream Playback ─────────────────────
   const stopAudioStream = useCallback(() => {
@@ -999,7 +1004,7 @@ export default function RRBPort3001() {
           </Card>
           <Card className="bg-slate-800/50 border-purple-500/10">
             <CardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-purple-400">90%</p>
+              <p className="text-2xl font-bold text-purple-400">{realAutonomy}%</p>
               <p className="text-xs text-slate-400">QUMUS Autonomy</p>
             </CardContent>
           </Card>

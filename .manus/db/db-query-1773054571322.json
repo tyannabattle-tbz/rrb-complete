@@ -1,0 +1,46 @@
+{
+  "query": "SELECT * FROM qumus_autonomous_actions LIMIT 2;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT * FROM qumus_autonomous_actions LIMIT 2;",
+  "rows": [
+    {
+      "id": "1",
+      "decision_id": "decision_1770748325102_vyicjkujc",
+      "policy_id": "policy_recommendation_engine",
+      "user_id": "NULL",
+      "action_type": "recommendation_engine",
+      "input": "\"{\\\"userId\\\":1004,\\\"contentType\\\":\\\"music\\\",\\\"genre\\\":\\\"jazz\\\",\\\"listenHistory\\\":200,\\\"timestamp\\\":1770748325102,\\\"eventId\\\":\\\"evt_1770748325102_gb05ie\\\"}\"",
+      "output": "\"{\\\"result\\\":\\\"approved\\\"}\"",
+      "confidence": "85.00",
+      "autonomous_flag": "1",
+      "status": "completed",
+      "result": "success",
+      "execution_time": "0",
+      "error_message": "NULL",
+      "metadata": "NULL",
+      "completed_at": "2026-02-10 18:32:05",
+      "timestamp": "2026-02-10 18:32:05"
+    },
+    {
+      "id": "2",
+      "decision_id": "decision_1770748325177_s4dagqd4j",
+      "policy_id": "policy_payment_processing",
+      "user_id": "NULL",
+      "action_type": "payment_processing",
+      "input": "\"{\\\"transactionId\\\":\\\"txn_1770748325101\\\",\\\"amount\\\":9.99,\\\"currency\\\":\\\"USD\\\",\\\"type\\\":\\\"subscription\\\",\\\"userId\\\":1001,\\\"timestamp\\\":1770748325177,\\\"eventId\\\":\\\"evt_1770748325177_on1nap\\\"}\"",
+      "output": "\"{\\\"result\\\":\\\"approved\\\"}\"",
+      "confidence": "85.00",
+      "autonomous_flag": "1",
+      "status": "completed",
+      "result": "success",
+      "execution_time": "0",
+      "error_message": "NULL",
+      "metadata": "NULL",
+      "completed_at": "2026-02-10 18:32:05",
+      "timestamp": "2026-02-10 18:32:05"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tdecision_id\tpolicy_id\tuser_id\taction_type\tinput\toutput\tconfidence\tautonomous_flag\tstatus\tresult\texecution_time\terror_message\tmetadata\tcompleted_at\ttimestamp\n1\tdecision_1770748325102_vyicjkujc\tpolicy_recommendation_engine\tNULL\trecommendation_engine\t\"{\\\"userId\\\":1004,\\\"contentType\\\":\\\"music\\\",\\\"genre\\\":\\\"jazz\\\",\\\"listenHistory\\\":200,\\\"timestamp\\\":1770748325102,\\\"eventId\\\":\\\"evt_1770748325102_gb05ie\\\"}\"\t\"{\\\"result\\\":\\\"approved\\\"}\"\t85.00\t1\tcompleted\tsuccess\t0\tNULL\tNULL\t2026-02-10 18:32:05\t2026-02-10 18:32:05\n2\tdecision_1770748325177_s4dagqd4j\tpolicy_payment_processing\tNULL\tpayment_processing\t\"{\\\"transactionId\\\":\\\"txn_1770748325101\\\",\\\"amount\\\":9.99,\\\"currency\\\":\\\"USD\\\",\\\"type\\\":\\\"subscription\\\",\\\"userId\\\":1001,\\\"timestamp\\\":1770748325177,\\\"eventId\\\":\\\"evt_1770748325177_on1nap\\\"}\"\t\"{\\\"result\\\":\\\"approved\\\"}\"\t85.00\t1\tcompleted\tsuccess\t0\tNULL\tNULL\t2026-02-10 18:32:05\t2026-02-10 18:32:05\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}

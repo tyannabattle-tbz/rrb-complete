@@ -1,0 +1,517 @@
+{
+  "query": "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() ORDER BY TABLE_NAME;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() ORDER BY TABLE_NAME;",
+  "rows": [
+    {
+      "TABLE_NAME": "__drizzle_migrations"
+    },
+    {
+      "TABLE_NAME": "accounting_invoices"
+    },
+    {
+      "TABLE_NAME": "accounting_payments"
+    },
+    {
+      "TABLE_NAME": "accounting_reconciliation"
+    },
+    {
+      "TABLE_NAME": "activity_logs"
+    },
+    {
+      "TABLE_NAME": "ad_inventory"
+    },
+    {
+      "TABLE_NAME": "agent_collaboration"
+    },
+    {
+      "TABLE_NAME": "agent_execution_logs"
+    },
+    {
+      "TABLE_NAME": "agent_installations"
+    },
+    {
+      "TABLE_NAME": "agent_memory"
+    },
+    {
+      "TABLE_NAME": "agent_performance_metrics"
+    },
+    {
+      "TABLE_NAME": "agent_registry"
+    },
+    {
+      "TABLE_NAME": "agent_sessions"
+    },
+    {
+      "TABLE_NAME": "agent_snapshots"
+    },
+    {
+      "TABLE_NAME": "agent_tools"
+    },
+    {
+      "TABLE_NAME": "agents"
+    },
+    {
+      "TABLE_NAME": "ai_recommendations"
+    },
+    {
+      "TABLE_NAME": "alert_broadcast_log"
+    },
+    {
+      "TABLE_NAME": "alert_delivery_log"
+    },
+    {
+      "TABLE_NAME": "analytics_metrics"
+    },
+    {
+      "TABLE_NAME": "anomaly_baselines"
+    },
+    {
+      "TABLE_NAME": "anomaly_history"
+    },
+    {
+      "TABLE_NAME": "anomaly_insights"
+    },
+    {
+      "TABLE_NAME": "anomaly_patterns"
+    },
+    {
+      "TABLE_NAME": "anomaly_reports"
+    },
+    {
+      "TABLE_NAME": "anomaly_rules"
+    },
+    {
+      "TABLE_NAME": "api_keys"
+    },
+    {
+      "TABLE_NAME": "api_usage"
+    },
+    {
+      "TABLE_NAME": "audio_content"
+    },
+    {
+      "TABLE_NAME": "audio_play_counts"
+    },
+    {
+      "TABLE_NAME": "audio_playback_history"
+    },
+    {
+      "TABLE_NAME": "audit_logs"
+    },
+    {
+      "TABLE_NAME": "auto_save_settings"
+    },
+    {
+      "TABLE_NAME": "autonomousDecisions"
+    },
+    {
+      "TABLE_NAME": "autonomous_tasks"
+    },
+    {
+      "TABLE_NAME": "bookkeeping_accounts"
+    },
+    {
+      "TABLE_NAME": "bookkeeping_journal_entries"
+    },
+    {
+      "TABLE_NAME": "bookkeeping_ledger_lines"
+    },
+    {
+      "TABLE_NAME": "broadcast_audit_log"
+    },
+    {
+      "TABLE_NAME": "broadcast_chat_commands"
+    },
+    {
+      "TABLE_NAME": "broadcast_schedules"
+    },
+    {
+      "TABLE_NAME": "broadcasts"
+    },
+    {
+      "TABLE_NAME": "commercial_breaks"
+    },
+    {
+      "TABLE_NAME": "commercials"
+    },
+    {
+      "TABLE_NAME": "content_listener_history"
+    },
+    {
+      "TABLE_NAME": "content_schedule"
+    },
+    {
+      "TABLE_NAME": "convention_attendees"
+    },
+    {
+      "TABLE_NAME": "convention_sessions"
+    },
+    {
+      "TABLE_NAME": "conventions"
+    },
+    {
+      "TABLE_NAME": "detected_anomalies"
+    },
+    {
+      "TABLE_NAME": "documentation_pages"
+    },
+    {
+      "TABLE_NAME": "donations"
+    },
+    {
+      "TABLE_NAME": "donors"
+    },
+    {
+      "TABLE_NAME": "ecosystem_commands"
+    },
+    {
+      "TABLE_NAME": "ecosystem_status"
+    },
+    {
+      "TABLE_NAME": "email_configs"
+    },
+    {
+      "TABLE_NAME": "email_subscribers"
+    },
+    {
+      "TABLE_NAME": "emergency_alerts"
+    },
+    {
+      "TABLE_NAME": "entertainment_metrics"
+    },
+    {
+      "TABLE_NAME": "entertainment_playlist_items"
+    },
+    {
+      "TABLE_NAME": "entertainment_playlists"
+    },
+    {
+      "TABLE_NAME": "entertainment_user_preferences"
+    },
+    {
+      "TABLE_NAME": "escalation_policies"
+    },
+    {
+      "TABLE_NAME": "family_tree"
+    },
+    {
+      "TABLE_NAME": "feature_flags"
+    },
+    {
+      "TABLE_NAME": "filter_history"
+    },
+    {
+      "TABLE_NAME": "filter_presets"
+    },
+    {
+      "TABLE_NAME": "finetuning_datasets"
+    },
+    {
+      "TABLE_NAME": "finetuning_evaluations"
+    },
+    {
+      "TABLE_NAME": "finetuning_jobs"
+    },
+    {
+      "TABLE_NAME": "finetuning_models"
+    },
+    {
+      "TABLE_NAME": "generated_content"
+    },
+    {
+      "TABLE_NAME": "grants"
+    },
+    {
+      "TABLE_NAME": "hr_departments"
+    },
+    {
+      "TABLE_NAME": "hr_employees"
+    },
+    {
+      "TABLE_NAME": "hr_payroll"
+    },
+    {
+      "TABLE_NAME": "hr_time_tracking"
+    },
+    {
+      "TABLE_NAME": "hybridcast_nodes"
+    },
+    {
+      "TABLE_NAME": "integration_logs"
+    },
+    {
+      "TABLE_NAME": "legal_compliance_items"
+    },
+    {
+      "TABLE_NAME": "legal_contracts"
+    },
+    {
+      "TABLE_NAME": "legal_intellectual_property"
+    },
+    {
+      "TABLE_NAME": "listener_analytics"
+    },
+    {
+      "TABLE_NAME": "listeners"
+    },
+    {
+      "TABLE_NAME": "media_distribution"
+    },
+    {
+      "TABLE_NAME": "media_projects"
+    },
+    {
+      "TABLE_NAME": "memory_store"
+    },
+    {
+      "TABLE_NAME": "messages"
+    },
+    {
+      "TABLE_NAME": "model_comparisons"
+    },
+    {
+      "TABLE_NAME": "monetization_events"
+    },
+    {
+      "TABLE_NAME": "music_playlists"
+    },
+    {
+      "TABLE_NAME": "music_tracks"
+    },
+    {
+      "TABLE_NAME": "news_articles"
+    },
+    {
+      "TABLE_NAME": "nonprofit_operations"
+    },
+    {
+      "TABLE_NAME": "notification_events"
+    },
+    {
+      "TABLE_NAME": "notification_preferences"
+    },
+    {
+      "TABLE_NAME": "notifications"
+    },
+    {
+      "TABLE_NAME": "performance_metrics"
+    },
+    {
+      "TABLE_NAME": "performance_trends"
+    },
+    {
+      "TABLE_NAME": "playlist_tracks"
+    },
+    {
+      "TABLE_NAME": "playlists"
+    },
+    {
+      "TABLE_NAME": "plugins"
+    },
+    {
+      "TABLE_NAME": "policy_decisions"
+    },
+    {
+      "TABLE_NAME": "predictive_alerts"
+    },
+    {
+      "TABLE_NAME": "qumus_autonomous_actions"
+    },
+    {
+      "TABLE_NAME": "qumus_core_policies"
+    },
+    {
+      "TABLE_NAME": "qumus_decision_logs"
+    },
+    {
+      "TABLE_NAME": "qumus_human_review"
+    },
+    {
+      "TABLE_NAME": "qumus_metrics"
+    },
+    {
+      "TABLE_NAME": "qumus_policy_recommendations"
+    },
+    {
+      "TABLE_NAME": "quota_alerts"
+    },
+    {
+      "TABLE_NAME": "quotas"
+    },
+    {
+      "TABLE_NAME": "radioChannels"
+    },
+    {
+      "TABLE_NAME": "radio_channels"
+    },
+    {
+      "TABLE_NAME": "radio_stations"
+    },
+    {
+      "TABLE_NAME": "rate_limit_events"
+    },
+    {
+      "TABLE_NAME": "reasoning_chains"
+    },
+    {
+      "TABLE_NAME": "report_history"
+    },
+    {
+      "TABLE_NAME": "rockin_boogie_content"
+    },
+    {
+      "TABLE_NAME": "royalty_collaborators"
+    },
+    {
+      "TABLE_NAME": "royalty_distributions"
+    },
+    {
+      "TABLE_NAME": "royalty_payments"
+    },
+    {
+      "TABLE_NAME": "royalty_projects"
+    },
+    {
+      "TABLE_NAME": "royalty_statements"
+    },
+    {
+      "TABLE_NAME": "rrb_channel_stats"
+    },
+    {
+      "TABLE_NAME": "rrb_channels"
+    },
+    {
+      "TABLE_NAME": "rrb_frequencies"
+    },
+    {
+      "TABLE_NAME": "rrb_listening_history"
+    },
+    {
+      "TABLE_NAME": "rrb_stream_sources"
+    },
+    {
+      "TABLE_NAME": "scheduled_reports"
+    },
+    {
+      "TABLE_NAME": "session_annotations"
+    },
+    {
+      "TABLE_NAME": "session_metrics"
+    },
+    {
+      "TABLE_NAME": "session_shares"
+    },
+    {
+      "TABLE_NAME": "session_versions"
+    },
+    {
+      "TABLE_NAME": "solbones_frequency_rolls"
+    },
+    {
+      "TABLE_NAME": "solbones_leaderboard"
+    },
+    {
+      "TABLE_NAME": "streaming_status"
+    },
+    {
+      "TABLE_NAME": "studio_guests"
+    },
+    {
+      "TABLE_NAME": "studio_recordings"
+    },
+    {
+      "TABLE_NAME": "studio_sessions"
+    },
+    {
+      "TABLE_NAME": "subscription_tiers"
+    },
+    {
+      "TABLE_NAME": "suppression_rules"
+    },
+    {
+      "TABLE_NAME": "sweet_miracles_alerts"
+    },
+    {
+      "TABLE_NAME": "systemAuditLog"
+    },
+    {
+      "TABLE_NAME": "systemCommands"
+    },
+    {
+      "TABLE_NAME": "systemMetrics"
+    },
+    {
+      "TABLE_NAME": "system_alerts"
+    },
+    {
+      "TABLE_NAME": "system_metrics"
+    },
+    {
+      "TABLE_NAME": "system_updates"
+    },
+    {
+      "TABLE_NAME": "task_execution_log"
+    },
+    {
+      "TABLE_NAME": "task_history"
+    },
+    {
+      "TABLE_NAME": "task_steps"
+    },
+    {
+      "TABLE_NAME": "team_members"
+    },
+    {
+      "TABLE_NAME": "team_notifications"
+    },
+    {
+      "TABLE_NAME": "teams"
+    },
+    {
+      "TABLE_NAME": "tool_executions"
+    },
+    {
+      "TABLE_NAME": "tool_usage_stats"
+    },
+    {
+      "TABLE_NAME": "training_data"
+    },
+    {
+      "TABLE_NAME": "usage_quotas"
+    },
+    {
+      "TABLE_NAME": "user_subscriptions"
+    },
+    {
+      "TABLE_NAME": "users"
+    },
+    {
+      "TABLE_NAME": "users_with_stripe"
+    },
+    {
+      "TABLE_NAME": "viewer_metrics"
+    },
+    {
+      "TABLE_NAME": "webhook_endpoints"
+    },
+    {
+      "TABLE_NAME": "webhook_installations"
+    },
+    {
+      "TABLE_NAME": "webhook_logs"
+    },
+    {
+      "TABLE_NAME": "webhook_marketplace_reviews"
+    },
+    {
+      "TABLE_NAME": "webhook_templates"
+    },
+    {
+      "TABLE_NAME": "wellness_checkins"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\n__drizzle_migrations\naccounting_invoices\naccounting_payments\naccounting_reconciliation\nactivity_logs\nad_inventory\nagent_collaboration\nagent_execution_logs\nagent_installations\nagent_memory\nagent_performance_metrics\nagent_registry\nagent_sessions\nagent_snapshots\nagent_tools\nagents\nai_recommendations\nalert_broadcast_log\nalert_delivery_log\nanalytics_metrics\nanomaly_baselines\nanomaly_history\nanomaly_insights\nanomaly_patterns\nanomaly_reports\nanomaly_rules\napi_keys\napi_usage\naudio_content\naudio_play_counts\naudio_playback_history\naudit_logs\nauto_save_settings\nautonomousDecisions\nautonomous_tasks\nbookkeeping_accounts\nbookkeeping_journal_entries\nbookkeeping_ledger_lines\nbroadcast_audit_log\nbroadcast_chat_commands\nbroadcast_schedules\nbroadcasts\ncommercial_breaks\ncommercials\ncontent_listener_history\ncontent_schedule\nconvention_attendees\nconvention_sessions\nconventions\ndetected_anomalies\ndocumentation_pages\ndonations\ndonors\necosystem_commands\necosystem_status\nemail_configs\nemail_subscribers\nemergency_alerts\nentertainment_metrics\nentertainment_playlist_items\nentertainment_playlists\nentertainment_user_preferences\nescalation_policies\nfamily_tree\nfeature_flags\nfilter_history\nfilter_presets\nfinetuning_datasets\nfinetuning_evaluations\nfinetuning_jobs\nfinetuning_models\ngenerated_content\ngrants\nhr_departments\nhr_employees\nhr_payroll\nhr_time_tracking\nhybridcast_nodes\nintegration_logs\nlegal_compliance_items\nlegal_contracts\nlegal_intellectual_property\nlistener_analytics\nlisteners\nmedia_distribution\nmedia_projects\nmemory_store\nmessages\nmodel_comparisons\nmonetization_events\nmusic_playlists\nmusic_tracks\nnews_articles\nnonprofit_operations\nnotification_events\nnotification_preferences\nnotifications\nperformance_metrics\nperformance_trends\nplaylist_tracks\nplaylists\nplugins\npolicy_decisions\npredictive_alerts\nqumus_autonomous_actions\nqumus_core_policies\nqumus_decision_logs\nqumus_human_review\nqumus_metrics\nqumus_policy_recommendations\nquota_alerts\nquotas\nradioChannels\nradio_channels\nradio_stations\nrate_limit_events\nreasoning_chains\nreport_history\nrockin_boogie_content\nroyalty_collaborators\nroyalty_distributions\nroyalty_payments\nroyalty_projects\nroyalty_statements\nrrb_channel_stats\nrrb_channels\nrrb_frequencies\nrrb_listening_history\nrrb_stream_sources\nscheduled_reports\nsession_annotations\nsession_metrics\nsession_shares\nsession_versions\nsolbones_frequency_rolls\nsolbones_leaderboard\nstreaming_status\nstudio_guests\nstudio_recordings\nstudio_sessions\nsubscription_tiers\nsuppression_rules\nsweet_miracles_alerts\nsystemAuditLog\nsystemCommands\nsystemMetrics\nsystem_alerts\nsystem_metrics\nsystem_updates\ntask_execution_log\ntask_history\ntask_steps\nteam_members\nteam_notifications\nteams\ntool_executions\ntool_usage_stats\ntraining_data\nusage_quotas\nuser_subscriptions\nusers\nusers_with_stripe\nviewer_metrics\nwebhook_endpoints\nwebhook_installations\nwebhook_logs\nwebhook_marketplace_reviews\nwebhook_templates\nwellness_checkins\n",
+  "stderr": "",
+  "execution_time_ms": 49
+}

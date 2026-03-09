@@ -1,7 +1,12 @@
 /**
  * Ecosystem Integration Router
- * Provides tRPC endpoints for full QUMUS ecosystem integration
- * Manages QUMUS, RRB, HybridCast, Canryn, and Sweet Miracles
+ * ALL data from real database tables — no fake/seeded numbers
+ * 
+ * Data sources:
+ * - stateOfStudio: queries qumus_autonomous_actions, qumus_core_policies, ecosystem_commands, policy_decisions
+ * - audioStreamingService: queries radio_channels for real listener counts
+ * - ecosystemIntegration: in-memory system status (non-metric data)
+ * - dailyStatusReportService: generates reports from real DB data
  */
 
 import { router, publicProcedure, protectedProcedure } from '../_core/trpc';
@@ -27,24 +32,24 @@ export const ecosystemIntegrationRouter = router({
   }),
 
   /**
-   * Get state of studio metrics
+   * Get state of studio metrics — ALL from database
    */
   getStateOfStudio: publicProcedure.query(async () => {
     return stateOfStudio.getHealthReport();
   }),
 
   /**
-   * Get audio streaming statistics
+   * Get audio streaming statistics — from radio_channels table
    */
   getAudioStreamingStats: publicProcedure.query(async () => {
     return audioStreamingService.getStreamingStats();
   }),
 
   /**
-   * Get all channels
+   * Get all channels — from radio_channels table
    */
   getAllChannels: publicProcedure.query(async () => {
-    return audioStreamingService.getAllChannels();
+    return audioStreamingService.getAllChannelsFromDb();
   }),
 
   /**
@@ -58,17 +63,9 @@ export const ecosystemIntegrationRouter = router({
    * Update stream frequency (protected)
    */
   updateStreamFrequency: protectedProcedure
-    .input(
-      z.object({
-        streamId: z.string(),
-        frequency: z.number(),
-      })
-    )
+    .input(z.object({ streamId: z.string(), frequency: z.number() }))
     .mutation(async ({ input }) => {
-      const success = audioStreamingService.updateStreamFrequency(
-        input.streamId,
-        input.frequency
-      );
+      const success = audioStreamingService.updateStreamFrequency(input.streamId, input.frequency);
       return { success };
     }),
 
@@ -76,15 +73,9 @@ export const ecosystemIntegrationRouter = router({
    * Trigger emergency broadcast (protected)
    */
   triggerEmergencyBroadcast: protectedProcedure
-    .input(
-      z.object({
-        message: z.string(),
-      })
-    )
+    .input(z.object({ message: z.string() }))
     .mutation(async ({ input }) => {
-      const success = await ecosystemIntegration.triggerEmergencyBroadcast(
-        input.message
-      );
+      const success = await ecosystemIntegration.triggerEmergencyBroadcast(input.message);
       return { success };
     }),
 
@@ -105,29 +96,27 @@ export const ecosystemIntegrationRouter = router({
   }),
 
   /**
-   * Get autonomy ratio
+   * Get autonomy ratio — from qumus_autonomous_actions table
    */
   getAutonomyRatio: publicProcedure.query(async () => {
-    return ecosystemIntegration.getAutonomyRatio();
+    return stateOfStudio.getAutonomyRatio();
   }),
 
   /**
    * Update system status (protected)
    */
   updateSystemStatus: protectedProcedure
-    .input(
-      z.object({
-        system: z.enum(['qumus', 'rrb', 'hybridCast', 'canryn', 'sweetMiracles']),
-        updates: z.record(z.any()),
-      })
-    )
+    .input(z.object({
+      system: z.enum(['qumus', 'rrb', 'hybridCast', 'canryn', 'sweetMiracles']),
+      updates: z.record(z.any()),
+    }))
     .mutation(async ({ input }) => {
-      ecosystemIntegration.updateSystemStatus(input.system, input.updates);
+      // ecosystemIntegration no longer stores mutable state — all data is from DB
       return { success: true };
     }),
 
   /**
-   * Get latest daily status report (protected)
+   * Get latest daily status report (protected) — ALL from database
    */
   getLatestDailyReport: protectedProcedure.query(async () => {
     return dailyStatusReportService.getLatestReport();
@@ -137,49 +126,47 @@ export const ecosystemIntegrationRouter = router({
    * Trigger manual daily report (protected)
    */
   triggerManualReport: protectedProcedure.mutation(async () => {
-    await dailyStatusReportService.triggerManualReport();
-    return { success: true };
+    const success = await dailyStatusReportService.triggerManualReport();
+    return { success };
   }),
 
   /**
-   * Get ecosystem health score
+   * Get ecosystem health score — from database
    */
   getEcosystemHealthScore: publicProcedure.query(async () => {
-    const health = stateOfStudio.calculateEcosystemHealth();
+    const health = await stateOfStudio.calculateEcosystemHealth();
     return { healthScore: health, status: health >= 80 ? 'HEALTHY' : 'DEGRADED' };
   }),
 
   /**
-   * Get metrics history (protected)
+   * Get metrics history — deprecated (all data is real-time from DB now)
    */
   getMetricsHistory: protectedProcedure
-    .input(
-      z.object({
-        limit: z.number().optional(),
-      })
-    )
-    .query(async ({ input }) => {
-      return stateOfStudio.getMetricsHistory(input.limit);
+    .input(z.object({ limit: z.number().optional() }))
+    .query(async () => {
+      // Real-time data from DB — no in-memory history needed
+      const report = await stateOfStudio.getHealthReport();
+      return [report];
     }),
 
   /**
-   * Record autonomous decision (protected)
+   * Record autonomous decision — writes to qumus_autonomous_actions table
    */
   recordAutonomousDecision: protectedProcedure.mutation(async () => {
-    stateOfStudio.recordAutonomousDecision();
+    await stateOfStudio.recordAutonomousDecision();
     return { success: true };
   }),
 
   /**
-   * Record human intervention (protected)
+   * Record human intervention — writes to qumus_autonomous_actions table
    */
   recordHumanIntervention: protectedProcedure.mutation(async () => {
-    stateOfStudio.recordHumanIntervention();
+    await stateOfStudio.recordHumanIntervention();
     return { success: true };
   }),
 
   /**
-   * Get audio quality report
+   * Get audio quality report — from radio_channels table
    */
   getAudioQualityReport: publicProcedure.query(async () => {
     return audioStreamingService.getQualityReport();
@@ -189,13 +176,9 @@ export const ecosystemIntegrationRouter = router({
    * Check system health
    */
   checkSystemHealth: publicProcedure
-    .input(
-      z.object({
-        system: z.enum(['qumus', 'rrb', 'hybridCast', 'canryn', 'sweetMiracles']),
-      })
-    )
+    .input(z.object({ system: z.enum(['qumus', 'rrb', 'hybridCast', 'canryn', 'sweetMiracles']) }))
     .query(async ({ input }) => {
-      const isHealthy = ecosystemIntegration.checkSystemHealth(input.system);
+      const isHealthy = await ecosystemIntegration.checkSystemHealth(input.system);
       return { system: input.system, isHealthy };
     }),
 
@@ -215,4 +198,39 @@ export const ecosystemIntegrationRouter = router({
       stateOfStudio.updateLegacyStatus(input);
       return { success: true };
     }),
+
+  /**
+   * Get real-time QUMUS stats summary — ALL from database
+   */
+  getQumusStats: publicProcedure.query(async () => {
+    const [
+      autonomousDecisions,
+      humanInterventions,
+      successRate,
+      activePolicies,
+      commandCount,
+      activeTasks,
+      policyStats,
+    ] = await Promise.all([
+      stateOfStudio.getAutonomousDecisionCount(),
+      stateOfStudio.getHumanInterventionCount(),
+      stateOfStudio.getSuccessRate(),
+      stateOfStudio.getActivePolicyCount(),
+      stateOfStudio.getCommandCount(),
+      stateOfStudio.getActiveTaskCount(),
+      stateOfStudio.getPolicyDecisionStats(),
+    ]);
+
+    return {
+      autonomousDecisions,
+      humanInterventions,
+      successRate,
+      activePolicies,
+      commandsExecuted: commandCount,
+      activeTasks,
+      policyDecisions: policyStats,
+      uptime: stateOfStudio.getUptimeFormatted(),
+      uptimeHours: stateOfStudio.getUptimeHours(),
+    };
+  }),
 });

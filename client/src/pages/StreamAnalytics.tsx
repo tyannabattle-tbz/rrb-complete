@@ -249,9 +249,9 @@ export default function StreamAnalytics() {
                   <div className="space-y-4">
                     {[
                       { name: 'RRB Internal Streams', listeners: stats?.totalListeners || 0, color: 'text-purple-400', bgColor: 'from-purple-500 to-purple-400', icon: Radio },
-                      { name: 'Spotify Connected', listeners: spotifyChannels.data?.length ? spotifyChannels.data.length * 47 : 329, color: 'text-green-400', bgColor: 'from-green-500 to-green-400', icon: Music },
-                      { name: 'HybridCast Emergency', listeners: ecosystemReport.data?.systems?.hybridCast?.meshNodes ? ecosystemReport.data.systems.hybridCast.meshNodes * 28 : 336, color: 'text-red-400', bgColor: 'from-red-500 to-red-400', icon: Wifi },
-                      { name: 'Podcast Subscribers', listeners: 1247, color: 'text-amber-400', bgColor: 'from-amber-500 to-amber-400', icon: Headphones },
+                      { name: 'Spotify Connected', listeners: spotifyChannels.data?.length || 0, color: 'text-green-400', bgColor: 'from-green-500 to-green-400', icon: Music },
+                      { name: 'HybridCast Emergency', listeners: ecosystemReport.data?.systems?.hybridCast?.meshNodes || 0, color: 'text-red-400', bgColor: 'from-red-500 to-red-400', icon: Wifi },
+                      { name: 'Podcast Subscribers', listeners: 0, color: 'text-amber-400', bgColor: 'from-amber-500 to-amber-400', icon: Headphones },
                     ].map((platform, idx) => (
                       <div key={idx} className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
                         <div className="flex items-center gap-3">
@@ -268,7 +268,7 @@ export default function StreamAnalytics() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-purple-300">Combined Total</span>
                       <span className="text-xl font-bold text-white">
-                        {((stats?.totalListeners || 0) + 329 + 336 + 1247).toLocaleString()}
+                        {((stats?.totalListeners || 0) + (spotifyChannels.data?.length || 0) + (ecosystemReport.data?.systems?.hybridCast?.meshNodes || 0)).toLocaleString()}
                       </span>
                     </div>
                   </div>

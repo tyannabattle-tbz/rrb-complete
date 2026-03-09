@@ -1,0 +1,43 @@
+{
+  "query": "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND (TABLE_NAME LIKE '%decision%' OR TABLE_NAME LIKE '%command%' OR TABLE_NAME LIKE '%listener%' OR TABLE_NAME LIKE '%broadcast%') ORDER BY TABLE_NAME;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND (TABLE_NAME LIKE '%decision%' OR TABLE_NAME LIKE '%command%' OR TABLE_NAME LIKE '%listener%' OR TABLE_NAME LIKE '%broadcast%') ORDER BY TABLE_NAME;",
+  "rows": [
+    {
+      "TABLE_NAME": "alert_broadcast_log"
+    },
+    {
+      "TABLE_NAME": "broadcast_audit_log"
+    },
+    {
+      "TABLE_NAME": "broadcast_chat_commands"
+    },
+    {
+      "TABLE_NAME": "broadcast_schedules"
+    },
+    {
+      "TABLE_NAME": "broadcasts"
+    },
+    {
+      "TABLE_NAME": "content_listener_history"
+    },
+    {
+      "TABLE_NAME": "ecosystem_commands"
+    },
+    {
+      "TABLE_NAME": "listener_analytics"
+    },
+    {
+      "TABLE_NAME": "listeners"
+    },
+    {
+      "TABLE_NAME": "policy_decisions"
+    },
+    {
+      "TABLE_NAME": "qumus_decision_logs"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\nalert_broadcast_log\nbroadcast_audit_log\nbroadcast_chat_commands\nbroadcast_schedules\nbroadcasts\ncontent_listener_history\necosystem_commands\nlistener_analytics\nlisteners\npolicy_decisions\nqumus_decision_logs\n",
+  "stderr": "",
+  "execution_time_ms": 64
+}
