@@ -114,7 +114,7 @@ const QUMUS_POLICIES: Record<string, QumusPolicy> = {
     autonomyLevel: 90,
     confidenceThreshold: 82,
     triggers: ["schedule_update", "airtime_rotation", "content_queue_empty"],
-    description: "Auto-schedule broadcasts, rotate content across 7 RRB channels, manage 24/7 airtime",
+    description: "Auto-schedule broadcasts, rotate content across 50 RRB channels, manage 24/7 airtime",
   },
   policy_broadcast_management: {
     id: "policy_broadcast_management",

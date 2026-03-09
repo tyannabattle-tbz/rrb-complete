@@ -10,7 +10,7 @@ import {
   Radio, Wifi, Users, MessageCircle, Heart, Send,
   Music, Mic, Video, SkipForward, SkipBack, Globe,
   ArrowRight, Calendar, MapPin, Headphones, Settings,
-  Loader2
+  Loader2, Clock, Sparkles, Bot
 } from 'lucide-react';
 
 // Color palette for channels based on genre
@@ -74,6 +74,22 @@ export default function LiveStreamPage() {
     refetchInterval: 30000, // Refresh every 30s for live listener counts
   });
 
+  // Fetch current DJ and schedule from DB
+  const { data: currentDj } = trpc.ecosystemIntegration.getCurrentDj.useQuery(undefined, {
+    refetchInterval: 60000,
+  });
+  const { data: dailySchedule } = trpc.ecosystemIntegration.getDailySchedule.useQuery(undefined, {
+    staleTime: 300000,
+  });
+  const { data: broadcastSchedule } = trpc.ecosystemIntegration.getBroadcastSchedule.useQuery(undefined, {
+    staleTime: 300000,
+  });
+
+  // AI DJ intro generation
+  const djIntroMutation = trpc.ecosystemIntegration.getDjIntro.useMutation();
+  const [djIntroText, setDjIntroText] = useState<string | null>(null);
+  const [showSchedule, setShowSchedule] = useState(false);
+
   // Record listener events to DB
   const recordEvent = trpc.listenerAnalytics.recordEvent.useMutation();
   const sessionStartRef = useRef<number>(0);
@@ -87,7 +103,7 @@ export default function LiveStreamPage() {
     return 'desktop' as const;
   }, []);
 
-  // Record tune-in event
+  // Record tune-in event + generate DJ intro
   const recordTuneIn = useCallback((channel: any) => {
     if (!channel) return;
     sessionStartRef.current = Date.now();
@@ -97,7 +113,12 @@ export default function LiveStreamPage() {
       listenerCount: 1,
       deviceType,
     });
-  }, [recordEvent, deviceType]);
+    // Generate AI DJ intro for this channel
+    djIntroMutation.mutate(
+      { channelName: channel.name, genre: channel.genre || 'Music', listenerCount: channel.currentListeners || 0 },
+      { onSuccess: (data) => setDjIntroText(data.text) }
+    );
+  }, [recordEvent, deviceType, djIntroMutation]);
 
   // Record tune-out event with session duration
   const recordTuneOut = useCallback((channel: any) => {
@@ -509,6 +530,124 @@ export default function LiveStreamPage() {
                     </button>
                   );
                 })}
+              </div>
+            )}
+
+            {/* AI DJ Personality Banner */}
+            {currentDj && (
+              <div className="mt-4 p-4 bg-gradient-to-r from-[#D4A843]/10 via-[#111] to-[#8B1A1A]/10 rounded-lg border border-[#D4A843]/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4A843] to-[#8B1A1A] flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-[#D4A843]">{currentDj.name}</span>
+                        <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">ON AIR</Badge>
+                      </div>
+                      <p className="text-xs text-[#E8E0D0]/60">{currentDj.show} &bull; {currentDj.timeSlot}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10 text-xs"
+                      onClick={() => setShowSchedule(!showSchedule)}
+                    >
+                      <Calendar className="w-3.5 h-3.5 mr-1" /> Schedule
+                    </Button>
+                  </div>
+                </div>
+                {/* AI DJ Intro Text */}
+                {djIntroText && (
+                  <div className="mt-3 p-3 bg-[#0A0A0A]/50 rounded-lg border border-[#D4A843]/10">
+                    <div className="flex items-start gap-2">
+                      <Sparkles className="w-4 h-4 text-[#D4A843] flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-[#E8E0D0]/80 italic">"{djIntroText}"</p>
+                    </div>
+                    <p className="text-xs text-[#E8E0D0]/30 mt-1 ml-6">— {currentDj.name}, AI DJ</p>
+                  </div>
+                )}
+                {djIntroMutation.isPending && (
+                  <div className="mt-3 flex items-center gap-2 text-xs text-[#E8E0D0]/40">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span>{currentDj.name} is preparing an intro...</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Broadcast Schedule Panel */}
+            {showSchedule && dailySchedule && (
+              <div className="mt-3 p-4 bg-[#111] rounded-lg border border-[#222]">
+                <h4 className="text-sm font-bold text-[#D4A843] mb-3 flex items-center gap-2">
+                  <Clock className="w-4 h-4" /> Daily DJ Schedule
+                </h4>
+                <div className="space-y-2">
+                  {dailySchedule.map((slot, i) => {
+                    const isActive = currentDj?.show === slot.show;
+                    return (
+                      <div key={i} className={`flex items-center gap-3 p-2 rounded-lg transition-all ${
+                        isActive ? 'bg-[#D4A843]/10 border border-[#D4A843]/30' : 'hover:bg-[#1A1A1A]'
+                      }`}>
+                        <div className="w-24 flex-shrink-0">
+                          <span className="text-xs font-mono text-[#E8E0D0]/50">{slot.timeSlot.split(' - ')[0]}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-[#E8E0D0]">{slot.show}</span>
+                            {isActive && <Badge className="bg-red-500/20 text-red-400 border-red-500/30 text-xs">NOW</Badge>}
+                          </div>
+                          <p className="text-xs text-[#E8E0D0]/40">{slot.description}</p>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <span className={`text-xs font-medium ${
+                            slot.dj === 'Valanna' ? 'text-purple-400' :
+                            slot.dj === 'Seraph' ? 'text-blue-400' :
+                            slot.dj === 'Candy' ? 'text-amber-400' : 'text-[#E8E0D0]/40'
+                          }`}>{slot.dj}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Broadcast Schedule from DB */}
+                {broadcastSchedule && broadcastSchedule.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-[#222]">
+                    <h4 className="text-sm font-bold text-[#E8E0D0] mb-3 flex items-center gap-2">
+                      <Radio className="w-4 h-4 text-[#D4A843]" /> Program Schedule
+                    </h4>
+                    <div className="space-y-1.5">
+                      {broadcastSchedule.filter(s => s.title !== 'Emergency Broadcast Channel').map(show => {
+                        const startHour = new Date(show.startTime).getUTCHours();
+                        const endHour = new Date(show.endTime).getUTCHours();
+                        const nowHour = new Date().getUTCHours();
+                        const isNow = nowHour >= startHour && nowHour < endHour;
+                        return (
+                          <div key={show.id} className={`flex items-center gap-3 p-2 rounded ${
+                            isNow ? 'bg-[#D4A843]/5 border border-[#D4A843]/20' : ''
+                          }`}>
+                            <span className="w-28 flex-shrink-0 text-xs font-mono text-[#E8E0D0]/50">
+                              {startHour.toString().padStart(2,'0')}:00 - {endHour.toString().padStart(2,'0')}:00
+                            </span>
+                            <div className="flex-1">
+                              <span className="text-sm text-[#E8E0D0]">{show.title}</span>
+                              {isNow && <Badge className="ml-2 bg-red-500/20 text-red-400 border-red-500/30 text-xs">LIVE</Badge>}
+                            </div>
+                            <Badge className={`text-xs ${
+                              show.type === 'music' ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' :
+                              show.type === 'talk' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+                              'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                            }`}>{show.type}</Badge>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

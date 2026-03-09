@@ -16,6 +16,9 @@ import { audioStreamingService } from '../_core/audioStreamingService';
 import { dailyStatusReportService } from '../_core/dailyStatusReport';
 import { getPlatformStats } from '../_core/realtimeStats';
 import { z } from 'zod';
+import { generateChannelIntro, generateShowTransition, getCurrentDjInfo, getDailySchedule } from '../_core/aiDjService';
+import { getDb } from '../db';
+import { sql } from 'drizzle-orm';
 
 export const ecosystemIntegrationRouter = router({
   /**
@@ -240,5 +243,70 @@ export const ecosystemIntegrationRouter = router({
       uptime: stateOfStudio.getUptimeFormatted(),
       uptimeHours: stateOfStudio.getUptimeHours(),
     };
+  }),
+
+  /**
+   * Get AI DJ channel intro — generates a live intro using Seraph/Candy/Valanna
+   */
+  getDjIntro: publicProcedure
+    .input(z.object({
+      channelName: z.string(),
+      genre: z.string(),
+      listenerCount: z.number().default(0),
+    }))
+    .mutation(async ({ input }) => {
+      return generateChannelIntro(input.channelName, input.genre, input.listenerCount);
+    }),
+
+  /**
+   * Get show transition — generates a transition between programs
+   */
+  getShowTransition: publicProcedure
+    .input(z.object({
+      fromShow: z.string(),
+      toShow: z.string(),
+    }))
+    .mutation(async ({ input }) => {
+      return generateShowTransition(input.fromShow, input.toShow);
+    }),
+
+  /**
+   * Get current active DJ info
+   */
+  getCurrentDj: publicProcedure.query(() => {
+    return getCurrentDjInfo();
+  }),
+
+  /**
+   * Get the full daily DJ schedule
+   */
+  getDailySchedule: publicProcedure.query(() => {
+    return getDailySchedule();
+  }),
+
+  /**
+   * Get broadcast schedule from database
+   */
+  getBroadcastSchedule: publicProcedure.query(async () => {
+    try {
+      const db = await getDb();
+      const result = await db.execute(
+        sql`SELECT id, title, description, start_time, end_time, status, type, autonomous_scheduling
+            FROM broadcast_schedules ORDER BY start_time`
+      );
+      const rows = Array.isArray(result[0]) ? result[0] : result;
+      return (rows as any[]).map(r => ({
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        startTime: r.start_time,
+        endTime: r.end_time,
+        status: r.status,
+        type: r.type,
+        autonomousScheduling: r.autonomous_scheduling,
+      }));
+    } catch {
+      return [];
+    }
   }),
 });

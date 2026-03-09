@@ -72,7 +72,7 @@ const PLATFORMS: ConferencePlatform[] = [
     name: 'RRB Live Broadcast',
     icon: '📡',
     color: 'from-amber-600 to-orange-600',
-    description: 'Broadcast directly to all 7 RRB Radio channels via QUMUS orchestration',
+    description: 'Broadcast directly to all 50 RRB Radio channels via QUMUS orchestration',
     features: ['7-Channel Broadcast', 'QUMUS Managed', 'Real-time Chat', 'Listener Analytics', 'Auto-Archive'],
     status: 'active',
     launchUrl: '/live',

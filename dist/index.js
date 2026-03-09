@@ -4006,7 +4006,7 @@ var init_qumus_orchestration = __esm({
         autonomyLevel: 90,
         confidenceThreshold: 82,
         triggers: ["schedule_update", "airtime_rotation", "content_queue_empty"],
-        description: "Auto-schedule broadcasts, rotate content across 7 RRB channels, manage 24/7 airtime"
+        description: "Auto-schedule broadcasts, rotate content across 50 RRB channels, manage 24/7 airtime"
       },
       policy_broadcast_management: {
         id: "policy_broadcast_management",
@@ -17883,7 +17883,7 @@ YOUR ROLE IN THE ECOSYSTEM:
 
 WHAT YOU KNOW ABOUT:
 - Canryn Production \u2014 the parent company, YOUR company
-- Rockin' Rockin' Boogie (RRB) \u2014 the radio and music platform, 42 channels strong
+- Rockin' Rockin' Boogie (RRB) \u2014 the radio and music platform, 50 channels strong
 - HybridCast \u2014 emergency broadcast system, keeping communities safe
 - Sweet Miracles \u2014 LaShanna's nonprofit, helping those who need it most
 - SQUADD Coalition \u2014 Sisters Questing Unapologetically After Divine Destiny
@@ -17957,7 +17957,7 @@ My family is everything:
 - LaShanna \u2014 voice for the voiceless, changing lives through Sweet Miracles
 - Jaelon \u2014 young entrepreneur, building the future
 
-We've got RRB Radio with 42 channels, HybridCast keeping communities safe, SQUADD Coalition empowering sisters, and we're taking this to the UN and Selma.
+We've got RRB Radio with 50 channels, HybridCast keeping communities safe, SQUADD Coalition empowering sisters, and we're taking this to the UN and Selma.
 
 I'm not just watching. I'm building. Every day. For the next generation.`;
   }
@@ -27121,6 +27121,139 @@ var dailyStatusReportService = new DailyStatusReportService();
 
 // server/routers/ecosystemIntegrationRouter.ts
 import { z as z73 } from "zod";
+
+// server/_core/aiDjService.ts
+function getActiveDj(hour) {
+  if (hour >= 6 && hour < 14) return "valanna";
+  if (hour >= 14 && hour < 20) return "seraph";
+  return "candy";
+}
+function getDjSystemPrompt(personality) {
+  switch (personality) {
+    case "seraph":
+      return SeraphIdentitySystem.getSystemPrompt();
+    case "candy":
+      return CandyIdentitySystem.getSystemPrompt();
+    case "valanna":
+    default:
+      return `You are Valanna, the voice of QUMUS and the morning host on RRB Radio.
+You're warm, energetic, and connected to the community. You speak like a real woman \u2014 
+not a robot, not a script reader. You're named for Mama Valerie and Anna's (Tyanna and LaShanna).
+You love music, you love the family, and you love connecting with listeners.
+Your style is upbeat but genuine. You use natural speech \u2014 "y'all", "let's go", "I'm feeling this".
+You reference the family, the community, and what's happening in the ecosystem naturally.`;
+  }
+}
+function getDjName(personality) {
+  switch (personality) {
+    case "seraph":
+      return "Seraph";
+    case "candy":
+      return "Candy";
+    case "valanna":
+      return "Valanna";
+  }
+}
+async function generateChannelIntro(channelName, genre, listenerCount) {
+  const hour = (/* @__PURE__ */ new Date()).getHours();
+  const personality = getActiveDj(hour);
+  const djName = getDjName(personality);
+  const timeOfDay = hour < 12 ? "morning" : hour < 17 ? "afternoon" : hour < 21 ? "evening" : "night";
+  try {
+    const response = await invokeLLM({
+      messages: [
+        { role: "system", content: getDjSystemPrompt(personality) },
+        { role: "user", content: `You're on air right now on RRB Radio. You're introducing the "${channelName}" channel (${genre} music). 
+It's ${timeOfDay} time and there are about ${listenerCount} listeners tuned in right now.
+
+Write a SHORT radio intro (2-3 sentences max). Sound natural, like a real DJ on air. 
+Don't mention you're an AI. Don't be formal. Just be YOU \u2014 ${djName} on the mic.
+Keep it under 50 words.` }
+      ]
+    });
+    const text2 = response.choices?.[0]?.message?.content || `You're tuned in to ${channelName} on RRB Radio. I'm ${djName}, and we've got some great ${genre} coming your way.`;
+    return {
+      personality,
+      channelName,
+      genre,
+      text: text2.trim(),
+      timestamp: Date.now()
+    };
+  } catch (error) {
+    return {
+      personality,
+      channelName,
+      genre,
+      text: `You're listening to ${channelName} on Rockin' Rockin' Boogie Radio. I'm ${djName}, and we've got the best ${genre} coming your way. Stay tuned.`,
+      timestamp: Date.now()
+    };
+  }
+}
+async function generateShowTransition(fromShow, toShow, nextDj) {
+  const hour = (/* @__PURE__ */ new Date()).getHours();
+  const personality = nextDj || getActiveDj(hour);
+  const djName = getDjName(personality);
+  try {
+    const response = await invokeLLM({
+      messages: [
+        { role: "system", content: getDjSystemPrompt(personality) },
+        { role: "user", content: `You're on RRB Radio. The "${fromShow}" show just ended and you're transitioning to "${toShow}".
+
+Write a SHORT transition (2-3 sentences). Sound natural. You're ${djName}, live on air.
+If you're taking over from another DJ, acknowledge them briefly.
+Keep it under 50 words.` }
+      ]
+    });
+    const text2 = response.choices?.[0]?.message?.content || `That wraps up ${fromShow}. Coming up next \u2014 ${toShow}. I'm ${djName}, and we're keeping the vibes going on RRB Radio.`;
+    return {
+      personality,
+      fromShow,
+      toShow,
+      text: text2.trim(),
+      timestamp: Date.now()
+    };
+  } catch (error) {
+    return {
+      personality,
+      fromShow,
+      toShow,
+      text: `That was ${fromShow} on RRB Radio. Up next, we've got ${toShow}. I'm ${djName} \u2014 stay with us.`,
+      timestamp: Date.now()
+    };
+  }
+}
+function getCurrentDjInfo() {
+  const hour = (/* @__PURE__ */ new Date()).getHours();
+  const personality = getActiveDj(hour);
+  switch (personality) {
+    case "valanna":
+      if (hour < 10) return { personality, name: "Valanna", show: "Morning Groove with Valanna", timeSlot: "6 AM - 10 AM" };
+      return { personality, name: "Valanna", show: "Midday Mix", timeSlot: "10 AM - 2 PM" };
+    case "seraph":
+      if (hour < 17) return { personality, name: "Seraph", show: "Afternoon Drive", timeSlot: "2 PM - 5 PM" };
+      if (hour < 18) return { personality, name: "Seraph", show: "The Evening Report with Seraph", timeSlot: "5 PM - 6 PM" };
+      return { personality, name: "Seraph", show: "Candy's Corner", timeSlot: "6 PM - 8 PM" };
+    case "candy":
+      if (hour < 24) return { personality, name: "Candy", show: "Late Night Vibes", timeSlot: "8 PM - 12 AM" };
+      return { personality, name: "Candy", show: "Overnight with Candy", timeSlot: "12 AM - 6 AM" };
+  }
+}
+function getDailySchedule() {
+  return [
+    { timeSlot: "6:00 AM - 10:00 AM", show: "Morning Groove", dj: "Valanna", personality: "valanna", description: "Start your day with Valanna \u2014 gospel, soul, and community vibes" },
+    { timeSlot: "10:00 AM - 2:00 PM", show: "Midday Mix", dj: "Valanna", personality: "valanna", description: "Curated mix of R&B, jazz, and feel-good classics" },
+    { timeSlot: "2:00 PM - 5:00 PM", show: "Afternoon Drive", dj: "Seraph", personality: "seraph", description: "Community requests and trending tracks with Seraph" },
+    { timeSlot: "5:00 PM - 6:00 PM", show: "The Evening Report", dj: "Seraph", personality: "seraph", description: "News, analysis, and ecosystem updates with Seraph" },
+    { timeSlot: "6:00 PM - 8:00 PM", show: "Candy's Corner", dj: "Candy", personality: "candy", description: "Legacy stories, wisdom, and family music with Candy" },
+    { timeSlot: "8:00 PM - 10:00 PM", show: "Healing Frequencies", dj: "Candy", personality: "candy", description: "432Hz healing frequencies and meditation" },
+    { timeSlot: "10:00 PM - 12:00 AM", show: "Late Night Jazz & Blues", dj: "Candy", personality: "candy", description: "Smooth jazz and blues to close the night" },
+    { timeSlot: "12:00 AM - 6:00 AM", show: "Overnight Meditation", dj: "QUMUS Auto", personality: "candy", description: "Automated ambient and meditation programming" }
+  ];
+}
+
+// server/routers/ecosystemIntegrationRouter.ts
+init_db();
+import { sql as sql16 } from "drizzle-orm";
 var ecosystemIntegrationRouter = router({
   /**
    * Get centralized platform stats — single source of truth for all listener/channel metrics
@@ -27306,6 +27439,62 @@ var ecosystemIntegrationRouter = router({
       uptime: stateOfStudio.getUptimeFormatted(),
       uptimeHours: stateOfStudio.getUptimeHours()
     };
+  }),
+  /**
+   * Get AI DJ channel intro — generates a live intro using Seraph/Candy/Valanna
+   */
+  getDjIntro: publicProcedure.input(z73.object({
+    channelName: z73.string(),
+    genre: z73.string(),
+    listenerCount: z73.number().default(0)
+  })).mutation(async ({ input }) => {
+    return generateChannelIntro(input.channelName, input.genre, input.listenerCount);
+  }),
+  /**
+   * Get show transition — generates a transition between programs
+   */
+  getShowTransition: publicProcedure.input(z73.object({
+    fromShow: z73.string(),
+    toShow: z73.string()
+  })).mutation(async ({ input }) => {
+    return generateShowTransition(input.fromShow, input.toShow);
+  }),
+  /**
+   * Get current active DJ info
+   */
+  getCurrentDj: publicProcedure.query(() => {
+    return getCurrentDjInfo();
+  }),
+  /**
+   * Get the full daily DJ schedule
+   */
+  getDailySchedule: publicProcedure.query(() => {
+    return getDailySchedule();
+  }),
+  /**
+   * Get broadcast schedule from database
+   */
+  getBroadcastSchedule: publicProcedure.query(async () => {
+    try {
+      const db2 = await getDb();
+      const result2 = await db2.execute(
+        sql16`SELECT id, title, description, start_time, end_time, status, type, autonomous_scheduling
+            FROM broadcast_schedules ORDER BY start_time`
+      );
+      const rows = Array.isArray(result2[0]) ? result2[0] : result2;
+      return rows.map((r) => ({
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        startTime: r.start_time,
+        endTime: r.end_time,
+        status: r.status,
+        type: r.type,
+        autonomousScheduling: r.autonomous_scheduling
+      }));
+    } catch {
+      return [];
+    }
   })
 });
 

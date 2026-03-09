@@ -257,7 +257,7 @@ export const RRBRadioIntegration: React.FC = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#E8E0D0]/30" />
             <input
               type="text"
-              placeholder="Search 42 channels by name, genre, or description..."
+              placeholder="Search 50 channels by name, genre, or description..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-[#111] border border-[#222] rounded-lg text-[#E8E0D0] placeholder-[#E8E0D0]/30 focus:border-[#D4A843]/50 focus:outline-none"

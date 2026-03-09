@@ -431,7 +431,7 @@ export const POLICY_REGISTRY = [
   { id: 'subscription_lifecycle', name: 'Subscription Lifecycle', category: 'core' as const, description: 'Auto-manages renewals, cancellations, and upgrades', autonomyLevel: 95 },
   { id: 'fraud_detection', name: 'Fraud Detection', category: 'core' as const, description: 'Auto-detects and blocks fraudulent transactions', autonomyLevel: 90 },
   { id: 'audit_logging', name: 'Analytics Aggregation', category: 'core' as const, description: 'Auto-aggregates analytics and audit trails', autonomyLevel: 98 },
-  { id: 'content_scheduling', name: 'Content Scheduling', category: 'ecosystem' as const, description: 'Auto-schedules broadcasts, rotates content across 7 RRB channels 24/7', autonomyLevel: 90 },
+  { id: 'content_scheduling', name: 'Content Scheduling', category: 'ecosystem' as const, description: 'Auto-schedules broadcasts, rotates content across 50 RRB channels 24/7', autonomyLevel: 90 },
   { id: 'broadcast_management', name: 'Broadcast Management', category: 'ecosystem' as const, description: 'Auto-manages channels, monitors stream health, handles failover', autonomyLevel: 88 },
   { id: 'emergency_response', name: 'Emergency Response', category: 'ecosystem' as const, description: 'Auto-escalates alerts, triggers HybridCast PWA, coordinates disaster response', autonomyLevel: 75 },
   { id: 'community_engagement', name: 'Community Engagement', category: 'ecosystem' as const, description: 'Auto-moderates content, tracks engagement, manages Sweet Miracles outreach', autonomyLevel: 85 },
