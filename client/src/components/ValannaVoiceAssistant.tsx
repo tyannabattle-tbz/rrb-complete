@@ -7,8 +7,9 @@ import { Mic, MicOff, Volume2, VolumeX, X, MessageCircle, Sparkles, Paperclip, I
 // ─── Persona Configuration ─────────────────────────────────────────
 const VALANNA_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/valanna-avatar-mYpqZPJmy73yGwB7kFmCe9.webp';
 const CANDY_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/candy-avatar_4d4d3bc0.png';
+const SERAPH_AVATAR = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/seraph-avatar-v2-4cBZycZ6qyGjmCjzjWUMUo.webp';
 
-type PersonaKey = 'valanna' | 'candy';
+type PersonaKey = 'valanna' | 'candy' | 'seraph';
 
 interface PersonaConfig {
   name: string;
@@ -69,6 +70,25 @@ const PERSONAS: Record<PersonaKey, PersonaConfig> = {
     voicePitch: 0.85,
     voiceRate: 0.88,
   },
+  seraph: {
+    name: 'Seraph',
+    avatar: SERAPH_AVATAR,
+    subtitle: 'Strategic Intelligence \u2022 Pattern Analyst',
+    greeting: "Seraph here. I've been running the numbers across all systems and I have some insights for you. Listener trends are up, all 13 QUMUS policies are active, and I've spotted a few patterns worth discussing. What do you want to dig into?",
+    borderColor: 'border-violet-500',
+    borderColorActive: 'border-violet-400 shadow-lg shadow-violet-400/50',
+    accentBg: 'bg-violet-500/10',
+    accentText: 'text-violet-400',
+    accentBorder: 'border-violet-500/30',
+    headerGradient: 'bg-gradient-to-r from-slate-800 via-violet-900/30 to-slate-800',
+    messageBg: 'bg-violet-900/20',
+    messageBorder: 'border-violet-500/10',
+    speakingLabel: 'Seraph is speaking...',
+    footerLabel: 'Seraph \u2022 Strategic Intelligence \u2022 Canryn Production',
+    voiceType: 'feminine',
+    voicePitch: 1.0,
+    voiceRate: 0.95,
+  },
 };
 
 // ─── Conflict Resolution System ────────────────────────────────────
@@ -77,30 +97,29 @@ function resolvePersonaConflict(message: string, currentPersona: PersonaKey): { 
   const lower = message.toLowerCase();
   const mentionsValanna = /valanna|val\b/i.test(lower);
   const mentionsCandy = /candy|seabrun|hunter\b/i.test(lower);
-  const asksBoth = /both|together|you two|y'all|team/i.test(lower);
+  const mentionsSeraph = /seraph|sareph/i.test(lower);
+  const asksBoth = /both|together|you two|y'all|team|all three|trinity/i.test(lower);
 
-  // If user mentions both or asks about the team
-  if ((mentionsValanna && mentionsCandy) || asksBoth) {
-    return {
-      persona: currentPersona,
-      mediatorNote: currentPersona === 'valanna'
-        ? "[Valanna speaks first, acknowledging Candy's presence]"
-        : "[Candy speaks first, acknowledging Valanna's role]",
+  // If user mentions multiple AIs or asks about the team
+  const mentionCount = [mentionsValanna, mentionsCandy, mentionsSeraph].filter(Boolean).length;
+  if (mentionCount >= 2 || asksBoth) {
+    const notes: Record<PersonaKey, string> = {
+      valanna: "[Valanna speaks first, acknowledging the team]",
+      candy: "[Candy speaks first, acknowledging the family]",
+      seraph: "[Seraph speaks first, providing the analytical perspective]",
     };
+    return { persona: currentPersona, mediatorNote: notes[currentPersona] };
   }
 
-  // If user specifically addresses the OTHER persona
-  if (mentionsValanna && currentPersona === 'candy') {
-    return {
-      persona: currentPersona,
-      mediatorNote: "[Candy acknowledges the question is about Valanna and responds with respect]",
-    };
+  // If user specifically addresses a different persona
+  if (mentionsValanna && currentPersona !== 'valanna') {
+    return { persona: currentPersona, mediatorNote: `[${PERSONAS[currentPersona].name} acknowledges the question is about Valanna and responds with respect]` };
   }
-  if (mentionsCandy && currentPersona === 'valanna') {
-    return {
-      persona: currentPersona,
-      mediatorNote: "[Valanna acknowledges the question is about Candy and responds with warmth]",
-    };
+  if (mentionsCandy && currentPersona !== 'candy') {
+    return { persona: currentPersona, mediatorNote: `[${PERSONAS[currentPersona].name} acknowledges the question is about Candy and responds with warmth]` };
+  }
+  if (mentionsSeraph && currentPersona !== 'seraph') {
+    return { persona: currentPersona, mediatorNote: `[${PERSONAS[currentPersona].name} acknowledges the question is about Seraph and responds thoughtfully]` };
   }
 
   // No conflict — stay with current persona
@@ -205,7 +224,7 @@ export default function ValannaVoiceAssistant() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isThinking, setIsThinking] = useState(false);
   const [inputText, setInputText] = useState('');
-  const [hasGreeted, setHasGreeted] = useState<Record<PersonaKey, boolean>>({ valanna: false, candy: false });
+  const [hasGreeted, setHasGreeted] = useState<Record<PersonaKey, boolean>>({ valanna: false, candy: false, seraph: false });
   const [pulseAnimation, setPulseAnimation] = useState(false);
   const [femVoice, setFemVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [mascVoice, setMascVoice] = useState<SpeechSynthesisVoice | null>(null);
@@ -350,7 +369,11 @@ export default function ValannaVoiceAssistant() {
     // Add transition message from the current persona
     const handoffMessages: Record<string, string> = {
       'valanna_to_candy': `Alright, I'm passing you over to Candy. He's been watching and he's ready. Go ahead, Candy.`,
+      'valanna_to_seraph': `Let me bring in Seraph. She's been analyzing the data and she's got insights. Go ahead, Seraph.`,
       'candy_to_valanna': `Let me hand you back to Valanna. She's got the day-to-day covered. Go ahead, Val.`,
+      'candy_to_seraph': `I'll let Seraph take this one. She sees the patterns I can't. Go ahead, Seraph.`,
+      'seraph_to_valanna': `Passing you back to Valanna. She'll handle the operations side. Go ahead, Val.`,
+      'seraph_to_candy': `Let me bring Candy in on this. He's got the wisdom we need here. Go ahead, Candy.`,
     };
 
     const handoffKey = `${activePersona}_to_${newPersona}`;
@@ -606,14 +629,14 @@ export default function ValannaVoiceAssistant() {
                                 </Badge>
                               )}
                             </div>
-                            <span className="text-[10px] text-gray-400">{key === 'valanna' ? 'Operations & Day-to-Day' : 'Vision & Strategy'}</span>
+                            <span className="text-[10px] text-gray-400">{key === 'valanna' ? 'Operations & Day-to-Day' : key === 'seraph' ? 'System Intelligence & Strategy' : 'Vision & Legacy'}</span>
                           </div>
                         </button>
                       );
                     })}
                     <div className="border-t border-slate-700 mt-1 pt-1">
                       <p className="text-[9px] text-gray-500 px-3 py-1 italic">
-                        Valanna runs the day-to-day. Candy provides vision and protection. They work as a team.
+                        Valanna runs operations. Seraph handles strategy & analysis. Candy guards the legacy. The AI Trinity.
                       </p>
                     </div>
                   </div>
@@ -636,14 +659,14 @@ export default function ValannaVoiceAssistant() {
               return (
                 <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                   {msg.role === 'assistant' && (
-                    <div className={`w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border ${msg.persona === 'candy' ? 'border-blue-500/30' : 'border-amber-500/30'}`}>
+                    <div className={`w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border ${msg.persona === 'candy' ? 'border-blue-500/30' : msg.persona === 'seraph' ? 'border-violet-500/30' : 'border-amber-500/30'}`}>
                       <img src={getMessageAvatar(msg)} alt={msg.persona || 'assistant'} className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                     msg.role === 'user'
                       ? 'bg-purple-600/30 text-purple-100 border border-purple-500/20'
-                      : `${msgColors.bg} text-${msg.persona === 'candy' ? 'blue' : 'amber'}-100 border ${msgColors.border}`
+                      : `${msgColors.bg} text-${msg.persona === 'candy' ? 'blue' : msg.persona === 'seraph' ? 'violet' : 'amber'}-100 border ${msgColors.border}`
                   }`}>
                     {/* File attachments */}
                     {msg.attachments && msg.attachments.length > 0 && (
@@ -785,21 +808,21 @@ export default function ValannaVoiceAssistant() {
                     <button
                       type="button"
                       onClick={() => { fileInputRef.current?.setAttribute('accept', 'image/*'); fileInputRef.current?.click(); }}
-                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
+                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : activePersona === 'seraph' ? 'violet' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
                     >
                       <Image className="w-4 h-4 text-green-400" /> Photo / Image
                     </button>
                     <button
                       type="button"
                       onClick={() => { fileInputRef.current?.setAttribute('accept', '.pdf,.doc,.docx,.txt,.csv'); fileInputRef.current?.click(); }}
-                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
+                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : activePersona === 'seraph' ? 'violet' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
                     >
                       <FileText className="w-4 h-4 text-blue-400" /> Document
                     </button>
                     <button
                       type="button"
                       onClick={() => { fileInputRef.current?.setAttribute('accept', 'audio/*,video/*'); fileInputRef.current?.click(); }}
-                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
+                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : activePersona === 'seraph' ? 'violet' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
                     >
                       <Music className="w-4 h-4 text-purple-400" /> Audio / Video
                     </button>
@@ -807,7 +830,7 @@ export default function ValannaVoiceAssistant() {
                     <button
                       type="button"
                       onClick={() => { fileInputRef.current?.setAttribute('accept', ACCEPTED_TYPES.join(',')); fileInputRef.current?.click(); }}
-                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
+                      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-${activePersona === 'valanna' ? 'amber' : activePersona === 'seraph' ? 'violet' : 'blue'}-100 hover:${persona.accentBg} rounded-lg transition-colors`}
                     >
                       <Paperclip className={`w-4 h-4 ${persona.accentText}`} /> Any File
                     </button>
@@ -822,7 +845,7 @@ export default function ValannaVoiceAssistant() {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={isListening ? 'Listening...' : pendingFiles.length > 0 ? 'Add a message or send files...' : `Talk to ${persona.name}...`}
-                className={`flex-1 bg-slate-700/50 border border-slate-600 rounded-full px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:${persona.accentBorder} focus:ring-1 focus:ring-${activePersona === 'valanna' ? 'amber' : 'blue'}-500/30`}
+                className={`flex-1 bg-slate-700/50 border border-slate-600 rounded-full px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:${persona.accentBorder} focus:ring-1 focus:ring-${activePersona === 'valanna' ? 'amber' : activePersona === 'seraph' ? 'violet' : 'blue'}-500/30`}
                 disabled={isListening}
               />
 

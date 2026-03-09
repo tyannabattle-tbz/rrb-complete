@@ -182,7 +182,7 @@ export default function RRBPort3001() {
   const AI_HOSTS = {
     valanna: { name: 'Valanna', avatar: VALANNA_AVATAR, color: 'amber', role: 'AI DJ & Operations', greeting: 'Hey baby, you\'re tuned in to RRB. What can I play for you?' },
     candy: { name: 'Candy', avatar: CANDY_AVATAR, color: 'blue', role: 'Guardian & Co-Host', greeting: 'What\'s good, family? Candy here. Let me know what you need.' },
-    seraph: { name: 'Seraph', avatar: '', color: 'purple', role: 'System Intelligence', greeting: 'Seraph online. I can analyze listening patterns, optimize scheduling, or provide system insights.' },
+    seraph: { name: 'Seraph', avatar: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/seraph-avatar-v2-4cBZycZ6qyGjmCjzjWUMUo.webp', color: 'violet', role: 'System Intelligence', greeting: 'Seraph online. I can analyze listening patterns, optimize scheduling, or provide system insights.' },
   };
 
   const sendAiMessage = async () => {

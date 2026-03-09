@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { invokeLLM } from '../_core/llm';
 import { QumusIdentitySystem } from '../_core/qumusIdentity';
 import { CandyIdentitySystem } from '../_core/candyIdentity';
+import { SeraphIdentitySystem } from '../_core/seraphIdentity';
 
 export const chatStreamingRouter = router({
   /**
@@ -15,8 +16,8 @@ export const chatStreamingRouter = router({
         content: z.string(),
       })),
       query: z.string(),
-      // Which AI persona to use — Valanna (default) or Candy
-      persona: z.enum(['valanna', 'candy']).default('valanna'),
+      // Which AI persona to use — Valanna (default), Candy, or Seraph
+      persona: z.enum(['valanna', 'candy', 'seraph']).default('valanna'),
       // Optional file attachments for multimodal input
       attachments: z.array(z.object({
         url: z.string(),           // S3 URL of the uploaded file
@@ -29,6 +30,8 @@ export const chatStreamingRouter = router({
         // Use the selected persona's identity system for system prompt
         const systemPrompt = input.persona === 'candy' 
           ? CandyIdentitySystem.getSystemPrompt() 
+          : input.persona === 'seraph'
+          ? SeraphIdentitySystem.getSystemPrompt()
           : QumusIdentitySystem.getSystemPrompt();
 
         // Build message history

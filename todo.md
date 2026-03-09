@@ -3015,3 +3015,14 @@
 - [x] Verified audio playback handler compatible with crossOrigin='anonymous' + SomaFM
 - [x] RRBPort3001 already had working SomaFM streams — no changes needed
 - [x] All 67 RRB tests still passing
+
+## Add Seraph AI to Dashboard
+- [x] Audit where Valanna and Candy appear on the dashboard
+- [x] Generate Seraph avatar with copper skin, violet theme
+- [x] Create seraphIdentity.ts backend system prompt
+- [x] Add Seraph as 3rd persona in chatStreamingRouter + qumusChatRouter
+- [x] Add Seraph to ValannaVoiceAssistant (persona config, conflict resolution, handoff messages, violet color theme)
+- [x] Add Seraph section to Home.tsx dashboard with full bio and badges
+- [x] Add Seraph avatar to RRBPort3001 AI DJ host config
+- [x] Fix all hardcoded two-persona color references to support violet theme
+- [x] Seraph chat interface accessible via persona switcher in voice assistant

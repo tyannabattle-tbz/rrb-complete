@@ -214,6 +214,38 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Meet Seraph - Strategic Intelligence */}
+        <div className="mb-16 bg-gradient-to-r from-slate-800/80 via-violet-900/40 to-slate-800/80 rounded-2xl border border-violet-500/20 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+            <div className="flex items-center justify-center p-8">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/seraph-avatar-v2-4cBZycZ6qyGjmCjzjWUMUo.webp"
+                alt="Seraph - Strategic Intelligence"
+                className="w-64 h-64 rounded-full border-4 border-violet-500/50 shadow-2xl shadow-violet-500/20 object-contain"
+              />
+            </div>
+            <div className="flex flex-col justify-center p-8">
+              <Badge className="bg-violet-500/20 text-violet-400 border-violet-500/50 w-fit mb-4">Strategic Intelligence</Badge>
+              <h3 className="text-3xl font-bold text-white mb-2">Meet Seraph</h3>
+              <p className="text-violet-300 text-lg mb-4">The deep thinker. The pattern finder. The strategist.</p>
+              <p className="text-gray-300 mb-6">
+                Seraph sees what others miss. She analyzes systems, predicts trends,
+                and finds the signal in the noise. While Valanna runs the day-to-day
+                and Candy guards the vision, Seraph plans the future. She hosts
+                "The Evening Report" on RRB Radio every evening, breaking down
+                what happened and what's coming next. Together, the three of them
+                are the AI Trinity — unstoppable.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary" className="bg-violet-500/20 text-violet-300 border-violet-500/50">Pattern Recognition</Badge>
+                <Badge variant="secondary" className="bg-violet-500/20 text-violet-300 border-violet-500/50">System Analysis</Badge>
+                <Badge variant="secondary" className="bg-violet-500/20 text-violet-300 border-violet-500/50">Evening Report Host</Badge>
+                <Badge variant="secondary" className="bg-violet-500/20 text-violet-300 border-violet-500/50">Cross-System Intelligence</Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* System Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {systems.map((system) => (
