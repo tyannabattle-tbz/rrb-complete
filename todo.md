@@ -3662,3 +3662,12 @@
 - [x] Stripe ticketing flows connected (4 tiers: Free/VIP/Speaker/Delegate)
 - [x] Full test suite: 143 tests passing, 0 TypeScript errors, QUMUS 18/18 healthy
 - [x] Fixed stale counts in RRBEcosystemDashboard (12→14), SelmaEvent (12→14), TyBattleProfile (13→14, 16→18), OnboardingTour (16→18)
+
+## Mobile UX Fixes - Conference System (March 2026)
+- [x] Fix Jitsi room requiring moderator — rooms should start immediately for all users
+- [x] Fix "Failed to start recording" error — use app recording flow, not Jitsi built-in
+- [x] Fix Conference Hub tabs overlapping on mobile
+- [x] Fix Conference Room toolbar buttons overlapping on mobile
+- [x] Fix Check-In Dashboard header misalignment on mobile
+- [x] Fix Conference Hub "Er" truncated button on mobile
+- [x] Improve overall mobile responsiveness across conference pages

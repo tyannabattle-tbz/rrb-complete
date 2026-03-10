@@ -621,3 +621,12 @@
     overflow-y: auto;
   }
 }
+
+/* Scrollbar-hide utility for mobile-scrollable tabs */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

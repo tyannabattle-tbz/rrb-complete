@@ -239,74 +239,79 @@ export default function RRBConferenceHub() {
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white">
       {/* Header */}
       <div className="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm">
-        <div className="container py-6">
-          <div className="flex items-center justify-between">
+        <div className="container py-4 sm:py-6">
+          {/* Header — stacks vertically on mobile */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
                 RRB Conference Hub
               </h1>
-              <p className="text-white/50 text-sm mt-1">Powered by QUMUS Orchestration Engine &bull; Built-in Jitsi + External Platforms</p>
+              <p className="text-white/50 text-xs sm:text-sm mt-0.5">Powered by QUMUS &bull; Jitsi + External Platforms</p>
             </div>
             <div className="flex items-center gap-4 text-sm">
               <div className="text-center">
-                <div className="text-2xl font-bold text-amber-400">{stats?.total || 0}</div>
-                <div className="text-white/40 text-xs">Total</div>
+                <div className="text-lg sm:text-2xl font-bold text-amber-400">{stats?.total || 0}</div>
+                <div className="text-white/40 text-[10px] sm:text-xs">Total</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-400">{stats?.live || 0}</div>
-                <div className="text-white/40 text-xs">Live</div>
+                <div className="text-lg sm:text-2xl font-bold text-green-400">{stats?.live || 0}</div>
+                <div className="text-white/40 text-[10px] sm:text-xs">Live</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400">{stats?.scheduled || 0}</div>
-                <div className="text-white/40 text-xs">Scheduled</div>
+                <div className="text-lg sm:text-2xl font-bold text-blue-400">{stats?.scheduled || 0}</div>
+                <div className="text-white/40 text-[10px] sm:text-xs">Scheduled</div>
               </div>
             </div>
           </div>
 
-          {/* Tabs + Navigation */}
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex gap-1">
+          {/* Tabs — horizontally scrollable on mobile */}
+          <div className="mt-3 sm:mt-4 -mx-4 px-4 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-1 min-w-max">
               {(['dashboard', 'create', 'scheduled', 'csw70'] as TabType[]).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+                  className={`px-3 sm:px-4 py-2 rounded-t-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                     activeTab === tab
                       ? 'bg-gray-800 text-amber-400 border-b-2 border-amber-400'
                       : 'text-white/50 hover:text-white/80 hover:bg-gray-800/50'
                   }`}
                 >
                   {tab === 'dashboard' && 'Dashboard'}
-                  {tab === 'create' && 'Create New'}
+                  {tab === 'create' && 'Create'}
                   {tab === 'scheduled' && 'Scheduled'}
-                  {tab === 'csw70' && '🌍 UN CSW70'}
+                  {tab === 'csw70' && '\ud83c\udf0d CSW70'}
                 </button>
               ))}
             </div>
-            <div className="flex gap-2">
+          </div>
+
+          {/* Navigation links — scrollable row on mobile */}
+          <div className="mt-2 -mx-4 px-4 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-1.5 sm:gap-2 min-w-max">
               <Link href="/conference/calendar">
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 text-xs font-medium transition-colors">
-                  <Calendar className="w-3.5 h-3.5" /> Calendar
+                <button className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 text-[11px] sm:text-xs font-medium transition-colors whitespace-nowrap">
+                  <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Calendar
                 </button>
               </Link>
               <Link href="/conference/analytics">
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-xs font-medium transition-colors">
-                  <BarChart3 className="w-3.5 h-3.5" /> Analytics
+                <button className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-[11px] sm:text-xs font-medium transition-colors whitespace-nowrap">
+                  <BarChart3 className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Analytics
                 </button>
               </Link>
               <Link href="/conference/recordings">
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-medium transition-colors">
-                  <Archive className="w-3.5 h-3.5" /> Recordings
+                <button className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-[11px] sm:text-xs font-medium transition-colors whitespace-nowrap">
+                  <Archive className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Recordings
                 </button>
               </Link>
               <Link href="/conference/checkin/0">
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 text-xs font-medium transition-colors">
-                  <Shield className="w-3.5 h-3.5" /> Check-In
+                <button className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 text-[11px] sm:text-xs font-medium transition-colors whitespace-nowrap">
+                  <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Check-In
                 </button>
               </Link>
               <Link href="/conference/translation/0">
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-xs font-medium transition-colors">
-                  <Globe className="w-3.5 h-3.5" /> Translation
+                <button className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-[11px] sm:text-xs font-medium transition-colors whitespace-nowrap">
+                  <Globe className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Translation
                 </button>
               </Link>
             </div>

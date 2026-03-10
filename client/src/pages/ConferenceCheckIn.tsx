@@ -44,24 +44,26 @@ export default function ConferenceCheckIn() {
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-green-950/20 to-gray-950">
       {/* Header */}
       <div className="border-b border-white/10 bg-black/30 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/conference">
-              <Button variant="ghost" size="sm" className="text-white/60 hover:text-white">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Conference Hub
-              </Button>
-            </Link>
-            <div className="h-4 w-px bg-white/20" />
-            <h1 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Scan className="w-5 h-5 text-green-400" /> Check-In Dashboard
-            </h1>
-          </div>
-          {dashboard && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">
-              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-sm text-green-400">{dashboard.arrivalRate}% Arrival Rate</span>
+        <div className="container mx-auto px-4 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+              <Link href="/conference">
+                <Button variant="ghost" size="sm" className="text-white/60 hover:text-white text-xs sm:text-sm">
+                  <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" /> Back
+                </Button>
+              </Link>
+              <div className="hidden sm:block h-4 w-px bg-white/20" />
+              <h1 className="text-sm sm:text-lg font-semibold text-white flex items-center gap-1.5 sm:gap-2">
+                <Scan className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" /> Check-In Dashboard
+              </h1>
             </div>
-          )}
+            {dashboard && (
+              <div className="flex items-center gap-2 px-3 py-1 sm:py-1.5 rounded-full bg-green-500/10 border border-green-500/20 self-start sm:self-auto">
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-xs sm:text-sm text-green-400">{dashboard.arrivalRate}% Arrival Rate</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
