@@ -41,6 +41,8 @@ const FEATURE_ROUTES: Record<string, string> = {
   'conf': '/conference',
   'cal': '/conference/calendar',
   'rec': '/conference/recordings',
+  'restream': 'https://studio.restream.io/enk-osex-pju',
+  'multistream': '/conference',
 };
 
 export default function HybridCastHub() {

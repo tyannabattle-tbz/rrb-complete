@@ -77,7 +77,7 @@ import { TaskHistory } from "@/components/TaskHistory";
 import { EcosystemStatusDashboard } from "@/components/EcosystemStatusDashboard";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import { useMetricsWebSocket } from "@/hooks/useMetricsWebSocket";
-import { Brain as BrainIcon, Glasses, Video } from "lucide-react";
+import { Brain as BrainIcon, Glasses, Video, Tv } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function QumusHome() {
@@ -569,7 +569,7 @@ export default function QumusHome() {
               Refresh
             </FuturisticButton>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-3">
             <FuturisticButton 
               onClick={() => window.location.href = '/conference'}
               variant="secondary"
@@ -577,6 +577,14 @@ export default function QumusHome() {
             >
               <Video size={16} className="mr-2" />
               Conference Hub
+            </FuturisticButton>
+            <FuturisticButton 
+              onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')}
+              variant="secondary"
+              className="w-full"
+            >
+              <Tv size={16} className="mr-2" />
+              Restream
             </FuturisticButton>
             <FuturisticButton 
               onClick={() => window.location.href = '/live'}

@@ -6,7 +6,7 @@ import {
   Crown, Mic, BookOpen, Scale, Lightbulb, MessageSquare,
   Radio, Shield, Heart, Brain, Zap, Globe, ArrowLeft,
   ExternalLink, Mail, Monitor, Headphones, Search,
-  Users, Cpu, Podcast, Sparkles
+  Users, Cpu, Podcast, Sparkles, Tv
 } from 'lucide-react';
 
 // Identity Modes
@@ -29,12 +29,13 @@ const CORE_FUNCTIONS = [
 
 // Ecosystem Modules
 const ECOSYSTEM_MODULES = [
-  { name: 'QUMUS', description: 'The Brain — 90% autonomous AI, 13 policies, 16 subsystems', icon: Cpu, link: '/agent', color: 'text-purple-400' },
+  { name: 'QUMUS', description: 'The Brain — 90% autonomous AI, 14 policies, 18 subsystems', icon: Cpu, link: '/agent', color: 'text-purple-400' },
   { name: 'RRB Radio', description: 'The Voice — 52 channels, 13 categories, 24/7 broadcasting', icon: Radio, link: '/live', color: 'text-amber-400' },
   { name: 'HybridCast', description: 'The Lifeline — 100% offline emergency broadcast PWA', icon: Shield, link: '/hybridcast', color: 'text-red-400' },
   { name: 'Sweet Miracles', description: 'The Heart — 501(c)(3) nonprofit, grants & donations', icon: Heart, link: '/donate', color: 'text-pink-400' },
   { name: 'SQUADD Coalition', description: 'The Movement — 7 women, 7 missions, 1 coalition', icon: Users, link: '/squadd', color: 'text-blue-400' },
   { name: 'Conference Hub', description: 'The Bridge — Jitsi, Zoom, Meet, Discord, Skype + recordings & analytics', icon: Globe, link: '/conference', color: 'text-cyan-400' },
+  { name: 'Restream Studio', description: 'Multi-Stream — YouTube, Facebook, LinkedIn, Twitter/X, Twitch, TikTok', icon: Tv, link: 'https://studio.restream.io/enk-osex-pju', color: 'text-purple-400', external: true },
   { name: 'TBZ-OS', description: 'The Operating System — Full digital steward platform', icon: Monitor, link: 'https://tybatos-uo4zkxnl.manus.space', color: 'text-green-400', external: true },
 ];
 

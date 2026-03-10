@@ -82,6 +82,7 @@ class QumusProductionIntegration {
       'content-scheduler', 'hybridcast', 'sweet-miracles',
       'email-service', 'stripe-payments', 'valanna-chat',
       'candy-archive', 'seraph-ai', 'production-studio', 'convention-hub',
+      'conference-hub', 'restream-multistream',
     ];
 
     for (const name of subsystems) {

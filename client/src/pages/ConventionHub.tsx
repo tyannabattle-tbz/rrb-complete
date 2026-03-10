@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Globe, Calendar, Users, Plus, MapPin, Ticket, Clock,
   Video, Mic, MessageSquare, Star, ChevronRight, Search,
-  Layout, Layers, UserPlus, CheckCircle, Tv
+  Layout, Layers, UserPlus, CheckCircle, Tv, Radio
 } from "lucide-react";
 
 type Tab = "conventions" | "create" | "detail";
@@ -598,7 +598,7 @@ export default function ConventionHub() {
       )}
 
       {/* Cross-Platform Integration */}
-      <div className="mt-8 grid md:grid-cols-3 gap-4 px-4">
+      <div className="mt-8 grid md:grid-cols-4 gap-4 px-4">
         <a href="/conference" className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 hover:border-amber-500/40 transition-colors block">
           <div className="flex items-center gap-2 mb-2">
             <Video className="w-5 h-5 text-amber-400" />
@@ -606,9 +606,16 @@ export default function ConventionHub() {
           </div>
           <p className="text-xs text-white/50">Schedule and manage conferences with Jitsi, Zoom, Meet, Discord. Bridge to RRB Radio and HybridCast.</p>
         </a>
+        <a href="https://studio.restream.io/enk-osex-pju" target="_blank" rel="noopener noreferrer" className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4 hover:border-purple-500/40 transition-colors block">
+          <div className="flex items-center gap-2 mb-2">
+            <Tv className="w-5 h-5 text-purple-400" />
+            <span className="font-bold text-white">Restream Studio</span>
+          </div>
+          <p className="text-xs text-white/50">Multi-stream to YouTube, Facebook, LinkedIn, Twitter/X, Twitch, TikTok simultaneously.</p>
+        </a>
         <a href="/live" className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 hover:border-red-500/40 transition-colors block">
           <div className="flex items-center gap-2 mb-2">
-            <Tv className="w-5 h-5 text-red-400" />
+            <Radio className="w-5 h-5 text-red-400" />
             <span className="font-bold text-white">RRB Radio Live</span>
           </div>
           <p className="text-xs text-white/50">Broadcast convention sessions live on Rockin' Rockin' Boogie Radio. 24/7 streaming.</p>

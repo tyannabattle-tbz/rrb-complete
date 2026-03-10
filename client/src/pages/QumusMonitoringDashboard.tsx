@@ -330,6 +330,10 @@ export default function QumusMonitoringDashboard() {
                     { name: 'S3 Recording Archive', status: 'active', desc: 'Cloud recording storage' },
                     { name: 'HybridCast Bridge', status: 'active', desc: 'Emergency broadcast bridge' },
                     { name: 'UN CSW70 Templates', status: 'active', desc: '6 session templates for world stage' },
+                    { name: 'Restream Multi-Stream', status: 'active', desc: 'YouTube, Facebook, LinkedIn, Twitter/X, Twitch, TikTok' },
+                    { name: 'QR Check-In', status: 'active', desc: 'Real-time attendee check-in with QR codes' },
+                    { name: '16-Language Translation', status: 'active', desc: 'Web Speech API real-time translation overlay' },
+                    { name: 'Speaker Profiles', status: 'active', desc: 'Bio, photo, social links, session history' },
                   ].map((svc, idx) => (
                     <div key={idx} className="flex items-center justify-between p-3 bg-slate-700 rounded border border-slate-600">
                       <div>
@@ -346,6 +350,7 @@ export default function QumusMonitoringDashboard() {
                   <Button size="sm" onClick={() => window.location.href = '/conference'} className="bg-cyan-600 hover:bg-cyan-700">Open Conference Hub</Button>
                   <Button size="sm" onClick={() => window.location.href = '/conference/calendar'} variant="outline" className="border-cyan-500/50 text-cyan-400">Calendar</Button>
                   <Button size="sm" onClick={() => window.location.href = '/conference/analytics'} variant="outline" className="border-cyan-500/50 text-cyan-400">Analytics</Button>
+                  <Button size="sm" onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')} variant="outline" className="border-purple-500/50 text-purple-400">Restream</Button>
                 </div>
               </CardContent>
             </Card>

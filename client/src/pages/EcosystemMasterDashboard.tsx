@@ -8,7 +8,7 @@ import {
   Radio, Heart, Zap, Users, TrendingUp, Activity, 
   Settings, RefreshCw, AlertCircle, Wifi, Volume2,
   BarChart3, Bell, Shield, Globe, Clock, Headphones,
-  Megaphone, Target, Layers, ChevronRight
+  Megaphone, Target, Layers, ChevronRight, Tv
 } from 'lucide-react';
 
 export default function EcosystemMasterDashboard() {
@@ -384,13 +384,14 @@ export default function EcosystemMasterDashboard() {
                 { label: 'QUMUS Chat', path: '/qumus-chat', icon: Users, color: 'bg-violet-600 hover:bg-violet-700' },
                 { label: 'Production Status', path: '/production', icon: Activity, color: 'bg-slate-600 hover:bg-slate-700' },
                 { label: 'Conference Hub', path: '/conference', icon: Globe, color: 'bg-amber-600 hover:bg-amber-700' },
+                { label: 'Restream Studio', path: 'https://studio.restream.io/enk-osex-pju', icon: Tv, color: 'bg-purple-600 hover:bg-purple-700' },
                 { label: 'Convention Hub', path: '/convention-hub', icon: Users, color: 'bg-indigo-600 hover:bg-indigo-700' },
                 { label: 'SQUADD Goals', path: '/squadd', icon: Shield, color: 'bg-yellow-600 hover:bg-yellow-700' },
                 { label: 'Admin Panel', path: '/admin', icon: Settings, color: 'bg-gray-600 hover:bg-gray-700' },
               ].map((item, i) => (
                 <Button
                   key={i}
-                  onClick={() => navigate(item.path)}
+                  onClick={() => item.path.startsWith('http') ? window.open(item.path, '_blank') : navigate(item.path)}
                   className={`${item.color} justify-between h-auto py-3 px-4`}
                 >
                   <span className="flex items-center gap-2">

@@ -4654,7 +4654,9 @@ var init_qumusProductionIntegration = __esm({
           "candy-archive",
           "seraph-ai",
           "production-studio",
-          "convention-hub"
+          "convention-hub",
+          "conference-hub",
+          "restream-multistream"
         ];
         for (const name of subsystems) {
           this.subsystemStatus[name] = {

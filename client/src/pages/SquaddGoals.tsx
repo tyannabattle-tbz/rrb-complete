@@ -573,7 +573,7 @@ export default function SquaddGoals() {
       <section className="py-8">
         <div className="container mx-auto px-4">
           <h3 className="text-lg font-bold text-[#D4A843] mb-4 text-center">World Stage Infrastructure</h3>
-          <div className="grid md:grid-cols-4 gap-3">
+          <div className="grid md:grid-cols-5 gap-3">
             <a href="/conference" className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 hover:border-amber-500/40 transition-colors block text-center">
               <div className="text-2xl mb-1">🎤</div>
               <div className="font-bold text-white text-sm">Conference Hub</div>
@@ -583,6 +583,11 @@ export default function SquaddGoals() {
               <div className="text-2xl mb-1">📻</div>
               <div className="font-bold text-white text-sm">RRB Radio</div>
               <p className="text-xs text-white/40 mt-1">Live broadcast worldwide</p>
+            </a>
+            <a href="https://studio.restream.io/enk-osex-pju" target="_blank" rel="noopener noreferrer" className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4 hover:border-purple-500/40 transition-colors block text-center">
+              <div className="text-2xl mb-1">📺</div>
+              <div className="font-bold text-white text-sm">Restream Studio</div>
+              <p className="text-xs text-white/40 mt-1">Multi-stream to 6 platforms</p>
             </a>
             <a href="/hybridcast-hub" className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 hover:border-red-500/40 transition-colors block text-center">
               <div className="text-2xl mb-1">🛡️</div>
