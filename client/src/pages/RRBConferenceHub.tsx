@@ -12,7 +12,7 @@ import {
   Camera, Monitor, MessageSquare, Settings,
   Zap, Radio, Play, Plus, ExternalLink, Copy,
   Shield, Headphones, ArrowRight, Trash2, Eye,
-  BarChart3, Archive, Cpu
+  BarChart3, Archive, Cpu, Tv
 } from 'lucide-react';
 import { Link } from 'wouter';
 
@@ -397,6 +397,40 @@ export default function RRBConferenceHub() {
               </CardContent>
             </Card>
 
+            {/* Restream Multi-Stream Hub */}
+            <Card className="bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-blue-500/10 border-purple-500/30 hover:border-purple-500/50 transition-all">
+              <CardContent className="pt-5 pb-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                      <Tv className="w-6 h-6 text-purple-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white text-lg">Restream Multi-Stream Hub</h3>
+                      <p className="text-white/50 text-sm">Broadcast to YouTube, Facebook, LinkedIn, Twitter/X simultaneously</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge variant="outline" className="text-[10px] border-red-500/50 text-red-400">YouTube</Badge>
+                        <Badge variant="outline" className="text-[10px] border-blue-500/50 text-blue-400">Facebook</Badge>
+                        <Badge variant="outline" className="text-[10px] border-sky-500/50 text-sky-400">LinkedIn</Badge>
+                        <Badge variant="outline" className="text-[10px] border-cyan-500/50 text-cyan-400">Twitter/X</Badge>
+                        <Badge variant="outline" className="text-[10px] border-purple-500/50 text-purple-400">Twitch</Badge>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')}
+                      className="border-purple-500/50 text-purple-400 hover:bg-purple-500/20"
+                    >
+                      <ExternalLink className="w-4 h-4 mr-1" /> Open Restream Studio
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Quick Start Templates */}
             <div>
               <h2 className="text-lg font-semibold text-white/80 mb-3">Quick Start</h2>
@@ -455,6 +489,9 @@ export default function RRBConferenceHub() {
                             </Button>
                             <Button size="sm" variant="outline" onClick={() => navigate(`/conference/translation/${conf.id}`)} className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/20">
                               <Globe className="w-3 h-3 mr-1" /> Translate
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')} className="border-purple-500 text-purple-400 hover:bg-purple-500/20">
+                              <Tv className="w-3 h-3 mr-1" /> Multi-Stream
                             </Button>
                             <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-green-600 hover:bg-green-700">
                               <Video className="w-4 h-4 mr-1" /> Join

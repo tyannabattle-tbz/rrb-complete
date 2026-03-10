@@ -10,7 +10,7 @@ import {
   Radio, Wifi, Users, MessageCircle, Heart, Send,
   Music, Mic, Video, SkipForward, SkipBack, Globe,
   ArrowRight, Calendar, MapPin, Headphones, Settings,
-  Loader2, Clock, Sparkles, Bot
+  Loader2, Clock, Sparkles, Bot, Tv
 } from 'lucide-react';
 
 // Color palette for channels based on genre
@@ -740,12 +740,13 @@ export default function LiveStreamPage() {
               {[
                 { label: 'SQUADD Goals', path: '/squadd', icon: Globe },
                 { label: 'Conference Hub', path: '/conference', icon: Video },
+                { label: 'Restream Studio', path: 'https://studio.restream.io/enk-osex-pju', icon: Tv },
                 { label: 'Meditation Hub', path: '/meditation', icon: Music },
                 { label: 'RRB Radio Station', path: '/rrb-radio', icon: Radio },
               ].map(link => (
                 <button
                   key={link.path}
-                  onClick={() => setLocation(link.path)}
+                  onClick={() => link.path.startsWith('http') ? window.open(link.path, '_blank') : setLocation(link.path)}
                   className="flex items-center gap-2 p-3 bg-[#111] border border-[#222] rounded-lg hover:border-[#D4A843]/30 transition-colors text-left"
                 >
                   <link.icon className="w-4 h-4 text-[#D4A843]" />

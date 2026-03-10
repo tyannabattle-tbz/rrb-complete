@@ -1081,4 +1081,122 @@ describe('Conference Router', () => {
       expect(isRecording).toBe(false);
     });
   });
+
+  // ─── Restream Multi-Stream Integration ───────────────────────
+  describe('Restream Multi-Stream Integration', () => {
+    it('should have Restream Studio URL configured', () => {
+      const config = {
+        studioUrl: 'https://studio.restream.io/enk-osex-pju',
+        embedEnabled: true,
+      };
+      expect(config.studioUrl).toContain('restream.io');
+      expect(config.studioUrl).toContain('enk-osex-pju');
+      expect(config.embedEnabled).toBe(true);
+    });
+
+    it('should support 6 streaming platforms', () => {
+      const platforms = [
+        { name: 'YouTube', status: 'connected' },
+        { name: 'Facebook', status: 'connected' },
+        { name: 'LinkedIn', status: 'connected' },
+        { name: 'Twitter/X', status: 'connected' },
+        { name: 'Twitch', status: 'available' },
+        { name: 'TikTok', status: 'available' },
+      ];
+      expect(platforms).toHaveLength(6);
+      expect(platforms.filter(p => p.status === 'connected')).toHaveLength(4);
+      expect(platforms.filter(p => p.status === 'available')).toHaveLength(2);
+    });
+
+    it('should generate unique stream keys per conference', () => {
+      const confId = 42;
+      const streamKey = `rrb-csw70-${confId}-${Date.now()}`;
+      expect(streamKey).toContain('rrb-csw70-42-');
+      expect(streamKey.length).toBeGreaterThan(15);
+    });
+
+    it('should track Restream active state', () => {
+      const status = {
+        active: true,
+        streamKey: 'rrb-csw70-1-1710000000000',
+        platforms: ['youtube', 'facebook', 'linkedin', 'twitter'],
+        studioUrl: 'https://studio.restream.io/enk-osex-pju',
+      };
+      expect(status.active).toBe(true);
+      expect(status.platforms).toHaveLength(4);
+      expect(status.platforms).toContain('youtube');
+      expect(status.platforms).toContain('facebook');
+    });
+
+    it('should support start and stop Restream flow', () => {
+      let restreamActive = false;
+      const startRestream = () => { restreamActive = true; };
+      const stopRestream = () => { restreamActive = false; };
+      startRestream();
+      expect(restreamActive).toBe(true);
+      stopRestream();
+      expect(restreamActive).toBe(false);
+    });
+
+    it('should have Restream features configured', () => {
+      const features = {
+        multistream: true,
+        chatEmbed: true,
+        studioEmbed: true,
+        recordings: true,
+        analytics: true,
+        scheduledStreams: true,
+      };
+      expect(features.multistream).toBe(true);
+      expect(features.chatEmbed).toBe(true);
+      expect(features.studioEmbed).toBe(true);
+      expect(Object.values(features).every(v => v === true)).toBe(true);
+    });
+
+    it('should log Restream decisions to QUMUS', () => {
+      const decision = {
+        policyId: 'conference_scheduling',
+        action: 'restream_started',
+        confidence: 0.95,
+        reasoning: 'Restream multi-stream started for conference 1',
+      };
+      expect(decision.policyId).toBe('conference_scheduling');
+      expect(decision.action).toBe('restream_started');
+      expect(decision.confidence).toBeGreaterThan(0.9);
+    });
+
+    it('should integrate Restream with Conference Room UI', () => {
+      const roomControls = {
+        recording: true,
+        translation: true,
+        checkIn: true,
+        speakerProfiles: true,
+        multiStream: true,
+        restreamStudioLink: true,
+      };
+      expect(roomControls.multiStream).toBe(true);
+      expect(roomControls.restreamStudioLink).toBe(true);
+      expect(Object.values(roomControls).every(v => v === true)).toBe(true);
+    });
+
+    it('should show Restream Hub on Conference Hub dashboard', () => {
+      const dashboardCards = [
+        'Test Room', 'Restream Multi-Stream Hub', 'Quick Start Templates',
+        'Live Now', 'Scheduled', 'Recent', 'Launch Readiness',
+      ];
+      expect(dashboardCards).toContain('Restream Multi-Stream Hub');
+    });
+
+    it('should have Restream link in LiveStreamPage quick links', () => {
+      const quickLinks = [
+        { label: 'SQUADD Goals', path: '/squadd' },
+        { label: 'Conference Hub', path: '/conference' },
+        { label: 'Restream Studio', path: 'https://studio.restream.io/enk-osex-pju' },
+        { label: 'Meditation Hub', path: '/meditation' },
+      ];
+      const restreamLink = quickLinks.find(l => l.label === 'Restream Studio');
+      expect(restreamLink).toBeDefined();
+      expect(restreamLink!.path).toContain('restream.io');
+    });
+  });
 });

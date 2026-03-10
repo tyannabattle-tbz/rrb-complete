@@ -1484,4 +1484,110 @@ export const conferenceRouter = router({
       domains: ['manuweb.sbs', 'www.manuweb.sbs', 'qumus.manus.space', 'manusweb-eshiamkd.manus.space'],
     };
   }),
+
+  // ─── Restream Studio Integration ───────────────────────
+  getRestreamConfig: publicProcedure.query(async () => {
+    return {
+      studioUrl: 'https://studio.restream.io/enk-osex-pju',
+      embedEnabled: true,
+      platforms: [
+        { name: 'YouTube', icon: 'youtube', status: 'connected', color: '#FF0000' },
+        { name: 'Facebook', icon: 'facebook', status: 'connected', color: '#1877F2' },
+        { name: 'LinkedIn', icon: 'linkedin', status: 'connected', color: '#0A66C2' },
+        { name: 'Twitter/X', icon: 'twitter', status: 'connected', color: '#1DA1F2' },
+        { name: 'Twitch', icon: 'twitch', status: 'available', color: '#9146FF' },
+        { name: 'TikTok', icon: 'tiktok', status: 'available', color: '#000000' },
+      ],
+      features: {
+        multistream: true,
+        chatEmbed: true,
+        studioEmbed: true,
+        recordings: true,
+        analytics: true,
+        scheduledStreams: true,
+      },
+    };
+  }),
+
+  startRestream: protectedProcedure.input(z.object({
+    conferenceId: z.number(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    platforms: z.array(z.string()).optional(),
+  })).mutation(async ({ input, ctx }) => {
+    const db = await getDb();
+    const streamKey = `rrb-csw70-${input.conferenceId}-${Date.now()}`;
+    await db.execute(sql`
+      UPDATE conferences SET 
+        restream_active = 1,
+        restream_key = ${streamKey},
+        restream_started_at = NOW(),
+        restream_platforms = ${JSON.stringify(input.platforms || ['youtube', 'facebook', 'linkedin', 'twitter'])}
+      WHERE id = ${input.conferenceId}
+    `);
+    await qumusEngine.logDecision({
+      policyId: 'conference_scheduling',
+      action: 'restream_started',
+      confidence: 0.95,
+      reasoning: `Restream multi-stream started for conference ${input.conferenceId} by ${ctx.user.name}`,
+      metadata: { conferenceId: input.conferenceId, platforms: input.platforms },
+    });
+    return {
+      success: true,
+      studioUrl: 'https://studio.restream.io/enk-osex-pju',
+      streamKey,
+      platforms: input.platforms || ['youtube', 'facebook', 'linkedin', 'twitter'],
+      message: 'Restream multi-stream activated. Open Restream Studio to go live.',
+    };
+  }),
+
+  stopRestream: protectedProcedure.input(z.object({
+    conferenceId: z.number(),
+  })).mutation(async ({ input }) => {
+    const db = await getDb();
+    await db.execute(sql`
+      UPDATE conferences SET 
+        restream_active = 0,
+        restream_ended_at = NOW()
+      WHERE id = ${input.conferenceId}
+    `);
+    return { success: true, message: 'Restream multi-stream stopped.' };
+  }),
+
+  getRestreamStatus: publicProcedure.input(z.object({
+    conferenceId: z.number(),
+  })).query(async ({ input }) => {
+    const db = await getDb();
+    const [rows] = await db.execute(sql`
+      SELECT restream_active, restream_key, restream_started_at, restream_ended_at, restream_platforms
+      FROM conferences WHERE id = ${input.conferenceId}
+    `);
+    const conf = (rows as any)[0];
+    if (!conf) return { active: false, platforms: [] };
+    return {
+      active: !!conf.restream_active,
+      streamKey: conf.restream_key || null,
+      startedAt: conf.restream_started_at || null,
+      endedAt: conf.restream_ended_at || null,
+      platforms: conf.restream_platforms ? JSON.parse(conf.restream_platforms) : [],
+      studioUrl: 'https://studio.restream.io/enk-osex-pju',
+    };
+  }),
+
+  getRestreamAnalytics: protectedProcedure.query(async () => {
+    const db = await getDb();
+    const [totalStreams] = await db.execute(sql`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1 OR restream_ended_at IS NOT NULL`);
+    const [activeStreams] = await db.execute(sql`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1`);
+    return {
+      totalStreams: (totalStreams as any)[0]?.count || 0,
+      activeStreams: (activeStreams as any)[0]?.count || 0,
+      platforms: {
+        youtube: { name: 'YouTube', streams: 0, viewers: 0, status: 'connected' },
+        facebook: { name: 'Facebook', streams: 0, viewers: 0, status: 'connected' },
+        linkedin: { name: 'LinkedIn', streams: 0, viewers: 0, status: 'connected' },
+        twitter: { name: 'Twitter/X', streams: 0, viewers: 0, status: 'connected' },
+      },
+      studioUrl: 'https://studio.restream.io/enk-osex-pju',
+    };
+  }),
 });

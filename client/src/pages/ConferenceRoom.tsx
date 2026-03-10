@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import {
   ArrowLeft, PhoneOff, Users, Clock, Copy, Mic, MicOff,
-  Video as VideoIcon, Globe, Shield, UserCircle, Circle
+  Video as VideoIcon, Globe, Shield, UserCircle, Circle,
+  Radio, Tv, ExternalLink
 } from 'lucide-react';
 
 export default function ConferenceRoom() {
@@ -28,6 +29,22 @@ export default function ConferenceRoom() {
     { conferenceId },
     { enabled: conferenceId > 0, refetchInterval: 10000 }
   );
+
+  const { data: restreamStatus } = trpc.conference.getRestreamStatus.useQuery(
+    { conferenceId },
+    { enabled: conferenceId > 0, refetchInterval: 10000 }
+  );
+  const startRestreamMutation = trpc.conference.startRestream.useMutation({
+    onSuccess: (data) => {
+      toast.success('Multi-stream activated! Open Restream Studio to go live.');
+      if (data.studioUrl) window.open(data.studioUrl, '_blank');
+    },
+    onError: () => toast.error('Failed to start multi-stream'),
+  });
+  const stopRestreamMutation = trpc.conference.stopRestream.useMutation({
+    onSuccess: () => toast.success('Multi-stream stopped'),
+    onError: () => toast.error('Failed to stop multi-stream'),
+  });
 
   const endMutation = trpc.conference.endConference.useMutation({
     onSuccess: () => {
@@ -208,6 +225,55 @@ export default function ConferenceRoom() {
           >
             <UserCircle className="w-3.5 h-3.5" />
           </Button>
+
+          {/* Restream Multi-Stream Controls */}
+          <div className="flex items-center gap-1 border-l border-gray-700 pl-2 ml-1">
+            {restreamStatus?.active ? (
+              <>
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-purple-500/20 border border-purple-500/40">
+                  <Tv className="w-3 h-3 text-purple-400 animate-pulse" />
+                  <span className="text-purple-300 text-[10px] font-semibold">MULTI-STREAMING</span>
+                  <span className="text-purple-400/60 text-[10px]">
+                    {restreamStatus.platforms?.length || 0} platforms
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')}
+                  className="text-purple-400/70 hover:text-purple-400 text-xs"
+                  title="Open Restream Studio"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => stopRestreamMutation.mutate({ conferenceId })}
+                  disabled={stopRestreamMutation.isPending}
+                  className="text-red-400/70 hover:text-red-400 text-xs"
+                  title="Stop Multi-Stream"
+                >
+                  <Radio className="w-3.5 h-3.5" />
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => startRestreamMutation.mutate({
+                  conferenceId,
+                  title: conference?.title,
+                  platforms: ['youtube', 'facebook', 'linkedin', 'twitter'],
+                })}
+                disabled={startRestreamMutation.isPending}
+                className="border-purple-500/50 text-purple-400 hover:bg-purple-500/20 text-xs"
+                title="Start Multi-Stream via Restream"
+              >
+                <Tv className="w-3 h-3 mr-1" /> Multi-Stream
+              </Button>
+            )}
+          </div>
 
           <Button variant="ghost" size="sm" onClick={handleCopyLink} className="text-white/70 hover:text-white">
             <Copy className="w-4 h-4 mr-1" /> Share
