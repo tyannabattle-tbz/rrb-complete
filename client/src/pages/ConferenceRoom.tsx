@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRoute, useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -8,8 +8,15 @@ import { toast } from 'sonner';
 import {
   ArrowLeft, PhoneOff, Users, Clock, Copy, Mic, MicOff,
   Video as VideoIcon, Globe, Shield, UserCircle, Circle,
-  Radio, Tv, ExternalLink, MoreHorizontal, X
+  Radio, Tv, ExternalLink, MoreHorizontal, X, Loader2
 } from 'lucide-react';
+
+// Declare the JitsiMeetExternalAPI on window
+declare global {
+  interface Window {
+    JitsiMeetExternalAPI: any;
+  }
+}
 
 export default function ConferenceRoom() {
   const [, params] = useRoute('/conference/room/:id');
@@ -19,7 +26,11 @@ export default function ConferenceRoom() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [showMoreTools, setShowMoreTools] = useState(false);
+  const [jitsiReady, setJitsiReady] = useState(false);
+  const [participantCount, setParticipantCount] = useState(0);
   const recordingTimer = useRef<NodeJS.Timeout | null>(null);
+  const jitsiContainerRef = useRef<HTMLDivElement>(null);
+  const jitsiApiRef = useRef<any>(null);
 
   const { data: conference, isLoading } = trpc.conference.getConference.useQuery(
     { id: conferenceId },
@@ -72,12 +83,14 @@ export default function ConferenceRoom() {
     onError: () => toast.error('Failed to stop recording'),
   });
 
+  // Register join in our backend
   useEffect(() => {
     if (conferenceId > 0 && user) {
       joinMutation.mutate({ conferenceId });
     }
   }, [conferenceId, user?.id]);
 
+  // Recording timer
   useEffect(() => {
     if (isRecording) {
       recordingTimer.current = setInterval(() => {
@@ -94,6 +107,138 @@ export default function ConferenceRoom() {
       setIsRecording(true);
     }
   }, [recordingStatus?.recordingStatus]);
+
+  // ─── Initialize Jitsi Meet External API ───
+  const initJitsi = useCallback(() => {
+    if (!conference || !jitsiContainerRef.current || jitsiApiRef.current) return;
+
+    const roomName = conference.room_code || `rrb-room-${conferenceId}`;
+    const displayName = user?.name || 'Guest';
+
+    // Wait for the external API script to load
+    if (!window.JitsiMeetExternalAPI) {
+      const checkInterval = setInterval(() => {
+        if (window.JitsiMeetExternalAPI) {
+          clearInterval(checkInterval);
+          createJitsiInstance(roomName, displayName);
+        }
+      }, 200);
+      // Timeout after 10s
+      setTimeout(() => clearInterval(checkInterval), 10000);
+      return;
+    }
+
+    createJitsiInstance(roomName, displayName);
+  }, [conference, conferenceId, user?.name]);
+
+  const createJitsiInstance = (roomName: string, displayName: string) => {
+    if (jitsiApiRef.current || !jitsiContainerRef.current) return;
+
+    try {
+      const api = new window.JitsiMeetExternalAPI('meet.jit.si', {
+        roomName,
+        parentNode: jitsiContainerRef.current,
+        width: '100%',
+        height: '100%',
+        userInfo: {
+          displayName,
+          email: user?.email || '',
+        },
+        configOverwrite: {
+          // ── Disable lobby & moderator requirement ──
+          prejoinConfig: { enabled: false },
+          prejoinPageEnabled: false,
+          startWithAudioMuted: true,
+          startWithVideoMuted: false,
+          enableLobbyChat: false,
+          hideLobbyButton: true,
+          requireDisplayName: false,
+          enableUserRolesBasedOnToken: false,
+          // Disable Jitsi recording (we use our own S3 flow)
+          enableRecording: false,
+          fileRecordingsEnabled: false,
+          liveStreamingEnabled: false,
+          localRecording: { disable: true },
+          // Mobile-friendly settings
+          disableDeepLinking: true,
+          enableClosePage: false,
+          enableWelcomePage: false,
+          enableInsecureRoomNameWarning: false,
+          // P2P for direct 2-person calls
+          p2p: { enabled: true },
+          // UI
+          hideConferenceSubject: true,
+          hideConferenceTimer: false,
+          disableModeratorIndicator: true,
+          defaultLanguage: 'en',
+          // Disable notifications about lone moderator
+          notifications: [],
+          disableThirdPartyRequests: false,
+          // Allow anyone to be moderator
+          enableForcedReload: false,
+        },
+        interfaceConfigOverwrite: {
+          DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+          MOBILE_APP_PROMO: false,
+          SHOW_CHROME_EXTENSION_BANNER: false,
+          SHOW_JITSI_WATERMARK: false,
+          SHOW_WATERMARK_FOR_GUESTS: false,
+          SHOW_BRAND_WATERMARK: false,
+          TOOLBAR_BUTTONS: [
+            'microphone', 'camera', 'closedcaptions', 'desktop',
+            'fullscreen', 'fodeviceselection', 'hangup', 'chat',
+            'raisehand', 'tileview', 'participants-pane',
+            'select-background', 'settings',
+          ],
+          SETTINGS_SECTIONS: ['devices', 'language'],
+          DEFAULT_BACKGROUND: '#000000',
+          DISABLE_FOCUS_INDICATOR: true,
+          FILM_STRIP_MAX_HEIGHT: 120,
+          VERTICAL_FILMSTRIP: true,
+        },
+      });
+
+      // Event listeners
+      api.addEventListener('videoConferenceJoined', () => {
+        setJitsiReady(true);
+        toast.success('Connected to conference room');
+      });
+
+      api.addEventListener('participantJoined', () => {
+        setParticipantCount(prev => prev + 1);
+      });
+
+      api.addEventListener('participantLeft', () => {
+        setParticipantCount(prev => Math.max(0, prev - 1));
+      });
+
+      api.addEventListener('videoConferenceLeft', () => {
+        setJitsiReady(false);
+      });
+
+      jitsiApiRef.current = api;
+    } catch (err) {
+      console.error('[ConferenceRoom] Failed to initialize Jitsi:', err);
+      toast.error('Failed to connect to conference. Retrying...');
+      // Retry once after 2s
+      setTimeout(() => {
+        jitsiApiRef.current = null;
+        createJitsiInstance(roomName, displayName);
+      }, 2000);
+    }
+  };
+
+  useEffect(() => {
+    if (conference) {
+      initJitsi();
+    }
+    return () => {
+      if (jitsiApiRef.current) {
+        try { jitsiApiRef.current.dispose(); } catch {}
+        jitsiApiRef.current = null;
+      }
+    };
+  }, [conference, initJitsi]);
 
   const handleCopyLink = () => {
     const url = `${window.location.origin}/conference/room/${conferenceId}`;
@@ -114,6 +259,9 @@ export default function ConferenceRoom() {
 
   const handleEndConference = () => {
     if (isRecording) handleStopRecording();
+    if (jitsiApiRef.current) {
+      try { jitsiApiRef.current.executeCommand('hangup'); } catch {}
+    }
     endMutation.mutate({ id: conferenceId });
   };
 
@@ -147,68 +295,23 @@ export default function ConferenceRoom() {
     );
   }
 
-  const jitsiDomain = 'meet.jit.si';
-  const roomName = conference.room_code || `rrb-room-${conferenceId}`;
-  const displayName = user?.name || 'Guest';
-  
-  // Jitsi URL — NO moderator requirement, NO lobby, instant join
-  const jitsiConfig = [
-    `userInfo.displayName="${encodeURIComponent(displayName)}"`,
-    // Disable lobby and moderator requirement — anyone can join immediately
-    'config.prejoinConfig.enabled=false',
-    'config.prejoinPageEnabled=false',
-    'config.startWithAudioMuted=false',
-    'config.startWithVideoMuted=false',
-    'config.enableLobbyChat=false',
-    'config.hideLobbyButton=true',
-    // Disable ALL moderator-related features
-    'config.lobby.autoKnock=true',
-    'config.lobby.enabled=false',
-    'config.requireDisplayName=false',
-    'config.enableUserRolesBasedOnToken=false',
-    // Disable Jitsi's built-in recording (we use our own S3 recording)
-    'config.enableRecording=false',
-    'config.fileRecordingsEnabled=false',
-    'config.liveStreamingEnabled=false',
-    'config.localRecording.disable=true',
-    // Better mobile experience
-    'config.disableDeepLinking=true',
-    'config.enableClosePage=false',
-    'config.disableInviteFunctions=false',
-    'config.enableWelcomePage=false',
-    'config.enableInsecureRoomNameWarning=false',
-    // P2P for 2-person calls (better quality, no server needed)
-    'config.p2p.enabled=true',
-    // UI customization
-    'config.hideConferenceSubject=false',
-    'config.hideConferenceTimer=false',
-    'config.disableModeratorIndicator=true',
-    'config.defaultLanguage=en',
-    // Interface config
-    'interfaceConfig.DISABLE_JOIN_LEAVE_NOTIFICATIONS=false',
-    'interfaceConfig.MOBILE_APP_PROMO=false',
-    'interfaceConfig.SHOW_CHROME_EXTENSION_BANNER=false',
-  ].join('&');
-  
-  const jitsiUrl = `https://${jitsiDomain}/${roomName}#${jitsiConfig}`;
-
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="h-screen bg-black flex flex-col overflow-hidden">
       {/* ── Single compact toolbar ── */}
-      <div className="bg-gray-900/90 border-b border-gray-800/50 px-2 sm:px-3 py-1.5">
+      <div className="bg-gray-900/90 border-b border-gray-800/50 px-2 sm:px-3 py-1.5 shrink-0">
         <div className="flex items-center justify-between gap-1">
           {/* Left: Back + Title */}
           <div className="flex items-center gap-1.5 min-w-0 flex-1">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/conference')} className="text-white/70 hover:text-white p-1 h-7 w-7 shrink-0">
+            <button onClick={() => navigate('/conference')} className="text-white/70 hover:text-white p-1 h-7 w-7 shrink-0 rounded hover:bg-white/10 flex items-center justify-center">
               <ArrowLeft className="w-4 h-4" />
-            </Button>
+            </button>
             <h1 className="text-white font-semibold text-xs sm:text-sm truncate">{conference.title}</h1>
-            <Badge variant="outline" className="text-[9px] sm:text-[10px] border-green-500/50 text-green-400 px-1 py-0 shrink-0 hidden xs:inline-flex">
+            <Badge variant="outline" className="text-[9px] sm:text-[10px] border-green-500/50 text-green-400 px-1 py-0 shrink-0 hidden sm:inline-flex">
               {conference.status === 'live' ? '● LIVE' : conference.status?.toUpperCase()}
             </Badge>
           </div>
 
-          {/* Center: Main controls — scrollable on mobile */}
+          {/* Center: Main controls */}
           <div className="flex items-center gap-1 shrink-0">
             {/* Recording */}
             {isRecording ? (
@@ -256,21 +359,18 @@ export default function ConferenceRoom() {
               </button>
             )}
 
-            {/* Quick tool icons */}
-            <button onClick={() => navigate(`/conference/translation/${conferenceId}`)} className="text-cyan-400/70 hover:text-cyan-400 h-7 w-7 flex items-center justify-center rounded hover:bg-white/5" title="Translation">
+            {/* Quick tool icons — desktop */}
+            <button onClick={() => navigate(`/conference/translation/${conferenceId}`)} className="text-cyan-400/70 hover:text-cyan-400 h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Translation">
               <Globe className="w-3.5 h-3.5" />
             </button>
-            <button onClick={() => navigate(`/conference/checkin/${conferenceId}`)} className="text-green-400/70 hover:text-green-400 h-7 w-7 flex items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Check-In">
+            <button onClick={() => navigate(`/conference/checkin/${conferenceId}`)} className="text-green-400/70 hover:text-green-400 h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Check-In">
               <Shield className="w-3.5 h-3.5" />
-            </button>
-            <button onClick={() => navigate(`/conference/speaker/0`)} className="text-purple-400/70 hover:text-purple-400 h-7 w-7 flex items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Speakers">
-              <UserCircle className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Right: Share + End + More */}
           <div className="flex items-center gap-1 shrink-0">
-            <button onClick={handleCopyLink} className="text-white/50 hover:text-white h-7 w-7 flex items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Copy link">
+            <button onClick={handleCopyLink} className="text-white/50 hover:text-white h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Copy link">
               <Copy className="w-3.5 h-3.5" />
             </button>
             <button
@@ -292,6 +392,9 @@ export default function ConferenceRoom() {
                   <button onClick={() => { handleCopyLink(); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
                     <Copy className="w-4 h-4" /> Share Link
                   </button>
+                  <button onClick={() => { navigate(`/conference/translation/${conferenceId}`); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
+                    <Globe className="w-4 h-4" /> Translation
+                  </button>
                   <button onClick={() => { navigate(`/conference/checkin/${conferenceId}`); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
                     <Shield className="w-4 h-4" /> Check-In
                   </button>
@@ -301,10 +404,6 @@ export default function ConferenceRoom() {
                   <button onClick={() => { window.open('https://studio.restream.io/enk-osex-pju', '_blank'); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
                     <ExternalLink className="w-4 h-4" /> Restream Studio
                   </button>
-                  <div className="border-t border-gray-700 my-1" />
-                  <button onClick={() => { handleEndConference(); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-red-400 hover:bg-gray-800">
-                    <PhoneOff className="w-4 h-4" /> End Conference
-                  </button>
                 </div>
               )}
             </div>
@@ -312,9 +411,9 @@ export default function ConferenceRoom() {
         </div>
       </div>
 
-      {/* Recording Status Bar (when not actively recording but has past recordings) */}
+      {/* Recording Status Bar */}
       {recordingStatus?.recordingStatus && recordingStatus.recordingStatus !== 'none' && !isRecording && (
-        <div className={`px-3 py-1 text-[11px] sm:text-xs flex items-center gap-2 ${
+        <div className={`px-3 py-1 text-[11px] sm:text-xs flex items-center gap-2 shrink-0 ${
           recordingStatus.recordingStatus === 'available' ? 'bg-green-500/10 text-green-400' :
           recordingStatus.recordingStatus === 'processing' ? 'bg-amber-500/10 text-amber-400' :
           'bg-gray-500/10 text-gray-400'
@@ -327,14 +426,21 @@ export default function ConferenceRoom() {
         </div>
       )}
 
-      {/* Jitsi iframe — fills remaining viewport */}
-      <div className="flex-1 relative">
-        <iframe
-          src={jitsiUrl}
-          allow="camera; microphone; fullscreen; display-capture; autoplay; clipboard-write"
-          className="w-full h-full absolute inset-0"
-          style={{ border: 'none' }}
-          title="RRB Conference Room"
+      {/* ── Jitsi Meet container (JS API renders here) ── */}
+      <div className="flex-1 relative bg-black">
+        {!jitsiReady && (
+          <div className="absolute inset-0 flex items-center justify-center z-10 bg-black">
+            <div className="text-center">
+              <Loader2 className="w-10 h-10 text-amber-500 animate-spin mx-auto mb-3" />
+              <p className="text-white/70 text-sm">Connecting to conference...</p>
+              <p className="text-white/40 text-xs mt-1">Camera & mic permissions may be requested</p>
+            </div>
+          </div>
+        )}
+        <div
+          ref={jitsiContainerRef}
+          className="w-full h-full"
+          style={{ minHeight: 0 }}
         />
       </div>
     </div>

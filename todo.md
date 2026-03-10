@@ -3671,3 +3671,13 @@
 - [x] Fix Check-In Dashboard header misalignment on mobile
 - [x] Fix Conference Hub "Er" truncated button on mobile
 - [x] Improve overall mobile responsiveness across conference pages
+
+## Conference System Critical Fixes - March 2026 (Round 2)
+- [x] Switch from Jitsi iframe embed to Jitsi Meet JavaScript API (eliminates 5-min demo limit)
+- [x] Fix moderator lock — Jitsi JS API allows configuring rooms without moderator requirement
+- [x] Create "UN CSW70 Strategy Session" conference room
+- [x] Create "UN CSW70 Main Event" conference room
+- [x] Fix Conference Hub "Er" truncated button on mobile (still showing)
+- [x] Fix conference card horizontal overflow on mobile
+- [x] Add Jitsi external API script to index.html
+- [x] Start camera/mic with muted=true to avoid permission errors on join

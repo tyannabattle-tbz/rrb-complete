@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO conferences (title, description, meeting_type, platform, room_code, status, duration_minutes, max_attendees, closed_captions, recording_enabled, source, created_by, created_at, updated_at)\nVALUES ('UN CSW70 Strategy Session', 'Private strategy and planning session for the UN CSW70 delegation. Coordinate presentations, review talking points, and align team messaging before the main event.', 'meeting', 'rrb_builtin', 'RRB-CSW70-STRATEGY', 'live', 120, 50, 1, 1, 'qumus', 1, NOW(), NOW())\nON DUPLICATE KEY UPDATE status = 'live', updated_at = NOW();",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute INSERT INTO conferences (title, description, meeting_type, platform, room_code, status, duration_minutes, max_attendees, closed_captions, recording_enabled, source, created_by, created_at, updated_at)\nVALUES ('UN CSW70 Strategy Session', 'Private strategy and planning session for the UN CSW70 delegation. Coordinate presentations, review talking points, and align team messaging before the main event.', 'meeting', 'rrb_builtin', 'RRB-CSW70-STRATEGY', 'live', 120, 50, 1, 1, 'qumus', 1, NOW(), NOW())\nON DUPLICATE KEY UPDATE status = 'live', updated_at = NOW();",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'meeting_type' in 'field list'"
+  ]
+}

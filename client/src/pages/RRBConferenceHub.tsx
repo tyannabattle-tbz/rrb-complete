@@ -326,22 +326,24 @@ export default function RRBConferenceHub() {
             {/* Quick Join */}
             <Card className="bg-gray-900/50 border-gray-800">
               <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                   <div className="flex-1">
                     <Input
                       placeholder="Enter conference ID to join..."
                       value={joinCode}
                       onChange={(e) => setJoinCode(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleQuickJoin()}
-                      className="bg-gray-800 border-gray-700 text-white"
+                      className="bg-gray-800 border-gray-700 text-white text-sm"
                     />
                   </div>
-                  <Button onClick={handleQuickJoin} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold">
-                    <ArrowRight className="w-4 h-4 mr-1" /> Join
-                  </Button>
-                  <Button onClick={() => setActiveTab('create')} variant="outline" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
-                    <Plus className="w-4 h-4 mr-1" /> New Conference
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button onClick={handleQuickJoin} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold text-xs sm:text-sm flex-1 sm:flex-none">
+                      <ArrowRight className="w-4 h-4 mr-1" /> Join
+                    </Button>
+                    <Button onClick={() => setActiveTab('create')} variant="outline" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10 text-xs sm:text-sm flex-1 sm:flex-none">
+                      <Plus className="w-4 h-4 mr-1" /> New Conference
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -349,18 +351,18 @@ export default function RRBConferenceHub() {
             {/* Permanent Test Room */}
             <Card className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 border-amber-500/30 hover:border-amber-500/50 transition-all">
               <CardContent className="pt-5 pb-5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-amber-400" />
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+                      <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-white text-lg">RRB Conference Test Room</h3>
-                      <p className="text-white/50 text-sm">Permanent test room &bull; Always live &bull; Room: rrb-TESTROOM001</p>
-                      <p className="text-white/30 text-xs mt-1">Powered by QUMUS &bull; Jitsi Built-in &bull; Recording Enabled &bull; Closed Captions</p>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-white text-sm sm:text-lg">RRB Conference Test Room</h3>
+                      <p className="text-white/50 text-xs sm:text-sm truncate">Permanent test room &bull; Always live &bull; Room: rrb-TESTROOM001</p>
+                      <p className="text-white/30 text-[10px] sm:text-xs mt-0.5 sm:mt-1 truncate">Powered by QUMUS &bull; Jitsi Built-in &bull; Recording Enabled &bull; Closed Captions</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 ml-0 sm:ml-0 pl-0 sm:pl-0 shrink-0">
                     <Button
                       size="sm"
                       variant="outline"
@@ -370,10 +372,10 @@ export default function RRBConferenceHub() {
                         toast.success('Room code copied!');
                       }}
                     >
-                      <Copy className="w-4 h-4 mr-1" /> Copy Code
+                      <Copy className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> <span className="text-xs sm:text-sm">Copy Code</span>
                     </Button>
                     <Button
-                      className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-6"
+                      className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-3 sm:px-6"
                       onClick={async () => {
                         try {
                           // Seed/reset the test conference
@@ -395,7 +397,7 @@ export default function RRBConferenceHub() {
                         }
                       }}
                     >
-                      <Video className="w-4 h-4 mr-1" /> Enter Test Room
+                      <Video className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> <span className="text-xs sm:text-sm">Enter Room</span>
                     </Button>
                   </div>
                 </div>
@@ -405,31 +407,31 @@ export default function RRBConferenceHub() {
             {/* Restream Multi-Stream Hub */}
             <Card className="bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-blue-500/10 border-purple-500/30 hover:border-purple-500/50 transition-all">
               <CardContent className="pt-5 pb-5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                      <Tv className="w-6 h-6 text-purple-400" />
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
+                      <Tv className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-white text-lg">Restream Multi-Stream Hub</h3>
-                      <p className="text-white/50 text-sm">Broadcast to YouTube, Facebook, LinkedIn, Twitter/X simultaneously</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge variant="outline" className="text-[10px] border-red-500/50 text-red-400">YouTube</Badge>
-                        <Badge variant="outline" className="text-[10px] border-blue-500/50 text-blue-400">Facebook</Badge>
-                        <Badge variant="outline" className="text-[10px] border-sky-500/50 text-sky-400">LinkedIn</Badge>
-                        <Badge variant="outline" className="text-[10px] border-cyan-500/50 text-cyan-400">Twitter/X</Badge>
-                        <Badge variant="outline" className="text-[10px] border-purple-500/50 text-purple-400">Twitch</Badge>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-white text-sm sm:text-lg">Restream Multi-Stream Hub</h3>
+                      <p className="text-white/50 text-xs sm:text-sm">Broadcast to YouTube, Facebook, LinkedIn, Twitter/X simultaneously</p>
+                      <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                        <Badge variant="outline" className="text-[9px] sm:text-[10px] border-red-500/50 text-red-400">YouTube</Badge>
+                        <Badge variant="outline" className="text-[9px] sm:text-[10px] border-blue-500/50 text-blue-400">Facebook</Badge>
+                        <Badge variant="outline" className="text-[9px] sm:text-[10px] border-sky-500/50 text-sky-400">LinkedIn</Badge>
+                        <Badge variant="outline" className="text-[9px] sm:text-[10px] border-cyan-500/50 text-cyan-400">Twitter/X</Badge>
+                        <Badge variant="outline" className="text-[9px] sm:text-[10px] border-purple-500/50 text-purple-400">Twitch</Badge>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')}
-                      className="border-purple-500/50 text-purple-400 hover:bg-purple-500/20"
+                      className="border-purple-500/50 text-purple-400 hover:bg-purple-500/20 text-xs"
                     >
-                      <ExternalLink className="w-4 h-4 mr-1" /> Open Restream Studio
+                      <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> <span className="hidden sm:inline">Open </span>Restream Studio
                     </Button>
                   </div>
                 </div>
@@ -478,28 +480,28 @@ export default function RRBConferenceHub() {
                   {liveConferences.map((conf: any) => (
                     <Card key={conf.id} className="bg-gray-900/50 border-green-500/30">
                       <CardContent className="pt-4 pb-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-semibold text-white">{conf.title}</h3>
-                            <p className="text-white/40 text-xs mt-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-white text-sm sm:text-base truncate">{conf.title}</h3>
+                            <p className="text-white/40 text-[10px] sm:text-xs mt-1 truncate">
                               Host: {conf.host_name} &bull; {conf.attendee_count} attendees &bull; {conf.meeting_type}
                             </p>
                           </div>
-                          <div className="flex flex-wrap gap-2">
-                            <Button size="sm" variant="outline" onClick={() => navigate(`/conference/register/${conf.id}`)} className="border-purple-500 text-purple-400 hover:bg-purple-500/20">
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2 shrink-0">
+                            <Button size="sm" variant="outline" onClick={() => navigate(`/conference/register/${conf.id}`)} className="border-purple-500 text-purple-400 hover:bg-purple-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
                               Register
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => navigate(`/conference/checkin/${conf.id}`)} className="border-green-500 text-green-400 hover:bg-green-500/20">
-                              <Shield className="w-3 h-3 mr-1" /> Check-In
+                            <Button size="sm" variant="outline" onClick={() => navigate(`/conference/checkin/${conf.id}`)} className="border-green-500 text-green-400 hover:bg-green-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
+                              <Shield className="w-3 h-3 mr-0.5" /> Check-In
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => navigate(`/conference/translation/${conf.id}`)} className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/20">
-                              <Globe className="w-3 h-3 mr-1" /> Translate
+                            <Button size="sm" variant="outline" onClick={() => navigate(`/conference/translation/${conf.id}`)} className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
+                              <Globe className="w-3 h-3 mr-0.5" /> Translate
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')} className="border-purple-500 text-purple-400 hover:bg-purple-500/20">
-                              <Tv className="w-3 h-3 mr-1" /> Multi-Stream
+                            <Button size="sm" variant="outline" onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')} className="border-purple-500 text-purple-400 hover:bg-purple-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
+                              <Tv className="w-3 h-3 mr-0.5" /> Stream
                             </Button>
-                            <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-green-600 hover:bg-green-700">
-                              <Video className="w-4 h-4 mr-1" /> Join
+                            <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-green-600 hover:bg-green-700 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
+                              <Video className="w-3 h-3 sm:w-4 sm:h-4 mr-0.5" /> Join
                             </Button>
                           </div>
                         </div>

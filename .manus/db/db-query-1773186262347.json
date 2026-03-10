@@ -1,0 +1,109 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'conferences' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'conferences' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "title"
+    },
+    {
+      "COLUMN_NAME": "description"
+    },
+    {
+      "COLUMN_NAME": "type"
+    },
+    {
+      "COLUMN_NAME": "platform"
+    },
+    {
+      "COLUMN_NAME": "host_user_id"
+    },
+    {
+      "COLUMN_NAME": "host_name"
+    },
+    {
+      "COLUMN_NAME": "room_code"
+    },
+    {
+      "COLUMN_NAME": "external_url"
+    },
+    {
+      "COLUMN_NAME": "scheduled_at"
+    },
+    {
+      "COLUMN_NAME": "duration_minutes"
+    },
+    {
+      "COLUMN_NAME": "max_attendees"
+    },
+    {
+      "COLUMN_NAME": "status"
+    },
+    {
+      "COLUMN_NAME": "is_recurring"
+    },
+    {
+      "COLUMN_NAME": "recurrence_pattern"
+    },
+    {
+      "COLUMN_NAME": "password"
+    },
+    {
+      "COLUMN_NAME": "recording_enabled"
+    },
+    {
+      "COLUMN_NAME": "captions_enabled"
+    },
+    {
+      "COLUMN_NAME": "created_at"
+    },
+    {
+      "COLUMN_NAME": "updated_at"
+    },
+    {
+      "COLUMN_NAME": "recording_url"
+    },
+    {
+      "COLUMN_NAME": "recording_key"
+    },
+    {
+      "COLUMN_NAME": "recording_status"
+    },
+    {
+      "COLUMN_NAME": "actual_attendees"
+    },
+    {
+      "COLUMN_NAME": "translation_enabled"
+    },
+    {
+      "COLUMN_NAME": "translation_languages"
+    },
+    {
+      "COLUMN_NAME": "transcript"
+    },
+    {
+      "COLUMN_NAME": "transcript_status"
+    },
+    {
+      "COLUMN_NAME": "restream_active"
+    },
+    {
+      "COLUMN_NAME": "restream_key"
+    },
+    {
+      "COLUMN_NAME": "restream_started_at"
+    },
+    {
+      "COLUMN_NAME": "restream_ended_at"
+    },
+    {
+      "COLUMN_NAME": "restream_platforms"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\ntitle\ndescription\ntype\nplatform\nhost_user_id\nhost_name\nroom_code\nexternal_url\nscheduled_at\nduration_minutes\nmax_attendees\nstatus\nis_recurring\nrecurrence_pattern\npassword\nrecording_enabled\ncaptions_enabled\ncreated_at\nupdated_at\nrecording_url\nrecording_key\nrecording_status\nactual_attendees\ntranslation_enabled\ntranslation_languages\ntranscript\ntranscript_status\nrestream_active\nrestream_key\nrestream_started_at\nrestream_ended_at\nrestream_platforms\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

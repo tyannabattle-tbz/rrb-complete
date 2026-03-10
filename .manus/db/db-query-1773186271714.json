@@ -1,0 +1,142 @@
+{
+  "query": "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'conferences' AND TABLE_SCHEMA = DATABASE() ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'conferences' AND TABLE_SCHEMA = DATABASE() ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "title",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "description",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "type",
+      "DATA_TYPE": "enum"
+    },
+    {
+      "COLUMN_NAME": "platform",
+      "DATA_TYPE": "enum"
+    },
+    {
+      "COLUMN_NAME": "host_user_id",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "host_name",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "room_code",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "external_url",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "scheduled_at",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "duration_minutes",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "max_attendees",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum"
+    },
+    {
+      "COLUMN_NAME": "is_recurring",
+      "DATA_TYPE": "tinyint"
+    },
+    {
+      "COLUMN_NAME": "recurrence_pattern",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "password",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "recording_enabled",
+      "DATA_TYPE": "tinyint"
+    },
+    {
+      "COLUMN_NAME": "captions_enabled",
+      "DATA_TYPE": "tinyint"
+    },
+    {
+      "COLUMN_NAME": "created_at",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "updated_at",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "recording_url",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "recording_key",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "recording_status",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "actual_attendees",
+      "DATA_TYPE": "int"
+    },
+    {
+      "COLUMN_NAME": "translation_enabled",
+      "DATA_TYPE": "tinyint"
+    },
+    {
+      "COLUMN_NAME": "translation_languages",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "transcript",
+      "DATA_TYPE": "text"
+    },
+    {
+      "COLUMN_NAME": "transcript_status",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "restream_active",
+      "DATA_TYPE": "tinyint"
+    },
+    {
+      "COLUMN_NAME": "restream_key",
+      "DATA_TYPE": "varchar"
+    },
+    {
+      "COLUMN_NAME": "restream_started_at",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "restream_ended_at",
+      "DATA_TYPE": "timestamp"
+    },
+    {
+      "COLUMN_NAME": "restream_platforms",
+      "DATA_TYPE": "text"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\tDATA_TYPE\nid\tint\ntitle\tvarchar\ndescription\ttext\ntype\tenum\nplatform\tenum\nhost_user_id\tint\nhost_name\tvarchar\nroom_code\tvarchar\nexternal_url\tvarchar\nscheduled_at\ttimestamp\nduration_minutes\tint\nmax_attendees\tint\nstatus\tenum\nis_recurring\ttinyint\nrecurrence_pattern\tvarchar\npassword\tvarchar\nrecording_enabled\ttinyint\ncaptions_enabled\ttinyint\ncreated_at\ttimestamp\nupdated_at\ttimestamp\nrecording_url\ttext\nrecording_key\ttext\nrecording_status\tvarchar\nactual_attendees\tint\ntranslation_enabled\ttinyint\ntranslation_languages\ttext\ntranscript\ttext\ntranscript_status\tvarchar\nrestream_active\ttinyint\nrestream_key\tvarchar\nrestream_started_at\ttimestamp\nrestream_ended_at\ttimestamp\nrestream_platforms\ttext\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

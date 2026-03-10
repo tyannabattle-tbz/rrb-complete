@@ -1,0 +1,24 @@
+{
+  "query": "SELECT id, title, room_code, status, type FROM conferences WHERE room_code IN ('RRB-CSW70-STRATEGY', 'RRB-CSW70-MAIN-EVENT') ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, title, room_code, status, type FROM conferences WHERE room_code IN ('RRB-CSW70-STRATEGY', 'RRB-CSW70-MAIN-EVENT') ORDER BY id;",
+  "rows": [
+    {
+      "id": "4",
+      "title": "UN CSW70 Strategy Session",
+      "room_code": "RRB-CSW70-STRATEGY",
+      "status": "live",
+      "type": "meeting"
+    },
+    {
+      "id": "5",
+      "title": "UN CSW70 Main Event — Live Broadcast",
+      "room_code": "RRB-CSW70-MAIN-EVENT",
+      "status": "live",
+      "type": "conference"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\troom_code\tstatus\ttype\n4\tUN CSW70 Strategy Session\tRRB-CSW70-STRATEGY\tlive\tmeeting\n5\tUN CSW70 Main Event — Live Broadcast\tRRB-CSW70-MAIN-EVENT\tlive\tconference\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}
