@@ -47,6 +47,45 @@ const QUICK_TEMPLATES = [
 
 type TabType = 'dashboard' | 'create' | 'scheduled' | 'csw70';
 
+function LaunchReadiness() {
+  const { data: readiness, isLoading } = trpc.conference.getLaunchReadiness.useQuery();
+  if (isLoading) return <div className="text-white/40 text-center py-4">Checking launch readiness...</div>;
+  if (!readiness) return null;
+  return (
+    <Card className="bg-white/5 border-white/10">
+      <CardHeader>
+        <CardTitle className="text-white text-lg flex items-center gap-2">
+          <Shield className="w-5 h-5 text-green-400" />
+          Launch Readiness: {readiness.score}%
+          <Badge variant={readiness.ready ? 'default' : 'secondary'} className={readiness.ready ? 'bg-green-600' : 'bg-amber-600'}>
+            {readiness.ready ? 'READY' : 'IN PROGRESS'}
+          </Badge>
+        </CardTitle>
+        <CardDescription className="text-white/40">Last checked: {new Date(readiness.timestamp).toLocaleString()}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {readiness.checks.map((check: any, idx: number) => (
+            <div key={idx} className={`p-2 rounded-lg text-xs ${
+              check.status === 'pass' ? 'bg-green-500/10 border border-green-500/20' :
+              check.status === 'warn' ? 'bg-amber-500/10 border border-amber-500/20' :
+              'bg-red-500/10 border border-red-500/20'
+            }`}>
+              <div className={`font-medium ${
+                check.status === 'pass' ? 'text-green-400' :
+                check.status === 'warn' ? 'text-amber-400' : 'text-red-400'
+              }`}>
+                {check.status === 'pass' ? '\u2713' : check.status === 'warn' ? '!' : '\u2717'} {check.name}
+              </div>
+              <div className="text-white/40 mt-0.5">{check.detail}</div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function RRBConferenceHub() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
@@ -252,6 +291,16 @@ export default function RRBConferenceHub() {
                   <Archive className="w-3.5 h-3.5" /> Recordings
                 </button>
               </Link>
+              <Link href="/conference/checkin/0">
+                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 text-xs font-medium transition-colors">
+                  <Shield className="w-3.5 h-3.5" /> Check-In
+                </button>
+              </Link>
+              <Link href="/conference/translation/0">
+                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-xs font-medium transition-colors">
+                  <Globe className="w-3.5 h-3.5" /> Translation
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -389,9 +438,15 @@ export default function RRBConferenceHub() {
                               Host: {conf.host_name} &bull; {conf.attendee_count} attendees &bull; {conf.meeting_type}
                             </p>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-2">
                             <Button size="sm" variant="outline" onClick={() => navigate(`/conference/register/${conf.id}`)} className="border-purple-500 text-purple-400 hover:bg-purple-500/20">
                               Register
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => navigate(`/conference/checkin/${conf.id}`)} className="border-green-500 text-green-400 hover:bg-green-500/20">
+                              <Shield className="w-3 h-3 mr-1" /> Check-In
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => navigate(`/conference/translation/${conf.id}`)} className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/20">
+                              <Globe className="w-3 h-3 mr-1" /> Translate
                             </Button>
                             <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-green-600 hover:bg-green-700">
                               <Video className="w-4 h-4 mr-1" /> Join
@@ -594,6 +649,12 @@ export default function RRBConferenceHub() {
                           <Button size="sm" variant="outline" onClick={() => navigate(`/conference/register/${conf.id}`)} className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10" title="Registration page">
                             <Users className="w-3 h-3" />
                           </Button>
+                          <Button size="sm" variant="outline" onClick={() => navigate(`/conference/checkin/${conf.id}`)} className="border-green-500/50 text-green-400 hover:bg-green-500/10" title="Check-in dashboard">
+                            <Eye className="w-3 h-3" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => navigate(`/conference/translation/${conf.id}`)} className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10" title="Translation overlay">
+                            <Globe className="w-3 h-3" />
+                          </Button>
                           <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-amber-500 hover:bg-amber-600 text-black">
                             <Play className="w-4 h-4 mr-1" /> Start
                           </Button>
@@ -725,6 +786,11 @@ export default function RRBConferenceHub() {
             </div>
           </Link>
         </div>
+
+      {/* Launch Readiness Dashboard */}
+      <div className="container py-8">
+        <LaunchReadiness />
+      </div>
 
       {/* Footer */}
       <div className="border-t border-gray-800 mt-12 py-6">

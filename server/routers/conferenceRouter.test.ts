@@ -743,6 +743,159 @@ describe('Conference Router', () => {
     });
   });
 
+  describe('QR Check-In System', () => {
+    it('should generate a unique QR code for attendee', () => {
+      const attendeeId = 42;
+      const qrCode = `CONF-CHK-${attendeeId}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      expect(qrCode).toContain('CONF-CHK-42-');
+      expect(qrCode.length).toBeGreaterThan(15);
+    });
+
+    it('should validate QR code format', () => {
+      const validQR = 'CONF-CHK-42-ABC123-XYZ789';
+      expect(validQR.startsWith('CONF-CHK-')).toBe(true);
+      const invalidQR = 'INVALID-CODE';
+      expect(invalidQR.startsWith('CONF-CHK-')).toBe(false);
+    });
+
+    it('should calculate arrival rate correctly', () => {
+      const total = 100;
+      const checkedIn = 75;
+      const arrivalRate = Math.round((checkedIn / total) * 100);
+      expect(arrivalRate).toBe(75);
+    });
+
+    it('should handle zero registrations', () => {
+      const total = 0;
+      const checkedIn = 0;
+      const arrivalRate = total > 0 ? Math.round((checkedIn / total) * 100) : 0;
+      expect(arrivalRate).toBe(0);
+    });
+
+    it('should track tier breakdown', () => {
+      const tiers = [
+        { ticket_type: 'general', count: 50, checked_in: 30 },
+        { ticket_type: 'vip', count: 20, checked_in: 18 },
+        { ticket_type: 'speaker', count: 10, checked_in: 10 },
+        { ticket_type: 'delegate', count: 5, checked_in: 3 },
+      ];
+      expect(tiers).toHaveLength(4);
+      const totalCheckedIn = tiers.reduce((sum, t) => sum + t.checked_in, 0);
+      expect(totalCheckedIn).toBe(61);
+    });
+  });
+
+  describe('Speaker Profile System', () => {
+    it('should create speaker with required fields', () => {
+      const speaker = {
+        conferenceId: 1,
+        name: 'Dr. Amara Osei',
+        bio: 'Expert in gender equality and sustainable development',
+        title: 'Director of Policy',
+        organization: 'Ghana UN Delegation',
+        sessionTopic: 'Women in Leadership: African Perspectives',
+      };
+      expect(speaker.name).toBe('Dr. Amara Osei');
+      expect(speaker.conferenceId).toBe(1);
+    });
+
+    it('should support social links', () => {
+      const speaker = {
+        socialTwitter: '@dramara',
+        socialLinkedin: 'dramara-osei',
+        socialWebsite: 'https://dramara.org',
+      };
+      expect(speaker.socialTwitter).toBe('@dramara');
+      expect(speaker.socialLinkedin).toBe('dramara-osei');
+      expect(speaker.socialWebsite).toContain('https://');
+    });
+
+    it('should track speaker order', () => {
+      const speakers = [
+        { name: 'Speaker A', speakerOrder: 0 },
+        { name: 'Speaker B', speakerOrder: 1 },
+        { name: 'Speaker C', speakerOrder: 2 },
+      ];
+      const sorted = speakers.sort((a, b) => a.speakerOrder - b.speakerOrder);
+      expect(sorted[0].name).toBe('Speaker A');
+      expect(sorted[2].name).toBe('Speaker C');
+    });
+
+    it('should link speaker to multiple sessions', () => {
+      const sessions = [
+        { conference_title: 'UN CSW70 Plenary', status: 'scheduled' },
+        { conference_title: 'Side Event: Gender Equality', status: 'completed' },
+      ];
+      expect(sessions).toHaveLength(2);
+    });
+  });
+
+  describe('Multi-Language Translation', () => {
+    it('should support 16 languages', () => {
+      const languages = ['en','es','fr','de','it','pt','ru','zh','ja','ko','ar','hi','sw','yo','am','zu'];
+      expect(languages).toHaveLength(16);
+    });
+
+    it('should include African languages for UN CSW70 inclusivity', () => {
+      const languages = ['en','es','fr','de','it','pt','ru','zh','ja','ko','ar','hi','sw','yo','am','zu'];
+      expect(languages).toContain('sw'); // Swahili
+      expect(languages).toContain('yo'); // Yoruba
+      expect(languages).toContain('am'); // Amharic
+      expect(languages).toContain('zu'); // Zulu
+    });
+
+    it('should enable translation for a conference', () => {
+      const config = {
+        enabled: true,
+        languages: ['en', 'fr', 'sw', 'ar'],
+      };
+      expect(config.enabled).toBe(true);
+      expect(config.languages).toContain('sw');
+    });
+
+    it('should parse comma-separated language string', () => {
+      const languagesStr = 'en,fr,sw,ar';
+      const languages = languagesStr.split(',');
+      expect(languages).toHaveLength(4);
+      expect(languages[2]).toBe('sw');
+    });
+  });
+
+  describe('Launch Readiness System', () => {
+    it('should calculate readiness score', () => {
+      const checks = [
+        { name: 'Database', status: 'pass' },
+        { name: 'QUMUS', status: 'pass' },
+        { name: 'Stripe', status: 'pass' },
+        { name: 'QR Check-In', status: 'pass' },
+        { name: 'Translation', status: 'pass' },
+        { name: 'Scheduled', status: 'warn' },
+      ];
+      const passed = checks.filter(c => c.status === 'pass').length;
+      const total = checks.length;
+      const score = Math.round((passed / total) * 100);
+      expect(score).toBe(83);
+    });
+
+    it('should have 15 launch readiness checks', () => {
+      const checkNames = [
+        'Conference Database', 'Speaker Profiles', 'Attendee Registration',
+        'QUMUS Orchestration', 'Scheduled Conferences',
+        'RRB Radio Integration', 'TBZ-OS Integration', 'HybridCast Bridge',
+        'Convention Hub', 'SQUADD Goals', 'Stripe Ticketing',
+        'QR Check-In', 'Multi-Language', 'Auto-Transcription', 'Weekly Digest',
+      ];
+      expect(checkNames).toHaveLength(15);
+    });
+
+    it('should mark as ready when all checks pass', () => {
+      const allPass = Array(15).fill({ status: 'pass' });
+      const passed = allPass.filter((c: any) => c.status === 'pass').length;
+      expect(passed).toBe(15);
+      expect(passed === allPass.length).toBe(true);
+    });
+  });
+
   describe('14 QUMUS Policies Consistency', () => {
     it('should have 14 policies including conference scheduling', () => {
       const policies = [

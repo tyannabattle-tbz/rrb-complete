@@ -1,0 +1,40 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'conference_attendees' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'conference_attendees' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "conference_id"
+    },
+    {
+      "COLUMN_NAME": "user_id"
+    },
+    {
+      "COLUMN_NAME": "name"
+    },
+    {
+      "COLUMN_NAME": "email"
+    },
+    {
+      "COLUMN_NAME": "rsvp_status"
+    },
+    {
+      "COLUMN_NAME": "role"
+    },
+    {
+      "COLUMN_NAME": "joined_at"
+    },
+    {
+      "COLUMN_NAME": "left_at"
+    },
+    {
+      "COLUMN_NAME": "created_at"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nconference_id\nuser_id\nname\nemail\nrsvp_status\nrole\njoined_at\nleft_at\ncreated_at\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

@@ -1,0 +1,16 @@
+{
+  "query": "SHOW TABLES LIKE '%conference%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SHOW TABLES LIKE '%conference%';",
+  "rows": [
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%conference%)": "conference_attendees"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%conference%)": "conferences"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%conference%)\nconference_attendees\nconferences\n",
+  "stderr": "",
+  "execution_time_ms": 98
+}

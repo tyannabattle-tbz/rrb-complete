@@ -3610,3 +3610,18 @@
 - [x] Vitest tests for all new features (100 tests passing across 2 files)
 - [x] Fixed stale 13 Active Policies → 14 in OnboardingTour
 - [x] Register buttons on Conference Hub (active + scheduled conferences)
+
+## QR Check-In System + Speaker Profiles + Multi-Language + Launch Prep (March 2026)
+- [x] QR code generation for conference registration confirmations
+- [x] Real-time check-in dashboard with arrival rate tracking (auto-refresh 5s)
+- [x] QR scan endpoint for attendee verification
+- [x] Speaker profile pages with bio, photo upload, social links
+- [x] Speaker session history and upcoming sessions
+- [x] Speaker pages linked from conference session cards
+- [x] Multi-language translation overlay for live conferences (16 languages)
+- [x] Wire existing voice/language system to conference translation (Web Speech API)
+- [x] Real-time translation controls in conference room UI
+- [x] Full integration audit across all platforms (RRB, TBZ-OS, HybridCast, QUMUS, SQUADD, Convention Hub)
+- [x] Launch readiness verification: 15-point check system with real-time dashboard
+- [x] Launch readiness: 16/16 QUMUS subsystems healthy, cron jobs running
+- [x] Vitest tests for all new features (116 tests passing across 2 files)

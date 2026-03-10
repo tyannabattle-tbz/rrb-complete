@@ -196,6 +196,9 @@ import ConferenceCalendar from '@/pages/ConferenceCalendar';
 import ConferenceAnalytics from '@/pages/ConferenceAnalytics';
 import ConferenceRecordings from '@/pages/ConferenceRecordings';
 import ConferenceRegister from '@/pages/ConferenceRegister';
+import SpeakerProfile from '@/pages/SpeakerProfile';
+import ConferenceCheckIn from '@/pages/ConferenceCheckIn';
+import ConferenceTranslation from '@/pages/ConferenceTranslation';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -373,6 +376,9 @@ function Router() {
       <Route path="/conference/analytics" component={ConferenceAnalytics} />
       <Route path="/conference/recordings" component={ConferenceRecordings} />
       <Route path="/conference/register/:id" component={ConferenceRegister} />
+      <Route path="/conference/checkin/:id" component={ConferenceCheckIn} />
+      <Route path="/conference/translation/:id" component={ConferenceTranslation} />
+      <Route path="/conference/speaker/:id" component={SpeakerProfile} />
       <Route path="/conference" component={RRBConferenceHub} />
       <Route path="/command-console" component={QumusCommandConsole} />
       <Route path="/stream-analytics" component={StreamAnalytics} />
