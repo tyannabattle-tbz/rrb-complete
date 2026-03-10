@@ -542,7 +542,7 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center text-purple-300">
           <p>A Canryn Production and its subsidiaries</p>
           <p className="text-sm mt-2">"A Voice for the Voiceless" — Sweet Miracles 501(c)(3) & 508</p>
-          <p className="text-xs text-purple-400/60 mt-2">Built by Ty Battle (Ty Bat Zan) — Digital Steward — TBZ Operating System — QUMUS Powered</p>
+          <p className="text-xs text-purple-400/60 mt-2">Built by <a href="/ty-battle" className="text-amber-400/80 hover:text-amber-300 underline">Ty Battle (Ty Bat Zan)</a> — Digital Steward — TBZ Operating System — QUMUS Powered</p>
           <p className="text-xs text-gray-500 mt-1">© 2026 Canryn Production. All rights reserved. TBZ-OS is proprietary technology of Canryn Production.</p>
         </div>
       </footer>

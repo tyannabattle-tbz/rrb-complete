@@ -3464,3 +3464,29 @@
 - [x] Enriched rrbSeedData.ts: Ty Bat Zan bio (CEO/Digital Steward) and Tyanna RaaShawn Battle bio (Founder & Executive Director)
 - [x] Updated SQUADD member database record with TBZ-OS reference
 - [x] Total: 15 references across 11 files, fully synced with TBZ-OS platform
+
+## Publish Latest Build & Verify Deployed Domain (NEEDS PUBLISH)
+- [x] Verify latest checkpoint is ready for publish
+- [x] Reminded user to click Publish in UI
+- [ ] Test Ty Battle credit lines on deployed domain pages (post-publish)
+
+## Nano Banana UN CSW70 Campaign Pitch Deck (COMPLETED)
+- [x] Create 12-slide image-based deck with gold-on-purple cinematic aesthetic
+- [x] Slides: Title, Presenter (Ty Battle), CSW70 Context, Sweet Miracles, SQUADD Goals, Bridge Across World, QUMUS Ecosystem, AI Trinity, HybridCast, Impact & Vision, Call to Action, Closing Credits
+- [x] Feature Ty Battle / Ty Bat Zan as presenter and Digital Steward
+- [x] Include QUMUS demo reference and full ecosystem overview
+- [x] Presented finished deck to user (manus-slides://0CRNW551iTV3W2Y6i58Fmq)
+
+## Meet Ty Bat Zan Dedicated Profile Page (COMPLETED)
+- [x] Create /ty-battle route in App.tsx with TyBattleProfile component
+- [x] Build full Digital Steward bio page matching TBZ-OS profile
+- [x] Include identity modes (Host, Scholar, Advocate, Strategist, Storyteller) with colored icons
+- [x] Include voice profile (Warm, Confident, Commanding, Intelligent, Smooth) and core functions
+- [x] Link to all ecosystem modules (QUMUS, RRB Radio, HybridCast, Sweet Miracles, SQUADD, TBZ-OS)
+- [x] AI Trinity section (Valanna, Candy, Seraph) with descriptions
+- [x] Family Subsidiaries section (Little C, Sean's Music, Anna's, Jaelon Enterprises)
+- [x] Legacy section honoring Seabrun Candy Hunter Sr. and Helen Hunter
+- [x] CTA buttons: Support Sweet Miracles, SQUADD Coalition, RRB Radio Live, Contact
+- [x] Full Canryn Production crediting and legal disclaimers
+- [x] Homepage footer link to /ty-battle profile
+- [x] All pages return 200, TypeScript 0 errors, QUMUS 16/16 healthy

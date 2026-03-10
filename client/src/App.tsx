@@ -190,6 +190,7 @@ import QumusCommandConsole from '@/pages/QumusCommandConsole';
 import StreamAnalytics from '@/pages/StreamAnalytics';
 import CommercialAnalytics from '@/pages/CommercialAnalytics';
 import SocialMediaKit from '@/pages/SocialMediaKit';
+import TyBattleProfile from '@/pages/TyBattleProfile';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -331,6 +332,7 @@ function Router() {
       <Route path="/health" component={SystemHealthPage} />
       <Route path="/squadd" component={SquaddGoals} />
       <Route path="/squadd/:slug" component={SquaddMemberProfile} />
+      <Route path="/ty-battle" component={TyBattleProfile} />
       <Route path="/selma" component={SelmaEvent} />
       <Route path="/live" component={LiveStreamPage} />
       <Route path="/flyer" component={InteractiveFlyer} />
