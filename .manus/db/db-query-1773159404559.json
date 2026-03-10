@@ -1,0 +1,154 @@
+{
+  "query": "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'conferences' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'conferences' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id",
+      "DATA_TYPE": "int",
+      "IS_NULLABLE": "NO",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "title",
+      "DATA_TYPE": "varchar",
+      "IS_NULLABLE": "NO",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "description",
+      "DATA_TYPE": "text",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "type",
+      "DATA_TYPE": "enum",
+      "IS_NULLABLE": "NO",
+      "COLUMN_DEFAULT": "meeting"
+    },
+    {
+      "COLUMN_NAME": "platform",
+      "DATA_TYPE": "enum",
+      "IS_NULLABLE": "NO",
+      "COLUMN_DEFAULT": "jitsi"
+    },
+    {
+      "COLUMN_NAME": "host_user_id",
+      "DATA_TYPE": "int",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "host_name",
+      "DATA_TYPE": "varchar",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "room_code",
+      "DATA_TYPE": "varchar",
+      "IS_NULLABLE": "NO",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "external_url",
+      "DATA_TYPE": "varchar",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "scheduled_at",
+      "DATA_TYPE": "timestamp",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "duration_minutes",
+      "DATA_TYPE": "int",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "60"
+    },
+    {
+      "COLUMN_NAME": "max_attendees",
+      "DATA_TYPE": "int",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "100"
+    },
+    {
+      "COLUMN_NAME": "status",
+      "DATA_TYPE": "enum",
+      "IS_NULLABLE": "NO",
+      "COLUMN_DEFAULT": "scheduled"
+    },
+    {
+      "COLUMN_NAME": "is_recurring",
+      "DATA_TYPE": "tinyint",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "0"
+    },
+    {
+      "COLUMN_NAME": "recurrence_pattern",
+      "DATA_TYPE": "varchar",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "password",
+      "DATA_TYPE": "varchar",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "recording_enabled",
+      "DATA_TYPE": "tinyint",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "1"
+    },
+    {
+      "COLUMN_NAME": "captions_enabled",
+      "DATA_TYPE": "tinyint",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "1"
+    },
+    {
+      "COLUMN_NAME": "created_at",
+      "DATA_TYPE": "timestamp",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP"
+    },
+    {
+      "COLUMN_NAME": "updated_at",
+      "DATA_TYPE": "timestamp",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "CURRENT_TIMESTAMP"
+    },
+    {
+      "COLUMN_NAME": "recording_url",
+      "DATA_TYPE": "text",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "recording_key",
+      "DATA_TYPE": "text",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "NULL"
+    },
+    {
+      "COLUMN_NAME": "recording_status",
+      "DATA_TYPE": "varchar",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "none"
+    },
+    {
+      "COLUMN_NAME": "actual_attendees",
+      "DATA_TYPE": "int",
+      "IS_NULLABLE": "YES",
+      "COLUMN_DEFAULT": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\tDATA_TYPE\tIS_NULLABLE\tCOLUMN_DEFAULT\nid\tint\tNO\tNULL\ntitle\tvarchar\tNO\tNULL\ndescription\ttext\tYES\tNULL\ntype\tenum\tNO\tmeeting\nplatform\tenum\tNO\tjitsi\nhost_user_id\tint\tYES\tNULL\nhost_name\tvarchar\tYES\tNULL\nroom_code\tvarchar\tNO\tNULL\nexternal_url\tvarchar\tYES\tNULL\nscheduled_at\ttimestamp\tYES\tNULL\nduration_minutes\tint\tYES\t60\nmax_attendees\tint\tYES\t100\nstatus\tenum\tNO\tscheduled\nis_recurring\ttinyint\tYES\t0\nrecurrence_pattern\tvarchar\tYES\tNULL\npassword\tvarchar\tYES\tNULL\nrecording_enabled\ttinyint\tYES\t1\ncaptions_enabled\ttinyint\tYES\t1\ncreated_at\ttimestamp\tYES\tCURRENT_TIMESTAMP\nupdated_at\ttimestamp\tYES\tCURRENT_TIMESTAMP\nrecording_url\ttext\tYES\tNULL\nrecording_key\ttext\tYES\tNULL\nrecording_status\tvarchar\tYES\tnone\nactual_attendees\tint\tYES\t0\n",
+  "stderr": "",
+  "execution_time_ms": 50
+}

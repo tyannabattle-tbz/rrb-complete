@@ -192,6 +192,9 @@ import StreamAnalytics from '@/pages/StreamAnalytics';
 import CommercialAnalytics from '@/pages/CommercialAnalytics';
 import SocialMediaKit from '@/pages/SocialMediaKit';
 import TyBattleProfile from '@/pages/TyBattleProfile';
+import ConferenceCalendar from '@/pages/ConferenceCalendar';
+import ConferenceAnalytics from '@/pages/ConferenceAnalytics';
+import ConferenceRecordings from '@/pages/ConferenceRecordings';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -365,6 +368,9 @@ function Router() {
       <Route path="/studio" component={StudioControlRoom} />
       <Route path="/convention-hub" component={ConventionHub} />
       <Route path="/conference/room/:id" component={ConferenceRoom} />
+      <Route path="/conference/calendar" component={ConferenceCalendar} />
+      <Route path="/conference/analytics" component={ConferenceAnalytics} />
+      <Route path="/conference/recordings" component={ConferenceRecordings} />
       <Route path="/conference" component={RRBConferenceHub} />
       <Route path="/command-console" component={QumusCommandConsole} />
       <Route path="/stream-analytics" component={StreamAnalytics} />

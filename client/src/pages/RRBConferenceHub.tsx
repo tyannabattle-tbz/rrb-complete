@@ -11,8 +11,10 @@ import {
   Video, Phone, Users, Globe, Calendar, Clock, Mic,
   Camera, Monitor, MessageSquare, Settings,
   Zap, Radio, Play, Plus, ExternalLink, Copy,
-  Shield, Headphones, ArrowRight, Trash2, Eye
+  Shield, Headphones, ArrowRight, Trash2, Eye,
+  BarChart3, Archive, Cpu
 } from 'lucide-react';
+import { Link } from 'wouter';
 
 // ─── Meeting Type Config ─────────────────────
 const MEETING_TYPES = [
@@ -178,23 +180,42 @@ export default function RRBConferenceHub() {
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="flex gap-1 mt-4">
-            {(['dashboard', 'create', 'scheduled'] as TabType[]).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
-                  activeTab === tab
-                    ? 'bg-gray-800 text-amber-400 border-b-2 border-amber-400'
-                    : 'text-white/50 hover:text-white/80 hover:bg-gray-800/50'
-                }`}
-              >
-                {tab === 'dashboard' && 'Dashboard'}
-                {tab === 'create' && 'Create New'}
-                {tab === 'scheduled' && 'Scheduled'}
-              </button>
-            ))}
+          {/* Tabs + Navigation */}
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex gap-1">
+              {(['dashboard', 'create', 'scheduled'] as TabType[]).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+                    activeTab === tab
+                      ? 'bg-gray-800 text-amber-400 border-b-2 border-amber-400'
+                      : 'text-white/50 hover:text-white/80 hover:bg-gray-800/50'
+                  }`}
+                >
+                  {tab === 'dashboard' && 'Dashboard'}
+                  {tab === 'create' && 'Create New'}
+                  {tab === 'scheduled' && 'Scheduled'}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Link href="/conference/calendar">
+                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 text-xs font-medium transition-colors">
+                  <Calendar className="w-3.5 h-3.5" /> Calendar
+                </button>
+              </Link>
+              <Link href="/conference/analytics">
+                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-xs font-medium transition-colors">
+                  <BarChart3 className="w-3.5 h-3.5" /> Analytics
+                </button>
+              </Link>
+              <Link href="/conference/recordings">
+                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-medium transition-colors">
+                  <Archive className="w-3.5 h-3.5" /> Recordings
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -479,6 +500,37 @@ export default function RRBConferenceHub() {
           </div>
         )}
       </div>
+
+        {/* Ecosystem Integration Cards */}
+        <div className="grid md:grid-cols-3 gap-4 mt-8">
+          <Link href="/live">
+            <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 hover:border-amber-500/40 transition-colors cursor-pointer">
+              <div className="flex items-center gap-2 mb-2">
+                <Radio className="w-5 h-5 text-amber-400" />
+                <span className="font-bold text-white">RRB Radio</span>
+              </div>
+              <p className="text-xs text-white/50">Broadcast conferences live on RRB Radio. Bridge listeners into live sessions.</p>
+            </div>
+          </Link>
+          <Link href="/ty-battle">
+            <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4 hover:border-purple-500/40 transition-colors cursor-pointer">
+              <div className="flex items-center gap-2 mb-2">
+                <Cpu className="w-5 h-5 text-purple-400" />
+                <span className="font-bold text-white">TBZ-OS</span>
+              </div>
+              <p className="text-xs text-white/50">Ty Bat Zan orchestrates scheduling, monitoring, and autonomous conference management.</p>
+            </div>
+          </Link>
+          <Link href="/hybridcast-hub">
+            <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 hover:border-red-500/40 transition-colors cursor-pointer">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-5 h-5 text-red-400" />
+                <span className="font-bold text-white">HybridCast</span>
+              </div>
+              <p className="text-xs text-white/50">Emergency broadcast bridge. Stream conferences through mesh networks and offline-first PWA.</p>
+            </div>
+          </Link>
+        </div>
 
       {/* Footer */}
       <div className="border-t border-gray-800 mt-12 py-6">

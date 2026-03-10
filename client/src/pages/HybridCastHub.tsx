@@ -38,6 +38,9 @@ const FEATURE_ROUTES: Record<string, string> = {
   'drill': '/broadcast-admin',
   'team': '/collaboration',
   'alerts': '/broadcast-admin',
+  'conf': '/conference',
+  'cal': '/conference/calendar',
+  'rec': '/conference/recordings',
 };
 
 export default function HybridCastHub() {

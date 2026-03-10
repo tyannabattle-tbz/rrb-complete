@@ -34,6 +34,7 @@ const ECOSYSTEM_MODULES = [
   { name: 'HybridCast', description: 'The Lifeline — 100% offline emergency broadcast PWA', icon: Shield, link: '/hybridcast', color: 'text-red-400' },
   { name: 'Sweet Miracles', description: 'The Heart — 501(c)(3) nonprofit, grants & donations', icon: Heart, link: '/donate', color: 'text-pink-400' },
   { name: 'SQUADD Coalition', description: 'The Movement — 7 women, 7 missions, 1 coalition', icon: Users, link: '/squadd', color: 'text-blue-400' },
+  { name: 'Conference Hub', description: 'The Bridge — Jitsi, Zoom, Meet, Discord, Skype + recordings & analytics', icon: Globe, link: '/conference', color: 'text-cyan-400' },
   { name: 'TBZ-OS', description: 'The Operating System — Full digital steward platform', icon: Monitor, link: 'https://tybatos-uo4zkxnl.manus.space', color: 'text-green-400', external: true },
 ];
 

@@ -733,9 +733,9 @@ export default function LiveStreamPage() {
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
               {[
                 { label: 'SQUADD Goals', path: '/squadd', icon: Globe },
+                { label: 'Conference Hub', path: '/conference', icon: Video },
                 { label: 'Meditation Hub', path: '/meditation', icon: Music },
                 { label: 'RRB Radio Station', path: '/rrb-radio', icon: Radio },
-                { label: 'Ecosystem', path: '/', icon: MapPin },
               ].map(link => (
                 <button
                   key={link.path}

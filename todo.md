@@ -3511,3 +3511,54 @@
 - [x] Tested: conference created, saved to DB, redirected to Jitsi room, user name pre-filled
 - [x] Conference Hub shows live conferences, quick start templates, scheduled events
 - [x] TypeScript 0 errors, QUMUS 16/16 healthy
+
+## Conference Recording Storage & Archive (IN PROGRESS)
+- [ ] Add recording_url, recording_key fields to conferences table
+- [ ] Create conference archive page with replay capability
+- [ ] Wire S3 storage for conference recordings
+- [ ] Add recording status tracking in conference router
+
+## Conference Calendar View (IN PROGRESS)
+- [ ] Build monthly/weekly calendar component for conferences
+- [ ] Show all scheduled conferences on calendar grid
+- [ ] Add click-to-view conference details from calendar
+- [ ] Wire into Conference Hub as a new tab
+
+## Conference Analytics Dashboard (IN PROGRESS)
+- [ ] Track attendance rates, average duration, platform usage
+- [ ] Build analytics visualization with charts
+- [ ] Show most active hosts and popular meeting types
+- [ ] Wire into Conference Hub analytics tab
+
+## RRB Radio Conference Integration (IN PROGRESS)
+- [ ] Add conference quick-launch from RRB Radio dashboard
+- [ ] Wire live conference status into RRB broadcast system
+- [ ] Add conference announcements to radio channels
+- [ ] Sync RRB with QUMUS conference orchestration
+
+## TBZ-OS Conference Integration (IN PROGRESS)
+- [ ] Add conference module to TyBattleProfile page
+- [ ] Wire Ty Bat Zan as default conference host identity
+- [ ] Add conference stats to TBZ-OS ecosystem overview
+- [ ] Sync TBZ-OS with QUMUS conference management
+
+## HybridCast Conference Integration (IN PROGRESS)
+- [ ] Add conference emergency broadcast capability to HybridCast
+- [ ] Wire conference system into HybridCast command center
+- [ ] Add conference status widget to HybridCast Hub
+- [ ] Enable HybridCast-to-conference bridge for emergency meetings
+
+## Conference System Enhancement (March 2026)
+- [x] Conference recording storage with S3-backed archive (recording_url, recording_key, recording_status columns)
+- [x] Conference recordings archive page at /conference/recordings with replay and download
+- [x] Conference calendar view at /conference/calendar with month/week toggle
+- [x] Conference analytics dashboard at /conference/analytics with KPIs, platform usage, meeting types, top hosts, monthly trends
+- [x] Conference Hub navigation links to Calendar, Analytics, and Recordings
+- [x] Ecosystem integration cards on Conference Hub (RRB Radio, TBZ-OS, HybridCast)
+- [x] Conference Hub added to Home page ecosystem modules
+- [x] Conference Hub added to Ty Bat Zan profile ecosystem modules
+- [x] Conference Hub added to LiveStreamPage quick links (RRB Radio integration)
+- [x] Conference routes added to HybridCast feature routing (conf, cal, rec)
+- [x] Fixed all timestamp handling to use MySQL NOW() instead of Date.now()
+- [x] Fixed calendar events query to return Unix timestamps for frontend
+- [x] All conference router endpoints verified: getStats, getConferences, getConference, getCalendarEvents, getAnalytics, getRecordings, createConference, saveRecording, joinConference, rsvpConference, endConference, deleteConference

@@ -150,6 +150,15 @@ export default function Home() {
       status: 'Active',
     },
     {
+      id: 'conference',
+      title: '🎙️ Conference Hub',
+      description: 'Full conference system with Jitsi, Zoom, Meet, Discord, Skype. Calendar, analytics, and S3-backed recordings.',
+      features: ['6 Platforms', 'Calendar View', 'Analytics', 'Recording Archive'],
+      color: 'from-cyan-600 to-blue-600',
+      path: '/conference',
+      status: 'Active',
+    },
+    {
       id: 'convention',
       title: '🌐 Convention Hub',
       description: 'Host global virtual conventions within the ecosystem. Multi-track sessions, breakout rooms, and attendee management.',

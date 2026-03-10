@@ -17378,14 +17378,18 @@ var conferenceRouter = router({
     const [totalRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences`);
     const [liveRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'live'`);
     const [scheduledRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'scheduled'`);
+    const [completedRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed'`);
+    const [recordingRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE recording_status = 'available'`);
     return {
       total: totalRows[0]?.count || 0,
       live: liveRows[0]?.count || 0,
-      scheduled: scheduledRows[0]?.count || 0
+      scheduled: scheduledRows[0]?.count || 0,
+      completed: completedRows[0]?.count || 0,
+      recordings: recordingRows[0]?.count || 0
     };
   }),
   getConferences: publicProcedure.input(z44.object({
-    status: z44.enum(["scheduled", "live", "ended", "cancelled", "all"]).optional().default("all"),
+    status: z44.enum(["scheduled", "live", "completed", "cancelled", "all"]).optional().default("all"),
     limit: z44.number().min(1).max(100).optional().default(20)
   }).optional()).query(async ({ input }) => {
     const db2 = await getDb();
@@ -17405,6 +17409,70 @@ var conferenceRouter = router({
     );
     return { ...conferences[0], attendees: attendeeRows };
   }),
+  // Calendar view - get conferences for a date range
+  getCalendarEvents: publicProcedure.input(z44.object({
+    startDate: z44.number(),
+    endDate: z44.number()
+  })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const startDate = new Date(input.startDate);
+    const endDate = new Date(input.endDate);
+    const [rows] = await db2.execute(sql12`
+        SELECT id, title, type as meeting_type, platform, host_name, room_code, 
+               UNIX_TIMESTAMP(scheduled_at)*1000 as scheduled_at, 
+               duration_minutes, status, actual_attendees, recording_status,
+               UNIX_TIMESTAMP(created_at)*1000 as created_at
+        FROM conferences 
+        WHERE (scheduled_at BETWEEN ${startDate} AND ${endDate})
+           OR (created_at BETWEEN ${startDate} AND ${endDate} AND scheduled_at IS NULL)
+        ORDER BY COALESCE(scheduled_at, created_at) ASC
+      `);
+    return rows;
+  }),
+  // Analytics - comprehensive conference metrics
+  getAnalytics: publicProcedure.query(async () => {
+    const db2 = await getDb();
+    const [platformRows] = await db2.execute(sql12`
+      SELECT platform, COUNT(*) as count, SUM(actual_attendees) as total_attendees, AVG(duration_minutes) as avg_duration
+      FROM conferences GROUP BY platform ORDER BY count DESC
+    `);
+    const [typeRows] = await db2.execute(sql12`
+      SELECT type, COUNT(*) as count FROM conferences GROUP BY type ORDER BY count DESC
+    `);
+    const [hostRows] = await db2.execute(sql12`
+      SELECT host_name, COUNT(*) as conferences_hosted, SUM(actual_attendees) as total_attendees
+      FROM conferences GROUP BY host_name ORDER BY conferences_hosted DESC LIMIT 10
+    `);
+    const [trendRows] = await db2.execute(sql12`
+      SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count, SUM(actual_attendees) as attendees
+      FROM conferences GROUP BY month ORDER BY month DESC LIMIT 6
+    `);
+    const [totalStats] = await db2.execute(sql12`
+      SELECT COUNT(*) as total_conferences, SUM(actual_attendees) as total_attendees, 
+             AVG(duration_minutes) as avg_duration, SUM(duration_minutes) as total_minutes,
+             COUNT(CASE WHEN recording_status = 'available' THEN 1 END) as total_recordings
+      FROM conferences
+    `);
+    return {
+      platforms: platformRows,
+      types: typeRows,
+      topHosts: hostRows,
+      monthlyTrend: trendRows,
+      totals: totalStats[0] || {}
+    };
+  }),
+  // Recordings archive
+  getRecordings: publicProcedure.input(z44.object({
+    limit: z44.number().min(1).max(50).optional().default(20)
+  }).optional()).query(async ({ input }) => {
+    const db2 = await getDb();
+    const limit = input?.limit || 20;
+    const [rows] = await db2.execute(sql12`
+        SELECT id, title, type, platform, host_name, duration_minutes, actual_attendees, recording_url, recording_status, created_at
+        FROM conferences WHERE recording_status = 'available' ORDER BY created_at DESC LIMIT ${limit}
+      `);
+    return rows;
+  }),
   createConference: protectedProcedure.input(z44.object({
     title: z44.string().min(1).max(255),
     description: z44.string().optional(),
@@ -17415,7 +17483,9 @@ var conferenceRouter = router({
     maxAttendees: z44.number().min(1).max(1e4).default(100),
     password: z44.string().optional(),
     closedCaptions: z44.boolean().default(true),
-    recording: z44.boolean().default(true)
+    recording: z44.boolean().default(true),
+    source: z44.string().optional()
+    // 'rrb', 'hybridcast', 'tbz-os', 'qumus'
   })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
     const now = Date.now();
@@ -17426,28 +17496,43 @@ var conferenceRouter = router({
     else if (input.platform === "discord") externalUrl = process.env.VITE_DISCORD_URL || "https://discord.gg";
     else if (input.platform === "skype") externalUrl = process.env.VITE_SKYPE_URL || "https://join.skype.com";
     const status = input.scheduledAt ? "scheduled" : "live";
+    const recordingStatus = input.recording ? "pending" : "none";
+    const platformValue = input.platform === "rrb_builtin" ? "jitsi" : input.platform === "google_meet" ? "meet" : input.platform === "rrb_broadcast" ? "rrb-live" : input.platform;
+    const scheduledAtDate = input.scheduledAt ? new Date(input.scheduledAt) : null;
     await db2.execute(sql12`
-        INSERT INTO conferences (title, description, meeting_type, platform, host_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, password, closed_captions, recording, status, attendee_count, created_at, updated_at)
-        VALUES (${input.title}, ${input.description || null}, ${input.meetingType}, ${input.platform}, ${ctx.user.id}, ${ctx.user.name}, ${roomCode}, ${externalUrl}, ${input.scheduledAt || null}, ${input.durationMinutes}, ${input.maxAttendees}, ${input.password || null}, ${input.closedCaptions}, ${input.recording}, ${status}, 0, ${now}, ${now})
+        INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, password, captions_enabled, recording_enabled, status, actual_attendees, recording_status, created_at, updated_at)
+        VALUES (${input.title}, ${input.description || null}, ${input.meetingType}, ${platformValue}, ${ctx.user.id}, ${ctx.user.name}, ${roomCode}, ${externalUrl}, ${scheduledAtDate}, ${input.durationMinutes}, ${input.maxAttendees}, ${input.password || null}, ${input.closedCaptions}, ${input.recording}, ${status}, 0, ${recordingStatus}, NOW(), NOW())
       `);
     const [result2] = await db2.execute(sql12`SELECT LAST_INSERT_ID() as id`);
     const conferenceId = result2[0]?.id;
     return { id: conferenceId, roomCode, status, platform: input.platform, externalUrl };
   }),
+  // Save recording URL after conference ends
+  saveRecording: protectedProcedure.input(z44.object({
+    conferenceId: z44.number(),
+    recordingUrl: z44.string(),
+    recordingKey: z44.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.execute(sql12`
+        UPDATE conferences SET recording_url = ${input.recordingUrl}, recording_key = ${input.recordingKey || null}, 
+        recording_status = 'available', updated_at = NOW() WHERE id = ${input.conferenceId}
+      `);
+    return { success: true };
+  }),
   joinConference: protectedProcedure.input(z44.object({ conferenceId: z44.number() })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
-    const now = Date.now();
     const [existing] = await db2.execute(
       sql12`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
     );
     if (existing.length > 0) {
-      await db2.execute(sql12`UPDATE conference_attendees SET joined_at = ${now} WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`);
+      await db2.execute(sql12`UPDATE conference_attendees SET joined_at = NOW() WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`);
     } else {
       await db2.execute(sql12`
           INSERT INTO conference_attendees (conference_id, user_id, user_name, rsvp_status, joined_at, created_at)
-          VALUES (${input.conferenceId}, ${ctx.user.id}, ${ctx.user.name}, 'going', ${now}, ${now})
+          VALUES (${input.conferenceId}, ${ctx.user.id}, ${ctx.user.name}, 'going', NOW(), NOW())
         `);
-      await db2.execute(sql12`UPDATE conferences SET attendee_count = attendee_count + 1, updated_at = ${now} WHERE id = ${input.conferenceId}`);
+      await db2.execute(sql12`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
     }
     return { success: true };
   }),
@@ -17456,7 +17541,6 @@ var conferenceRouter = router({
     status: z44.enum(["going", "maybe", "declined"])
   })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
-    const now = Date.now();
     const [existing] = await db2.execute(
       sql12`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
     );
@@ -17465,19 +17549,23 @@ var conferenceRouter = router({
     } else {
       await db2.execute(sql12`
           INSERT INTO conference_attendees (conference_id, user_id, user_name, rsvp_status, created_at)
-          VALUES (${input.conferenceId}, ${ctx.user.id}, ${ctx.user.name}, ${input.status}, ${now})
+          VALUES (${input.conferenceId}, ${ctx.user.id}, ${ctx.user.name}, ${input.status}, NOW())
         `);
     }
     return { success: true };
   }),
-  endConference: protectedProcedure.input(z44.object({ id: z44.number() })).mutation(async ({ input }) => {
+  endConference: protectedProcedure.input(z44.object({ id: z44.number(), actualAttendees: z44.number().optional() })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    const now = Date.now();
-    await db2.execute(sql12`UPDATE conferences SET status = 'ended', updated_at = ${now} WHERE id = ${input.id}`);
+    if (input.actualAttendees !== void 0) {
+      await db2.execute(sql12`UPDATE conferences SET status = 'completed', actual_attendees = ${input.actualAttendees}, updated_at = NOW() WHERE id = ${input.id}`);
+    } else {
+      await db2.execute(sql12`UPDATE conferences SET status = 'completed', updated_at = NOW() WHERE id = ${input.id}`);
+    }
     return { success: true };
   }),
   deleteConference: protectedProcedure.input(z44.object({ id: z44.number() })).mutation(async ({ input }) => {
     const db2 = await getDb();
+    await db2.execute(sql12`DELETE FROM conference_attendees WHERE conference_id = ${input.id}`);
     await db2.execute(sql12`DELETE FROM conferences WHERE id = ${input.id}`);
     return { success: true };
   })
