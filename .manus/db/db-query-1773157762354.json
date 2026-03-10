@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE users SET role = 'editor' WHERE id = 5221363 AND name = 'Crystal James';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute UPDATE users SET role = 'editor' WHERE id = 5221363 AND name = 'Crystal James';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 82
+}

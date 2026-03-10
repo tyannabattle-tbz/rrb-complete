@@ -25,6 +25,7 @@ import { productionIntegrationRouter } from '../routers/productionIntegrationRou
 import { studioRouter } from '../routers/studioRouter';
 import { conventionRouter } from '../routers/conventionRouter';
 import { squaddGoalsRouter } from '../routers/squaddGoalsRouter';
+import { conferenceRouter } from '../routers/conferenceRouter';
 
 export const chunk5Router = router({
   seedData: seedDataRouter,
@@ -51,4 +52,5 @@ export const chunk5Router = router({
   studio: studioRouter,
   convention: conventionRouter,
   squaddGoals: squaddGoalsRouter,
+  conference: conferenceRouter,
 });

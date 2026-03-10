@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -8,490 +8,485 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import {
-  Video, Phone, Users, Globe, Calendar, Clock, Mic, MicOff,
-  Camera, CameraOff, Monitor, Share2, MessageSquare, Settings,
-  Zap, Radio, Play, Plus, ExternalLink, Copy, ChevronDown,
-  ChevronUp, Shield, Headphones, Tv, Link2, ArrowRight
+  Video, Phone, Users, Globe, Calendar, Clock, Mic,
+  Camera, Monitor, MessageSquare, Settings,
+  Zap, Radio, Play, Plus, ExternalLink, Copy,
+  Shield, Headphones, ArrowRight, Trash2, Eye
 } from 'lucide-react';
 
-// ─── Conference Platform Integrations ─────────────────────
-interface ConferencePlatform {
-  id: string;
-  name: string;
-  icon: string;
-  color: string;
-  description: string;
-  features: string[];
-  status: 'active' | 'coming_soon';
-  launchUrl?: string;
-}
+// ─── Meeting Type Config ─────────────────────
+const MEETING_TYPES = [
+  { id: 'huddle', label: 'Quick Huddle', icon: Zap, color: 'text-yellow-400', duration: 15, desc: '15-min standup' },
+  { id: 'meeting', label: 'Meeting', icon: Users, color: 'text-blue-400', duration: 60, desc: 'Standard meeting' },
+  { id: 'conference', label: 'Conference', icon: Globe, color: 'text-purple-400', duration: 120, desc: 'Large conference' },
+  { id: 'webinar', label: 'Webinar', icon: Monitor, color: 'text-green-400', duration: 90, desc: 'Presentation mode' },
+  { id: 'broadcast', label: 'Broadcast', icon: Radio, color: 'text-red-400', duration: 60, desc: 'Live broadcast' },
+  { id: 'workshop', label: 'Workshop', icon: Settings, color: 'text-orange-400', duration: 180, desc: 'Interactive workshop' },
+] as const;
 
-const PLATFORMS: ConferencePlatform[] = [
-  {
-    id: 'zoom',
-    name: 'Zoom Meetings',
-    icon: '📹',
-    color: 'from-blue-600 to-blue-700',
-    description: 'HD video conferencing with breakout rooms, recording, and up to 1,000 participants',
-    features: ['HD Video', 'Breakout Rooms', 'Cloud Recording', 'Screen Share', 'Closed Captions'],
-    status: 'active',
-    launchUrl: import.meta.env.VITE_ZOOM_URL || 'https://zoom.us/join',
-  },
-  {
-    id: 'meet',
-    name: 'Google Meet',
-    icon: '🎥',
-    color: 'from-green-600 to-teal-600',
-    description: 'Google Meet integration for quick video calls and team huddles',
-    features: ['Live Captions', 'Screen Share', 'Noise Cancellation', 'Polls', 'Q&A'],
-    status: 'active',
-    launchUrl: import.meta.env.VITE_MEET_URL || 'https://meet.google.com',
-  },
-  {
-    id: 'discord',
-    name: 'Discord Community',
-    icon: '💬',
-    color: 'from-indigo-600 to-purple-600',
-    description: 'Community voice channels, text chat, and live streaming for the RRB family',
-    features: ['Voice Channels', 'Text Chat', 'Go Live', 'Stage Channels', 'Community Events'],
-    status: 'active',
-    launchUrl: import.meta.env.VITE_DISCORD_URL || 'https://discord.gg',
-  },
-  {
-    id: 'skype',
-    name: 'Skype',
-    icon: '📞',
-    color: 'from-sky-500 to-blue-500',
-    description: 'Classic video calling for one-on-one and small group conversations',
-    features: ['Video Calls', 'Screen Share', 'Call Recording', 'Live Subtitles', 'Phone Calls'],
-    status: 'active',
-    launchUrl: import.meta.env.VITE_SKYPE_URL || 'https://web.skype.com',
-  },
-  {
-    id: 'rrb-live',
-    name: 'RRB Live Broadcast',
-    icon: '📡',
-    color: 'from-amber-600 to-orange-600',
-    description: 'Broadcast directly to all 50 RRB Radio channels via QUMUS orchestration',
-    features: ['7-Channel Broadcast', 'QUMUS Managed', 'Real-time Chat', 'Listener Analytics', 'Auto-Archive'],
-    status: 'active',
-    launchUrl: '/live',
-  },
-];
+const PLATFORMS = [
+  { id: 'rrb_builtin', label: 'RRB Built-in (Jitsi)', icon: Video, color: 'bg-amber-500', desc: 'Free, no account needed' },
+  { id: 'zoom', label: 'Zoom', icon: Video, color: 'bg-blue-500', desc: 'External Zoom meeting' },
+  { id: 'google_meet', label: 'Google Meet', icon: Video, color: 'bg-green-500', desc: 'External Google Meet' },
+  { id: 'discord', label: 'Discord', icon: Headphones, color: 'bg-indigo-500', desc: 'Discord voice/video' },
+  { id: 'skype', label: 'Skype', icon: Phone, color: 'bg-sky-500', desc: 'External Skype call' },
+  { id: 'rrb_broadcast', label: 'RRB Live Broadcast', icon: Radio, color: 'bg-red-500', desc: 'RRB Radio broadcast' },
+] as const;
 
-// ─── Upcoming Conferences & Events ─────────────────────
-interface ScheduledEvent {
-  id: number;
-  title: string;
-  date: string;
-  time: string;
-  platform: string;
-  host: string;
-  attendees: number;
-  maxAttendees: number;
-  type: 'conference' | 'meeting' | 'webinar' | 'broadcast' | 'workshop';
-  status: 'upcoming' | 'live' | 'completed';
-  description: string;
-}
-
-const SCHEDULED_EVENTS: ScheduledEvent[] = [
-  {
-    id: 1, title: 'SQUADD Goals Weekly Strategy', date: 'Every Monday', time: '10:00 AM CST',
-    platform: 'zoom', host: 'Candy AI', attendees: 24, maxAttendees: 100,
-    type: 'meeting', status: 'upcoming',
-    description: 'Weekly strategy session for SQUADD Goals — Sisters Questing Unapologetically After Divine Destiny',
-  },
-  {
-    id: 2, title: 'RRB Community Town Hall', date: 'Every Wednesday', time: '7:00 PM CST',
-    platform: 'rrb-live', host: 'Valanna', attendees: 342, maxAttendees: 5000,
-    type: 'broadcast', status: 'upcoming',
-    description: 'Open community town hall broadcast across all RRB channels — voice of the people',
-  },
-  {
-    id: 3, title: 'Canryn Production Board Meeting', date: 'Monthly — 1st Friday', time: '2:00 PM CST',
-    platform: 'meet', host: 'Seabrun Candy Hunter', attendees: 12, maxAttendees: 25,
-    type: 'meeting', status: 'upcoming',
-    description: 'Monthly board meeting for Canryn Production and all subsidiaries',
-  },
-  {
-    id: 4, title: 'HybridCast Emergency Drill', date: 'Quarterly', time: '9:00 AM CST',
-    platform: 'discord', host: 'Seraph', attendees: 48, maxAttendees: 200,
-    type: 'workshop', status: 'upcoming',
-    description: 'Quarterly emergency broadcast drill — testing all HybridCast systems and mesh networks',
-  },
-  {
-    id: 5, title: 'Sweet Miracles Donor Appreciation', date: 'March 15, 2026', time: '6:00 PM CST',
-    platform: 'zoom', host: 'Sweet Miracles Team', attendees: 67, maxAttendees: 500,
-    type: 'webinar', status: 'upcoming',
-    description: 'Annual donor appreciation event — celebrating the impact of every contribution',
-  },
-  {
-    id: 6, title: 'Gospel Hour Live Worship', date: 'Every Sunday', time: '9:00 AM CST',
-    platform: 'rrb-live', host: 'Gospel Hour Team', attendees: 289, maxAttendees: 5000,
-    type: 'broadcast', status: 'upcoming',
-    description: 'Live Sunday worship broadcast — traditional and contemporary gospel across all channels',
-  },
-];
-
-// ─── Quick Meeting Templates ─────────────────────
+// ─── Quick Start Templates ─────────────────────
 const QUICK_TEMPLATES = [
-  { label: 'Team Huddle', icon: '👥', duration: '15 min', platform: 'meet' },
-  { label: 'Board Meeting', icon: '🏛️', duration: '60 min', platform: 'zoom' },
-  { label: 'Community Call', icon: '📢', duration: '45 min', platform: 'discord' },
-  { label: 'Live Broadcast', icon: '📡', duration: 'Open', platform: 'rrb-live' },
-  { label: '1-on-1 Check-in', icon: '☎️', duration: '30 min', platform: 'skype' },
-  { label: 'Workshop', icon: '🎓', duration: '90 min', platform: 'zoom' },
+  { title: 'SQUADD Strategy Session', type: 'meeting' as const, platform: 'rrb_builtin' as const, desc: 'SQUADD Goals planning', duration: 60 },
+  { title: 'RRB Production Meeting', type: 'meeting' as const, platform: 'rrb_builtin' as const, desc: 'Canryn Production team sync', duration: 45 },
+  { title: 'Sweet Miracles Fundraiser', type: 'webinar' as const, platform: 'rrb_builtin' as const, desc: 'Donation drive webinar', duration: 90 },
+  { title: 'HybridCast Emergency Drill', type: 'broadcast' as const, platform: 'rrb_builtin' as const, desc: 'Emergency broadcast test', duration: 30 },
+  { title: 'UN CSW70 Prep Call', type: 'conference' as const, platform: 'rrb_builtin' as const, desc: 'Pre-conference planning', duration: 120 },
+  { title: 'DJ Workshop', type: 'workshop' as const, platform: 'rrb_builtin' as const, desc: 'AI DJ training session', duration: 180 },
 ];
+
+type TabType = 'dashboard' | 'create' | 'scheduled';
 
 export default function RRBConferenceHub() {
+  const [, navigate] = useLocation();
   const { user } = useAuth();
-  const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<'platforms' | 'schedule' | 'quick'>('platforms');
-  const [expandedPlatform, setExpandedPlatform] = useState<string | null>(null);
-  const [meetingLink, setMeetingLink] = useState('');
+  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
 
-  const handleLaunchPlatform = (platform: ConferencePlatform) => {
-    if (platform.id === 'rrb-live') {
-      setLocation('/live');
-      return;
-    }
-    if (platform.launchUrl) {
-      window.open(platform.launchUrl, '_blank');
-      toast.success(`Opening ${platform.name}`, {
-        description: 'Launching in a new tab...',
-      });
-    }
+  // Create form state
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [meetingType, setMeetingType] = useState<string>('meeting');
+  const [platform, setPlatform] = useState<string>('rrb_builtin');
+  const [duration, setDuration] = useState(60);
+  const [maxAttendees, setMaxAttendees] = useState(100);
+  const [password, setPassword] = useState('');
+  const [closedCaptions, setClosedCaptions] = useState(true);
+  const [recording, setRecording] = useState(true);
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [scheduleTime, setScheduleTime] = useState('');
+  const [isScheduled, setIsScheduled] = useState(false);
+
+  // Quick join
+  const [joinCode, setJoinCode] = useState('');
+
+  // Data
+  const { data: stats } = trpc.conference.getStats.useQuery();
+  const { data: conferences } = trpc.conference.getConferences.useQuery({ limit: 50 });
+  const utils = trpc.useUtils();
+
+  const createMutation = trpc.conference.createConference.useMutation({
+    onSuccess: (data: any) => {
+      toast.success('Conference created!');
+      utils.conference.getConferences.invalidate();
+      utils.conference.getStats.invalidate();
+      if (data.platform === 'rrb_builtin') {
+        navigate(`/conference/room/${data.id}`);
+      } else if (data.externalUrl) {
+        window.open(data.externalUrl, '_blank');
+        setActiveTab('dashboard');
+      }
+      resetForm();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const deleteMutation = trpc.conference.deleteConference.useMutation({
+    onSuccess: () => {
+      toast.success('Conference deleted');
+      utils.conference.getConferences.invalidate();
+      utils.conference.getStats.invalidate();
+    },
+  });
+
+  const resetForm = () => {
+    setTitle(''); setDescription(''); setMeetingType('meeting'); setPlatform('rrb_builtin');
+    setDuration(60); setMaxAttendees(100); setPassword('');
+    setClosedCaptions(true); setRecording(true);
+    setScheduleDate(''); setScheduleTime(''); setIsScheduled(false);
   };
 
-  const handleJoinMeeting = () => {
-    if (!meetingLink.trim()) {
-      toast.error('Please enter a meeting link or ID');
-      return;
-    }
-    const link = meetingLink.trim();
-    if (link.startsWith('http')) {
-      window.open(link, '_blank');
-    } else {
-      // Assume Zoom meeting ID
-      window.open(`https://zoom.us/j/${link.replace(/\s/g, '')}`, '_blank');
-    }
-    toast.success('Joining meeting...', { description: link });
-    setMeetingLink('');
-  };
+  const handleCreate = () => {
+    if (!title.trim()) { toast.error('Please enter a conference title'); return; }
+    if (!user) { toast.error('Please log in to create a conference'); return; }
 
-  const handleCopyLink = (url: string) => {
-    navigator.clipboard.writeText(url).then(() => {
-      toast.success('Link copied to clipboard');
+    let scheduledAt: number | undefined;
+    if (isScheduled && scheduleDate && scheduleTime) {
+      scheduledAt = new Date(`${scheduleDate}T${scheduleTime}`).getTime();
+    }
+
+    createMutation.mutate({
+      title: title.trim(),
+      description: description.trim() || undefined,
+      meetingType: meetingType as any,
+      platform: platform as any,
+      durationMinutes: duration,
+      maxAttendees,
+      password: password || undefined,
+      closedCaptions,
+      recording,
+      scheduledAt,
     });
   };
 
-  const handleQuickMeeting = (template: typeof QUICK_TEMPLATES[0]) => {
-    const platform = PLATFORMS.find(p => p.id === template.platform);
-    if (platform) {
-      handleLaunchPlatform(platform);
-      toast.success(`Starting ${template.label}`, {
-        description: `${template.duration} on ${platform.name}`,
-      });
-    }
+  const handleQuickStart = (template: typeof QUICK_TEMPLATES[0]) => {
+    if (!user) { toast.error('Please log in to create a conference'); return; }
+    createMutation.mutate({
+      title: template.title,
+      description: template.desc,
+      meetingType: template.type,
+      platform: template.platform,
+      durationMinutes: template.duration,
+      maxAttendees: 100,
+      closedCaptions: true,
+      recording: true,
+    });
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'conference': return 'bg-blue-500/20 text-blue-400 border-blue-500/50';
-      case 'meeting': return 'bg-green-500/20 text-green-400 border-green-500/50';
-      case 'webinar': return 'bg-purple-500/20 text-purple-400 border-purple-500/50';
-      case 'broadcast': return 'bg-amber-500/20 text-amber-400 border-amber-500/50';
-      case 'workshop': return 'bg-pink-500/20 text-pink-400 border-pink-500/50';
-      default: return 'bg-slate-500/20 text-slate-400';
-    }
+  const handleQuickJoin = () => {
+    if (!joinCode.trim()) { toast.error('Please enter a room code or conference ID'); return; }
+    const id = parseInt(joinCode);
+    if (!isNaN(id)) { navigate(`/conference/room/${id}`); } else { toast.error('Please enter a valid conference ID'); }
   };
+
+  const liveConferences = useMemo(() => (conferences || []).filter((c: any) => c.status === 'live'), [conferences]);
+  const scheduledConferences = useMemo(() => (conferences || []).filter((c: any) => c.status === 'scheduled'), [conferences]);
+  const pastConferences = useMemo(() => (conferences || []).filter((c: any) => c.status === 'ended' || c.status === 'cancelled'), [conferences]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white">
       {/* Header */}
-      <header className="border-b border-purple-500/20 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <div className="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm">
+        <div className="container py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Video className="w-8 h-8 text-blue-400" />
-                <Zap className="w-4 h-4 text-purple-400 absolute -top-1 -right-1" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-white">RRB Conference Hub</h1>
-                <p className="text-sm text-purple-300 flex items-center gap-2">
-                  <span>Video Conferencing • Meetings • Live Broadcasts</span>
-                  <span className="text-purple-500">•</span>
-                  <span className="text-amber-400">QUMUS Integrated</span>
-                </p>
-              </div>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+                RRB Conference Hub
+              </h1>
+              <p className="text-white/50 text-sm mt-1">Powered by QUMUS Orchestration Engine &bull; Built-in Jitsi + External Platforms</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => setLocation('/rrb-radio')} className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10">
-                <Radio className="w-4 h-4 mr-1" /> RRB Radio
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => setLocation('/convention-hub')} className="border-amber-500/30 text-amber-300 hover:bg-amber-500/10">
-                <Calendar className="w-4 h-4 mr-1" /> Convention Hub
-              </Button>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-amber-400">{stats?.total || 0}</div>
+                <div className="text-white/40 text-xs">Total</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-400">{stats?.live || 0}</div>
+                <div className="text-white/40 text-xs">Live</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-400">{stats?.scheduled || 0}</div>
+                <div className="text-white/40 text-xs">Scheduled</div>
+              </div>
             </div>
           </div>
+
+          {/* Tabs */}
+          <div className="flex gap-1 mt-4">
+            {(['dashboard', 'create', 'scheduled'] as TabType[]).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
+                  activeTab === tab
+                    ? 'bg-gray-800 text-amber-400 border-b-2 border-amber-400'
+                    : 'text-white/50 hover:text-white/80 hover:bg-gray-800/50'
+                }`}
+              >
+                {tab === 'dashboard' && 'Dashboard'}
+                {tab === 'create' && 'Create New'}
+                {tab === 'scheduled' && 'Scheduled'}
+              </button>
+            ))}
+          </div>
         </div>
-      </header>
+      </div>
 
-      <main className="container mx-auto px-4 py-6 space-y-6">
-
-        {/* Quick Join Bar */}
-        <Card className="bg-gradient-to-r from-blue-900/30 via-purple-900/20 to-blue-900/30 border-blue-500/20">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row items-center gap-3">
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <Link2 className="w-5 h-5 text-blue-400" />
-                <span className="text-sm font-medium text-white">Quick Join:</span>
-              </div>
-              <Input
-                value={meetingLink}
-                onChange={(e) => setMeetingLink(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleJoinMeeting()}
-                placeholder="Paste meeting link or Zoom ID..."
-                className="flex-1 bg-slate-800/60 border-blue-500/20 text-white placeholder:text-slate-500"
-              />
-              <Button onClick={handleJoinMeeting} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                <ArrowRight className="w-4 h-4 mr-1" /> Join
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tab Navigation */}
-        <div className="flex gap-2 border-b border-purple-500/20 pb-2">
-          {[
-            { key: 'platforms', label: 'Platforms', icon: Globe },
-            { key: 'schedule', label: 'Scheduled Events', icon: Calendar },
-            { key: 'quick', label: 'Quick Start', icon: Zap },
-          ].map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as typeof activeTab)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-t-lg text-sm font-medium transition-all ${
-                activeTab === tab.key
-                  ? 'bg-purple-500/20 text-purple-300 border-b-2 border-purple-400'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-            >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* ─── Platforms Tab ─── */}
-        {activeTab === 'platforms' && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {PLATFORMS.map((platform) => (
-                <Card
-                  key={platform.id}
-                  className="bg-slate-800/50 border-purple-500/10 hover:border-purple-500/30 transition-all cursor-pointer"
-                  onClick={() => setExpandedPlatform(expandedPlatform === platform.id ? null : platform.id)}
-                >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${platform.color} flex items-center justify-center text-2xl`}>
-                          {platform.icon}
-                        </div>
-                        <div>
-                          <CardTitle className="text-base text-white">{platform.name}</CardTitle>
-                          <Badge className={platform.status === 'active' ? 'bg-green-500/20 text-green-400 text-xs' : 'bg-yellow-500/20 text-yellow-400 text-xs'}>
-                            {platform.status === 'active' ? 'Active' : 'Coming Soon'}
-                          </Badge>
-                        </div>
-                      </div>
-                      {expandedPlatform === platform.id ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <p className="text-xs text-slate-400">{platform.description}</p>
-
-                    {expandedPlatform === platform.id && (
-                      <div className="space-y-3 pt-2 border-t border-slate-700/50">
-                        <div className="flex flex-wrap gap-1">
-                          {platform.features.map((f) => (
-                            <Badge key={f} variant="outline" className="text-[10px] border-slate-600 text-slate-300">{f}</Badge>
-                          ))}
-                        </div>
-                        {platform.launchUrl && (
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              onClick={(e) => { e.stopPropagation(); handleLaunchPlatform(platform); }}
-                              className={`flex-1 bg-gradient-to-r ${platform.color} hover:opacity-90`}
-                            >
-                              <ExternalLink className="w-3 h-3 mr-1" /> Launch
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={(e) => { e.stopPropagation(); handleCopyLink(platform.launchUrl || ''); }}
-                              className="border-slate-600 text-slate-300 hover:bg-slate-700"
-                            >
-                              <Copy className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Video Production Quick Access */}
-            <Card className="bg-gradient-to-r from-amber-900/20 via-slate-800/60 to-amber-900/20 border-amber-500/20">
-              <CardContent className="p-4">
-                <div className="flex flex-col md:flex-row items-center gap-4">
-                  <div className="flex items-center gap-3 flex-1">
-                    <Tv className="w-8 h-8 text-amber-400" />
-                    <div>
-                      <h3 className="text-base font-bold text-white">Video Production Studio</h3>
-                      <p className="text-xs text-slate-400">Generate AI videos, edit timelines, manage video queue — all QUMUS orchestrated</p>
-                    </div>
+      <div className="container py-6">
+        {/* ─── DASHBOARD TAB ─────────────────────── */}
+        {activeTab === 'dashboard' && (
+          <div className="space-y-6">
+            {/* Quick Join */}
+            <Card className="bg-gray-900/50 border-gray-800">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Enter conference ID to join..."
+                      value={joinCode}
+                      onChange={(e) => setJoinCode(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleQuickJoin()}
+                      className="bg-gray-800 border-gray-700 text-white"
+                    />
                   </div>
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={() => setLocation('/video-production')} className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
-                      <Video className="w-4 h-4 mr-1" /> Video Studio
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => setLocation('/live')} className="border-amber-500/30 text-amber-300 hover:bg-amber-500/10">
-                      <Play className="w-4 h-4 mr-1" /> Live Stream
-                    </Button>
-                  </div>
+                  <Button onClick={handleQuickJoin} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold">
+                    <ArrowRight className="w-4 h-4 mr-1" /> Join
+                  </Button>
+                  <Button onClick={() => setActiveTab('create')} variant="outline" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
+                    <Plus className="w-4 h-4 mr-1" /> New Conference
+                  </Button>
                 </div>
               </CardContent>
             </Card>
-          </div>
-        )}
 
-        {/* ─── Scheduled Events Tab ─── */}
-        {activeTab === 'schedule' && (
-          <div className="space-y-4">
-            {SCHEDULED_EVENTS.map((event) => {
-              const platform = PLATFORMS.find(p => p.id === event.platform);
-              return (
-                <Card key={event.id} className="bg-slate-800/50 border-purple-500/10 hover:border-purple-500/30 transition-all">
-                  <CardContent className="p-4">
-                    <div className="flex flex-col md:flex-row items-start gap-4">
-                      <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-gradient-to-br from-purple-900/40 to-slate-800/60 flex flex-col items-center justify-center border border-purple-500/20">
-                        <Calendar className="w-5 h-5 text-purple-400 mb-1" />
-                        <span className="text-[10px] text-slate-400">{event.time}</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <h3 className="text-base font-bold text-white">{event.title}</h3>
-                          <Badge className={getTypeColor(event.type)}>{event.type}</Badge>
-                          {event.status === 'live' && <Badge className="bg-red-500/20 text-red-400 animate-pulse">LIVE NOW</Badge>}
-                        </div>
-                        <p className="text-xs text-slate-400 mb-2">{event.description}</p>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {event.date} • {event.time}</span>
-                          <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {event.attendees}/{event.maxAttendees}</span>
-                          <span className="flex items-center gap-1"><Mic className="w-3 h-3" /> Host: {event.host}</span>
-                          {platform && <span className="flex items-center gap-1">{platform.icon} {platform.name}</span>}
-                        </div>
-                      </div>
-                      <div className="flex gap-2 flex-shrink-0">
-                        {platform && (
-                          <Button size="sm" onClick={() => handleLaunchPlatform(platform)} className={`bg-gradient-to-r ${platform.color} hover:opacity-90`}>
-                            <ExternalLink className="w-3 h-3 mr-1" /> Join
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-
-            <div className="text-center py-4">
-              <Button variant="outline" onClick={() => setLocation('/convention-hub')} className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10">
-                <Calendar className="w-4 h-4 mr-2" /> View Full Convention Hub
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* ─── Quick Start Tab ─── */}
-        {activeTab === 'quick' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {QUICK_TEMPLATES.map((template, idx) => {
-                const platform = PLATFORMS.find(p => p.id === template.platform);
-                return (
+            {/* Quick Start Templates */}
+            <div>
+              <h2 className="text-lg font-semibold text-white/80 mb-3">Quick Start</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {QUICK_TEMPLATES.map((template, i) => (
                   <Card
-                    key={idx}
-                    className="bg-slate-800/50 border-purple-500/10 hover:border-purple-500/30 transition-all cursor-pointer hover:scale-[1.02]"
-                    onClick={() => handleQuickMeeting(template)}
+                    key={i}
+                    className="bg-gray-900/50 border-gray-800 hover:border-amber-500/50 cursor-pointer transition-all"
+                    onClick={() => handleQuickStart(template)}
                   >
-                    <CardContent className="p-4 text-center">
-                      <div className="text-3xl mb-2">{template.icon}</div>
-                      <h3 className="text-sm font-bold text-white mb-1">{template.label}</h3>
-                      <p className="text-xs text-slate-400 mb-2">{template.duration}</p>
-                      {platform && (
-                        <Badge variant="outline" className="text-[10px] border-slate-600 text-slate-300">
-                          {platform.icon} {platform.name}
-                        </Badge>
-                      )}
+                    <CardContent className="pt-4 pb-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-semibold text-white text-sm">{template.title}</h3>
+                          <p className="text-white/40 text-xs mt-1">{template.desc}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Badge variant="outline" className="text-[10px] border-gray-700 text-white/50">
+                              {template.type}
+                            </Badge>
+                            <span className="text-white/30 text-xs flex items-center gap-1">
+                              <Clock className="w-3 h-3" /> {template.duration}min
+                            </span>
+                          </div>
+                        </div>
+                        <Play className="w-8 h-8 text-amber-500/60" />
+                      </div>
                     </CardContent>
                   </Card>
-                );
-              })}
+                ))}
+              </div>
             </div>
 
-            {/* Accessibility Note */}
-            <Card className="bg-gradient-to-r from-green-900/20 via-slate-800/60 to-green-900/20 border-green-500/20">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <Shield className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
+            {/* Live Conferences */}
+            {liveConferences.length > 0 && (
+              <div>
+                <h2 className="text-lg font-semibold text-green-400 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" /> Live Now
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {liveConferences.map((conf: any) => (
+                    <Card key={conf.id} className="bg-gray-900/50 border-green-500/30">
+                      <CardContent className="pt-4 pb-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="font-semibold text-white">{conf.title}</h3>
+                            <p className="text-white/40 text-xs mt-1">
+                              Host: {conf.host_name} &bull; {conf.attendee_count} attendees &bull; {conf.meeting_type}
+                            </p>
+                          </div>
+                          <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-green-600 hover:bg-green-700">
+                            <Video className="w-4 h-4 mr-1" /> Join
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Recent Conferences */}
+            {pastConferences.length > 0 && (
+              <div>
+                <h2 className="text-lg font-semibold text-white/60 mb-3">Recent</h2>
+                <div className="space-y-2">
+                  {pastConferences.slice(0, 5).map((conf: any) => (
+                    <div key={conf.id} className="flex items-center justify-between py-2 px-3 bg-gray-900/30 rounded-lg border border-gray-800/50">
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className={`text-[10px] ${conf.status === 'ended' ? 'border-gray-600 text-gray-400' : 'border-red-600 text-red-400'}`}>
+                          {conf.status}
+                        </Badge>
+                        <span className="text-white/70 text-sm">{conf.title}</span>
+                        <span className="text-white/30 text-xs">{conf.meeting_type} &bull; {conf.attendee_count} attended</span>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate({ id: conf.id })} className="text-red-400/50 hover:text-red-400">
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ─── CREATE TAB ─────────────────────── */}
+        {activeTab === 'create' && (
+          <div className="max-w-3xl mx-auto space-y-6">
+            <Card className="bg-gray-900/50 border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-amber-400">Create New Conference</CardTitle>
+                <CardDescription className="text-white/40">Set up a meeting, webinar, or broadcast</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Title & Description */}
+                <div className="space-y-3">
                   <div>
-                    <h3 className="text-sm font-bold text-white mb-1">Accessibility & Inclusion</h3>
-                    <p className="text-xs text-slate-400">
-                      All RRB conferences support closed captions, screen reader compatibility, and keyboard navigation.
-                      Live broadcasts include real-time captioning powered by QUMUS. Need accommodations? Contact the host before the event.
-                    </p>
+                    <label className="text-sm text-white/60 mb-1 block">Title *</label>
+                    <Input placeholder="Conference title..." value={title} onChange={(e) => setTitle(e.target.value)} className="bg-gray-800 border-gray-700 text-white" />
+                  </div>
+                  <div>
+                    <label className="text-sm text-white/60 mb-1 block">Description</label>
+                    <Input placeholder="What's this conference about?" value={description} onChange={(e) => setDescription(e.target.value)} className="bg-gray-800 border-gray-700 text-white" />
                   </div>
                 </div>
+
+                {/* Meeting Type */}
+                <div>
+                  <label className="text-sm text-white/60 mb-2 block">Meeting Type</label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {MEETING_TYPES.map((type) => {
+                      const Icon = type.icon;
+                      return (
+                        <button key={type.id} onClick={() => { setMeetingType(type.id); setDuration(type.duration); }}
+                          className={`p-3 rounded-lg border text-left transition-all ${meetingType === type.id ? 'border-amber-500 bg-amber-500/10' : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'}`}>
+                          <Icon className={`w-5 h-5 ${type.color} mb-1`} />
+                          <div className="text-sm font-medium text-white">{type.label}</div>
+                          <div className="text-xs text-white/40">{type.desc}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Platform */}
+                <div>
+                  <label className="text-sm text-white/60 mb-2 block">Platform</label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {PLATFORMS.map((p) => {
+                      const Icon = p.icon;
+                      return (
+                        <button key={p.id} onClick={() => setPlatform(p.id)}
+                          className={`p-3 rounded-lg border text-left transition-all ${platform === p.id ? 'border-amber-500 bg-amber-500/10' : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'}`}>
+                          <div className={`w-6 h-6 ${p.color} rounded flex items-center justify-center mb-1`}>
+                            <Icon className="w-3 h-3 text-white" />
+                          </div>
+                          <div className="text-sm font-medium text-white">{p.label}</div>
+                          <div className="text-xs text-white/40">{p.desc}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Settings Row */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div>
+                    <label className="text-xs text-white/50 mb-1 block">Duration (min)</label>
+                    <Input type="number" value={duration} onChange={(e) => setDuration(parseInt(e.target.value) || 60)} className="bg-gray-800 border-gray-700 text-white" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-white/50 mb-1 block">Max Attendees</label>
+                    <Input type="number" value={maxAttendees} onChange={(e) => setMaxAttendees(parseInt(e.target.value) || 100)} className="bg-gray-800 border-gray-700 text-white" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-white/50 mb-1 block">Password (optional)</label>
+                    <Input type="password" placeholder="Room password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-gray-800 border-gray-700 text-white" />
+                  </div>
+                  <div className="flex flex-col gap-2 pt-4">
+                    <label className="flex items-center gap-2 text-xs text-white/60 cursor-pointer">
+                      <input type="checkbox" checked={closedCaptions} onChange={(e) => setClosedCaptions(e.target.checked)} className="accent-amber-500" />
+                      Closed Captions
+                    </label>
+                    <label className="flex items-center gap-2 text-xs text-white/60 cursor-pointer">
+                      <input type="checkbox" checked={recording} onChange={(e) => setRecording(e.target.checked)} className="accent-amber-500" />
+                      Recording
+                    </label>
+                  </div>
+                </div>
+
+                {/* Schedule Toggle */}
+                <div className="border-t border-gray-800 pt-4">
+                  <label className="flex items-center gap-2 text-sm text-white/70 cursor-pointer mb-3">
+                    <input type="checkbox" checked={isScheduled} onChange={(e) => setIsScheduled(e.target.checked)} className="accent-amber-500" />
+                    <Calendar className="w-4 h-4" /> Schedule for later
+                  </label>
+                  {isScheduled && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs text-white/50 mb-1 block">Date</label>
+                        <Input type="date" value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} className="bg-gray-800 border-gray-700 text-white" />
+                      </div>
+                      <div>
+                        <label className="text-xs text-white/50 mb-1 block">Time</label>
+                        <Input type="time" value={scheduleTime} onChange={(e) => setScheduleTime(e.target.value)} className="bg-gray-800 border-gray-700 text-white" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Create Button */}
+                <Button onClick={handleCreate} disabled={createMutation.isPending || !title.trim()}
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-black font-bold py-3 text-lg">
+                  {createMutation.isPending ? (
+                    <span className="flex items-center gap-2">
+                      <span className="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full" /> Creating...
+                    </span>
+                  ) : isScheduled ? (
+                    <span className="flex items-center gap-2"><Calendar className="w-5 h-5" /> Schedule Conference</span>
+                  ) : (
+                    <span className="flex items-center gap-2"><Video className="w-5 h-5" /> Start Conference Now</span>
+                  )}
+                </Button>
               </CardContent>
             </Card>
           </div>
         )}
 
-        {/* Quick Navigation */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Button onClick={() => setLocation('/rrb-radio')} variant="outline" className="h-12 border-purple-500/20 text-purple-300 hover:bg-purple-500/10">
-            <Radio className="w-4 h-4 mr-2" /> RRB Radio
-          </Button>
-          <Button onClick={() => setLocation('/video-production')} variant="outline" className="h-12 border-amber-500/20 text-amber-300 hover:bg-amber-500/10">
-            <Video className="w-4 h-4 mr-2" /> Video Studio
-          </Button>
-          <Button onClick={() => setLocation('/convention-hub')} variant="outline" className="h-12 border-blue-500/20 text-blue-300 hover:bg-blue-500/10">
-            <Calendar className="w-4 h-4 mr-2" /> Conventions
-          </Button>
-          <Button onClick={() => setLocation('/qumus')} variant="outline" className="h-12 border-green-500/20 text-green-300 hover:bg-green-500/10">
-            <Zap className="w-4 h-4 mr-2" /> QUMUS
-          </Button>
-        </div>
-      </main>
+        {/* ─── SCHEDULED TAB ─────────────────────── */}
+        {activeTab === 'scheduled' && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-white/80">Upcoming Conferences</h2>
+            {scheduledConferences.length === 0 ? (
+              <Card className="bg-gray-900/50 border-gray-800">
+                <CardContent className="pt-8 pb-8 text-center">
+                  <Calendar className="w-12 h-12 text-white/20 mx-auto mb-3" />
+                  <p className="text-white/40">No scheduled conferences</p>
+                  <Button onClick={() => setActiveTab('create')} variant="outline" className="mt-3 border-amber-500/50 text-amber-400">
+                    <Plus className="w-4 h-4 mr-1" /> Schedule One
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {scheduledConferences.map((conf: any) => (
+                  <Card key={conf.id} className="bg-gray-900/50 border-gray-800">
+                    <CardContent className="pt-4 pb-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-semibold text-white">{conf.title}</h3>
+                          <p className="text-white/40 text-xs mt-1">
+                            {conf.scheduled_at ? new Date(Number(conf.scheduled_at)).toLocaleString() : 'No date set'}
+                            {' '}&bull; {conf.meeting_type} &bull; {conf.platform?.replace('_', ' ')} &bull; {conf.duration_minutes}min
+                          </p>
+                          {conf.description && <p className="text-white/30 text-xs mt-1">{conf.description}</p>}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-amber-500 hover:bg-amber-600 text-black">
+                            <Play className="w-4 h-4 mr-1" /> Start
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate({ id: conf.id })} className="text-red-400/50 hover:text-red-400">
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Footer */}
-      <footer className="border-t border-purple-500/20 bg-slate-900/80 mt-8 py-6">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-purple-300 text-sm">
-            RRB Conference Hub • Video Conferencing • Live Broadcasting • QUMUS Orchestrated
-          </p>
-          <p className="text-slate-500 text-xs mt-1">
-            Accessible to all • Closed captions available • A Canryn Production and its subsidiaries
-          </p>
+      <div className="border-t border-gray-800 mt-12 py-6">
+        <div className="container text-center text-xs text-white/30">
+          <p>RRB Conference Hub &bull; Powered by QUMUS &bull; Built-in Jitsi + Zoom + Google Meet + Discord + Skype</p>
+          <p className="mt-1">Ty Battle (Ty Bat Zan) &bull; Canryn Production LLC &bull; TBZ Operating System</p>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }

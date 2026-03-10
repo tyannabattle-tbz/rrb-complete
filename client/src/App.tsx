@@ -186,6 +186,7 @@ import StudioControlRoom from '@/pages/StudioControlRoom';
 import ConventionHub from '@/pages/ConventionHub';
 import { OnboardingTour } from '@/components/OnboardingTour';
 import RRBConferenceHub from '@/pages/RRBConferenceHub';
+import ConferenceRoom from '@/pages/ConferenceRoom';
 import QumusCommandConsole from '@/pages/QumusCommandConsole';
 import StreamAnalytics from '@/pages/StreamAnalytics';
 import CommercialAnalytics from '@/pages/CommercialAnalytics';
@@ -363,6 +364,7 @@ function Router() {
       <Route path="/webhook-manager" component={WebhookManager} />
       <Route path="/studio" component={StudioControlRoom} />
       <Route path="/convention-hub" component={ConventionHub} />
+      <Route path="/conference/room/:id" component={ConferenceRoom} />
       <Route path="/conference" component={RRBConferenceHub} />
       <Route path="/command-console" component={QumusCommandConsole} />
       <Route path="/stream-analytics" component={StreamAnalytics} />
