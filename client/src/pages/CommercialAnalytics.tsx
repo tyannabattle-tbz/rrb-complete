@@ -70,6 +70,7 @@ export default function CommercialAnalytics() {
               <h1 className="text-2xl font-bold text-[#D4A843]">Commercial Analytics</h1>
               <p className="text-sm text-[#E8E0D0]/50 mt-1">Sweet Miracles & Rockin' Rockin' Boogie — Building the Bridge Across the World</p>
               <p className="text-xs text-[#E8E0D0]/30 mt-0.5">UN NGO CSW70 Campaign Performance • March 17, 2026</p>
+              <p className="text-xs text-purple-400/50 mt-0.5">Produced by Ty Battle (Ty Bat Zan) • Canryn Production • TBZ-OS</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">

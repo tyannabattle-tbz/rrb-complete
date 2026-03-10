@@ -400,6 +400,7 @@ export default function SocialMediaKit() {
                 <h1 className="text-xl font-bold">UN Campaign Social Media Kit</h1>
                 <p className="text-sm text-amber-400/80">Sweet Miracles & Rockin' Rockin' Boogie — Building the Bridge Across the World</p>
                 <p className="text-xs text-gray-500">From Selma to the United Nations — March 17, 2026</p>
+                <p className="text-xs text-purple-400/70">Created by Ty Battle (Ty Bat Zan) — Digital Steward, Canryn Production</p>
               </div>
             </div>
             <Badge variant="outline" className="border-amber-500/50 text-amber-400 text-lg px-4 py-1">

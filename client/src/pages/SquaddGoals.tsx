@@ -591,6 +591,9 @@ export default function SquaddGoals() {
             <p className="text-sm text-[#E8E0D0]/40">
               Sweet Miracles 501(c)(3) & 508 | Canryn Production and Its Subsidiaries
             </p>
+            <p className="text-xs text-purple-400/50 mt-1">
+              Founded by Ty Battle (Ty Bat Zan) &bull; Digital Steward &bull; TBZ-OS &bull; QUMUS Powered
+            </p>
           </div>
         </div>
       </section>

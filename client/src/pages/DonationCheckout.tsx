@@ -127,9 +127,10 @@ export function DonationCheckout() {
             </span>
           </h1>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Sweet Miracles is founded to bring awareness to elderly abuse, neglect, and exploitation.
+            Sweet Miracles is founded by Tyanna RaaShawn Battle (Ty Bat Zan) to bring awareness to elderly abuse, neglect, and exploitation.
             Your donation helps protect legacies and empower communities.
           </p>
+          <p className="text-sm text-purple-400/80 mt-2">Founded by Ty Battle — Digital Steward, Canryn Production</p>
         </div>
 
         {/* Fundraising Goal Tracker */}

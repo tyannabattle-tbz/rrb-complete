@@ -218,6 +218,9 @@ export default function SquaddMemberProfile() {
           <p className="text-xs text-[#E8E0D0]/30 mt-2">
             A Voice for the Voiceless — In Honor of Seabrun Candy Hunter
           </p>
+          <p className="text-xs text-purple-400/50 mt-1">
+            Founded by Ty Battle (Ty Bat Zan) &bull; Digital Steward &bull; TBZ-OS &bull; QUMUS Powered
+          </p>
         </div>
       </section>
     </div>

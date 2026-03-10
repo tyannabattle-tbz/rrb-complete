@@ -69,7 +69,10 @@ export default function HybridCastHub() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-4xl font-bold text-white">HybridCast Control Center</h1>
+            <div>
+              <h1 className="text-4xl font-bold text-white">HybridCast Control Center</h1>
+              <p className="text-xs text-purple-400/60 mt-1">Built by Ty Battle (Ty Bat Zan) &bull; Canryn Production &bull; TBZ-OS &bull; QUMUS Powered</p>
+            </div>
             <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-sm font-medium border border-cyan-500/50">
               50+ Features
             </span>

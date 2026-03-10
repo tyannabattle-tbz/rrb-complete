@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE squadd_members SET \n  bio = 'Tyanna RaaShawn Battle — also known as Ty Bat Zan — is the founder of Sweet Miracles, CEO and Digital Steward of Canryn Production, and architect of the TBZ Operating System. She built the entire QUMUS autonomous ecosystem, 52-channel RRB Radio Network, HybridCast Emergency Broadcasting, and the SQUADD Coalition. Through Canryn Production and its subsidiaries, she created a technology ecosystem to ensure no voice is ever silenced again. Her work bridges elder protection advocacy with cutting-edge technology, creating tools that empower communities during crises and preserve legacies for future generations. Knowledge. Justice. Legacy. Action.',\n  quote = 'Knowledge. Justice. Legacy. Action. — Not charity, INFRASTRUCTURE.'\nWHERE slug = 'tyanna-raashawn-battle';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute UPDATE squadd_members SET \n  bio = 'Tyanna RaaShawn Battle — also known as Ty Bat Zan — is the founder of Sweet Miracles, CEO and Digital Steward of Canryn Production, and architect of the TBZ Operating System. She built the entire QUMUS autonomous ecosystem, 52-channel RRB Radio Network, HybridCast Emergency Broadcasting, and the SQUADD Coalition. Through Canryn Production and its subsidiaries, she created a technology ecosystem to ensure no voice is ever silenced again. Her work bridges elder protection advocacy with cutting-edge technology, creating tools that empower communities during crises and preserve legacies for future generations. Knowledge. Justice. Legacy. Action.',\n  quote = 'Knowledge. Justice. Legacy. Action. — Not charity, INFRASTRUCTURE.'\nWHERE slug = 'tyanna-raashawn-battle';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 114
+}

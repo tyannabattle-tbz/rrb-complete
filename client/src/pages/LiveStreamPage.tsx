@@ -688,6 +688,9 @@ export default function LiveStreamPage() {
                   <p className="text-sm text-[#E8E0D0]/60 mt-1">
                     Canryn Production &bull; A Voice for the Voiceless &bull; Sweet Miracles
                   </p>
+                  <p className="text-xs text-purple-400/50 mt-0.5">
+                    Built by Ty Battle (Ty Bat Zan) &bull; TBZ Operating System &bull; QUMUS Powered
+                  </p>
                   {activeTab === 'radio' && activeChannel && (
                     <p className="text-xs text-[#E8E0D0]/40 mt-1">
                       Rockin Rockin Boogie 24/7 Radio Network &bull; {channels?.length || 0} channels streaming live
