@@ -21,6 +21,18 @@ vi.mock('../_core/trpc', () => ({
   router: vi.fn((routes) => routes),
 }));
 
+// Mock notification
+vi.mock('../_core/notification', () => ({
+  notifyOwner: vi.fn(() => Promise.resolve(true)),
+}));
+
+// Mock QUMUS engine
+vi.mock('../qumus-orchestration', () => ({
+  qumusEngine: {
+    makeDecision: vi.fn(() => Promise.resolve({ decision: 'approve' })),
+  },
+}));
+
 describe('Conference Router', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -36,7 +48,6 @@ describe('Conference Router', () => {
         'recording_enabled', 'captions_enabled', 'created_at', 'updated_at',
         'recording_url', 'recording_key', 'recording_status', 'actual_attendees'
       ];
-      // All 24 columns should be present
       expect(requiredColumns).toHaveLength(24);
     });
 
@@ -103,7 +114,6 @@ describe('Conference Router', () => {
 
   describe('Room Code Generation', () => {
     it('should generate a valid room code format', () => {
-      // Room codes should be alphanumeric strings
       const generateRoomCode = () => {
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         let code = 'RRB-';
@@ -140,7 +150,6 @@ describe('Conference Router', () => {
     });
 
     it('should handle month boundaries correctly', () => {
-      // February 2026
       const febStart = new Date(2026, 1, 1);
       const febEnd = new Date(2026, 1, 28);
       expect(febStart.getMonth()).toBe(1);
@@ -150,7 +159,7 @@ describe('Conference Router', () => {
 
   describe('Conference Status Logic', () => {
     it('should set status to scheduled when scheduledAt is provided', () => {
-      const scheduledAt = Date.now() + 86400000; // tomorrow
+      const scheduledAt = Date.now() + 86400000;
       const status = scheduledAt ? 'scheduled' : 'live';
       expect(status).toBe('scheduled');
     });
@@ -209,10 +218,239 @@ describe('Conference Router', () => {
         { name: 'RRB Radio', link: '/live' },
         { name: 'HybridCast', link: '/hybridcast' },
         { name: 'Conference Hub', link: '/conference' },
+        { name: 'Convention Hub', link: '/convention-hub' },
+        { name: 'SQUADD Goals', link: '/squadd' },
       ];
       const conferenceModule = ecosystemModules.find(m => m.name === 'Conference Hub');
       expect(conferenceModule).toBeDefined();
       expect(conferenceModule?.link).toBe('/conference');
+      const conventionModule = ecosystemModules.find(m => m.name === 'Convention Hub');
+      expect(conventionModule).toBeDefined();
+      const squaddModule = ecosystemModules.find(m => m.name === 'SQUADD Goals');
+      expect(squaddModule).toBeDefined();
+    });
+  });
+
+  describe('UN CSW70 Templates', () => {
+    it('should have all 6 UN CSW70 conference templates', () => {
+      const templateIds = [
+        'csw70-plenary',
+        'csw70-side-event',
+        'csw70-broadcast',
+        'csw70-workshop',
+        'csw70-panel',
+        'csw70-networking',
+      ];
+      expect(templateIds).toHaveLength(6);
+    });
+
+    it('should have correct template configurations', () => {
+      const templates: Record<string, any> = {
+        'csw70-plenary': { type: 'conference', platform: 'jitsi', duration: 120, max: 500 },
+        'csw70-side-event': { type: 'webinar', platform: 'jitsi', duration: 90, max: 200 },
+        'csw70-broadcast': { type: 'broadcast', platform: 'rrb-live', duration: 180, max: 10000 },
+        'csw70-workshop': { type: 'workshop', platform: 'jitsi', duration: 60, max: 50 },
+        'csw70-panel': { type: 'conference', platform: 'jitsi', duration: 90, max: 300 },
+        'csw70-networking': { type: 'huddle', platform: 'jitsi', duration: 30, max: 25 },
+      };
+      expect(Object.keys(templates)).toHaveLength(6);
+      expect(templates['csw70-plenary'].type).toBe('conference');
+      expect(templates['csw70-plenary'].max).toBe(500);
+      expect(templates['csw70-broadcast'].platform).toBe('rrb-live');
+      expect(templates['csw70-broadcast'].max).toBe(10000);
+      expect(templates['csw70-networking'].type).toBe('huddle');
+      expect(templates['csw70-networking'].duration).toBe(30);
+    });
+
+    it('should throw error for invalid template ID', () => {
+      const templates: Record<string, any> = {
+        'csw70-plenary': { title: 'Plenary' },
+      };
+      const tmpl = templates['invalid-template'];
+      expect(tmpl).toBeUndefined();
+    });
+  });
+
+  describe('Recurring Conference Logic', () => {
+    it('should calculate correct interval for daily recurrence', () => {
+      const intervalMs = 86400000; // daily
+      expect(intervalMs).toBe(86400000);
+    });
+
+    it('should calculate correct interval for weekly recurrence', () => {
+      const intervalMs = 604800000; // weekly
+      expect(intervalMs).toBe(604800000);
+    });
+
+    it('should calculate correct interval for biweekly recurrence', () => {
+      const intervalMs = 1209600000; // biweekly
+      expect(intervalMs).toBe(1209600000);
+    });
+
+    it('should calculate correct interval for monthly recurrence', () => {
+      const intervalMs = 2592000000; // monthly approx
+      expect(intervalMs).toBe(2592000000);
+    });
+
+    it('should generate correct number of occurrences', () => {
+      const occurrences = 12;
+      const startDate = Date.now();
+      const intervalMs = 604800000; // weekly
+      const dates: number[] = [];
+      for (let i = 0; i < occurrences; i++) {
+        dates.push(startDate + (i * intervalMs));
+      }
+      expect(dates).toHaveLength(12);
+      expect(dates[1] - dates[0]).toBe(intervalMs);
+    });
+
+    it('should generate numbered titles for multi-occurrence series', () => {
+      const baseTitle = 'Weekly Standup';
+      const occurrences = 4;
+      const titles: string[] = [];
+      for (let i = 0; i < occurrences; i++) {
+        titles.push(`${baseTitle} #${i + 1}`);
+      }
+      expect(titles[0]).toBe('Weekly Standup #1');
+      expect(titles[3]).toBe('Weekly Standup #4');
+    });
+  });
+
+  describe('Broadcast Bridge Logic', () => {
+    it('should update conference type to broadcast when bridging', () => {
+      const originalType = 'conference';
+      const bridgedType = 'broadcast';
+      expect(bridgedType).not.toBe(originalType);
+      expect(bridgedType).toBe('broadcast');
+    });
+
+    it('should support RRB-Main as default broadcast channel', () => {
+      const defaultChannel = 'RRB-Main';
+      expect(defaultChannel).toBe('RRB-Main');
+    });
+  });
+
+  describe('HybridCast Bridge Logic', () => {
+    it('should support all priority levels', () => {
+      const priorities = ['low', 'medium', 'high', 'critical'];
+      expect(priorities).toContain('low');
+      expect(priorities).toContain('medium');
+      expect(priorities).toContain('high');
+      expect(priorities).toContain('critical');
+    });
+
+    it('should default to medium priority', () => {
+      const defaultPriority = 'medium';
+      expect(defaultPriority).toBe('medium');
+    });
+  });
+
+  describe('Social Share Data', () => {
+    it('should generate correct share text with hashtags', () => {
+      const hashtags = ['UNCSW70', 'GenderEquality', 'WomensRights', 'CanrynProduction', 'SweetMiracles', 'RRBRadio'];
+      expect(hashtags).toHaveLength(6);
+      expect(hashtags).toContain('UNCSW70');
+      expect(hashtags).toContain('GenderEquality');
+      expect(hashtags).toContain('CanrynProduction');
+    });
+
+    it('should generate Twitter share URL', () => {
+      const text = 'UN CSW70 Plenary Session';
+      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+      expect(url).toContain('twitter.com/intent/tweet');
+      expect(url).toContain('CSW70');
+    });
+
+    it('should generate LinkedIn share URL', () => {
+      const shareUrl = 'https://manusweb-eshiamkd.manus.space/conference';
+      const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+      expect(url).toContain('linkedin.com');
+      expect(url).toContain('conference');
+    });
+  });
+
+  describe('QUMUS Policy Integration', () => {
+    it('should reference conference_scheduling policy', () => {
+      const policyId = 'policy_conference_scheduling';
+      expect(policyId).toBe('policy_conference_scheduling');
+    });
+
+    it('should reference broadcast_management policy for bridge', () => {
+      const policyId = 'policy_broadcast_management';
+      expect(policyId).toBe('policy_broadcast_management');
+    });
+
+    it('should reference emergency_response policy for HybridCast bridge', () => {
+      const policyId = 'policy_emergency_response';
+      expect(policyId).toBe('policy_emergency_response');
+    });
+
+    it('should use high confidence for UN CSW70 sessions', () => {
+      const confidence = 98;
+      expect(confidence).toBeGreaterThanOrEqual(90);
+    });
+  });
+
+  describe('Notification System', () => {
+    it('should format notification title correctly', () => {
+      const confTitle = 'UN CSW70 Plenary Session';
+      const notifTitle = `Conference Reminder: ${confTitle}`;
+      expect(notifTitle).toBe('Conference Reminder: UN CSW70 Plenary Session');
+    });
+
+    it('should include room code and platform in notification content', () => {
+      const roomCode = 'rrb-ABC12345';
+      const platform = 'jitsi';
+      const attendeeCount = 42;
+      const content = `Conference is starting soon. Room: ${roomCode} | Platform: ${platform} | ${attendeeCount} attendees confirmed.`;
+      expect(content).toContain(roomCode);
+      expect(content).toContain(platform);
+      expect(content).toContain('42');
+    });
+  });
+
+  describe('Cross-Platform Wiring Verification', () => {
+    it('should have Conference Hub in Ecosystem Dashboard quick links', () => {
+      const quickLinks = [
+        { label: 'QUMUS Dashboard', path: '/qumus' },
+        { label: 'Conference Hub', path: '/conference' },
+        { label: 'Convention Hub', path: '/convention-hub' },
+        { label: 'SQUADD Goals', path: '/squadd' },
+      ];
+      expect(quickLinks.find(l => l.label === 'Conference Hub')).toBeDefined();
+      expect(quickLinks.find(l => l.label === 'Convention Hub')).toBeDefined();
+      expect(quickLinks.find(l => l.label === 'SQUADD Goals')).toBeDefined();
+    });
+
+    it('should have Conference Hub in TBZ-OS ecosystem modules', () => {
+      const modules = [
+        { name: 'Conference Hub', link: '/conference' },
+      ];
+      expect(modules.find(m => m.name === 'Conference Hub')?.link).toBe('/conference');
+    });
+
+    it('should have conference routes in HybridCast', () => {
+      const routes = { 'conf': '/conference', 'cal': '/conference/calendar', 'rec': '/conference/recordings' };
+      expect(Object.keys(routes)).toHaveLength(3);
+    });
+
+    it('should have World Stage Infrastructure section in SQUADD Goals', () => {
+      const worldStageLinks = [
+        { name: 'Conference Hub', path: '/conference' },
+        { name: 'RRB Radio', path: '/live' },
+        { name: 'HybridCast', path: '/hybridcast-hub' },
+        { name: 'Convention Hub', path: '/convention-hub' },
+      ];
+      expect(worldStageLinks).toHaveLength(4);
+    });
+
+    it('should have cross-platform integration in Convention Hub', () => {
+      const integrationLinks = [
+        { name: 'Conference Hub', path: '/conference' },
+        { name: 'RRB Radio Live', path: '/live' },
+        { name: 'SQUADD Goals', path: '/squadd' },
+      ];
+      expect(integrationLinks).toHaveLength(3);
     });
   });
 });

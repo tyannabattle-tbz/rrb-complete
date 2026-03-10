@@ -596,6 +596,37 @@ export default function ConventionHub() {
           </div>
         </div>
       )}
+
+      {/* Cross-Platform Integration */}
+      <div className="mt-8 grid md:grid-cols-3 gap-4 px-4">
+        <a href="/conference" className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 hover:border-amber-500/40 transition-colors block">
+          <div className="flex items-center gap-2 mb-2">
+            <Video className="w-5 h-5 text-amber-400" />
+            <span className="font-bold text-white">Conference Hub</span>
+          </div>
+          <p className="text-xs text-white/50">Schedule and manage conferences with Jitsi, Zoom, Meet, Discord. Bridge to RRB Radio and HybridCast.</p>
+        </a>
+        <a href="/live" className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 hover:border-red-500/40 transition-colors block">
+          <div className="flex items-center gap-2 mb-2">
+            <Tv className="w-5 h-5 text-red-400" />
+            <span className="font-bold text-white">RRB Radio Live</span>
+          </div>
+          <p className="text-xs text-white/50">Broadcast convention sessions live on Rockin' Rockin' Boogie Radio. 24/7 streaming.</p>
+        </a>
+        <a href="/squadd" className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 hover:border-blue-500/40 transition-colors block">
+          <div className="flex items-center gap-2 mb-2">
+            <Globe className="w-5 h-5 text-blue-400" />
+            <span className="font-bold text-white">SQUADD Goals</span>
+          </div>
+          <p className="text-xs text-white/50">UN CSW70 partnership with Ghana. Sisters Questing Unapologetically After Divine Destiny.</p>
+        </a>
+      </div>
+
+      {/* Footer */}
+      <div className="border-t border-white/10 mt-8 py-6 text-center text-xs text-white/30">
+        <p>Convention Hub &bull; Powered by QUMUS &bull; Canryn Production LLC &bull; Sweet Miracles 501(c)/508</p>
+        <p className="mt-1">A Voice for the Voiceless &bull; TBZ Operating System</p>
+      </div>
     </div>
   );
 }

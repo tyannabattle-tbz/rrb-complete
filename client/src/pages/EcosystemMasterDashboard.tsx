@@ -383,6 +383,9 @@ export default function EcosystemMasterDashboard() {
                 { label: 'Sweet Miracles', path: '/sweet-miracles', icon: Heart, color: 'bg-green-600 hover:bg-green-700' },
                 { label: 'QUMUS Chat', path: '/qumus-chat', icon: Users, color: 'bg-violet-600 hover:bg-violet-700' },
                 { label: 'Production Status', path: '/production', icon: Activity, color: 'bg-slate-600 hover:bg-slate-700' },
+                { label: 'Conference Hub', path: '/conference', icon: Globe, color: 'bg-amber-600 hover:bg-amber-700' },
+                { label: 'Convention Hub', path: '/convention-hub', icon: Users, color: 'bg-indigo-600 hover:bg-indigo-700' },
+                { label: 'SQUADD Goals', path: '/squadd', icon: Shield, color: 'bg-yellow-600 hover:bg-yellow-700' },
                 { label: 'Admin Panel', path: '/admin', icon: Settings, color: 'bg-gray-600 hover:bg-gray-700' },
               ].map((item, i) => (
                 <Button

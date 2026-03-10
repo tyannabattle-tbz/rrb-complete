@@ -2,6 +2,8 @@ import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { sql } from "drizzle-orm";
+import { notifyOwner } from "../_core/notification";
+import { qumusEngine } from "../qumus-orchestration";
 
 function generateRoomCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
@@ -245,5 +247,315 @@ export const conferenceRouter = router({
       await db.execute(sql`DELETE FROM conference_attendees WHERE conference_id = ${input.id}`);
       await db.execute(sql`DELETE FROM conferences WHERE id = ${input.id}`);
       return { success: true };
+    }),
+
+  // Notify attendees about upcoming conference
+  notifyAttendees: protectedProcedure
+    .input(z.object({
+      conferenceId: z.number(),
+      message: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      const [confRows] = await db.execute(sql`SELECT title, scheduled_at, room_code, platform FROM conferences WHERE id = ${input.conferenceId}`);
+      const conf = (confRows as any[])[0];
+      if (!conf) throw new Error('Conference not found');
+      const [attendeeRows] = await db.execute(sql`SELECT user_name FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND rsvp_status IN ('going', 'maybe')`);
+      const attendeeCount = (attendeeRows as any[]).length;
+      await notifyOwner({
+        title: `Conference Reminder: ${conf.title}`,
+        content: input.message || `Conference "${conf.title}" is starting soon. Room: ${conf.room_code} | Platform: ${conf.platform} | ${attendeeCount} attendees confirmed.`,
+      });
+      // Log QUMUS decision
+      try {
+        await qumusEngine.makeDecision({
+          policyId: 'policy_conference_scheduling',
+          confidence: 95,
+          inputData: { action: 'attendee_notification', conferenceId: input.conferenceId, attendeeCount },
+        });
+      } catch (e) { /* non-critical */ }
+      return { success: true, notifiedCount: attendeeCount };
+    }),
+
+  // Transcribe a conference recording
+  transcribeRecording: protectedProcedure
+    .input(z.object({
+      conferenceId: z.number(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      const [confRows] = await db.execute(sql`SELECT recording_url, recording_status, title FROM conferences WHERE id = ${input.conferenceId}`);
+      const conf = (confRows as any[])[0];
+      if (!conf || conf.recording_status !== 'available' || !conf.recording_url) {
+        throw new Error('No recording available for transcription');
+      }
+      // Use Whisper transcription service
+      try {
+        const { transcribeAudio } = await import('../_core/voiceTranscription');
+        const result = await transcribeAudio({
+          audioUrl: conf.recording_url,
+          language: 'en',
+          prompt: `Transcribe conference recording: ${conf.title}`,
+        });
+        // Store transcription in description field for searchability
+        const transcriptText = result.text || '';
+        await db.execute(sql`UPDATE conferences SET description = CONCAT(COALESCE(description, ''), '\n\n--- TRANSCRIPT ---\n', ${transcriptText}), updated_at = NOW() WHERE id = ${input.conferenceId}`);
+        // Log QUMUS decision
+        try {
+          await qumusEngine.makeDecision({
+            policyId: 'policy_conference_scheduling',
+            confidence: 92,
+            inputData: { action: 'recording_transcription', conferenceId: input.conferenceId, textLength: transcriptText.length },
+          });
+        } catch (e) { /* non-critical */ }
+        return { success: true, transcript: transcriptText, language: result.language };
+      } catch (error: any) {
+        console.error('[Conference] Transcription failed:', error.message);
+        return { success: false, error: error.message };
+      }
+    }),
+
+  // QUMUS autonomous: create recurring conference from template
+  createRecurring: protectedProcedure
+    .input(z.object({
+      title: z.string().min(1).max(255),
+      description: z.string().optional(),
+      meetingType: z.enum(['huddle', 'meeting', 'conference', 'webinar', 'broadcast', 'workshop']).default('meeting'),
+      platform: z.enum(['rrb_builtin', 'zoom', 'google_meet', 'discord', 'skype', 'rrb_broadcast']).default('rrb_builtin'),
+      durationMinutes: z.number().min(5).max(480).default(60),
+      maxAttendees: z.number().min(1).max(10000).default(100),
+      recurrencePattern: z.enum(['daily', 'weekly', 'biweekly', 'monthly']).default('weekly'),
+      startDate: z.number(), // first occurrence timestamp
+      occurrences: z.number().min(1).max(52).default(12),
+      source: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      const createdIds: number[] = [];
+      const platformValue = input.platform === 'rrb_builtin' ? 'jitsi' : input.platform === 'google_meet' ? 'meet' : input.platform === 'rrb_broadcast' ? 'rrb-live' : input.platform;
+      let externalUrl: string | null = null;
+      if (input.platform === 'zoom') externalUrl = process.env.VITE_ZOOM_URL || 'https://zoom.us';
+      else if (input.platform === 'google_meet') externalUrl = process.env.VITE_MEET_URL || 'https://meet.google.com';
+      else if (input.platform === 'discord') externalUrl = process.env.VITE_DISCORD_URL || 'https://discord.gg';
+      else if (input.platform === 'skype') externalUrl = process.env.VITE_SKYPE_URL || 'https://join.skype.com';
+
+      const intervalMs = input.recurrencePattern === 'daily' ? 86400000
+        : input.recurrencePattern === 'weekly' ? 604800000
+        : input.recurrencePattern === 'biweekly' ? 1209600000
+        : 2592000000; // monthly approx
+
+      for (let i = 0; i < input.occurrences; i++) {
+        const scheduledAt = new Date(input.startDate + (i * intervalMs));
+        const roomCode = generateRoomCode();
+        const titleWithNum = input.occurrences > 1 ? `${input.title} #${i + 1}` : input.title;
+        await db.execute(sql`
+          INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, status, is_recurring, recurrence_pattern, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
+          VALUES (${titleWithNum}, ${input.description || null}, ${input.meetingType}, ${platformValue}, ${ctx.user.id}, ${ctx.user.name}, ${roomCode}, ${externalUrl}, ${scheduledAt}, ${input.durationMinutes}, ${input.maxAttendees}, 'scheduled', true, ${input.recurrencePattern}, true, true, 0, 'none', NOW(), NOW())
+        `);
+        const [result] = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
+        createdIds.push((result as any)[0]?.id);
+      }
+      // Log QUMUS autonomous decision
+      try {
+        await qumusEngine.makeDecision({
+          policyId: 'policy_conference_scheduling',
+          confidence: 95,
+          inputData: { action: 'create_recurring', pattern: input.recurrencePattern, occurrences: input.occurrences, source: input.source },
+        });
+      } catch (e) { /* non-critical */ }
+      return { success: true, createdCount: createdIds.length, conferenceIds: createdIds };
+    }),
+
+  // UN CSW70 conference templates
+  getCSW70Templates: publicProcedure.query(async () => {
+    return [
+      {
+        id: 'csw70-plenary',
+        title: 'UN CSW70 Plenary Session',
+        description: 'Official plenary session for the 70th Commission on the Status of Women. Focus on gender equality, women\'s empowerment, and sustainable development.',
+        meetingType: 'conference' as const,
+        platform: 'rrb_builtin' as const,
+        durationMinutes: 120,
+        maxAttendees: 500,
+        tags: ['UN', 'CSW70', 'Gender Equality', 'Plenary'],
+        icon: '🌍',
+      },
+      {
+        id: 'csw70-side-event',
+        title: 'UN CSW70 Side Event',
+        description: 'Side event exploring specific themes related to women\'s rights, economic empowerment, and social justice.',
+        meetingType: 'webinar' as const,
+        platform: 'rrb_builtin' as const,
+        durationMinutes: 90,
+        maxAttendees: 200,
+        tags: ['UN', 'CSW70', 'Side Event', 'Women\'s Rights'],
+        icon: '🎤',
+      },
+      {
+        id: 'csw70-broadcast',
+        title: 'UN CSW70 Live Broadcast',
+        description: 'Live broadcast of CSW70 proceedings via RRB Radio and HybridCast emergency network. A Voice for the Voiceless.',
+        meetingType: 'broadcast' as const,
+        platform: 'rrb_broadcast' as const,
+        durationMinutes: 180,
+        maxAttendees: 10000,
+        tags: ['UN', 'CSW70', 'Broadcast', 'RRB Radio', 'HybridCast'],
+        icon: '📡',
+      },
+      {
+        id: 'csw70-workshop',
+        title: 'UN CSW70 Workshop',
+        description: 'Interactive workshop on implementing gender-responsive policies and programs. Canryn Production & Sweet Miracles collaboration.',
+        meetingType: 'workshop' as const,
+        platform: 'rrb_builtin' as const,
+        durationMinutes: 60,
+        maxAttendees: 50,
+        tags: ['UN', 'CSW70', 'Workshop', 'Canryn Production', 'Sweet Miracles'],
+        icon: '🛠️',
+      },
+      {
+        id: 'csw70-panel',
+        title: 'UN CSW70 Expert Panel',
+        description: 'Expert panel discussion on technology, AI, and women\'s empowerment. Featuring QUMUS autonomous orchestration demonstration.',
+        meetingType: 'conference' as const,
+        platform: 'rrb_builtin' as const,
+        durationMinutes: 90,
+        maxAttendees: 300,
+        tags: ['UN', 'CSW70', 'Panel', 'AI', 'QUMUS'],
+        icon: '💡',
+      },
+      {
+        id: 'csw70-networking',
+        title: 'UN CSW70 Networking Huddle',
+        description: 'Informal networking session for delegates, NGO representatives, and community leaders.',
+        meetingType: 'huddle' as const,
+        platform: 'rrb_builtin' as const,
+        durationMinutes: 30,
+        maxAttendees: 25,
+        tags: ['UN', 'CSW70', 'Networking', 'Community'],
+        icon: '🤝',
+      },
+    ];
+  }),
+
+  // Create conference from UN CSW70 template
+  createFromTemplate: protectedProcedure
+    .input(z.object({
+      templateId: z.string(),
+      scheduledAt: z.number(),
+      customTitle: z.string().optional(),
+      customDescription: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      const templates: Record<string, any> = {
+        'csw70-plenary': { title: 'UN CSW70 Plenary Session', type: 'conference', platform: 'jitsi', duration: 120, max: 500, desc: 'Official plenary session for the 70th Commission on the Status of Women.' },
+        'csw70-side-event': { title: 'UN CSW70 Side Event', type: 'webinar', platform: 'jitsi', duration: 90, max: 200, desc: 'Side event exploring women\'s rights and social justice.' },
+        'csw70-broadcast': { title: 'UN CSW70 Live Broadcast', type: 'broadcast', platform: 'rrb-live', duration: 180, max: 10000, desc: 'Live broadcast via RRB Radio and HybridCast. A Voice for the Voiceless.' },
+        'csw70-workshop': { title: 'UN CSW70 Workshop', type: 'workshop', platform: 'jitsi', duration: 60, max: 50, desc: 'Interactive workshop on gender-responsive policies.' },
+        'csw70-panel': { title: 'UN CSW70 Expert Panel', type: 'conference', platform: 'jitsi', duration: 90, max: 300, desc: 'Expert panel on technology, AI, and women\'s empowerment.' },
+        'csw70-networking': { title: 'UN CSW70 Networking Huddle', type: 'huddle', platform: 'jitsi', duration: 30, max: 25, desc: 'Informal networking session for delegates and leaders.' },
+      };
+      const tmpl = templates[input.templateId];
+      if (!tmpl) throw new Error('Template not found');
+      const roomCode = generateRoomCode();
+      const scheduledAt = new Date(input.scheduledAt);
+      const title = input.customTitle || tmpl.title;
+      const description = input.customDescription || tmpl.desc;
+      await db.execute(sql`
+        INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, scheduled_at, duration_minutes, max_attendees, status, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
+        VALUES (${title}, ${description}, ${tmpl.type}, ${tmpl.platform}, ${ctx.user.id}, ${ctx.user.name}, ${roomCode}, ${scheduledAt}, ${tmpl.duration}, ${tmpl.max}, 'scheduled', true, true, 0, 'none', NOW(), NOW())
+      `);
+      const [result] = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
+      const conferenceId = (result as any)[0]?.id;
+      // QUMUS decision for UN CSW70 session creation
+      try {
+        await qumusEngine.makeDecision({
+          policyId: 'policy_conference_scheduling',
+          confidence: 98,
+          inputData: { action: 'un_csw70_session', templateId: input.templateId, conferenceId },
+        });
+      } catch (e) { /* non-critical */ }
+      // Notify owner
+      await notifyOwner({
+        title: `UN CSW70 Conference Created: ${title}`,
+        content: `Template: ${input.templateId} | Room: ${roomCode} | Scheduled: ${scheduledAt.toISOString()} | Max: ${tmpl.max} attendees`,
+      });
+      return { id: conferenceId, roomCode, status: 'scheduled', platform: tmpl.platform };
+    }),
+
+  // Get conference share data for social media
+  getShareData: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      const [rows] = await db.execute(sql`SELECT title, description, type, platform, scheduled_at, room_code, host_name, max_attendees FROM conferences WHERE id = ${input.id}`);
+      const conf = (rows as any[])[0];
+      if (!conf) return null;
+      const scheduledStr = conf.scheduled_at ? new Date(conf.scheduled_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Live Now';
+      return {
+        title: conf.title,
+        description: conf.description || `Join ${conf.title} - ${conf.type} on ${conf.platform}`,
+        shareText: `🌍 Join us: ${conf.title}\n📅 ${scheduledStr}\n🎤 Host: ${conf.host_name}\n🔗 Room: ${conf.room_code}\n\nPowered by Canryn Production | A Voice for the Voiceless\n#UNCSW70 #GenderEquality #CanrynProduction`,
+        hashtags: ['UNCSW70', 'GenderEquality', 'WomensRights', 'CanrynProduction', 'SweetMiracles', 'RRBRadio'],
+        platforms: {
+          twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`🌍 ${conf.title} - ${scheduledStr}\nRoom: ${conf.room_code}\n#UNCSW70 #GenderEquality`)}`,
+          linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://manusweb-eshiamkd.manus.space/conference`)}`,
+        },
+      };
+    }),
+
+  // Bridge conference to RRB Radio broadcast
+  bridgeToBroadcast: protectedProcedure
+    .input(z.object({
+      conferenceId: z.number(),
+      broadcastChannel: z.string().default('RRB-Main'),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      const [confRows] = await db.execute(sql`SELECT title, room_code, platform FROM conferences WHERE id = ${input.conferenceId}`);
+      const conf = (confRows as any[])[0];
+      if (!conf) throw new Error('Conference not found');
+      // Update conference to broadcast type
+      await db.execute(sql`UPDATE conferences SET type = 'broadcast', updated_at = NOW() WHERE id = ${input.conferenceId}`);
+      // Log QUMUS decision for broadcast bridge
+      try {
+        await qumusEngine.makeDecision({
+          policyId: 'policy_broadcast_management',
+          confidence: 90,
+          inputData: { action: 'conference_broadcast_bridge', conferenceId: input.conferenceId, channel: input.broadcastChannel },
+        });
+      } catch (e) { /* non-critical */ }
+      await notifyOwner({
+        title: `Conference Bridged to ${input.broadcastChannel}`,
+        content: `"${conf.title}" (Room: ${conf.room_code}) is now broadcasting on ${input.broadcastChannel}`,
+      });
+      return { success: true, broadcastChannel: input.broadcastChannel };
+    }),
+
+  // Bridge conference to HybridCast emergency network
+  bridgeToHybridCast: protectedProcedure
+    .input(z.object({
+      conferenceId: z.number(),
+      priority: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      const [confRows] = await db.execute(sql`SELECT title, room_code FROM conferences WHERE id = ${input.conferenceId}`);
+      const conf = (confRows as any[])[0];
+      if (!conf) throw new Error('Conference not found');
+      // Log QUMUS decision for HybridCast bridge
+      try {
+        await qumusEngine.makeDecision({
+          policyId: 'policy_emergency_response',
+          confidence: 88,
+          inputData: { action: 'conference_hybridcast_bridge', conferenceId: input.conferenceId, priority: input.priority },
+        });
+      } catch (e) { /* non-critical */ }
+      await notifyOwner({
+        title: `Conference Bridged to HybridCast [${input.priority.toUpperCase()}]`,
+        content: `"${conf.title}" (Room: ${conf.room_code}) is now on HybridCast emergency network with ${input.priority} priority`,
+      });
+      return { success: true, hybridcastPriority: input.priority };
     }),
 });

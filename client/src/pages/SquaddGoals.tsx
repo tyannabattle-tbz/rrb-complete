@@ -569,6 +569,35 @@ export default function SquaddGoals() {
         </div>
       </section>
 
+      {/* Cross-Platform Conference Integration */}
+      <section className="py-8">
+        <div className="container mx-auto px-4">
+          <h3 className="text-lg font-bold text-[#D4A843] mb-4 text-center">World Stage Infrastructure</h3>
+          <div className="grid md:grid-cols-4 gap-3">
+            <a href="/conference" className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 hover:border-amber-500/40 transition-colors block text-center">
+              <div className="text-2xl mb-1">🎤</div>
+              <div className="font-bold text-white text-sm">Conference Hub</div>
+              <p className="text-xs text-white/40 mt-1">UN CSW70 sessions, workshops, panels</p>
+            </a>
+            <a href="/live" className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 hover:border-red-500/40 transition-colors block text-center">
+              <div className="text-2xl mb-1">📻</div>
+              <div className="font-bold text-white text-sm">RRB Radio</div>
+              <p className="text-xs text-white/40 mt-1">Live broadcast worldwide</p>
+            </a>
+            <a href="/hybridcast-hub" className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 hover:border-red-500/40 transition-colors block text-center">
+              <div className="text-2xl mb-1">🛡️</div>
+              <div className="font-bold text-white text-sm">HybridCast</div>
+              <p className="text-xs text-white/40 mt-1">Emergency mesh network</p>
+            </a>
+            <a href="/convention-hub" className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4 hover:border-purple-500/40 transition-colors block text-center">
+              <div className="text-2xl mb-1">🌍</div>
+              <div className="font-bold text-white text-sm">Convention Hub</div>
+              <p className="text-xs text-white/40 mt-1">Multi-track event management</p>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Contact / Footer */}
       <section className="border-t border-[#D4A843]/10">
         <div className="container mx-auto px-4 py-16">

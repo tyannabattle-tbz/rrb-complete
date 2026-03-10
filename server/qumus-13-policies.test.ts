@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { qumusEngine } from "./qumus-orchestration";
 
-describe("QUMUS Orchestration Engine — 13 Policies", () => {
+describe("QUMUS Orchestration Engine — 14 Policies", () => {
   describe("Policy Registry", () => {
-    it("has exactly 13 policies registered", () => {
+    it("has exactly 14 policies registered", () => {
       const policies = qumusEngine.getPolicies();
-      expect(policies.length).toBe(13);
+      expect(policies.length).toBe(14);
     });
 
     it("includes all 8 core policies", () => {
@@ -26,7 +26,7 @@ describe("QUMUS Orchestration Engine — 13 Policies", () => {
       });
     });
 
-    it("includes all 5 ecosystem policies", () => {
+    it("includes all 6 ecosystem policies", () => {
       const policies = qumusEngine.getPolicies();
       const ecosystemIds = [
         "policy_content_scheduling",
@@ -34,6 +34,7 @@ describe("QUMUS Orchestration Engine — 13 Policies", () => {
         "policy_emergency_response",
         "policy_community_engagement",
         "policy_code_maintenance",
+        "policy_conference_scheduling",
       ];
       ecosystemIds.forEach((id) => {
         const found = policies.find((p) => p.id === id);
@@ -143,6 +144,18 @@ describe("QUMUS Orchestration Engine — 13 Policies", () => {
       const policy = qumusEngine.getPolicy("policy_code_maintenance");
       expect(policy?.triggers).toContain("broken_link_detected");
       expect(policy?.triggers).toContain("dependency_vulnerability");
+    });
+
+    it("conference scheduling handles UN CSW70 sessions", () => {
+      const policy = qumusEngine.getPolicy("policy_conference_scheduling");
+      expect(policy).toBeDefined();
+      expect(policy?.triggers).toContain("conference_scheduled");
+      expect(policy?.triggers).toContain("recurring_conference_due");
+      expect(policy?.triggers).toContain("un_csw70_session");
+      expect(policy?.description).toContain("UN CSW70");
+      expect(policy?.description).toContain("RRB Radio");
+      expect(policy?.description).toContain("HybridCast");
+      expect(policy?.autonomyLevel).toBe(90);
     });
   });
 

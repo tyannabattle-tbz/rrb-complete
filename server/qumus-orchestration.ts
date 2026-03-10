@@ -148,6 +148,14 @@ const QUMUS_POLICIES: Record<string, QumusPolicy> = {
     triggers: ["health_scan", "broken_link_detected", "dependency_vulnerability"],
     description: "Auto-scan code health, fix broken links, monitor dependencies, ensure ecosystem integrity",
   },
+  policy_conference_scheduling: {
+    id: "policy_conference_scheduling",
+    name: "Conference Scheduling",
+    autonomyLevel: 90,
+    confidenceThreshold: 82,
+    triggers: ["conference_scheduled", "recurring_conference_due", "attendee_rsvp", "conference_reminder", "un_csw70_session"],
+    description: "Auto-schedule recurring conferences, send attendee notifications, manage RSVP tracking, bridge conferences to RRB Radio and HybridCast for UN CSW70 world-stage broadcasting",
+  },
 };
 
 // ============================================================================

@@ -4437,6 +4437,14 @@ var init_qumus_orchestration = __esm({
         confidenceThreshold: 85,
         triggers: ["health_scan", "broken_link_detected", "dependency_vulnerability"],
         description: "Auto-scan code health, fix broken links, monitor dependencies, ensure ecosystem integrity"
+      },
+      policy_conference_scheduling: {
+        id: "policy_conference_scheduling",
+        name: "Conference Scheduling",
+        autonomyLevel: 90,
+        confidenceThreshold: 82,
+        triggers: ["conference_scheduled", "recurring_conference_due", "attendee_rsvp", "conference_reminder", "un_csw70_session"],
+        description: "Auto-schedule recurring conferences, send attendee notifications, manage RSVP tracking, bridge conferences to RRB Radio and HybridCast for UN CSW70 world-stage broadcasting"
       }
     };
     decisionHistory = /* @__PURE__ */ new Map();
@@ -4991,6 +4999,144 @@ var init_qumusProductionIntegration = __esm({
       }
     };
     instance = null;
+  }
+});
+
+// server/_core/voiceTranscription.ts
+var voiceTranscription_exports = {};
+__export(voiceTranscription_exports, {
+  transcribeAudio: () => transcribeAudio
+});
+async function transcribeAudio(options) {
+  try {
+    if (!ENV.forgeApiUrl) {
+      return {
+        error: "Voice transcription service is not configured",
+        code: "SERVICE_ERROR",
+        details: "BUILT_IN_FORGE_API_URL is not set"
+      };
+    }
+    if (!ENV.forgeApiKey) {
+      return {
+        error: "Voice transcription service authentication is missing",
+        code: "SERVICE_ERROR",
+        details: "BUILT_IN_FORGE_API_KEY is not set"
+      };
+    }
+    let audioBuffer;
+    let mimeType;
+    try {
+      const response2 = await fetch(options.audioUrl);
+      if (!response2.ok) {
+        return {
+          error: "Failed to download audio file",
+          code: "INVALID_FORMAT",
+          details: `HTTP ${response2.status}: ${response2.statusText}`
+        };
+      }
+      audioBuffer = Buffer.from(await response2.arrayBuffer());
+      mimeType = response2.headers.get("content-type") || "audio/mpeg";
+      const sizeMB = audioBuffer.length / (1024 * 1024);
+      if (sizeMB > 16) {
+        return {
+          error: "Audio file exceeds maximum size limit",
+          code: "FILE_TOO_LARGE",
+          details: `File size is ${sizeMB.toFixed(2)}MB, maximum allowed is 16MB`
+        };
+      }
+    } catch (error) {
+      return {
+        error: "Failed to fetch audio file",
+        code: "SERVICE_ERROR",
+        details: error instanceof Error ? error.message : "Unknown error"
+      };
+    }
+    const formData = new FormData();
+    const filename = `audio.${getFileExtension(mimeType)}`;
+    const audioBlob = new Blob([new Uint8Array(audioBuffer)], { type: mimeType });
+    formData.append("file", audioBlob, filename);
+    formData.append("model", "whisper-1");
+    formData.append("response_format", "verbose_json");
+    const prompt = options.prompt || (options.language ? `Transcribe the user's voice to text, the user's working language is ${getLanguageName(options.language)}` : "Transcribe the user's voice to text");
+    formData.append("prompt", prompt);
+    const baseUrl = ENV.forgeApiUrl.endsWith("/") ? ENV.forgeApiUrl : `${ENV.forgeApiUrl}/`;
+    const fullUrl = new URL(
+      "v1/audio/transcriptions",
+      baseUrl
+    ).toString();
+    const response = await fetch(fullUrl, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${ENV.forgeApiKey}`,
+        "Accept-Encoding": "identity"
+      },
+      body: formData
+    });
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "");
+      return {
+        error: "Transcription service request failed",
+        code: "TRANSCRIPTION_FAILED",
+        details: `${response.status} ${response.statusText}${errorText ? `: ${errorText}` : ""}`
+      };
+    }
+    const whisperResponse = await response.json();
+    if (!whisperResponse.text || typeof whisperResponse.text !== "string") {
+      return {
+        error: "Invalid transcription response",
+        code: "SERVICE_ERROR",
+        details: "Transcription service returned an invalid response format"
+      };
+    }
+    return whisperResponse;
+  } catch (error) {
+    return {
+      error: "Voice transcription failed",
+      code: "SERVICE_ERROR",
+      details: error instanceof Error ? error.message : "An unexpected error occurred"
+    };
+  }
+}
+function getFileExtension(mimeType) {
+  const mimeToExt = {
+    "audio/webm": "webm",
+    "audio/mp3": "mp3",
+    "audio/mpeg": "mp3",
+    "audio/wav": "wav",
+    "audio/wave": "wav",
+    "audio/ogg": "ogg",
+    "audio/m4a": "m4a",
+    "audio/mp4": "m4a"
+  };
+  return mimeToExt[mimeType] || "audio";
+}
+function getLanguageName(langCode) {
+  const langMap = {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "ru": "Russian",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "zh": "Chinese",
+    "ar": "Arabic",
+    "hi": "Hindi",
+    "nl": "Dutch",
+    "pl": "Polish",
+    "tr": "Turkish",
+    "sv": "Swedish",
+    "da": "Danish",
+    "no": "Norwegian",
+    "fi": "Finnish"
+  };
+  return langMap[langCode] || langCode;
+}
+var init_voiceTranscription = __esm({
+  "server/_core/voiceTranscription.ts"() {
+    init_env();
   }
 });
 
@@ -17363,6 +17509,8 @@ var squaddGoalsRouter = router({
 // server/routers/conferenceRouter.ts
 import { z as z44 } from "zod";
 init_db();
+init_notification();
+init_qumus_orchestration();
 import { sql as sql12 } from "drizzle-orm";
 function generateRoomCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
@@ -17568,6 +17716,294 @@ var conferenceRouter = router({
     await db2.execute(sql12`DELETE FROM conference_attendees WHERE conference_id = ${input.id}`);
     await db2.execute(sql12`DELETE FROM conferences WHERE id = ${input.id}`);
     return { success: true };
+  }),
+  // Notify attendees about upcoming conference
+  notifyAttendees: protectedProcedure.input(z44.object({
+    conferenceId: z44.number(),
+    message: z44.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const [confRows] = await db2.execute(sql12`SELECT title, scheduled_at, room_code, platform FROM conferences WHERE id = ${input.conferenceId}`);
+    const conf = confRows[0];
+    if (!conf) throw new Error("Conference not found");
+    const [attendeeRows] = await db2.execute(sql12`SELECT user_name FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND rsvp_status IN ('going', 'maybe')`);
+    const attendeeCount = attendeeRows.length;
+    await notifyOwner({
+      title: `Conference Reminder: ${conf.title}`,
+      content: input.message || `Conference "${conf.title}" is starting soon. Room: ${conf.room_code} | Platform: ${conf.platform} | ${attendeeCount} attendees confirmed.`
+    });
+    try {
+      await qumusEngine2.makeDecision({
+        policyId: "policy_conference_scheduling",
+        confidence: 95,
+        inputData: { action: "attendee_notification", conferenceId: input.conferenceId, attendeeCount }
+      });
+    } catch (e) {
+    }
+    return { success: true, notifiedCount: attendeeCount };
+  }),
+  // Transcribe a conference recording
+  transcribeRecording: protectedProcedure.input(z44.object({
+    conferenceId: z44.number()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const [confRows] = await db2.execute(sql12`SELECT recording_url, recording_status, title FROM conferences WHERE id = ${input.conferenceId}`);
+    const conf = confRows[0];
+    if (!conf || conf.recording_status !== "available" || !conf.recording_url) {
+      throw new Error("No recording available for transcription");
+    }
+    try {
+      const { transcribeAudio: transcribeAudio2 } = await Promise.resolve().then(() => (init_voiceTranscription(), voiceTranscription_exports));
+      const result2 = await transcribeAudio2({
+        audioUrl: conf.recording_url,
+        language: "en",
+        prompt: `Transcribe conference recording: ${conf.title}`
+      });
+      const transcriptText = result2.text || "";
+      await db2.execute(sql12`UPDATE conferences SET description = CONCAT(COALESCE(description, ''), '\n\n--- TRANSCRIPT ---\n', ${transcriptText}), updated_at = NOW() WHERE id = ${input.conferenceId}`);
+      try {
+        await qumusEngine2.makeDecision({
+          policyId: "policy_conference_scheduling",
+          confidence: 92,
+          inputData: { action: "recording_transcription", conferenceId: input.conferenceId, textLength: transcriptText.length }
+        });
+      } catch (e) {
+      }
+      return { success: true, transcript: transcriptText, language: result2.language };
+    } catch (error) {
+      console.error("[Conference] Transcription failed:", error.message);
+      return { success: false, error: error.message };
+    }
+  }),
+  // QUMUS autonomous: create recurring conference from template
+  createRecurring: protectedProcedure.input(z44.object({
+    title: z44.string().min(1).max(255),
+    description: z44.string().optional(),
+    meetingType: z44.enum(["huddle", "meeting", "conference", "webinar", "broadcast", "workshop"]).default("meeting"),
+    platform: z44.enum(["rrb_builtin", "zoom", "google_meet", "discord", "skype", "rrb_broadcast"]).default("rrb_builtin"),
+    durationMinutes: z44.number().min(5).max(480).default(60),
+    maxAttendees: z44.number().min(1).max(1e4).default(100),
+    recurrencePattern: z44.enum(["daily", "weekly", "biweekly", "monthly"]).default("weekly"),
+    startDate: z44.number(),
+    // first occurrence timestamp
+    occurrences: z44.number().min(1).max(52).default(12),
+    source: z44.string().optional()
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    const createdIds = [];
+    const platformValue = input.platform === "rrb_builtin" ? "jitsi" : input.platform === "google_meet" ? "meet" : input.platform === "rrb_broadcast" ? "rrb-live" : input.platform;
+    let externalUrl = null;
+    if (input.platform === "zoom") externalUrl = process.env.VITE_ZOOM_URL || "https://zoom.us";
+    else if (input.platform === "google_meet") externalUrl = process.env.VITE_MEET_URL || "https://meet.google.com";
+    else if (input.platform === "discord") externalUrl = process.env.VITE_DISCORD_URL || "https://discord.gg";
+    else if (input.platform === "skype") externalUrl = process.env.VITE_SKYPE_URL || "https://join.skype.com";
+    const intervalMs = input.recurrencePattern === "daily" ? 864e5 : input.recurrencePattern === "weekly" ? 6048e5 : input.recurrencePattern === "biweekly" ? 12096e5 : 2592e6;
+    for (let i = 0; i < input.occurrences; i++) {
+      const scheduledAt = new Date(input.startDate + i * intervalMs);
+      const roomCode = generateRoomCode();
+      const titleWithNum = input.occurrences > 1 ? `${input.title} #${i + 1}` : input.title;
+      await db2.execute(sql12`
+          INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, status, is_recurring, recurrence_pattern, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
+          VALUES (${titleWithNum}, ${input.description || null}, ${input.meetingType}, ${platformValue}, ${ctx.user.id}, ${ctx.user.name}, ${roomCode}, ${externalUrl}, ${scheduledAt}, ${input.durationMinutes}, ${input.maxAttendees}, 'scheduled', true, ${input.recurrencePattern}, true, true, 0, 'none', NOW(), NOW())
+        `);
+      const [result2] = await db2.execute(sql12`SELECT LAST_INSERT_ID() as id`);
+      createdIds.push(result2[0]?.id);
+    }
+    try {
+      await qumusEngine2.makeDecision({
+        policyId: "policy_conference_scheduling",
+        confidence: 95,
+        inputData: { action: "create_recurring", pattern: input.recurrencePattern, occurrences: input.occurrences, source: input.source }
+      });
+    } catch (e) {
+    }
+    return { success: true, createdCount: createdIds.length, conferenceIds: createdIds };
+  }),
+  // UN CSW70 conference templates
+  getCSW70Templates: publicProcedure.query(async () => {
+    return [
+      {
+        id: "csw70-plenary",
+        title: "UN CSW70 Plenary Session",
+        description: "Official plenary session for the 70th Commission on the Status of Women. Focus on gender equality, women's empowerment, and sustainable development.",
+        meetingType: "conference",
+        platform: "rrb_builtin",
+        durationMinutes: 120,
+        maxAttendees: 500,
+        tags: ["UN", "CSW70", "Gender Equality", "Plenary"],
+        icon: "\u{1F30D}"
+      },
+      {
+        id: "csw70-side-event",
+        title: "UN CSW70 Side Event",
+        description: "Side event exploring specific themes related to women's rights, economic empowerment, and social justice.",
+        meetingType: "webinar",
+        platform: "rrb_builtin",
+        durationMinutes: 90,
+        maxAttendees: 200,
+        tags: ["UN", "CSW70", "Side Event", "Women's Rights"],
+        icon: "\u{1F3A4}"
+      },
+      {
+        id: "csw70-broadcast",
+        title: "UN CSW70 Live Broadcast",
+        description: "Live broadcast of CSW70 proceedings via RRB Radio and HybridCast emergency network. A Voice for the Voiceless.",
+        meetingType: "broadcast",
+        platform: "rrb_broadcast",
+        durationMinutes: 180,
+        maxAttendees: 1e4,
+        tags: ["UN", "CSW70", "Broadcast", "RRB Radio", "HybridCast"],
+        icon: "\u{1F4E1}"
+      },
+      {
+        id: "csw70-workshop",
+        title: "UN CSW70 Workshop",
+        description: "Interactive workshop on implementing gender-responsive policies and programs. Canryn Production & Sweet Miracles collaboration.",
+        meetingType: "workshop",
+        platform: "rrb_builtin",
+        durationMinutes: 60,
+        maxAttendees: 50,
+        tags: ["UN", "CSW70", "Workshop", "Canryn Production", "Sweet Miracles"],
+        icon: "\u{1F6E0}\uFE0F"
+      },
+      {
+        id: "csw70-panel",
+        title: "UN CSW70 Expert Panel",
+        description: "Expert panel discussion on technology, AI, and women's empowerment. Featuring QUMUS autonomous orchestration demonstration.",
+        meetingType: "conference",
+        platform: "rrb_builtin",
+        durationMinutes: 90,
+        maxAttendees: 300,
+        tags: ["UN", "CSW70", "Panel", "AI", "QUMUS"],
+        icon: "\u{1F4A1}"
+      },
+      {
+        id: "csw70-networking",
+        title: "UN CSW70 Networking Huddle",
+        description: "Informal networking session for delegates, NGO representatives, and community leaders.",
+        meetingType: "huddle",
+        platform: "rrb_builtin",
+        durationMinutes: 30,
+        maxAttendees: 25,
+        tags: ["UN", "CSW70", "Networking", "Community"],
+        icon: "\u{1F91D}"
+      }
+    ];
+  }),
+  // Create conference from UN CSW70 template
+  createFromTemplate: protectedProcedure.input(z44.object({
+    templateId: z44.string(),
+    scheduledAt: z44.number(),
+    customTitle: z44.string().optional(),
+    customDescription: z44.string().optional()
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    const templates = {
+      "csw70-plenary": { title: "UN CSW70 Plenary Session", type: "conference", platform: "jitsi", duration: 120, max: 500, desc: "Official plenary session for the 70th Commission on the Status of Women." },
+      "csw70-side-event": { title: "UN CSW70 Side Event", type: "webinar", platform: "jitsi", duration: 90, max: 200, desc: "Side event exploring women's rights and social justice." },
+      "csw70-broadcast": { title: "UN CSW70 Live Broadcast", type: "broadcast", platform: "rrb-live", duration: 180, max: 1e4, desc: "Live broadcast via RRB Radio and HybridCast. A Voice for the Voiceless." },
+      "csw70-workshop": { title: "UN CSW70 Workshop", type: "workshop", platform: "jitsi", duration: 60, max: 50, desc: "Interactive workshop on gender-responsive policies." },
+      "csw70-panel": { title: "UN CSW70 Expert Panel", type: "conference", platform: "jitsi", duration: 90, max: 300, desc: "Expert panel on technology, AI, and women's empowerment." },
+      "csw70-networking": { title: "UN CSW70 Networking Huddle", type: "huddle", platform: "jitsi", duration: 30, max: 25, desc: "Informal networking session for delegates and leaders." }
+    };
+    const tmpl = templates[input.templateId];
+    if (!tmpl) throw new Error("Template not found");
+    const roomCode = generateRoomCode();
+    const scheduledAt = new Date(input.scheduledAt);
+    const title = input.customTitle || tmpl.title;
+    const description = input.customDescription || tmpl.desc;
+    await db2.execute(sql12`
+        INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, scheduled_at, duration_minutes, max_attendees, status, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
+        VALUES (${title}, ${description}, ${tmpl.type}, ${tmpl.platform}, ${ctx.user.id}, ${ctx.user.name}, ${roomCode}, ${scheduledAt}, ${tmpl.duration}, ${tmpl.max}, 'scheduled', true, true, 0, 'none', NOW(), NOW())
+      `);
+    const [result2] = await db2.execute(sql12`SELECT LAST_INSERT_ID() as id`);
+    const conferenceId = result2[0]?.id;
+    try {
+      await qumusEngine2.makeDecision({
+        policyId: "policy_conference_scheduling",
+        confidence: 98,
+        inputData: { action: "un_csw70_session", templateId: input.templateId, conferenceId }
+      });
+    } catch (e) {
+    }
+    await notifyOwner({
+      title: `UN CSW70 Conference Created: ${title}`,
+      content: `Template: ${input.templateId} | Room: ${roomCode} | Scheduled: ${scheduledAt.toISOString()} | Max: ${tmpl.max} attendees`
+    });
+    return { id: conferenceId, roomCode, status: "scheduled", platform: tmpl.platform };
+  }),
+  // Get conference share data for social media
+  getShareData: publicProcedure.input(z44.object({ id: z44.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const [rows] = await db2.execute(sql12`SELECT title, description, type, platform, scheduled_at, room_code, host_name, max_attendees FROM conferences WHERE id = ${input.id}`);
+    const conf = rows[0];
+    if (!conf) return null;
+    const scheduledStr = conf.scheduled_at ? new Date(conf.scheduled_at).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "Live Now";
+    return {
+      title: conf.title,
+      description: conf.description || `Join ${conf.title} - ${conf.type} on ${conf.platform}`,
+      shareText: `\u{1F30D} Join us: ${conf.title}
+\u{1F4C5} ${scheduledStr}
+\u{1F3A4} Host: ${conf.host_name}
+\u{1F517} Room: ${conf.room_code}
+
+Powered by Canryn Production | A Voice for the Voiceless
+#UNCSW70 #GenderEquality #CanrynProduction`,
+      hashtags: ["UNCSW70", "GenderEquality", "WomensRights", "CanrynProduction", "SweetMiracles", "RRBRadio"],
+      platforms: {
+        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`\u{1F30D} ${conf.title} - ${scheduledStr}
+Room: ${conf.room_code}
+#UNCSW70 #GenderEquality`)}`,
+        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://manusweb-eshiamkd.manus.space/conference`)}`
+      }
+    };
+  }),
+  // Bridge conference to RRB Radio broadcast
+  bridgeToBroadcast: protectedProcedure.input(z44.object({
+    conferenceId: z44.number(),
+    broadcastChannel: z44.string().default("RRB-Main")
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const [confRows] = await db2.execute(sql12`SELECT title, room_code, platform FROM conferences WHERE id = ${input.conferenceId}`);
+    const conf = confRows[0];
+    if (!conf) throw new Error("Conference not found");
+    await db2.execute(sql12`UPDATE conferences SET type = 'broadcast', updated_at = NOW() WHERE id = ${input.conferenceId}`);
+    try {
+      await qumusEngine2.makeDecision({
+        policyId: "policy_broadcast_management",
+        confidence: 90,
+        inputData: { action: "conference_broadcast_bridge", conferenceId: input.conferenceId, channel: input.broadcastChannel }
+      });
+    } catch (e) {
+    }
+    await notifyOwner({
+      title: `Conference Bridged to ${input.broadcastChannel}`,
+      content: `"${conf.title}" (Room: ${conf.room_code}) is now broadcasting on ${input.broadcastChannel}`
+    });
+    return { success: true, broadcastChannel: input.broadcastChannel };
+  }),
+  // Bridge conference to HybridCast emergency network
+  bridgeToHybridCast: protectedProcedure.input(z44.object({
+    conferenceId: z44.number(),
+    priority: z44.enum(["low", "medium", "high", "critical"]).default("medium")
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const [confRows] = await db2.execute(sql12`SELECT title, room_code FROM conferences WHERE id = ${input.conferenceId}`);
+    const conf = confRows[0];
+    if (!conf) throw new Error("Conference not found");
+    try {
+      await qumusEngine2.makeDecision({
+        policyId: "policy_emergency_response",
+        confidence: 88,
+        inputData: { action: "conference_hybridcast_bridge", conferenceId: input.conferenceId, priority: input.priority }
+      });
+    } catch (e) {
+    }
+    await notifyOwner({
+      title: `Conference Bridged to HybridCast [${input.priority.toUpperCase()}]`,
+      content: `"${conf.title}" (Room: ${conf.room_code}) is now on HybridCast emergency network with ${input.priority} priority`
+    });
+    return { success: true, hybridcastPriority: input.priority };
   })
 });
 
@@ -19149,138 +19585,7 @@ var locationSharingRouter = router({
 
 // server/routers/fileAnalysisRouter.ts
 import { z as z48 } from "zod";
-
-// server/_core/voiceTranscription.ts
-init_env();
-async function transcribeAudio(options) {
-  try {
-    if (!ENV.forgeApiUrl) {
-      return {
-        error: "Voice transcription service is not configured",
-        code: "SERVICE_ERROR",
-        details: "BUILT_IN_FORGE_API_URL is not set"
-      };
-    }
-    if (!ENV.forgeApiKey) {
-      return {
-        error: "Voice transcription service authentication is missing",
-        code: "SERVICE_ERROR",
-        details: "BUILT_IN_FORGE_API_KEY is not set"
-      };
-    }
-    let audioBuffer;
-    let mimeType;
-    try {
-      const response2 = await fetch(options.audioUrl);
-      if (!response2.ok) {
-        return {
-          error: "Failed to download audio file",
-          code: "INVALID_FORMAT",
-          details: `HTTP ${response2.status}: ${response2.statusText}`
-        };
-      }
-      audioBuffer = Buffer.from(await response2.arrayBuffer());
-      mimeType = response2.headers.get("content-type") || "audio/mpeg";
-      const sizeMB = audioBuffer.length / (1024 * 1024);
-      if (sizeMB > 16) {
-        return {
-          error: "Audio file exceeds maximum size limit",
-          code: "FILE_TOO_LARGE",
-          details: `File size is ${sizeMB.toFixed(2)}MB, maximum allowed is 16MB`
-        };
-      }
-    } catch (error) {
-      return {
-        error: "Failed to fetch audio file",
-        code: "SERVICE_ERROR",
-        details: error instanceof Error ? error.message : "Unknown error"
-      };
-    }
-    const formData = new FormData();
-    const filename = `audio.${getFileExtension(mimeType)}`;
-    const audioBlob = new Blob([new Uint8Array(audioBuffer)], { type: mimeType });
-    formData.append("file", audioBlob, filename);
-    formData.append("model", "whisper-1");
-    formData.append("response_format", "verbose_json");
-    const prompt = options.prompt || (options.language ? `Transcribe the user's voice to text, the user's working language is ${getLanguageName(options.language)}` : "Transcribe the user's voice to text");
-    formData.append("prompt", prompt);
-    const baseUrl = ENV.forgeApiUrl.endsWith("/") ? ENV.forgeApiUrl : `${ENV.forgeApiUrl}/`;
-    const fullUrl = new URL(
-      "v1/audio/transcriptions",
-      baseUrl
-    ).toString();
-    const response = await fetch(fullUrl, {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${ENV.forgeApiKey}`,
-        "Accept-Encoding": "identity"
-      },
-      body: formData
-    });
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => "");
-      return {
-        error: "Transcription service request failed",
-        code: "TRANSCRIPTION_FAILED",
-        details: `${response.status} ${response.statusText}${errorText ? `: ${errorText}` : ""}`
-      };
-    }
-    const whisperResponse = await response.json();
-    if (!whisperResponse.text || typeof whisperResponse.text !== "string") {
-      return {
-        error: "Invalid transcription response",
-        code: "SERVICE_ERROR",
-        details: "Transcription service returned an invalid response format"
-      };
-    }
-    return whisperResponse;
-  } catch (error) {
-    return {
-      error: "Voice transcription failed",
-      code: "SERVICE_ERROR",
-      details: error instanceof Error ? error.message : "An unexpected error occurred"
-    };
-  }
-}
-function getFileExtension(mimeType) {
-  const mimeToExt = {
-    "audio/webm": "webm",
-    "audio/mp3": "mp3",
-    "audio/mpeg": "mp3",
-    "audio/wav": "wav",
-    "audio/wave": "wav",
-    "audio/ogg": "ogg",
-    "audio/m4a": "m4a",
-    "audio/mp4": "m4a"
-  };
-  return mimeToExt[mimeType] || "audio";
-}
-function getLanguageName(langCode) {
-  const langMap = {
-    "en": "English",
-    "es": "Spanish",
-    "fr": "French",
-    "de": "German",
-    "it": "Italian",
-    "pt": "Portuguese",
-    "ru": "Russian",
-    "ja": "Japanese",
-    "ko": "Korean",
-    "zh": "Chinese",
-    "ar": "Arabic",
-    "hi": "Hindi",
-    "nl": "Dutch",
-    "pl": "Polish",
-    "tr": "Turkish",
-    "sv": "Swedish",
-    "da": "Danish",
-    "no": "Norwegian",
-    "fi": "Finnish"
-  };
-  return langMap[langCode] || langCode;
-}
-
-// server/routers/fileAnalysisRouter.ts
+init_voiceTranscription();
 var fileAnalysisRouter = router({
   /**
    * Analyze uploaded file and extract content

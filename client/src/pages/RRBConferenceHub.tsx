@@ -45,7 +45,7 @@ const QUICK_TEMPLATES = [
   { title: 'DJ Workshop', type: 'workshop' as const, platform: 'rrb_builtin' as const, desc: 'AI DJ training session', duration: 180 },
 ];
 
-type TabType = 'dashboard' | 'create' | 'scheduled';
+type TabType = 'dashboard' | 'create' | 'scheduled' | 'csw70';
 
 export default function RRBConferenceHub() {
   const [, navigate] = useLocation();
@@ -97,6 +97,42 @@ export default function RRBConferenceHub() {
       utils.conference.getStats.invalidate();
     },
   });
+
+  const notifyMutation = trpc.conference.notifyAttendees.useMutation({
+    onSuccess: (data: any) => toast.success(`Notified ${data.notifiedCount} attendees`),
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const transcribeMutation = trpc.conference.transcribeRecording.useMutation({
+    onSuccess: (data: any) => {
+      if (data.success) toast.success('Recording transcribed successfully');
+      else toast.error(data.error || 'Transcription failed');
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const bridgeBroadcastMutation = trpc.conference.bridgeToBroadcast.useMutation({
+    onSuccess: (data: any) => toast.success(`Bridged to ${data.broadcastChannel}`),
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const bridgeHybridCastMutation = trpc.conference.bridgeToHybridCast.useMutation({
+    onSuccess: () => toast.success('Bridged to HybridCast emergency network'),
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const createFromTemplateMutation = trpc.conference.createFromTemplate.useMutation({
+    onSuccess: (data: any) => {
+      toast.success(`UN CSW70 conference created! Room: ${data.roomCode}`);
+      utils.conference.getConferences.invalidate();
+      utils.conference.getStats.invalidate();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const { data: csw70Templates } = trpc.conference.getCSW70Templates.useQuery();
+  const [csw70Date, setCsw70Date] = useState('');
+  const [csw70Time, setCsw70Time] = useState('09:00');
 
   const resetForm = () => {
     setTitle(''); setDescription(''); setMeetingType('meeting'); setPlatform('rrb_builtin');
@@ -183,7 +219,7 @@ export default function RRBConferenceHub() {
           {/* Tabs + Navigation */}
           <div className="flex items-center justify-between mt-4">
             <div className="flex gap-1">
-              {(['dashboard', 'create', 'scheduled'] as TabType[]).map((tab) => (
+              {(['dashboard', 'create', 'scheduled', 'csw70'] as TabType[]).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -196,6 +232,7 @@ export default function RRBConferenceHub() {
                   {tab === 'dashboard' && 'Dashboard'}
                   {tab === 'create' && 'Create New'}
                   {tab === 'scheduled' && 'Scheduled'}
+                  {tab === 'csw70' && '🌍 UN CSW70'}
                 </button>
               ))}
             </div>
@@ -484,6 +521,15 @@ export default function RRBConferenceHub() {
                           {conf.description && <p className="text-white/30 text-xs mt-1">{conf.description}</p>}
                         </div>
                         <div className="flex gap-2">
+                          <Button size="sm" onClick={() => notifyMutation.mutate({ conferenceId: conf.id })} variant="outline" className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10" title="Notify attendees">
+                            <MessageSquare className="w-3 h-3" />
+                          </Button>
+                          <Button size="sm" onClick={() => bridgeBroadcastMutation.mutate({ conferenceId: conf.id })} variant="outline" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10" title="Bridge to RRB Radio">
+                            <Radio className="w-3 h-3" />
+                          </Button>
+                          <Button size="sm" onClick={() => bridgeHybridCastMutation.mutate({ conferenceId: conf.id })} variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" title="Bridge to HybridCast">
+                            <Shield className="w-3 h-3" />
+                          </Button>
                           <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-amber-500 hover:bg-amber-600 text-black">
                             <Play className="w-4 h-4 mr-1" /> Start
                           </Button>
@@ -500,6 +546,90 @@ export default function RRBConferenceHub() {
           </div>
         )}
       </div>
+
+        {/* ─── UN CSW70 TAB ─────────────────────── */}
+        {activeTab === 'csw70' && (
+          <div className="space-y-6">
+            <div className="text-center py-4">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-white to-blue-400 bg-clip-text text-transparent">
+                🌍 UN CSW70 — The World Stage
+              </h2>
+              <p className="text-white/50 text-sm mt-2">70th Commission on the Status of Women &bull; Gender Equality &bull; Women's Empowerment</p>
+              <p className="text-white/30 text-xs mt-1">Powered by Canryn Production &bull; Sweet Miracles 501(c)/508 &bull; A Voice for the Voiceless</p>
+            </div>
+
+            {/* Schedule Picker */}
+            <Card className="bg-blue-950/30 border-blue-500/20">
+              <CardContent className="pt-4 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <label className="text-xs text-white/50 mb-1 block">Date</label>
+                    <Input type="date" value={csw70Date} onChange={(e) => setCsw70Date(e.target.value)} className="bg-gray-800 border-gray-700 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-xs text-white/50 mb-1 block">Time</label>
+                    <Input type="time" value={csw70Time} onChange={(e) => setCsw70Time(e.target.value)} className="bg-gray-800 border-gray-700 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Templates Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(csw70Templates || []).map((tmpl: any) => (
+                <Card key={tmpl.id} className="bg-gray-900/50 border-gray-800 hover:border-blue-500/50 transition-all">
+                  <CardContent className="pt-5 pb-5">
+                    <div className="text-3xl mb-2">{tmpl.icon}</div>
+                    <h3 className="font-bold text-white text-sm">{tmpl.title}</h3>
+                    <p className="text-white/40 text-xs mt-1 line-clamp-2">{tmpl.description}</p>
+                    <div className="flex flex-wrap gap-1 mt-3">
+                      {tmpl.tags?.map((tag: string) => (
+                        <Badge key={tag} variant="outline" className="text-[9px] border-blue-500/30 text-blue-400">{tag}</Badge>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2 mt-3 text-white/30 text-xs">
+                      <Clock className="w-3 h-3" /> {tmpl.durationMinutes}min &bull; Up to {tmpl.maxAttendees} attendees
+                    </div>
+                    <Button
+                      onClick={() => {
+                        if (!user) { toast.error('Please log in'); return; }
+                        if (!csw70Date) { toast.error('Please select a date'); return; }
+                        createFromTemplateMutation.mutate({
+                          templateId: tmpl.id,
+                          scheduledAt: new Date(`${csw70Date}T${csw70Time}`).getTime(),
+                        });
+                      }}
+                      disabled={createFromTemplateMutation.isPending}
+                      className="w-full mt-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xs"
+                    >
+                      <Calendar className="w-3 h-3 mr-1" /> Schedule This Session
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* CSW70 Info */}
+            <Card className="bg-gradient-to-r from-blue-950/30 to-purple-950/30 border-blue-500/20">
+              <CardContent className="pt-5 pb-5">
+                <div className="grid md:grid-cols-3 gap-4 text-center">
+                  <div>
+                    <div className="text-2xl font-bold text-blue-400">RRB Radio</div>
+                    <p className="text-white/40 text-xs mt-1">Live broadcast all sessions worldwide via Rockin' Rockin' Boogie radio network</p>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-red-400">HybridCast</div>
+                    <p className="text-white/40 text-xs mt-1">Emergency mesh network ensures sessions reach communities even offline</p>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-purple-400">QUMUS</div>
+                    <p className="text-white/40 text-xs mt-1">Autonomous orchestration manages scheduling, recording, and distribution</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Ecosystem Integration Cards */}
         <div className="grid md:grid-cols-3 gap-4 mt-8">
