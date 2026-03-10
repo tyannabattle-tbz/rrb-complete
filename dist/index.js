@@ -3858,6 +3858,10 @@ var init_sdk = __esm({
 });
 
 // server/_core/notification.ts
+var notification_exports = {};
+__export(notification_exports, {
+  notifyOwner: () => notifyOwner
+});
 import { TRPCError } from "@trpc/server";
 async function notifyOwner(payload) {
   const { title, content } = validatePayload(payload);
@@ -4899,6 +4903,43 @@ var init_qumusProductionIntegration = __esm({
         setInterval(() => {
           this.performHealthCheck();
         }, 6e4);
+        setInterval(async () => {
+          try {
+            const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+            const { sql: sql19 } = await import("drizzle-orm");
+            const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
+            const db2 = await getDb5();
+            const now = /* @__PURE__ */ new Date();
+            const fifteenMinLater = new Date(now.getTime() + 15 * 60 * 1e3);
+            const [upcomingRows] = await db2.execute(sql19`
+          SELECT id, title, room_code, platform, scheduled_at, host_name
+          FROM conferences 
+          WHERE status = 'scheduled' 
+            AND scheduled_at BETWEEN ${now} AND ${fifteenMinLater}
+        `);
+            const upcoming = upcomingRows;
+            for (const conf of upcoming) {
+              const [attendeeRows] = await db2.execute(
+                sql19`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
+              );
+              const attendeeCount = attendeeRows.length;
+              if (attendeeCount > 0 || true) {
+                await notifyOwner2({
+                  title: `Conference Starting Soon: ${conf.title}`,
+                  content: `"${conf.title}" starts in ~15 minutes. Room: ${conf.room_code} | Platform: ${conf.platform} | Host: ${conf.host_name} | ${attendeeCount} attendees confirmed.`
+                });
+                console.log(`[QUMUS-CRON] Auto-notified for conference ${conf.id}: ${conf.title} (${attendeeCount} attendees)`);
+              }
+              await db2.execute(sql19`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
+            }
+            if (upcoming.length > 0) {
+              console.log(`[QUMUS-CRON] Conference auto-notification: ${upcoming.length} conferences starting within 15 minutes`);
+            }
+          } catch (err) {
+            console.error("[QUMUS-CRON] Conference auto-notification error:", err);
+          }
+        }, 5 * 60 * 1e3);
+        console.log("[QUMUS-PROD] Conference auto-notification cron started (every 5 min)");
       }
       getStatus() {
         return {
@@ -17981,6 +18022,111 @@ Room: ${conf.room_code}
       content: `"${conf.title}" (Room: ${conf.room_code}) is now broadcasting on ${input.broadcastChannel}`
     });
     return { success: true, broadcastChannel: input.broadcastChannel };
+  }),
+  // Permanent test conference - always available for testing/demo
+  seedTestConference: publicProcedure.mutation(async () => {
+    const db2 = await getDb();
+    const [existing] = await db2.execute(sql12`SELECT id FROM conferences WHERE room_code = 'rrb-TESTROOM001'`);
+    if (existing.length > 0) {
+      await db2.execute(sql12`UPDATE conferences SET status = 'live', actual_attendees = 0, updated_at = NOW() WHERE room_code = 'rrb-TESTROOM001'`);
+      return { success: true, id: existing[0].id, roomCode: "rrb-TESTROOM001", message: "Test conference reset to live" };
+    }
+    await db2.execute(sql12`
+      INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, status, is_recurring, recurrence_pattern, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
+      VALUES ('RRB Conference Test Room', 'Permanent test conference room for the Canryn Production ecosystem. Always available for testing, demos, and walk-throughs. Powered by QUMUS autonomous orchestration.', 'meeting', 'jitsi', 1, 'QUMUS System', 'rrb-TESTROOM001', NULL, NULL, 480, 1000, 'live', false, NULL, true, true, 0, 'none', NOW(), NOW())
+    `);
+    const [result2] = await db2.execute(sql12`SELECT LAST_INSERT_ID() as id`);
+    const conferenceId = result2[0]?.id;
+    try {
+      await qumusEngine2.makeDecision({
+        policyId: "policy_conference_scheduling",
+        confidence: 100,
+        inputData: { action: "seed_test_conference", conferenceId }
+      });
+    } catch (e) {
+    }
+    return { success: true, id: conferenceId, roomCode: "rrb-TESTROOM001", message: "Permanent test conference created" };
+  }),
+  // Get the permanent test conference
+  getTestConference: publicProcedure.query(async () => {
+    const db2 = await getDb();
+    const [rows] = await db2.execute(sql12`SELECT * FROM conferences WHERE room_code = 'rrb-TESTROOM001' LIMIT 1`);
+    const conf = rows[0];
+    if (!conf) return null;
+    const [attendeeRows] = await db2.execute(sql12`SELECT * FROM conference_attendees WHERE conference_id = ${conf.id} ORDER BY created_at ASC`);
+    return { ...conf, attendees: attendeeRows, isTestRoom: true };
+  }),
+  // Stripe conference ticketing - create checkout for VIP/Speaker tickets
+  createTicketCheckout: protectedProcedure.input(z44.object({
+    conferenceId: z44.number(),
+    ticketType: z44.enum(["general", "vip", "speaker", "delegate"]).default("general")
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    const [confRows] = await db2.execute(sql12`SELECT title, scheduled_at, room_code FROM conferences WHERE id = ${input.conferenceId}`);
+    const conf = confRows[0];
+    if (!conf) throw new Error("Conference not found");
+    const ticketPrices = {
+      general: { amount: 0, label: "General Admission (Free)" },
+      vip: { amount: 4999, label: "VIP Access ($49.99)" },
+      speaker: { amount: 9999, label: "Speaker Pass ($99.99)" },
+      delegate: { amount: 14999, label: "UN Delegate Pass ($149.99)" }
+    };
+    const ticket = ticketPrices[input.ticketType];
+    if (ticket.amount === 0) {
+      const [existing] = await db2.execute(
+        sql12`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
+      );
+      if (existing.length === 0) {
+        await db2.execute(sql12`
+            INSERT INTO conference_attendees (conference_id, user_id, user_name, rsvp_status, created_at)
+            VALUES (${input.conferenceId}, ${ctx.user.id}, ${ctx.user.name}, 'going', NOW())
+          `);
+        await db2.execute(sql12`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
+      }
+      return { success: true, free: true, message: "Registered for free admission" };
+    }
+    const Stripe4 = (await import("stripe")).default;
+    const stripe4 = new Stripe4(process.env.STRIPE_SECRET_KEY || "", { apiVersion: "2023-10-16" });
+    const origin = ctx.req?.headers?.origin || "https://manusweb-eshiamkd.manus.space";
+    const session = await stripe4.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: `${conf.title} - ${ticket.label}`,
+            description: `Conference ticket: ${input.ticketType.toUpperCase()} | Room: ${conf.room_code} | Powered by Canryn Production`,
+            metadata: { conferenceId: String(input.conferenceId), ticketType: input.ticketType }
+          },
+          unit_amount: ticket.amount
+        },
+        quantity: 1
+      }],
+      mode: "payment",
+      customer_email: ctx.user.email || void 0,
+      client_reference_id: ctx.user.id.toString(),
+      metadata: {
+        user_id: ctx.user.id.toString(),
+        customer_email: ctx.user.email || "",
+        customer_name: ctx.user.name || "",
+        conferenceId: String(input.conferenceId),
+        ticketType: input.ticketType,
+        type: "conference_ticket"
+      },
+      success_url: `${origin}/conference/room/${input.conferenceId}?ticket=success`,
+      cancel_url: `${origin}/conference?ticket=cancelled`,
+      allow_promotion_codes: true
+    });
+    return { success: true, free: false, checkoutUrl: session.url, sessionId: session.id };
+  }),
+  // Get ticket types for a conference
+  getTicketTypes: publicProcedure.query(async () => {
+    return [
+      { id: "general", label: "General Admission", price: 0, description: "Free access to the conference", perks: ["Join conference", "Chat access", "Recording access"] },
+      { id: "vip", label: "VIP Access", price: 4999, description: "Priority access with premium features", perks: ["Priority join", "Speaker Q&A", "Exclusive recordings", "VIP badge"] },
+      { id: "speaker", label: "Speaker Pass", price: 9999, description: "Full speaker privileges", perks: ["Present & share screen", "Extended time", "Speaker profile", "All VIP perks"] },
+      { id: "delegate", label: "UN Delegate Pass", price: 14999, description: "Official delegate access for UN CSW70", perks: ["Delegate credentials", "All sessions access", "Networking priority", "All Speaker perks"] }
+    ];
   }),
   // Bridge conference to HybridCast emergency network
   bridgeToHybridCast: protectedProcedure.input(z44.object({

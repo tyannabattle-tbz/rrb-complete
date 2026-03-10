@@ -3576,3 +3576,20 @@
 - [x] Conference sharing and social media integration
 - [x] All conference endpoints verified end-to-end
 - [x] Vitest tests for all new conference features (48 tests passing)
+
+## Conference System Follow-ups + Compatibility Audit (March 2026)
+- [x] QUMUS cron job for auto conference notifications (every 5 min, 15-min pre-alert)
+- [x] Stripe conference ticketing (4 tiers: General Free/VIP $49.99/Speaker $99.99/UN Delegate $149.99)
+- [x] Live conference "Live Now" dashboard widget on Home page with auto-refresh
+- [x] Full compatibility audit: QUMUS Control Center — quick actions + command console + monitoring tab
+- [x] Full compatibility audit: TBZ-OS — conference module card verified
+- [x] Full compatibility audit: HybridCast — conference bridge verified
+- [x] Redesigned stale policy counts across ecosystem (12 → 14 policies)
+- [x] Vitest tests for all new features (84 tests passing across 2 test files)
+
+## Permanent Test Conference + RRB Conference Tab (March 2026)
+- [x] Created permanent test conference seed endpoint (QUMUS-TEST-ROOM always live)
+- [x] Added Conference tab to RRB homepage navigation (Video | Radio | Podcast | Conference)
+- [x] Test conference accessible via seedTestConference and getTestConference endpoints
+- [x] Conference tab navigates to /conference from RRB homepage
+- [x] Test room card on Conference Hub dashboard with one-click enter

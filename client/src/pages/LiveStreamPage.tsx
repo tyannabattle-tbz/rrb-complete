@@ -75,7 +75,8 @@ export default function LiveStreamPage() {
   const [volume, setVolume] = useState(75);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeChannelId, setActiveChannelId] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'video' | 'radio' | 'podcast'>('radio');
+  const [activeTab, setActiveTab] = useState<'video' | 'radio' | 'podcast' | 'conference'>('radio');
+
   const [newMessage, setNewMessage] = useState('');
   const [showChat, setShowChat] = useState(true);
   const [audioError, setAudioError] = useState<string | null>(null);
@@ -316,10 +317,15 @@ export default function LiveStreamPage() {
                 { id: 'video' as const, icon: <Video className="w-4 h-4" />, label: 'Video' },
                 { id: 'radio' as const, icon: <Radio className="w-4 h-4" />, label: 'Radio' },
                 { id: 'podcast' as const, icon: <Mic className="w-4 h-4" />, label: 'Podcast' },
+                { id: 'conference' as const, icon: <Globe className="w-4 h-4" />, label: 'Conference' },
               ].map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => {
+                    if (tab.id === 'conference') {
+                      setLocation('/conference');
+                      return;
+                    }
                     setActiveTab(tab.id);
                     if (tab.id !== 'radio' && audioRef.current) {
                       audioRef.current.pause();

@@ -77,7 +77,8 @@ import { TaskHistory } from "@/components/TaskHistory";
 import { EcosystemStatusDashboard } from "@/components/EcosystemStatusDashboard";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import { useMetricsWebSocket } from "@/hooks/useMetricsWebSocket";
-import { Brain as BrainIcon, Glasses } from "lucide-react";
+import { Brain as BrainIcon, Glasses, Video } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function QumusHome() {
   const [taskGoal, setTaskGoal] = useState("");
@@ -566,6 +567,40 @@ export default function QumusHome() {
             >
               <RefreshCw size={16} className="mr-2" />
               Refresh
+            </FuturisticButton>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+            <FuturisticButton 
+              onClick={() => window.location.href = '/conference'}
+              variant="secondary"
+              className="w-full"
+            >
+              <Video size={16} className="mr-2" />
+              Conference Hub
+            </FuturisticButton>
+            <FuturisticButton 
+              onClick={() => window.location.href = '/live'}
+              variant="secondary"
+              className="w-full"
+            >
+              <Radio size={16} className="mr-2" />
+              RRB Radio
+            </FuturisticButton>
+            <FuturisticButton 
+              onClick={() => window.location.href = '/hybridcast'}
+              variant="secondary"
+              className="w-full"
+            >
+              <Wifi size={16} className="mr-2" />
+              HybridCast
+            </FuturisticButton>
+            <FuturisticButton 
+              onClick={() => window.location.href = '/ty-bat-zan'}
+              variant="secondary"
+              className="w-full"
+            >
+              <Globe size={16} className="mr-2" />
+              TBZ-OS
             </FuturisticButton>
           </div>
         </FuturisticSection>

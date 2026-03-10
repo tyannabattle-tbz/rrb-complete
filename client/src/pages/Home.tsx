@@ -4,11 +4,104 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { LogIn, LogOut, Globe, Zap } from 'lucide-react';
+import { LogIn, LogOut, Globe, Zap, Video, Users, ArrowRight } from 'lucide-react';
 import { getLoginUrl } from '@/const';
+import { trpc } from '@/lib/trpc';
+import { Link } from 'wouter';
 
 // March 17, 2026 10:00 AM EST — UN CSW70 Launch
 const LAUNCH_DATE = new Date('2026-03-17T10:00:00-05:00').getTime();
+
+function LiveConferenceWidget() {
+  const [, setLocation] = useLocation();
+  const { data: stats } = trpc.conference.getStats.useQuery(undefined, { refetchInterval: 30000 });
+  const { data: conferences } = trpc.conference.getConferences.useQuery({ status: 'live', limit: 5 }, { refetchInterval: 15000 });
+
+  const liveCount = stats?.live || 0;
+  const scheduledCount = stats?.scheduled || 0;
+  const liveConfs = (conferences || []) as any[];
+
+  return (
+    <div className="mb-12">
+      <div className="bg-gradient-to-r from-slate-800/80 via-cyan-900/30 to-slate-800/80 rounded-2xl border border-cyan-500/20 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+              <Video className="w-5 h-5 text-cyan-400" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Live Conferences</h3>
+              <p className="text-cyan-300/60 text-sm">
+                {liveCount > 0 ? `${liveCount} live now` : 'No active conferences'}
+                {scheduledCount > 0 && ` • ${scheduledCount} scheduled`}
+              </p>
+            </div>
+            {liveCount > 0 && (
+              <span className="ml-2 flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                <span className="text-green-400 text-xs font-medium">LIVE</span>
+              </span>
+            )}
+          </div>
+          <Button
+            onClick={() => setLocation('/conference')}
+            variant="outline"
+            size="sm"
+            className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+          >
+            Conference Hub <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
+        </div>
+
+        {liveConfs.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {liveConfs.map((conf: any) => (
+              <div
+                key={conf.id}
+                onClick={() => setLocation(`/conference/room/${conf.id}`)}
+                className="bg-slate-900/50 rounded-lg border border-green-500/20 p-4 cursor-pointer hover:border-green-500/40 transition-all"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-semibold text-white text-sm truncate">{conf.title}</h4>
+                  <Badge className="bg-green-500/20 text-green-400 border-green-500/50 text-[10px]">LIVE</Badge>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-white/40">
+                  <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {conf.actual_attendees || 0}</span>
+                  <span>{conf.host_name}</span>
+                  <span>{conf.platform}</span>
+                </div>
+                <Button size="sm" className="w-full mt-3 bg-green-600 hover:bg-green-700 text-xs">
+                  <Video className="w-3 h-3 mr-1" /> Join Now
+                </Button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-6">
+            <p className="text-white/40 text-sm mb-3">No live conferences right now</p>
+            <div className="flex gap-2 justify-center">
+              <Button
+                onClick={() => setLocation('/conference')}
+                size="sm"
+                className="bg-cyan-600 hover:bg-cyan-700"
+              >
+                Start a Conference
+              </Button>
+              <Button
+                onClick={() => setLocation('/conference/calendar')}
+                size="sm"
+                variant="outline"
+                className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+              >
+                View Calendar
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
@@ -270,7 +363,7 @@ export default function Home() {
                 protecting the legacy of Seabrun Candy Hunter.
               </p>
               <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">12 AI Policies</Badge>
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">14 AI Policies</Badge>
                 <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">90% Valanna, 10% You</Badge>
                 <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">Full Audit Trail</Badge>
                 <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">Human Override</Badge>
@@ -341,6 +434,9 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Live Conference Widget */}
+        <LiveConferenceWidget />
 
         {/* System Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

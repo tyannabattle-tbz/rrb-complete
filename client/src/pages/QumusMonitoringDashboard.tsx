@@ -123,6 +123,7 @@ export default function QumusMonitoringDashboard() {
             <TabsTrigger value="hybridcast">HybridCast</TabsTrigger>
             <TabsTrigger value="boogie">Rockin' Boogie</TabsTrigger>
             <TabsTrigger value="metrics">Metrics</TabsTrigger>
+            <TabsTrigger value="conference">Conference</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -160,7 +161,7 @@ export default function QumusMonitoringDashboard() {
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white">Decision Policies</CardTitle>
-                <CardDescription>8 Core Autonomous Decision Policies</CardDescription>
+                <CardDescription>14 Autonomous Decision Policies</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -189,7 +190,7 @@ export default function QumusMonitoringDashboard() {
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white">Service Integrations</CardTitle>
-                <CardDescription>11+ Integrated Services Status</CardDescription>
+                <CardDescription>14+ Integrated Services Status</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -302,6 +303,49 @@ export default function QumusMonitoringDashboard() {
                     </div>
                     <p className="text-2xl font-bold text-white">142ms</p>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Conference Tab */}
+          <TabsContent value="conference" className="space-y-4">
+            <Card className="bg-slate-800 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white">Conference System</CardTitle>
+                <CardDescription>Multi-Platform Conference Management</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {[
+                    { name: 'Jitsi Meet', status: 'active', desc: 'Self-hosted video conferencing' },
+                    { name: 'Zoom Integration', status: 'active', desc: 'Enterprise video meetings' },
+                    { name: 'Google Meet', status: 'active', desc: 'Google Workspace meetings' },
+                    { name: 'Discord Bridge', status: 'active', desc: 'Community voice channels' },
+                    { name: 'Skype Connect', status: 'active', desc: 'Legacy video calls' },
+                    { name: 'Custom WebRTC', status: 'active', desc: 'Custom peer-to-peer rooms' },
+                    { name: 'QUMUS Auto-Schedule', status: 'active', desc: 'Autonomous conference scheduling' },
+                    { name: 'Stripe Ticketing', status: 'active', desc: '4-tier ticket system (Free/VIP/Speaker/Delegate)' },
+                    { name: 'Whisper Transcription', status: 'active', desc: 'Auto-transcribe recordings' },
+                    { name: 'S3 Recording Archive', status: 'active', desc: 'Cloud recording storage' },
+                    { name: 'HybridCast Bridge', status: 'active', desc: 'Emergency broadcast bridge' },
+                    { name: 'UN CSW70 Templates', status: 'active', desc: '6 session templates for world stage' },
+                  ].map((svc, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 bg-slate-700 rounded border border-slate-600">
+                      <div>
+                        <p className="text-white font-medium">{svc.name}</p>
+                        <p className="text-xs text-slate-400">{svc.desc}</p>
+                      </div>
+                      <Badge className={svc.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}>
+                        {svc.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Button size="sm" onClick={() => window.location.href = '/conference'} className="bg-cyan-600 hover:bg-cyan-700">Open Conference Hub</Button>
+                  <Button size="sm" onClick={() => window.location.href = '/conference/calendar'} variant="outline" className="border-cyan-500/50 text-cyan-400">Calendar</Button>
+                  <Button size="sm" onClick={() => window.location.href = '/conference/analytics'} variant="outline" className="border-cyan-500/50 text-cyan-400">Analytics</Button>
                 </div>
               </CardContent>
             </Card>

@@ -533,6 +533,126 @@ export const conferenceRouter = router({
       return { success: true, broadcastChannel: input.broadcastChannel };
     }),
 
+  // Permanent test conference - always available for testing/demo
+  seedTestConference: publicProcedure.mutation(async () => {
+    const db = await getDb();
+    // Check if test conference already exists
+    const [existing] = await db.execute(sql`SELECT id FROM conferences WHERE room_code = 'rrb-TESTROOM001'`);
+    if ((existing as any[]).length > 0) {
+      // Reset it to live status
+      await db.execute(sql`UPDATE conferences SET status = 'live', actual_attendees = 0, updated_at = NOW() WHERE room_code = 'rrb-TESTROOM001'`);
+      return { success: true, id: (existing as any[])[0].id, roomCode: 'rrb-TESTROOM001', message: 'Test conference reset to live' };
+    }
+    // Create permanent test conference
+    await db.execute(sql`
+      INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, status, is_recurring, recurrence_pattern, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
+      VALUES ('RRB Conference Test Room', 'Permanent test conference room for the Canryn Production ecosystem. Always available for testing, demos, and walk-throughs. Powered by QUMUS autonomous orchestration.', 'meeting', 'jitsi', 1, 'QUMUS System', 'rrb-TESTROOM001', NULL, NULL, 480, 1000, 'live', false, NULL, true, true, 0, 'none', NOW(), NOW())
+    `);
+    const [result] = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
+    const conferenceId = (result as any)[0]?.id;
+    // Log QUMUS decision
+    try {
+      await qumusEngine.makeDecision({
+        policyId: 'policy_conference_scheduling',
+        confidence: 100,
+        inputData: { action: 'seed_test_conference', conferenceId },
+      });
+    } catch (e) { /* non-critical */ }
+    return { success: true, id: conferenceId, roomCode: 'rrb-TESTROOM001', message: 'Permanent test conference created' };
+  }),
+
+  // Get the permanent test conference
+  getTestConference: publicProcedure.query(async () => {
+    const db = await getDb();
+    const [rows] = await db.execute(sql`SELECT * FROM conferences WHERE room_code = 'rrb-TESTROOM001' LIMIT 1`);
+    const conf = (rows as any[])[0];
+    if (!conf) return null;
+    const [attendeeRows] = await db.execute(sql`SELECT * FROM conference_attendees WHERE conference_id = ${conf.id} ORDER BY created_at ASC`);
+    return { ...conf, attendees: attendeeRows as any[], isTestRoom: true };
+  }),
+
+  // Stripe conference ticketing - create checkout for VIP/Speaker tickets
+  createTicketCheckout: protectedProcedure
+    .input(z.object({
+      conferenceId: z.number(),
+      ticketType: z.enum(['general', 'vip', 'speaker', 'delegate']).default('general'),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      const [confRows] = await db.execute(sql`SELECT title, scheduled_at, room_code FROM conferences WHERE id = ${input.conferenceId}`);
+      const conf = (confRows as any[])[0];
+      if (!conf) throw new Error('Conference not found');
+
+      const ticketPrices: Record<string, { amount: number; label: string }> = {
+        general: { amount: 0, label: 'General Admission (Free)' },
+        vip: { amount: 4999, label: 'VIP Access ($49.99)' },
+        speaker: { amount: 9999, label: 'Speaker Pass ($99.99)' },
+        delegate: { amount: 14999, label: 'UN Delegate Pass ($149.99)' },
+      };
+      const ticket = ticketPrices[input.ticketType];
+
+      // Free tickets - just register
+      if (ticket.amount === 0) {
+        const [existing] = await db.execute(
+          sql`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
+        );
+        if ((existing as any[]).length === 0) {
+          await db.execute(sql`
+            INSERT INTO conference_attendees (conference_id, user_id, user_name, rsvp_status, created_at)
+            VALUES (${input.conferenceId}, ${ctx.user.id}, ${ctx.user.name}, 'going', NOW())
+          `);
+          await db.execute(sql`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
+        }
+        return { success: true, free: true, message: 'Registered for free admission' };
+      }
+
+      // Paid tickets - create Stripe checkout
+      const Stripe = (await import('stripe')).default;
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2023-10-16' as any });
+      const origin = (ctx as any).req?.headers?.origin || 'https://manusweb-eshiamkd.manus.space';
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `${conf.title} - ${ticket.label}`,
+              description: `Conference ticket: ${input.ticketType.toUpperCase()} | Room: ${conf.room_code} | Powered by Canryn Production`,
+              metadata: { conferenceId: String(input.conferenceId), ticketType: input.ticketType },
+            },
+            unit_amount: ticket.amount,
+          },
+          quantity: 1,
+        }],
+        mode: 'payment',
+        customer_email: ctx.user.email || undefined,
+        client_reference_id: ctx.user.id.toString(),
+        metadata: {
+          user_id: ctx.user.id.toString(),
+          customer_email: ctx.user.email || '',
+          customer_name: ctx.user.name || '',
+          conferenceId: String(input.conferenceId),
+          ticketType: input.ticketType,
+          type: 'conference_ticket',
+        },
+        success_url: `${origin}/conference/room/${input.conferenceId}?ticket=success`,
+        cancel_url: `${origin}/conference?ticket=cancelled`,
+        allow_promotion_codes: true,
+      });
+
+      return { success: true, free: false, checkoutUrl: session.url, sessionId: session.id };
+    }),
+
+  // Get ticket types for a conference
+  getTicketTypes: publicProcedure.query(async () => {
+    return [
+      { id: 'general', label: 'General Admission', price: 0, description: 'Free access to the conference', perks: ['Join conference', 'Chat access', 'Recording access'] },
+      { id: 'vip', label: 'VIP Access', price: 4999, description: 'Priority access with premium features', perks: ['Priority join', 'Speaker Q&A', 'Exclusive recordings', 'VIP badge'] },
+      { id: 'speaker', label: 'Speaker Pass', price: 9999, description: 'Full speaker privileges', perks: ['Present & share screen', 'Extended time', 'Speaker profile', 'All VIP perks'] },
+      { id: 'delegate', label: 'UN Delegate Pass', price: 14999, description: 'Official delegate access for UN CSW70', perks: ['Delegate credentials', 'All sessions access', 'Networking priority', 'All Speaker perks'] },
+    ];
+  }),
+
   // Bridge conference to HybridCast emergency network
   bridgeToHybridCast: protectedProcedure
     .input(z.object({

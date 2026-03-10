@@ -284,6 +284,62 @@ export default function RRBConferenceHub() {
               </CardContent>
             </Card>
 
+            {/* Permanent Test Room */}
+            <Card className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 border-amber-500/30 hover:border-amber-500/50 transition-all">
+              <CardContent className="pt-5 pb-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                      <Zap className="w-6 h-6 text-amber-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white text-lg">RRB Conference Test Room</h3>
+                      <p className="text-white/50 text-sm">Permanent test room &bull; Always live &bull; Room: rrb-TESTROOM001</p>
+                      <p className="text-white/30 text-xs mt-1">Powered by QUMUS &bull; Jitsi Built-in &bull; Recording Enabled &bull; Closed Captions</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
+                      onClick={() => {
+                        navigator.clipboard.writeText('rrb-TESTROOM001');
+                        toast.success('Room code copied!');
+                      }}
+                    >
+                      <Copy className="w-4 h-4 mr-1" /> Copy Code
+                    </Button>
+                    <Button
+                      className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-6"
+                      onClick={async () => {
+                        try {
+                          // Seed/reset the test conference
+                          const result = await fetch('/api/trpc/conference.seedTestConference', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+                          const data = await result.json();
+                          const confId = data?.result?.data?.id;
+                          if (confId) {
+                            navigate(`/conference/room/${confId}`);
+                          } else {
+                            // Fallback: try to get the test conference
+                            const getResult = await fetch('/api/trpc/conference.getTestConference');
+                            const getData = await getResult.json();
+                            const testId = getData?.result?.data?.id;
+                            if (testId) navigate(`/conference/room/${testId}`);
+                            else toast.error('Could not load test room. Try again.');
+                          }
+                        } catch (err) {
+                          toast.error('Failed to enter test room');
+                        }
+                      }}
+                    >
+                      <Video className="w-4 h-4 mr-1" /> Enter Test Room
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Quick Start Templates */}
             <div>
               <h2 className="text-lg font-semibold text-white/80 mb-3">Quick Start</h2>

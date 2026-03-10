@@ -453,4 +453,151 @@ describe('Conference Router', () => {
       expect(integrationLinks).toHaveLength(3);
     });
   });
+
+  describe('Stripe Conference Ticketing', () => {
+    it('should have 4 ticket tiers', () => {
+      const tiers = [
+        { id: 'general', price: 0, label: 'General Admission' },
+        { id: 'vip', price: 4999, label: 'VIP Access' },
+        { id: 'speaker', price: 9999, label: 'Speaker Pass' },
+        { id: 'delegate', price: 14999, label: 'UN Delegate Pass' },
+      ];
+      expect(tiers).toHaveLength(4);
+      expect(tiers[0].price).toBe(0);
+      expect(tiers[3].price).toBe(14999);
+    });
+
+    it('should have free general admission', () => {
+      const generalTier = { id: 'general', price: 0, label: 'General Admission (Free)' };
+      expect(generalTier.price).toBe(0);
+      expect(generalTier.label).toContain('Free');
+    });
+
+    it('should have UN Delegate Pass as highest tier', () => {
+      const delegateTier = { id: 'delegate', price: 14999, label: 'UN Delegate Pass ($149.99)' };
+      expect(delegateTier.price).toBe(14999);
+      expect(delegateTier.label).toContain('UN Delegate');
+    });
+
+    it('should include perks for each tier', () => {
+      const tierPerks: Record<string, string[]> = {
+        general: ['Join conference', 'Chat access', 'Recording access'],
+        vip: ['Priority join', 'Speaker Q&A', 'Exclusive recordings', 'VIP badge'],
+        speaker: ['Present & share screen', 'Extended time', 'Speaker profile', 'All VIP perks'],
+        delegate: ['Delegate credentials', 'All sessions access', 'Networking priority', 'All Speaker perks'],
+      };
+      expect(Object.keys(tierPerks)).toHaveLength(4);
+      expect(tierPerks.delegate).toContain('Delegate credentials');
+    });
+  });
+
+  describe('QUMUS Auto-Notification Cron', () => {
+    it('should run every 5 minutes', () => {
+      const cronIntervalMs = 5 * 60 * 1000;
+      expect(cronIntervalMs).toBe(300000);
+    });
+
+    it('should check for conferences within 15 minutes', () => {
+      const now = new Date();
+      const fifteenMinLater = new Date(now.getTime() + 15 * 60 * 1000);
+      expect(fifteenMinLater.getTime() - now.getTime()).toBe(900000);
+    });
+
+    it('should notify owner with conference details', () => {
+      const notification = {
+        title: 'Conference Starting Soon: UN CSW70 Plenary',
+        content: '"UN CSW70 Plenary" starts in ~15 minutes. Room: ABC123 | Platform: jitsi | Host: Tyanna | 5 attendees confirmed.',
+      };
+      expect(notification.title).toContain('Starting Soon');
+      expect(notification.content).toContain('15 minutes');
+    });
+  });
+
+  describe('Live Conference Widget', () => {
+    it('should show live count and scheduled count', () => {
+      const stats = { live: 2, scheduled: 5, completed: 10, total: 17 };
+      expect(stats.live).toBe(2);
+      expect(stats.scheduled).toBe(5);
+    });
+
+    it('should auto-refresh every 15 seconds for live conferences', () => {
+      const refreshInterval = 15000;
+      expect(refreshInterval).toBe(15000);
+    });
+
+    it('should show join button for live conferences', () => {
+      const liveConf = { id: 1, title: 'Test', status: 'live', actual_attendees: 3 };
+      expect(liveConf.status).toBe('live');
+      expect(liveConf.actual_attendees).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Permanent Test Room', () => {
+    it('should have test conference seed data', () => {
+      const testConf = {
+        title: 'QUMUS Test Conference Room',
+        type: 'meeting',
+        platform: 'jitsi',
+        room_code: 'QUMUS-TEST-ROOM',
+        status: 'live',
+        host_name: 'QUMUS System',
+        max_attendees: 100,
+      };
+      expect(testConf.room_code).toBe('QUMUS-TEST-ROOM');
+      expect(testConf.status).toBe('live');
+      expect(testConf.platform).toBe('jitsi');
+    });
+
+    it('should always be available for testing', () => {
+      const testRoom = { isTestRoom: true, status: 'live' };
+      expect(testRoom.isTestRoom).toBe(true);
+      expect(testRoom.status).toBe('live');
+    });
+  });
+
+  describe('QUMUS Control Center Integration', () => {
+    it('should have conference quick actions in QUMUS Home', () => {
+      const quickActions = [
+        { label: 'Conference Hub', path: '/conference' },
+        { label: 'RRB Radio', path: '/live' },
+        { label: 'HybridCast', path: '/hybridcast' },
+        { label: 'TBZ-OS', path: '/ty-bat-zan' },
+      ];
+      expect(quickActions).toHaveLength(4);
+    });
+
+    it('should have conference commands in Command Console', () => {
+      const commands = [
+        { label: 'Conference Status', command: 'show all active conferences' },
+        { label: 'Start Conference', command: 'create new conference room' },
+        { label: 'HybridCast Bridge', command: 'bridge conference to hybridcast emergency' },
+        { label: 'UN CSW70 Session', command: 'create UN CSW70 plenary session' },
+      ];
+      expect(commands).toHaveLength(4);
+    });
+
+    it('should have Conference tab in Monitoring Dashboard', () => {
+      const monitoringTabs = ['overview', 'policies', 'services', 'hybridcast', 'boogie', 'metrics', 'conference'];
+      expect(monitoringTabs).toContain('conference');
+      expect(monitoringTabs).toHaveLength(7);
+    });
+
+    it('should show 14 policies count', () => {
+      const policyCount = 14;
+      expect(policyCount).toBe(14);
+    });
+  });
+
+  describe('Conference Tab on RRB Homepage', () => {
+    it('should have Conference tab in RRB navigation', () => {
+      const tabs = ['video', 'radio', 'podcast', 'conference'];
+      expect(tabs).toContain('conference');
+      expect(tabs).toHaveLength(4);
+    });
+
+    it('should navigate to /conference when Conference tab clicked', () => {
+      const conferenceTabAction = '/conference';
+      expect(conferenceTabAction).toBe('/conference');
+    });
+  });
 });

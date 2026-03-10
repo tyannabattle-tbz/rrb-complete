@@ -33,6 +33,10 @@ const COMMAND_SHORTCUTS = [
   { label: 'Trigger Report', command: 'generate and send daily status report', icon: '📧' },
   { label: 'Policy Status', command: 'show all QUMUS policy statuses', icon: '📋' },
   { label: 'Listener Stats', command: 'show listener analytics for today', icon: '👥' },
+  { label: 'Conference Status', command: 'show all active conferences', icon: '🎙️' },
+  { label: 'Start Conference', command: 'create new conference room', icon: '📹' },
+  { label: 'HybridCast Bridge', command: 'bridge conference to hybridcast emergency', icon: '🚨' },
+  { label: 'UN CSW70 Session', command: 'create UN CSW70 plenary session', icon: '🌐' },
 ];
 
 export default function QumusCommandConsole() {

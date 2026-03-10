@@ -228,7 +228,7 @@ function getEcosystemLinks(): EcoLink[] {
     {
       id: 'qumus',
       title: 'QUMUS Engine',
-      description: '90% Autonomous AI Orchestration • 12 Policies • Full Audit Trail',
+      description: '90% Autonomous AI Orchestration • 14 Policies • Full Audit Trail',
       icon: <Zap className="w-6 h-6" />,
       path: `${baseUrl}/qumus`,
       color: 'from-purple-500 to-blue-500',
@@ -658,7 +658,7 @@ export default function InteractiveFlyer() {
 
               {/* Badges */}
               <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="secondary" className={highContrast ? 'bg-yellow-900 text-yellow-300 border-yellow-500' : 'bg-purple-500/20 text-purple-300 border-purple-500/50'}>12 AI Policies</Badge>
+                <Badge variant="secondary" className={highContrast ? 'bg-yellow-900 text-yellow-300 border-yellow-500' : 'bg-purple-500/20 text-purple-300 border-purple-500/50'}>14 AI Policies</Badge>
                 <Badge variant="secondary" className={highContrast ? 'bg-yellow-900 text-yellow-300 border-yellow-500' : 'bg-purple-500/20 text-purple-300 border-purple-500/50'}>90% Valanna, 10% You</Badge>
                 <Badge variant="secondary" className={highContrast ? 'bg-yellow-900 text-yellow-300 border-yellow-500' : 'bg-purple-500/20 text-purple-300 border-purple-500/50'}>Human Override</Badge>
               </div>

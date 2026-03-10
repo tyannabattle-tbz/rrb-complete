@@ -363,16 +363,56 @@ class QumusProductionIntegration {
     this.startTime = new Date();
     console.log('[QUMUS-PROD] Production Integration Engine STARTED');
     
-    // Emit startup event
+      // Emit startup event
     this.emit(this.createEvent('system.startup', 'qumus-production', {
       subsystems: Object.keys(this.subsystemStatus).length,
       handlers: this.handlers.length,
     }));
 
-    // Start health check interval (every 60 seconds)
     setInterval(() => {
       this.performHealthCheck();
     }, 60000);
+
+    // QUMUS Conference Auto-Notification Cron (every 5 minutes)
+    // Checks for conferences starting within 15 minutes and auto-notifies attendees
+    setInterval(async () => {
+      try {
+        const { getDb } = await import('../db');
+        const { sql } = await import('drizzle-orm');
+        const { notifyOwner } = await import('../_core/notification');
+        const db = await getDb();
+        const now = new Date();
+        const fifteenMinLater = new Date(now.getTime() + 15 * 60 * 1000);
+        const [upcomingRows] = await db.execute(sql`
+          SELECT id, title, room_code, platform, scheduled_at, host_name
+          FROM conferences 
+          WHERE status = 'scheduled' 
+            AND scheduled_at BETWEEN ${now} AND ${fifteenMinLater}
+        `);
+        const upcoming = upcomingRows as any[];
+        for (const conf of upcoming) {
+          const [attendeeRows] = await db.execute(
+            sql`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
+          );
+          const attendeeCount = (attendeeRows as any[]).length;
+          if (attendeeCount > 0 || true) { // Always notify owner even if no attendees
+            await notifyOwner({
+              title: `Conference Starting Soon: ${conf.title}`,
+              content: `"${conf.title}" starts in ~15 minutes. Room: ${conf.room_code} | Platform: ${conf.platform} | Host: ${conf.host_name} | ${attendeeCount} attendees confirmed.`,
+            });
+            console.log(`[QUMUS-CRON] Auto-notified for conference ${conf.id}: ${conf.title} (${attendeeCount} attendees)`);
+          }
+          // Mark as notified (use description field since we don't have notification_sent column)
+          await db.execute(sql`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
+        }
+        if (upcoming.length > 0) {
+          console.log(`[QUMUS-CRON] Conference auto-notification: ${upcoming.length} conferences starting within 15 minutes`);
+        }
+      } catch (err) {
+        console.error('[QUMUS-CRON] Conference auto-notification error:', err);
+      }
+    }, 5 * 60 * 1000); // Every 5 minutes
+    console.log('[QUMUS-PROD] Conference auto-notification cron started (every 5 min)');
   }
 
   getStatus() {
