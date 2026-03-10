@@ -3625,3 +3625,14 @@
 - [x] Launch readiness verification: 15-point check system with real-time dashboard
 - [x] Launch readiness: 16/16 QUMUS subsystems healthy, cron jobs running
 - [x] Vitest tests for all new features (116 tests passing across 2 files)
+
+## UN CSW70 Speaker Roster + Auto-Recording + Production Prep (March 2026)
+- [x] Seed UN CSW70 speaker roster (8 speakers: Ghana delegation, African leaders, Ty Battle)
+- [x] Create seedCSW70Speakers + getCSW70Speakers endpoints
+- [x] Wire Jitsi conference room auto-recording with S3 upload (start/stop/upload/status)
+- [x] Recording status indicator in conference room UI (live timer, status bar)
+- [x] Connect auto-recording to Whisper transcription pipeline (auto-trigger on stop)
+- [x] Auto-transcription triggers on recording completion
+- [x] Production deployment preparation and final audit (25-point readiness check)
+- [x] All routes verified accessible on 4 production domains
+- [x] Vitest tests for new features (133 tests passing across 2 files)

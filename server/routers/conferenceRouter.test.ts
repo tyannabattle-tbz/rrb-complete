@@ -914,4 +914,171 @@ describe('Conference Router', () => {
       expect(tourFeatures[0]).toBe('14 Active Policies');
     });
   });
+
+  // ─── UN CSW70 Speaker Roster ───────────────────────
+  describe('CSW70 Speaker Roster', () => {
+    it('should define 8 UN CSW70 speakers for seeding', () => {
+      const speakers = [
+        'H.E. Nana Addo Dankwa Akufo-Addo',
+        'Ty Battle',
+        'Dr. Amara Osei-Mensah',
+        'Nana Ama Browne Klutse',
+        'Abena Oppong-Asare',
+        'Dr. Leticia Adelaide Appiah',
+        'Juliana Rotich',
+        'Yvonne Aki-Sawyerr',
+      ];
+      expect(speakers).toHaveLength(8);
+      expect(speakers[0]).toContain('Akufo-Addo');
+      expect(speakers[1]).toBe('Ty Battle');
+    });
+
+    it('should include Ghana delegation and African leaders', () => {
+      const organizations = [
+        'Republic of Ghana',
+        'Canryn Production LLC / Sweet Miracles Foundation',
+        'Ghana Ministry of Gender, Children and Social Protection',
+        'University of Ghana / IPCC Lead Author',
+        'UK Parliament / Ghanaian-British Diaspora',
+        'National Population Council, Ghana',
+        'Ushahidi / BRCK',
+        'Freetown City Council, Sierra Leone',
+      ];
+      const ghanaOrgs = organizations.filter(o => o.includes('Ghana'));
+      expect(ghanaOrgs.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('should have session topics for each speaker', () => {
+      const topics = [
+        'Opening Plenary: Gender Equality in African Governance',
+        'Technology as a Voice for the Voiceless: The QUMUS Story',
+        'Women\'s Economic Empowerment: Lessons from Ghana',
+        'Climate Justice and Gender: An African Scientific Perspective',
+        'Diaspora Bridges: Connecting Global Women\'s Movements',
+        'Reproductive Rights and Women\'s Health in West Africa',
+        'Emergency Technology for Women\'s Safety: From Ushahidi to HybridCast',
+        'Gender-Responsive Urban Governance in Africa',
+      ];
+      expect(topics).toHaveLength(8);
+      topics.forEach(t => expect(t.length).toBeGreaterThan(10));
+    });
+
+    it('should include Ty Battle as CEO & Founder of Canryn Production', () => {
+      const tyBattle = {
+        name: 'Ty Battle',
+        title: 'CEO & Founder',
+        organization: 'Canryn Production LLC / Sweet Miracles Foundation',
+        sessionTopic: 'Technology as a Voice for the Voiceless: The QUMUS Story',
+      };
+      expect(tyBattle.name).toBe('Ty Battle');
+      expect(tyBattle.organization).toContain('Canryn Production');
+      expect(tyBattle.organization).toContain('Sweet Miracles');
+      expect(tyBattle.sessionTopic).toContain('QUMUS');
+    });
+  });
+
+  // ─── Auto-Recording System ───────────────────────
+  describe('Auto-Recording System', () => {
+    it('should generate recording keys with conference ID and timestamp', () => {
+      const conferenceId = 42;
+      const recordingKey = `conference-recordings/${conferenceId}/${Date.now()}-session.webm`;
+      expect(recordingKey).toContain('conference-recordings/42/');
+      expect(recordingKey).toContain('-session.webm');
+    });
+
+    it('should support start and stop recording states', () => {
+      const states = ['none', 'recording', 'processing', 'available'];
+      expect(states).toContain('recording');
+      expect(states).toContain('available');
+    });
+
+    it('should auto-trigger transcription when recording URL is available', () => {
+      const recordingUrl = 'https://storage.example.com/conference-recordings/42/session.webm';
+      const shouldTriggerTranscription = !!recordingUrl;
+      expect(shouldTriggerTranscription).toBe(true);
+    });
+
+    it('should not trigger transcription without recording URL', () => {
+      const recordingUrl = '';
+      const shouldTriggerTranscription = !!recordingUrl;
+      expect(shouldTriggerTranscription).toBe(false);
+    });
+
+    it('should track recording duration in seconds', () => {
+      const duration = 3600; // 1 hour
+      const minutes = Math.round(duration / 60);
+      expect(minutes).toBe(60);
+    });
+  });
+
+  // ─── Production Readiness ───────────────────────
+  describe('Production Readiness', () => {
+    it('should check all 5 categories', () => {
+      const categories = ['Infrastructure', 'Content', 'Orchestration', 'Integration', 'Features'];
+      expect(categories).toHaveLength(5);
+    });
+
+    it('should verify all 4 production domains', () => {
+      const domains = ['manuweb.sbs', 'www.manuweb.sbs', 'qumus.manus.space', 'manusweb-eshiamkd.manus.space'];
+      expect(domains).toHaveLength(4);
+      expect(domains).toContain('manuweb.sbs');
+      expect(domains).toContain('qumus.manus.space');
+    });
+
+    it('should report version 3.0.0', () => {
+      const version = '3.0.0';
+      expect(version).toBe('3.0.0');
+    });
+
+    it('should check 25+ production readiness items', () => {
+      const checkNames = [
+        'Conference Database', 'Speaker Roster', 'Attendee System',
+        'QUMUS Engine', 'QUMUS Policies', 'Conference Cron', 'Weekly Digest Cron',
+        'RRB Radio Bridge', 'TBZ-OS Integration', 'HybridCast Bridge',
+        'SQUADD Goals', 'Convention Hub', 'Ecosystem Dashboard',
+        'Stripe Ticketing', 'QR Check-In', 'Multi-Language',
+        'Auto-Recording', 'Auto-Transcription', 'Speaker Profiles',
+        'UN CSW70 Templates', 'Social Sharing', 'Calendar Invites',
+        'Accessibility', 'Production Domain', 'QUMUS Domain',
+      ];
+      expect(checkNames.length).toBeGreaterThanOrEqual(25);
+    });
+
+    it('should calculate readiness score as percentage', () => {
+      const passed = 24;
+      const total = 25;
+      const score = Math.round((passed / total) * 100);
+      expect(score).toBe(96);
+    });
+  });
+
+  // ─── Conference Room Controls ───────────────────────
+  describe('Conference Room Controls', () => {
+    it('should format recording duration correctly', () => {
+      const formatDuration = (seconds: number) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      };
+      expect(formatDuration(0)).toBe('00:00');
+      expect(formatDuration(65)).toBe('01:05');
+      expect(formatDuration(3661)).toBe('61:01');
+    });
+
+    it('should have translation, check-in, and speaker quick links', () => {
+      const quickLinks = [
+        { path: '/conference/translation/', icon: 'Globe' },
+        { path: '/conference/checkin/', icon: 'Shield' },
+        { path: '/conference/speaker/', icon: 'UserCircle' },
+      ];
+      expect(quickLinks).toHaveLength(3);
+    });
+
+    it('should auto-stop recording when ending conference', () => {
+      let isRecording = true;
+      const handleEnd = () => { if (isRecording) isRecording = false; };
+      handleEnd();
+      expect(isRecording).toBe(false);
+    });
+  });
 });

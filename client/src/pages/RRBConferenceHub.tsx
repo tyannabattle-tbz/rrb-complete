@@ -170,6 +170,14 @@ export default function RRBConferenceHub() {
   });
 
   const { data: csw70Templates } = trpc.conference.getCSW70Templates.useQuery();
+  const { data: csw70Speakers } = trpc.conference.getCSW70Speakers.useQuery();
+  const seedSpeakersMutation = trpc.conference.seedCSW70Speakers.useMutation({
+    onSuccess: (data: any) => {
+      toast.success(`Seeded ${data.seeded} UN CSW70 speakers`);
+      utils.conference.getCSW70Speakers.invalidate();
+    },
+    onError: () => toast.error('Failed to seed speakers — please log in'),
+  });
   const [csw70Date, setCsw70Date] = useState('');
   const [csw70Time, setCsw70Time] = useState('09:00');
 
@@ -733,6 +741,54 @@ export default function RRBConferenceHub() {
                 </Card>
               ))}
             </div>
+
+            {/* CSW70 Speaker Roster */}
+            <Card className="bg-gray-900/50 border-blue-500/20">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-white text-lg flex items-center gap-2">
+                    <Users className="w-5 h-5 text-blue-400" /> UN CSW70 Speaker Roster
+                  </CardTitle>
+                  {user && (
+                    <Button
+                      size="sm"
+                      onClick={() => seedSpeakersMutation.mutate()}
+                      disabled={seedSpeakersMutation.isPending}
+                      className="bg-blue-600 hover:bg-blue-700 text-xs"
+                    >
+                      <Plus className="w-3 h-3 mr-1" /> Seed Roster
+                    </Button>
+                  )}
+                </div>
+                <CardDescription className="text-white/40">Confirmed speakers and panelists for the 70th Commission on the Status of Women</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {csw70Speakers && (csw70Speakers as any[]).length > 0 ? (
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {(csw70Speakers as any[]).map((speaker: any) => (
+                      <Link key={speaker.id} href={`/conference/speaker/${speaker.id}`}>
+                        <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-950/20 border border-blue-500/10 hover:border-blue-500/30 transition-colors cursor-pointer">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                            {speaker.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-white font-semibold text-sm truncate">{speaker.name}</h4>
+                            <p className="text-white/40 text-xs truncate">{speaker.title} — {speaker.organization}</p>
+                            <p className="text-blue-400/60 text-xs mt-1 truncate">{speaker.session_topic}</p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <Users className="w-8 h-8 text-white/20 mx-auto mb-2" />
+                    <p className="text-white/30 text-sm">No speakers seeded yet</p>
+                    <p className="text-white/20 text-xs mt-1">Click "Seed Roster" to populate the UN CSW70 speaker database</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* CSW70 Info */}
             <Card className="bg-gradient-to-r from-blue-950/30 to-purple-950/30 border-blue-500/20">
