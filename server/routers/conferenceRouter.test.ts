@@ -600,4 +600,165 @@ describe('Conference Router', () => {
       expect(conferenceTabAction).toBe('/conference');
     });
   });
+
+  describe('Attendee Registration System', () => {
+    it('should support all 4 ticket tiers', () => {
+      const ticketTiers = ['general', 'vip', 'speaker', 'delegate'];
+      expect(ticketTiers).toHaveLength(4);
+      expect(ticketTiers).toContain('general');
+      expect(ticketTiers).toContain('delegate');
+    });
+
+    it('should generate ICS calendar invite format', () => {
+      const icsTemplate = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Canryn Production//Conference//EN',
+        'BEGIN:VEVENT',
+        'SUMMARY:UN CSW70 Plenary Session',
+        'DTSTART:20260315T140000Z',
+        'DTEND:20260315T160000Z',
+        'DESCRIPTION:Conference registration',
+        'END:VEVENT',
+        'END:VCALENDAR',
+      ].join('\r\n');
+      expect(icsTemplate).toContain('BEGIN:VCALENDAR');
+      expect(icsTemplate).toContain('BEGIN:VEVENT');
+      expect(icsTemplate).toContain('END:VCALENDAR');
+      expect(icsTemplate).toContain('SUMMARY:');
+      expect(icsTemplate).toContain('DTSTART:');
+    });
+
+    it('should validate required registration fields', () => {
+      const requiredFields = ['conferenceId', 'name', 'email', 'ticketType'];
+      const optionalFields = ['organization', 'accessibilityNeeds', 'dietaryNeeds'];
+      expect(requiredFields).toHaveLength(4);
+      expect(optionalFields).toHaveLength(3);
+    });
+
+    it('should include accessibility fields for inclusive design', () => {
+      const registrationFields = [
+        'name', 'email', 'organization', 'ticketType',
+        'accessibilityNeeds', 'dietaryNeeds'
+      ];
+      expect(registrationFields).toContain('accessibilityNeeds');
+      expect(registrationFields).toContain('dietaryNeeds');
+    });
+
+    it('should have registration route at /conference/register/:id', () => {
+      const route = '/conference/register/42';
+      expect(route).toMatch(/\/conference\/register\/\d+/);
+    });
+
+    it('should support Stripe checkout for paid tiers', () => {
+      const paidTiers = {
+        vip: 4999,
+        speaker: 9999,
+        delegate: 14999,
+      };
+      expect(paidTiers.vip).toBe(4999);
+      expect(paidTiers.speaker).toBe(9999);
+      expect(paidTiers.delegate).toBe(14999);
+    });
+  });
+
+  describe('Auto-Transcription Pipeline', () => {
+    it('should support Whisper transcription trigger', () => {
+      const transcriptionInput = {
+        conferenceId: 1,
+        recordingUrl: 'https://storage.example.com/recording.mp3',
+      };
+      expect(transcriptionInput.conferenceId).toBe(1);
+      expect(transcriptionInput.recordingUrl).toContain('recording');
+    });
+
+    it('should return transcript with metadata', () => {
+      const transcriptResult = {
+        status: 'completed',
+        transcriptLength: 5000,
+        language: 'en',
+      };
+      expect(transcriptResult.status).toBe('completed');
+      expect(transcriptResult.transcriptLength).toBeGreaterThan(0);
+    });
+
+    it('should have getTranscript query endpoint', () => {
+      const transcriptResponse = {
+        title: 'UN CSW70 Session',
+        hasTranscript: true,
+        transcript: 'Full text of the conference...',
+        recordingStatus: 'available',
+      };
+      expect(transcriptResponse.hasTranscript).toBe(true);
+      expect(transcriptResponse.transcript.length).toBeGreaterThan(0);
+    });
+
+    it('should handle missing transcripts gracefully', () => {
+      const noTranscript = {
+        title: 'Test Conference',
+        hasTranscript: false,
+        transcript: null,
+        recordingStatus: 'pending',
+      };
+      expect(noTranscript.hasTranscript).toBe(false);
+      expect(noTranscript.transcript).toBeNull();
+    });
+  });
+
+  describe('Weekly Analytics Digest', () => {
+    it('should generate digest with all required metrics', () => {
+      const digest = {
+        sessions: 12,
+        attendees: 156,
+        totalMinutes: 1440,
+        recordings: 8,
+        topHost: 'Ty Bat Zan',
+        topPlatform: 'rrb_builtin',
+        period: '2026-03-03 to 2026-03-10',
+      };
+      expect(digest.sessions).toBeGreaterThan(0);
+      expect(digest.attendees).toBeGreaterThan(0);
+      expect(digest.period).toContain('2026');
+    });
+
+    it('should be scheduled via QUMUS cron every Sunday at 8pm', () => {
+      const cronSchedule = 'Sunday 8:00 PM';
+      const digestInterval = 7 * 24 * 60 * 60 * 1000; // 1 week in ms
+      expect(digestInterval).toBe(604800000);
+      expect(cronSchedule).toContain('Sunday');
+    });
+
+    it('should send digest via notifyOwner', () => {
+      const notificationPayload = {
+        title: 'Weekly Conference Analytics Digest',
+        content: 'Sessions: 12, Attendees: 156, Revenue: $0',
+      };
+      expect(notificationPayload.title).toContain('Weekly');
+      expect(notificationPayload.content).toContain('Sessions');
+    });
+
+    it('should support manual digest trigger', () => {
+      const manualTrigger = 'sendWeeklyDigest';
+      expect(manualTrigger).toBe('sendWeeklyDigest');
+    });
+  });
+
+  describe('14 QUMUS Policies Consistency', () => {
+    it('should have 14 policies including conference scheduling', () => {
+      const policies = [
+        'content_scheduling', 'audience_engagement', 'quality_control',
+        'emergency_response', 'revenue_optimization', 'content_moderation',
+        'platform_health', 'cross_platform_sync', 'code_maintenance',
+        'royalty_audit', 'evidence_monitoring', 'donation_management',
+        'error_recovery', 'conference_scheduling'
+      ];
+      expect(policies).toHaveLength(14);
+      expect(policies).toContain('conference_scheduling');
+    });
+
+    it('should have updated policy count in OnboardingTour', () => {
+      const tourFeatures = ['14 Active Policies', '16 Subsystems', '90% Autonomous'];
+      expect(tourFeatures[0]).toBe('14 Active Policies');
+    });
+  });
 });

@@ -4940,6 +4940,38 @@ var init_qumusProductionIntegration = __esm({
           }
         }, 5 * 60 * 1e3);
         console.log("[QUMUS-PROD] Conference auto-notification cron started (every 5 min)");
+        setInterval(async () => {
+          try {
+            const now = /* @__PURE__ */ new Date();
+            if (now.getDay() === 0 && now.getHours() === 20 && now.getMinutes() < 60) {
+              const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+              const { sql: sql19 } = await import("drizzle-orm");
+              const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
+              const db2 = await getDb5();
+              const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
+              const [weekSessions] = await db2.execute(sql19`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [weekAttendees] = await db2.execute(sql19`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [completedSessions] = await db2.execute(sql19`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+              const sessions = weekSessions[0]?.count || 0;
+              const attendees = weekAttendees[0]?.total || 0;
+              const completed = completedSessions[0]?.count || 0;
+              await notifyOwner2({
+                title: `Weekly Conference Digest | ${now.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`,
+                content: `QUMUS Conference Analytics Weekly Digest
+
+Sessions This Week: ${sessions}
+Completed: ${completed}
+Total Attendees: ${attendees}
+
+Powered by QUMUS Autonomous Orchestration | Canryn Production`
+              });
+              console.log(`[QUMUS-CRON] Weekly digest sent: ${sessions} sessions, ${attendees} attendees`);
+            }
+          } catch (err) {
+            console.error("[QUMUS-CRON] Weekly digest error:", err);
+          }
+        }, 60 * 60 * 1e3);
+        console.log("[QUMUS-PROD] Weekly conference digest cron started (Sunday 8pm)");
       }
       getStatus() {
         return {
@@ -18150,6 +18182,227 @@ Room: ${conf.room_code}
       content: `"${conf.title}" (Room: ${conf.room_code}) is now on HybridCast emergency network with ${input.priority} priority`
     });
     return { success: true, hybridcastPriority: input.priority };
+  }),
+  // ─── Public Conference Registration with Email + Calendar Invite ───
+  registerAttendee: publicProcedure.input(z44.object({
+    conferenceId: z44.number(),
+    name: z44.string().min(1),
+    email: z44.string().email(),
+    organization: z44.string().optional(),
+    ticketType: z44.enum(["general", "vip", "speaker", "delegate"]).default("general"),
+    dietaryNeeds: z44.string().optional(),
+    accessibilityNeeds: z44.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    const [confRows] = await db2.execute(sql12`SELECT * FROM conferences WHERE id = ${input.conferenceId}`);
+    const conf = confRows[0];
+    if (!conf) throw new Error("Conference not found");
+    if (conf.max_attendees && conf.actual_attendees >= conf.max_attendees) {
+      throw new Error("Conference is at full capacity");
+    }
+    const [existing] = await db2.execute(
+      sql12`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_name = ${input.name} AND rsvp_status != 'declined'`
+    );
+    if (existing.length > 0) {
+      throw new Error("Already registered for this conference");
+    }
+    await db2.execute(sql12`
+        INSERT INTO conference_attendees (conference_id, user_id, user_name, rsvp_status, created_at)
+        VALUES (${input.conferenceId}, 0, ${input.name}, 'going', NOW())
+      `);
+    await db2.execute(sql12`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
+    const startDate = conf.scheduled_at ? new Date(conf.scheduled_at) : /* @__PURE__ */ new Date();
+    const endDate = new Date(startDate.getTime() + (conf.duration_minutes || 60) * 60 * 1e3);
+    const formatICSDate = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Canryn Production//Conference Hub//EN",
+      "CALSCALE:GREGORIAN",
+      "METHOD:REQUEST",
+      "BEGIN:VEVENT",
+      `DTSTART:${formatICSDate(startDate)}`,
+      `DTEND:${formatICSDate(endDate)}`,
+      `SUMMARY:${conf.title}`,
+      `DESCRIPTION:${conf.description || "Conference powered by Canryn Production"}\\nRoom Code: ${conf.room_code}\\nPlatform: ${conf.platform}\\nTicket: ${input.ticketType.toUpperCase()}\\n\\nPowered by QUMUS Autonomous Orchestration | A Voice for the Voiceless`,
+      `LOCATION:${conf.platform === "jitsi" ? `https://meet.jit.si/${conf.room_code}` : "Online"}`,
+      `ORGANIZER;CN=${conf.host_name || "QUMUS"}:mailto:conference@canrynproduction.com`,
+      `ATTENDEE;CN=${input.name};RSVP=TRUE:mailto:${input.email}`,
+      `UID:conf-${input.conferenceId}-${Date.now()}@canrynproduction.com`,
+      `STATUS:CONFIRMED`,
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+    await notifyOwner({
+      title: `New Registration: ${conf.title}`,
+      content: `${input.name} (${input.email}) registered as ${input.ticketType.toUpperCase()} for "${conf.title}"${input.organization ? ` | Org: ${input.organization}` : ""}${input.accessibilityNeeds ? ` | Accessibility: ${input.accessibilityNeeds}` : ""}`
+    });
+    return {
+      success: true,
+      registrationId: Date.now(),
+      conferenceTitle: conf.title,
+      roomCode: conf.room_code,
+      platform: conf.platform,
+      scheduledAt: conf.scheduled_at,
+      ticketType: input.ticketType,
+      icsCalendarInvite: icsContent,
+      message: `Successfully registered for ${conf.title}. Calendar invite generated.`
+    };
+  }),
+  // Get registration info for a conference
+  getRegistrationInfo: publicProcedure.input(z44.object({ conferenceId: z44.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const [confRows] = await db2.execute(sql12`SELECT id, title, description, type, platform, host_name, room_code, scheduled_at, duration_minutes, max_attendees, actual_attendees, status FROM conferences WHERE id = ${input.conferenceId}`);
+    const conf = confRows[0];
+    if (!conf) return null;
+    const spotsRemaining = conf.max_attendees ? Math.max(0, conf.max_attendees - conf.actual_attendees) : 999;
+    return {
+      ...conf,
+      spotsRemaining,
+      isFull: spotsRemaining === 0,
+      ticketTypes: [
+        { id: "general", label: "General Admission", price: 0, perks: ["Join conference", "Chat access", "Recording access"] },
+        { id: "vip", label: "VIP Access", price: 4999, perks: ["Priority join", "Speaker Q&A", "Exclusive recordings", "VIP badge"] },
+        { id: "speaker", label: "Speaker Pass", price: 9999, perks: ["Present & share screen", "Extended time", "Speaker profile"] },
+        { id: "delegate", label: "UN Delegate Pass", price: 14999, perks: ["Delegate credentials", "All sessions access", "Networking priority"] }
+      ]
+    };
+  }),
+  // ─── Auto-Transcription Pipeline ───
+  triggerTranscription: protectedProcedure.input(z44.object({
+    conferenceId: z44.number(),
+    recordingUrl: z44.string().url()
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    await db2.execute(sql12`
+        UPDATE conferences 
+        SET recording_url = ${input.recordingUrl}, 
+            recording_status = 'processing',
+            updated_at = NOW()
+        WHERE id = ${input.conferenceId}
+      `);
+    let transcript = "";
+    let transcriptionStatus = "completed";
+    try {
+      const { transcribeAudio: transcribeAudio2 } = await Promise.resolve().then(() => (init_voiceTranscription(), voiceTranscription_exports));
+      const result2 = await transcribeAudio2({
+        audioUrl: input.recordingUrl,
+        language: "en",
+        prompt: "Conference recording transcription for Canryn Production"
+      });
+      transcript = result2.text || "";
+    } catch (err) {
+      console.error("[Conference] Transcription error:", err);
+      transcriptionStatus = "failed";
+      transcript = "Transcription failed - audio may be too large or in unsupported format.";
+    }
+    await db2.execute(sql12`
+        UPDATE conferences 
+        SET recording_status = ${transcriptionStatus === "completed" ? "available" : "failed"},
+            description = CONCAT(COALESCE(description, ''), '\n\n--- TRANSCRIPT ---\n', ${transcript}),
+            updated_at = NOW()
+        WHERE id = ${input.conferenceId}
+      `);
+    try {
+      await qumusEngine2.makeDecision({
+        policyId: "policy_conference_scheduling",
+        confidence: 85,
+        inputData: { action: "auto_transcription", conferenceId: input.conferenceId, status: transcriptionStatus }
+      });
+    } catch (e) {
+    }
+    await notifyOwner({
+      title: `Transcription ${transcriptionStatus}: Conference #${input.conferenceId}`,
+      content: `Recording transcription ${transcriptionStatus} for conference #${input.conferenceId}. ${transcript.length} characters transcribed.`
+    });
+    return { success: true, status: transcriptionStatus, transcriptLength: transcript.length, transcript: transcript.substring(0, 500) + (transcript.length > 500 ? "..." : "") };
+  }),
+  // Get transcript for a conference
+  getTranscript: publicProcedure.input(z44.object({ conferenceId: z44.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const [rows] = await db2.execute(sql12`SELECT id, title, description, recording_url, recording_status FROM conferences WHERE id = ${input.conferenceId}`);
+    const conf = rows[0];
+    if (!conf) return null;
+    const desc16 = conf.description || "";
+    const transcriptMarker = "--- TRANSCRIPT ---";
+    const transcriptIdx = desc16.indexOf(transcriptMarker);
+    const transcript = transcriptIdx >= 0 ? desc16.substring(transcriptIdx + transcriptMarker.length).trim() : null;
+    return {
+      conferenceId: conf.id,
+      title: conf.title,
+      recordingUrl: conf.recording_url,
+      recordingStatus: conf.recording_status,
+      hasTranscript: !!transcript,
+      transcript
+    };
+  }),
+  // ─── Weekly Conference Analytics Digest ───
+  getAnalyticsDigest: protectedProcedure.query(async () => {
+    const db2 = await getDb();
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
+    const [weekSessions] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+    const [completedSessions] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+    const [weekAttendees] = await db2.execute(sql12`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+    const [topHosts] = await db2.execute(sql12`
+      SELECT host_name, COUNT(*) as sessions, SUM(actual_attendees) as total_attendees
+      FROM conferences WHERE created_at >= ${oneWeekAgo} AND host_name IS NOT NULL
+      GROUP BY host_name ORDER BY sessions DESC LIMIT 5
+    `);
+    const [platformBreakdown] = await db2.execute(sql12`
+      SELECT platform, COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}
+      GROUP BY platform ORDER BY count DESC
+    `);
+    const [typeBreakdown] = await db2.execute(sql12`
+      SELECT type, COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}
+      GROUP BY type ORDER BY count DESC
+    `);
+    const [recordings] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE recording_status = 'available' AND updated_at >= ${oneWeekAgo}`);
+    const [allTime] = await db2.execute(sql12`SELECT COUNT(*) as total, COALESCE(SUM(actual_attendees), 0) as total_attendees FROM conferences`);
+    return {
+      period: { start: oneWeekAgo.toISOString(), end: (/* @__PURE__ */ new Date()).toISOString() },
+      weeklyStats: {
+        totalSessions: weekSessions[0]?.count || 0,
+        completedSessions: completedSessions[0]?.count || 0,
+        totalAttendees: weekAttendees[0]?.total || 0,
+        newRecordings: recordings[0]?.count || 0
+      },
+      topHosts,
+      platformBreakdown,
+      typeBreakdown,
+      allTimeStats: {
+        totalConferences: allTime[0]?.total || 0,
+        totalAttendees: allTime[0]?.total_attendees || 0
+      }
+    };
+  }),
+  // Send weekly digest email
+  sendWeeklyDigest: protectedProcedure.mutation(async () => {
+    const db2 = await getDb();
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
+    const [weekSessions] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+    const [weekAttendees] = await db2.execute(sql12`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+    const [completedSessions] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+    const [topHosts] = await db2.execute(sql12`
+      SELECT host_name, COUNT(*) as sessions FROM conferences WHERE created_at >= ${oneWeekAgo} AND host_name IS NOT NULL
+      GROUP BY host_name ORDER BY sessions DESC LIMIT 3
+    `);
+    const topHostsStr = topHosts.map((h) => `${h.host_name} (${h.sessions} sessions)`).join(", ") || "None";
+    const sessions = weekSessions[0]?.count || 0;
+    const attendees = weekAttendees[0]?.total || 0;
+    const completed = completedSessions[0]?.count || 0;
+    const sent = await notifyOwner({
+      title: `Weekly Conference Digest | ${(/* @__PURE__ */ new Date()).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`,
+      content: `QUMUS Conference Analytics Weekly Digest
+
+Sessions This Week: ${sessions}
+Completed: ${completed}
+Total Attendees: ${attendees}
+Top Hosts: ${topHostsStr}
+
+Powered by QUMUS Autonomous Orchestration | Canryn Production
+A Voice for the Voiceless`
+    });
+    return { success: sent, sessions, attendees, completed };
   })
 });
 

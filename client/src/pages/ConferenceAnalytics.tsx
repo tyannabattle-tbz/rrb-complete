@@ -1,6 +1,8 @@
 import { trpc } from '@/lib/trpc';
 import { Link } from 'wouter';
-import { ArrowLeft, BarChart3, Users, Clock, Video, Radio, Shield, Cpu, TrendingUp, Mic } from 'lucide-react';
+import { ArrowLeft, BarChart3, Users, Clock, Video, Radio, Shield, Cpu, TrendingUp, Mic, Mail, Loader2, UserPlus } from 'lucide-react';
+import { useAuth } from '@/lib/auth';
+import { useToast } from '@/hooks/use-toast';
 
 const platformLabels: Record<string, string> = {
   jitsi: 'RRB Built-in (Jitsi)',
@@ -24,6 +26,15 @@ const typeLabels: Record<string, string> = {
 export default function ConferenceAnalytics() {
   const { data: analytics, isLoading } = trpc.conference.getAnalytics.useQuery();
   const { data: stats } = trpc.conference.getStats.useQuery();
+  const { data: digest } = trpc.conference.getAnalyticsDigest.useQuery(undefined, { enabled: false });
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const sendDigestMutation = trpc.conference.sendWeeklyDigest.useMutation({
+    onSuccess: (data) => {
+      toast({ title: 'Weekly Digest Sent!', description: `${data.sessions} sessions, ${data.attendees} attendees reported` });
+    },
+    onError: (err) => toast({ title: 'Failed to send digest', description: err.message, variant: 'destructive' }),
+  });
 
   if (isLoading) {
     return (
@@ -236,6 +247,49 @@ export default function ConferenceAnalytics() {
           </div>
         </div>
       </div>
+
+      {/* Weekly Digest Section */}
+      {user && (
+        <div className="container mx-auto px-4 py-6">
+          <div className="bg-gray-900/50 border border-purple-500/20 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <Mail className="w-6 h-6 text-purple-400" />
+                <div>
+                  <h3 className="text-lg font-bold text-white">Weekly Conference Digest</h3>
+                  <p className="text-xs text-gray-400">QUMUS auto-sends every Sunday at 8pm &bull; Manual trigger available</p>
+                </div>
+              </div>
+              <button
+                onClick={() => sendDigestMutation.mutate()}
+                disabled={sendDigestMutation.isPending}
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm disabled:opacity-50 transition-colors"
+              >
+                {sendDigestMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                Send Digest Now
+              </button>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Sessions This Week</p>
+                <p className="text-xl font-bold text-white">{totalConferences}</p>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Total Attendees</p>
+                <p className="text-xl font-bold text-white">{totalAttendees}</p>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Recordings</p>
+                <p className="text-xl font-bold text-white">{totalRecordings}</p>
+              </div>
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Avg Duration</p>
+                <p className="text-xl font-bold text-white">{avgDuration}m</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <div className="border-t border-purple-500/10 mt-8 py-4 text-center text-xs text-gray-600">

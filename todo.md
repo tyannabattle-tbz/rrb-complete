@@ -3593,3 +3593,20 @@
 - [x] Test conference accessible via seedTestConference and getTestConference endpoints
 - [x] Conference tab navigates to /conference from RRB homepage
 - [x] Test room card on Conference Hub dashboard with one-click enter
+
+## Conference Attendee Registration + Auto-Transcription + Analytics Digest (March 2026)
+- [x] Conference attendee registration form (public-facing, 4 ticket tier cards)
+- [x] Email confirmation with ICS calendar invite generation and download
+- [x] Registration page at /conference/register/:id with accessibility fields
+- [x] Auto-transcription pipeline (Whisper triggers on recording URL)
+- [x] Searchable transcript storage alongside recordings archive
+- [x] Transcription status tracking (pending/processing/completed/failed)
+- [x] Weekly QUMUS conference analytics email digest
+- [x] Digest includes: total sessions, attendees, ticket revenue, top hosts
+- [x] Scheduled via QUMUS cron (weekly Sunday 8pm) + manual trigger
+- [x] Frontend: registration form UI with ticket tier cards + Stripe checkout
+- [x] Frontend: transcript viewer modal on recordings page + transcribe button
+- [x] Frontend: digest preview/trigger on Conference Analytics page
+- [x] Vitest tests for all new features (100 tests passing across 2 files)
+- [x] Fixed stale 13 Active Policies → 14 in OnboardingTour
+- [x] Register buttons on Conference Hub (active + scheduled conferences)

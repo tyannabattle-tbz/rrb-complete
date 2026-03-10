@@ -1,6 +1,9 @@
 import { trpc } from '@/lib/trpc';
+import { useState } from 'react';
 import { Link } from 'wouter';
-import { ArrowLeft, Video, Download, Play, Clock, Users, Calendar, Radio, Shield, Cpu, Archive } from 'lucide-react';
+import { ArrowLeft, Video, Download, Play, Clock, Users, Calendar, Radio, Shield, Cpu, Archive, FileText, Loader2, X } from 'lucide-react';
+import { useAuth } from '@/lib/auth';
+import { useToast } from '@/hooks/use-toast';
 
 const platformLabels: Record<string, string> = {
   jitsi: 'RRB Built-in',
@@ -12,8 +15,22 @@ const platformLabels: Record<string, string> = {
 };
 
 export default function ConferenceRecordings() {
-  const { data: recordings, isLoading } = trpc.conference.getRecordings.useQuery({ limit: 50 });
+  const { data: recordings, isLoading, refetch } = trpc.conference.getRecordings.useQuery({ limit: 50 });
   const { data: stats } = trpc.conference.getStats.useQuery();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [viewingTranscript, setViewingTranscript] = useState<number | null>(null);
+  const { data: transcript } = trpc.conference.getTranscript.useQuery(
+    { conferenceId: viewingTranscript! },
+    { enabled: viewingTranscript !== null }
+  );
+  const transcribeMutation = trpc.conference.triggerTranscription.useMutation({
+    onSuccess: (data) => {
+      toast({ title: `Transcription ${data.status}`, description: `${data.transcriptLength} characters transcribed` });
+      refetch();
+    },
+    onError: (err) => toast({ title: 'Transcription failed', description: err.message, variant: 'destructive' }),
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950/30 to-gray-950 text-white">
@@ -106,6 +123,22 @@ export default function ConferenceRecordings() {
                         </a>
                       </>
                     )}
+                    <button
+                      onClick={() => setViewingTranscript(rec.id)}
+                      className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-500/20 text-blue-300 rounded-lg text-sm hover:bg-blue-500/30 transition-colors"
+                    >
+                      <FileText className="w-3.5 h-3.5" /> Transcript
+                    </button>
+                    {user && rec.recording_url && rec.recording_status !== 'available' && (
+                      <button
+                        onClick={() => transcribeMutation.mutate({ conferenceId: rec.id, recordingUrl: rec.recording_url })}
+                        disabled={transcribeMutation.isPending}
+                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-amber-500/20 text-amber-300 rounded-lg text-sm hover:bg-amber-500/30 transition-colors disabled:opacity-50"
+                      >
+                        {transcribeMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileText className="w-3.5 h-3.5" />}
+                        Transcribe
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -124,6 +157,38 @@ export default function ConferenceRecordings() {
           </div>
         )}
       </div>
+
+      {/* Transcript Viewer Modal */}
+      {viewingTranscript !== null && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={() => setViewingTranscript(null)}>
+          <div className="bg-gray-900 border border-purple-500/30 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-800">
+              <div>
+                <h3 className="text-lg font-bold text-white">{transcript?.title || 'Transcript'}</h3>
+                <p className="text-xs text-gray-400">
+                  Status: <span className={transcript?.recordingStatus === 'available' ? 'text-green-400' : 'text-yellow-400'}>{transcript?.recordingStatus || 'unknown'}</span>
+                </p>
+              </div>
+              <button onClick={() => setViewingTranscript(null)} className="p-2 hover:bg-gray-800 rounded-lg">
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto max-h-[60vh]">
+              {transcript?.hasTranscript ? (
+                <div className="prose prose-invert prose-sm max-w-none">
+                  <pre className="whitespace-pre-wrap text-sm text-gray-300 font-sans leading-relaxed">{transcript.transcript}</pre>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <FileText className="w-12 h-12 text-gray-700 mx-auto mb-4" />
+                  <p className="text-gray-400 mb-2">No transcript available yet</p>
+                  <p className="text-xs text-gray-500">Use the "Transcribe" button on the recording card to auto-generate a transcript via Whisper AI</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <div className="border-t border-purple-500/10 mt-8 py-4 text-center text-xs text-gray-600">

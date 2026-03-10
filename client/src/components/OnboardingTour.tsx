@@ -21,12 +21,12 @@ const tourSteps: TourStep[] = [
   {
     id: 'qumus',
     title: 'QUMUS Control Center',
-    description: 'The autonomous brain of the entire ecosystem. QUMUS orchestrates 13 active policies, manages 16 subsystems, and maintains 90% autonomous control with human override capabilities.',
+    description: 'The autonomous brain of the entire ecosystem. QUMUS orchestrates 14 active policies, manages 16 subsystems, and maintains 90% autonomous control with human override capabilities.',
     icon: Monitor,
     iconColor: 'text-violet-400',
     iconBg: 'bg-violet-500/20',
     path: '/qumus',
-    features: ['13 Active Policies', '16 Subsystems', '90% Autonomous', 'Real-time Health Monitoring'],
+    features: ['14 Active Policies', '16 Subsystems', '90% Autonomous', 'Real-time Health Monitoring'],
   },
   {
     id: 'ai-chat',

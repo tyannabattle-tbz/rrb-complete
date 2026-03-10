@@ -389,9 +389,14 @@ export default function RRBConferenceHub() {
                               Host: {conf.host_name} &bull; {conf.attendee_count} attendees &bull; {conf.meeting_type}
                             </p>
                           </div>
-                          <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-green-600 hover:bg-green-700">
-                            <Video className="w-4 h-4 mr-1" /> Join
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => navigate(`/conference/register/${conf.id}`)} className="border-purple-500 text-purple-400 hover:bg-purple-500/20">
+                              Register
+                            </Button>
+                            <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-green-600 hover:bg-green-700">
+                              <Video className="w-4 h-4 mr-1" /> Join
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -585,6 +590,9 @@ export default function RRBConferenceHub() {
                           </Button>
                           <Button size="sm" onClick={() => bridgeHybridCastMutation.mutate({ conferenceId: conf.id })} variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" title="Bridge to HybridCast">
                             <Shield className="w-3 h-3" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => navigate(`/conference/register/${conf.id}`)} className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10" title="Registration page">
+                            <Users className="w-3 h-3" />
                           </Button>
                           <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-amber-500 hover:bg-amber-600 text-black">
                             <Play className="w-4 h-4 mr-1" /> Start

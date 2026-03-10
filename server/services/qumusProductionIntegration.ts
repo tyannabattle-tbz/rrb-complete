@@ -413,6 +413,35 @@ class QumusProductionIntegration {
       }
     }, 5 * 60 * 1000); // Every 5 minutes
     console.log('[QUMUS-PROD] Conference auto-notification cron started (every 5 min)');
+
+    // QUMUS Weekly Conference Analytics Digest (every Sunday at 8pm - check hourly)
+    setInterval(async () => {
+      try {
+        const now = new Date();
+        // Only send on Sundays at 8pm hour
+        if (now.getDay() === 0 && now.getHours() === 20 && now.getMinutes() < 60) {
+          const { getDb } = await import('../db');
+          const { sql } = await import('drizzle-orm');
+          const { notifyOwner } = await import('../_core/notification');
+          const db = await getDb();
+          const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+          const [weekSessions] = await db.execute(sql`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+          const [weekAttendees] = await db.execute(sql`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+          const [completedSessions] = await db.execute(sql`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+          const sessions = (weekSessions as any)[0]?.count || 0;
+          const attendees = (weekAttendees as any)[0]?.total || 0;
+          const completed = (completedSessions as any)[0]?.count || 0;
+          await notifyOwner({
+            title: `Weekly Conference Digest | ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`,
+            content: `QUMUS Conference Analytics Weekly Digest\n\nSessions This Week: ${sessions}\nCompleted: ${completed}\nTotal Attendees: ${attendees}\n\nPowered by QUMUS Autonomous Orchestration | Canryn Production`,
+          });
+          console.log(`[QUMUS-CRON] Weekly digest sent: ${sessions} sessions, ${attendees} attendees`);
+        }
+      } catch (err) {
+        console.error('[QUMUS-CRON] Weekly digest error:', err);
+      }
+    }, 60 * 60 * 1000); // Check every hour
+    console.log('[QUMUS-PROD] Weekly conference digest cron started (Sunday 8pm)');
   }
 
   getStatus() {
