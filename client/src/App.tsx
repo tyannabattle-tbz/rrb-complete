@@ -191,6 +191,7 @@ import QumusCommandConsole from '@/pages/QumusCommandConsole';
 import StreamAnalytics from '@/pages/StreamAnalytics';
 import CommercialAnalytics from '@/pages/CommercialAnalytics';
 import SocialMediaKit from '@/pages/SocialMediaKit';
+import MediaBlastCampaign from '@/pages/MediaBlastCampaign';
 import TyBattleProfile from '@/pages/TyBattleProfile';
 import ConferenceCalendar from '@/pages/ConferenceCalendar';
 import ConferenceAnalytics from '@/pages/ConferenceAnalytics';
@@ -389,6 +390,7 @@ function Router() {
       <Route path="/stream-analytics" component={StreamAnalytics} />
       <Route path="/commercial-analytics" component={CommercialAnalytics} />
       <Route path="/social-media-kit" component={SocialMediaKit} />
+      <Route path="/media-blast" component={MediaBlastCampaign} />
       <Route component={NotFound} />
     </Switch>
     </>

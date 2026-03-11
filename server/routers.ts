@@ -85,6 +85,7 @@ import { callInRouter } from "./routers/callInRouter";
 import { advancedFeaturesRouter } from "./routers/advancedFeaturesRouter";
 import { studioAudioRouter } from "./routers/studioAudioRouter";
 import { interpreterRouter } from "./routers/interpreterRouter";
+import { mediaBlastRouter } from "./routers/mediaBlastRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -99,6 +100,9 @@ export const appRouter = router({
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
+
+  // Media Blast Campaign (CSW70 + future campaigns)
+  mediaBlast: mediaBlastRouter,
 
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter,

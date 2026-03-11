@@ -3783,3 +3783,20 @@
 - [ ] Sync to rockin-rockin-boogie repo — GitHub token expired, needs manual push or token refresh
 - [x] Valanna runs QUMUS — no separate repo needed, Valanna is the AI orchestrator
 - [ ] Sync to Ty OS (tybatos-uo4zkxnl.manus.space) — separate Manus project, needs separate task
+- [ ] Create UN CSW70 media blast campaign — commercial scripts, social media posts, event graphics
+- [ ] Generate campaign visuals — event cards, thumbnails, promotional graphics
+- [ ] Build campaign scheduler in QUMUS for automated broadcast across all channels
+- [ ] Schedule commercials on RRB Radio for UN CSW70 event promotion
+- [ ] Activate social media bots and AIs (Valanna, Seraph, Candy) to push campaign content
+- [ ] Deploy media blast across YouTube, Facebook, Instagram, LinkedIn, Twitch, Rumble, X
+
+## Media Blast Campaign — UN CSW70 (March 2026)
+- [x] Create MediaBlastCampaign page with campaign dashboard
+- [x] Build campaign scheduler with automated posting timeline
+- [x] Create commercial scripts display and audio generation
+- [x] Build social media post queue with platform-specific content
+- [x] Integrate campaign visuals (banner, social cards, thumbnails, overlay)
+- [x] Add QUMUS autonomous campaign distribution policy
+- [x] Create media blast campaign tRPC router for scheduling and tracking
+- [x] Add route /media-blast to App.tsx
+- [x] Wire campaign to QUMUS brain for autonomous execution

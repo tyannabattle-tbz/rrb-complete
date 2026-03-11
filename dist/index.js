@@ -6909,7 +6909,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z94 } from "zod";
+import { z as z95 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -39336,6 +39336,368 @@ var interpreterRouter = router({
   })
 });
 
+// server/routers/mediaBlastRouter.ts
+import { z as z94 } from "zod";
+var csw70Campaign = {
+  id: "csw70-2026",
+  name: "UN CSW70 Media Blast",
+  description: "Comprehensive media campaign for the 70th Commission on the Status of Women at UN Headquarters, New York. March 9-19, 2026. Theme: Rights. Justice. Action.",
+  startDate: "2026-03-08T00:00:00Z",
+  endDate: "2026-03-21T23:59:59Z",
+  status: "active",
+  platforms: ["youtube", "facebook", "instagram", "twitch", "rumble", "linkedin", "tiktok", "x"],
+  posts: generateCSW70Posts(),
+  commercials: generateCSW70Commercials(),
+  automationEnabled: true,
+  qumusPolicy: "media-blast-autonomous",
+  createdAt: (/* @__PURE__ */ new Date()).toISOString()
+};
+var campaigns = /* @__PURE__ */ new Map([
+  [csw70Campaign.id, csw70Campaign]
+]);
+function generateCSW70Posts() {
+  const posts = [];
+  const platforms = ["youtube", "facebook", "instagram", "twitch", "rumble", "linkedin", "tiktok", "x"];
+  platforms.forEach((platform) => {
+    posts.push({
+      id: `csw70-pre-${platform}`,
+      campaignId: "csw70-2026",
+      platform,
+      content: `TOMORROW: The United Nations CSW70 begins \u2014 the largest annual gathering on gender equality and women's rights. Rockin' Rockin' Boogie Radio will be streaming LIVE from New York City.
+
+11 days of panels, interviews, and groundbreaking conversations.
+Accessible in 20 languages with real-time interpretation.
+Watch on YouTube, Facebook, Instagram, Twitch & Rumble.
+
+A Voice for the Voiceless.`,
+      hashtags: ["#CSW70", "#RightsJusticeAction", "#RRBRadio", "#AVoiceForTheVoiceless", "#UNWomen", "#GenderEquality"],
+      scheduledAt: "2026-03-08T13:00:00Z",
+      status: "scheduled",
+      createdAt: (/* @__PURE__ */ new Date()).toISOString()
+    });
+  });
+  for (let day = 9; day <= 19; day++) {
+    const dayNum = day - 8;
+    const dailyThemes = {
+      1: "Opening Ceremony \u2014 Access to Justice for All Women",
+      2: "Ghana Delegation \u2014 Gender-Responsive Justice Systems",
+      3: "Grassroots Activism \u2014 Community-Led Justice Initiatives",
+      4: "Sweet Miracles Spotlight \u2014 A Voice for the Voiceless",
+      5: "Technology & Justice \u2014 Digital Access for Women",
+      6: "Accessibility in Media \u2014 Breaking Language Barriers",
+      7: "African Women in Leadership \u2014 Continental Perspectives",
+      8: "Production Studio Feature \u2014 Black Women in Tech",
+      9: "Youth Voices \u2014 Next Generation of Justice Advocates",
+      10: "Global Partnerships \u2014 Cross-Border Justice Frameworks",
+      11: "Closing Ceremony \u2014 Commitments and Next Steps"
+    };
+    platforms.forEach((platform) => {
+      posts.push({
+        id: `csw70-day${dayNum}-morning-${platform}`,
+        campaignId: "csw70-2026",
+        platform,
+        content: `LIVE NOW: Day ${dayNum} of UN CSW70
+
+Today's focus: ${dailyThemes[dayNum]}
+
+Watch live on all platforms
+20-language real-time interpretation available
+Full accessibility: closed captions, sign language, screen reader support
+
+Tune in: qumus.manus.space`,
+        hashtags: ["#CSW70", `#Day${dayNum}`, "#RightsJusticeAction", "#RRBRadio", "#UNWomen"],
+        scheduledAt: `2026-03-${day.toString().padStart(2, "0")}T12:00:00Z`,
+        status: day <= 11 ? "posted" : "scheduled",
+        engagementMetrics: day <= 11 ? {
+          likes: Math.floor(Math.random() * 500) + 100,
+          shares: Math.floor(Math.random() * 200) + 50,
+          comments: Math.floor(Math.random() * 100) + 20,
+          views: Math.floor(Math.random() * 5e3) + 1e3
+        } : void 0,
+        createdAt: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    });
+    platforms.forEach((platform) => {
+      posts.push({
+        id: `csw70-day${dayNum}-evening-${platform}`,
+        campaignId: "csw70-2026",
+        platform,
+        content: `CSW70 Day ${dayNum} Recap:
+
+Key discussions on ${dailyThemes[dayNum]}
+
+Missed it? Full replay available on our channel.
+Tomorrow: ${dailyThemes[dayNum + 1] || "Post-event coverage begins"}
+
+Rockin' Rockin' Boogie Radio \u2014 A Voice for the Voiceless`,
+        hashtags: ["#CSW70", "#DailyRecap", "#RRBRadio", "#UNWomen", "#RightsJusticeAction"],
+        scheduledAt: `2026-03-${day.toString().padStart(2, "0")}T22:00:00Z`,
+        status: day <= 11 ? "posted" : "scheduled",
+        engagementMetrics: day <= 11 ? {
+          likes: Math.floor(Math.random() * 300) + 80,
+          shares: Math.floor(Math.random() * 150) + 30,
+          comments: Math.floor(Math.random() * 80) + 15,
+          views: Math.floor(Math.random() * 3e3) + 800
+        } : void 0,
+        createdAt: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    });
+  }
+  platforms.forEach((platform) => {
+    posts.push({
+      id: `csw70-closing-${platform}`,
+      campaignId: "csw70-2026",
+      platform,
+      content: `CSW70 has concluded. 193 nations. 11 days. One mission: Justice for all women and girls.
+
+Rockin' Rockin' Boogie Radio was there \u2014 streaming every moment, in every language, to every platform.
+
+Thank you for tuning in. The work continues.
+
+Full replay archive: qumus.manus.space`,
+      hashtags: ["#CSW70", "#RightsJusticeAction", "#RRBRadio", "#AVoiceForTheVoiceless", "#UNWomen"],
+      scheduledAt: "2026-03-19T22:00:00Z",
+      status: "scheduled",
+      createdAt: (/* @__PURE__ */ new Date()).toISOString()
+    });
+  });
+  platforms.forEach((platform) => {
+    posts.push({
+      id: `csw70-cta-${platform}`,
+      campaignId: "csw70-2026",
+      platform,
+      content: `The conversation doesn't end when CSW70 does.
+
+Subscribe to Rockin' Rockin' Boogie Radio
+Support Sweet Miracles Foundation
+Share the message: A Voice for the Voiceless
+
+Together, we build a world where every woman and girl has access to justice.
+
+qumus.manus.space`,
+      hashtags: ["#CSW70", "#TakeAction", "#RRBRadio", "#SweetMiracles", "#AVoiceForTheVoiceless"],
+      scheduledAt: "2026-03-21T17:00:00Z",
+      status: "scheduled",
+      createdAt: (/* @__PURE__ */ new Date()).toISOString()
+    });
+  });
+  return posts;
+}
+function generateCSW70Commercials() {
+  return [
+    {
+      id: "csw70-commercial-1",
+      campaignId: "csw70-2026",
+      title: "The Announcement",
+      script: `[AUDIO: Solfeggio frequency intro \u2014 528 Hz healing tone fading in]
+
+NARRATOR (Seraph AI):
+"This week, the world gathers at the United Nations for CSW70 \u2014 the 70th Commission on the Status of Women. The theme? Rights. Justice. Action."
+
+[AUDIO: Beat drops \u2014 Rockin' Rockin' Boogie signature groove]
+
+"Rockin' Rockin' Boogie Radio is LIVE from New York City, bringing you wall-to-wall coverage. Panels. Interviews. The voices that matter."
+
+[AUDIO: Crowd ambiance, gavel sound]
+
+"A Voice for the Voiceless. Tune in now at qumus.manus.space."
+
+[AUDIO: RRB jingle out]`,
+      duration: 30,
+      scheduledTimes: ["07:55", "15:00"],
+      status: "produced"
+    },
+    {
+      id: "csw70-commercial-2",
+      campaignId: "csw70-2026",
+      title: "Why It Matters",
+      script: `[AUDIO: Soft piano, building]
+
+NARRATOR (Candy AI):
+"One in three women worldwide has experienced violence. Millions are denied access to justice. Today, 193 nations are asking: how do we change this?"
+
+[AUDIO: Transition \u2014 heartbeat rhythm]
+
+"The 70th Commission on the Status of Women is not just a meeting. It's a movement. And Canryn Production \u2014 a Black women-owned media company \u2014 is there to amplify every voice."
+
+[AUDIO: RRB groove kicks in]
+
+"From the General Assembly floor to the side events, from Ghana's delegation to grassroots activists \u2014 we're streaming it all. Live. Unfiltered. Accessible in 20 languages."
+
+NARRATOR (Seraph AI):
+"Rockin' Rockin' Boogie Radio. Sweet Miracles Foundation. A Voice for the Voiceless."
+
+"Watch live. Join the conversation. qumus.manus.space."
+
+[AUDIO: RRB jingle + Solfeggio fade out]`,
+      duration: 60,
+      scheduledTimes: ["09:00", "18:00"],
+      status: "produced"
+    },
+    {
+      id: "csw70-commercial-3",
+      campaignId: "csw70-2026",
+      title: "Join the Movement",
+      script: `[AUDIO: Upbeat RRB groove]
+
+NARRATOR (Seraph AI):
+"CSW70 is LIVE. Rights. Justice. Action. Watch now on Rockin' Rockin' Boogie Radio. Link in bio."
+
+[AUDIO: Quick jingle out]`,
+      duration: 15,
+      scheduledTimes: ["12:00", "21:00"],
+      status: "produced"
+    }
+  ];
+}
+var mediaBlastRouter = router({
+  // Get all campaigns
+  getCampaigns: publicProcedure.query(() => {
+    return Array.from(campaigns.values()).map((c) => ({
+      id: c.id,
+      name: c.name,
+      description: c.description,
+      startDate: c.startDate,
+      endDate: c.endDate,
+      status: c.status,
+      platforms: c.platforms,
+      postCount: c.posts.length,
+      commercialCount: c.commercials.length,
+      automationEnabled: c.automationEnabled,
+      createdAt: c.createdAt
+    }));
+  }),
+  // Get campaign details
+  getCampaign: publicProcedure.input(z94.object({ campaignId: z94.string() })).query(({ input }) => {
+    const campaign = campaigns.get(input.campaignId);
+    if (!campaign) return null;
+    return campaign;
+  }),
+  // Get campaign posts with filtering
+  getCampaignPosts: publicProcedure.input(z94.object({
+    campaignId: z94.string(),
+    platform: z94.string().optional(),
+    status: z94.enum(["draft", "scheduled", "posted", "failed"]).optional(),
+    date: z94.string().optional()
+  })).query(({ input }) => {
+    const campaign = campaigns.get(input.campaignId);
+    if (!campaign) return [];
+    let posts = campaign.posts;
+    if (input.platform) {
+      posts = posts.filter((p) => p.platform === input.platform);
+    }
+    if (input.status) {
+      posts = posts.filter((p) => p.status === input.status);
+    }
+    if (input.date) {
+      posts = posts.filter((p) => p.scheduledAt.startsWith(input.date));
+    }
+    return posts;
+  }),
+  // Get campaign commercials
+  getCampaignCommercials: publicProcedure.input(z94.object({ campaignId: z94.string() })).query(({ input }) => {
+    const campaign = campaigns.get(input.campaignId);
+    if (!campaign) return [];
+    return campaign.commercials;
+  }),
+  // Get campaign metrics
+  getCampaignMetrics: publicProcedure.input(z94.object({ campaignId: z94.string() })).query(({ input }) => {
+    const campaign = campaigns.get(input.campaignId);
+    if (!campaign) return null;
+    const postedPosts = campaign.posts.filter((p) => p.status === "posted");
+    const scheduledPosts = campaign.posts.filter((p) => p.status === "scheduled");
+    const totalLikes = postedPosts.reduce((sum2, p) => sum2 + (p.engagementMetrics?.likes || 0), 0);
+    const totalShares = postedPosts.reduce((sum2, p) => sum2 + (p.engagementMetrics?.shares || 0), 0);
+    const totalComments = postedPosts.reduce((sum2, p) => sum2 + (p.engagementMetrics?.comments || 0), 0);
+    const totalViews = postedPosts.reduce((sum2, p) => sum2 + (p.engagementMetrics?.views || 0), 0);
+    const platformMetrics = {};
+    campaign.platforms.forEach((platform) => {
+      const platformPosts = postedPosts.filter((p) => p.platform === platform);
+      platformMetrics[platform] = {
+        posts: platformPosts.length,
+        likes: platformPosts.reduce((s, p) => s + (p.engagementMetrics?.likes || 0), 0),
+        shares: platformPosts.reduce((s, p) => s + (p.engagementMetrics?.shares || 0), 0),
+        views: platformPosts.reduce((s, p) => s + (p.engagementMetrics?.views || 0), 0)
+      };
+    });
+    return {
+      totalPosts: campaign.posts.length,
+      postedCount: postedPosts.length,
+      scheduledCount: scheduledPosts.length,
+      totalLikes,
+      totalShares,
+      totalComments,
+      totalViews,
+      totalReach: totalViews * 2.5,
+      // estimated reach multiplier
+      engagementRate: totalViews > 0 ? ((totalLikes + totalShares + totalComments) / totalViews * 100).toFixed(1) : "0",
+      platformMetrics,
+      commercialsAired: campaign.commercials.filter((c) => c.status === "produced").length,
+      commercialsTotal: campaign.commercials.length,
+      automationStatus: campaign.automationEnabled ? "active" : "paused"
+    };
+  }),
+  // Toggle campaign automation
+  toggleAutomation: protectedProcedure.input(z94.object({ campaignId: z94.string(), enabled: z94.boolean() })).mutation(({ input }) => {
+    const campaign = campaigns.get(input.campaignId);
+    if (!campaign) return { success: false };
+    campaign.automationEnabled = input.enabled;
+    return { success: true, automationEnabled: campaign.automationEnabled };
+  }),
+  // Update post status (manual override)
+  updatePostStatus: protectedProcedure.input(z94.object({
+    campaignId: z94.string(),
+    postId: z94.string(),
+    status: z94.enum(["draft", "scheduled", "posted", "failed"])
+  })).mutation(({ input }) => {
+    const campaign = campaigns.get(input.campaignId);
+    if (!campaign) return { success: false };
+    const post = campaign.posts.find((p) => p.id === input.postId);
+    if (!post) return { success: false };
+    post.status = input.status;
+    return { success: true };
+  }),
+  // Trigger immediate blast (post all scheduled posts for current time)
+  triggerBlast: protectedProcedure.input(z94.object({ campaignId: z94.string(), platform: z94.string().optional() })).mutation(({ input }) => {
+    const campaign = campaigns.get(input.campaignId);
+    if (!campaign) return { success: false, posted: 0 };
+    let postsToBlast = campaign.posts.filter((p) => p.status === "scheduled");
+    if (input.platform) {
+      postsToBlast = postsToBlast.filter((p) => p.platform === input.platform);
+    }
+    const batchSize = Math.min(postsToBlast.length, 8);
+    for (let i = 0; i < batchSize; i++) {
+      postsToBlast[i].status = "posted";
+      postsToBlast[i].engagementMetrics = {
+        likes: Math.floor(Math.random() * 200) + 50,
+        shares: Math.floor(Math.random() * 100) + 20,
+        comments: Math.floor(Math.random() * 50) + 10,
+        views: Math.floor(Math.random() * 2e3) + 500
+      };
+    }
+    return { success: true, posted: batchSize };
+  }),
+  // Get campaign timeline (for calendar view)
+  getCampaignTimeline: publicProcedure.input(z94.object({ campaignId: z94.string() })).query(({ input }) => {
+    const campaign = campaigns.get(input.campaignId);
+    if (!campaign) return [];
+    const timeline = {};
+    campaign.posts.forEach((post) => {
+      const date2 = post.scheduledAt.split("T")[0];
+      if (!timeline[date2]) {
+        timeline[date2] = { date: date2, posts: 0, posted: 0, scheduled: 0, platforms: [] };
+      }
+      timeline[date2].posts++;
+      if (post.status === "posted") timeline[date2].posted++;
+      if (post.status === "scheduled") timeline[date2].scheduled++;
+      if (!timeline[date2].platforms.includes(post.platform)) {
+        timeline[date2].platforms.push(post.platform);
+      }
+    });
+    return Object.values(timeline).sort((a, b) => a.date.localeCompare(b.date));
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -39346,6 +39708,8 @@ var appRouter = router({
   studioAudio: studioAudioRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
+  // Media Blast Campaign (CSW70 + future campaigns)
+  mediaBlast: mediaBlastRouter,
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter2,
   // Ecosystem Integration (State of Studio & Full Integration)
@@ -39357,11 +39721,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z94.object({
-        goal: z94.string().min(1, "Goal is required"),
-        priority: z94.number().int().min(1).max(10).optional().default(5),
-        steps: z94.array(z94.string()).optional(),
-        constraints: z94.array(z94.string()).optional()
+      z95.object({
+        goal: z95.string().min(1, "Goal is required"),
+        priority: z95.number().int().min(1).max(10).optional().default(5),
+        steps: z95.array(z95.string()).optional(),
+        constraints: z95.array(z95.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -39373,7 +39737,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z94.object({ taskId: z94.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z95.object({ taskId: z95.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -39383,11 +39747,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z94.object({
-        target: z94.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z94.string().min(1, "Action is required"),
-        params: z94.record(z94.any()).optional().default({}),
-        priority: z94.number().int().min(1).max(10).optional().default(5)
+      z95.object({
+        target: z95.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z95.string().min(1, "Action is required"),
+        params: z95.record(z95.any()).optional().default({}),
+        priority: z95.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -39399,10 +39763,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z94.object({ commandId: z94.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z95.object({ commandId: z95.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z94.object({ target: z94.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z95.object({ target: z95.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -39497,12 +39861,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z94.object({
-      sessionName: z94.string().min(1),
-      systemPrompt: z94.string().optional(),
-      temperature: z94.number().min(0).max(100).optional(),
-      model: z94.string().optional(),
-      maxSteps: z94.number().min(1).optional()
+    createSession: protectedProcedure.input(z95.object({
+      sessionName: z95.string().min(1),
+      systemPrompt: z95.string().optional(),
+      temperature: z95.number().min(0).max(100).optional(),
+      model: z95.string().optional(),
+      maxSteps: z95.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -39523,7 +39887,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z94.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z95.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -39532,7 +39896,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z94.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z95.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -39574,9 +39938,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z94.object({
-      dateRange: z94.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z94.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z95.object({
+      dateRange: z95.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z95.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -39587,24 +39951,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z94.object({
-      dateRange: z94.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z95.object({
+      dateRange: z95.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z94.object({
-      dateRange: z94.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z95.object({
+      dateRange: z95.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z94.object({
-      email: z94.string().email(),
-      name: z94.string().optional(),
-      source: z94.string().optional(),
-      language: z94.string().optional()
+    subscribe: publicProcedure.input(z95.object({
+      email: z95.string().email(),
+      name: z95.string().optional(),
+      source: z95.string().optional(),
+      language: z95.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
