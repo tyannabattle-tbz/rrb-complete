@@ -172,6 +172,11 @@ function ShowCard({ showSlug, dbShow }: { showSlug: string; dbShow?: any }) {
               <Play className="w-4 h-4" />
             </Button>
           </Link>
+          <a href={`/api/podcasts/${config.slug}/feed.xml`} target="_blank" rel="noopener noreferrer">
+            <Button variant="outline" className="border-zinc-700 text-orange-400 hover:bg-orange-900/20" title="RSS Feed">
+              <Podcast className="w-4 h-4" />
+            </Button>
+          </a>
         </div>
       </CardContent>
     </Card>
@@ -292,13 +297,33 @@ export default function PodcastsHub() {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-zinc-950 to-zinc-950" />
         <div className="relative container max-w-6xl mx-auto px-4 pt-12 pb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-400">
-              <Podcast className="w-7 h-7" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-400">
+                <Podcast className="w-7 h-7" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">Canryn Podcasts</h1>
+                <p className="text-zinc-400 text-sm">3 shows, live video, call-in, AI hosts, and QUMUS automation</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold">Canryn Podcasts</h1>
-              <p className="text-zinc-400 text-sm">3 shows, live video, call-in, AI hosts, and QUMUS automation</p>
+            <div className="flex items-center gap-2">
+              <a href="/api/podcasts/opml" download>
+                <Button variant="outline" size="sm" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
+                  <Download className="w-3.5 h-3.5 mr-1.5" /> OPML
+                </Button>
+              </a>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-orange-700 text-orange-400 hover:bg-orange-900/20"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/api/podcasts/candys-corner/feed.xml`);
+                  toast({ title: 'RSS URL Copied', description: 'Paste in your podcast app to subscribe' });
+                }}
+              >
+                <ExternalLink className="w-3.5 h-3.5 mr-1.5" /> Subscribe via RSS
+              </Button>
             </div>
           </div>
 

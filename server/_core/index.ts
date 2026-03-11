@@ -11,6 +11,7 @@ import { initializeWebSocket } from "../websocket";
 import { handleStripeWebhook } from "../webhooks/stripeWebhook";
 import { activateQumus } from "../qumus/qumusActivation";
 import { registerAudioStreamProxy } from "../audioStreamProxy";
+import { registerPodcastRssRoutes } from "../routes/podcastRssFeed";
 import { startProductionIntegration } from "../services/qumusProductionIntegration";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
@@ -209,6 +210,9 @@ async function startServer() {
   
   // Audio Stream Proxy - proxies HTTP radio streams through HTTPS server
   registerAudioStreamProxy(app);
+
+  // Podcast RSS Feed endpoints
+  registerPodcastRssRoutes(app);
 
   // tRPC API
   app.use(

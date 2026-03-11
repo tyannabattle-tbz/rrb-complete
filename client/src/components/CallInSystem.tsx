@@ -160,6 +160,8 @@ function CallerView({ showId, showSlug, accentColor }: { showId: number; showSlu
   const [callDuration, setCallDuration] = useState(0);
   const audioManagerRef = useRef<WebRTCAudioManager | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const peerIdRef = useRef<string>(`caller-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
 
   const joinQueue = trpc.podcastManagement.joinCallInQueue.useMutation({
     onSuccess: (data) => {
@@ -221,7 +223,61 @@ function CallerView({ showId, showSlug, accentColor }: { showId: number; showSlu
         console.log('[CallIn] WebRTC state:', state);
       });
       await audioManagerRef.current.initializeLocalAudio();
-      await audioManagerRef.current.createPeerConnection();
+
+      // Connect to WebSocket signaling server
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const ws = new WebSocket(`${wsProtocol}//${window.location.host}/api/ws`);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        console.log('[CallIn] WebSocket connected, joining signaling room');
+        ws.send(JSON.stringify({
+          type: 'webrtc:join-room',
+          roomId: showSlug,
+          peerId: peerIdRef.current,
+          payload: { role: 'caller' },
+        }));
+      };
+
+      ws.onmessage = async (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          if (msg.type === 'webrtc:room-joined') {
+            // Create peer connection with provided ICE servers
+            const pc = await audioManagerRef.current!.createPeerConnection(msg.iceServers);
+            // Set up ICE candidate forwarding
+            pc.onicecandidate = (e) => {
+              if (e.candidate && wsRef.current?.readyState === 1) {
+                wsRef.current.send(JSON.stringify({
+                  type: 'webrtc:ice-candidate',
+                  roomId: showSlug,
+                  peerId: peerIdRef.current,
+                  payload: e.candidate.toJSON(),
+                }));
+              }
+            };
+            // Create and send offer to host
+            const offer = await audioManagerRef.current!.createOffer();
+            ws.send(JSON.stringify({
+              type: 'webrtc:offer',
+              roomId: showSlug,
+              peerId: peerIdRef.current,
+              payload: offer,
+            }));
+          } else if (msg.type === 'webrtc:answer') {
+            await audioManagerRef.current?.handleAnswer(msg.payload);
+          } else if (msg.type === 'webrtc:ice-candidate') {
+            audioManagerRef.current?.addIceCandidate(msg.payload);
+          } else if (msg.type === 'webrtc:peer-muted' || msg.type === 'webrtc:peer-unmuted') {
+            console.log(`[CallIn] Peer ${msg.peerId} ${msg.type === 'webrtc:peer-muted' ? 'muted' : 'unmuted'}`);
+          }
+        } catch (err) {
+          console.error('[CallIn] Signaling message error:', err);
+        }
+      };
+
+      ws.onerror = (err) => console.error('[CallIn] WebSocket error:', err);
+      ws.onclose = () => console.log('[CallIn] WebSocket disconnected');
 
       // Join the queue
       joinQueue.mutate({
@@ -237,6 +293,16 @@ function CallerView({ showId, showSlug, accentColor }: { showId: number; showSlu
 
   const handleHangUp = () => {
     audioManagerRef.current?.disconnect();
+    // Leave signaling room
+    if (wsRef.current?.readyState === 1) {
+      wsRef.current.send(JSON.stringify({
+        type: 'webrtc:leave-room',
+        roomId: showSlug,
+        peerId: peerIdRef.current,
+      }));
+      wsRef.current.close();
+    }
+    wsRef.current = null;
     if (timerRef.current) clearInterval(timerRef.current);
     setCallDuration(0);
     
@@ -249,7 +315,26 @@ function CallerView({ showId, showSlug, accentColor }: { showId: number; showSlu
   const handleToggleMute = () => {
     const isMuted = audioManagerRef.current?.toggleMute() ?? false;
     setMuted(isMuted);
+    // Notify peers via signaling
+    if (wsRef.current?.readyState === 1) {
+      wsRef.current.send(JSON.stringify({
+        type: isMuted ? 'webrtc:mute' : 'webrtc:unmute',
+        roomId: showSlug,
+        peerId: peerIdRef.current,
+      }));
+    }
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      audioManagerRef.current?.disconnect();
+      if (wsRef.current?.readyState === 1) {
+        wsRef.current.close();
+      }
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);

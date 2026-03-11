@@ -1,6 +1,7 @@
 import { Server as HTTPServer } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import type { IncomingMessage } from "http";
+import { getSignalingManager } from "./services/webrtcSignaling";
 
 export interface AgentStatusUpdate {
   type: "status" | "message" | "tool_execution" | "error";
@@ -32,6 +33,10 @@ export class AgentWebSocketManager {
       ws.on("close", () => {
         console.log("[WebSocket] Connection closed");
         this.removeClient(ws);
+        // Clean up WebRTC signaling for disconnected peer
+        try {
+          getSignalingManager().handleDisconnect(ws);
+        } catch (e) { /* signaling not initialized yet */ }
       });
 
       ws.on("error", (error: Error) => {
@@ -59,6 +64,14 @@ export class AgentWebSocketManager {
       }));
     } else if (type === "ping") {
       ws.send(JSON.stringify({ type: "pong", timestamp: new Date().toISOString() }));
+    } else if (type?.startsWith('webrtc:')) {
+      // Route WebRTC signaling messages to the signaling manager
+      try {
+        getSignalingManager().handleMessage(ws, message);
+      } catch (e) {
+        console.error('[WebSocket] WebRTC signaling error:', e);
+        ws.send(JSON.stringify({ type: 'error', message: 'WebRTC signaling error' }));
+      }
     }
   }
 

@@ -32,6 +32,7 @@ import { useAiVoice } from '@/hooks/useAiVoice';
 import type { AiPersona } from '@/services/aiVoiceTts';
 import EpisodeManager from './EpisodeManager';
 import CallInSystem from './CallInSystem';
+import PodcastRecorder from './PodcastRecorder';
 
 // ─── Types ───
 export interface PodcastShowConfig {
@@ -238,6 +239,14 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
   const handleStopRecording = () => {
     setIsRecording(false);
     toast.info('Recording saved', { description: `${formatTime(recordingTime)} captured. Routing to pipeline...` });
+  };
+
+  const handleRecordingStateChange = (recording: boolean) => {
+    setIsRecording(recording);
+  };
+
+  const handleEpisodeCreated = (episodeId: number) => {
+    toast.success(`Episode #${episodeId} created and published!`);
   };
 
   // Fetch real show data from DB
@@ -551,6 +560,19 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
                     <div className="h-full rounded-full" style={{ width: '90%', background: config.theme.gradient }} />
                   </div>
                 </div>
+                {/* Live Recorder */}
+                {currentShow && (
+                  <div className="p-3 rounded-lg bg-white/5">
+                    <PodcastRecorder
+                      showId={currentShow.id}
+                      showSlug={config.id}
+                      showTitle={config.title}
+                      onEpisodeCreated={handleEpisodeCreated}
+                      onRecordingStateChange={handleRecordingStateChange}
+                      accentColor={config.theme.primary}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>

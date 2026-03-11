@@ -15,11 +15,11 @@ var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc17) => {
+var __copyProps = (to, from, except, desc18) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc17 = __getOwnPropDesc(from, key)) || desc17.enumerable });
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc18 = __getOwnPropDesc(from, key)) || desc18.enumerable });
   }
   return to;
 };
@@ -4936,12 +4936,12 @@ async function checkAndPublishScheduledPosts() {
   try {
     const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
     const { socialMediaPosts: socialMediaPosts2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
-    const { eq: eq30, and: and21, lte: lte4 } = await import("drizzle-orm");
+    const { eq: eq31, and: and22, lte: lte4 } = await import("drizzle-orm");
     const db2 = await getDb5();
     const now = Date.now();
     const duePosts = await db2.select().from(socialMediaPosts2).where(
-      and21(
-        eq30(socialMediaPosts2.status, "scheduled"),
+      and22(
+        eq31(socialMediaPosts2.status, "scheduled"),
         lte4(socialMediaPosts2.scheduledAt, now)
       )
     );
@@ -4971,7 +4971,7 @@ async function checkAndPublishScheduledPosts() {
         status: newStatus,
         publishedAt: result2.success ? Date.now() : void 0,
         updatedAt: Date.now()
-      }).where(eq30(socialMediaPosts2.id, post.id));
+      }).where(eq31(socialMediaPosts2.id, post.id));
       results.push({
         postId: post.id,
         platform: post.platform,
@@ -20046,10 +20046,10 @@ Room: ${conf.room_code}
     const [rows] = await db2.execute(sql11`SELECT id, title, description, recording_url, recording_status FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = rows[0];
     if (!conf) return null;
-    const desc17 = conf.description || "";
+    const desc18 = conf.description || "";
     const transcriptMarker = "--- TRANSCRIPT ---";
-    const transcriptIdx = desc17.indexOf(transcriptMarker);
-    const transcript = transcriptIdx >= 0 ? desc17.substring(transcriptIdx + transcriptMarker.length).trim() : null;
+    const transcriptIdx = desc18.indexOf(transcriptMarker);
+    const transcript = transcriptIdx >= 0 ? desc18.substring(transcriptIdx + transcriptMarker.length).trim() : null;
     return {
       conferenceId: conf.id,
       title: conf.title,
@@ -29229,7 +29229,7 @@ var videoProductionWorkflowRouter = router({
   registerGeneratedVideo: protectedProcedure.input(videoProductionSchema).mutation(async ({ ctx, input }) => {
     try {
       const videoRecord = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq30 }) => eq30(videos2.id, input.videoId)
+        where: (videos2, { eq: eq31 }) => eq31(videos2.id, input.videoId)
       });
       if (!videoRecord) {
         await (void 0)(void 0).values({
@@ -29260,7 +29260,7 @@ var videoProductionWorkflowRouter = router({
   getVideoStatus: protectedProcedure.input(z73.object({ videoId: z73.string() })).query(async ({ input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq30 }) => eq30(videos2.id, input.videoId)
+        where: (videos2, { eq: eq31 }) => eq31(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29282,7 +29282,7 @@ var videoProductionWorkflowRouter = router({
   scheduleForRRBRadio: protectedProcedure.input(broadcastScheduleSchema).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq30 }) => eq30(videos2.id, input.videoId)
+        where: (videos2, { eq: eq31 }) => eq31(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29318,10 +29318,10 @@ var videoProductionWorkflowRouter = router({
   getScheduledBroadcasts: protectedProcedure.input(z73.object({ stationId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcastSchedules.findMany({
-        where: (schedules, { eq: eq30, and: and21 }) => input.stationId ? and21(
-          eq30(schedules.createdBy, String(ctx.user.id)),
-          eq30(schedules.stationId, input.stationId)
-        ) : eq30(schedules.createdBy, String(ctx.user.id))
+        where: (schedules, { eq: eq31, and: and22 }) => input.stationId ? and22(
+          eq31(schedules.createdBy, String(ctx.user.id)),
+          eq31(schedules.stationId, input.stationId)
+        ) : eq31(schedules.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         scheduleId: broadcast.id,
@@ -29346,7 +29346,7 @@ var videoProductionWorkflowRouter = router({
   ).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq30 }) => eq30(videos2.id, input.videoId)
+        where: (videos2, { eq: eq31 }) => eq31(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29378,10 +29378,10 @@ var videoProductionWorkflowRouter = router({
   getBroadcastHistory: protectedProcedure.input(z73.object({ videoId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq30, and: and21 }) => input.videoId ? and21(
-          eq30(broadcasts5.createdBy, String(ctx.user.id)),
-          eq30(broadcasts5.videoId, input.videoId)
-        ) : eq30(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq31, and: and22 }) => input.videoId ? and22(
+          eq31(broadcasts5.createdBy, String(ctx.user.id)),
+          eq31(broadcasts5.videoId, input.videoId)
+        ) : eq31(broadcasts5.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         broadcastId: broadcast.id,
@@ -29401,10 +29401,10 @@ var videoProductionWorkflowRouter = router({
   getWorkflowStats: protectedProcedure.query(async ({ ctx }) => {
     try {
       const videos2 = await (void 0).videos.findMany({
-        where: (videos3, { eq: eq30 }) => eq30(videos3.userId, String(ctx.user.id))
+        where: (videos3, { eq: eq31 }) => eq31(videos3.userId, String(ctx.user.id))
       });
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq30 }) => eq30(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq31 }) => eq31(broadcasts5.createdBy, String(ctx.user.id))
       });
       const statusCounts = {
         generated: videos2.filter((v) => v.status === "generated").length,
@@ -41840,6 +41840,233 @@ function serveStatic(app) {
 
 // server/websocket.ts
 import { WebSocketServer, WebSocket } from "ws";
+
+// server/services/webrtcSignaling.ts
+var WebRTCSignalingManager = class {
+  rooms = /* @__PURE__ */ new Map();
+  peerToRoom = /* @__PURE__ */ new Map();
+  // peerId -> roomId
+  // ICE servers configuration
+  iceServers = [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun3.l.google.com:19302" },
+    { urls: "stun:stun4.l.google.com:19302" }
+  ];
+  // ─── Handle Signaling Message ──────────────────────────
+  handleMessage(ws, message) {
+    switch (message.type) {
+      case "webrtc:join-room":
+        this.handleJoinRoom(ws, message);
+        break;
+      case "webrtc:leave-room":
+        this.handleLeaveRoom(message.peerId);
+        break;
+      case "webrtc:offer":
+        this.relayMessage(message);
+        break;
+      case "webrtc:answer":
+        this.relayMessage(message);
+        break;
+      case "webrtc:ice-candidate":
+        this.relayMessage(message);
+        break;
+      case "webrtc:mute":
+      case "webrtc:unmute":
+        this.handleMuteToggle(message);
+        break;
+      default:
+        console.warn("[WebRTC Signaling] Unknown message type:", message.type);
+    }
+  }
+  // ─── Join Room ─────────────────────────────────────────
+  handleJoinRoom(ws, message) {
+    const { roomId, peerId, callInId, payload } = message;
+    const role = payload?.role || "caller";
+    if (!this.rooms.has(roomId)) {
+      this.rooms.set(roomId, {
+        id: roomId,
+        showSlug: roomId,
+        host: null,
+        callers: /* @__PURE__ */ new Map(),
+        createdAt: Date.now()
+      });
+      console.log(`[WebRTC Signaling] Room created: ${roomId}`);
+    }
+    const room = this.rooms.get(roomId);
+    const peerInfo = {
+      peerId,
+      callInId,
+      role,
+      ws,
+      joinedAt: Date.now(),
+      isMuted: role === "caller"
+      // Callers start muted
+    };
+    if (role === "host") {
+      room.host = peerInfo;
+      console.log(`[WebRTC Signaling] Host joined room ${roomId}: ${peerId}`);
+    } else {
+      room.callers.set(peerId, peerInfo);
+      console.log(`[WebRTC Signaling] Caller joined room ${roomId}: ${peerId} (callInId: ${callInId})`);
+    }
+    this.peerToRoom.set(peerId, roomId);
+    this.sendToPeer(ws, {
+      type: "webrtc:room-joined",
+      roomId,
+      peerId,
+      iceServers: this.iceServers,
+      peers: this.getRoomPeers(roomId, peerId)
+    });
+    this.broadcastToRoom(roomId, {
+      type: "webrtc:peer-joined",
+      roomId,
+      peerId,
+      role,
+      callInId
+    }, peerId);
+  }
+  // ─── Leave Room ────────────────────────────────────────
+  handleLeaveRoom(peerId) {
+    const roomId = this.peerToRoom.get(peerId);
+    if (!roomId) return;
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+    if (room.host?.peerId === peerId) {
+      room.host = null;
+      console.log(`[WebRTC Signaling] Host left room ${roomId}`);
+    } else {
+      room.callers.delete(peerId);
+      console.log(`[WebRTC Signaling] Caller left room ${roomId}: ${peerId}`);
+    }
+    this.peerToRoom.delete(peerId);
+    this.broadcastToRoom(roomId, {
+      type: "webrtc:peer-left",
+      roomId,
+      peerId
+    });
+    if (!room.host && room.callers.size === 0) {
+      this.rooms.delete(roomId);
+      console.log(`[WebRTC Signaling] Room destroyed: ${roomId}`);
+    }
+  }
+  // ─── Relay SDP/ICE Messages ────────────────────────────
+  relayMessage(message) {
+    const { roomId, peerId, targetPeerId, payload } = message;
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+    if (targetPeerId) {
+      const targetPeer = room.host?.peerId === targetPeerId ? room.host : room.callers.get(targetPeerId);
+      if (targetPeer) {
+        this.sendToPeer(targetPeer.ws, {
+          type: message.type,
+          roomId,
+          peerId,
+          // sender
+          payload
+        });
+      }
+    } else {
+      this.broadcastToRoom(roomId, {
+        type: message.type,
+        roomId,
+        peerId,
+        payload
+      }, peerId);
+    }
+  }
+  // ─── Mute/Unmute ───────────────────────────────────────
+  handleMuteToggle(message) {
+    const { roomId, peerId, type } = message;
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+    const isMuted = type === "webrtc:mute";
+    const peer = room.host?.peerId === peerId ? room.host : room.callers.get(peerId);
+    if (peer) {
+      peer.isMuted = isMuted;
+    }
+    this.broadcastToRoom(roomId, {
+      type: isMuted ? "webrtc:peer-muted" : "webrtc:peer-unmuted",
+      roomId,
+      peerId
+    });
+  }
+  // ─── Helpers ───────────────────────────────────────────
+  getRoomPeers(roomId, excludePeerId) {
+    const room = this.rooms.get(roomId);
+    if (!room) return [];
+    const peers = [];
+    if (room.host && room.host.peerId !== excludePeerId) {
+      peers.push({ peerId: room.host.peerId, role: "host", isMuted: room.host.isMuted });
+    }
+    for (const [id, caller] of room.callers) {
+      if (id !== excludePeerId) {
+        peers.push({ peerId: caller.peerId, role: "caller", isMuted: caller.isMuted });
+      }
+    }
+    return peers;
+  }
+  sendToPeer(ws, data) {
+    try {
+      if (ws.readyState === 1) {
+        ws.send(JSON.stringify(data));
+      }
+    } catch (err) {
+      console.error("[WebRTC Signaling] Failed to send to peer:", err);
+    }
+  }
+  broadcastToRoom(roomId, data, excludePeerId) {
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+    if (room.host && room.host.peerId !== excludePeerId) {
+      this.sendToPeer(room.host.ws, data);
+    }
+    for (const [id, caller] of room.callers) {
+      if (id !== excludePeerId) {
+        this.sendToPeer(caller.ws, data);
+      }
+    }
+  }
+  // ─── Status ────────────────────────────────────────────
+  getStatus() {
+    return {
+      activeRooms: this.rooms.size,
+      totalPeers: this.peerToRoom.size,
+      rooms: Array.from(this.rooms.entries()).map(([id, room]) => ({
+        id,
+        hasHost: !!room.host,
+        callerCount: room.callers.size,
+        createdAt: room.createdAt
+      }))
+    };
+  }
+  // ─── Cleanup disconnected peer ─────────────────────────
+  handleDisconnect(ws) {
+    for (const [peerId, roomId] of this.peerToRoom) {
+      const room = this.rooms.get(roomId);
+      if (!room) continue;
+      if (room.host?.ws === ws) {
+        this.handleLeaveRoom(peerId);
+        return;
+      }
+      const caller = room.callers.get(peerId);
+      if (caller?.ws === ws) {
+        this.handleLeaveRoom(peerId);
+        return;
+      }
+    }
+  }
+};
+var signalingManager = null;
+function getSignalingManager() {
+  if (!signalingManager) {
+    signalingManager = new WebRTCSignalingManager();
+  }
+  return signalingManager;
+}
+
+// server/websocket.ts
 var AgentWebSocketManager = class {
   wss;
   clients = /* @__PURE__ */ new Map();
@@ -41860,6 +42087,10 @@ var AgentWebSocketManager = class {
       ws.on("close", () => {
         console.log("[WebSocket] Connection closed");
         this.removeClient(ws);
+        try {
+          getSignalingManager().handleDisconnect(ws);
+        } catch (e) {
+        }
       });
       ws.on("error", (error) => {
         console.error("[WebSocket] Error:", error);
@@ -41884,6 +42115,13 @@ var AgentWebSocketManager = class {
       }));
     } else if (type === "ping") {
       ws.send(JSON.stringify({ type: "pong", timestamp: (/* @__PURE__ */ new Date()).toISOString() }));
+    } else if (type?.startsWith("webrtc:")) {
+      try {
+        getSignalingManager().handleMessage(ws, message);
+      } catch (e) {
+        console.error("[WebSocket] WebRTC signaling error:", e);
+        ws.send(JSON.stringify({ type: "error", message: "WebRTC signaling error" }));
+      }
     }
   }
   subscribeToSession(sessionId, ws) {
@@ -42527,6 +42765,199 @@ function registerAudioStreamProxy(app) {
   console.log("[Stream Proxy] Audio stream proxy registered at /api/stream-proxy");
 }
 
+// server/routes/podcastRssFeed.ts
+init_db();
+init_schema();
+import { eq as eq30, desc as desc17, and as and21 } from "drizzle-orm";
+function escapeXml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+}
+function formatDuration(seconds) {
+  if (!seconds || seconds <= 0) return "00:00:00";
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor(seconds % 3600 / 60);
+  const s = seconds % 60;
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+}
+function toRfc2822(timestamp2) {
+  if (!timestamp2) return (/* @__PURE__ */ new Date()).toUTCString();
+  return new Date(timestamp2).toUTCString();
+}
+var showMetadata = {
+  "candys-corner": {
+    author: "Candy \u2014 Canryn Production",
+    category: "Society &amp; Culture",
+    subcategory: "Personal Journals",
+    imageUrl: "/podcast-covers/candys-corner.jpg",
+    language: "en-us",
+    explicit: false,
+    copyright: "\xA9 2025 Canryn Production and its subsidiaries. All rights reserved.",
+    ownerName: "Canryn Production",
+    ownerEmail: "podcasts@canrynproduction.com"
+  },
+  "solbones": {
+    author: "Seraph AI \u2014 Canryn Production",
+    category: "Leisure",
+    subcategory: "Games",
+    imageUrl: "/podcast-covers/solbones-podcast.jpg",
+    language: "en-us",
+    explicit: false,
+    copyright: "\xA9 2025 Canryn Production and its subsidiaries. All rights reserved.",
+    ownerName: "Canryn Production",
+    ownerEmail: "podcasts@canrynproduction.com"
+  },
+  "around-the-qumunity": {
+    author: "Valanna AI \u2014 Canryn Production",
+    category: "Technology",
+    subcategory: "Tech News",
+    imageUrl: "/podcast-covers/around-the-qumunity.jpg",
+    language: "en-us",
+    explicit: false,
+    copyright: "\xA9 2025 Canryn Production and its subsidiaries. All rights reserved.",
+    ownerName: "Canryn Production",
+    ownerEmail: "podcasts@canrynproduction.com"
+  }
+};
+async function generateRssFeed(slug, baseUrl) {
+  const db2 = await getDb();
+  if (!db2) return null;
+  const [show] = await db2.select().from(podcastShows).where(eq30(podcastShows.slug, slug)).limit(1);
+  if (!show) return null;
+  const episodes = await db2.select().from(podcastEpisodes).where(and21(
+    eq30(podcastEpisodes.showId, show.id),
+    eq30(podcastEpisodes.status, "published")
+  )).orderBy(desc17(podcastEpisodes.publishedAt)).limit(100);
+  const meta = showMetadata[slug] || showMetadata["candys-corner"];
+  const feedUrl = `${baseUrl}/api/podcasts/${slug}/feed.xml`;
+  const siteUrl = `${baseUrl}/podcasts`;
+  const imageUrl = meta.imageUrl.startsWith("http") ? meta.imageUrl : `${baseUrl}${meta.imageUrl}`;
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <title>${escapeXml(show.title)}</title>
+    <link>${siteUrl}</link>
+    <description>${escapeXml(show.description || `${show.title} \u2014 A Canryn Production podcast`)}</description>
+    <language>${meta.language}</language>
+    <copyright>${meta.copyright}</copyright>
+    <lastBuildDate>${toRfc2822(Date.now())}</lastBuildDate>
+    <generator>QUMUS Podcast Engine \u2014 Canryn Production</generator>
+    <atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />
+
+    <itunes:author>${meta.author}</itunes:author>
+    <itunes:summary>${escapeXml(show.description || show.title)}</itunes:summary>
+    <itunes:type>episodic</itunes:type>
+    <itunes:owner>
+      <itunes:name>${meta.ownerName}</itunes:name>
+      <itunes:email>${meta.ownerEmail}</itunes:email>
+    </itunes:owner>
+    <itunes:image href="${imageUrl}" />
+    <itunes:category text="${meta.category}"${meta.subcategory ? `>
+      <itunes:category text="${meta.subcategory}" />
+    </itunes:category` : " /"}>
+    <itunes:explicit>${meta.explicit ? "true" : "false"}</itunes:explicit>
+
+    <image>
+      <url>${imageUrl}</url>
+      <title>${escapeXml(show.title)}</title>
+      <link>${siteUrl}</link>
+    </image>
+`;
+  for (const ep of episodes) {
+    const audioUrl = ep.audioUrl || "";
+    const pubDate = toRfc2822(ep.publishedAt);
+    const duration = formatDuration(ep.duration);
+    const episodeUrl = `${baseUrl}/podcast/${slug}/episode/${ep.id}`;
+    const guid = `canryn-${slug}-ep-${ep.id}`;
+    const fileSize = ep.fileSize || 0;
+    const mimeType = audioUrl.includes(".mp4") ? "audio/mp4" : audioUrl.includes(".mp3") ? "audio/mpeg" : "audio/webm";
+    xml += `
+    <item>
+      <title>${escapeXml(ep.title)}</title>
+      <description>${escapeXml(ep.description || "")}</description>
+      <link>${episodeUrl}</link>
+      <guid isPermaLink="false">${guid}</guid>
+      <pubDate>${pubDate}</pubDate>
+      <enclosure url="${escapeXml(audioUrl)}" length="${fileSize}" type="${mimeType}" />
+      <itunes:title>${escapeXml(ep.title)}</itunes:title>
+      <itunes:summary>${escapeXml(ep.description || "")}</itunes:summary>
+      <itunes:duration>${duration}</itunes:duration>
+      <itunes:episode>${ep.episodeNumber || 1}</itunes:episode>
+      <itunes:season>${ep.seasonNumber || 1}</itunes:season>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:explicit>${meta.explicit ? "true" : "false"}</itunes:explicit>
+    </item>`;
+  }
+  xml += `
+  </channel>
+</rss>`;
+  return xml;
+}
+function registerPodcastRssRoutes(app) {
+  app.get("/api/podcasts/:slug/feed.xml", async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const protocol = req.protocol;
+      const host = req.get("host") || "localhost:3000";
+      const baseUrl = `${protocol}://${host}`;
+      const xml = await generateRssFeed(slug, baseUrl);
+      if (!xml) {
+        return res.status(404).type("text/plain").send("Podcast not found");
+      }
+      res.set({
+        "Content-Type": "application/rss+xml; charset=utf-8",
+        "Cache-Control": "public, max-age=300",
+        // 5 min cache
+        "X-Powered-By": "QUMUS Podcast Engine"
+      });
+      res.send(xml);
+      console.log(`[RSS] Served feed for ${slug}`);
+    } catch (error) {
+      console.error("[RSS] Feed generation error:", error);
+      res.status(500).type("text/plain").send("Feed generation failed");
+    }
+  });
+  app.get("/api/podcasts/opml", async (req, res) => {
+    try {
+      const db2 = await getDb();
+      if (!db2) return res.status(500).send("Database unavailable");
+      const protocol = req.protocol;
+      const host = req.get("host") || "localhost:3000";
+      const baseUrl = `${protocol}://${host}`;
+      const shows = await db2.select().from(podcastShows).where(eq30(podcastShows.isActive, 1));
+      let opml = `<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>Canryn Production Podcasts</title>
+    <dateCreated>${(/* @__PURE__ */ new Date()).toUTCString()}</dateCreated>
+    <ownerName>Canryn Production</ownerName>
+  </head>
+  <body>
+    <outline text="Canryn Production Podcasts">`;
+      for (const show of shows) {
+        opml += `
+      <outline type="rss" text="${escapeXml(show.title)}" xmlUrl="${baseUrl}/api/podcasts/${show.slug}/feed.xml" htmlUrl="${baseUrl}/podcasts" />`;
+      }
+      opml += `
+    </outline>
+  </body>
+</opml>`;
+      res.set({
+        "Content-Type": "text/x-opml; charset=utf-8",
+        "Content-Disposition": 'attachment; filename="canryn-production-podcasts.opml"'
+      });
+      res.send(opml);
+    } catch (error) {
+      console.error("[OPML] Generation error:", error);
+      res.status(500).send("OPML generation failed");
+    }
+  });
+  console.log("[RSS] Podcast RSS feed routes registered");
+}
+
 // server/_core/index.ts
 init_qumusProductionIntegration();
 init_const();
@@ -42683,6 +43114,7 @@ async function startServer() {
     }
   });
   registerAudioStreamProxy(app);
+  registerPodcastRssRoutes(app);
   app.use(
     "/api/trpc",
     createExpressMiddleware({

@@ -3854,3 +3854,15 @@
 - [x] Wire episode playback with inline audio player on hub page
 - [x] Add /podcasts route to App.tsx
 - [x] Write vitest tests for podcast episode CRUD and call-in system
+
+## Full Production Mode — Recording, WebRTC Signaling, RSS Feed
+- [x] Build episode recording flow with MediaRecorder capture in podcast rooms
+- [x] Auto-upload recorded audio to S3 with progress indicator
+- [x] Auto-create episode entry in database after recording completes
+- [x] Wire WebRTC call-in signaling server with WebSocket relay for real peer connections
+- [x] Build WebSocket signaling endpoint for SDP offer/answer and ICE candidate exchange
+- [x] Create public RSS feed endpoint at /api/podcasts/:slug/feed.xml
+- [x] Generate valid RSS 2.0 XML with iTunes podcast namespace tags
+- [x] Include episode enclosures with S3 audio URLs, durations, and metadata
+- [x] Add RSS feed link to each podcast show card on the hub page
+- [x] Write vitest tests for recording flow, signaling, and RSS feed generation
