@@ -15,6 +15,17 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import LanguageInterpreter from '@/components/LanguageInterpreter';
 
+const QUICK_LANGS = [
+  { code: 'en', flag: '\u{1F1FA}\u{1F1F8}', name: 'EN' },
+  { code: 'es', flag: '\u{1F1EA}\u{1F1F8}', name: 'ES' },
+  { code: 'fr', flag: '\u{1F1EB}\u{1F1F7}', name: 'FR' },
+  { code: 'zh', flag: '\u{1F1E8}\u{1F1F3}', name: 'ZH' },
+  { code: 'ar', flag: '\u{1F1F8}\u{1F1E6}', name: 'AR' },
+  { code: 'sw', flag: '\u{1F1F0}\u{1F1EA}', name: 'SW' },
+  { code: 'pt', flag: '\u{1F1E7}\u{1F1F7}', name: 'PT' },
+  { code: 'de', flag: '\u{1F1E9}\u{1F1EA}', name: 'DE' },
+];
+
 declare global {
   interface Window {
     JitsiMeetExternalAPI: any;
@@ -220,6 +231,11 @@ export default function ConferenceRoom() {
   const [showMoreTools, setShowMoreTools] = useState(false);
   const [showInterpreter, setShowInterpreter] = useState(false);
   const [showCaptions, setShowCaptions] = useState(false);
+  const [captionTargetLang, setCaptionTargetLang] = useState('es');
+  const [showLangQuickSwitch, setShowLangQuickSwitch] = useState(false);
+  const [voiceCommandActive, setVoiceCommandActive] = useState(false);
+  const voiceCmdRecognitionRef = useRef<any>(null);
+  const interpreterRef = useRef<{ setTargetLang?: (lang: string) => void }>({});
   const [captionText, setCaptionText] = useState<{ original: string; translated: string; sourceLang: string; targetLang: string; speaker?: string; speakerColor?: string } | null>(null);
   const [captionVisible, setCaptionVisible] = useState(true);
   const [captionSize, setCaptionSize] = useState<'sm' | 'md' | 'lg'>('md');
@@ -242,6 +258,67 @@ export default function ConferenceRoom() {
     }
     return speakerColors[speaker];
   }, [speakerColors]);
+
+  // Voice command handler
+  const startVoiceCommands = useCallback(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) { toast.error('Voice commands not supported'); return; }
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    recognition.onresult = (event: any) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          const cmd = event.results[i][0].transcript.toLowerCase().trim();
+          if (cmd.includes('start captions') || cmd.includes('turn on captions')) {
+            setShowCaptions(true); if (!showInterpreter) setShowInterpreter(true);
+            toast.success('Voice: Captions enabled');
+          } else if (cmd.includes('stop captions') || cmd.includes('turn off captions')) {
+            setShowCaptions(false); toast.success('Voice: Captions disabled');
+          } else if (cmd.includes('increase font') || cmd.includes('bigger text') || cmd.includes('larger')) {
+            setCaptionSize(prev => prev === 'sm' ? 'md' : 'lg'); toast.success('Voice: Font size increased');
+          } else if (cmd.includes('decrease font') || cmd.includes('smaller text') || cmd.includes('smaller')) {
+            setCaptionSize(prev => prev === 'lg' ? 'md' : 'sm'); toast.success('Voice: Font size decreased');
+          } else if (cmd.includes('switch to spanish') || cmd.includes('español')) {
+            setCaptionTargetLang('es'); toast.success('Voice: Switched to Spanish');
+          } else if (cmd.includes('switch to french') || cmd.includes('français')) {
+            setCaptionTargetLang('fr'); toast.success('Voice: Switched to French');
+          } else if (cmd.includes('switch to chinese') || cmd.includes('mandarin')) {
+            setCaptionTargetLang('zh'); toast.success('Voice: Switched to Chinese');
+          } else if (cmd.includes('switch to arabic')) {
+            setCaptionTargetLang('ar'); toast.success('Voice: Switched to Arabic');
+          } else if (cmd.includes('switch to swahili')) {
+            setCaptionTargetLang('sw'); toast.success('Voice: Switched to Swahili');
+          } else if (cmd.includes('switch to portuguese')) {
+            setCaptionTargetLang('pt'); toast.success('Voice: Switched to Portuguese');
+          } else if (cmd.includes('switch to german') || cmd.includes('deutsch')) {
+            setCaptionTargetLang('de'); toast.success('Voice: Switched to German');
+          } else if (cmd.includes('switch to english')) {
+            setCaptionTargetLang('en'); toast.success('Voice: Switched to English');
+          } else if (cmd.includes('start interpreter') || cmd.includes('open interpreter')) {
+            setShowInterpreter(true); toast.success('Voice: Interpreter opened');
+          } else if (cmd.includes('close interpreter') || cmd.includes('stop interpreter')) {
+            setShowInterpreter(false); toast.success('Voice: Interpreter closed');
+          }
+        }
+      }
+    };
+    recognition.onerror = (e: any) => { if (e.error !== 'no-speech' && e.error !== 'aborted') toast.error(`Voice cmd error: ${e.error}`); };
+    recognition.onend = () => { if (voiceCmdRecognitionRef.current && voiceCommandActive) { try { recognition.start(); } catch {} } };
+    voiceCmdRecognitionRef.current = recognition;
+    try { recognition.start(); setVoiceCommandActive(true); toast.success('Voice commands active. Say "start captions", "switch to Spanish", etc.'); } catch { toast.error('Failed to start voice commands'); }
+  }, [showInterpreter, voiceCommandActive]);
+
+  const stopVoiceCommands = useCallback(() => {
+    if (voiceCmdRecognitionRef.current) {
+      voiceCmdRecognitionRef.current.onend = null;
+      try { voiceCmdRecognitionRef.current.stop(); } catch {}
+      voiceCmdRecognitionRef.current = null;
+    }
+    setVoiceCommandActive(false);
+    toast.info('Voice commands stopped');
+  }, []);
 
   // Handle caption updates from interpreter
   const handleCaptionUpdate = useCallback((caption: { original: string; translated: string; sourceLang: string; targetLang: string }) => {
@@ -745,6 +822,7 @@ export default function ConferenceRoom() {
           contextLabel={conference?.title || 'Conference Room'}
           onClose={() => setShowInterpreter(false)}
           enableSignLanguage={true}
+          defaultTargetLang={captionTargetLang}
           onCaptionUpdate={showCaptions ? handleCaptionUpdate : undefined}
         />
       )}
@@ -847,6 +925,64 @@ export default function ConferenceRoom() {
             ))}
           </div>
         )}
+
+        {/* Language quick-switch - only show when CC is on */}
+        {showCaptions && (
+          <div className="relative">
+            <button
+              onClick={() => setShowLangQuickSwitch(!showLangQuickSwitch)}
+              className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-800/80 border border-white/10 shadow-lg text-white/70 hover:text-white text-xs transition-all"
+              aria-label="Quick switch caption language"
+              title="Change caption language"
+            >
+              <span>{QUICK_LANGS.find(l => l.code === captionTargetLang)?.flag || '\u{1F310}'}</span>
+              <span className="text-[10px]">{QUICK_LANGS.find(l => l.code === captionTargetLang)?.name || 'Lang'}</span>
+            </button>
+            {showLangQuickSwitch && (
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl p-1.5 z-50">
+                <div className="grid grid-cols-4 gap-1">
+                  {QUICK_LANGS.map(lang => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        setCaptionTargetLang(lang.code);
+                        setShowLangQuickSwitch(false);
+                        // Re-open interpreter with new language
+                        setShowInterpreter(false);
+                        setTimeout(() => setShowInterpreter(true), 100);
+                        toast.success(`Captions: ${lang.name}`);
+                      }}
+                      className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-all ${
+                        captionTargetLang === lang.code
+                          ? 'bg-cyan-500/30 border border-cyan-500/50 text-white'
+                          : 'text-white/60 hover:bg-white/10 hover:text-white'
+                      }`}
+                      aria-label={`Switch captions to ${lang.name}`}
+                    >
+                      <span className="text-base">{lang.flag}</span>
+                      <span className="text-[9px] font-medium">{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Voice command toggle */}
+        <button
+          onClick={voiceCommandActive ? stopVoiceCommands : startVoiceCommands}
+          className={`flex items-center gap-1 px-2 py-1 rounded-full shadow-lg text-xs transition-all ${
+            voiceCommandActive
+              ? 'bg-green-600 text-white hover:bg-green-700'
+              : 'bg-gray-800/80 text-white/50 hover:text-white border border-white/10'
+          }`}
+          title={voiceCommandActive ? 'Voice commands active' : 'Enable voice commands'}
+          aria-label={voiceCommandActive ? 'Disable voice commands' : 'Enable voice commands'}
+        >
+          {voiceCommandActive ? <Mic className="w-3 h-3 animate-pulse" /> : <Mic className="w-3 h-3" />}
+          <span className="text-[10px]">{voiceCommandActive ? 'Voice' : 'Cmd'}</span>
+        </button>
       </div>
 
       {/* Jitsi Meet container */}

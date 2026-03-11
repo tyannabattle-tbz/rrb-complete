@@ -3776,3 +3776,10 @@
 - [x] Add screen reader ARIA live region announcements for captions and translations
 - [x] Add caption font size controls (Small/Medium/Large) for CC subtitle bar
 - [x] Add multi-speaker identification with color-coded captions by speaker
+- [x] Add caption language quick-switch — tap language flag on CC bar to change translation target without opening interpreter
+- [x] Add transcript export to PDF — formatted PDF with speaker names, timestamps, dual-language text
+- [x] Add voice command controls — hands-free operation (start captions, switch to Spanish, increase font)
+- [x] Sync to RRB (rrb-complete) via checkpoint — auto-synced through Manus GitHub integration
+- [ ] Sync to rockin-rockin-boogie repo — GitHub token expired, needs manual push or token refresh
+- [x] Valanna runs QUMUS — no separate repo needed, Valanna is the AI orchestrator
+- [ ] Sync to Ty OS (tybatos-uo4zkxnl.manus.space) — separate Manus project, needs separate task
