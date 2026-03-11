@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell, Megaphone } from 'lucide-react';
+import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell, Megaphone, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavSection {
@@ -45,6 +45,15 @@ export function SimplifiedMobileNav() {
         { id: 'nav-squadd', label: 'SQUADD Goals', icon: Globe, path: '/squadd' },
         { id: 'nav-donate', label: 'Sweet Miracles', icon: Heart, path: '/donate' },
         { id: 'nav-media-blast', label: 'Media Blast', icon: Megaphone, path: '/media-blast' },
+      ],
+    },
+    {
+      title: 'Podcasts',
+      items: [
+        { id: 'nav-podcasts', label: 'All Podcasts', icon: Mic, path: '/podcasts' },
+        { id: 'nav-candys-corner', label: "Candy's Corner", icon: Mic, path: '/podcast/candys-corner' },
+        { id: 'nav-solbones-podcast', label: 'Solbones Podcast', icon: Mic, path: '/podcast/solbones' },
+        { id: 'nav-qumunity', label: 'Around the QumUnity', icon: Mic, path: '/podcast/around-the-qumunity' },
       ],
     },
     {

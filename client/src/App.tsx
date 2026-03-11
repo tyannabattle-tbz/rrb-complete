@@ -202,6 +202,9 @@ import SpeakerProfile from '@/pages/SpeakerProfile';
 import ConferenceCheckIn from '@/pages/ConferenceCheckIn';
 import ConferenceTranslation from '@/pages/ConferenceTranslation';
 import GuestJoin from '@/pages/GuestJoin';
+import CandysCornerPodcast from '@/pages/CandysCornerPodcast';
+import SolbonesPodcast from '@/pages/SolbonesPodcast';
+import AroundTheQumUnityPodcast from '@/pages/AroundTheQumUnityPodcast';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -391,6 +394,9 @@ function Router() {
       <Route path="/commercial-analytics" component={CommercialAnalytics} />
       <Route path="/social-media-kit" component={SocialMediaKit} />
       <Route path="/media-blast" component={MediaBlastCampaign} />
+      <Route path="/podcast/candys-corner" component={CandysCornerPodcast} />
+      <Route path="/podcast/solbones" component={SolbonesPodcast} />
+      <Route path="/podcast/around-the-qumunity" component={AroundTheQumUnityPodcast} />
       <Route component={NotFound} />
     </Switch>
     </>

@@ -3827,3 +3827,16 @@
 - [x] Build mini AI chat panel inside Conference Room sidebar with TTS auto-play
 - [x] Create animated speaking avatar indicators for all 3 AI personas (Valanna, Candy, Seraph)
 - [x] Integrate speaking avatars into all chat interfaces and conference room
+
+## Dedicated Podcast Rooms — Candy's Corner, Solbones Podcast, Around the QumUnity
+- [x] Build reusable PodcastRoom component with video, AI host, chat, call-in, recording, game screen
+- [x] Create Candy's Corner podcast room — Candy (echo/male) as host, guest AI/live support
+- [x] Create Solbones Podcast room — with Solbones dice game integration and healing frequencies
+- [x] Create Around the QumUnity podcast room — community-focused with QUMUS orchestration
+- [x] Add routes /podcast/candys-corner, /podcast/solbones, /podcast/around-the-qumunity
+- [x] Add podcast rooms to navigation (desktop + mobile)
+- [x] Wire all podcast rooms to recording pipeline (5 destinations)
+- [x] Integrate AI chat sidebar with TTS and SpeakingAvatar in each room
+- [x] Add call-in feature for live feedback and interaction
+- [x] Add mobile game screen activation for interactive elements
+- [x] Ensure accessibility for impaired community

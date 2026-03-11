@@ -72,6 +72,7 @@ export function AppHeaderEnhanced() {
     { id: 'nav-13', label: 'GPS Map', icon: MapPin, path: '/gps-radar', action: () => navigate('/gps-radar') },
     { id: 'nav-14', label: 'Selma Event', icon: MapPin, path: '/selma', action: () => navigate('/selma') },
     { id: 'nav-15', label: 'Media Blast', icon: Megaphone, path: '/media-blast', action: () => navigate('/media-blast') },
+    { id: 'nav-16', label: 'Podcasts', icon: Mic, path: '/podcasts', action: () => navigate('/podcasts') },
   ];
 
   return (
