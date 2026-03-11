@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell } from 'lucide-react';
+import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell, Megaphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NavSection {
@@ -44,6 +44,7 @@ export function SimplifiedMobileNav() {
         { id: 'nav-selma', label: 'Selma Jubilee', icon: MapPin, path: '/selma' },
         { id: 'nav-squadd', label: 'SQUADD Goals', icon: Globe, path: '/squadd' },
         { id: 'nav-donate', label: 'Sweet Miracles', icon: Heart, path: '/donate' },
+        { id: 'nav-media-blast', label: 'Media Blast', icon: Megaphone, path: '/media-blast' },
       ],
     },
     {

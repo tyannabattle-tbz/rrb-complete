@@ -22,13 +22,13 @@ export interface CommercialAudio {
 const DJ_VOICE_MAP: Record<string, string> = {
   valanna: "nova",      // Warm, female, nurturing
   seraph: "onyx",       // Deep, authoritative, male
-  candy: "shimmer",     // Energetic, bright, female
+  candy: "echo",        // Warm, expressive, male (dad)
 };
 
 const DJ_VOICE_SPEED: Record<string, number> = {
   valanna: 0.95,   // Slightly slower, warm delivery
   seraph: 0.90,    // Measured, authoritative pace
-  candy: 1.05,     // Slightly faster, energetic
+  candy: 0.95,     // Warm, natural male delivery (dad)
 };
 
 class CommercialTtsService {

@@ -6,6 +6,8 @@
 
 import { z } from "zod";
 import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
+import { commercialTtsService } from "../_core/commercialTtsService";
+import { recordingPipeline } from "../_core/recordingPipeline";
 
 // In-memory campaign store (production would use database)
 interface CampaignPost {
@@ -368,6 +370,113 @@ export const mediaBlastRouter = router({
       return { success: true, posted: batchSize };
     }),
 
+  // Generate TTS audio for all commercials
+  generateCommercialAudio: protectedProcedure
+    .input(z.object({ campaignId: z.string() }))
+    .mutation(async ({ input }) => {
+      const campaign = campaigns.get(input.campaignId);
+      if (!campaign) return { success: false, generated: [], fallback: [] };
+
+      const commercialsForTts = campaign.commercials.map(c => {
+        // Map commercial to DJ voice based on script content
+        let djVoice = 'seraph'; // default
+        if (c.script.includes('Candy AI')) djVoice = 'candy';
+        if (c.script.includes('Valanna')) djVoice = 'valanna';
+        
+        // Extract clean narration text from script (remove audio cues)
+        const cleanScript = c.script
+          .replace(/\[AUDIO:.*?\]/g, '')
+          .replace(/NARRATOR \(.*?\):/g, '')
+          .replace(/\n{2,}/g, '\n')
+          .trim();
+
+        return {
+          id: c.id,
+          title: c.title,
+          script: cleanScript,
+          djVoice,
+        };
+      });
+
+      const result = await commercialTtsService.generateAllCommercialAudio(commercialsForTts);
+
+      // Update commercial status and audio URLs
+      result.generated.forEach(audio => {
+        const commercial = campaign.commercials.find(c => c.id === audio.id);
+        if (commercial) {
+          commercial.audioUrl = audio.audioUrl;
+          commercial.status = 'produced';
+        }
+      });
+
+      return {
+        success: true,
+        generated: result.generated.map(a => ({
+          id: a.id,
+          title: a.title,
+          audioUrl: a.audioUrl,
+          duration: a.duration,
+          djVoice: a.djVoice,
+        })),
+        fallback: result.fallback,
+      };
+    }),
+
+  // Generate TTS for a single commercial
+  generateSingleCommercialAudio: protectedProcedure
+    .input(z.object({
+      campaignId: z.string(),
+      commercialId: z.string(),
+      djVoice: z.enum(['seraph', 'candy', 'valanna']).optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const campaign = campaigns.get(input.campaignId);
+      if (!campaign) return { success: false, audioUrl: null };
+
+      const commercial = campaign.commercials.find(c => c.id === input.commercialId);
+      if (!commercial) return { success: false, audioUrl: null };
+
+      const cleanScript = commercial.script
+        .replace(/\[AUDIO:.*?\]/g, '')
+        .replace(/NARRATOR \(.*?\):/g, '')
+        .replace(/\n{2,}/g, '\n')
+        .trim();
+
+      const djVoice = input.djVoice || (commercial.script.includes('Candy AI') ? 'candy' : 'seraph');
+
+      const audio = await commercialTtsService.generateCommercialAudio(
+        commercial.id,
+        commercial.title,
+        cleanScript,
+        djVoice
+      );
+
+      if (audio) {
+        commercial.audioUrl = audio.audioUrl;
+        commercial.status = 'produced';
+        return { success: true, audioUrl: audio.audioUrl, duration: audio.duration };
+      }
+
+      return { success: false, audioUrl: null };
+    }),
+
+  // Get TTS generation status
+  getTtsStatus: publicProcedure.query(() => {
+    return commercialTtsService.getStats();
+  }),
+
+  // Get all generated audio
+  getGeneratedAudio: publicProcedure.query(() => {
+    return commercialTtsService.getAllGeneratedAudio().map(a => ({
+      id: a.id,
+      title: a.title,
+      audioUrl: a.audioUrl,
+      duration: a.duration,
+      djVoice: a.djVoice,
+      generatedAt: a.generatedAt.toISOString(),
+    }));
+  }),
+
   // Get campaign timeline (for calendar view)
   getCampaignTimeline: publicProcedure
     .input(z.object({ campaignId: z.string() }))
@@ -393,4 +502,92 @@ export const mediaBlastRouter = router({
 
       return Object.values(timeline).sort((a, b) => a.date.localeCompare(b.date));
     }),
+
+  // ============ RECORDING PIPELINE ============
+
+  // Submit a recording to the pipeline (routes to all 5 destinations)
+  submitRecording: protectedProcedure
+    .input(z.object({
+      title: z.string(),
+      description: z.string(),
+      duration: z.number(),
+      sourceType: z.enum(['conference', 'meeting', 'podcast', 'live-stream', 'interview', 'commercial']),
+      participants: z.array(z.string()),
+      audioUrl: z.string(),
+      videoUrl: z.string().optional(),
+      thumbnailUrl: z.string().optional(),
+      tags: z.array(z.string()),
+    }))
+    .mutation(async ({ input }) => {
+      const recording = {
+        id: `rec-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+        ...input,
+        recordedAt: new Date(),
+      };
+
+      const job = await recordingPipeline.submitRecording(recording);
+
+      return {
+        success: true,
+        jobId: job.id,
+        destinations: job.destinations.map(d => ({ id: d.id, name: d.name, status: d.status })),
+        qumusDecisionId: job.qumusDecisionId,
+      };
+    }),
+
+  // Get pipeline job status
+  getPipelineJob: publicProcedure
+    .input(z.object({ jobId: z.string() }))
+    .query(({ input }) => {
+      const job = recordingPipeline.getJob(input.jobId);
+      if (!job) return null;
+
+      return {
+        id: job.id,
+        status: job.status,
+        recording: {
+          id: job.recording.id,
+          title: job.recording.title,
+          sourceType: job.recording.sourceType,
+          duration: job.recording.duration,
+        },
+        destinations: job.destinations.map(d => ({
+          id: d.id,
+          name: d.name,
+          status: d.status,
+          deliveredAt: d.deliveredAt?.toISOString(),
+          deliveryUrl: d.deliveryUrl,
+          error: d.error,
+        })),
+        qumusDecisionId: job.qumusDecisionId,
+        autonomyLevel: job.autonomyLevel,
+        createdAt: job.createdAt.toISOString(),
+        completedAt: job.completedAt?.toISOString(),
+      };
+    }),
+
+  // Get all pipeline jobs
+  getPipelineJobs: publicProcedure.query(() => {
+    return recordingPipeline.getAllJobs().map(job => ({
+      id: job.id,
+      status: job.status,
+      recordingTitle: job.recording.title,
+      sourceType: job.recording.sourceType,
+      destinationCount: job.destinations.length,
+      completedDestinations: job.destinations.filter(d => d.status === 'completed').length,
+      qumusDecisionId: job.qumusDecisionId,
+      createdAt: job.createdAt.toISOString(),
+      completedAt: job.completedAt?.toISOString(),
+    }));
+  }),
+
+  // Get pipeline statistics
+  getPipelineStats: publicProcedure.query(() => {
+    return recordingPipeline.getStats();
+  }),
+
+  // Get pipeline destination configs
+  getPipelineDestinations: publicProcedure.query(() => {
+    return recordingPipeline.getDestinations();
+  }),
 });

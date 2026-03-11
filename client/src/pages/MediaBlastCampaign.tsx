@@ -40,7 +40,7 @@ const PLATFORM_COLORS: Record<string, string> = {
   x: '#1DA1F2',
 };
 
-type TabType = 'overview' | 'posts' | 'commercials' | 'timeline' | 'visuals' | 'automation';
+type TabType = 'overview' | 'posts' | 'commercials' | 'timeline' | 'visuals' | 'automation' | 'pipeline';
 
 export default function MediaBlastCampaign() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -71,6 +71,31 @@ export default function MediaBlastCampaign() {
     },
   });
 
+  const generateTts = trpc.mediaBlast.generateCommercialAudio.useMutation({
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(`Audio generated for ${data.generated.length} commercials! ${data.fallback.length > 0 ? `(${data.fallback.length} using browser fallback)` : ''}`);
+      } else {
+        toast.error('Failed to generate commercial audio');
+      }
+    },
+    onError: () => toast.error('TTS generation failed'),
+  });
+
+  const generateSingleTts = trpc.mediaBlast.generateSingleCommercialAudio.useMutation({
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(`Audio generated! Duration: ${data.duration}s`);
+      } else {
+        toast.error('TTS generation failed — using browser fallback');
+      }
+    },
+  });
+
+  const { data: pipelineJobs } = trpc.mediaBlast.getPipelineJobs.useQuery();
+  const { data: pipelineStats } = trpc.mediaBlast.getPipelineStats.useQuery();
+  const { data: generatedAudio } = trpc.mediaBlast.getGeneratedAudio.useQuery();
+
   const tabs: { id: TabType; label: string; icon: string }[] = [
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'posts', label: 'Post Queue', icon: '📝' },
@@ -78,6 +103,7 @@ export default function MediaBlastCampaign() {
     { id: 'timeline', label: 'Timeline', icon: '📅' },
     { id: 'visuals', label: 'Visuals', icon: '🎨' },
     { id: 'automation', label: 'QUMUS AI', icon: '🤖' },
+    { id: 'pipeline', label: 'Recording Pipeline', icon: '🔄' },
   ];
 
   return (
@@ -139,7 +165,14 @@ export default function MediaBlastCampaign() {
           />
         )}
         {activeTab === 'commercials' && (
-          <CommercialsTab commercials={commercials || []} />
+          <CommercialsTab
+            commercials={commercials || []}
+            campaignId={campaignId}
+            onGenerateAll={() => generateTts.mutate({ campaignId })}
+            onGenerateSingle={(commercialId: string, djVoice?: string) => generateSingleTts.mutate({ campaignId, commercialId, djVoice: djVoice as any })}
+            isGenerating={generateTts.isPending || generateSingleTts.isPending}
+            generatedAudio={generatedAudio || []}
+          />
         )}
         {activeTab === 'timeline' && (
           <TimelineTab timeline={timeline || []} />
@@ -152,6 +185,12 @@ export default function MediaBlastCampaign() {
             campaign={campaign}
             metrics={metrics}
             onToggleAutomation={(enabled: boolean) => toggleAutomation.mutate({ campaignId, enabled })}
+          />
+        )}
+        {activeTab === 'pipeline' && (
+          <RecordingPipelineTab
+            jobs={pipelineJobs || []}
+            stats={pipelineStats}
           />
         )}
       </div>
@@ -373,60 +412,147 @@ function PostQueueTab({ posts, selectedPlatform, setSelectedPlatform, selectedSt
 }
 
 // ============ COMMERCIALS TAB ============
-function CommercialsTab({ commercials }: { commercials: any[] }) {
+function CommercialsTab({ commercials, campaignId, onGenerateAll, onGenerateSingle, isGenerating, generatedAudio }: {
+  commercials: any[];
+  campaignId: string;
+  onGenerateAll: () => void;
+  onGenerateSingle: (commercialId: string, djVoice?: string) => void;
+  isGenerating: boolean;
+  generatedAudio: any[];
+}) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [playingId, setPlayingId] = useState<string | null>(null);
+
+  const getAudioForCommercial = (id: string) => {
+    return generatedAudio.find((a: any) => a.id === id);
+  };
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold text-amber-400">Commercial Spots</h2>
-      <p className="text-sm text-gray-400">
-        Three commercial spots produced for CSW70 campaign rotation. Narrated by Seraph AI and Candy AI.
-      </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-amber-400">Commercial Spots</h2>
+          <p className="text-sm text-gray-400">
+            Three commercial spots for CSW70 campaign. Narrated by Seraph AI (onyx voice) and Candy AI (echo voice — dad).
+          </p>
+        </div>
+        <button
+          onClick={onGenerateAll}
+          disabled={isGenerating}
+          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+            isGenerating
+              ? 'bg-purple-800 text-purple-400 cursor-wait'
+              : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg shadow-purple-500/20'
+          }`}
+        >
+          {isGenerating ? '⏳ Generating...' : '🎙 Generate All Audio (TTS)'}
+        </button>
+      </div>
+
+      {/* Generated Audio Status */}
+      {generatedAudio.length > 0 && (
+        <div className="bg-green-900/20 rounded-lg p-3 border border-green-500/30">
+          <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
+            <span>✓</span>
+            <span>{generatedAudio.length} commercial audio files generated</span>
+          </div>
+          <div className="flex gap-4 mt-2">
+            {generatedAudio.map((audio: any) => (
+              <div key={audio.id} className="text-xs text-gray-400">
+                <span className="text-green-400">{audio.title}</span> — {audio.duration}s ({audio.djVoice})
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="space-y-4">
-        {commercials.map(commercial => (
-          <div key={commercial.id} className="bg-white/5 rounded-xl border border-purple-800/30 overflow-hidden">
-            <button
-              onClick={() => setExpandedId(expandedId === commercial.id ? null : commercial.id)}
-              className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🎬</span>
-                <div className="text-left">
-                  <h3 className="font-bold text-white">{commercial.title}</h3>
-                  <p className="text-xs text-gray-400">
-                    {commercial.duration}s • {commercial.scheduledTimes.join(', ')} ET daily •{' '}
-                    <span className={commercial.status === 'produced' ? 'text-green-400' : 'text-amber-400'}>
-                      {commercial.status}
-                    </span>
-                  </p>
+        {commercials.map(commercial => {
+          const audio = getAudioForCommercial(commercial.id);
+          return (
+            <div key={commercial.id} className="bg-white/5 rounded-xl border border-purple-800/30 overflow-hidden">
+              <button
+                onClick={() => setExpandedId(expandedId === commercial.id ? null : commercial.id)}
+                className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{audio ? '🔊' : '🎬'}</span>
+                  <div className="text-left">
+                    <h3 className="font-bold text-white">{commercial.title}</h3>
+                    <p className="text-xs text-gray-400">
+                      {commercial.duration}s • {commercial.scheduledTimes.join(', ')} ET daily •{' '}
+                      <span className={audio ? 'text-green-400' : commercial.status === 'produced' ? 'text-green-400' : 'text-amber-400'}>
+                        {audio ? 'audio ready' : commercial.status}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <span className="text-gray-400">{expandedId === commercial.id ? '▲' : '▼'}</span>
-            </button>
-            {expandedId === commercial.id && (
-              <div className="px-4 pb-4 border-t border-white/10 pt-3">
-                <pre className="text-sm text-gray-300 whitespace-pre-wrap font-sans leading-relaxed">
-                  {commercial.script}
-                </pre>
-                <div className="mt-4 flex gap-2">
-                  <button className="px-4 py-2 bg-purple-600 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
-                    Generate Audio (TTS)
-                  </button>
-                  <button className="px-4 py-2 bg-white/10 rounded-lg text-sm font-medium hover:bg-white/20 transition-colors">
-                    Edit Script
-                  </button>
-                  <a
-                    href="/studio-suite"
-                    className="px-4 py-2 bg-amber-600 rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
-                  >
-                    Open in Studio
-                  </a>
+                <span className="text-gray-400">{expandedId === commercial.id ? '▲' : '▼'}</span>
+              </button>
+              {expandedId === commercial.id && (
+                <div className="px-4 pb-4 border-t border-white/10 pt-3">
+                  {/* Audio Player */}
+                  {audio && (
+                    <div className="mb-4 bg-purple-900/30 rounded-lg p-3 border border-purple-500/20">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => {
+                            if (playingId === commercial.id) {
+                              setPlayingId(null);
+                              document.querySelectorAll('audio').forEach(a => a.pause());
+                            } else {
+                              setPlayingId(commercial.id);
+                              const audioEl = document.getElementById(`audio-${commercial.id}`) as HTMLAudioElement;
+                              audioEl?.play();
+                            }
+                          }}
+                          className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center hover:bg-purple-700 transition-colors"
+                        >
+                          {playingId === commercial.id ? '⏸' : '▶'}
+                        </button>
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-white">{audio.title}</div>
+                          <div className="text-xs text-gray-400">Voice: {audio.djVoice} • {audio.duration}s</div>
+                        </div>
+                        <a href={audio.audioUrl} download className="text-xs text-purple-400 hover:text-purple-300">Download</a>
+                      </div>
+                      <audio
+                        id={`audio-${commercial.id}`}
+                        src={audio.audioUrl}
+                        onEnded={() => setPlayingId(null)}
+                        className="hidden"
+                      />
+                    </div>
+                  )}
+
+                  <pre className="text-sm text-gray-300 whitespace-pre-wrap font-sans leading-relaxed">
+                    {commercial.script}
+                  </pre>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <button
+                      onClick={() => onGenerateSingle(commercial.id, commercial.script.includes('Candy AI') ? 'candy' : 'seraph')}
+                      disabled={isGenerating}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        isGenerating ? 'bg-purple-800 text-purple-400' : 'bg-purple-600 hover:bg-purple-700'
+                      }`}
+                    >
+                      {isGenerating ? '⏳ Generating...' : `🎙 Generate Audio (${commercial.script.includes('Candy AI') ? 'Candy — echo' : 'Seraph — onyx'})`}
+                    </button>
+                    <button className="px-4 py-2 bg-white/10 rounded-lg text-sm font-medium hover:bg-white/20 transition-colors">
+                      Edit Script
+                    </button>
+                    <a
+                      href="/studio-suite"
+                      className="px-4 py-2 bg-amber-600 rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
+                    >
+                      Open in Studio
+                    </a>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Broadcast Schedule */}
@@ -786,6 +912,146 @@ function AutomationTab({ campaign, metrics, onToggleAutomation }: any) {
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ============ RECORDING PIPELINE TAB ============
+function RecordingPipelineTab({ jobs, stats }: { jobs: any[]; stats: any }) {
+  const destinations = [
+    { id: 'rrb-radio-replay', name: 'RRB Radio Replay Library', icon: '📻', desc: 'On-demand replay content for listeners' },
+    { id: 'media-blast-content', name: 'Media Blast Campaign', icon: '📢', desc: 'Social media clips and campaign content' },
+    { id: 'studio-suite-editing', name: 'Studio Suite', icon: '🎛', desc: 'Professional editing and post-production' },
+    { id: 'streaming-platforms', name: 'Streaming Platforms', icon: '📺', desc: 'YouTube, Facebook, Twitch, Rumble, etc.' },
+    { id: 'qumus-automation', name: 'QUMUS Automation', icon: '🧠', desc: 'AI analysis, scheduling, and monitoring' },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Pipeline Overview */}
+      <div className="bg-gradient-to-r from-purple-900/50 to-indigo-900/50 rounded-xl p-6 border border-purple-500/30">
+        <h2 className="text-xl font-bold text-amber-400">Recording Pipeline</h2>
+        <p className="text-sm text-gray-400 mt-1">
+          All meeting and conference recordings are automatically routed to 5 destinations via QUMUS.
+          90% autonomous operation with human override.
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+          <div className="bg-white/5 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-white">{stats?.totalJobs || 0}</div>
+            <div className="text-xs text-gray-400">Total Jobs</div>
+          </div>
+          <div className="bg-white/5 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-green-400">{stats?.completed || 0}</div>
+            <div className="text-xs text-gray-400">Completed</div>
+          </div>
+          <div className="bg-white/5 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-amber-400">{stats?.processing || 0}</div>
+            <div className="text-xs text-gray-400">Processing</div>
+          </div>
+          <div className="bg-white/5 rounded-lg p-3 text-center">
+            <div className="text-2xl font-bold text-red-400">{stats?.failed || 0}</div>
+            <div className="text-xs text-gray-400">Failed</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Destination Routes */}
+      <div className="bg-white/5 rounded-xl p-6 border border-purple-800/30">
+        <h3 className="text-lg font-bold text-amber-400 mb-4">Pipeline Destinations</h3>
+        <div className="space-y-3">
+          {destinations.map((dest, idx) => {
+            const destStat = stats?.destinations?.find((d: any) => d.name === dest.name);
+            return (
+              <div key={dest.id} className="flex items-center gap-4 p-4 bg-white/5 rounded-lg border border-white/10">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-purple-600/30 text-xl">
+                  {dest.icon}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-white">{dest.name}</span>
+                    <span className="w-2 h-2 rounded-full bg-green-500" />
+                  </div>
+                  <p className="text-xs text-gray-400">{dest.desc}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-bold text-green-400">{destStat?.completed || 0} delivered</div>
+                  {(destStat?.failed || 0) > 0 && (
+                    <div className="text-xs text-red-400">{destStat.failed} failed</div>
+                  )}
+                </div>
+                <div className="w-8 text-center text-gray-500">
+                  {idx < destinations.length - 1 ? '→' : '✓'}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Flow Diagram */}
+      <div className="bg-white/5 rounded-xl p-6 border border-purple-800/30">
+        <h3 className="text-lg font-bold text-amber-400 mb-4">Recording Flow</h3>
+        <div className="flex items-center justify-center gap-2 flex-wrap text-sm">
+          <div className="px-4 py-2 bg-blue-600/30 rounded-lg border border-blue-500/30 text-blue-300 font-medium">
+            Recording Ends
+          </div>
+          <span className="text-gray-500">→</span>
+          <div className="px-4 py-2 bg-purple-600/30 rounded-lg border border-purple-500/30 text-purple-300 font-medium">
+            QUMUS Pipeline
+          </div>
+          <span className="text-gray-500">→</span>
+          <div className="flex flex-col gap-1">
+            <div className="px-3 py-1 bg-green-600/20 rounded border border-green-500/20 text-green-300 text-xs">📻 RRB Radio</div>
+            <div className="px-3 py-1 bg-green-600/20 rounded border border-green-500/20 text-green-300 text-xs">📢 Media Blast</div>
+            <div className="px-3 py-1 bg-green-600/20 rounded border border-green-500/20 text-green-300 text-xs">🎛 Studio Suite</div>
+            <div className="px-3 py-1 bg-green-600/20 rounded border border-green-500/20 text-green-300 text-xs">📺 Streaming</div>
+            <div className="px-3 py-1 bg-green-600/20 rounded border border-green-500/20 text-green-300 text-xs">🧠 QUMUS AI</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Pipeline Jobs */}
+      <div className="bg-white/5 rounded-xl p-6 border border-purple-800/30">
+        <h3 className="text-lg font-bold text-amber-400 mb-4">Recent Pipeline Jobs</h3>
+        {jobs.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <span className="text-4xl block mb-2">🔄</span>
+            <p>No recordings have been processed yet.</p>
+            <p className="text-xs mt-1">When a meeting or conference recording ends, it will automatically appear here.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {jobs.map((job: any) => (
+              <div key={job.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+                <div className="flex items-center gap-3">
+                  <span className={`w-2 h-2 rounded-full ${
+                    job.status === 'completed' ? 'bg-green-500' :
+                    job.status === 'processing' ? 'bg-amber-500 animate-pulse' :
+                    'bg-red-500'
+                  }`} />
+                  <div>
+                    <span className="font-medium text-white text-sm">{job.recordingTitle}</span>
+                    <span className="text-xs text-gray-400 ml-2">({job.sourceType})</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-xs text-gray-400">
+                    {job.completedDestinations}/{job.destinationCount} destinations
+                  </span>
+                  <span className={`text-xs font-medium ${
+                    job.status === 'completed' ? 'text-green-400' :
+                    job.status === 'processing' ? 'text-amber-400' :
+                    'text-red-400'
+                  }`}>
+                    {job.status.toUpperCase()}
+                  </span>
+                  <span className="text-xs text-gray-500">{new Date(job.createdAt).toLocaleString()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

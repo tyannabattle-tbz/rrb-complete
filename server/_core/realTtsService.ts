@@ -37,7 +37,7 @@ export const AVAILABLE_VOICES = [
 export const DJ_VOICES: Record<string, string> = {
   valanna: 'nova',
   seraph: 'onyx',
-  candy: 'shimmer',
+  candy: 'echo',
   qumus: 'alloy',
 };
 

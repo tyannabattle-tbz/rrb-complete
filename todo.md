@@ -3800,3 +3800,18 @@
 - [x] Create media blast campaign tRPC router for scheduling and tracking
 - [x] Add route /media-blast to App.tsx
 - [x] Wire campaign to QUMUS brain for autonomous execution
+
+## Media Blast Follow-ups (Apply All)
+- [x] Trigger media blast — fire first wave of posts across all 8 platforms
+- [x] Generate TTS audio for 3 commercial scripts (Seraph AI + Candy AI voices)
+- [x] Add "Media Blast" link to main navigation bar for one-click access
+
+## Candy Voice Fix + Recording Pipeline
+- [x] Fix Candy AI voice from shimmer (female) to echo (warm male) — Candy is dad
+- [x] Build recording pipeline: auto-route meeting recordings to all 5 destinations
+- [x] Route recordings to RRB Radio replay library
+- [x] Route recordings to Media Blast campaign as content
+- [x] Route recordings to Studio Suite for editing
+- [x] Route recordings to streaming platforms (YouTube, Facebook, etc.)
+- [x] Route recordings through QUMUS automation for full pipeline control
+- [x] Update Candy identity/description to reflect male persona (already correct)

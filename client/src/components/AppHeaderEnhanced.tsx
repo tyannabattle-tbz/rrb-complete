@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon, Map as MapIcon, Shield, Users, Gamepad2, BookOpen, Globe, Headphones, Monitor, Calendar } from 'lucide-react';
+import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon, Map as MapIcon, Shield, Users, Gamepad2, BookOpen, Globe, Headphones, Monitor, Calendar, Megaphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -71,6 +71,7 @@ export function AppHeaderEnhanced() {
     { id: 'nav-12', label: 'Legacy', icon: BookOpen, path: '/legacy', action: () => navigate('/legacy') },
     { id: 'nav-13', label: 'GPS Map', icon: MapPin, path: '/gps-radar', action: () => navigate('/gps-radar') },
     { id: 'nav-14', label: 'Selma Event', icon: MapPin, path: '/selma', action: () => navigate('/selma') },
+    { id: 'nav-15', label: 'Media Blast', icon: Megaphone, path: '/media-blast', action: () => navigate('/media-blast') },
   ];
 
   return (
