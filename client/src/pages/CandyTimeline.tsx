@@ -2,6 +2,7 @@ import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Clock, Music, Mic2, FileText, Film } from 'lucide-react';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 
 const TIMELINE_EVENTS = [
   { era: 'Early 1970s', title: 'Candy Enters Richard\'s World', description: 'Seabrun "Candy" Hunter Jr. joins Little Richard\'s touring organization, taking on multiple roles including bandleader, songwriter, and engineer.', type: 'milestone', icon: Music },
@@ -46,9 +47,12 @@ export default function CandyTimeline() {
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Collaboration Timeline
           </h1>
-          <p className="text-purple-200/70 text-base leading-relaxed mb-10">
+          <p className="text-purple-200/70 text-base leading-relaxed mb-6">
             A chronological view of Candy's collaboration within Little Richard's world, from entry into the touring organization through the present-day archive work.
           </p>
+          <div className="mb-10">
+            <RRBSongBadge variant="compact" showTitle />
+          </div>
 
           {/* Timeline */}
           <div className="relative">

@@ -1,0 +1,48 @@
+RRB Official Radio Station List — Key Findings from PDF
+=======================================================
+Date: March 11, 2026
+Source: cfdceb36-5963-4a8c-9edf-52a4ec6e070f.pdf
+
+TOTAL CHANNELS: 51 (up from 43)
+
+NEW CHANNELS TO ADD (8 new ones):
+- ch-032: Worship & Devotional (Multi-faith worship, 432 Hz, Icecast 128kbps)
+- ch-033: Caribbean Vibes (Soca, calypso, zouk, 432 Hz, Icecast 128kbps)
+- ch-034: Women in Music (Women artists all genres, 432 Hz, Icecast 128kbps)
+- ch-035: Indie & Underground (Independent artists, 440 Hz, Icecast 128kbps)
+- ch-036: World Fusion (Global music fusion, 432 Hz, Icecast 128kbps)
+- ch-037: Throwback Radio (70s, 80s, 90s, 2000s hits, 440 Hz, Icecast 128kbps)
+- ch-038: Love Songs (Romantic ballads, 432 Hz, Icecast 128kbps)
+- ch-050: Open Mic (Community open mic, freestyle, 432 Hz, Icecast 128kbps)
+
+CATEGORY BREAKDOWN:
+- Music: 22 stations
+- Talk: 3 stations (ch-002, ch-008, ch-024)
+- AI-Curated: 3 stations (ch-041, ch-042, ch-043)
+- Wellness: 5 stations (ch-007, ch-023, ch-027, ch-039, ch-040)
+- Education: 3 stations (ch-025, ch-026, ch-028)
+- Entertainment: 7 stations (ch-003, ch-021, ch-022, ch-029, ch-030, ch-031, ch-048)
+- Specialty: 5 stations (ch-004, ch-044, ch-046, ch-047, ch-049)
+- Community: 3 stations (ch-006, ch-045, ch-050)
+
+C.J. BATTLE PLATFORM LINKS (ch-051):
+- Spotify (Primary): https://open.spotify.com/artist/2kFnLPBd40yxliDHZZpAPy
+- Apple Music (Fallback): https://music.apple.com/us/artist/c-j-battle/1438716457
+- SoundCloud: https://soundcloud.com/cjbttle
+- TIDAL: https://tidal.com/artist/10464604
+- Deezer: https://www.deezer.com/en/artist/52608732
+- YouTube: https://www.youtube.com/channel/UCR_UZEE4FkpCR9THocyutkQ
+- Instagram: https://www.instagram.com/c.j.battle/
+
+FREQUENCY DISTRIBUTION:
+- 432 Hz: 37 channels (healing frequency default)
+- 440 Hz: 13 channels (standard tuning — sports, news, rock, electronic)
+- 528 Hz: 1 channel (Sweet Miracles ch-045 — love frequency)
+
+STREAM PRIORITY PROTOCOL:
+1. Primary Stream URL (Icecast/Shoutcast/HLS/Direct)
+2. Spotify Embed (currently ch-051)
+3. Apple Music Embed (fallback)
+4. Synthesized Fallback (432 Hz tone generation)
+
+SOURCE FILE: shared/radioStationRegistry.ts — single source of truth

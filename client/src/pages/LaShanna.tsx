@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -315,6 +316,7 @@ export default function LaShanna() {
             <p className="text-amber-300 text-lg">
               Co-Director, Anna's Promotions | SQUADD Coalition | Sweet Miracles
             </p>
+            <div className="mt-4"><RRBSongBadge variant="inline" /></div>
           </div>
 
           {/* Quick Stats */}

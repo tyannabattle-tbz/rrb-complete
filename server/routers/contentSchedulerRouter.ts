@@ -62,6 +62,22 @@ const DEFAULT_SCHEDULE_TEMPLATE = [
   // ── Live Events (Channel 41) ──
   { channelId: 41, channelName: 'Live Events', showName: 'Selma Jubilee Coverage', showType: 'live_event' as const, dayOfWeek: 'saturday' as const, startTime: '10:00', endTime: '18:00', description: '61st Selma Bridge Crossing Jubilee — GRITS & GREENS live coverage', host: 'Valanna AI' },
   { channelId: 41, channelName: 'Live Events', showName: 'Bridge Crossing Broadcast', showType: 'live_event' as const, dayOfWeek: 'sunday' as const, startTime: '14:00', endTime: '18:00', description: 'Live broadcast of the commemorative Bridge Crossing', host: 'Valanna AI' },
+
+  // ── Women in Music (New Channel) ──
+  { channelId: 44, channelName: 'Women in Music', showName: 'Queens of Music', showType: 'music' as const, dayOfWeek: 'daily' as const, startTime: '06:00', endTime: '18:00', description: 'Celebrating women artists across all genres', host: 'QUMUS Auto' },
+  { channelId: 44, channelName: 'Women in Music', showName: 'Women in Industry', showType: 'talk' as const, dayOfWeek: 'wednesday' as const, startTime: '18:00', endTime: '20:00', description: 'Conversations with women leaders in the music industry', host: 'Valanna AI' },
+
+  // ── Throwback Radio (New Channel) ──
+  { channelId: 47, channelName: 'Throwback Radio', showName: '90s Block Party', showType: 'music' as const, dayOfWeek: 'daily' as const, startTime: '10:00', endTime: '14:00', description: '90s greatest hits — hip-hop, R&B, pop, and rock', host: 'QUMUS Auto' },
+  { channelId: 47, channelName: 'Throwback Radio', showName: '80s Rewind', showType: 'music' as const, dayOfWeek: 'daily' as const, startTime: '14:00', endTime: '18:00', description: '80s classics — new wave, synth-pop, and power ballads', host: 'QUMUS Auto' },
+  { channelId: 47, channelName: 'Throwback Radio', showName: '70s Groove', showType: 'music' as const, dayOfWeek: 'daily' as const, startTime: '18:00', endTime: '22:00', description: '70s funk, soul, and disco', host: 'QUMUS Auto' },
+
+  // ── Open Mic (New Channel) ──
+  { channelId: 49, channelName: 'Open Mic', showName: 'Open Mic Night', showType: 'live_event' as const, dayOfWeek: 'friday' as const, startTime: '20:00', endTime: '23:00', description: 'Community open mic — freestyle, poetry, and live performances', host: 'QUMUS Auto' },
+  { channelId: 49, channelName: 'Open Mic', showName: 'Freestyle Sessions', showType: 'live_event' as const, dayOfWeek: 'saturday' as const, startTime: '21:00', endTime: '00:00', description: 'Saturday night freestyle and battle sessions', host: 'QUMUS Auto' },
+
+  // ── C.J. Battle Radio (New Channel) ──
+  { channelId: 50, channelName: 'C.J. Battle Radio', showName: 'C.J. Battle Essentials', showType: 'music' as const, dayOfWeek: 'daily' as const, startTime: '00:00', endTime: '23:59', description: 'C.J. Battle — OLD SOUL, Searching, TRIGONOMETRY. Most.High.Ova.Everything.', host: 'QUMUS Auto' },
 ];
 
 export const contentSchedulerRouter = router({

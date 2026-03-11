@@ -16909,7 +16909,19 @@ var DEFAULT_SCHEDULE_TEMPLATE = [
   { channelId: 0, channelName: "All Channels", showName: "HybridCast Awareness", showType: "commercial", dayOfWeek: "daily", startTime: "20:00", endTime: "20:05", description: "HybridCast emergency broadcast system \u2014 be prepared", host: "QUMUS Auto" },
   // ── Live Events (Channel 41) ──
   { channelId: 41, channelName: "Live Events", showName: "Selma Jubilee Coverage", showType: "live_event", dayOfWeek: "saturday", startTime: "10:00", endTime: "18:00", description: "61st Selma Bridge Crossing Jubilee \u2014 GRITS & GREENS live coverage", host: "Valanna AI" },
-  { channelId: 41, channelName: "Live Events", showName: "Bridge Crossing Broadcast", showType: "live_event", dayOfWeek: "sunday", startTime: "14:00", endTime: "18:00", description: "Live broadcast of the commemorative Bridge Crossing", host: "Valanna AI" }
+  { channelId: 41, channelName: "Live Events", showName: "Bridge Crossing Broadcast", showType: "live_event", dayOfWeek: "sunday", startTime: "14:00", endTime: "18:00", description: "Live broadcast of the commemorative Bridge Crossing", host: "Valanna AI" },
+  // ── Women in Music (New Channel) ──
+  { channelId: 44, channelName: "Women in Music", showName: "Queens of Music", showType: "music", dayOfWeek: "daily", startTime: "06:00", endTime: "18:00", description: "Celebrating women artists across all genres", host: "QUMUS Auto" },
+  { channelId: 44, channelName: "Women in Music", showName: "Women in Industry", showType: "talk", dayOfWeek: "wednesday", startTime: "18:00", endTime: "20:00", description: "Conversations with women leaders in the music industry", host: "Valanna AI" },
+  // ── Throwback Radio (New Channel) ──
+  { channelId: 47, channelName: "Throwback Radio", showName: "90s Block Party", showType: "music", dayOfWeek: "daily", startTime: "10:00", endTime: "14:00", description: "90s greatest hits \u2014 hip-hop, R&B, pop, and rock", host: "QUMUS Auto" },
+  { channelId: 47, channelName: "Throwback Radio", showName: "80s Rewind", showType: "music", dayOfWeek: "daily", startTime: "14:00", endTime: "18:00", description: "80s classics \u2014 new wave, synth-pop, and power ballads", host: "QUMUS Auto" },
+  { channelId: 47, channelName: "Throwback Radio", showName: "70s Groove", showType: "music", dayOfWeek: "daily", startTime: "18:00", endTime: "22:00", description: "70s funk, soul, and disco", host: "QUMUS Auto" },
+  // ── Open Mic (New Channel) ──
+  { channelId: 49, channelName: "Open Mic", showName: "Open Mic Night", showType: "live_event", dayOfWeek: "friday", startTime: "20:00", endTime: "23:00", description: "Community open mic \u2014 freestyle, poetry, and live performances", host: "QUMUS Auto" },
+  { channelId: 49, channelName: "Open Mic", showName: "Freestyle Sessions", showType: "live_event", dayOfWeek: "saturday", startTime: "21:00", endTime: "00:00", description: "Saturday night freestyle and battle sessions", host: "QUMUS Auto" },
+  // ── C.J. Battle Radio (New Channel) ──
+  { channelId: 50, channelName: "C.J. Battle Radio", showName: "C.J. Battle Essentials", showType: "music", dayOfWeek: "daily", startTime: "00:00", endTime: "23:59", description: "C.J. Battle \u2014 OLD SOUL, Searching, TRIGONOMETRY. Most.High.Ova.Everything.", host: "QUMUS Auto" }
 ];
 var contentSchedulerRouter = router({
   // Get full schedule (optionally filtered by channel or day)
@@ -26631,7 +26643,15 @@ var RRB_CHANNELS = [
   { id: 17, name: "963 Hz Crown", frequency: 963, spotifyPlaylistId: "playlist_963hz", category: "healing" },
   { id: 18, name: "Solfeggio Mix", frequency: 432, spotifyPlaylistId: "playlist_solfeggio", category: "healing" },
   { id: 19, name: "Gospel Hour", frequency: 432, spotifyPlaylistId: "playlist_gospel", category: "gospel" },
-  { id: 20, name: "Praise & Worship", frequency: 432, spotifyPlaylistId: "playlist_praise", category: "gospel" }
+  { id: 20, name: "Praise & Worship", frequency: 432, spotifyPlaylistId: "playlist_praise", category: "gospel" },
+  { id: 21, name: "Worship & Devotional", frequency: 432, spotifyPlaylistId: "playlist_worship", category: "gospel" },
+  { id: 22, name: "Women in Music", frequency: 432, spotifyPlaylistId: "playlist_women", category: "music" },
+  { id: 23, name: "Indie & Underground", frequency: 440, spotifyPlaylistId: "playlist_indie", category: "music" },
+  { id: 24, name: "World Fusion", frequency: 432, spotifyPlaylistId: "playlist_worldfusion", category: "music" },
+  { id: 25, name: "Throwback Radio", frequency: 440, spotifyPlaylistId: "playlist_throwback", category: "music" },
+  { id: 26, name: "Love Songs", frequency: 432, spotifyPlaylistId: "playlist_lovesongs", category: "music" },
+  { id: 27, name: "Open Mic", frequency: 432, spotifyPlaylistId: "playlist_openmic", category: "community" },
+  { id: 28, name: "C.J. Battle Radio", frequency: 432, spotifyPlaylistId: "2kFnLPBd40yxliDHZZpAPy", category: "music" }
 ];
 var tokenCache = null;
 async function getSpotifyAccessToken() {

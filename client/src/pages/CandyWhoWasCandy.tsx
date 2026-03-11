@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Music, Mic2, Wrench, Users, ArrowLeft } from 'lucide-react';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 
 const ROLES = [
   { icon: Music, title: 'Songwriter', description: 'Co-wrote Rockin\' Rockin\' Boogie with Richard W. Penniman (Little Richard). BMI-registered, reconciled 50/50 split.' },
@@ -42,9 +43,12 @@ export default function CandyWhoWasCandy() {
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Who Was Seabrun "Candy" Hunter Jr.?
           </h1>
-          <p className="text-purple-200/70 text-lg leading-relaxed mb-8">
+          <p className="text-purple-200/70 text-lg leading-relaxed mb-4">
             Seabrun "Candy" Hunter Jr. was a musician, songwriter, bandleader, and studio engineer who worked within Little Richard's touring and recording circle during the 1970s. His contributions span stage performance, songwriting, studio engineering, and organizational leadership within the band.
           </p>
+          <div className="mb-8">
+            <RRBSongBadge variant="compact" showTitle />
+          </div>
 
           {/* Roles Grid */}
           <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">

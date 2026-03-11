@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Music, Video, FileAudio, Upload, Download, Trash2, Play, Search, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
+import { RRB_SONG_LINKS } from '@/lib/rrbSongLinks';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -13,6 +15,8 @@ interface MediaFile {
   size: string;
   uploadedDate: string;
   plays: number;
+  appleMusicUrl?: string;
+  spotifyUrl?: string;
 }
 
 export function MediaLibrary() {
@@ -27,6 +31,8 @@ export function MediaLibrary() {
       size: '8.2 MB',
       uploadedDate: '2026-03-01',
       plays: 1240,
+      appleMusicUrl: 'https://music.apple.com/us/song/rockin-rockin-boogie/335850412',
+      spotifyUrl: 'https://open.spotify.com/track/6vmu5hZHazgoa2BwPiSswD',
     },
     {
       id: '2',
@@ -193,6 +199,11 @@ export function MediaLibrary() {
                       Delete
                     </Button>
                   </div>
+                  {(file.appleMusicUrl || file.spotifyUrl) && (
+                    <div className="pt-2 border-t border-slate-700">
+                      <RRBSongBadge variant="compact" showTitle />
+                    </div>
+                  )}
                 </div>
               </Card>
             ))

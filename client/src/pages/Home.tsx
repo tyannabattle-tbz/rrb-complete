@@ -8,6 +8,8 @@ import { LogIn, LogOut, Globe, Zap, Video, Users, ArrowRight } from 'lucide-reac
 import { getLoginUrl } from '@/const';
 import { trpc } from '@/lib/trpc';
 import { Link } from 'wouter';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
+import { RRB_SONG_LINKS } from '@/lib/rrbSongLinks';
 
 // March 17, 2026 10:00 AM EST — UN CSW70 Launch
 const LAUNCH_DATE = new Date('2026-03-17T10:00:00-05:00').getTime();
@@ -161,6 +163,9 @@ function CountdownTimer() {
         ))}
       </div>
       <p className="text-gray-400 text-sm">SQUADD Goals &bull; A Voice for the Voiceless &bull; A Canryn Production</p>
+      <div className="mt-4 flex justify-center">
+        <RRBSongBadge variant="compact" showTitle />
+      </div>
     </div>
   );
 }
@@ -610,12 +615,12 @@ export default function Home() {
             { name: "Sean's Music", owner: "Sean Hunter", link: "" },
             { name: "Anna's", owner: "Tyanna & LaShanna", link: "/lashanna" },
             { name: "Jaelon Enterprises", owner: "Jaelon Hunter", link: "" },
-            { name: "Payten Music (BMI)", owner: "RRB Registration", link: "" },
+            { name: "Payten Music (BMI)", owner: "RRB Registration", link: RRB_SONG_LINKS.appleMusic, external: true },
           ].map((sub, idx) => (
             <Card 
               key={idx} 
               className={`bg-slate-800/50 border-purple-500/20 text-center ${sub.link ? 'cursor-pointer hover:border-amber-500/40 transition-all' : ''}`}
-              onClick={() => sub.link && setLocation(sub.link)}
+              onClick={() => sub.link && ((sub as any).external ? window.open(sub.link, '_blank') : setLocation(sub.link))}
             >
               <CardContent className="pt-4 pb-4">
                 <p className="font-semibold text-white text-sm">{sub.name}</p>

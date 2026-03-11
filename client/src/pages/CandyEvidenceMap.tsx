@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, CheckCircle2, AlertCircle, FileText, Users, Music, Building2, Shield, ArrowRight } from 'lucide-react';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 
 const EVIDENCE_NODES = [
   {
@@ -110,9 +111,12 @@ export default function CandyEvidenceMap() {
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Evidence Map
           </h1>
-          <p className="text-purple-200/70 text-base leading-relaxed mb-10">
+          <p className="text-purple-200/70 text-base leading-relaxed mb-6">
             A clean visual proof chain for researchers, journalists, publishers, and producers. Each evidence node is independently verifiable and cross-references other nodes in the chain.
           </p>
+          <div className="mb-10">
+            <RRBSongBadge variant="full" showTitle />
+          </div>
 
           {/* Evidence Nodes */}
           <div className="space-y-4 mb-12">

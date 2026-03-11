@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { useLocation } from 'wouter';
 import {
   Play, Pause, SkipForward, Volume2, VolumeX, Radio, Heart,
@@ -16,7 +17,7 @@ const GENRE_FILTERS = [
   'Classics & Legacy', 'Kids & Family', 'Late Night & Chill', 'Podcast & Special'
 ];
 
-// RRB Radio — 42 Channels: Industry-leading lineup for Canryn Production
+// RRB Radio — 50 Channels: Industry-leading lineup for Canryn Production
 const channels = [
   // === FLAGSHIP ===
   { id: 1, name: 'RRB Main', icon: '📻', genre: 'Mixed', frequency: '432 Hz', color: 'from-purple-600 to-blue-600', description: 'Flagship channel — music, talk, community voices. The heartbeat of Canryn Production.', streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3', listeners: 127, nowPlaying: 'Community Hour with Sweet Miracles', category: 'Flagship' },
@@ -71,8 +72,16 @@ const channels = [
   { id: 40, name: 'RRB Podcast Network', icon: '🎙️', genre: 'Podcast', frequency: 'Standard', color: 'from-red-500 to-pink-600', description: 'Original podcasts from the Canryn Production family — interviews, stories, and more.', streamUrl: 'https://ice5.somafm.com/live-128-mp3', listeners: 58, nowPlaying: 'The Canryn Chronicles', category: 'Podcast & Special' },
   { id: 41, name: 'HybridCast Emergency', icon: '🚨', genre: 'News', frequency: 'Standard', color: 'from-red-700 to-red-900', description: 'Emergency broadcast channel — weather alerts, community safety, and disaster response.', streamUrl: 'https://ice5.somafm.com/defcon-128-mp3', listeners: 22, nowPlaying: 'All Clear — No Active Alerts', category: 'Podcast & Special' },
   { id: 42, name: 'Solbones Soundscapes', icon: '🎲', genre: 'Meditation', frequency: '432 Hz', color: 'from-amber-500 to-orange-600', description: 'Sacred math frequencies from the Solbones dice game — Solfeggio tones meet play.', streamUrl: 'https://ice5.somafm.com/digitalis-128-mp3', listeners: 31, nowPlaying: 'Solfeggio Dice Tones', category: 'Podcast & Special' },
+  // === NEW CHANNELS (PDF Station List Update) ===
+  { id: 43, name: 'Worship & Devotional', icon: '⛪', genre: 'Worship', frequency: '432 Hz', color: 'from-sky-600 to-blue-700', description: 'Multi-faith worship and devotional music — hymns, praise, and spiritual songs across traditions.', streamUrl: 'https://ice5.somafm.com/covers-128-mp3', listeners: 48, nowPlaying: 'Morning Devotional', category: 'Gospel & Worship' },
+  { id: 44, name: 'Women in Music', icon: '👩‍🎤', genre: 'Mixed', frequency: '432 Hz', color: 'from-fuchsia-500 to-pink-600', description: 'Celebrating women artists across all genres — from Nina Simone to Beyoncé to H.E.R.', streamUrl: 'https://ice5.somafm.com/lush-128-mp3', listeners: 95, nowPlaying: 'Queens of Music', category: 'Classics & Legacy' },
+  { id: 45, name: 'Indie & Underground', icon: '🎸', genre: 'Indie', frequency: '440 Hz', color: 'from-zinc-600 to-slate-700', description: 'Independent and underground artists — the sounds you discover before everyone else.', streamUrl: 'https://ice5.somafm.com/indiepop-128-mp3', listeners: 67, nowPlaying: 'Underground Discoveries', category: 'Late Night & Chill' },
+  { id: 46, name: 'World Fusion', icon: '🌐', genre: 'World', frequency: '432 Hz', color: 'from-teal-500 to-green-600', description: 'Global music fusion — cross-cultural sounds blending traditions from every continent.', streamUrl: 'https://ice5.somafm.com/suburbsofgoa-128-mp3', listeners: 53, nowPlaying: 'Global Fusion Mix', category: 'African Diaspora & Caribbean' },
+  { id: 47, name: 'Throwback Radio', icon: '📼', genre: 'Classics', frequency: '440 Hz', color: 'from-orange-500 to-amber-600', description: "70s, 80s, 90s, and 2000s greatest hits — the soundtrack of every generation.", streamUrl: 'https://ice5.somafm.com/secretagent-128-mp3', listeners: 143, nowPlaying: '90s Throwback Jams', category: 'Classics & Legacy' },
+  { id: 48, name: 'Love Songs', icon: '💕', genre: 'R&B', frequency: '432 Hz', color: 'from-rose-500 to-pink-600', description: 'Romantic ballads and love songs across all eras — from doo-wop to modern R&B.', streamUrl: 'https://ice5.somafm.com/7soul-128-mp3', listeners: 112, nowPlaying: 'Love Ballads Hour', category: 'Jazz, Soul & Blues' },
+  { id: 49, name: 'Open Mic', icon: '🎤', genre: 'Community', frequency: '432 Hz', color: 'from-amber-400 to-yellow-500', description: 'Community open mic — freestyle, live performances, and new voices finding their stage.', streamUrl: 'https://ice5.somafm.com/live-128-mp3', listeners: 28, nowPlaying: 'Open Mic Night', category: 'Talk & Community' },
   // === C.J. BATTLE ===
-  { id: 43, name: 'C.J. Battle Radio', icon: '🎤', genre: 'Hip-Hop', frequency: '432 Hz', color: 'from-blue-600 to-cyan-500', description: 'C.J. Battle — OLD SOUL, Searching, TRIGONOMETRY and more. Most.High.Ova.Everything. Stream direct from Apple Music.', streamUrl: 'https://ice5.somafm.com/bagel-128-mp3', listeners: 89, nowPlaying: 'C.J. Battle — OLD SOUL', category: 'R&B & Hip-Hop', appleMusicUrl: 'https://music.apple.com/us/artist/c-j-battle/1438716457', spotifyUrl: 'https://open.spotify.com/artist/2kFnLPBd40yxliDHZZpAPy', isArtistStation: true },
+  { id: 50, name: 'C.J. Battle Radio', icon: '🎤', genre: 'Hip-Hop', frequency: '432 Hz', color: 'from-blue-600 to-cyan-500', description: 'C.J. Battle — OLD SOUL, Searching, TRIGONOMETRY and more. Most.High.Ova.Everything. Stream direct from Apple Music.', streamUrl: 'https://ice5.somafm.com/bagel-128-mp3', listeners: 89, nowPlaying: 'C.J. Battle — OLD SOUL', category: 'R&B & Hip-Hop', appleMusicUrl: 'https://music.apple.com/us/artist/c-j-battle/1438716457', spotifyUrl: 'https://open.spotify.com/artist/2kFnLPBd40yxliDHZZpAPy', isArtistStation: true, soundcloudUrl: 'https://soundcloud.com/cjbttle', tidalUrl: 'https://tidal.com/artist/10464604', deezerUrl: 'https://www.deezer.com/en/artist/52608732', youtubeUrl: 'https://www.youtube.com/channel/UCR_UZEE4FkpCR9THocyutkQ', instagramUrl: 'https://www.instagram.com/c.j.battle/' },
 ];
 
 export const RRBRadioIntegration: React.FC = () => {
@@ -182,6 +191,7 @@ export const RRBRadioIntegration: React.FC = () => {
             <div>
               <h1 className="text-4xl font-black text-[#D4A843]">RRB Radio</h1>
               <p className="text-[#E8E0D0]/60">Rockin' Rockin' Boogie • Payten Music (BMI) • Canryn Production</p>
+              <div className="mt-1"><RRBSongBadge variant="inline" /></div>
             </div>
           </div>
           <div className="flex items-center gap-6 text-sm text-[#E8E0D0]/50 flex-wrap">
@@ -231,15 +241,40 @@ export const RRBRadioIntegration: React.FC = () => {
                 </p>
                 {audioError && <p className="text-xs text-amber-400 mt-1">{audioError}</p>}
                 {(selectedChannel as any).isArtistStation && (
-                  <div className="flex items-center gap-3 mt-3">
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
                     {(selectedChannel as any).appleMusicUrl && (
-                      <a href={(selectedChannel as any).appleMusicUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
-                        <Music className="w-4 h-4" /> Apple Music
+                      <a href={(selectedChannel as any).appleMusicUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-red-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <Music className="w-3.5 h-3.5" /> Apple Music
                       </a>
                     )}
                     {(selectedChannel as any).spotifyUrl && (
-                      <a href={(selectedChannel as any).spotifyUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
-                        <Headphones className="w-4 h-4" /> Spotify
+                      <a href={(selectedChannel as any).spotifyUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <Headphones className="w-3.5 h-3.5" /> Spotify
+                      </a>
+                    )}
+                    {(selectedChannel as any).soundcloudUrl && (
+                      <a href={(selectedChannel as any).soundcloudUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <Wifi className="w-3.5 h-3.5" /> SoundCloud
+                      </a>
+                    )}
+                    {(selectedChannel as any).tidalUrl && (
+                      <a href={(selectedChannel as any).tidalUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-slate-700 to-slate-800 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <Music className="w-3.5 h-3.5" /> TIDAL
+                      </a>
+                    )}
+                    {(selectedChannel as any).deezerUrl && (
+                      <a href={(selectedChannel as any).deezerUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-purple-500 to-violet-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <Music className="w-3.5 h-3.5" /> Deezer
+                      </a>
+                    )}
+                    {(selectedChannel as any).youtubeUrl && (
+                      <a href={(selectedChannel as any).youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-red-600 to-red-700 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <Play className="w-3.5 h-3.5" /> YouTube
+                      </a>
+                    )}
+                    {(selectedChannel as any).instagramUrl && (
+                      <a href={(selectedChannel as any).instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-fuchsia-500 to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <Heart className="w-3.5 h-3.5" /> Instagram
                       </a>
                     )}
                   </div>
@@ -347,15 +382,40 @@ export const RRBRadioIntegration: React.FC = () => {
                     <span className="italic truncate">{channel.nowPlaying}</span>
                   </div>
                   {(channel as any).isArtistStation && (
-                    <div className="flex items-center gap-2 mt-2">
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
                       {(channel as any).appleMusicUrl && (
                         <a href={(channel as any).appleMusicUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-pink-500 to-red-500 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
-                          <Music className="w-3 h-3" /> Apple Music
+                          <Music className="w-3 h-3" /> Apple
                         </a>
                       )}
                       {(channel as any).spotifyUrl && (
                         <a href={(channel as any).spotifyUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
                           <Music className="w-3 h-3" /> Spotify
+                        </a>
+                      )}
+                      {(channel as any).soundcloudUrl && (
+                        <a href={(channel as any).soundcloudUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
+                          SC
+                        </a>
+                      )}
+                      {(channel as any).tidalUrl && (
+                        <a href={(channel as any).tidalUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-slate-700 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
+                          TIDAL
+                        </a>
+                      )}
+                      {(channel as any).deezerUrl && (
+                        <a href={(channel as any).deezerUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
+                          Deezer
+                        </a>
+                      )}
+                      {(channel as any).youtubeUrl && (
+                        <a href={(channel as any).youtubeUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
+                          YT
+                        </a>
+                      )}
+                      {(channel as any).instagramUrl && (
+                        <a href={(channel as any).instagramUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-fuchsia-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
+                          IG
                         </a>
                       )}
                     </div>

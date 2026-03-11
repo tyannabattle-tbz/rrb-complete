@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, Download, ExternalLink, CheckCircle2, Clock } from 'lucide-react';
@@ -22,7 +23,7 @@ const MOCK_DOCUMENTS: ProofDocument[] = [
     category: 'discogs',
     date: '2024-01-15',
     verified: true,
-    url: 'https://www.discogs.com/release/123456',
+    url: 'https://music.apple.com/us/song/rockin-rockin-boogie/335850412',
     description: 'Official Discogs database entry with complete release information',
   },
   {
@@ -202,6 +203,9 @@ export function ProofVaultSearch() {
                           </Badge>
                         )}
                       </div>
+                      {doc.title.includes('Rockin') && (
+                        <div className="mt-2"><RRBSongBadge variant="compact" showTitle /></div>
+                      )}
                     </div>
 
                     <div className="flex gap-2 flex-shrink-0">

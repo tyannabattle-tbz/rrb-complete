@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { Badge } from '@/components/ui/badge';
 import {
   BarChart,
@@ -81,6 +82,7 @@ export function ListenerDashboard() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Your Listening Dashboard</h1>
           <p className="text-slate-400">Track your podcast listening journey</p>
+          <div className="mt-3"><RRBSongBadge variant="inline" /></div>
         </div>
 
         {/* Stats Grid */}

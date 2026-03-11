@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Film, BookOpen, Mic2, Music, Clock, Camera, FileText } from 'lucide-react';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 
 const STORY_SPINE = [
   { act: 'Act I', title: 'The Collaborator', description: 'Introduce Candy — musician, songwriter, bandleader, engineer. Establish his entry into Little Richard\'s world and the multiple roles he played.', beats: ['Candy\'s background and musical roots', 'Entry into Richard\'s touring organization', '"I wore many hats" — the breadth of his contributions'] },
@@ -51,9 +52,12 @@ export default function CandyDocumentary() {
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Candy's Story — Documentary
           </h1>
-          <p className="text-purple-200/70 text-lg leading-relaxed mb-10">
+          <p className="text-purple-200/70 text-lg leading-relaxed mb-6">
             Story spine and production notes for the documentary in development. This page serves as the creative and factual foundation for telling Candy's story on screen.
           </p>
+          <div className="mb-10">
+            <RRBSongBadge variant="compact" showTitle />
+          </div>
 
           {/* Story Spine */}
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">

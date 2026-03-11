@@ -33,6 +33,14 @@ const RRB_CHANNELS = [
   { id: 18, name: 'Solfeggio Mix', frequency: 432, spotifyPlaylistId: 'playlist_solfeggio', category: 'healing' },
   { id: 19, name: 'Gospel Hour', frequency: 432, spotifyPlaylistId: 'playlist_gospel', category: 'gospel' },
   { id: 20, name: 'Praise & Worship', frequency: 432, spotifyPlaylistId: 'playlist_praise', category: 'gospel' },
+  { id: 21, name: 'Worship & Devotional', frequency: 432, spotifyPlaylistId: 'playlist_worship', category: 'gospel' },
+  { id: 22, name: 'Women in Music', frequency: 432, spotifyPlaylistId: 'playlist_women', category: 'music' },
+  { id: 23, name: 'Indie & Underground', frequency: 440, spotifyPlaylistId: 'playlist_indie', category: 'music' },
+  { id: 24, name: 'World Fusion', frequency: 432, spotifyPlaylistId: 'playlist_worldfusion', category: 'music' },
+  { id: 25, name: 'Throwback Radio', frequency: 440, spotifyPlaylistId: 'playlist_throwback', category: 'music' },
+  { id: 26, name: 'Love Songs', frequency: 432, spotifyPlaylistId: 'playlist_lovesongs', category: 'music' },
+  { id: 27, name: 'Open Mic', frequency: 432, spotifyPlaylistId: 'playlist_openmic', category: 'community' },
+  { id: 28, name: 'C.J. Battle Radio', frequency: 432, spotifyPlaylistId: '2kFnLPBd40yxliDHZZpAPy', category: 'music' },
 ];
 
 // Spotify token cache

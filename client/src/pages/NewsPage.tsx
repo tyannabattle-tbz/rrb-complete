@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Newspaper, TrendingUp, AlertCircle, Clock, ArrowLeft, ExternalLink, Filter } from 'lucide-react';
@@ -60,6 +61,7 @@ export default function NewsPage() {
             <p className="text-purple-200/60 text-base">
               The latest from Canryn Production, Rockin' Rockin' Boogie, Sweet Miracles, and the broader music and broadcasting community.
             </p>
+            <div className="mt-3"><RRBSongBadge variant="inline" /></div>
           </div>
 
           {/* Category Filter */}

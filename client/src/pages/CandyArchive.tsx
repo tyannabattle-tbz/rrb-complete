@@ -2,6 +2,7 @@ import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { BookOpen, FileText, Clock, Map, Film, Music, ExternalLink, Quote, Shield } from 'lucide-react';
 
 const ARCHIVE_PAGES = [
@@ -77,6 +78,9 @@ export default function CandyArchive() {
               <p className="text-purple-200/70 text-sm leading-relaxed mb-4">
                 This archive presents primary-source writings by Candy, witness testimony, BMI registration records, historical references, and session-era documentation tied to songs such as <strong className="text-white">Rockin' Rockin' Boogie</strong>, <strong className="text-white">I Saw What You Did</strong>, and <strong className="text-white">Standing Right Here</strong>.
               </p>
+              <div className="mt-3">
+                <RRBSongBadge variant="compact" showTitle />
+              </div>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="outline" className="border-amber-500/40 text-amber-300">Primary Sources</Badge>
                 <Badge variant="outline" className="border-amber-500/40 text-amber-300">BMI Evidence</Badge>

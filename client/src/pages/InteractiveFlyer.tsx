@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { QRCodeSVG } from 'qrcode.react';
 import { trpc } from '@/lib/trpc';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { toast } from 'sonner';
 import {
   Volume2, VolumeX, Globe, Maximize2, Minimize2, Printer,
@@ -208,7 +209,8 @@ function getEcosystemLinks(): EcoLink[] {
     {
       id: 'rrb-radio',
       title: "Rockin' Rockin' Boogie Radio",
-      description: '24/7 Broadcasting • 432 Hz Healing Frequencies • 6 Channels',
+      description: '24/7 Broadcasting • 432 Hz Healing Frequencies • Listen to the Original Song',
+      songLinks: true,
       icon: <Radio className="w-6 h-6" />,
       path: `${baseUrl}/rrb-radio`,
       color: 'from-pink-500 to-orange-500',
@@ -876,6 +878,9 @@ export default function InteractiveFlyer() {
           <p className={`text-sm mb-2 ${highContrast ? 'text-yellow-300' : 'text-amber-400'}`}>
             Payten Music (BMI) • Canryn Production • In Honor of Seabrun Candy Hunter
           </p>
+          <div className="flex justify-center mt-3">
+            <RRBSongBadge variant="compact" showTitle />
+          </div>
           <p className={`text-xs ${highContrast ? 'text-yellow-200' : 'text-gray-400'}`}>
             {content.poweredBy}
           </p>

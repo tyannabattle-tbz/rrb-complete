@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
+import { RRB_SONG_LINKS } from '@/lib/rrbSongLinks';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, ChevronUp, Music, Award, Users, BookOpen } from 'lucide-react';
@@ -143,6 +145,9 @@ export default function Legacy() {
                 <div className="text-2xl font-bold text-blue-400">5</div>
                 <p className="text-sm text-slate-400">Children</p>
               </div>
+            </div>
+            <div className="mt-6">
+              <RRBSongBadge variant="full" showTitle />
             </div>
           </CardContent>
         </Card>

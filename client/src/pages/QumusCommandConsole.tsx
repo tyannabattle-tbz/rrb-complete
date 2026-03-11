@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -432,6 +433,7 @@ Note: External platform stats (Spotify, Apple Music) available at /stream-analyt
                 <p className="text-sm text-green-400/70 font-mono">
                   Real-Time Data • {qumusStats?.activePolicies ?? '...'} Policies • {streamStats?.totalChannels ?? '...'} Channels • {streamStats?.totalListeners?.toLocaleString() ?? '...'} Listeners
                 </p>
+                <div className="mt-1"><RRBSongBadge variant="inline" /></div>
               </div>
             </div>
             <div className="flex items-center gap-2">

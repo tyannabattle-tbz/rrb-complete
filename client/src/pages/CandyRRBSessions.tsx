@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Music, FileText, Users, Building2, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 
 const SESSION_EVIDENCE = [
   { category: 'BMI Registration', icon: FileText, status: 'verified', items: [
@@ -63,9 +64,12 @@ export default function CandyRRBSessions() {
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Rockin' Rockin' Boogie Sessions
           </h1>
-          <p className="text-purple-200/70 text-lg leading-relaxed mb-10">
+          <p className="text-purple-200/70 text-lg leading-relaxed mb-6">
             This page ties together the BMI registration, Candy's personal writings, the Nashville session account, and Alvin Taylor's witness confirmation into a single investigative view.
           </p>
+          <div className="mb-10">
+            <RRBSongBadge variant="full" showTitle />
+          </div>
 
           {/* Evidence Sections */}
           <div className="space-y-6 mb-12">

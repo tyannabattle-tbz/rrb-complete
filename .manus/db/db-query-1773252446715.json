@@ -1,0 +1,230 @@
+{
+  "query": "SELECT id, name FROM radio_channels WHERE status = 'active' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, name FROM radio_channels WHERE status = 'active' ORDER BY id;",
+  "rows": [
+    {
+      "id": "870011",
+      "name": "RRB Gospel Hour"
+    },
+    {
+      "id": "870012",
+      "name": "RRB Praise & Worship"
+    },
+    {
+      "id": "870013",
+      "name": "RRB Christian Hits"
+    },
+    {
+      "id": "870014",
+      "name": "RRB Sunday Morning"
+    },
+    {
+      "id": "870015",
+      "name": "RRB Spoken Word"
+    },
+    {
+      "id": "870016",
+      "name": "RRB Faith Talk"
+    },
+    {
+      "id": "870017",
+      "name": "RRB Smooth Jazz"
+    },
+    {
+      "id": "870018",
+      "name": "RRB Classic Jazz"
+    },
+    {
+      "id": "870019",
+      "name": "RRB Acid Jazz"
+    },
+    {
+      "id": "870020",
+      "name": "RRB Neo Soul"
+    },
+    {
+      "id": "870021",
+      "name": "RRB Soul Classics"
+    },
+    {
+      "id": "870022",
+      "name": "RRB R&B Hits"
+    },
+    {
+      "id": "870023",
+      "name": "RRB Blues Station"
+    },
+    {
+      "id": "870024",
+      "name": "RRB Hip-Hop Central"
+    },
+    {
+      "id": "870025",
+      "name": "RRB Trap & Bass"
+    },
+    {
+      "id": "870026",
+      "name": "RRB Lo-Fi Beats"
+    },
+    {
+      "id": "870027",
+      "name": "RRB Chillhop"
+    },
+    {
+      "id": "870028",
+      "name": "RRB Urban Mix"
+    },
+    {
+      "id": "870029",
+      "name": "RRB Funk Factory"
+    },
+    {
+      "id": "870030",
+      "name": "RRB Disco Nights"
+    },
+    {
+      "id": "870031",
+      "name": "RRB House Music"
+    },
+    {
+      "id": "870032",
+      "name": "RRB Electronic"
+    },
+    {
+      "id": "870033",
+      "name": "RRB Techno Underground"
+    },
+    {
+      "id": "870034",
+      "name": "RRB Rock Legends"
+    },
+    {
+      "id": "870035",
+      "name": "RRB Alternative"
+    },
+    {
+      "id": "870036",
+      "name": "RRB Metal Forge"
+    },
+    {
+      "id": "870037",
+      "name": "RRB Punk Radio"
+    },
+    {
+      "id": "870038",
+      "name": "RRB Indie Vibes"
+    },
+    {
+      "id": "870039",
+      "name": "RRB Reggae Island"
+    },
+    {
+      "id": "870040",
+      "name": "RRB Afrobeat"
+    },
+    {
+      "id": "870041",
+      "name": "RRB Latin Heat"
+    },
+    {
+      "id": "870042",
+      "name": "RRB Caribbean Vibes"
+    },
+    {
+      "id": "870043",
+      "name": "RRB World Music"
+    },
+    {
+      "id": "870044",
+      "name": "RRB Ska & Rocksteady"
+    },
+    {
+      "id": "870045",
+      "name": "RRB Healing Frequencies"
+    },
+    {
+      "id": "870046",
+      "name": "RRB Meditation"
+    },
+    {
+      "id": "870047",
+      "name": "RRB Ambient"
+    },
+    {
+      "id": "870048",
+      "name": "RRB New Age"
+    },
+    {
+      "id": "870049",
+      "name": "RRB Yoga & Chill"
+    },
+    {
+      "id": "870050",
+      "name": "RRB Oldies Gold"
+    },
+    {
+      "id": "870051",
+      "name": "RRB Classical"
+    },
+    {
+      "id": "870052",
+      "name": "RRB Country Roads"
+    },
+    {
+      "id": "870053",
+      "name": "RRB Folk & Acoustic"
+    },
+    {
+      "id": "870054",
+      "name": "RRB DnB Station"
+    },
+    {
+      "id": "870055",
+      "name": "RRB African Heritage"
+    },
+    {
+      "id": "870056",
+      "name": "RRB Selma Jubilee"
+    },
+    {
+      "id": "870057",
+      "name": "RRB Little Richard Tribute"
+    },
+    {
+      "id": "870058",
+      "name": "RRB Ghana Connect"
+    },
+    {
+      "id": "870059",
+      "name": "RRB Sweet Miracles"
+    },
+    {
+      "id": "870060",
+      "name": "RRB SQUADD Goals"
+    },
+    {
+      "id": "870061",
+      "name": "Test Channel"
+    },
+    {
+      "id": "870062",
+      "name": "Test Channel"
+    },
+    {
+      "id": "870063",
+      "name": "Test Channel"
+    },
+    {
+      "id": "870064",
+      "name": "Test Channel"
+    },
+    {
+      "id": "900001",
+      "name": "Test Channel"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\n870011\tRRB Gospel Hour\n870012\tRRB Praise & Worship\n870013\tRRB Christian Hits\n870014\tRRB Sunday Morning\n870015\tRRB Spoken Word\n870016\tRRB Faith Talk\n870017\tRRB Smooth Jazz\n870018\tRRB Classic Jazz\n870019\tRRB Acid Jazz\n870020\tRRB Neo Soul\n870021\tRRB Soul Classics\n870022\tRRB R&B Hits\n870023\tRRB Blues Station\n870024\tRRB Hip-Hop Central\n870025\tRRB Trap & Bass\n870026\tRRB Lo-Fi Beats\n870027\tRRB Chillhop\n870028\tRRB Urban Mix\n870029\tRRB Funk Factory\n870030\tRRB Disco Nights\n870031\tRRB House Music\n870032\tRRB Electronic\n870033\tRRB Techno Underground\n870034\tRRB Rock Legends\n870035\tRRB Alternative\n870036\tRRB Metal Forge\n870037\tRRB Punk Radio\n870038\tRRB Indie Vibes\n870039\tRRB Reggae Island\n870040\tRRB Afrobeat\n870041\tRRB Latin Heat\n870042\tRRB Caribbean Vibes\n870043\tRRB World Music\n870044\tRRB Ska & Rocksteady\n870045\tRRB Healing Frequencies\n870046\tRRB Meditation\n870047\tRRB Ambient\n870048\tRRB New Age\n870049\tRRB Yoga & Chill\n870050\tRRB Oldies Gold\n870051\tRRB Classical\n870052\tRRB Country Roads\n870053\tRRB Folk & Acoustic\n870054\tRRB DnB Station\n870055\tRRB African Heritage\n870056\tRRB Selma Jubilee\n870057\tRRB Little Richard Tribute\n870058\tRRB Ghana Connect\n870059\tRRB Sweet Miracles\n870060\tRRB SQUADD Goals\n870061\tTest Channel\n870062\tTest Channel\n870063\tTest Channel\n870064\tTest Channel\n900001\tTest Channel\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

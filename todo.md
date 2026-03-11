@@ -3889,3 +3889,43 @@
 - [x] Wire all live links across the platform to dynamic Restream URL
 - [x] Add C.J. Battle as channel #43 on RRB Radio with Apple Music + Spotify links
 - [x] Create useRestreamUrl hook for consistent access across components
+
+## RRB Song Link Integration
+- [x] Create shared RRB_SONG_LINKS constant with Apple Music, Spotify, YouTube links
+- [x] Create reusable RRBSongBadge component for rendering song links inline
+- [x] Add song links to Home page (Payten Music / RRB Registration section)
+- [x] Add song links to InteractiveFlyer (Rockin' Rockin' Boogie Radio section)
+- [x] Add song links to CandyArchive (BMI registration references)
+- [x] Add song links to CandyRRBSessions (song detail section)
+- [x] Add song links to CandyEvidenceMap (BMI evidence node)
+- [x] Add song links to CandyTimeline (BMI registration milestone)
+- [x] Add song links to CandyDocumentary (evidence section)
+- [x] Add song links to CandyWhoWasCandy (BMI reference)
+- [x] Add song links to ProofVaultSearch (Discogs entry)
+- [x] Add song links to Legacy page (Payten Music section)
+- [x] Add song links to LiveStreamPage (Payten Music footer)
+- [x] Add song links to MediaLibrary (Theme Song entry with streaming platform buttons)
+- [x] Add song links to ListenerDashboard (RRB channel)
+- [x] Add song links to RRBRadioIntegration (main channel)
+- [x] Add song links to QumusCommandConsole (RRB reference)
+- [x] Add song links to LaShanna page (legacy project reference)
+- [x] Add song links to NewsPage (RRB reference)
+- [x] Verify all links open correctly and TypeScript compiles (0 errors)
+- [x] Write tests for RRB song link presence (37 tests passing)
+
+## 8 New Radio Channels (PDF Station List Update)
+- [x] Add Worship & Devotional (ch-043) — multi-faith worship, 432 Hz
+- [x] Add Women in Music (ch-044) — celebrating women artists, 432 Hz
+- [x] Add Indie & Underground (ch-045) — independent artists, 440 Hz
+- [x] Add World Fusion (ch-046) — global music fusion, 432 Hz
+- [x] Add Throwback Radio (ch-047) — 70s/80s/90s/2000s hits, 440 Hz
+- [x] Add Love Songs (ch-048) — romantic ballads, 432 Hz
+- [x] Add Open Mic (ch-049) — community freestyle, 432 Hz
+- [x] Add C.J. Battle Radio (ch-050) — with all 7 platform links
+- [x] Update database with 8 new channels (58 active total)
+- [x] Update RRBRadioIntegration frontend channel list (50 channels)
+- [x] Update Spotify router with new channel entries
+- [x] Update content scheduler with new channel programming
+- [x] Add all 7 C.J. Battle platform links (Apple Music, Spotify, SoundCloud, TIDAL, Deezer, YouTube, Instagram)
+- [x] Clean up test channels (moved to offline)
+- [x] TypeScript compilation passes (0 errors)

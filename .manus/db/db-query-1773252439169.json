@@ -1,0 +1,340 @@
+{
+  "query": "SELECT id, name, genre, frequency FROM radio_channels WHERE status = 'active' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, name, genre, frequency FROM radio_channels WHERE status = 'active' ORDER BY id;",
+  "rows": [
+    {
+      "id": "870011",
+      "name": "RRB Gospel Hour",
+      "genre": "Gospel & Faith",
+      "frequency": "432"
+    },
+    {
+      "id": "870012",
+      "name": "RRB Praise & Worship",
+      "genre": "Gospel & Faith",
+      "frequency": "432"
+    },
+    {
+      "id": "870013",
+      "name": "RRB Christian Hits",
+      "genre": "Gospel & Faith",
+      "frequency": "432"
+    },
+    {
+      "id": "870014",
+      "name": "RRB Sunday Morning",
+      "genre": "Gospel & Faith",
+      "frequency": "432"
+    },
+    {
+      "id": "870015",
+      "name": "RRB Spoken Word",
+      "genre": "Gospel & Faith",
+      "frequency": "432"
+    },
+    {
+      "id": "870016",
+      "name": "RRB Faith Talk",
+      "genre": "Gospel & Faith",
+      "frequency": "432"
+    },
+    {
+      "id": "870017",
+      "name": "RRB Smooth Jazz",
+      "genre": "Jazz & Soul",
+      "frequency": "432"
+    },
+    {
+      "id": "870018",
+      "name": "RRB Classic Jazz",
+      "genre": "Jazz & Soul",
+      "frequency": "432"
+    },
+    {
+      "id": "870019",
+      "name": "RRB Acid Jazz",
+      "genre": "Jazz & Soul",
+      "frequency": "432"
+    },
+    {
+      "id": "870020",
+      "name": "RRB Neo Soul",
+      "genre": "Jazz & Soul",
+      "frequency": "432"
+    },
+    {
+      "id": "870021",
+      "name": "RRB Soul Classics",
+      "genre": "Jazz & Soul",
+      "frequency": "432"
+    },
+    {
+      "id": "870022",
+      "name": "RRB R&B Hits",
+      "genre": "Jazz & Soul",
+      "frequency": "432"
+    },
+    {
+      "id": "870023",
+      "name": "RRB Blues Station",
+      "genre": "Jazz & Soul",
+      "frequency": "432"
+    },
+    {
+      "id": "870024",
+      "name": "RRB Hip-Hop Central",
+      "genre": "Hip-Hop & Urban",
+      "frequency": "432"
+    },
+    {
+      "id": "870025",
+      "name": "RRB Trap & Bass",
+      "genre": "Hip-Hop & Urban",
+      "frequency": "432"
+    },
+    {
+      "id": "870026",
+      "name": "RRB Lo-Fi Beats",
+      "genre": "Hip-Hop & Urban",
+      "frequency": "432"
+    },
+    {
+      "id": "870027",
+      "name": "RRB Chillhop",
+      "genre": "Hip-Hop & Urban",
+      "frequency": "432"
+    },
+    {
+      "id": "870028",
+      "name": "RRB Urban Mix",
+      "genre": "Hip-Hop & Urban",
+      "frequency": "432"
+    },
+    {
+      "id": "870029",
+      "name": "RRB Funk Factory",
+      "genre": "Funk & Dance",
+      "frequency": "432"
+    },
+    {
+      "id": "870030",
+      "name": "RRB Disco Nights",
+      "genre": "Funk & Dance",
+      "frequency": "432"
+    },
+    {
+      "id": "870031",
+      "name": "RRB House Music",
+      "genre": "Funk & Dance",
+      "frequency": "432"
+    },
+    {
+      "id": "870032",
+      "name": "RRB Electronic",
+      "genre": "Funk & Dance",
+      "frequency": "432"
+    },
+    {
+      "id": "870033",
+      "name": "RRB Techno Underground",
+      "genre": "Funk & Dance",
+      "frequency": "432"
+    },
+    {
+      "id": "870034",
+      "name": "RRB Rock Legends",
+      "genre": "Rock & Alternative",
+      "frequency": "432"
+    },
+    {
+      "id": "870035",
+      "name": "RRB Alternative",
+      "genre": "Rock & Alternative",
+      "frequency": "432"
+    },
+    {
+      "id": "870036",
+      "name": "RRB Metal Forge",
+      "genre": "Rock & Alternative",
+      "frequency": "432"
+    },
+    {
+      "id": "870037",
+      "name": "RRB Punk Radio",
+      "genre": "Rock & Alternative",
+      "frequency": "432"
+    },
+    {
+      "id": "870038",
+      "name": "RRB Indie Vibes",
+      "genre": "Rock & Alternative",
+      "frequency": "432"
+    },
+    {
+      "id": "870039",
+      "name": "RRB Reggae Island",
+      "genre": "World & Culture",
+      "frequency": "432"
+    },
+    {
+      "id": "870040",
+      "name": "RRB Afrobeat",
+      "genre": "World & Culture",
+      "frequency": "432"
+    },
+    {
+      "id": "870041",
+      "name": "RRB Latin Heat",
+      "genre": "World & Culture",
+      "frequency": "432"
+    },
+    {
+      "id": "870042",
+      "name": "RRB Caribbean Vibes",
+      "genre": "World & Culture",
+      "frequency": "432"
+    },
+    {
+      "id": "870043",
+      "name": "RRB World Music",
+      "genre": "World & Culture",
+      "frequency": "432"
+    },
+    {
+      "id": "870044",
+      "name": "RRB Ska & Rocksteady",
+      "genre": "World & Culture",
+      "frequency": "432"
+    },
+    {
+      "id": "870045",
+      "name": "RRB Healing Frequencies",
+      "genre": "Healing & Wellness",
+      "frequency": "432"
+    },
+    {
+      "id": "870046",
+      "name": "RRB Meditation",
+      "genre": "Healing & Wellness",
+      "frequency": "432"
+    },
+    {
+      "id": "870047",
+      "name": "RRB Ambient",
+      "genre": "Healing & Wellness",
+      "frequency": "432"
+    },
+    {
+      "id": "870048",
+      "name": "RRB New Age",
+      "genre": "Healing & Wellness",
+      "frequency": "432"
+    },
+    {
+      "id": "870049",
+      "name": "RRB Yoga & Chill",
+      "genre": "Healing & Wellness",
+      "frequency": "528"
+    },
+    {
+      "id": "870050",
+      "name": "RRB Oldies Gold",
+      "genre": "Classics & Heritage",
+      "frequency": "432"
+    },
+    {
+      "id": "870051",
+      "name": "RRB Classical",
+      "genre": "Classics & Heritage",
+      "frequency": "432"
+    },
+    {
+      "id": "870052",
+      "name": "RRB Country Roads",
+      "genre": "Classics & Heritage",
+      "frequency": "432"
+    },
+    {
+      "id": "870053",
+      "name": "RRB Folk & Acoustic",
+      "genre": "Classics & Heritage",
+      "frequency": "432"
+    },
+    {
+      "id": "870054",
+      "name": "RRB DnB Station",
+      "genre": "Classics & Heritage",
+      "frequency": "432"
+    },
+    {
+      "id": "870055",
+      "name": "RRB African Heritage",
+      "genre": "Classics & Heritage",
+      "frequency": "432"
+    },
+    {
+      "id": "870056",
+      "name": "RRB Selma Jubilee",
+      "genre": "Special",
+      "frequency": "432"
+    },
+    {
+      "id": "870057",
+      "name": "RRB Little Richard Tribute",
+      "genre": "Special",
+      "frequency": "432"
+    },
+    {
+      "id": "870058",
+      "name": "RRB Ghana Connect",
+      "genre": "Special",
+      "frequency": "432"
+    },
+    {
+      "id": "870059",
+      "name": "RRB Sweet Miracles",
+      "genre": "Special",
+      "frequency": "432"
+    },
+    {
+      "id": "870060",
+      "name": "RRB SQUADD Goals",
+      "genre": "Special",
+      "frequency": "432"
+    },
+    {
+      "id": "870061",
+      "name": "Test Channel",
+      "genre": "NULL",
+      "frequency": "101.5 FM"
+    },
+    {
+      "id": "870062",
+      "name": "Test Channel",
+      "genre": "NULL",
+      "frequency": "101.5 FM"
+    },
+    {
+      "id": "870063",
+      "name": "Test Channel",
+      "genre": "NULL",
+      "frequency": "101.5 FM"
+    },
+    {
+      "id": "870064",
+      "name": "Test Channel",
+      "genre": "NULL",
+      "frequency": "101.5 FM"
+    },
+    {
+      "id": "900001",
+      "name": "Test Channel",
+      "genre": "NULL",
+      "frequency": "101.5 FM"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tgenre\tfrequency\n870011\tRRB Gospel Hour\tGospel & Faith\t432\n870012\tRRB Praise & Worship\tGospel & Faith\t432\n870013\tRRB Christian Hits\tGospel & Faith\t432\n870014\tRRB Sunday Morning\tGospel & Faith\t432\n870015\tRRB Spoken Word\tGospel & Faith\t432\n870016\tRRB Faith Talk\tGospel & Faith\t432\n870017\tRRB Smooth Jazz\tJazz & Soul\t432\n870018\tRRB Classic Jazz\tJazz & Soul\t432\n870019\tRRB Acid Jazz\tJazz & Soul\t432\n870020\tRRB Neo Soul\tJazz & Soul\t432\n870021\tRRB Soul Classics\tJazz & Soul\t432\n870022\tRRB R&B Hits\tJazz & Soul\t432\n870023\tRRB Blues Station\tJazz & Soul\t432\n870024\tRRB Hip-Hop Central\tHip-Hop & Urban\t432\n870025\tRRB Trap & Bass\tHip-Hop & Urban\t432\n870026\tRRB Lo-Fi Beats\tHip-Hop & Urban\t432\n870027\tRRB Chillhop\tHip-Hop & Urban\t432\n870028\tRRB Urban Mix\tHip-Hop & Urban\t432\n870029\tRRB Funk Factory\tFunk & Dance\t432\n870030\tRRB Disco Nights\tFunk & Dance\t432\n870031\tRRB House Music\tFunk & Dance\t432\n870032\tRRB Electronic\tFunk & Dance\t432\n870033\tRRB Techno Underground\tFunk & Dance\t432\n870034\tRRB Rock Legends\tRock & Alternative\t432\n870035\tRRB Alternative\tRock & Alternative\t432\n870036\tRRB Metal Forge\tRock & Alternative\t432\n870037\tRRB Punk Radio\tRock & Alternative\t432\n870038\tRRB Indie Vibes\tRock & Alternative\t432\n870039\tRRB Reggae Island\tWorld & Culture\t432\n870040\tRRB Afrobeat\tWorld & Culture\t432\n870041\tRRB Latin Heat\tWorld & Culture\t432\n870042\tRRB Caribbean Vibes\tWorld & Culture\t432\n870043\tRRB World Music\tWorld & Culture\t432\n870044\tRRB Ska & Rocksteady\tWorld & Culture\t432\n870045\tRRB Healing Frequencies\tHealing & Wellness\t432\n870046\tRRB Meditation\tHealing & Wellness\t432\n870047\tRRB Ambient\tHealing & Wellness\t432\n870048\tRRB New Age\tHealing & Wellness\t432\n870049\tRRB Yoga & Chill\tHealing & Wellness\t528\n870050\tRRB Oldies Gold\tClassics & Heritage\t432\n870051\tRRB Classical\tClassics & Heritage\t432\n870052\tRRB Country Roads\tClassics & Heritage\t432\n870053\tRRB Folk & Acoustic\tClassics & Heritage\t432\n870054\tRRB DnB Station\tClassics & Heritage\t432\n870055\tRRB African Heritage\tClassics & Heritage\t432\n870056\tRRB Selma Jubilee\tSpecial\t432\n870057\tRRB Little Richard Tribute\tSpecial\t432\n870058\tRRB Ghana Connect\tSpecial\t432\n870059\tRRB Sweet Miracles\tSpecial\t432\n870060\tRRB SQUADD Goals\tSpecial\t432\n870061\tTest Channel\tNULL\t101.5 FM\n870062\tTest Channel\tNULL\t101.5 FM\n870063\tTest Channel\tNULL\t101.5 FM\n870064\tTest Channel\tNULL\t101.5 FM\n900001\tTest Channel\tNULL\t101.5 FM\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

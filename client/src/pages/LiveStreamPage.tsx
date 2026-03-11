@@ -3,6 +3,7 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { useRestreamUrl } from '@/hooks/useRestreamUrl';
+import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -311,6 +312,7 @@ export default function LiveStreamPage() {
                 <span>{channels?.length || 0} channels</span>
               </div>
               <span className="text-xs text-[#E8E0D0]/30 hidden md:inline">Payten Music (BMI) &bull; Canryn Production</span>
+              <span className="hidden md:inline ml-2"><RRBSongBadge variant="inline" /></span>
             </div>
 
             {/* Tab Switcher */}
@@ -424,6 +426,7 @@ export default function LiveStreamPage() {
                           </p>
                         )}
                         <p className="text-[#E8E0D0]/30 text-xs">Registered through Payten Music in BMI</p>
+                        <div className="mt-1"><RRBSongBadge variant="inline" /></div>
                         {audioError && (
                           <p className="text-amber-400/80 text-xs mt-3">{audioError}</p>
                         )}
