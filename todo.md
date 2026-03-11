@@ -3761,3 +3761,6 @@
 - [x] Connect real Web Audio API engine to transport controls for audio playback, mixing, and real-time metering
 - [x] Implement drag-and-drop: drag files from browser panel onto tracks, reposition regions on timeline
 - [x] Build File menu with Save/Export/Import project functionality persisted to localStorage (.rrbstudio format)
+- [x] Add audio file upload to S3 — wire browser panel import to upload audio files for persistent cross-session storage
+- [x] Add real waveform analysis — use Web Audio API AnalyserNode to generate actual waveform visualizations from loaded audio
+- [x] Add recording capability — connect Record button to MediaRecorder API for microphone input capture into tracks

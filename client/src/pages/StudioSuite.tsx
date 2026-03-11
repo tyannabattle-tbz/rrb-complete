@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
+import { trpc } from '@/lib/trpc';
 
 // ============================================================
 // TYPE DEFINITIONS
@@ -374,20 +375,29 @@ export function StudioSuite() {
     setIsPlaying(false);
   }, [audioEngine]);
 
-  // Load audio file onto a track
+  // Load audio file onto a track (with real waveform extraction)
   const handleLoadAudioToTrack = useCallback(async (trackId: string, file: File) => {
     if (!audioEngine.engineState.isInitialized) {
       await handleInitAudio();
     }
     const success = await audioEngine.loadAudioToTrack(trackId, file);
     if (success) {
-      // Generate waveform data from file name hash for visual
-      const waveform = generateWaveform(200);
+      // Extract REAL waveform from the loaded AudioBuffer
+      const realWaveform = audioEngine.getTrackWaveform(trackId, 200);
+      const waveform = realWaveform || generateWaveform(200);
+
+      // Get real duration and convert to beats
+      const duration = await audioEngine.getAudioDuration(file);
+      const durationBeats = duration > 0 ? Math.ceil((duration / 60) * bpm) : 32;
+
+      const track = tracks.find(t => t.id === trackId);
+      const lastRegionEnd = track?.regions.reduce((max, r) => Math.max(max, r.startBeat + r.durationBeats), 0) || 0;
+
       const newRegion: Region = {
         id: `r${Date.now()}`,
         name: file.name.replace(/\.[^.]+$/, ''),
-        startBeat: 0,
-        durationBeats: 32,
+        startBeat: lastRegionEnd,
+        durationBeats: durationBeats,
         color: tracks.find(t => t.id === trackId)?.color || '#4ade80',
         waveformData: waveform,
         audioFile: file,
@@ -398,11 +408,124 @@ export function StudioSuite() {
           : t
       ));
       setIsDirty(true);
-      toast.success(`Loaded "${file.name}" onto track`);
+
+      // Upload to S3 in background
+      try {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = (reader.result as string).split(',')[1];
+          if (base64) {
+            uploadAudioMutation.mutate({
+              fileName: file.name,
+              fileData: base64,
+              mimeType: file.type || 'audio/wav',
+              trackId,
+              projectName,
+            });
+          }
+        };
+        reader.readAsDataURL(file);
+      } catch { /* S3 upload is best-effort */ }
+
+      toast.success(`Loaded "${file.name}" onto track (${duration.toFixed(1)}s)`);
     } else {
       toast.error(`Failed to load "${file.name}"`);
     }
-  }, [audioEngine, handleInitAudio, tracks]);
+  }, [audioEngine, handleInitAudio, tracks, bpm, projectName]);
+
+  // S3 upload mutation
+  const uploadAudioMutation = trpc.studioAudio.uploadAudio.useMutation({
+    onSuccess: (data) => {
+      console.log('[Studio] Audio uploaded to S3:', data.url);
+    },
+    onError: (err) => {
+      console.warn('[Studio] S3 upload failed (non-critical):', err.message);
+    },
+  });
+
+  // Recording handlers
+  const handleStartRecording = useCallback(async () => {
+    if (!selectedTrack || selectedTrack.type === 'master') {
+      toast.error('Select a track to record to');
+      return;
+    }
+    if (!audioEngine.engineState.isInitialized) {
+      await handleInitAudio();
+    }
+    const success = await audioEngine.startRecording(selectedTrack.id);
+    if (success) {
+      setIsRecording(true);
+      setIsPlaying(true);
+      toast.success(`Recording to ${selectedTrack.name}...`);
+    } else {
+      toast.error('Failed to start recording — check microphone permissions');
+    }
+  }, [audioEngine, selectedTrack, handleInitAudio]);
+
+  const handleStopRecording = useCallback(async () => {
+    const result = await audioEngine.stopRecording();
+    setIsRecording(false);
+    if (!result) {
+      toast.error('No recording data captured');
+      return;
+    }
+
+    const { blob, duration, mimeType } = result;
+    const trackId = selectedTrack?.id;
+    if (!trackId) return;
+
+    // Load recording into the track's AudioBuffer
+    const loaded = await audioEngine.loadRecordingToTrack(trackId, blob);
+    if (loaded) {
+      // Extract real waveform from the recording
+      const realWaveform = audioEngine.getTrackWaveform(trackId, 200);
+      const waveform = realWaveform || generateWaveform(200);
+      const durationBeats = Math.ceil((duration / 60) * bpm);
+
+      const track = tracks.find(t => t.id === trackId);
+      const lastRegionEnd = track?.regions.reduce((max, r) => Math.max(max, r.startBeat + r.durationBeats), 0) || 0;
+
+      const newRegion: Region = {
+        id: `r${Date.now()}`,
+        name: `Recording ${new Date().toLocaleTimeString()}`,
+        startBeat: lastRegionEnd,
+        durationBeats: durationBeats,
+        color: '#ef4444',
+        waveformData: waveform,
+      };
+      setTracks(prev => prev.map(t =>
+        t.id === trackId
+          ? { ...t, regions: [...t.regions, newRegion] }
+          : t
+      ));
+      setIsDirty(true);
+
+      // Upload recording to S3 in background
+      try {
+        const base64 = await audioEngine.blobToBase64(blob);
+        uploadRecordingMutation.mutate({
+          fileName: `recording_${Date.now()}`,
+          fileData: base64,
+          mimeType,
+          trackId,
+          duration,
+        });
+      } catch { /* best-effort */ }
+
+      toast.success(`Recording saved (${duration.toFixed(1)}s) with real waveform`);
+    } else {
+      toast.error('Failed to process recording');
+    }
+  }, [audioEngine, selectedTrack, tracks, bpm]);
+
+  const uploadRecordingMutation = trpc.studioAudio.uploadRecording.useMutation({
+    onSuccess: (data) => {
+      console.log('[Studio] Recording uploaded to S3:', data.url);
+    },
+    onError: (err) => {
+      console.warn('[Studio] Recording upload failed (non-critical):', err.message);
+    },
+  });
 
   // ============================================================
   // DRAG AND DROP
@@ -609,7 +732,7 @@ export function StudioSuite() {
         case 'R':
           if (!e.metaKey && !e.ctrlKey) {
             e.preventDefault();
-            setIsRecording(prev => { if (!prev) setIsPlaying(true); return !prev; });
+            if (isRecording) { handleStopRecording(); } else { handleStartRecording(); }
           }
           break;
         case 'Enter':
@@ -672,7 +795,7 @@ export function StudioSuite() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedTrack, selectedTrackId, tracks, updateTrack, isPlaying, handlePlayWithEngine, handleStopWithEngine, handleSaveProject]);
+  }, [selectedTrack, selectedTrackId, tracks, updateTrack, isPlaying, isRecording, handlePlayWithEngine, handleStopWithEngine, handleSaveProject, handleStartRecording, handleStopRecording]);
 
   // Auto-load saved project on mount
   useEffect(() => {
@@ -827,9 +950,9 @@ export function StudioSuite() {
             title="Stop">
             <Square className="w-3.5 h-3.5" />
           </button>
-          <button onClick={() => { setIsRecording(!isRecording); if (!isRecording) { setIsPlaying(true); toast.success('Recording armed'); } }}
+          <button onClick={() => { if (isRecording) { handleStopRecording(); } else { handleStartRecording(); } }}
             className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${isRecording ? 'bg-red-600 text-white animate-pulse' : 'hover:bg-[#4a4a4a] text-[#aaa] hover:text-white'}`}
-            title="Record">
+            title={isRecording ? 'Stop Recording' : 'Record (requires microphone)'}>
             <div className={`w-3 h-3 rounded-full ${isRecording ? 'bg-white' : 'bg-red-500'}`} />
           </button>
           <button onClick={() => setCurrentBeat(Math.min(totalBeats, currentBeat + 4))}

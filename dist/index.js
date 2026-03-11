@@ -6909,8 +6909,8 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z92 } from "zod";
-import { TRPCError as TRPCError18 } from "@trpc/server";
+import { z as z93 } from "zod";
+import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
 import { z as z2 } from "zod";
@@ -14798,9 +14798,9 @@ var qumusFileUploadRouter = router({
       }
       const buffer = Buffer.from(input.base64Data, "base64");
       const timestamp2 = Date.now();
-      const randomSuffix = Math.random().toString(36).substring(2, 8);
+      const randomSuffix2 = Math.random().toString(36).substring(2, 8);
       const fileExtension = input.fileName.split(".").pop() || "";
-      const s3Key = `qumus-uploads/${ctx.user.id}/${fileType}/${timestamp2}-${randomSuffix}.${fileExtension}`;
+      const s3Key = `qumus-uploads/${ctx.user.id}/${fileType}/${timestamp2}-${randomSuffix2}.${fileExtension}`;
       const { url: s3Url } = await storagePut(s3Key, buffer, input.mimeType);
       const metadata = {
         originalName: input.fileName,
@@ -14815,7 +14815,7 @@ var qumusFileUploadRouter = router({
       };
       return {
         success: true,
-        fileId: `${timestamp2}-${randomSuffix}`,
+        fileId: `${timestamp2}-${randomSuffix2}`,
         metadata,
         s3Url,
         message: `${fileType} uploaded successfully`
@@ -19720,8 +19720,8 @@ A Voice for the Voiceless`
     contentType: z44.string().optional()
   })).mutation(async ({ input }) => {
     const { storagePut: storagePut2 } = await Promise.resolve().then(() => (init_storage(), storage_exports));
-    const randomSuffix = Math.random().toString(36).substring(2, 10);
-    const fileKey = `conference-recordings/${input.conferenceId}/${input.fileName}-${randomSuffix}`;
+    const randomSuffix2 = Math.random().toString(36).substring(2, 10);
+    const fileKey = `conference-recordings/${input.conferenceId}/${input.fileName}-${randomSuffix2}`;
     return {
       fileKey,
       uploadEndpoint: `/api/conference/upload/${input.conferenceId}`,
@@ -33343,8 +33343,8 @@ init_storage();
 async function uploadTaskArtifact(taskId, userId, fileName, fileBuffer, mimeType, metadata) {
   try {
     const timestamp2 = Date.now();
-    const randomSuffix = Math.random().toString(36).substring(7);
-    const fileKey = `tasks/${userId}/${taskId}/${timestamp2}-${randomSuffix}-${fileName}`;
+    const randomSuffix2 = Math.random().toString(36).substring(7);
+    const fileKey = `tasks/${userId}/${taskId}/${timestamp2}-${randomSuffix2}-${fileName}`;
     const { url } = await storagePut(fileKey, fileBuffer, mimeType);
     const artifact = await db.insert("task_artifacts").values({
       taskId,
@@ -39066,12 +39066,143 @@ var advancedFeaturesRouter = router({
   })
 });
 
+// server/routers/studioAudioRouter.ts
+import { z as z92 } from "zod";
+init_storage();
+import { TRPCError as TRPCError18 } from "@trpc/server";
+function randomSuffix() {
+  return Math.random().toString(36).substring(2, 10);
+}
+var studioAudioRouter = router({
+  // Upload audio file to S3
+  uploadAudio: protectedProcedure.input(z92.object({
+    fileName: z92.string(),
+    fileData: z92.string(),
+    // base64 encoded
+    mimeType: z92.string().default("audio/wav"),
+    trackId: z92.string().optional(),
+    projectName: z92.string().optional()
+  })).mutation(async ({ ctx, input }) => {
+    const { fileName, fileData, mimeType, trackId, projectName } = input;
+    const userId = ctx.user.id;
+    const buffer = Buffer.from(fileData, "base64");
+    if (buffer.length > 50 * 1024 * 1024) {
+      throw new TRPCError18({
+        code: "BAD_REQUEST",
+        message: "Audio file exceeds 50MB limit"
+      });
+    }
+    const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const fileKey = `studio/${userId}/audio/${safeName}-${randomSuffix()}${getExtension(mimeType)}`;
+    try {
+      const { url } = await storagePut(fileKey, buffer, mimeType);
+      return {
+        url,
+        fileKey,
+        fileName: safeName,
+        mimeType,
+        size: buffer.length,
+        trackId: trackId || null,
+        projectName: projectName || null
+      };
+    } catch (err) {
+      console.error("[StudioAudio] Upload failed:", err);
+      throw new TRPCError18({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to upload audio file"
+      });
+    }
+  }),
+  // Upload recording from microphone to S3
+  uploadRecording: protectedProcedure.input(z92.object({
+    fileName: z92.string(),
+    fileData: z92.string(),
+    // base64 encoded
+    mimeType: z92.string().default("audio/webm"),
+    trackId: z92.string(),
+    duration: z92.number()
+    // seconds
+  })).mutation(async ({ ctx, input }) => {
+    const { fileName, fileData, mimeType, trackId, duration } = input;
+    const userId = ctx.user.id;
+    const buffer = Buffer.from(fileData, "base64");
+    if (buffer.length > 100 * 1024 * 1024) {
+      throw new TRPCError18({
+        code: "BAD_REQUEST",
+        message: "Recording exceeds 100MB limit"
+      });
+    }
+    const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const fileKey = `studio/${userId}/recordings/${safeName}-${randomSuffix()}${getExtension(mimeType)}`;
+    try {
+      const { url } = await storagePut(fileKey, buffer, mimeType);
+      return {
+        url,
+        fileKey,
+        fileName: safeName,
+        mimeType,
+        size: buffer.length,
+        trackId,
+        duration
+      };
+    } catch (err) {
+      console.error("[StudioAudio] Recording upload failed:", err);
+      throw new TRPCError18({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to upload recording"
+      });
+    }
+  }),
+  // Save studio project to S3
+  saveProject: protectedProcedure.input(z92.object({
+    projectName: z92.string(),
+    projectData: z92.string()
+    // JSON string of project state
+  })).mutation(async ({ ctx, input }) => {
+    const { projectName, projectData } = input;
+    const userId = ctx.user.id;
+    const safeName = projectName.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const fileKey = `studio/${userId}/projects/${safeName}-${randomSuffix()}.rrbstudio`;
+    try {
+      const { url } = await storagePut(fileKey, projectData, "application/json");
+      return {
+        url,
+        fileKey,
+        projectName: safeName,
+        savedAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+    } catch (err) {
+      console.error("[StudioAudio] Project save failed:", err);
+      throw new TRPCError18({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to save project"
+      });
+    }
+  })
+});
+function getExtension(mimeType) {
+  const map = {
+    "audio/wav": ".wav",
+    "audio/mpeg": ".mp3",
+    "audio/mp3": ".mp3",
+    "audio/ogg": ".ogg",
+    "audio/webm": ".webm",
+    "audio/flac": ".flac",
+    "audio/aac": ".aac",
+    "audio/m4a": ".m4a",
+    "audio/x-m4a": ".m4a"
+  };
+  return map[mimeType] || ".audio";
+}
+
 // server/routers.ts
 var appRouter = router({
   // System router
   system: systemRouter,
   // Audio router
   audio: audioRouter,
+  // Studio Audio (S3 upload, recording, project persistence)
+  studioAudio: studioAudioRouter,
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter2,
   // Ecosystem Integration (State of Studio & Full Integration)
@@ -39083,11 +39214,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z92.object({
-        goal: z92.string().min(1, "Goal is required"),
-        priority: z92.number().int().min(1).max(10).optional().default(5),
-        steps: z92.array(z92.string()).optional(),
-        constraints: z92.array(z92.string()).optional()
+      z93.object({
+        goal: z93.string().min(1, "Goal is required"),
+        priority: z93.number().int().min(1).max(10).optional().default(5),
+        steps: z93.array(z93.string()).optional(),
+        constraints: z93.array(z93.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -39099,7 +39230,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z92.object({ taskId: z92.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z93.object({ taskId: z93.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -39109,11 +39240,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z92.object({
-        target: z92.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z92.string().min(1, "Action is required"),
-        params: z92.record(z92.any()).optional().default({}),
-        priority: z92.number().int().min(1).max(10).optional().default(5)
+      z93.object({
+        target: z93.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z93.string().min(1, "Action is required"),
+        params: z93.record(z93.any()).optional().default({}),
+        priority: z93.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -39125,10 +39256,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z92.object({ commandId: z92.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z93.object({ commandId: z93.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z92.object({ target: z92.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z93.object({ target: z93.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -39223,14 +39354,14 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z92.object({
-      sessionName: z92.string().min(1),
-      systemPrompt: z92.string().optional(),
-      temperature: z92.number().min(0).max(100).optional(),
-      model: z92.string().optional(),
-      maxSteps: z92.number().min(1).optional()
+    createSession: protectedProcedure.input(z93.object({
+      sessionName: z93.string().min(1),
+      systemPrompt: z93.string().optional(),
+      temperature: z93.number().min(0).max(100).optional(),
+      model: z93.string().optional(),
+      maxSteps: z93.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
-      if (!ctx.user) throw new TRPCError18({ code: "UNAUTHORIZED" });
+      if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
         ctx.user.id,
         input.sessionName,
@@ -39245,24 +39376,24 @@ var appRouter = router({
     }),
     // Get all sessions for the current user
     getSessions: protectedProcedure.query(async ({ ctx }) => {
-      if (!ctx.user) throw new TRPCError18({ code: "UNAUTHORIZED" });
+      if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z92.number()).query(async ({ ctx, input }) => {
-      if (!ctx.user) throw new TRPCError18({ code: "UNAUTHORIZED" });
+    getSession: protectedProcedure.input(z93.number()).query(async ({ ctx, input }) => {
+      if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
-        throw new TRPCError18({ code: "NOT_FOUND" });
+        throw new TRPCError19({ code: "NOT_FOUND" });
       }
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z92.number()).mutation(async ({ ctx, input }) => {
-      if (!ctx.user) throw new TRPCError18({ code: "UNAUTHORIZED" });
+    deleteSession: protectedProcedure.input(z93.number()).mutation(async ({ ctx, input }) => {
+      if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
-        throw new TRPCError18({ code: "NOT_FOUND" });
+        throw new TRPCError19({ code: "NOT_FOUND" });
       }
       await deleteAgentSession(input);
       return { success: true };
@@ -39300,9 +39431,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z92.object({
-      dateRange: z92.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z92.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z93.object({
+      dateRange: z93.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z93.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -39313,24 +39444,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z92.object({
-      dateRange: z92.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z93.object({
+      dateRange: z93.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z92.object({
-      dateRange: z92.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z93.object({
+      dateRange: z93.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z92.object({
-      email: z92.string().email(),
-      name: z92.string().optional(),
-      source: z92.string().optional(),
-      language: z92.string().optional()
+    subscribe: publicProcedure.input(z93.object({
+      email: z93.string().email(),
+      name: z93.string().optional(),
+      source: z93.string().optional(),
+      language: z93.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),

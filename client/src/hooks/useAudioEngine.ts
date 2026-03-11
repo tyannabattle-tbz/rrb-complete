@@ -25,9 +25,11 @@ export interface MeterData {
 export interface AudioEngineState {
   isInitialized: boolean;
   isPlaying: boolean;
+  isRecording: boolean;
   sampleRate: number;
   currentTime: number;
   cpuLoad: number;
+  recordingTrackId: string | null;
 }
 
 export function useAudioEngine() {
@@ -39,12 +41,19 @@ export function useAudioEngine() {
   const startTimeRef = useRef<number>(0);
   const pauseTimeRef = useRef<number>(0);
 
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const recordingStartTimeRef = useRef<number>(0);
+
   const [engineState, setEngineState] = useState<AudioEngineState>({
     isInitialized: false,
     isPlaying: false,
+    isRecording: false,
     sampleRate: 48000,
     currentTime: 0,
     cpuLoad: 0,
+    recordingTrackId: null,
   });
 
   const [masterMeters, setMasterMeters] = useState<MeterData>({
@@ -362,10 +371,240 @@ export function useAudioEngine() {
     source.start();
   }, [createTrackNode]);
 
+  // ============================================================
+  // WAVEFORM EXTRACTION FROM AUDIOBUFFER
+  // ============================================================
+
+  // Extract waveform peaks from an AudioBuffer for visualization
+  const extractWaveform = useCallback((audioBuffer: AudioBuffer, numSamples: number = 200): number[] => {
+    const channelData = audioBuffer.getChannelData(0); // Use first channel
+    const blockSize = Math.floor(channelData.length / numSamples);
+    const peaks: number[] = [];
+
+    for (let i = 0; i < numSamples; i++) {
+      const start = i * blockSize;
+      let max = 0;
+      for (let j = start; j < start + blockSize && j < channelData.length; j++) {
+        const abs = Math.abs(channelData[j]);
+        if (abs > max) max = abs;
+      }
+      peaks.push(max);
+    }
+
+    return peaks;
+  }, []);
+
+  // Extract waveform from a loaded track
+  const getTrackWaveform = useCallback((trackId: string, numSamples: number = 200): number[] | null => {
+    const node = trackNodesRef.current.get(trackId);
+    if (!node || !node.buffer) return null;
+    return extractWaveform(node.buffer, numSamples);
+  }, [extractWaveform]);
+
+  // Extract waveform from a File object (without loading to a track)
+  const extractWaveformFromFile = useCallback(async (file: File, numSamples: number = 200): Promise<number[] | null> => {
+    const ctx = audioContextRef.current;
+    if (!ctx) return null;
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+      return extractWaveform(audioBuffer, numSamples);
+    } catch (err) {
+      console.error('[AudioEngine] Failed to extract waveform:', err);
+      return null;
+    }
+  }, [extractWaveform]);
+
+  // Get audio file duration from a File object
+  const getAudioDuration = useCallback(async (file: File): Promise<number> => {
+    const ctx = audioContextRef.current;
+    if (!ctx) return 0;
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+      return audioBuffer.duration;
+    } catch {
+      return 0;
+    }
+  }, []);
+
+  // Get frequency spectrum data from a track's analyser
+  const getTrackSpectrum = useCallback((trackId: string): Float32Array | null => {
+    const node = trackNodesRef.current.get(trackId);
+    if (!node) return null;
+
+    const data = new Float32Array(node.analyserNode.frequencyBinCount);
+    node.analyserNode.getFloatFrequencyData(data);
+    return data;
+  }, []);
+
+  // ============================================================
+  // MICROPHONE RECORDING (MediaRecorder API)
+  // ============================================================
+
+  // Start recording from microphone into a track
+  const startRecording = useCallback(async (trackId: string): Promise<boolean> => {
+    try {
+      // Request microphone access
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          sampleRate: 48000,
+        },
+      });
+
+      mediaStreamRef.current = stream;
+      recordedChunksRef.current = [];
+
+      // Choose best supported format
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/webm')
+          ? 'audio/webm'
+          : 'audio/ogg';
+
+      const recorder = new MediaRecorder(stream, {
+        mimeType,
+        audioBitsPerSecond: 128000,
+      });
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        // Stream tracks will be stopped in stopRecording
+      };
+
+      mediaRecorderRef.current = recorder;
+      recordingStartTimeRef.current = Date.now();
+
+      // Also route mic input through the audio engine for live monitoring
+      const ctx = audioContextRef.current;
+      if (ctx) {
+        const sourceNode = ctx.createMediaStreamSource(stream);
+        let node = trackNodesRef.current.get(trackId);
+        if (!node) {
+          node = createTrackNode(trackId);
+        }
+        if (node) {
+          sourceNode.connect(node.analyserNode);
+          // Store reference for cleanup
+          (node as any)._micSource = sourceNode;
+        }
+      }
+
+      recorder.start(100); // Collect data every 100ms
+
+      setEngineState(prev => ({
+        ...prev,
+        isRecording: true,
+        recordingTrackId: trackId,
+      }));
+
+      return true;
+    } catch (err) {
+      console.error('[AudioEngine] Recording failed:', err);
+      return false;
+    }
+  }, [createTrackNode]);
+
+  // Stop recording and return the recorded audio as a Blob
+  const stopRecording = useCallback(async (): Promise<{ blob: Blob; duration: number; mimeType: string } | null> => {
+    const recorder = mediaRecorderRef.current;
+    if (!recorder || recorder.state === 'inactive') return null;
+
+    return new Promise((resolve) => {
+      recorder.onstop = () => {
+        const duration = (Date.now() - recordingStartTimeRef.current) / 1000;
+        const mimeType = recorder.mimeType;
+        const blob = new Blob(recordedChunksRef.current, { type: mimeType });
+
+        // Stop all mic tracks
+        if (mediaStreamRef.current) {
+          mediaStreamRef.current.getTracks().forEach(track => track.stop());
+          mediaStreamRef.current = null;
+        }
+
+        // Disconnect mic source from audio engine
+        const trackId = engineState.recordingTrackId;
+        if (trackId) {
+          const node = trackNodesRef.current.get(trackId);
+          if (node && (node as any)._micSource) {
+            try { (node as any)._micSource.disconnect(); } catch { /* */ }
+            delete (node as any)._micSource;
+          }
+        }
+
+        mediaRecorderRef.current = null;
+        recordedChunksRef.current = [];
+
+        setEngineState(prev => ({
+          ...prev,
+          isRecording: false,
+          recordingTrackId: null,
+        }));
+
+        resolve({ blob, duration, mimeType });
+      };
+
+      recorder.stop();
+    });
+  }, [engineState.recordingTrackId]);
+
+  // Load a recorded blob into a track's AudioBuffer
+  const loadRecordingToTrack = useCallback(async (trackId: string, blob: Blob): Promise<boolean> => {
+    const ctx = audioContextRef.current;
+    if (!ctx) return false;
+
+    let node = trackNodesRef.current.get(trackId);
+    if (!node) {
+      node = createTrackNode(trackId);
+      if (!node) return false;
+    }
+
+    try {
+      const arrayBuffer = await blob.arrayBuffer();
+      const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+      node.buffer = audioBuffer;
+      node.isLoaded = true;
+      return true;
+    } catch (err) {
+      console.error(`[AudioEngine] Failed to load recording for track ${trackId}:`, err);
+      return false;
+    }
+  }, [createTrackNode]);
+
+  // Convert blob to base64 for server upload
+  const blobToBase64 = useCallback((blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = (reader.result as string).split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }, []);
+
   // Cleanup
   useEffect(() => {
     return () => {
       cancelAnimationFrame(animFrameRef.current);
+      // Stop any active recording
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach(track => track.stop());
+      }
       trackNodesRef.current.forEach((node) => {
         if (node.sourceNode) {
           try { node.sourceNode.stop(); } catch { /* */ }
@@ -393,5 +632,16 @@ export function useAudioEngine() {
     stopAll,
     playTestTone,
     playWhiteNoise,
+    // Waveform extraction
+    extractWaveform,
+    getTrackWaveform,
+    extractWaveformFromFile,
+    getAudioDuration,
+    getTrackSpectrum,
+    // Recording
+    startRecording,
+    stopRecording,
+    loadRecordingToTrack,
+    blobToBase64,
   };
 }

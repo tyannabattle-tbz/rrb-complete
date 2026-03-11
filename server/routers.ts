@@ -83,6 +83,7 @@ import { advancedSchedulingRouter } from "./routers/advancedSchedulingRouter";
 import { engagementWebhooksRouter } from "./routers/engagementWebhooksRouter";
 import { callInRouter } from "./routers/callInRouter";
 import { advancedFeaturesRouter } from "./routers/advancedFeaturesRouter";
+import { studioAudioRouter } from "./routers/studioAudioRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -91,6 +92,9 @@ export const appRouter = router({
 
   // Audio router
   audio: audioRouter,
+
+  // Studio Audio (S3 upload, recording, project persistence)
+  studioAudio: studioAudioRouter,
 
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter,
