@@ -9,8 +9,9 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Globe, Calendar, Users, Plus, MapPin, Ticket, Clock,
   Video, Mic, MessageSquare, Star, ChevronRight, Search,
-  Layout, Layers, UserPlus, CheckCircle, Tv, Radio
+  Layout, Layers, UserPlus, CheckCircle, Tv, Radio, Languages
 } from "lucide-react";
+import LanguageInterpreter from '@/components/LanguageInterpreter';
 
 type Tab = "conventions" | "create" | "detail";
 
@@ -22,6 +23,7 @@ export default function ConventionHub() {
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showInterpreter, setShowInterpreter] = useState(false);
 
   const [newConvention, setNewConvention] = useState({
     title: "",
@@ -131,6 +133,13 @@ export default function ConventionHub() {
                 <span>{conventionStats.data.totalAttendees || 0} attendees</span>
               </div>
             )}
+            <Button
+              onClick={() => setShowInterpreter(!showInterpreter)}
+              variant="outline"
+              className={`border-cyan-500/30 ${showInterpreter ? 'bg-cyan-500/20 text-cyan-400' : 'text-cyan-400/70 hover:text-cyan-400'}`}
+            >
+              <Languages className="w-4 h-4 mr-2" /> Interpreter
+            </Button>
             <Button onClick={() => setActiveTab("create")} className="bg-indigo-600 hover:bg-indigo-700">
               <Plus className="w-4 h-4 mr-2" /> New Convention
             </Button>
@@ -628,6 +637,15 @@ export default function ConventionHub() {
           <p className="text-xs text-white/50">UN CSW70 partnership with Ghana. Sisters Questing Unapologetically After Divine Destiny.</p>
         </a>
       </div>
+
+      {/* Language Interpreter Overlay */}
+      {showInterpreter && (
+        <LanguageInterpreter
+          mode="overlay"
+          contextLabel={conv?.title || 'Convention Hub'}
+          onClose={() => setShowInterpreter(false)}
+        />
+      )}
 
       {/* Footer */}
       <div className="border-t border-white/10 mt-8 py-6 text-center text-xs text-white/30">

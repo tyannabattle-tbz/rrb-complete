@@ -6909,7 +6909,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z93 } from "zod";
+import { z as z94 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -39195,6 +39195,147 @@ function getExtension(mimeType) {
   return map[mimeType] || ".audio";
 }
 
+// server/routers/interpreterRouter.ts
+import { z as z93 } from "zod";
+var SUPPORTED_LANGUAGES = [
+  { code: "en", name: "English" },
+  { code: "es", name: "Spanish" },
+  { code: "fr", name: "French" },
+  { code: "de", name: "German" },
+  { code: "it", name: "Italian" },
+  { code: "pt", name: "Portuguese" },
+  { code: "ru", name: "Russian" },
+  { code: "zh", name: "Chinese (Mandarin)" },
+  { code: "ja", name: "Japanese" },
+  { code: "ko", name: "Korean" },
+  { code: "ar", name: "Arabic" },
+  { code: "hi", name: "Hindi" },
+  { code: "sw", name: "Swahili" },
+  { code: "yo", name: "Yoruba" },
+  { code: "am", name: "Amharic" },
+  { code: "zu", name: "Zulu" },
+  { code: "ha", name: "Hausa" },
+  { code: "ig", name: "Igbo" },
+  { code: "tw", name: "Twi (Akan)" },
+  { code: "ga", name: "Ga" }
+];
+var interpreterRouter = router({
+  /** Translate text from source language to target language */
+  translate: publicProcedure.input(z93.object({
+    text: z93.string().min(1).max(5e3),
+    sourceLang: z93.string().min(2).max(5),
+    targetLang: z93.string().min(2).max(5)
+  })).mutation(async ({ input }) => {
+    const sourceName = SUPPORTED_LANGUAGES.find((l) => l.code === input.sourceLang)?.name || input.sourceLang;
+    const targetName = SUPPORTED_LANGUAGES.find((l) => l.code === input.targetLang)?.name || input.targetLang;
+    if (input.sourceLang === input.targetLang) {
+      return { translatedText: input.text, sourceLang: input.sourceLang, targetLang: input.targetLang };
+    }
+    try {
+      const response = await invokeLLM({
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional simultaneous interpreter. Translate the following text from ${sourceName} to ${targetName}. Return ONLY the translated text, nothing else. Preserve the tone, meaning, and nuance of the original. If the text contains proper nouns, keep them as-is. Do not add explanations or notes.`
+          },
+          {
+            role: "user",
+            content: input.text
+          }
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "translation",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                translated: { type: "string", description: "The translated text" }
+              },
+              required: ["translated"],
+              additionalProperties: false
+            }
+          }
+        }
+      });
+      const content = response.choices?.[0]?.message?.content || "";
+      let translatedText = input.text;
+      try {
+        const parsed = JSON.parse(content);
+        translatedText = parsed.translated || content;
+      } catch {
+        translatedText = content;
+      }
+      return {
+        translatedText,
+        sourceLang: input.sourceLang,
+        targetLang: input.targetLang
+      };
+    } catch (error) {
+      console.error("[Interpreter] Translation error:", error);
+      return {
+        translatedText: `[Translation unavailable] ${input.text}`,
+        sourceLang: input.sourceLang,
+        targetLang: input.targetLang
+      };
+    }
+  }),
+  /** Batch translate multiple lines */
+  batchTranslate: publicProcedure.input(z93.object({
+    texts: z93.array(z93.string()).max(20),
+    sourceLang: z93.string().min(2).max(5),
+    targetLang: z93.string().min(2).max(5)
+  })).mutation(async ({ input }) => {
+    const sourceName = SUPPORTED_LANGUAGES.find((l) => l.code === input.sourceLang)?.name || input.sourceLang;
+    const targetName = SUPPORTED_LANGUAGES.find((l) => l.code === input.targetLang)?.name || input.targetLang;
+    if (input.sourceLang === input.targetLang) {
+      return { translations: input.texts };
+    }
+    try {
+      const combined = input.texts.map((t2, i) => `[${i}] ${t2}`).join("\n");
+      const response = await invokeLLM({
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional simultaneous interpreter. Translate each numbered line from ${sourceName} to ${targetName}. Return a JSON object with a "translations" array containing the translated text for each line in the same order. Preserve tone and meaning.`
+          },
+          { role: "user", content: combined }
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "batch_translation",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                translations: {
+                  type: "array",
+                  items: { type: "string" },
+                  description: "Array of translated texts in the same order as input"
+                }
+              },
+              required: ["translations"],
+              additionalProperties: false
+            }
+          }
+        }
+      });
+      const content = response.choices?.[0]?.message?.content || "{}";
+      const parsed = JSON.parse(content);
+      return { translations: parsed.translations || input.texts };
+    } catch (error) {
+      console.error("[Interpreter] Batch translation error:", error);
+      return { translations: input.texts.map((t2) => `[Translation unavailable] ${t2}`) };
+    }
+  }),
+  /** Get supported languages */
+  getLanguages: publicProcedure.query(() => {
+    return { languages: SUPPORTED_LANGUAGES };
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -39203,6 +39344,8 @@ var appRouter = router({
   audio: audioRouter,
   // Studio Audio (S3 upload, recording, project persistence)
   studioAudio: studioAudioRouter,
+  // Language Interpreter (real-time translation via LLM)
+  interpreter: interpreterRouter,
   // Qumus Orchestration (Central Brain)
   qumusOrchestration: qumusOrchestrationRouter2,
   // Ecosystem Integration (State of Studio & Full Integration)
@@ -39214,11 +39357,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z93.object({
-        goal: z93.string().min(1, "Goal is required"),
-        priority: z93.number().int().min(1).max(10).optional().default(5),
-        steps: z93.array(z93.string()).optional(),
-        constraints: z93.array(z93.string()).optional()
+      z94.object({
+        goal: z94.string().min(1, "Goal is required"),
+        priority: z94.number().int().min(1).max(10).optional().default(5),
+        steps: z94.array(z94.string()).optional(),
+        constraints: z94.array(z94.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -39230,7 +39373,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z93.object({ taskId: z93.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z94.object({ taskId: z94.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -39240,11 +39383,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z93.object({
-        target: z93.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z93.string().min(1, "Action is required"),
-        params: z93.record(z93.any()).optional().default({}),
-        priority: z93.number().int().min(1).max(10).optional().default(5)
+      z94.object({
+        target: z94.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z94.string().min(1, "Action is required"),
+        params: z94.record(z94.any()).optional().default({}),
+        priority: z94.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -39256,10 +39399,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z93.object({ commandId: z93.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z94.object({ commandId: z94.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z93.object({ target: z93.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z94.object({ target: z94.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -39354,12 +39497,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z93.object({
-      sessionName: z93.string().min(1),
-      systemPrompt: z93.string().optional(),
-      temperature: z93.number().min(0).max(100).optional(),
-      model: z93.string().optional(),
-      maxSteps: z93.number().min(1).optional()
+    createSession: protectedProcedure.input(z94.object({
+      sessionName: z94.string().min(1),
+      systemPrompt: z94.string().optional(),
+      temperature: z94.number().min(0).max(100).optional(),
+      model: z94.string().optional(),
+      maxSteps: z94.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -39380,7 +39523,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z93.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z94.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -39389,7 +39532,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z93.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z94.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -39431,9 +39574,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z93.object({
-      dateRange: z93.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z93.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z94.object({
+      dateRange: z94.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z94.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -39444,24 +39587,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z93.object({
-      dateRange: z93.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z94.object({
+      dateRange: z94.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z93.object({
-      dateRange: z93.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z94.object({
+      dateRange: z94.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z93.object({
-      email: z93.string().email(),
-      name: z93.string().optional(),
-      source: z93.string().optional(),
-      language: z93.string().optional()
+    subscribe: publicProcedure.input(z94.object({
+      email: z94.string().email(),
+      name: z94.string().optional(),
+      source: z94.string().optional(),
+      language: z94.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),

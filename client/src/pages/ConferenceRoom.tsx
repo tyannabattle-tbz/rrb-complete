@@ -13,6 +13,7 @@ import {
   Share2, Link2, QrCode, Camera, Settings, Volume2
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import LanguageInterpreter from '@/components/LanguageInterpreter';
 
 declare global {
   interface Window {
@@ -217,6 +218,7 @@ export default function ConferenceRoom() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [showMoreTools, setShowMoreTools] = useState(false);
+  const [showInterpreter, setShowInterpreter] = useState(false);
   const [jitsiReady, setJitsiReady] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -604,7 +606,7 @@ export default function ConferenceRoom() {
               </button>
             )}
 
-            <button onClick={() => navigate(`/conference/translation/${conferenceId}`)} className="text-cyan-400/70 hover:text-cyan-400 h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Translation">
+            <button onClick={() => setShowInterpreter(!showInterpreter)} className={`h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex ${showInterpreter ? 'text-cyan-400 bg-cyan-500/20' : 'text-cyan-400/70 hover:text-cyan-400'}`} title="Live Interpreter">
               <Globe className="w-3.5 h-3.5" />
             </button>
             <button onClick={() => navigate(`/conference/checkin/${conferenceId}`)} className="text-green-400/70 hover:text-green-400 h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Check-In">
@@ -635,8 +637,8 @@ export default function ConferenceRoom() {
                   <button onClick={() => { handleNativeShare(); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
                     <Share2 className="w-4 h-4" /> Share Room Link
                   </button>
-                  <button onClick={() => { navigate(`/conference/translation/${conferenceId}`); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
-                    <Globe className="w-4 h-4" /> Translation
+                  <button onClick={() => { setShowInterpreter(true); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
+                    <Globe className="w-4 h-4" /> Live Interpreter
                   </button>
                   <button onClick={() => { navigate(`/conference/checkin/${conferenceId}`); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
                     <Shield className="w-4 h-4" /> Check-In
@@ -705,6 +707,15 @@ export default function ConferenceRoom() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Language Interpreter Overlay */}
+      {showInterpreter && (
+        <LanguageInterpreter
+          mode="overlay"
+          contextLabel={conference?.title || 'Conference Room'}
+          onClose={() => setShowInterpreter(false)}
+        />
+      )}
 
       {/* Jitsi Meet container */}
       <div className="flex-1 relative bg-black">
