@@ -84,7 +84,11 @@ async function checkStream(channelId: number, channelName: string, streamUrl: st
 export async function runHealthCheck(): Promise<HealthReport> {
   console.log('[StreamHealth] Starting health check across all channels...');
 
-  const db = getDb();
+  const db = await getDb();
+  if (!db) {
+    console.warn('[StreamHealth] Database not available');
+    return { timestamp: Date.now(), totalChannels: 0, healthy: 0, degraded: 0, down: 0, unknown: 0, uptimePercent: 0, results: [] };
+  }
   const channels = await db.execute(
     sql`SELECT id, name, streamUrl FROM radio_channels WHERE status = 'active' ORDER BY id`
   );
@@ -92,7 +96,16 @@ export async function runHealthCheck(): Promise<HealthReport> {
   const results: StreamHealthResult[] = [];
 
   // Check in batches of 10 to avoid overwhelming
-  const rows = channels.rows as any[];
+  // drizzle mysql2 execute returns [[rows], fields] — extract the actual row array
+  let rows: any[] = [];
+  if (Array.isArray(channels)) {
+    if (channels.length > 0 && Array.isArray(channels[0])) {
+      rows = channels[0]; // [[rows], fields] format
+    } else if (channels.length > 0 && typeof channels[0] === 'object' && 'id' in channels[0]) {
+      rows = channels; // flat array of rows
+    }
+  }
+  console.log(`[StreamHealth] Found ${rows.length} active channels to check`);
   for (let i = 0; i < rows.length; i += 10) {
     const batch = rows.slice(i, i + 10);
     const batchResults = await Promise.all(
@@ -123,6 +136,10 @@ export async function runHealthCheck(): Promise<HealthReport> {
   lastReport = report;
 
   console.log(`[StreamHealth] Check complete: ${healthy}/${results.length} healthy (${report.uptimePercent}% uptime)`);
+  // Log any non-healthy channels
+  results.filter(r => r.status !== 'healthy').forEach(r => {
+    console.log(`[StreamHealth] ${r.status.toUpperCase()}: ch-${r.channelId} ${r.channelName} — ${r.error || 'slow response'} (${r.responseTimeMs}ms)`);
+  });
 
   // Alert if any streams are down
   if (down > 0) {

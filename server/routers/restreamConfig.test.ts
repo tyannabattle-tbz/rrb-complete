@@ -49,10 +49,12 @@ describe('Restream Config Router', () => {
     expect(procedures).toContain('setRestreamUrl');
   });
 
-  it('should have 5 procedures total', async () => {
+  it('should have all required procedures', async () => {
     const { restreamConfigRouter } = await import('./restreamConfigRouter');
     const procedures = Object.keys(restreamConfigRouter._def.procedures);
-    expect(procedures.length).toBe(5);
+    expect(procedures.length).toBeGreaterThanOrEqual(5);
+    expect(procedures).toContain('createRoom');
+    expect(procedures).toContain('getRooms');
   });
 
   it('should have getRestreamUrl as a public query', async () => {

@@ -16,7 +16,22 @@ import {
 export const streamHealthRouter = router({
   // Get latest health report (public — dashboard can read)
   getLatest: publicProcedure.query(async () => {
-    return getLatestReport();
+    const report = getLatestReport();
+    if (!report) return null;
+    return {
+      timestamp: report.timestamp,
+      totalChannels: report.totalChannels,
+      healthy: report.healthy,
+      degraded: report.degraded,
+      down: report.down,
+      uptimePercent: report.uptimePercent,
+      channels: report.results.map(r => ({
+        name: r.channelName,
+        status: r.status,
+        responseTime: r.responseTimeMs,
+        error: r.error,
+      })),
+    };
   }),
 
   // Get monitor status

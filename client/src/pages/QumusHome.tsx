@@ -76,6 +76,7 @@ import {
 } from "lucide-react";
 import { TaskHistory } from "@/components/TaskHistory";
 import { EcosystemStatusDashboard } from "@/components/EcosystemStatusDashboard";
+import { StreamHealthWidget } from "@/components/StreamHealthWidget";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import { useMetricsWebSocket } from "@/hooks/useMetricsWebSocket";
 import { Brain as BrainIcon, Glasses, Video, Tv } from "lucide-react";
@@ -500,6 +501,9 @@ export default function QumusHome() {
               </FuturisticGrid>
             )}
             {showRealtimeMetrics && <RealtimeARMetrics />}
+
+            {/* Stream Health Widget */}
+            <StreamHealthWidget />
           </TabsContent>
 
           {/* Insights Tab */}

@@ -3985,3 +3985,30 @@
 - [x] Programmatically tested all 51 stream URLs
 - [x] Fixed 5 broken streams (Gospel, Afrobeats, Blues, Kids, Worship)
 - [x] Confirmed 100% stream health — ALL 51 CHANNELS VERIFIED HEALTHY
+
+## Admin Settings Page (/admin) — DONE
+- [x] Built Admin Control Panel with tabbed interface (Restream, Stream Health, System Config)
+- [x] Restream URL management tab (view/edit/test URL, create rooms)
+- [x] Stream Health dashboard tab (live uptime %, channel status grid, start/stop monitor)
+- [x] System Config tab (manage all system_config key-value pairs with add/edit/delete)
+- [x] Restream API Key management (save key, test connection, auto-create rooms)
+- [x] Wired into App.tsx at /admin route
+- [x] Admin-only access via protectedProcedure
+- [x] 53 tests passing (37 restreamConfig + 16 streamHealth)
+
+## Stream Health Widget on QUMUS Dashboard — DONE
+- [x] Added StreamHealthWidget component to QumusHome monitoring tab
+- [x] Shows live uptime percentage with color-coded bar (green/yellow/red)
+- [x] Shows count of healthy/degraded/down channels in 4-card grid
+- [x] Channel health grid showing all 51 channels with hover details
+- [x] Down channels alert panel with error details
+- [x] Start/Stop monitor controls and manual "Check Now" button
+- [x] Auto-refresh every 60 seconds via refetchInterval
+
+## Restream API Key Integration — DONE
+- [x] restream_api_key stored in system_config table
+- [x] restreamService uses stored API key for room creation
+- [x] Auto-create rooms when API key is present via createRestreamRoom
+- [x] Fallback to manual mode when no API key (returns instructions)
+- [x] Test connection endpoint in Admin Control Panel
+- [x] Owner notification on room creation

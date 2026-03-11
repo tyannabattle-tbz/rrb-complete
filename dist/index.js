@@ -7152,12 +7152,24 @@ async function checkStream(channelId, channelName, streamUrl) {
 }
 async function runHealthCheck() {
   console.log("[StreamHealth] Starting health check across all channels...");
-  const db2 = getDb();
+  const db2 = await getDb();
+  if (!db2) {
+    console.warn("[StreamHealth] Database not available");
+    return { timestamp: Date.now(), totalChannels: 0, healthy: 0, degraded: 0, down: 0, unknown: 0, uptimePercent: 0, results: [] };
+  }
   const channels = await db2.execute(
     sql18`SELECT id, name, streamUrl FROM radio_channels WHERE status = 'active' ORDER BY id`
   );
   const results = [];
-  const rows = channels.rows;
+  let rows = [];
+  if (Array.isArray(channels)) {
+    if (channels.length > 0 && Array.isArray(channels[0])) {
+      rows = channels[0];
+    } else if (channels.length > 0 && typeof channels[0] === "object" && "id" in channels[0]) {
+      rows = channels;
+    }
+  }
+  console.log(`[StreamHealth] Found ${rows.length} active channels to check`);
   for (let i = 0; i < rows.length; i += 10) {
     const batch = rows.slice(i, i + 10);
     const batchResults = await Promise.all(
@@ -7183,6 +7195,9 @@ async function runHealthCheck() {
   if (healthHistory.length > MAX_HISTORY) healthHistory.shift();
   lastReport = report;
   console.log(`[StreamHealth] Check complete: ${healthy}/${results.length} healthy (${report.uptimePercent}% uptime)`);
+  results.filter((r) => r.status !== "healthy").forEach((r) => {
+    console.log(`[StreamHealth] ${r.status.toUpperCase()}: ch-${r.channelId} ${r.channelName} \u2014 ${r.error || "slow response"} (${r.responseTimeMs}ms)`);
+  });
   if (down > 0) {
     const downChannels = results.filter((r) => r.status === "down");
     const alertContent = downChannels.map((c) => `\u2022 ch-${String(c.channelId).padStart(3, "0")}: ${c.channelName} \u2014 ${c.error}`).join("\n");
@@ -41773,7 +41788,22 @@ init_streamHealthMonitor();
 var streamHealthRouter = router({
   // Get latest health report (public — dashboard can read)
   getLatest: publicProcedure.query(async () => {
-    return getLatestReport();
+    const report = getLatestReport();
+    if (!report) return null;
+    return {
+      timestamp: report.timestamp,
+      totalChannels: report.totalChannels,
+      healthy: report.healthy,
+      degraded: report.degraded,
+      down: report.down,
+      uptimePercent: report.uptimePercent,
+      channels: report.results.map((r) => ({
+        name: r.channelName,
+        status: r.status,
+        responseTime: r.responseTimeMs,
+        error: r.error
+      }))
+    };
   }),
   // Get monitor status
   getStatus: publicProcedure.query(async () => {
