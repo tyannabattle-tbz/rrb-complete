@@ -3929,3 +3929,26 @@
 - [x] Add all 7 C.J. Battle platform links (Apple Music, Spotify, SoundCloud, TIDAL, Deezer, YouTube, Instagram)
 - [x] Clean up test channels (moved to offline)
 - [x] TypeScript compilation passes (0 errors)
+
+## CRITICAL: Fix All Radio Channel Audio Streams (Pre-Airtime)
+- [x] Audit all 50 channel stream URLs for connectivity
+- [x] Fix C.J. Battle Radio — now plays FluxFM Hip-Hop (320kbps)
+- [x] Fix all broken urban music channels (Neo Soul, Hip-Hop, R&B, etc.)
+- [x] Ensure Neo Soul channel plays actual neo soul music (181.FM Soul)
+- [x] Ensure Hip-Hop channel plays actual hip-hop music (FluxFM Hip-Hop 320kbps)
+- [x] Ensure every channel's stream matches its genre (22 channels remapped)
+- [x] Replace all non-working SomaFM streams with verified working alternatives
+- [x] Test all 50 channels produce audio — 100% SUCCESS RATE
+- [x] Verify genre-appropriate content on every channel
+- [x] Update both database tables (radioChannels + radio_channels) with new URLs
+- [x] Gospel channels → Afrofusion Gospel, Groot Nieuws Worship, Christian Hits
+- [x] R&B/Soul → 181.FM Soul, Smooth R&B 105.7
+- [x] Motown → 4U Motown (actual Motown music)
+- [x] Funk/Disco → FUNKY RADIO (320kbps)
+- [x] Blues → KCSM Jazz/Blues
+- [x] Lo-Fi → 0R Lo-Fi (192kbps)
+- [x] Love Songs → RdMix Love Songs
+- [x] Throwback → Classic Vinyl HD (320kbps)
+- [x] Kids → Radio Doudou + ForKidz Bedtime Stories
+- [x] News → CNN (96kbps)
+- [x] Late Night → Airport Lounge Radio
