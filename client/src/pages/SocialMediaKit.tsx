@@ -46,7 +46,7 @@ const CAMPAIGN_GRAPHICS = [
   },
   {
     id: 'radio',
-    title: '50 Channels Live',
+    title: '51 Channels Live',
     description: '24/7 radio coverage across all genres — tune in now',
     imageUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/un-campaign-radio-FBCNHEraACLvoGpVKqqPGV.webp',
     downloadUrl: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/un-campaign-radio-J5yHit4Pdjm9VZeJVs5ZPi.png',
@@ -64,7 +64,7 @@ const SOCIAL_COPY = {
 
 Sweet Miracles and Rockin' Rockin' Boogie — Building the Bridge Across the World.
 
-SQUADD Goals at UN CSW70. 50 channels. 24/7 live coverage. History in the making.
+SQUADD Goals at UN CSW70. 51 channels. 24/7 live coverage. History in the making.
 
 Tune in: [LINK]
 
@@ -106,7 +106,7 @@ From Selma to the United Nations — LIVE NOW.
 
 Sweet Miracles and Rockin' Rockin' Boogie — Building the Bridge Across the World.
 
-50 channels broadcasting from UN CSW70.
+51 channels broadcasting from UN CSW70.
 
 Gospel. Jazz. Hip-Hop. Soul. Healing Frequencies. All live. All day.
 
@@ -223,7 +223,7 @@ From Selma to the United Nations — the broadcast has begun.
 
 **Tune in NOW:** [LINK]
 
-50 channels. Real streams. Real impact.
+51 channels. Real streams. Real impact.
 
 Drop a reaction if you're listening!`,
       timing: 'March 17 — LAUNCH DAY',
@@ -237,7 +237,7 @@ const POSTING_SCHEDULE = [
   { date: 'March 12', platform: 'Twitter + Instagram', action: 'Ghana Partnership spotlight', type: 'Post' },
   { date: 'March 13', platform: 'Instagram', action: 'Story: Meet your AI DJs', type: 'Story' },
   { date: 'March 14', platform: 'All + Discord', action: '3-day countdown + server announcement', type: 'Post + Announcement' },
-  { date: 'March 15', platform: 'Twitter + Instagram', action: '50 Channels Live graphic + copy', type: 'Post' },
+  { date: 'March 15', platform: 'Twitter + Instagram', action: '51 Channels Live graphic + copy', type: 'Post' },
   { date: 'March 16', platform: 'Instagram', action: 'Story: Final preparations, 1 day out', type: 'Story' },
   { date: 'March 17 AM', platform: 'All', action: 'LAUNCH DAY — "We are LIVE" across all platforms', type: 'Post + Story + Announcement' },
   { date: 'March 17 PM', platform: 'Twitter', action: 'Sweet Miracles donation CTA', type: 'Post' },
@@ -605,7 +605,7 @@ export default function SocialMediaKit() {
             <CardContent className="p-6 text-center">
               <Radio className="h-8 w-8 text-purple-400 mx-auto mb-3" />
               <h3 className="font-bold text-white mb-2">Live Radio</h3>
-              <p className="text-sm text-gray-400 mb-3">50 channels broadcasting 24/7</p>
+              <p className="text-sm text-gray-400 mb-3">51 channels broadcasting 24/7</p>
               <Button size="sm" variant="outline" className="border-purple-500/50 text-purple-400" onClick={() => window.location.href = '/live'}>
                 Go to /live
               </Button>

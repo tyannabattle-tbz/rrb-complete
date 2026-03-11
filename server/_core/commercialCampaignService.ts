@@ -1,7 +1,7 @@
 /**
  * Commercial Campaign Service
  * Manages UN NGO CSW70 campaign launch commercials for March 17, 2026
- * Generates AI DJ-voiced commercial scripts and manages rotation across 50 channels
+ * Generates AI DJ-voiced commercial scripts and manages rotation across 51 channels
  */
 
 import { getDb } from '../db';
@@ -107,10 +107,10 @@ export const UN_CAMPAIGN_COMMERCIALS: CampaignCommercial[] = [
   // ─── RRB RADIO BUMPER (15s) ───
   {
     id: 'un-rrb-bumper-15',
-    title: 'RRB Radio — 50 Channels, One Mission',
+    title: 'RRB Radio — 51 Channels, One Mission',
     category: 'bumper',
     djVoice: 'seraph',
-    script: `You're listening to Rockin' Rockin' Boogie Radio — 50 channels strong. Sweet Miracles and Rockin' Rockin' Boogie — building the bridge across the world. Powered by QUMUS. Built by Canryn Production. March 17th — we take it to the United Nations. Stay tuned.`,
+    script: `You're listening to Rockin' Rockin' Boogie Radio — 51 channels strong. Sweet Miracles and Rockin' Rockin' Boogie — building the bridge across the world. Powered by QUMUS. Built by Canryn Production. March 17th — we take it to the United Nations. Stay tuned.`,
     duration: 15,
     priority: 10,
     targetChannelGenres: ['Gospel', 'Soul', 'Jazz', 'R&B', 'Hip-Hop', 'Funk', 'Rock', 'Blues', 'Afrobeat', 'World', 'Reggae', 'Electronic', 'Lo-Fi', 'Classical', 'Healing', 'Meditation', 'Community', 'Talk'],

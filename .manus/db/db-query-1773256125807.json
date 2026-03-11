@@ -1,0 +1,22 @@
+{
+  "query": "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME LIKE '%radio%' ORDER BY TABLE_NAME;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME LIKE '%radio%' ORDER BY TABLE_NAME;",
+  "rows": [
+    {
+      "TABLE_NAME": "radioChannels"
+    },
+    {
+      "TABLE_NAME": "radio_channels"
+    },
+    {
+      "TABLE_NAME": "radio_chat_messages"
+    },
+    {
+      "TABLE_NAME": "radio_stations"
+    }
+  ],
+  "messages": [],
+  "stdout": "TABLE_NAME\nradioChannels\nradio_channels\nradio_chat_messages\nradio_stations\n",
+  "stderr": "",
+  "execution_time_ms": 46
+}

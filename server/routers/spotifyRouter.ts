@@ -1,6 +1,6 @@
 /**
  * Real Spotify Integration Router
- * Connects to actual Spotify API for 41-channel RRB radio
+ * Connects to actual Spotify API for 51-channel RRB radio
  * Syncs listener data with audioStreamingService for unified metrics
  */
 
@@ -11,36 +11,67 @@ import { audioStreamingService } from '../_core/audioStreamingService';
 
 const SPOTIFY_API_BASE = 'https://api.spotify.com/v1';
 
-// RRB 41+ Channels mapped to Spotify playlists with Solfeggio frequencies
+// RRB 51 Channels — Official Station List | Canryn Production | QUMUS Orchestrated
 const RRB_CHANNELS = [
-  { id: 1, name: 'RRB Main', frequency: 432, spotifyPlaylistId: 'playlist_root_chakra', category: 'music' },
-  { id: 2, name: 'Soul & R&B Classics', frequency: 432, spotifyPlaylistId: 'playlist_soul_rnb', category: 'music' },
-  { id: 3, name: 'Southern Blues', frequency: 432, spotifyPlaylistId: 'playlist_southern_blues', category: 'music' },
-  { id: 4, name: 'Hip-Hop & Spoken Word', frequency: 432, spotifyPlaylistId: 'playlist_hiphop', category: 'music' },
-  { id: 5, name: 'Jazz Lounge', frequency: 432, spotifyPlaylistId: 'playlist_jazz', category: 'music' },
-  { id: 6, name: 'Reggae & Caribbean', frequency: 432, spotifyPlaylistId: 'playlist_reggae', category: 'music' },
-  { id: 7, name: 'Afrobeats & World', frequency: 432, spotifyPlaylistId: 'playlist_afrobeats', category: 'music' },
-  { id: 8, name: 'Neo Soul & Indie', frequency: 432, spotifyPlaylistId: 'playlist_neosoul', category: 'music' },
-  { id: 9, name: 'Old School Funk', frequency: 432, spotifyPlaylistId: 'playlist_funk', category: 'music' },
-  { id: 10, name: 'Country & Folk Roots', frequency: 432, spotifyPlaylistId: 'playlist_country', category: 'music' },
-  { id: 11, name: '432 Hz Pure', frequency: 432, spotifyPlaylistId: 'playlist_432hz', category: 'healing' },
-  { id: 12, name: '528 Hz Miracle Tone', frequency: 528, spotifyPlaylistId: 'playlist_528hz', category: 'healing' },
-  { id: 13, name: '396 Hz Liberation', frequency: 396, spotifyPlaylistId: 'playlist_396hz', category: 'healing' },
-  { id: 14, name: '639 Hz Connection', frequency: 639, spotifyPlaylistId: 'playlist_639hz', category: 'healing' },
-  { id: 15, name: '741 Hz Expression', frequency: 741, spotifyPlaylistId: 'playlist_741hz', category: 'healing' },
-  { id: 16, name: '852 Hz Intuition', frequency: 852, spotifyPlaylistId: 'playlist_852hz', category: 'healing' },
-  { id: 17, name: '963 Hz Crown', frequency: 963, spotifyPlaylistId: 'playlist_963hz', category: 'healing' },
-  { id: 18, name: 'Solfeggio Mix', frequency: 432, spotifyPlaylistId: 'playlist_solfeggio', category: 'healing' },
-  { id: 19, name: 'Gospel Hour', frequency: 432, spotifyPlaylistId: 'playlist_gospel', category: 'gospel' },
-  { id: 20, name: 'Praise & Worship', frequency: 432, spotifyPlaylistId: 'playlist_praise', category: 'gospel' },
-  { id: 21, name: 'Worship & Devotional', frequency: 432, spotifyPlaylistId: 'playlist_worship', category: 'gospel' },
-  { id: 22, name: 'Women in Music', frequency: 432, spotifyPlaylistId: 'playlist_women', category: 'music' },
-  { id: 23, name: 'Indie & Underground', frequency: 440, spotifyPlaylistId: 'playlist_indie', category: 'music' },
-  { id: 24, name: 'World Fusion', frequency: 432, spotifyPlaylistId: 'playlist_worldfusion', category: 'music' },
-  { id: 25, name: 'Throwback Radio', frequency: 440, spotifyPlaylistId: 'playlist_throwback', category: 'music' },
-  { id: 26, name: 'Love Songs', frequency: 432, spotifyPlaylistId: 'playlist_lovesongs', category: 'music' },
-  { id: 27, name: 'Open Mic', frequency: 432, spotifyPlaylistId: 'playlist_openmic', category: 'community' },
-  { id: 28, name: 'C.J. Battle Radio', frequency: 432, spotifyPlaylistId: '2kFnLPBd40yxliDHZZpAPy', category: 'music' },
+  // MUSIC (22)
+  { id: 1, name: 'RRB Main Radio', frequency: 432, spotifyPlaylistId: 'playlist_soul_funk_rnb', category: 'music' },
+  { id: 5, name: 'Music Discovery', frequency: 432, spotifyPlaylistId: 'playlist_emerging', category: 'music' },
+  { id: 9, name: 'Gospel & Praise', frequency: 432, spotifyPlaylistId: 'playlist_gospel', category: 'music' },
+  { id: 10, name: 'Smooth Jazz Lounge', frequency: 432, spotifyPlaylistId: 'playlist_jazz', category: 'music' },
+  { id: 11, name: 'Hip-Hop Classics', frequency: 440, spotifyPlaylistId: 'playlist_hiphop', category: 'music' },
+  { id: 12, name: 'Neo-Soul', frequency: 432, spotifyPlaylistId: 'playlist_neosoul', category: 'music' },
+  { id: 13, name: 'Reggae & Dancehall', frequency: 432, spotifyPlaylistId: 'playlist_reggae', category: 'music' },
+  { id: 14, name: 'Afrobeats Global', frequency: 432, spotifyPlaylistId: 'playlist_afrobeats', category: 'music' },
+  { id: 15, name: 'Blues Highway', frequency: 432, spotifyPlaylistId: 'playlist_blues', category: 'music' },
+  { id: 16, name: 'Classical Serenity', frequency: 432, spotifyPlaylistId: 'playlist_classical', category: 'music' },
+  { id: 17, name: 'Latin Rhythms', frequency: 432, spotifyPlaylistId: 'playlist_latin', category: 'music' },
+  { id: 18, name: 'Country Crossroads', frequency: 432, spotifyPlaylistId: 'playlist_country', category: 'music' },
+  { id: 19, name: 'Electronic Pulse', frequency: 440, spotifyPlaylistId: 'playlist_electronic', category: 'music' },
+  { id: 20, name: 'Rock Legends', frequency: 440, spotifyPlaylistId: 'playlist_rock', category: 'music' },
+  { id: 32, name: 'Worship & Devotional', frequency: 432, spotifyPlaylistId: 'playlist_worship', category: 'music' },
+  { id: 33, name: 'Caribbean Vibes', frequency: 432, spotifyPlaylistId: 'playlist_caribbean', category: 'music' },
+  { id: 34, name: 'Women in Music', frequency: 432, spotifyPlaylistId: 'playlist_women', category: 'music' },
+  { id: 35, name: 'Indie & Underground', frequency: 440, spotifyPlaylistId: 'playlist_indie', category: 'music' },
+  { id: 36, name: 'World Fusion', frequency: 432, spotifyPlaylistId: 'playlist_worldfusion', category: 'music' },
+  { id: 37, name: 'Throwback Radio', frequency: 440, spotifyPlaylistId: 'playlist_throwback', category: 'music' },
+  { id: 38, name: 'Love Songs', frequency: 432, spotifyPlaylistId: 'playlist_lovesongs', category: 'music' },
+  { id: 51, name: 'C.J. Battle Radio', frequency: 432, spotifyPlaylistId: '2kFnLPBd40yxliDHZZpAPy', category: 'music' },
+  // TALK (3)
+  { id: 2, name: 'Podcast Network', frequency: 432, spotifyPlaylistId: 'playlist_podcast', category: 'talk' },
+  { id: 8, name: 'Sports Talk', frequency: 440, spotifyPlaylistId: 'playlist_sports', category: 'talk' },
+  { id: 24, name: 'News & Current Affairs', frequency: 440, spotifyPlaylistId: 'playlist_news', category: 'talk' },
+  // AI-CURATED (3)
+  { id: 41, name: 'Seraph AI Radio', frequency: 432, spotifyPlaylistId: 'playlist_seraph', category: 'ai' },
+  { id: 42, name: 'Candy AI Radio', frequency: 432, spotifyPlaylistId: 'playlist_candy', category: 'ai' },
+  { id: 43, name: 'Valanna AI Radio', frequency: 432, spotifyPlaylistId: 'playlist_valanna', category: 'ai' },
+  // WELLNESS (5)
+  { id: 7, name: 'Drop Radio 432Hz', frequency: 432, spotifyPlaylistId: 'playlist_432hz', category: 'wellness' },
+  { id: 23, name: 'Meditation & Mindfulness', frequency: 432, spotifyPlaylistId: 'playlist_meditation', category: 'wellness' },
+  { id: 27, name: 'Health & Wellness', frequency: 432, spotifyPlaylistId: 'playlist_health', category: 'wellness' },
+  { id: 39, name: 'Workout & Energy', frequency: 440, spotifyPlaylistId: 'playlist_workout', category: 'wellness' },
+  { id: 40, name: 'Sleep & Relaxation', frequency: 432, spotifyPlaylistId: 'playlist_sleep', category: 'wellness' },
+  // EDUCATION (3)
+  { id: 25, name: 'Business & Finance', frequency: 440, spotifyPlaylistId: 'playlist_business', category: 'education' },
+  { id: 26, name: 'Science & Technology', frequency: 440, spotifyPlaylistId: 'playlist_science', category: 'education' },
+  { id: 28, name: 'Education & Learning', frequency: 440, spotifyPlaylistId: 'playlist_education', category: 'education' },
+  // ENTERTAINMENT (7)
+  { id: 3, name: 'Audiobook Stream', frequency: 432, spotifyPlaylistId: 'playlist_audiobook', category: 'entertainment' },
+  { id: 21, name: 'Kids & Family', frequency: 432, spotifyPlaylistId: 'playlist_kids', category: 'entertainment' },
+  { id: 22, name: 'Spoken Word & Poetry', frequency: 432, spotifyPlaylistId: 'playlist_spokenword', category: 'entertainment' },
+  { id: 29, name: 'Comedy Central', frequency: 440, spotifyPlaylistId: 'playlist_comedy', category: 'entertainment' },
+  { id: 30, name: 'Drama & Theater', frequency: 432, spotifyPlaylistId: 'playlist_drama', category: 'entertainment' },
+  { id: 31, name: 'Anime & Gaming', frequency: 440, spotifyPlaylistId: 'playlist_anime', category: 'entertainment' },
+  { id: 48, name: 'Gaming Battle Arena', frequency: 440, spotifyPlaylistId: 'playlist_gaming', category: 'entertainment' },
+  // SPECIALTY (5)
+  { id: 4, name: 'HybridCast Emergency', frequency: 440, spotifyPlaylistId: 'playlist_emergency', category: 'specialty' },
+  { id: 44, name: 'Ty Battle Live', frequency: 432, spotifyPlaylistId: 'playlist_tybattle', category: 'specialty' },
+  { id: 46, name: 'Canryn Production', frequency: 432, spotifyPlaylistId: 'playlist_canryn', category: 'specialty' },
+  { id: 47, name: 'Dragon Frequencies', frequency: 432, spotifyPlaylistId: 'playlist_dragon', category: 'specialty' },
+  { id: 49, name: 'Legacy Archives', frequency: 432, spotifyPlaylistId: 'playlist_archives', category: 'specialty' },
+  // COMMUNITY (3)
+  { id: 6, name: 'Community Voice', frequency: 432, spotifyPlaylistId: 'playlist_community', category: 'community' },
+  { id: 45, name: 'Sweet Miracles', frequency: 528, spotifyPlaylistId: 'playlist_sweetmiracles', category: 'community' },
+  { id: 50, name: 'Open Mic', frequency: 432, spotifyPlaylistId: 'playlist_openmic', category: 'community' },
 ];
 
 // Spotify token cache

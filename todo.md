@@ -3952,3 +3952,19 @@
 - [x] Kids → Radio Doudou + ForKidz Bedtime Stories
 - [x] News → CNN (96kbps)
 - [x] Late Night → Airport Lounge Radio
+
+## 51-Channel Consistency Across Platform
+- [ ] Audit current channel count in frontend RRBRadioIntegration
+- [ ] Audit current channel count in both database tables
+- [ ] Audit Spotify router## 51-Channel Consistency Across Platform
+- [x] Audit current channel count across frontend, database, Spotify router, content scheduler
+- [x] Completely rebuilt channel list to match PDF station list exactly (ch-001 through ch-051)
+- [x] Frontend RRBRadioIntegration: 51 channels with correct names, genres, frequencies, and streams
+- [x] Database radio_channels: 51 active channels with genre-matched stream URLs
+- [x] Spotify router: 51 channels with correct IDs and categories
+- [x] Updated ALL channel count references across 15+ files (50→51, 43→51, 41→51)
+- [x] Updated candyIdentity, commercialCampaignService, adRotationRouter, rrbSeedData, rrbUpdateOrchestrator
+- [x] Updated ContentScheduler, RRBPort3001, SocialMediaKit, Legacy page
+- [x] TypeScript compilation: 0 errors
+- [x] QUMUS 18/18 subsystems healthy
+- [x] Verified: Frontend=51, Database=51, SpotifyRouter=51 — CONSISTENT

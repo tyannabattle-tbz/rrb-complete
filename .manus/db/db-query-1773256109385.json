@@ -1,0 +1,22 @@
+{
+  "query": "\n-- First, check what tables we have for radio channels\nSHOW TABLES LIKE '%radio%';\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute \n-- First, check what tables we have for radio channels\nSHOW TABLES LIKE '%radio%';\n",
+  "rows": [
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%radio%)": "radioChannels"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%radio%)": "radio_channels"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%radio%)": "radio_chat_messages"
+    },
+    {
+      "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%radio%)": "radio_stations"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_eSHiAmKDzW4pqcyH7Ttb7c (%radio%)\nradioChannels\nradio_channels\nradio_chat_messages\nradio_stations\n",
+  "stderr": "",
+  "execution_time_ms": 101
+}

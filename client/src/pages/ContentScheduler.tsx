@@ -102,7 +102,7 @@ export default function ContentScheduler() {
                   QUMUS Content Scheduler
                   <Badge className="bg-purple-500/20 text-purple-300 text-xs">24/7</Badge>
                 </h1>
-                <p className="text-xs text-slate-400">Autonomous content scheduling across 50 channels</p>
+                <p className="text-xs text-slate-400">Autonomous content scheduling across 51 channels</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -232,7 +232,7 @@ export default function ContentScheduler() {
             <CardContent className="p-12 text-center">
               <Calendar className="w-12 h-12 text-purple-400 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-white mb-2">No Schedule Entries</h3>
-              <p className="text-sm text-slate-400 mb-4">Click "Seed Default Schedule" to populate all 50 channels with 24/7 content</p>
+              <p className="text-sm text-slate-400 mb-4">Click "Seed Default Schedule" to populate all 51 channels with 24/7 content</p>
               <Button onClick={() => seedMutation.mutate()} disabled={seedMutation.isPending}
                 className="bg-gradient-to-r from-purple-600 to-amber-600">
                 <Zap className="w-4 h-4 mr-1" /> Seed Now
@@ -322,7 +322,7 @@ export default function ContentScheduler() {
         {/* Footer */}
         <footer className="text-center py-4 border-t border-purple-500/10">
           <p className="text-xs text-slate-500">
-            QUMUS Content Scheduler • 50 Channels • 24/7 Autonomous Programming • A Canryn Production
+            QUMUS Content Scheduler • 51 Channels • 24/7 Autonomous Programming • A Canryn Production
           </p>
         </footer>
       </main>
