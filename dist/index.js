@@ -4945,12 +4945,12 @@ async function checkAndPublishScheduledPosts() {
   try {
     const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
     const { socialMediaPosts: socialMediaPosts2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
-    const { eq: eq32, and: and22, lte: lte4 } = await import("drizzle-orm");
+    const { eq: eq33, and: and22, lte: lte4 } = await import("drizzle-orm");
     const db2 = await getDb5();
     const now = Date.now();
     const duePosts = await db2.select().from(socialMediaPosts2).where(
       and22(
-        eq32(socialMediaPosts2.status, "scheduled"),
+        eq33(socialMediaPosts2.status, "scheduled"),
         lte4(socialMediaPosts2.scheduledAt, now)
       )
     );
@@ -4980,7 +4980,7 @@ async function checkAndPublishScheduledPosts() {
         status: newStatus,
         publishedAt: result2.success ? Date.now() : void 0,
         updatedAt: Date.now()
-      }).where(eq32(socialMediaPosts2.id, post.id));
+      }).where(eq33(socialMediaPosts2.id, post.id));
       results.push({
         postId: post.id,
         platform: post.platform,
@@ -5704,12 +5704,12 @@ var init_qumusProductionIntegration = __esm({
         setInterval(async () => {
           try {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-            const { sql: sql19 } = await import("drizzle-orm");
+            const { sql: sql20 } = await import("drizzle-orm");
             const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
             const db2 = await getDb5();
             const now = /* @__PURE__ */ new Date();
             const fifteenMinLater = new Date(now.getTime() + 15 * 60 * 1e3);
-            const [upcomingRows] = await db2.execute(sql19`
+            const [upcomingRows] = await db2.execute(sql20`
           SELECT id, title, room_code, platform, scheduled_at, host_name
           FROM conferences 
           WHERE status = 'scheduled' 
@@ -5718,7 +5718,7 @@ var init_qumusProductionIntegration = __esm({
             const upcoming = upcomingRows;
             for (const conf of upcoming) {
               const [attendeeRows] = await db2.execute(
-                sql19`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
+                sql20`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
               );
               const attendeeCount = attendeeRows.length;
               if (attendeeCount > 0 || true) {
@@ -5728,7 +5728,7 @@ var init_qumusProductionIntegration = __esm({
                 });
                 console.log(`[QUMUS-CRON] Auto-notified for conference ${conf.id}: ${conf.title} (${attendeeCount} attendees)`);
               }
-              await db2.execute(sql19`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
+              await db2.execute(sql20`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
             }
             if (upcoming.length > 0) {
               console.log(`[QUMUS-CRON] Conference auto-notification: ${upcoming.length} conferences starting within 15 minutes`);
@@ -5743,13 +5743,13 @@ var init_qumusProductionIntegration = __esm({
             const now = /* @__PURE__ */ new Date();
             if (now.getDay() === 0 && now.getHours() === 20 && now.getMinutes() < 60) {
               const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-              const { sql: sql19 } = await import("drizzle-orm");
+              const { sql: sql20 } = await import("drizzle-orm");
               const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
               const db2 = await getDb5();
               const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
-              const [weekSessions] = await db2.execute(sql19`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-              const [weekAttendees] = await db2.execute(sql19`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-              const [completedSessions] = await db2.execute(sql19`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+              const [weekSessions] = await db2.execute(sql20`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [weekAttendees] = await db2.execute(sql20`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [completedSessions] = await db2.execute(sql20`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
               const sessions = weekSessions[0]?.count || 0;
               const attendees = weekAttendees[0]?.total || 0;
               const completed = completedSessions[0]?.count || 0;
@@ -7113,6 +7113,147 @@ var init_ecosystemController = __esm({
   }
 });
 
+// server/services/streamHealthMonitor.ts
+import { sql as sql18 } from "drizzle-orm";
+async function checkStream(channelId, channelName, streamUrl) {
+  const start = Date.now();
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8e3);
+    const response = await fetch(streamUrl, {
+      method: "GET",
+      signal: controller.signal,
+      headers: { "Range": "bytes=0-1024" }
+    });
+    clearTimeout(timeout);
+    const elapsed = Date.now() - start;
+    const contentType = response.headers.get("content-type") || "";
+    const isAudio = contentType.includes("audio") || contentType.includes("mpeg") || contentType.includes("ogg") || contentType.includes("aac");
+    const isOk = response.ok || response.status === 206;
+    if (isOk && isAudio) {
+      return { channelId, channelName, streamUrl, status: "healthy", responseTimeMs: elapsed, contentType, checkedAt: Date.now() };
+    } else if (isOk) {
+      return { channelId, channelName, streamUrl, status: "degraded", responseTimeMs: elapsed, contentType, checkedAt: Date.now(), error: `Non-audio content: ${contentType}` };
+    } else {
+      return { channelId, channelName, streamUrl, status: "down", responseTimeMs: elapsed, contentType, checkedAt: Date.now(), error: `HTTP ${response.status}` };
+    }
+  } catch (err) {
+    return {
+      channelId,
+      channelName,
+      streamUrl,
+      status: err.name === "AbortError" ? "degraded" : "down",
+      responseTimeMs: Date.now() - start,
+      contentType: "",
+      checkedAt: Date.now(),
+      error: err.message || "Connection failed"
+    };
+  }
+}
+async function runHealthCheck() {
+  console.log("[StreamHealth] Starting health check across all channels...");
+  const db2 = getDb();
+  const channels = await db2.execute(
+    sql18`SELECT id, name, streamUrl FROM radio_channels WHERE status = 'active' ORDER BY id`
+  );
+  const results = [];
+  const rows = channels.rows;
+  for (let i = 0; i < rows.length; i += 10) {
+    const batch = rows.slice(i, i + 10);
+    const batchResults = await Promise.all(
+      batch.map((ch) => checkStream(ch.id, ch.name, ch.streamUrl || ""))
+    );
+    results.push(...batchResults);
+  }
+  const healthy = results.filter((r) => r.status === "healthy").length;
+  const degraded = results.filter((r) => r.status === "degraded").length;
+  const down = results.filter((r) => r.status === "down").length;
+  const unknown = results.filter((r) => r.status === "unknown").length;
+  const report = {
+    timestamp: Date.now(),
+    totalChannels: results.length,
+    healthy,
+    degraded,
+    down,
+    unknown,
+    uptimePercent: results.length > 0 ? Math.round(healthy / results.length * 100) : 0,
+    results
+  };
+  healthHistory.push(report);
+  if (healthHistory.length > MAX_HISTORY) healthHistory.shift();
+  lastReport = report;
+  console.log(`[StreamHealth] Check complete: ${healthy}/${results.length} healthy (${report.uptimePercent}% uptime)`);
+  if (down > 0) {
+    const downChannels = results.filter((r) => r.status === "down");
+    const alertContent = downChannels.map((c) => `\u2022 ch-${String(c.channelId).padStart(3, "0")}: ${c.channelName} \u2014 ${c.error}`).join("\n");
+    await notifyOwner({
+      title: `\u26A0\uFE0F RRB Radio: ${down} Channel${down > 1 ? "s" : ""} Down`,
+      content: `Stream health check detected ${down} down channel${down > 1 ? "s" : ""}:
+
+${alertContent}
+
+Total: ${healthy}/${results.length} healthy (${report.uptimePercent}% uptime)
+Time: ${(/* @__PURE__ */ new Date()).toISOString()}`
+    }).catch((err) => console.error("[StreamHealth] Alert failed:", err));
+  }
+  return report;
+}
+function startStreamHealthMonitor() {
+  if (isRunning) {
+    console.log("[StreamHealth] Monitor already running");
+    return;
+  }
+  isRunning = true;
+  console.log("[StreamHealth] Starting automated 15-minute health monitor");
+  setTimeout(() => {
+    runHealthCheck().catch((err) => console.error("[StreamHealth] Initial check failed:", err));
+  }, 3e4);
+  monitorInterval = setInterval(() => {
+    runHealthCheck().catch((err) => console.error("[StreamHealth] Scheduled check failed:", err));
+  }, 15 * 60 * 1e3);
+}
+function stopStreamHealthMonitor() {
+  if (monitorInterval) {
+    clearInterval(monitorInterval);
+    monitorInterval = null;
+  }
+  isRunning = false;
+  console.log("[StreamHealth] Monitor stopped");
+}
+function getLatestReport() {
+  return lastReport;
+}
+function getHealthHistory() {
+  return healthHistory;
+}
+function getMonitorStatus() {
+  return {
+    isRunning,
+    lastCheckAt: lastReport?.timestamp || null,
+    totalChecks: healthHistory.length,
+    currentUptime: lastReport?.uptimePercent || null,
+    healthyChannels: lastReport?.healthy || 0,
+    totalChannels: lastReport?.totalChannels || 0,
+    downChannels: lastReport?.results.filter((r) => r.status === "down").map((r) => ({
+      id: r.channelId,
+      name: r.channelName,
+      error: r.error
+    })) || []
+  };
+}
+var healthHistory, MAX_HISTORY, monitorInterval, isRunning, lastReport;
+var init_streamHealthMonitor = __esm({
+  "server/services/streamHealthMonitor.ts"() {
+    init_notification();
+    init_db();
+    healthHistory = [];
+    MAX_HISTORY = 96;
+    monitorInterval = null;
+    isRunning = false;
+    lastReport = null;
+  }
+});
+
 // server/qumus/qumusActivation.ts
 var qumusActivation_exports = {};
 __export(qumusActivation_exports, {
@@ -7142,6 +7283,7 @@ var init_qumusActivation = __esm({
     init_planningEngine();
     init_ecosystemController();
     init_socialMediaPublisher();
+    init_streamHealthMonitor();
     QumusActivation = class {
       agent;
       config;
@@ -7335,6 +7477,8 @@ var init_qumusActivation = __esm({
           } catch (e) {
           }
         }, 6e4);
+        startStreamHealthMonitor();
+        console.log("[QUMUS] Stream Health Monitor activated (15-min intervals)");
         console.log("[QUMUS] Monitoring started");
       }
       /**
@@ -29298,7 +29442,7 @@ var videoProductionWorkflowRouter = router({
   registerGeneratedVideo: protectedProcedure.input(videoProductionSchema).mutation(async ({ ctx, input }) => {
     try {
       const videoRecord = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq32 }) => eq32(videos2.id, input.videoId)
+        where: (videos2, { eq: eq33 }) => eq33(videos2.id, input.videoId)
       });
       if (!videoRecord) {
         await (void 0)(void 0).values({
@@ -29329,7 +29473,7 @@ var videoProductionWorkflowRouter = router({
   getVideoStatus: protectedProcedure.input(z73.object({ videoId: z73.string() })).query(async ({ input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq32 }) => eq32(videos2.id, input.videoId)
+        where: (videos2, { eq: eq33 }) => eq33(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29351,7 +29495,7 @@ var videoProductionWorkflowRouter = router({
   scheduleForRRBRadio: protectedProcedure.input(broadcastScheduleSchema).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq32 }) => eq32(videos2.id, input.videoId)
+        where: (videos2, { eq: eq33 }) => eq33(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29387,10 +29531,10 @@ var videoProductionWorkflowRouter = router({
   getScheduledBroadcasts: protectedProcedure.input(z73.object({ stationId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcastSchedules.findMany({
-        where: (schedules, { eq: eq32, and: and22 }) => input.stationId ? and22(
-          eq32(schedules.createdBy, String(ctx.user.id)),
-          eq32(schedules.stationId, input.stationId)
-        ) : eq32(schedules.createdBy, String(ctx.user.id))
+        where: (schedules, { eq: eq33, and: and22 }) => input.stationId ? and22(
+          eq33(schedules.createdBy, String(ctx.user.id)),
+          eq33(schedules.stationId, input.stationId)
+        ) : eq33(schedules.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         scheduleId: broadcast.id,
@@ -29415,7 +29559,7 @@ var videoProductionWorkflowRouter = router({
   ).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq32 }) => eq32(videos2.id, input.videoId)
+        where: (videos2, { eq: eq33 }) => eq33(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29447,10 +29591,10 @@ var videoProductionWorkflowRouter = router({
   getBroadcastHistory: protectedProcedure.input(z73.object({ videoId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq32, and: and22 }) => input.videoId ? and22(
-          eq32(broadcasts5.createdBy, String(ctx.user.id)),
-          eq32(broadcasts5.videoId, input.videoId)
-        ) : eq32(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq33, and: and22 }) => input.videoId ? and22(
+          eq33(broadcasts5.createdBy, String(ctx.user.id)),
+          eq33(broadcasts5.videoId, input.videoId)
+        ) : eq33(broadcasts5.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         broadcastId: broadcast.id,
@@ -29470,10 +29614,10 @@ var videoProductionWorkflowRouter = router({
   getWorkflowStats: protectedProcedure.query(async ({ ctx }) => {
     try {
       const videos2 = await (void 0).videos.findMany({
-        where: (videos3, { eq: eq32 }) => eq32(videos3.userId, String(ctx.user.id))
+        where: (videos3, { eq: eq33 }) => eq33(videos3.userId, String(ctx.user.id))
       });
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq32 }) => eq32(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq33 }) => eq33(broadcasts5.createdBy, String(ctx.user.id))
       });
       const statusCounts = {
         generated: videos2.filter((v) => v.status === "generated").length,
@@ -41003,7 +41147,7 @@ import { z as z95 } from "zod";
 init_storage();
 init_db();
 init_schema();
-import { eq as eq28, desc as desc16, and as and20, sql as sql18 } from "drizzle-orm";
+import { eq as eq28, desc as desc16, and as and20, sql as sql19 } from "drizzle-orm";
 function randomSuffix2() {
   return Math.random().toString(36).substring(2, 10);
 }
@@ -41072,7 +41216,7 @@ var podcastManagementRouter = router({
       conditions.push(eq28(podcastEpisodes.status, input.status));
     }
     const episodes = await db2.select().from(podcastEpisodes).where(and20(...conditions)).orderBy(desc16(podcastEpisodes.episodeNumber)).limit(input.limit).offset(input.offset);
-    const [countResult] = await db2.select({ count: sql18`COUNT(*)` }).from(podcastEpisodes).where(and20(...conditions));
+    const [countResult] = await db2.select({ count: sql19`COUNT(*)` }).from(podcastEpisodes).where(and20(...conditions));
     return { episodes, total: countResult?.count ?? 0 };
   }),
   /** Get a single episode */
@@ -41093,7 +41237,7 @@ var podcastManagementRouter = router({
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) throw new Error("Database unavailable");
-    const [lastEp] = await db2.select({ maxNum: sql18`COALESCE(MAX(episode_number), 0)` }).from(podcastEpisodes).where(eq28(podcastEpisodes.showId, input.showId));
+    const [lastEp] = await db2.select({ maxNum: sql19`COALESCE(MAX(episode_number), 0)` }).from(podcastEpisodes).where(eq28(podcastEpisodes.showId, input.showId));
     const episodeNumber = (lastEp?.maxNum ?? 0) + 1;
     const now = Date.now();
     const [result2] = await db2.insert(podcastEpisodes).values({
@@ -41109,7 +41253,7 @@ var podcastManagementRouter = router({
       updatedAt: now
     });
     await db2.update(podcastShows).set({
-      totalEpisodes: sql18`total_episodes + 1`,
+      totalEpisodes: sql19`total_episodes + 1`,
       updatedAt: now
     }).where(eq28(podcastShows.id, input.showId));
     return { success: true, episodeId: result2.insertId, episodeNumber };
@@ -41201,7 +41345,7 @@ var podcastManagementRouter = router({
     if (episode) {
       await db2.delete(podcastEpisodes).where(eq28(podcastEpisodes.id, input.episodeId));
       await db2.update(podcastShows).set({
-        totalEpisodes: sql18`GREATEST(total_episodes - 1, 0)`,
+        totalEpisodes: sql19`GREATEST(total_episodes - 1, 0)`,
         updatedAt: Date.now()
       }).where(eq28(podcastShows.id, episode.showId));
     }
@@ -41211,10 +41355,10 @@ var podcastManagementRouter = router({
   trackPlay: publicProcedure.input(z95.object({ episodeId: z95.number() })).mutation(async ({ input }) => {
     const db2 = await getDb();
     if (!db2) return { success: false };
-    await db2.update(podcastEpisodes).set({ playCount: sql18`play_count + 1` }).where(eq28(podcastEpisodes.id, input.episodeId));
+    await db2.update(podcastEpisodes).set({ playCount: sql19`play_count + 1` }).where(eq28(podcastEpisodes.id, input.episodeId));
     const [episode] = await db2.select({ showId: podcastEpisodes.showId }).from(podcastEpisodes).where(eq28(podcastEpisodes.id, input.episodeId)).limit(1);
     if (episode) {
-      await db2.update(podcastShows).set({ totalListeners: sql18`total_listeners + 1` }).where(eq28(podcastShows.id, episode.showId));
+      await db2.update(podcastShows).set({ totalListeners: sql19`total_listeners + 1` }).where(eq28(podcastShows.id, episode.showId));
     }
     return { success: true };
   }),
@@ -41230,7 +41374,7 @@ var podcastManagementRouter = router({
     const db2 = await getDb();
     if (!db2) throw new Error("Database unavailable");
     const now = Date.now();
-    const [maxPos] = await db2.select({ maxPos: sql18`COALESCE(MAX(queue_position), 0)` }).from(callInQueue).where(and20(
+    const [maxPos] = await db2.select({ maxPos: sql19`COALESCE(MAX(queue_position), 0)` }).from(callInQueue).where(and20(
       eq28(callInQueue.showId, input.showId),
       eq28(callInQueue.status, "waiting")
     ));
@@ -41256,7 +41400,7 @@ var podcastManagementRouter = router({
     if (!db2) return [];
     const queue = await db2.select().from(callInQueue).where(and20(
       eq28(callInQueue.showId, input.showId),
-      sql18`status IN ('waiting', 'screening', 'ready', 'on_air')`
+      sql19`status IN ('waiting', 'screening', 'ready', 'on_air')`
     )).orderBy(callInQueue.queuePosition);
     return queue;
   }),
@@ -41339,10 +41483,10 @@ var podcastManagementRouter = router({
     if (!db2) return { showCount: 0, totalEpisodes: 0, publishedEpisodes: 0, totalPlays: 0, totalDownloads: 0, shows: [] };
     const shows = await db2.select().from(podcastShows).where(eq28(podcastShows.isActive, 1));
     const [episodeStats] = await db2.select({
-      totalEpisodes: sql18`COUNT(*)`,
-      totalPlays: sql18`COALESCE(SUM(play_count), 0)`,
-      totalDownloads: sql18`COALESCE(SUM(download_count), 0)`,
-      publishedCount: sql18`SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END)`
+      totalEpisodes: sql19`COUNT(*)`,
+      totalPlays: sql19`COALESCE(SUM(play_count), 0)`,
+      totalDownloads: sql19`COALESCE(SUM(download_count), 0)`,
+      publishedCount: sql19`SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END)`
     }).from(podcastEpisodes);
     return {
       showCount: shows.length,
@@ -41394,12 +41538,144 @@ async function triggerAutoDistribution(db2, episode, publishedAt) {
 import { z as z96 } from "zod";
 init_db();
 init_schema();
+import { eq as eq30 } from "drizzle-orm";
+
+// server/services/restreamService.ts
+init_db();
+init_schema();
+init_notification();
 import { eq as eq29 } from "drizzle-orm";
+async function getRestreamUrl() {
+  const db2 = getDb();
+  const rows = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
+  return rows[0]?.configValue || "";
+}
+async function setRestreamUrl(url, updatedBy = "system") {
+  const db2 = getDb();
+  const existing = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
+  if (existing.length > 0) {
+    await db2.update(systemConfig).set({
+      configValue: url,
+      updatedAt: Date.now(),
+      updatedBy
+    }).where(eq29(systemConfig.configKey, "restream_studio_url"));
+  } else {
+    await db2.insert(systemConfig).values({
+      configKey: "restream_studio_url",
+      configValue: url,
+      description: "Restream studio URL \u2014 all live/studio buttons use this",
+      updatedAt: Date.now(),
+      updatedBy
+    });
+  }
+}
+async function createRestreamRoom(options) {
+  const { title = "RRB Live Broadcast", description = "Rockin' Rockin' Boogie Live", createdBy = "QUMUS" } = options;
+  const db2 = getDb();
+  const apiKeyRow = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_api_key"));
+  const apiKey = apiKeyRow[0]?.configValue;
+  if (apiKey) {
+    try {
+      const response = await fetch("https://api.restream.io/v2/platform/all/events", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          scheduled_for: null
+          // Live now
+        })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const roomUrl = data.embed?.url || data.url || `https://studio.restream.io/${data.id}`;
+        await setRestreamUrl(roomUrl, createdBy);
+        await notifyOwner({
+          title: "\u{1F399}\uFE0F Restream Room Created",
+          content: `New Restream room created: "${title}"
+URL: ${roomUrl}
+Created by: ${createdBy}
+Time: ${(/* @__PURE__ */ new Date()).toISOString()}`
+        }).catch(() => {
+        });
+        return {
+          url: roomUrl,
+          name: title,
+          createdAt: Date.now(),
+          status: "active"
+        };
+      } else {
+        const errorText = await response.text();
+        console.error("[Restream] API error:", response.status, errorText);
+        throw new Error(`Restream API error: ${response.status}`);
+      }
+    } catch (err) {
+      console.error("[Restream] Room creation failed:", err.message);
+    }
+  }
+  const existingUrl = await getRestreamUrl();
+  const room = {
+    url: existingUrl || "https://studio.restream.io",
+    name: title,
+    createdAt: Date.now(),
+    status: existingUrl ? "active" : "pending"
+  };
+  await db2.insert(systemConfig).values({
+    configKey: `restream_room_${Date.now()}`,
+    configValue: JSON.stringify(room),
+    description: `Restream room: ${title}`,
+    updatedAt: Date.now(),
+    updatedBy: createdBy
+  }).catch(() => {
+  });
+  if (!apiKey) {
+    await notifyOwner({
+      title: "\u{1F399}\uFE0F Restream Room Ready \u2014 Manual Setup",
+      content: `A Restream room request was created for "${title}".
+
+Current studio URL: ${room.url}
+
+To create a new room:
+1. Go to https://studio.restream.io
+2. Create a new broadcast
+3. Copy the room URL
+4. Update it in Admin Settings \u2192 Restream URL
+
+All platform buttons will automatically use the new URL.
+
+To enable auto-creation, add your Restream API key in Admin Settings.`
+    }).catch(() => {
+    });
+  }
+  return room;
+}
+async function getRestreamRooms() {
+  const db2 = getDb();
+  const rows = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
+  const roomRows = await db2.execute(
+    { sql: "SELECT configValue FROM system_config WHERE config_key LIKE 'restream_room_%' ORDER BY updated_at DESC LIMIT 10", params: [] }
+  );
+  const rooms = [];
+  if (rows[0]?.configValue) {
+    rooms.push({
+      url: rows[0].configValue,
+      name: "Current Studio",
+      createdAt: rows[0].updatedAt || Date.now(),
+      status: "active"
+    });
+  }
+  return rooms;
+}
+
+// server/routers/restreamConfigRouter.ts
 var restreamConfigRouter = router({
   // Get the Restream studio URL (public — any component can read it)
   getRestreamUrl: publicProcedure.query(async () => {
     const db2 = getDb();
-    const rows = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
+    const rows = await db2.select().from(systemConfig).where(eq30(systemConfig.configKey, "restream_studio_url"));
     return {
       url: rows[0]?.configValue || "",
       isConfigured: !!rows[0]?.configValue
@@ -41408,7 +41684,7 @@ var restreamConfigRouter = router({
   // Get any system config by key (public)
   getConfig: publicProcedure.input(z96.object({ key: z96.string() })).query(async ({ input }) => {
     const db2 = getDb();
-    const rows = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, input.key));
+    const rows = await db2.select().from(systemConfig).where(eq30(systemConfig.configKey, input.key));
     return {
       key: input.key,
       value: rows[0]?.configValue || "",
@@ -41436,13 +41712,13 @@ var restreamConfigRouter = router({
     })
   ).mutation(async ({ input, ctx }) => {
     const db2 = getDb();
-    const existing = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, input.key));
+    const existing = await db2.select().from(systemConfig).where(eq30(systemConfig.configKey, input.key));
     if (existing.length > 0) {
       await db2.update(systemConfig).set({
         configValue: input.value,
         updatedAt: Date.now(),
         updatedBy: ctx.user?.name || ctx.user?.openId || "admin"
-      }).where(eq29(systemConfig.configKey, input.key));
+      }).where(eq30(systemConfig.configKey, input.key));
     } else {
       await db2.insert(systemConfig).values({
         configKey: input.key,
@@ -41453,16 +41729,32 @@ var restreamConfigRouter = router({
     }
     return { success: true, key: input.key };
   }),
+  // Create a new Restream room (admin only)
+  createRoom: protectedProcedure.input(z96.object({
+    title: z96.string().optional(),
+    description: z96.string().optional()
+  })).mutation(async ({ input, ctx }) => {
+    const room = await createRestreamRoom({
+      title: input.title,
+      description: input.description,
+      createdBy: ctx.user?.name || ctx.user?.openId || "admin"
+    });
+    return room;
+  }),
+  // Get all Restream rooms
+  getRooms: protectedProcedure.query(async () => {
+    return getRestreamRooms();
+  }),
   // Set Restream URL specifically (admin only)
   setRestreamUrl: protectedProcedure.input(z96.object({ url: z96.string() })).mutation(async ({ input, ctx }) => {
     const db2 = getDb();
-    const existing = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
+    const existing = await db2.select().from(systemConfig).where(eq30(systemConfig.configKey, "restream_studio_url"));
     if (existing.length > 0) {
       await db2.update(systemConfig).set({
         configValue: input.url,
         updatedAt: Date.now(),
         updatedBy: ctx.user?.name || ctx.user?.openId || "admin"
-      }).where(eq29(systemConfig.configKey, "restream_studio_url"));
+      }).where(eq30(systemConfig.configKey, "restream_studio_url"));
     } else {
       await db2.insert(systemConfig).values({
         configKey: "restream_studio_url",
@@ -41476,6 +41768,54 @@ var restreamConfigRouter = router({
   })
 });
 
+// server/routers/streamHealthRouter.ts
+init_streamHealthMonitor();
+var streamHealthRouter = router({
+  // Get latest health report (public — dashboard can read)
+  getLatest: publicProcedure.query(async () => {
+    return getLatestReport();
+  }),
+  // Get monitor status
+  getStatus: publicProcedure.query(async () => {
+    return getMonitorStatus();
+  }),
+  // Get health history (last 24 hours)
+  getHistory: publicProcedure.query(async () => {
+    const history = getHealthHistory();
+    return history.map((h) => ({
+      timestamp: h.timestamp,
+      totalChannels: h.totalChannels,
+      healthy: h.healthy,
+      degraded: h.degraded,
+      down: h.down,
+      uptimePercent: h.uptimePercent
+    }));
+  }),
+  // Trigger a manual health check (admin only)
+  runCheck: protectedProcedure.mutation(async () => {
+    const report = await runHealthCheck();
+    return {
+      success: true,
+      totalChannels: report.totalChannels,
+      healthy: report.healthy,
+      degraded: report.degraded,
+      down: report.down,
+      uptimePercent: report.uptimePercent,
+      downChannels: report.results.filter((r) => r.status === "down").map((r) => ({ id: r.channelId, name: r.channelName, error: r.error }))
+    };
+  }),
+  // Start the automated monitor (admin only)
+  startMonitor: protectedProcedure.mutation(async () => {
+    startStreamHealthMonitor();
+    return { success: true, message: "Stream health monitor started (15-min intervals)" };
+  }),
+  // Stop the automated monitor (admin only)
+  stopMonitor: protectedProcedure.mutation(async () => {
+    stopStreamHealthMonitor();
+    return { success: true, message: "Stream health monitor stopped" };
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -41486,6 +41826,8 @@ var appRouter = router({
   studioAudio: studioAudioRouter,
   // Restream config (dynamic URL for all live/studio buttons)
   restreamConfig: restreamConfigRouter,
+  // Stream Health Monitor (QUMUS Policy #19 — 15-min automated checks)
+  streamHealth: streamHealthRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -42368,7 +42710,7 @@ init_db();
 init_schema();
 init_notification();
 import Stripe2 from "stripe";
-import { eq as eq30 } from "drizzle-orm";
+import { eq as eq31 } from "drizzle-orm";
 
 // server/services/notificationService.ts
 init_db();
@@ -42691,7 +43033,7 @@ async function handlePaymentSucceeded(paymentIntent) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const user = await db2.select().from(users).where(eq30(users.id, parseInt(clientRefId))).limit(1);
+    const user = await db2.select().from(users).where(eq31(users.id, parseInt(clientRefId))).limit(1);
     if (user.length > 0) {
       await db2.insert(payments).values({
         userId: user[0].id,
@@ -42739,12 +43081,12 @@ async function handleSubscriptionUpdated(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq30(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq31(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq30(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq31(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       if (subscription.items.data.length > 0) {
@@ -42779,12 +43121,12 @@ async function handleSubscriptionCancelled(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq30(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq31(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq30(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq31(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Cancelled subscription for user ${user.id}`);
@@ -42807,12 +43149,12 @@ async function handleInvoicePaid(invoice) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq30(payments.stripePaymentIntentId, invoice.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq31(payments.stripePaymentIntentId, invoice.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for invoice ${invoice.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq30(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq31(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       await db2.insert(donations).values({
@@ -42842,12 +43184,12 @@ async function handleChargeRefunded(charge) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq30(payments.stripePaymentIntentId, charge.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq31(payments.stripePaymentIntentId, charge.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for charge ${charge.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq30(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq31(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Recorded refund: $${amount} for user ${user.id}`);
@@ -42925,7 +43267,7 @@ function registerAudioStreamProxy(app) {
 // server/routes/podcastRssFeed.ts
 init_db();
 init_schema();
-import { eq as eq31, desc as desc17, and as and21 } from "drizzle-orm";
+import { eq as eq32, desc as desc17, and as and21 } from "drizzle-orm";
 function escapeXml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 }
@@ -42978,11 +43320,11 @@ var showMetadata = {
 async function generateRssFeed(slug, baseUrl) {
   const db2 = await getDb();
   if (!db2) return null;
-  const [show] = await db2.select().from(podcastShows).where(eq31(podcastShows.slug, slug)).limit(1);
+  const [show] = await db2.select().from(podcastShows).where(eq32(podcastShows.slug, slug)).limit(1);
   if (!show) return null;
   const episodes = await db2.select().from(podcastEpisodes).where(and21(
-    eq31(podcastEpisodes.showId, show.id),
-    eq31(podcastEpisodes.status, "published")
+    eq32(podcastEpisodes.showId, show.id),
+    eq32(podcastEpisodes.status, "published")
   )).orderBy(desc17(podcastEpisodes.publishedAt)).limit(100);
   const meta = showMetadata[slug] || showMetadata["candys-corner"];
   const feedUrl = `${baseUrl}/api/podcasts/${slug}/feed.xml`;
@@ -43084,7 +43426,7 @@ function registerPodcastRssRoutes(app) {
       const protocol = req.protocol;
       const host = req.get("host") || "localhost:3000";
       const baseUrl = `${protocol}://${host}`;
-      const shows = await db2.select().from(podcastShows).where(eq31(podcastShows.isActive, 1));
+      const shows = await db2.select().from(podcastShows).where(eq32(podcastShows.isActive, 1));
       let opml = `<?xml version="1.0" encoding="UTF-8"?>
 <opml version="2.0">
   <head>

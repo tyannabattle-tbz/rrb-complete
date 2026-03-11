@@ -10,6 +10,7 @@ import { getMemorySystem } from "./memorySystem";
 import { getPlanningEngine } from "./planningEngine";
 import { getEcosystemController } from "./ecosystemController";
 import { startSocialMediaPublisher } from "../socialMediaPublisher";
+import { startStreamHealthMonitor } from "../services/streamHealthMonitor";
 
 export interface QumusConfig {
   maxConcurrentTasks: number;
@@ -280,6 +281,10 @@ export class QumusActivation {
         }
       } catch (e) { /* non-critical — server may not be ready yet */ }
     }, 60000);
+
+    // Start Stream Health Monitor (Policy #19 — 15-min automated checks)
+    startStreamHealthMonitor();
+    console.log("[QUMUS] Stream Health Monitor activated (15-min intervals)");
 
     console.log("[QUMUS] Monitoring started");
   }

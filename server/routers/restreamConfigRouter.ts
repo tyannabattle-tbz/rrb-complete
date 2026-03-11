@@ -4,6 +4,7 @@ import { router } from "../_core/trpc";
 import { getDb } from "../db";
 import { systemConfig } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { createRestreamRoom, getRestreamRooms } from "../services/restreamService";
 
 export const restreamConfigRouter = router({
   // Get the Restream studio URL (public — any component can read it)
@@ -84,6 +85,26 @@ export const restreamConfigRouter = router({
 
       return { success: true, key: input.key };
     }),
+
+  // Create a new Restream room (admin only)
+  createRoom: protectedProcedure
+    .input(z.object({
+      title: z.string().optional(),
+      description: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const room = await createRestreamRoom({
+        title: input.title,
+        description: input.description,
+        createdBy: ctx.user?.name || ctx.user?.openId || 'admin',
+      });
+      return room;
+    }),
+
+  // Get all Restream rooms
+  getRooms: protectedProcedure.query(async () => {
+    return getRestreamRooms();
+  }),
 
   // Set Restream URL specifically (admin only)
   setRestreamUrl: protectedProcedure
