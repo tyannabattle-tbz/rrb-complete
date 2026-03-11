@@ -3,12 +3,12 @@ import { VideoGenerationWithWorkflow } from '@/components/VideoGenerationWithWor
 
 export function VideoProductionPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-gray-900 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Video Production Hub</h1>
-          <p className="text-lg text-gray-600">
-            Generate videos and automatically schedule them for broadcast on RRB Radio
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Video Production Studio</h1>
+          <p className="text-base md:text-lg text-gray-400">
+            AI-powered video production — generate scripts, storyboards, and narration for RRB Radio broadcasts
           </p>
         </div>
 

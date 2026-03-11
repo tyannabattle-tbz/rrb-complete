@@ -30,6 +30,7 @@ export default function ConferenceRoom() {
   const [showMoreTools, setShowMoreTools] = useState(false);
   const [jitsiReady, setJitsiReady] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const recordingTimer = useRef<NodeJS.Timeout | null>(null);
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
@@ -119,14 +120,18 @@ export default function ConferenceRoom() {
 
     // Wait for the external API script to load
     if (!window.JitsiMeetExternalAPI) {
+      let attempts = 0;
       const checkInterval = setInterval(() => {
+        attempts++;
         if (window.JitsiMeetExternalAPI) {
           clearInterval(checkInterval);
           createJitsiInstance(roomName, displayName);
+        } else if (attempts > 50) {
+          // 10s timeout — show error and offer fallback
+          clearInterval(checkInterval);
+          setConnectionError('Jitsi API failed to load. Try opening in a new tab.');
         }
       }, 200);
-      // Timeout after 10s
-      setTimeout(() => clearInterval(checkInterval), 10000);
       return;
     }
 
@@ -200,9 +205,15 @@ export default function ConferenceRoom() {
         },
       });
 
+      // Auto-hide connecting overlay after 5s even if event doesn't fire
+      setTimeout(() => {
+        if (!jitsiReady) setJitsiReady(true);
+      }, 5000);
+
       // Event listeners
       api.addEventListener('videoConferenceJoined', () => {
         setJitsiReady(true);
+        setConnectionError(null);
         toast.success('Connected to conference room');
       });
 
@@ -485,12 +496,30 @@ export default function ConferenceRoom() {
 
       {/* ── Jitsi Meet container (JS API renders here) ── */}
       <div className="flex-1 relative bg-black">
-        {!jitsiReady && (
-          <div className="absolute inset-0 flex items-center justify-center z-10 bg-black">
+        {!jitsiReady && !connectionError && (
+          <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/80">
             <div className="text-center">
               <Loader2 className="w-10 h-10 text-amber-500 animate-spin mx-auto mb-3" />
               <p className="text-white/70 text-sm">Connecting to conference...</p>
               <p className="text-white/40 text-xs mt-1">Camera & mic permissions may be requested</p>
+              <button onClick={() => setJitsiReady(true)} className="mt-4 text-amber-400 text-xs underline hover:text-amber-300">
+                Dismiss overlay
+              </button>
+            </div>
+          </div>
+        )}
+        {connectionError && (
+          <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/90">
+            <div className="text-center max-w-sm px-4">
+              <p className="text-red-400 text-sm mb-3">{connectionError}</p>
+              <div className="flex gap-2 justify-center">
+                <Button onClick={() => { setConnectionError(null); jitsiApiRef.current = null; initJitsi(); }} variant="outline" className="border-amber-500 text-amber-400">
+                  Retry
+                </Button>
+                <Button onClick={() => { const roomName = conference?.room_code || `rrb-room-${conferenceId}`; window.open(`https://meet.jit.si/${roomName}`, '_blank'); }} className="bg-amber-600 hover:bg-amber-700 text-white">
+                  Open in Jitsi Tab
+                </Button>
+              </div>
             </div>
           </div>
         )}

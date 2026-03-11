@@ -111,6 +111,11 @@ export function OnboardingTour() {
   const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {
+    // Don't show tour on conference room, guest join, or playback pages
+    const path = window.location.pathname;
+    if (path.startsWith('/conference/room/') || path.startsWith('/join/') || path.startsWith('/conference/playback/')) {
+      return;
+    }
     const completed = localStorage.getItem(TOUR_COMPLETED_KEY);
     const dismissed = localStorage.getItem(TOUR_DISMISSED_KEY);
     if (!completed && !dismissed) {

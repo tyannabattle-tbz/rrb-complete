@@ -113,10 +113,11 @@ export default function ConferenceRecordings() {
                   <div className="flex gap-2 mt-3">
                     {rec.recording_url && (
                       <>
-                        <a href={rec.recording_url} target="_blank" rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 bg-purple-500/20 text-purple-300 rounded-lg text-sm hover:bg-purple-500/30 transition-colors">
+                        <Link href={`/conference/playback/${rec.id}`}>
+                        <span className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 bg-purple-500/20 text-purple-300 rounded-lg text-sm hover:bg-purple-500/30 transition-colors cursor-pointer">
                           <Play className="w-3.5 h-3.5" /> Replay
-                        </a>
+                        </span>
+                      </Link>
                         <a href={rec.recording_url} download
                           className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gray-800/50 text-gray-300 rounded-lg text-sm hover:bg-gray-700/50 transition-colors">
                           <Download className="w-3.5 h-3.5" />

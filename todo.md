@@ -3707,3 +3707,21 @@
 - [x] motionGenerationRouter rewritten with real AI services (no mock)
 - [x] Audio routers rewritten with real Forge TTS (valanna, seraph, candy, qumus voices)
 - [x] VEO/proprietary dependencies removed — all open-source compatible (generateImage + invokeLLM + Forge TTS)
+
+## Full Operation Preparation - March 2026
+- [x] Build conference recording playback page with timestamped chapters and speaker labels
+- [x] Wire Video Production Studio UI to real backend (storyboard generator, narration, script)
+- [ ] Audit all routes and pages for broken/404 errors
+- [ ] Verify all 18 QUMUS subsystems operational
+- [ ] Ensure all audio components functional (TTS, DJ voices, radio streams)
+- [x] Ensure all video production pipeline functional (storyboards, scripts, narration)
+- [ ] Verify conference system end-to-end (create, join, guest join, share, notify)
+- [ ] Verify push notifications operational
+- [ ] Run comprehensive test suite and fix failures
+- [ ] Final system health check before full operation
+
+## Critical Fix - Conference Room Connection
+- [x] Fix ConferenceRoom stuck on "Connecting to conference..." on desktop (getRecordingStatus column fix)
+- [x] Ensure Jitsi loads properly on both mobile and desktop
+- [x] Add error handling and fallback if Jitsi API fails to load (timeout + retry + open in tab)
+- [x] Suppress Getting Started tour on conference room pages

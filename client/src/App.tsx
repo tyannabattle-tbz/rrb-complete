@@ -195,6 +195,7 @@ import TyBattleProfile from '@/pages/TyBattleProfile';
 import ConferenceCalendar from '@/pages/ConferenceCalendar';
 import ConferenceAnalytics from '@/pages/ConferenceAnalytics';
 import ConferenceRecordings from '@/pages/ConferenceRecordings';
+import ConferencePlayback from '@/pages/ConferencePlayback';
 import ConferenceRegister from '@/pages/ConferenceRegister';
 import SpeakerProfile from '@/pages/SpeakerProfile';
 import ConferenceCheckIn from '@/pages/ConferenceCheckIn';
@@ -376,6 +377,7 @@ function Router() {
       <Route path="/conference/calendar" component={ConferenceCalendar} />
       <Route path="/conference/analytics" component={ConferenceAnalytics} />
       <Route path="/conference/recordings" component={ConferenceRecordings} />
+      <Route path="/conference/playback/:id" component={ConferencePlayback} />
       <Route path="/conference/register/:id" component={ConferenceRegister} />
       <Route path="/conference/checkin/:id" component={ConferenceCheckIn} />
       <Route path="/conference/translation/:id" component={ConferenceTranslation} />

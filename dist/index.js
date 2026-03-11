@@ -19732,7 +19732,7 @@ A Voice for the Voiceless`
   getRecordingStatus: publicProcedure.input(z44.object({ conferenceId: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
     const [rows] = await db2.execute(
-      sql12`SELECT id, title, recording_status, recording_url, transcript_status, transcript_text
+      sql12`SELECT id, title, recording_status, recording_url, transcript_status, transcript
             FROM conferences WHERE id = ${input.conferenceId}`
     );
     const conf = rows[0];
@@ -19744,7 +19744,7 @@ A Voice for the Voiceless`
       recordingStatus: conf.recording_status || "none",
       recordingUrl: conf.recording_url || null,
       transcriptStatus: conf.transcript_status || "none",
-      hasTranscript: !!(conf.transcript_text && conf.transcript_text.length > 0)
+      hasTranscript: !!(conf.transcript && conf.transcript.length > 0)
     };
   }),
   // ─── Production Readiness Check ─────────────────────

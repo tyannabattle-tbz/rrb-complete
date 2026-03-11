@@ -1,350 +1,334 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { AlertCircle, CheckCircle, Clock, Radio, Zap } from 'lucide-react';
+import React, { useState } from 'react';
 import { trpc } from '@/lib/trpc';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import { Loader2, Film, Image, Mic, FileText, Play, Download, ChevronRight, Sparkles, Volume2 } from 'lucide-react';
 
-interface VideoGenerationJob {
-  jobId: string;
-  videoId: string;
-  title: string;
-  status: 'generated' | 'processing' | 'scheduled' | 'broadcasting' | 'completed';
-  stage: string;
-  progress: number;
-  videoUrl?: string;
-  scheduledTime?: Date;
-}
+type WorkflowStep = 'prompt' | 'script' | 'storyboard' | 'narration' | 'complete';
 
 export function VideoGenerationWithWorkflow() {
+  const [step, setStep] = useState<WorkflowStep>('prompt');
   const [prompt, setPrompt] = useState('');
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [duration, setDuration] = useState('60');
+  const [style, setStyle] = useState('cinematic');
+  const [duration, setDuration] = useState(30);
+  const [voice, setVoice] = useState('valanna');
+
+  const [script, setScript] = useState<{ title: string; scenes: Array<{ sceneNumber: number; description: string; narration: string; duration: number }> } | null>(null);
+  const [storyboardFrames, setStoryboardFrames] = useState<Array<{ sceneNumber: number; imageUrl: string; description: string }>>([]);
+  const [narrationUrl, setNarrationUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [jobs, setJobs] = useState<VideoGenerationJob[]>([]);
-  const [selectedJob, setSelectedJob] = useState<VideoGenerationJob | null>(null);
 
-  // Simulated video generation - in production this would call the actual API
-  const handleGenerateVideo = async () => {
-    if (!title || !prompt) {
-      alert('Please enter title and prompt');
-      return;
-    }
+  const generateScript = trpc.motionGeneration.generateScript.useMutation();
+  const generateStoryboard = trpc.motionGeneration.generateStoryboard.useMutation();
+  const generateNarration = trpc.motionGeneration.generateNarration.useMutation();
 
+  const handleGenerateScript = async () => {
+    if (!prompt.trim()) { toast.error('Enter a video concept first'); return; }
     setIsGenerating(true);
-
     try {
-      // Simulate video generation
-      const videoId = `video-${Date.now()}`;
-      const jobId = `job-${videoId}-${Date.now()}`;
-
-      const newJob: VideoGenerationJob = {
-        jobId,
-        videoId,
-        title,
-        status: 'processing',
-        stage: 'Initializing production workflow',
-        progress: 10,
-      };
-
-      setJobs([newJob, ...jobs]);
-      setSelectedJob(newJob);
-
-      // Simulate production workflow stages
-      const stages = [
-        { stage: 'Analyzing video content', progress: 20 },
-        { stage: 'Generating metadata and tags', progress: 40 },
-        { stage: 'Scheduling for production', progress: 60 },
-        { stage: 'Integrating with RRB Radio', progress: 80 },
-        { stage: 'Ready for broadcast', progress: 100 },
-      ];
-
-      for (const { stage, progress } of stages) {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        const updatedJob = { ...newJob, stage, progress };
-        setJobs((prev) => prev.map((j) => (j.jobId === jobId ? updatedJob : j)));
-        setSelectedJob(updatedJob);
-      }
-
-      // Mark as scheduled
-      const completedJob: VideoGenerationJob = {
-        ...newJob,
-        status: 'scheduled',
-        stage: 'Scheduled for RRB Radio broadcast',
-        progress: 100,
-        scheduledTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      };
-
-      setJobs((prev) => prev.map((j) => (j.jobId === jobId ? completedJob : j)));
-      setSelectedJob(completedJob);
-
-      // Reset form
-      setTitle('');
-      setPrompt('');
-      setDescription('');
-      setDuration('60');
-    } catch (error) {
-      console.error('Video generation failed:', error);
-      alert('Failed to generate video');
+      const result = await generateScript.mutateAsync({ prompt, style, durationSeconds: duration });
+      setScript(result);
+      setStep('script');
+      toast.success('Script generated!');
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to generate script');
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleBroadcastNow = (job: VideoGenerationJob) => {
-    const updatedJob: VideoGenerationJob = {
-      ...job,
-      status: 'broadcasting',
-      stage: 'Live on RRB Radio',
-      progress: 100,
-    };
-
-    setJobs((prev) => prev.map((j) => (j.jobId === job.jobId ? updatedJob : j)));
-    setSelectedJob(updatedJob);
-
-    alert(`Video "${job.title}" is now broadcasting on RRB Radio!`);
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'processing':
-        return <Zap className="w-4 h-4 text-yellow-500" />;
-      case 'scheduled':
-        return <Clock className="w-4 h-4 text-blue-500" />;
-      case 'broadcasting':
-        return <Radio className="w-4 h-4 text-red-500" />;
-      case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      default:
-        return <AlertCircle className="w-4 h-4 text-gray-500" />;
+  const handleGenerateStoryboard = async () => {
+    if (!script) return;
+    setIsGenerating(true);
+    try {
+      const frames: typeof storyboardFrames = [];
+      for (const scene of script.scenes.slice(0, 4)) {
+        try {
+          const result = await generateStoryboard.mutateAsync({
+            sceneDescription: scene.description,
+            style,
+            sceneNumber: scene.sceneNumber,
+          });
+          frames.push(result);
+        } catch {
+          frames.push({ sceneNumber: scene.sceneNumber, imageUrl: '', description: scene.description });
+        }
+      }
+      setStoryboardFrames(frames);
+      setStep('storyboard');
+      toast.success(`${frames.filter(f => f.imageUrl).length} storyboard frames generated!`);
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to generate storyboard');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
+  const handleGenerateNarration = async () => {
+    if (!script) return;
+    setIsGenerating(true);
+    try {
+      const narrationText = script.scenes.map(s => s.narration).join(' ');
+      const result = await generateNarration.mutateAsync({ text: narrationText, voice });
+      setNarrationUrl(result.audioUrl);
+      setStep('narration');
+      toast.success('Narration generated!');
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to generate narration');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const styles = [
+    { value: 'cinematic', label: 'Cinematic' },
+    { value: 'documentary', label: 'Documentary' },
+    { value: 'promotional', label: 'Promotional' },
+    { value: 'educational', label: 'Educational' },
+    { value: 'artistic', label: 'Artistic' },
+  ];
+
+  const voices = [
+    { value: 'valanna', label: 'Valanna (Warm DJ)' },
+    { value: 'seraph', label: 'Seraph (Ethereal)' },
+    { value: 'candy', label: 'Candy (Energetic)' },
+    { value: 'qumus', label: 'QUMUS (Authoritative)' },
+    { value: 'alloy', label: 'Alloy (Neutral)' },
+    { value: 'nova', label: 'Nova (Friendly)' },
+    { value: 'shimmer', label: 'Shimmer (Gentle)' },
+  ];
+
+  const stepIndicators = [
+    { key: 'prompt', label: 'Concept', icon: FileText },
+    { key: 'script', label: 'Script', icon: Sparkles },
+    { key: 'storyboard', label: 'Storyboard', icon: Image },
+    { key: 'narration', label: 'Narration', icon: Volume2 },
+    { key: 'complete', label: 'Complete', icon: Film },
+  ];
+
+  const currentStepIndex = stepIndicators.findIndex(s => s.key === step);
+
   return (
     <div className="space-y-6">
-      {/* Video Generation Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Video Generation with Production Workflow</CardTitle>
-          <CardDescription>
-            Generate videos and automatically schedule them for RRB Radio broadcast
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Video Title</label>
-            <Input
-              placeholder="Enter video title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              disabled={isGenerating}
-            />
-          </div>
+      {/* Progress Steps */}
+      <div className="flex items-center justify-between mb-8 overflow-x-auto scrollbar-hide">
+        {stepIndicators.map((s, i) => {
+          const Icon = s.icon;
+          const isActive = i === currentStepIndex;
+          const isCompleted = i < currentStepIndex;
+          return (
+            <React.Fragment key={s.key}>
+              <div className="flex flex-col items-center gap-1 min-w-[60px]">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                  isActive ? 'bg-amber-500 text-white scale-110' : isCompleted ? 'bg-green-500 text-white' : 'bg-gray-700 text-gray-400'
+                }`}>
+                  <Icon className="w-5 h-5" />
+                </div>
+                <span className={`text-xs ${isActive ? 'text-amber-400 font-semibold' : isCompleted ? 'text-green-400' : 'text-gray-500'}`}>
+                  {s.label}
+                </span>
+              </div>
+              {i < stepIndicators.length - 1 && (
+                <ChevronRight className={`w-4 h-4 flex-shrink-0 ${i < currentStepIndex ? 'text-green-500' : 'text-gray-600'}`} />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Video Prompt</label>
-            <Textarea
-              placeholder="Describe the video content you want to generate..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              disabled={isGenerating}
-              rows={4}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Description (Optional)</label>
-            <Textarea
-              placeholder="Additional details about the video"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              disabled={isGenerating}
-              rows={2}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Duration (seconds)</label>
-            <Input
-              type="number"
-              min="15"
-              max="300"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              disabled={isGenerating}
-            />
-          </div>
-
-          <Button
-            onClick={handleGenerateVideo}
-            disabled={isGenerating || !title || !prompt}
-            className="w-full"
-          >
-            {isGenerating ? 'Generating & Processing...' : 'Generate Video & Schedule for RRB Radio'}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Active Job Details */}
-      {selectedJob && (
-        <Card className="border-blue-200 bg-blue-50">
+      {/* Step 1: Concept Input */}
+      {step === 'prompt' && (
+        <Card className="bg-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              {getStatusIcon(selectedJob.status)}
-              {selectedJob.title}
+            <CardTitle className="text-white flex items-center gap-2">
+              <FileText className="w-5 h-5 text-amber-400" /> Video Concept
             </CardTitle>
-            <CardDescription>{selectedJob.stage}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">Production Progress</span>
-                <span className="text-sm text-gray-600">{selectedJob.progress}%</span>
-              </div>
-              <Progress value={selectedJob.progress} className="h-2" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <Textarea
+              placeholder="Describe your video concept... e.g., 'A 30-second promotional video for the UN CSW70 conference highlighting women empowerment and global solidarity'"
+              value={prompt}
+              onChange={e => setPrompt(e.target.value)}
+              className="min-h-[120px] bg-gray-800 border-gray-600 text-white placeholder:text-gray-500"
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <span className="text-gray-600">Status</span>
-                <p className="font-medium capitalize">{selectedJob.status}</p>
+                <label className="text-sm text-gray-400 mb-1 block">Style</label>
+                <select value={style} onChange={e => setStyle(e.target.value)}
+                  className="w-full bg-gray-800 border border-gray-600 text-white rounded-md px-3 py-2 text-sm">
+                  {styles.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                </select>
               </div>
               <div>
-                <span className="text-gray-600">Video ID</span>
-                <p className="font-medium text-xs break-all">{selectedJob.videoId}</p>
+                <label className="text-sm text-gray-400 mb-1 block">Duration (seconds)</label>
+                <Input type="number" value={duration} onChange={e => setDuration(Number(e.target.value))}
+                  min={10} max={180} className="bg-gray-800 border-gray-600 text-white" />
+              </div>
+              <div>
+                <label className="text-sm text-gray-400 mb-1 block">Narration Voice</label>
+                <select value={voice} onChange={e => setVoice(e.target.value)}
+                  className="w-full bg-gray-800 border border-gray-600 text-white rounded-md px-3 py-2 text-sm">
+                  {voices.map(v => <option key={v.value} value={v.value}>{v.label}</option>)}
+                </select>
               </div>
             </div>
-
-            {selectedJob.status === 'scheduled' && (
-              <div className="bg-white p-3 rounded border border-blue-200">
-                <p className="text-sm text-gray-700 mb-3">
-                  ✓ Video is ready for broadcast on RRB Radio
-                </p>
-                <Button
-                  onClick={() => handleBroadcastNow(selectedJob)}
-                  className="w-full bg-red-500 hover:bg-red-600"
-                >
-                  <Radio className="w-4 h-4 mr-2" />
-                  Broadcast Now on RRB Radio
-                </Button>
-              </div>
-            )}
-
-            {selectedJob.status === 'broadcasting' && (
-              <div className="bg-green-50 p-3 rounded border border-green-200">
-                <p className="text-sm text-green-700 font-medium">
-                  🔴 LIVE: Video is currently broadcasting on RRB Radio
-                </p>
-              </div>
-            )}
+            <Button onClick={handleGenerateScript} disabled={isGenerating || !prompt.trim()}
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white">
+              {isGenerating ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating Script...</> : <><Sparkles className="w-4 h-4 mr-2" /> Generate Script</>}
+            </Button>
           </CardContent>
         </Card>
       )}
 
-      {/* Production Workflow Stages */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Production Workflow Stages</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold">
-                1
-              </div>
-              <div>
-                <p className="font-medium">Video Generation</p>
-                <p className="text-sm text-gray-600">AI generates video from prompt</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold">
-                2
-              </div>
-              <div>
-                <p className="font-medium">Content Analysis</p>
-                <p className="text-sm text-gray-600">LLM analyzes video content and quality</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold">
-                3
-              </div>
-              <div>
-                <p className="font-medium">Metadata Generation</p>
-                <p className="text-sm text-gray-600">Automatic tags, categories, and descriptions</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold">
-                4
-              </div>
-              <div>
-                <p className="font-medium">Production Scheduling</p>
-                <p className="text-sm text-gray-600">Schedule video in production queue</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold">
-                5
-              </div>
-              <div>
-                <p className="font-medium">RRB Radio Integration</p>
-                <p className="text-sm text-gray-600">Integrate with RRB Radio broadcast system</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold">
-                6
-              </div>
-              <div>
-                <p className="font-medium">Broadcast Ready</p>
-                <p className="text-sm text-gray-600">Video scheduled for automatic broadcast</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Job History */}
-      {jobs.length > 0 && (
-        <Card>
+      {/* Step 2: Script Review */}
+      {step === 'script' && script && (
+        <Card className="bg-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle>Video Generation History</CardTitle>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-400" /> Script: {script.title}
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {jobs.map((job) => (
-                <div
-                  key={job.jobId}
-                  onClick={() => setSelectedJob(job)}
-                  className="p-3 border rounded cursor-pointer hover:bg-gray-50 flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    {getStatusIcon(job.status)}
-                    <div>
-                      <p className="font-medium">{job.title}</p>
-                      <p className="text-xs text-gray-600">{job.stage}</p>
+          <CardContent className="space-y-4">
+            {script.scenes.map(scene => (
+              <div key={scene.sceneNumber} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-amber-600 text-white text-xs font-bold px-2 py-0.5 rounded">Scene {scene.sceneNumber}</span>
+                  <span className="text-gray-400 text-xs">{scene.duration}s</span>
+                </div>
+                <p className="text-gray-300 text-sm mb-2"><strong className="text-gray-200">Visual:</strong> {scene.description}</p>
+                <p className="text-gray-400 text-sm italic">"{scene.narration}"</p>
+              </div>
+            ))}
+            <div className="flex gap-3">
+              <Button onClick={() => setStep('prompt')} variant="outline" className="border-gray-600 text-gray-300">Back</Button>
+              <Button onClick={handleGenerateStoryboard} disabled={isGenerating}
+                className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">
+                {isGenerating ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating Frames...</> : <><Image className="w-4 h-4 mr-2" /> Generate Storyboard</>}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Step 3: Storyboard Review */}
+      {step === 'storyboard' && (
+        <Card className="bg-gray-900 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Image className="w-5 h-5 text-amber-400" /> Storyboard Frames
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {storyboardFrames.map(frame => (
+                <div key={frame.sceneNumber} className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
+                  {frame.imageUrl ? (
+                    <img src={frame.imageUrl} alt={`Scene ${frame.sceneNumber}`} className="w-full h-48 object-cover" />
+                  ) : (
+                    <div className="w-full h-48 bg-gray-700 flex items-center justify-center text-gray-500">
+                      <span>Frame not generated</span>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">{job.progress}%</p>
-                    <p className="text-xs text-gray-600 capitalize">{job.status}</p>
+                  )}
+                  <div className="p-3">
+                    <span className="bg-amber-600 text-white text-xs font-bold px-2 py-0.5 rounded">Scene {frame.sceneNumber}</span>
+                    <p className="text-gray-400 text-xs mt-2 line-clamp-2">{frame.description}</p>
                   </div>
                 </div>
               ))}
             </div>
+            <div className="flex gap-3">
+              <Button onClick={() => setStep('script')} variant="outline" className="border-gray-600 text-gray-300">Back</Button>
+              <Button onClick={handleGenerateNarration} disabled={isGenerating}
+                className="flex-1 bg-amber-600 hover:bg-amber-700 text-white">
+                {isGenerating ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating Narration...</> : <><Mic className="w-4 h-4 mr-2" /> Generate Narration</>}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Step 4: Narration + Final */}
+      {step === 'narration' && (
+        <Card className="bg-gray-900 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Volume2 className="w-5 h-5 text-amber-400" /> Narration Preview
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {narrationUrl ? (
+              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                <p className="text-gray-300 text-sm mb-3">Voice: <strong className="text-amber-400">{voices.find(v => v.value === voice)?.label}</strong></p>
+                <audio controls className="w-full" src={narrationUrl}>Your browser does not support audio.</audio>
+              </div>
+            ) : (
+              <p className="text-gray-400">No narration generated yet.</p>
+            )}
+            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+              <h3 className="text-white font-semibold mb-2">Production Summary</h3>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="text-gray-400">Title:</div><div className="text-gray-200">{script?.title}</div>
+                <div className="text-gray-400">Scenes:</div><div className="text-gray-200">{script?.scenes.length}</div>
+                <div className="text-gray-400">Frames:</div><div className="text-gray-200">{storyboardFrames.filter(f => f.imageUrl).length} generated</div>
+                <div className="text-gray-400">Style:</div><div className="text-gray-200 capitalize">{style}</div>
+                <div className="text-gray-400">Duration:</div><div className="text-gray-200">{duration}s</div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Button onClick={() => setStep('storyboard')} variant="outline" className="border-gray-600 text-gray-300">Back</Button>
+              <Button onClick={() => { setStep('complete'); toast.success('Video production package complete!'); }}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white">
+                <Film className="w-4 h-4 mr-2" /> Finalize Production
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Step 5: Complete */}
+      {step === 'complete' && (
+        <Card className="bg-gray-900 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Film className="w-5 h-5 text-green-400" /> Production Complete
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center py-6">
+              <div className="w-16 h-16 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Film className="w-8 h-8 text-green-400" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">{script?.title}</h3>
+              <p className="text-gray-400">Your production package is ready with {script?.scenes.length} scenes, {storyboardFrames.filter(f => f.imageUrl).length} storyboard frames, and narration.</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {storyboardFrames.filter(f => f.imageUrl).map(frame => (
+                <a key={frame.sceneNumber} href={frame.imageUrl} target="_blank" rel="noopener noreferrer"
+                  className="bg-gray-800 rounded-lg p-3 border border-gray-700 hover:border-amber-500 transition-colors flex items-center gap-2">
+                  <Download className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                  <span className="text-gray-300 text-sm">Frame {frame.sceneNumber}</span>
+                </a>
+              ))}
+              {narrationUrl && (
+                <a href={narrationUrl} target="_blank" rel="noopener noreferrer"
+                  className="bg-gray-800 rounded-lg p-3 border border-gray-700 hover:border-amber-500 transition-colors flex items-center gap-2">
+                  <Download className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                  <span className="text-gray-300 text-sm">Narration Audio</span>
+                </a>
+              )}
+            </div>
+            <Button onClick={() => { setStep('prompt'); setScript(null); setStoryboardFrames([]); setNarrationUrl(null); setPrompt(''); }}
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white">
+              <Play className="w-4 h-4 mr-2" /> Start New Production
+            </Button>
           </CardContent>
         </Card>
       )}
     </div>
   );
 }
+
+export default VideoGenerationWithWorkflow;
