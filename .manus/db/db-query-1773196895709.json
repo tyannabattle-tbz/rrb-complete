@@ -1,0 +1,40 @@
+{
+  "query": "SELECT id, title, room_code, status FROM conferences;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, title, room_code, status FROM conferences;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "SQUADD Goals UN CSW70 Strategy Session",
+      "room_code": "rrb-7org-qrs8-gr1n",
+      "status": "completed"
+    },
+    {
+      "id": "2",
+      "title": "Test",
+      "room_code": "rrb-WsMumGPPKmc6",
+      "status": "completed"
+    },
+    {
+      "id": "3",
+      "title": "RRB Conference Test Room",
+      "room_code": "rrb-TESTROOM001",
+      "status": "live"
+    },
+    {
+      "id": "4",
+      "title": "UN CSW70 Strategy Session",
+      "room_code": "RRB-CSW70-STRATEGY",
+      "status": "live"
+    },
+    {
+      "id": "5",
+      "title": "UN CSW70 Main Event — Live Broadcast",
+      "room_code": "RRB-CSW70-MAIN-EVENT",
+      "status": "live"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\troom_code\tstatus\n1\tSQUADD Goals UN CSW70 Strategy Session\trrb-7org-qrs8-gr1n\tcompleted\n2\tTest\trrb-WsMumGPPKmc6\tcompleted\n3\tRRB Conference Test Room\trrb-TESTROOM001\tlive\n4\tUN CSW70 Strategy Session\tRRB-CSW70-STRATEGY\tlive\n5\tUN CSW70 Main Event — Live Broadcast\tRRB-CSW70-MAIN-EVENT\tlive\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
