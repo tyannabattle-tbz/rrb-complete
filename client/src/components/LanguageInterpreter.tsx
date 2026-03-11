@@ -16,8 +16,9 @@ import { toast } from 'sonner';
 import {
   Globe, Languages, Mic, MicOff, Volume2, VolumeX,
   ChevronDown, ChevronUp, Settings, ArrowRight, Pause,
-  Play, Trash2, Download, X, Minimize2, Maximize2
+  Play, Trash2, Download, X, Minimize2, Maximize2, Hand, Scan
 } from 'lucide-react';
+import SignLanguageAvatar from './SignLanguageAvatar';
 
 const LANGUAGES = [
   { code: 'en', name: 'English', flag: '\u{1F1FA}\u{1F1F8}', speechCode: 'en-US' },
@@ -64,6 +65,10 @@ interface LanguageInterpreterProps {
   onClose?: () => void;
   /** Context label (e.g., conference name) */
   contextLabel?: string;
+  /** Enable sign language avatar */
+  enableSignLanguage?: boolean;
+  /** Enable closed captions output callback */
+  onCaptionUpdate?: (caption: { original: string; translated: string; sourceLang: string; targetLang: string }) => void;
 }
 
 export default function LanguageInterpreter({
@@ -73,6 +78,8 @@ export default function LanguageInterpreter({
   autoStart = false,
   onClose,
   contextLabel,
+  enableSignLanguage = false,
+  onCaptionUpdate,
 }: LanguageInterpreterProps) {
   const [sourceLang, setSourceLang] = useState(defaultSourceLang);
   const [targetLang, setTargetLang] = useState(defaultTargetLang);
@@ -87,6 +94,10 @@ export default function LanguageInterpreter({
   const [speechRate, setSpeechRate] = useState(1.0);
   const [showSourcePicker, setShowSourcePicker] = useState(false);
   const [showTargetPicker, setShowTargetPicker] = useState(false);
+  const [autoDetect, setAutoDetect] = useState(false);
+  const [detectedLang, setDetectedLang] = useState<string | null>(null);
+  const [showSignLanguage, setShowSignLanguage] = useState(enableSignLanguage);
+  const [latestTranslation, setLatestTranslation] = useState('');
 
   const recognitionRef = useRef<any>(null);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
@@ -126,6 +137,19 @@ export default function LanguageInterpreter({
         if (result.isFinal) {
           const text = result[0].transcript.trim();
           if (text) {
+            // Auto-detect: check if the recognition detected a different language
+            if (autoDetect && result[0].confidence > 0) {
+              // Use the recognition's detected language if available
+              const detLang = (event as any).results?.[i]?.language;
+              if (detLang) {
+                const matchedLang = LANGUAGES.find(l => l.speechCode.startsWith(detLang.split('-')[0]));
+                if (matchedLang && matchedLang.code !== sourceLang) {
+                  setDetectedLang(matchedLang.code);
+                  setSourceLang(matchedLang.code);
+                  toast.info(`Auto-detected: ${matchedLang.name} ${matchedLang.flag}`);
+                }
+              }
+            }
             handleTranslate(text);
           }
           setInterimText('');
@@ -194,6 +218,26 @@ export default function LanguageInterpreter({
       };
 
       setTranscript(prev => [...prev, entry]);
+      setLatestTranslation(result.translatedText);
+
+      // Send caption update for closed captions overlay
+      if (onCaptionUpdate) {
+        onCaptionUpdate({
+          original: text,
+          translated: result.translatedText,
+          sourceLang,
+          targetLang,
+        });
+      }
+
+      // Auto-detect language from LLM response
+      if (autoDetect && result.detectedLanguage) {
+        const matchedLang = LANGUAGES.find(l => l.code === result.detectedLanguage);
+        if (matchedLang && matchedLang.code !== sourceLang) {
+          setDetectedLang(matchedLang.code);
+          toast.info(`Language detected: ${matchedLang.name} ${matchedLang.flag}`);
+        }
+      }
 
       // Auto-speak the translation
       if (autoSpeak && result.translatedText) {
@@ -431,6 +475,40 @@ export default function LanguageInterpreter({
               aria-label="Adjust speech rate"
             />
           </div>
+          <div className="flex items-center justify-between">
+            <label className="text-white/60 text-xs flex items-center gap-1.5">
+              <Scan className="w-3 h-3" /> Auto-detect language
+            </label>
+            <button
+              onClick={() => setAutoDetect(!autoDetect)}
+              className={`w-8 h-4 rounded-full transition-all ${autoDetect ? 'bg-green-500' : 'bg-gray-600'}`}
+              role="switch"
+              aria-checked={autoDetect}
+              aria-label="Toggle auto-detect language"
+            >
+              <div className={`w-3 h-3 rounded-full bg-white transition-transform ${autoDetect ? 'translate-x-4' : 'translate-x-0.5'}`} />
+            </button>
+          </div>
+          {autoDetect && detectedLang && (
+            <p className="text-green-400/70 text-[10px] flex items-center gap-1">
+              <Scan className="w-2.5 h-2.5" />
+              Detected: {LANGUAGES.find(l => l.code === detectedLang)?.name} {LANGUAGES.find(l => l.code === detectedLang)?.flag}
+            </p>
+          )}
+          <div className="flex items-center justify-between">
+            <label className="text-white/60 text-xs flex items-center gap-1.5">
+              <Hand className="w-3 h-3" /> Sign language avatar
+            </label>
+            <button
+              onClick={() => setShowSignLanguage(!showSignLanguage)}
+              className={`w-8 h-4 rounded-full transition-all ${showSignLanguage ? 'bg-indigo-500' : 'bg-gray-600'}`}
+              role="switch"
+              aria-checked={showSignLanguage}
+              aria-label="Toggle sign language avatar"
+            >
+              <div className={`w-3 h-3 rounded-full bg-white transition-transform ${showSignLanguage ? 'translate-x-4' : 'translate-x-0.5'}`} />
+            </button>
+          </div>
           <p className="text-white/30 text-[10px]">
             {LANGUAGES.length} languages supported including African languages (Swahili, Yoruba, Amharic, Zulu, Hausa, Igbo, Twi, Ga).
             Designed for inclusive multilingual participation.
@@ -562,6 +640,8 @@ export default function LanguageInterpreter({
             QUMUS Interpreter | {LANGUAGES.length} Languages | ADA Accessible
           </p>
           <div className="flex items-center gap-1.5">
+            {autoDetect && <span className="text-green-400/50 text-[10px]">Auto</span>}
+            {showSignLanguage && <Hand className="w-2.5 h-2.5 text-indigo-400/50" />}
             {isListening && <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />}
             <span className="text-white/20 text-[10px]">
               {transcript.length} entries
@@ -569,6 +649,15 @@ export default function LanguageInterpreter({
           </div>
         </div>
       </div>
+
+      {/* ── Sign Language Avatar ── */}
+      <SignLanguageAvatar
+        text={latestTranslation}
+        isActive={showSignLanguage && isListening}
+        onClose={() => setShowSignLanguage(false)}
+        position="bottom-left"
+        size="medium"
+      />
     </div>
   );
 }

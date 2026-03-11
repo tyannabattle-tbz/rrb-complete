@@ -3770,3 +3770,6 @@
 - [x] Support 20 languages for interpretation (including Twi, Swahili, Yoruba, Amharic)
 - [x] Add interpreter panel UI with language selector, dual transcript display, and translation output
 - [x] Ensure ADA accessibility compliance for interpreter features
+- [x] Add AI sign language avatar overlay — animated signing visualization for deaf/hard-of-hearing participants
+- [x] Add interpreter language auto-detect — use Web Speech API language detection to auto-identify speaker language
+- [x] Add closed captions subtitle bar over Jitsi video feed — real-time transcription as subtitles during conference

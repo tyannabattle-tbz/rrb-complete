@@ -219,12 +219,27 @@ export default function ConferenceRoom() {
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [showMoreTools, setShowMoreTools] = useState(false);
   const [showInterpreter, setShowInterpreter] = useState(false);
+  const [showCaptions, setShowCaptions] = useState(false);
+  const [captionText, setCaptionText] = useState<{ original: string; translated: string; sourceLang: string; targetLang: string } | null>(null);
+  const [captionVisible, setCaptionVisible] = useState(true);
+  const captionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [jitsiReady, setJitsiReady] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [inLobby, setInLobby] = useState(true);
   const [joinSettings, setJoinSettings] = useState({ audioEnabled: true, videoEnabled: true });
   const recordingTimer = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle caption updates from interpreter
+  const handleCaptionUpdate = useCallback((caption: { original: string; translated: string; sourceLang: string; targetLang: string }) => {
+    setCaptionText(caption);
+    setCaptionVisible(true);
+    // Auto-hide captions after 8 seconds
+    if (captionTimeoutRef.current) clearTimeout(captionTimeoutRef.current);
+    captionTimeoutRef.current = setTimeout(() => {
+      setCaptionVisible(false);
+    }, 8000);
+  }, []);
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
 
@@ -714,8 +729,52 @@ export default function ConferenceRoom() {
           mode="overlay"
           contextLabel={conference?.title || 'Conference Room'}
           onClose={() => setShowInterpreter(false)}
+          enableSignLanguage={true}
+          onCaptionUpdate={showCaptions ? handleCaptionUpdate : undefined}
         />
       )}
+
+      {/* ── Closed Captions Subtitle Bar ── */}
+      {showCaptions && captionText && captionVisible && (
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-40 max-w-[80%] sm:max-w-[60%] pointer-events-none">
+          <div className="bg-black/85 backdrop-blur-sm rounded-lg px-4 py-2.5 border border-white/10 shadow-2xl">
+            {/* Original text */}
+            <p className="text-white/50 text-xs mb-1 text-center">
+              {captionText.original}
+            </p>
+            {/* Translated text - larger */}
+            <p className="text-white text-sm sm:text-base font-medium text-center leading-snug">
+              {captionText.translated}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Caption Toggle (bottom-center, above Jitsi controls) ── */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+        <button
+          onClick={() => {
+            setShowCaptions(!showCaptions);
+            if (!showCaptions && !showInterpreter) {
+              setShowInterpreter(true);
+              toast.info('Interpreter started for closed captions');
+            }
+          }}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all shadow-lg ${
+            showCaptions
+              ? 'bg-white text-black hover:bg-gray-200'
+              : 'bg-gray-800/80 text-white/70 hover:bg-gray-700/80 hover:text-white border border-white/10'
+          }`}
+          title={showCaptions ? 'Turn off captions' : 'Turn on captions'}
+          aria-label={showCaptions ? 'Disable closed captions' : 'Enable closed captions'}
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+            <text x="12" y="15" textAnchor="middle" fontSize="8" fill="currentColor" stroke="none" fontWeight="bold">CC</text>
+          </svg>
+          <span>{showCaptions ? 'CC On' : 'CC'}</span>
+        </button>
+      </div>
 
       {/* Jitsi Meet container */}
       <div className="flex-1 relative bg-black">
