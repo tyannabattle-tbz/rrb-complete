@@ -4024,3 +4024,20 @@
 - [ ] Include QUMUS ecosystem demo section
 - [ ] Include RRB Radio 51-channel showcase
 - [ ] Include live video integration concept for QUMUS demo
+
+## Interactive Video Walkthrough of the Ecosystem
+- [ ] Write full narration script (8 scenes, 5+ minutes)
+- [ ] Generate reference images for all scenes
+- [ ] Generate video clips with keyframes
+- [ ] Generate warm cinematic narration audio (not robotic)
+- [ ] Build interactive web-based video experience page on the site
+- [ ] Assemble final video with audio mixing
+- [ ] Save checkpoint and deliver
+
+## Interactive Ecosystem Presentation
+- [x] Interactive Ecosystem Presentation page at /ecosystem and /presentation
+- [x] Generate 8 video clips for ecosystem walkthrough
+- [x] Generate 8 narration segments with warm feminine voice
+- [x] Assemble final MP4 video (3:42, 153MB)
+- [x] Upload video and images to CDN
+- [x] Update Sweet Miracles scene with UN projection (not globe)

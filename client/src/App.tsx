@@ -206,6 +206,7 @@ import GuestJoin from '@/pages/GuestJoin';
 import CandysCornerPodcast from '@/pages/CandysCornerPodcast';
 import SolbonesPodcast from '@/pages/SolbonesPodcast';
 import AroundTheQumUnityPodcast from '@/pages/AroundTheQumUnityPodcast';
+import EcosystemPresentation from '@/pages/EcosystemPresentation';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -398,6 +399,8 @@ function Router() {
       <Route path="/podcast/candys-corner" component={CandysCornerPodcast} />
       <Route path="/podcast/solbones" component={SolbonesPodcast} />
       <Route path="/podcast/around-the-qumunity" component={AroundTheQumUnityPodcast} />
+      <Route path="/ecosystem" component={EcosystemPresentation} />
+      <Route path="/presentation" component={EcosystemPresentation} />
       <Route component={NotFound} />
     </Switch>
     </>
