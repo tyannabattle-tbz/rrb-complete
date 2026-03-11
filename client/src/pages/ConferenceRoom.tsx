@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import LanguageInterpreter from '@/components/LanguageInterpreter';
+import { ConferenceAiChatPanel } from '@/components/ConferenceAiChatPanel';
+import { MessageSquare } from 'lucide-react';
 
 const QUICK_LANGS = [
   { code: 'en', flag: '\u{1F1FA}\u{1F1F8}', name: 'EN' },
@@ -246,6 +248,7 @@ export default function ConferenceRoom() {
   const [jitsiReady, setJitsiReady] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [showAiChat, setShowAiChat] = useState(false);
   const [inLobby, setInLobby] = useState(true);
   const [joinSettings, setJoinSettings] = useState({ audioEnabled: true, videoEnabled: true });
   const recordingTimer = useRef<NodeJS.Timeout | null>(null);
@@ -987,6 +990,24 @@ export default function ConferenceRoom() {
 
       {/* Jitsi Meet container */}
       <div className="flex-1 relative bg-black">
+        {/* AI Chat Panel Sidebar */}
+        <ConferenceAiChatPanel
+          isOpen={showAiChat}
+          onClose={() => setShowAiChat(false)}
+          conferenceTitle={conference?.title}
+        />
+
+        {/* AI Chat Toggle Button */}
+        {!showAiChat && (
+          <button
+            onClick={() => setShowAiChat(true)}
+            className="absolute right-3 top-3 z-30 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-purple-600/80 hover:bg-purple-600 text-white text-xs font-medium shadow-lg backdrop-blur-sm transition-all hover:scale-105"
+            title="Open AI Assistant"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">AI Chat</span>
+          </button>
+        )}
         {!jitsiReady && !connectionError && (
           <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/80">
             <div className="text-center">

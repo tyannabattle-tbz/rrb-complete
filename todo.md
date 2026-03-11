@@ -3821,3 +3821,9 @@
 - [x] Ensure Seraph AI TTS audio plays through speakers in conference mode
 - [x] Ensure Valanna TTS audio plays through speakers in conference mode
 - [x] Ensure all other AI voices play through speakers in conference mode
+
+## Voice System Follow-ups (Apply All)
+- [x] Test voices live on /qumus-chat — verify Valanna, Candy, Seraph all speak through speakers
+- [x] Build mini AI chat panel inside Conference Room sidebar with TTS auto-play
+- [x] Create animated speaking avatar indicators for all 3 AI personas (Valanna, Candy, Seraph)
+- [x] Integrate speaking avatars into all chat interfaces and conference room
