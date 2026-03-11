@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 
 // Genre categories for filtering
 const GENRE_FILTERS = [
@@ -70,10 +71,13 @@ const channels = [
   { id: 40, name: 'RRB Podcast Network', icon: '🎙️', genre: 'Podcast', frequency: 'Standard', color: 'from-red-500 to-pink-600', description: 'Original podcasts from the Canryn Production family — interviews, stories, and more.', streamUrl: 'https://ice5.somafm.com/live-128-mp3', listeners: 58, nowPlaying: 'The Canryn Chronicles', category: 'Podcast & Special' },
   { id: 41, name: 'HybridCast Emergency', icon: '🚨', genre: 'News', frequency: 'Standard', color: 'from-red-700 to-red-900', description: 'Emergency broadcast channel — weather alerts, community safety, and disaster response.', streamUrl: 'https://ice5.somafm.com/defcon-128-mp3', listeners: 22, nowPlaying: 'All Clear — No Active Alerts', category: 'Podcast & Special' },
   { id: 42, name: 'Solbones Soundscapes', icon: '🎲', genre: 'Meditation', frequency: '432 Hz', color: 'from-amber-500 to-orange-600', description: 'Sacred math frequencies from the Solbones dice game — Solfeggio tones meet play.', streamUrl: 'https://ice5.somafm.com/digitalis-128-mp3', listeners: 31, nowPlaying: 'Solfeggio Dice Tones', category: 'Podcast & Special' },
+  // === C.J. BATTLE ===
+  { id: 43, name: 'C.J. Battle Radio', icon: '🎤', genre: 'Hip-Hop', frequency: '432 Hz', color: 'from-blue-600 to-cyan-500', description: 'C.J. Battle — OLD SOUL, Searching, TRIGONOMETRY and more. Most.High.Ova.Everything. Stream direct from Apple Music.', streamUrl: 'https://ice5.somafm.com/bagel-128-mp3', listeners: 89, nowPlaying: 'C.J. Battle — OLD SOUL', category: 'R&B & Hip-Hop', appleMusicUrl: 'https://music.apple.com/us/artist/c-j-battle/1438716457', spotifyUrl: 'https://open.spotify.com/artist/2kFnLPBd40yxliDHZZpAPy', isArtistStation: true },
 ];
 
 export const RRBRadioIntegration: React.FC = () => {
   const [, navigate] = useLocation();
+  const { openRestream } = useRestreamUrl();
   const [selectedChannel, setSelectedChannel] = useState(channels[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(75);
@@ -226,6 +230,20 @@ export const RRBRadioIntegration: React.FC = () => {
                   {selectedChannel.genre} • {selectedChannel.frequency} • {selectedChannel.nowPlaying}
                 </p>
                 {audioError && <p className="text-xs text-amber-400 mt-1">{audioError}</p>}
+                {(selectedChannel as any).isArtistStation && (
+                  <div className="flex items-center gap-3 mt-3">
+                    {(selectedChannel as any).appleMusicUrl && (
+                      <a href={(selectedChannel as any).appleMusicUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+                        <Music className="w-4 h-4" /> Apple Music
+                      </a>
+                    )}
+                    {(selectedChannel as any).spotifyUrl && (
+                      <a href={(selectedChannel as any).spotifyUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+                        <Headphones className="w-4 h-4" /> Spotify
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -328,6 +346,20 @@ export const RRBRadioIntegration: React.FC = () => {
                     <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {channel.listeners}</span>
                     <span className="italic truncate">{channel.nowPlaying}</span>
                   </div>
+                  {(channel as any).isArtistStation && (
+                    <div className="flex items-center gap-2 mt-2">
+                      {(channel as any).appleMusicUrl && (
+                        <a href={(channel as any).appleMusicUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-pink-500 to-red-500 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
+                          <Music className="w-3 h-3" /> Apple Music
+                        </a>
+                      )}
+                      {(channel as any).spotifyUrl && (
+                        <a href={(channel as any).spotifyUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
+                          <Music className="w-3 h-3" /> Spotify
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </button>
@@ -392,7 +424,7 @@ export const RRBRadioIntegration: React.FC = () => {
               <p className="text-sm text-[#E8E0D0]/60 mb-4">
                 Join the conversation live during broadcasts. Share your story, ask questions, or send a shout-out to the community. Your voice matters.
               </p>
-              <Button variant="outline" className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10 w-full" onClick={() => navigate('/live')}>
+              <Button variant="outline" className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10 w-full" onClick={openRestream}>
                 <Wifi className="w-4 h-4 mr-2" /> Join Live Broadcast
               </Button>
             </div>
@@ -404,7 +436,7 @@ export const RRBRadioIntegration: React.FC = () => {
       <div className="border-t border-[#D4A843]/10">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-wrap gap-3 justify-center">
-            <Button className="bg-[#D4A843] text-[#0A0A0A] hover:bg-[#E8C860]" onClick={() => navigate('/live')}>
+            <Button className="bg-[#D4A843] text-[#0A0A0A] hover:bg-[#E8C860]" onClick={openRestream}>
               <Radio className="w-4 h-4 mr-2" /> Live Stream
             </Button>
             <Button variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10" onClick={() => navigate('/flyer')}>

@@ -32,6 +32,7 @@ import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 
 interface NavItem {
   icon: any;
@@ -238,6 +239,7 @@ function DashboardLayoutContent({
   const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const { openRestream } = useRestreamUrl();
 
   // Collapsible section state - persisted to localStorage
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
@@ -412,6 +414,11 @@ function DashboardLayoutContent({
                             <SidebarMenuButton
                               isActive={isActive}
                               onClick={() => {
+                                if (item.path === '/live') {
+                                  openRestream();
+                                  setSearchQuery("");
+                                  return;
+                                }
                                 setLocation(item.path);
                                 setSearchQuery("");
                               }}

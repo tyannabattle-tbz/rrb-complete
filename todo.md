@@ -3866,3 +3866,26 @@
 - [x] Include episode enclosures with S3 audio URLs, durations, and metadata
 - [x] Add RSS feed link to each podcast show card on the hub page
 - [x] Write vitest tests for recording flow, signaling, and RSS feed generation
+
+## Restream Link Wiring
+- [x] Wire Restream link to Enter Studio button on RRB Radio page
+- [x] Ensure all live links across the platform point to Restream
+- [x] Find and update all Go Live / Enter Studio / Live Stream buttons to use Restream URL
+
+## Restream Link Wiring + C.J. Battle Apple Music
+- [x] Wire Restream link to Enter Studio button on RRB Radio page
+- [x] Find and update all Go Live / Enter Studio / Live Stream buttons across platform to use Restream
+- [x] Connect C.J. Battle radio station to his Apple Music (primary) with Spotify fallback
+- [x] Embed C.J. Battle Apple Music tracks/playlist into his station
+
+## Restream Integration + C.J. Battle Apple Music
+- [x] Create system_config table for storing Restream URL
+- [x] Build tRPC router for getting/setting Restream studio URL
+- [x] Add Restream config panel in admin/settings area
+- [x] Wire Enter Studio button on RRB Radio to dynamic Restream URL
+- [x] Wire Live Stream button on RRB Radio to dynamic Restream URL
+- [x] Wire Join Live Broadcast button on RRB Radio to dynamic Restream URL
+- [x] Wire all Go Live buttons across podcast rooms to dynamic Restream URL
+- [x] Wire all live links across the platform to dynamic Restream URL
+- [x] Add C.J. Battle as channel #43 on RRB Radio with Apple Music + Spotify links
+- [x] Create useRestreamUrl hook for consistent access across components

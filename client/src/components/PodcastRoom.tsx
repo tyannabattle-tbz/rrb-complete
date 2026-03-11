@@ -15,6 +15,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -219,10 +220,14 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
     return `${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  const { openRestream, isConfigured: restreamReady } = useRestreamUrl();
+
   const handleGoLive = () => {
     setIsLive(true);
     setIsRecording(true);
-    toast.success(`${config.title} is now LIVE!`, { description: 'Broadcasting to all platforms via QUMUS' });
+    // Open Restream studio in new tab for multi-platform broadcasting
+    openRestream();
+    toast.success(`${config.title} is now LIVE!`, { description: restreamReady ? 'Restream studio opened — broadcasting to all platforms' : 'Broadcasting to all platforms via QUMUS' });
   };
 
   const handleEndShow = () => {

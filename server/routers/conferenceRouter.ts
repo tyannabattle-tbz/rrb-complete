@@ -1533,8 +1533,12 @@ export const conferenceRouter = router({
 
   // ─── Restream Studio Integration ───────────────────────
   getRestreamConfig: publicProcedure.query(async () => {
+    // Pull dynamic Restream URL from system_config
+    const db2 = await getDb();
+    const [cfgRows] = await db2.execute(sql`SELECT config_value FROM system_config WHERE config_key = 'restream_studio_url' LIMIT 1`);
+    const dynamicUrl = (cfgRows as any)[0]?.config_value || 'https://studio.restream.io';
     return {
-      studioUrl: 'https://studio.restream.io/enk-osex-pju',
+      studioUrl: dynamicUrl,
       embedEnabled: true,
       platforms: [
         { name: 'YouTube', icon: 'youtube', status: 'connected', color: '#FF0000' },
@@ -1578,9 +1582,12 @@ export const conferenceRouter = router({
       reasoning: `Restream multi-stream started for conference ${input.conferenceId} by ${ctx.user.name}`,
       metadata: { conferenceId: input.conferenceId, platforms: input.platforms },
     });
+    // Pull dynamic Restream URL from system_config
+    const [cfgRows2] = await db.execute(sql`SELECT config_value FROM system_config WHERE config_key = 'restream_studio_url' LIMIT 1`);
+    const dynamicUrl2 = (cfgRows2 as any)[0]?.config_value || 'https://studio.restream.io';
     return {
       success: true,
-      studioUrl: 'https://studio.restream.io/enk-osex-pju',
+      studioUrl: dynamicUrl2,
       streamKey,
       platforms: input.platforms || ['youtube', 'facebook', 'linkedin', 'twitter'],
       message: 'Restream multi-stream activated. Open Restream Studio to go live.',
@@ -1609,14 +1616,17 @@ export const conferenceRouter = router({
       FROM conferences WHERE id = ${input.conferenceId}
     `);
     const conf = (rows as any)[0];
-    if (!conf) return { active: false, platforms: [] };
+    // Pull dynamic Restream URL from system_config
+    const [cfgRows3] = await db.execute(sql`SELECT config_value FROM system_config WHERE config_key = 'restream_studio_url' LIMIT 1`);
+    const dynamicUrl3 = (cfgRows3 as any)[0]?.config_value || 'https://studio.restream.io';
+    if (!conf) return { active: false, platforms: [], studioUrl: dynamicUrl3 };
     return {
       active: !!conf.restream_active,
       streamKey: conf.restream_key || null,
       startedAt: conf.restream_started_at || null,
       endedAt: conf.restream_ended_at || null,
       platforms: conf.restream_platforms ? JSON.parse(conf.restream_platforms) : [],
-      studioUrl: 'https://studio.restream.io/enk-osex-pju',
+      studioUrl: dynamicUrl3,
     };
   }),
 
@@ -1678,6 +1688,9 @@ export const conferenceRouter = router({
     const db = await getDb();
     const [totalStreams] = await db.execute(sql`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1 OR restream_ended_at IS NOT NULL`);
     const [activeStreams] = await db.execute(sql`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1`);
+    // Pull dynamic Restream URL from system_config
+    const [cfgRows4] = await db.execute(sql`SELECT config_value FROM system_config WHERE config_key = 'restream_studio_url' LIMIT 1`);
+    const dynamicUrl4 = (cfgRows4 as any)[0]?.config_value || 'https://studio.restream.io';
     return {
       totalStreams: (totalStreams as any)[0]?.count || 0,
       activeStreams: (activeStreams as any)[0]?.count || 0,
@@ -1687,7 +1700,7 @@ export const conferenceRouter = router({
         linkedin: { name: 'LinkedIn', streams: 0, viewers: 0, status: 'connected' },
         twitter: { name: 'Twitter/X', streams: 0, viewers: 0, status: 'connected' },
       },
-      studioUrl: 'https://studio.restream.io/enk-osex-pju',
+      studioUrl: dynamicUrl4,
     };
   }),
 });

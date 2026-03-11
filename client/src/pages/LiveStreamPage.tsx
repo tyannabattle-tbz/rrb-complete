@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { useAuth } from '@/_core/hooks/useAuth';
 import { useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -70,6 +71,7 @@ const djStyles: Record<string, { avatar: string; color: string }> = {
 export default function LiveStreamPage() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const { openRestream, restreamUrl } = useRestreamUrl();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(75);
@@ -740,7 +742,7 @@ export default function LiveStreamPage() {
               {[
                 { label: 'SQUADD Goals', path: '/squadd', icon: Globe },
                 { label: 'Conference Hub', path: '/conference', icon: Video },
-                { label: 'Restream Studio', path: 'https://studio.restream.io/enk-osex-pju', icon: Tv },
+                { label: 'Restream Studio', path: restreamUrl || 'https://studio.restream.io', icon: Tv },
                 { label: 'Meditation Hub', path: '/meditation', icon: Music },
                 { label: 'RRB Radio Station', path: '/rrb-radio', icon: Radio },
               ].map(link => (

@@ -4,9 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { trpc } from '@/lib/trpc';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { Activity, CheckCircle, AlertCircle, Zap, BarChart3, Settings, Clock, Users } from 'lucide-react';
 
 export default function QumusMonitoringDashboard() {
+  const { openRestream } = useRestreamUrl();
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshInterval, setRefreshInterval] = useState(5000);
 
@@ -350,7 +352,7 @@ export default function QumusMonitoringDashboard() {
                   <Button size="sm" onClick={() => window.location.href = '/conference'} className="bg-cyan-600 hover:bg-cyan-700">Open Conference Hub</Button>
                   <Button size="sm" onClick={() => window.location.href = '/conference/calendar'} variant="outline" className="border-cyan-500/50 text-cyan-400">Calendar</Button>
                   <Button size="sm" onClick={() => window.location.href = '/conference/analytics'} variant="outline" className="border-cyan-500/50 text-cyan-400">Analytics</Button>
-                  <Button size="sm" onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')} variant="outline" className="border-purple-500/50 text-purple-400">Restream</Button>
+                  <Button size="sm" onClick={openRestream} variant="outline" className="border-purple-500/50 text-purple-400">Restream</Button>
                 </div>
               </CardContent>
             </Card>

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useLocation, Link } from 'wouter';
 import { trpc } from '@/lib/trpc';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -85,6 +86,7 @@ function SquaddMemberCards() {
 
 export default function SquaddGoals() {
   const [, setLocation] = useLocation();
+  const { openRestream, restreamUrl } = useRestreamUrl();
 
   const ecosystemSystems = [
     {
@@ -584,7 +586,7 @@ export default function SquaddGoals() {
               <div className="font-bold text-white text-sm">RRB Radio</div>
               <p className="text-xs text-white/40 mt-1">Live broadcast worldwide</p>
             </a>
-            <a href="https://studio.restream.io/enk-osex-pju" target="_blank" rel="noopener noreferrer" className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4 hover:border-purple-500/40 transition-colors block text-center">
+            <a href={restreamUrl || '#'} onClick={(e) => { e.preventDefault(); openRestream(); }} className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4 hover:border-purple-500/40 transition-colors block text-center cursor-pointer">
               <div className="text-2xl mb-1">📺</div>
               <div className="font-bold text-white text-sm">Restream Studio</div>
               <p className="text-xs text-white/40 mt-1">Multi-stream to 6 platforms</p>

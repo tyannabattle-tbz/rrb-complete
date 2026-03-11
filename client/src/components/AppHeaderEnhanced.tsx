@@ -8,11 +8,13 @@ import { HybridCastTabNavigationFixed } from '@/components/HybridCastTabNavigati
 import { HybridCastStatusWidget } from '@/components/HybridCastStatusWidget';
 import { SimplifiedMobileNav } from '@/components/SimplifiedMobileNav';
 import { SearchBox } from '@/components/SearchBox';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 
 export function AppHeaderEnhanced() {
   const [, navigate] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showHybridCastTabs, setShowHybridCastTabs] = useState(false);
+  const { openRestream } = useRestreamUrl();
 
 
 
@@ -64,7 +66,7 @@ export function AppHeaderEnhanced() {
     { id: 'nav-5', label: 'Studio', icon: Headphones, path: '/studio', action: () => navigate('/studio') },
     { id: 'nav-6', label: 'Conventions', icon: Calendar, path: '/convention-hub', action: () => navigate('/convention-hub') },
     { id: 'nav-7', label: 'Broadcast', icon: Zap, path: '/broadcast-hub', action: () => navigate('/broadcast-hub') },
-    { id: 'nav-8', label: 'Live Stream', icon: Eye, path: '/live', action: () => navigate('/live') },
+    { id: 'nav-8', label: 'Live Stream', icon: Eye, path: '/live', action: openRestream },
     { id: 'nav-9', label: 'Donate', icon: Heart, path: '/donate', action: () => navigate('/donate') },
     { id: 'nav-10', label: 'Ecosystem', icon: Globe, path: '/ecosystem-dashboard', action: () => navigate('/ecosystem-dashboard') },
     { id: 'nav-11', label: 'Games', icon: Gamepad2, path: '/games', action: () => navigate('/games') },

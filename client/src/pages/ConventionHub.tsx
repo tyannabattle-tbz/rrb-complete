@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,7 @@ type Tab = "conventions" | "create" | "detail";
 export default function ConventionHub() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { openRestream, restreamUrl } = useRestreamUrl();
   const [activeTab, setActiveTab] = useState<Tab>("conventions");
   const [selectedConventionId, setSelectedConventionId] = useState<number | null>(null);
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
@@ -615,7 +617,7 @@ export default function ConventionHub() {
           </div>
           <p className="text-xs text-white/50">Schedule and manage conferences with Jitsi, Zoom, Meet, Discord. Bridge to RRB Radio and HybridCast.</p>
         </a>
-        <a href="https://studio.restream.io/enk-osex-pju" target="_blank" rel="noopener noreferrer" className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4 hover:border-purple-500/40 transition-colors block">
+        <a href={restreamUrl || '#'} onClick={(e) => { e.preventDefault(); openRestream(); }} className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4 hover:border-purple-500/40 transition-colors block cursor-pointer">
           <div className="flex items-center gap-2 mb-2">
             <Tv className="w-5 h-5 text-purple-400" />
             <span className="font-bold text-white">Restream Studio</span>

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRoute, useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -227,6 +228,7 @@ export default function ConferenceRoom() {
   const [, params] = useRoute('/conference/room/:id');
   const [, navigate] = useLocation();
   const { user } = useAuth();
+  const { openRestream } = useRestreamUrl();
   const conferenceId = params?.id ? parseInt(params.id) : 0;
   const [isRecording, setIsRecording] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
@@ -756,7 +758,7 @@ export default function ConferenceRoom() {
                   <button onClick={() => { navigate(`/conference/speaker/0`); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
                     <UserCircle className="w-4 h-4" /> Speakers
                   </button>
-                  <button onClick={() => { window.open('https://studio.restream.io/enk-osex-pju', '_blank'); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
+                  <button onClick={() => { openRestream(); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
                     <ExternalLink className="w-4 h-4" /> Restream Studio
                   </button>
                 </div>

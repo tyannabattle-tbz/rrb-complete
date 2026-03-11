@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -89,6 +90,7 @@ function LaunchReadiness() {
 export default function RRBConferenceHub() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
+  const { openRestream } = useRestreamUrl();
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
 
   // Create form state
@@ -428,7 +430,7 @@ export default function RRBConferenceHub() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')}
+                      onClick={openRestream}
                       className="border-purple-500/50 text-purple-400 hover:bg-purple-500/20 text-xs"
                     >
                       <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> <span className="hidden sm:inline">Open </span>Restream Studio
@@ -497,7 +499,7 @@ export default function RRBConferenceHub() {
                             <Button size="sm" variant="outline" onClick={() => navigate(`/conference/translation/${conf.id}`)} className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
                               <Globe className="w-3 h-3 mr-0.5" /> Translate
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')} className="border-purple-500 text-purple-400 hover:bg-purple-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
+                            <Button size="sm" variant="outline" onClick={openRestream} className="border-purple-500 text-purple-400 hover:bg-purple-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
                               <Tv className="w-3 h-3 mr-0.5" /> Stream
                             </Button>
                             <Button size="sm" variant="outline" onClick={() => {

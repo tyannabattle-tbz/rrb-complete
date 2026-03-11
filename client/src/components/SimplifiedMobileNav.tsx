@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell, Megaphone, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 
 interface NavSection {
   title: string;
@@ -80,7 +81,14 @@ export function SimplifiedMobileNav() {
     return location === path || location.startsWith(path + '?');
   };
 
+  const { openRestream } = useRestreamUrl();
+
   const handleNavigation = (path: string) => {
+    if (path === '/live') {
+      openRestream();
+      setIsOpen(false);
+      return;
+    }
     navigate(path);
     setIsOpen(false);
   };

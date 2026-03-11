@@ -87,6 +87,7 @@ import { studioAudioRouter } from "./routers/studioAudioRouter";
 import { interpreterRouter } from "./routers/interpreterRouter";
 import { mediaBlastRouter } from "./routers/mediaBlastRouter";
 import { podcastManagementRouter } from "./routers/podcastManagementRouter";
+import { restreamConfigRouter } from "./routers/restreamConfigRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -98,6 +99,9 @@ export const appRouter = router({
 
   // Studio Audio (S3 upload, recording, project persistence)
   studioAudio: studioAudioRouter,
+
+  // Restream config (dynamic URL for all live/studio buttons)
+  restreamConfig: restreamConfigRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,

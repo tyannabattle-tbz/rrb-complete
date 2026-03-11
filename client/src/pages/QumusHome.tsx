@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { ARGlassInterface } from "@/components/ARGlassInterface";
 import { voiceCommandService } from "@/services/voiceCommandService";
 import { predictiveAnalyticsService } from "@/services/predictiveAnalyticsService";
@@ -81,6 +82,7 @@ import { Brain as BrainIcon, Glasses, Video, Tv } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function QumusHome() {
+  const { openRestream } = useRestreamUrl();
   const [taskGoal, setTaskGoal] = useState("");
   const [taskPriority, setTaskPriority] = useState("5");
   const [selectedTarget, setSelectedTarget] = useState("rrb");
@@ -579,7 +581,7 @@ export default function QumusHome() {
               Conference Hub
             </FuturisticButton>
             <FuturisticButton 
-              onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')}
+              onClick={openRestream}
               variant="secondary"
               className="w-full"
             >

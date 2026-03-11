@@ -1,4 +1,5 @@
 import { Link } from 'wouter';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,7 +36,7 @@ const ECOSYSTEM_MODULES = [
   { name: 'Sweet Miracles', description: 'The Heart — 501(c)(3) nonprofit, grants & donations', icon: Heart, link: '/donate', color: 'text-pink-400' },
   { name: 'SQUADD Coalition', description: 'The Movement — 7 women, 7 missions, 1 coalition', icon: Users, link: '/squadd', color: 'text-blue-400' },
   { name: 'Conference Hub', description: 'The Bridge — Jitsi, Zoom, Meet, Discord, Skype + recordings & analytics', icon: Globe, link: '/conference', color: 'text-cyan-400' },
-  { name: 'Restream Studio', description: 'Multi-Stream — YouTube, Facebook, LinkedIn, Twitter/X, Twitch, TikTok', icon: Tv, link: 'https://studio.restream.io/enk-osex-pju', color: 'text-purple-400', external: true },
+  { name: 'Restream Studio', description: 'Multi-Stream — YouTube, Facebook, LinkedIn, Twitter/X, Twitch, TikTok', icon: Tv, link: '__RESTREAM__', color: 'text-purple-400', external: true },
   { name: 'TBZ-OS', description: 'The Operating System — Full digital steward platform', icon: Monitor, link: 'https://tybatos-uo4zkxnl.manus.space', color: 'text-green-400', external: true },
 ];
 
@@ -55,6 +56,9 @@ const AI_TRINITY = [
 ];
 
 export default function TyBattleProfile() {
+  const { openRestream, restreamUrl } = useRestreamUrl();
+  // Dynamically patch Restream link
+  const modules = ECOSYSTEM_MODULES.map(m => m.link === '__RESTREAM__' ? { ...m, link: restreamUrl || 'https://studio.restream.io' } : m);
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a0015] via-[#1a0a2e] to-[#0a0015] text-[#E8E0D0]">
       {/* Back Navigation */}
@@ -229,7 +233,7 @@ export default function TyBattleProfile() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-amber-400 mb-8 text-center">Ecosystem Modules</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
-            {ECOSYSTEM_MODULES.map((mod) => (
+            {modules.map((mod) => (
               <Link key={mod.name} href={mod.external ? '#' : mod.link}>
                 <div 
                   className="flex items-start gap-4 p-4 rounded-lg bg-[#1a0a2e]/40 border border-purple-500/20 hover:border-amber-500/40 transition-all cursor-pointer"

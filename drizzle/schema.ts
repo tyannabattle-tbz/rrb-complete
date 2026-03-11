@@ -2939,3 +2939,14 @@ export const stationSharing = mysqlTable("station_sharing", {
   permission: varchar({ length: 50 }).default('listen'),
   createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 });
+
+
+// System-wide configuration (Restream URL, platform settings, etc.)
+export const systemConfig = mysqlTable("system_config", {
+  id: int().autoincrement().notNull(),
+  configKey: varchar("config_key", { length: 255 }).notNull(),
+  configValue: text("config_value").notNull(),
+  description: varchar({ length: 500 }),
+  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+  updatedBy: varchar("updated_by", { length: 255 }),
+});

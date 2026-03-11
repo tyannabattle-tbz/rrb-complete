@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Home } from 'lucide-react';
@@ -41,15 +42,21 @@ const FEATURE_ROUTES: Record<string, string> = {
   'conf': '/conference',
   'cal': '/conference/calendar',
   'rec': '/conference/recordings',
-  'restream': 'https://studio.restream.io/enk-osex-pju',
+  'restream': '#restream', // handled dynamically by useRestreamUrl hook
   'multistream': '/conference',
 };
 
 export default function HybridCastHub() {
   const [, navigate] = useLocation();
+  const { openRestream, restreamUrl } = useRestreamUrl();
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
 
   const handleTabClick = (tabId: string) => {
+    // Restream tab opens dynamic URL
+    if (tabId === 'restream') {
+      openRestream();
+      return;
+    }
     // Check if feature has a dedicated route
     if (FEATURE_ROUTES[tabId]) {
       navigate(FEATURE_ROUTES[tabId]);

@@ -7,6 +7,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { trpc } from '@/lib/trpc';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { toast } from 'sonner';
 
 // CDN image URLs for campaign visuals
@@ -43,6 +44,7 @@ const PLATFORM_COLORS: Record<string, string> = {
 type TabType = 'overview' | 'posts' | 'commercials' | 'timeline' | 'visuals' | 'automation' | 'pipeline';
 
 export default function MediaBlastCampaign() {
+  const { restreamUrl } = useRestreamUrl();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -229,7 +231,7 @@ function OverviewTab({ metrics, campaign, timeline, onTriggerBlast }: any) {
           TRIGGER MEDIA BLAST
         </button>
         <a
-          href="https://app.restream.io/studio"
+          href={restreamUrl || 'https://studio.restream.io'}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg"

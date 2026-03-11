@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { trpc } from '@/lib/trpc';
+import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { 
   Radio, Heart, Zap, Users, TrendingUp, Activity, 
   Settings, RefreshCw, AlertCircle, Wifi, Volume2,
@@ -13,6 +14,7 @@ import {
 
 export default function EcosystemMasterDashboard() {
   const [, navigate] = useLocation();
+  const { restreamUrl } = useRestreamUrl();
   const [refreshKey, setRefreshKey] = useState(0);
 
   // ─── Live Data Connections ───────────────────────────────
@@ -384,7 +386,7 @@ export default function EcosystemMasterDashboard() {
                 { label: 'QUMUS Chat', path: '/qumus-chat', icon: Users, color: 'bg-violet-600 hover:bg-violet-700' },
                 { label: 'Production Status', path: '/production', icon: Activity, color: 'bg-slate-600 hover:bg-slate-700' },
                 { label: 'Conference Hub', path: '/conference', icon: Globe, color: 'bg-amber-600 hover:bg-amber-700' },
-                { label: 'Restream Studio', path: 'https://studio.restream.io/enk-osex-pju', icon: Tv, color: 'bg-purple-600 hover:bg-purple-700' },
+                { label: 'Restream Studio', path: restreamUrl || 'https://studio.restream.io', icon: Tv, color: 'bg-purple-600 hover:bg-purple-700' },
                 { label: 'Convention Hub', path: '/convention-hub', icon: Users, color: 'bg-indigo-600 hover:bg-indigo-700' },
                 { label: 'SQUADD Goals', path: '/squadd', icon: Shield, color: 'bg-yellow-600 hover:bg-yellow-700' },
                 { label: 'Admin Panel', path: '/admin', icon: Settings, color: 'bg-gray-600 hover:bg-gray-700' },

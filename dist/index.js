@@ -219,6 +219,7 @@ __export(schema_exports, {
   systemAlerts: () => systemAlerts,
   systemAuditLog: () => systemAuditLog,
   systemCommands: () => systemCommands,
+  systemConfig: () => systemConfig,
   systemMetrics: () => systemMetrics,
   systemMetricsV2: () => systemMetricsV2,
   systemUpdates: () => systemUpdates,
@@ -245,7 +246,7 @@ __export(schema_exports, {
   wellnessCheckins: () => wellnessCheckins
 });
 import { mysqlTable, int, varchar, mysqlEnum, timestamp, decimal, text, json, bigint, index, tinyint, date } from "drizzle-orm/mysql-core";
-var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing;
+var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing, systemConfig;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
     accountingInvoices = mysqlTable("accounting_invoices", {
@@ -3003,6 +3004,14 @@ var init_schema = __esm({
       permission: varchar({ length: 50 }).default("listen"),
       createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
     });
+    systemConfig = mysqlTable("system_config", {
+      id: int().autoincrement().notNull(),
+      configKey: varchar("config_key", { length: 255 }).notNull(),
+      configValue: text("config_value").notNull(),
+      description: varchar({ length: 500 }),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+      updatedBy: varchar("updated_by", { length: 255 })
+    });
   }
 });
 
@@ -4936,12 +4945,12 @@ async function checkAndPublishScheduledPosts() {
   try {
     const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
     const { socialMediaPosts: socialMediaPosts2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
-    const { eq: eq31, and: and22, lte: lte4 } = await import("drizzle-orm");
+    const { eq: eq32, and: and22, lte: lte4 } = await import("drizzle-orm");
     const db2 = await getDb5();
     const now = Date.now();
     const duePosts = await db2.select().from(socialMediaPosts2).where(
       and22(
-        eq31(socialMediaPosts2.status, "scheduled"),
+        eq32(socialMediaPosts2.status, "scheduled"),
         lte4(socialMediaPosts2.scheduledAt, now)
       )
     );
@@ -4971,7 +4980,7 @@ async function checkAndPublishScheduledPosts() {
         status: newStatus,
         publishedAt: result2.success ? Date.now() : void 0,
         updatedAt: Date.now()
-      }).where(eq31(socialMediaPosts2.id, post.id));
+      }).where(eq32(socialMediaPosts2.id, post.id));
       results.push({
         postId: post.id,
         platform: post.platform,
@@ -7696,7 +7705,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z96 } from "zod";
+import { z as z97 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -20607,8 +20616,11 @@ A Voice for the Voiceless`
   }),
   // ─── Restream Studio Integration ───────────────────────
   getRestreamConfig: publicProcedure.query(async () => {
+    const db2 = await getDb();
+    const [cfgRows] = await db2.execute(sql11`SELECT config_value FROM system_config WHERE config_key = 'restream_studio_url' LIMIT 1`);
+    const dynamicUrl = cfgRows[0]?.config_value || "https://studio.restream.io";
     return {
-      studioUrl: "https://studio.restream.io/enk-osex-pju",
+      studioUrl: dynamicUrl,
       embedEnabled: true,
       platforms: [
         { name: "YouTube", icon: "youtube", status: "connected", color: "#FF0000" },
@@ -20651,9 +20663,11 @@ A Voice for the Voiceless`
       reasoning: `Restream multi-stream started for conference ${input.conferenceId} by ${ctx.user.name}`,
       metadata: { conferenceId: input.conferenceId, platforms: input.platforms }
     });
+    const [cfgRows2] = await db2.execute(sql11`SELECT config_value FROM system_config WHERE config_key = 'restream_studio_url' LIMIT 1`);
+    const dynamicUrl2 = cfgRows2[0]?.config_value || "https://studio.restream.io";
     return {
       success: true,
-      studioUrl: "https://studio.restream.io/enk-osex-pju",
+      studioUrl: dynamicUrl2,
       streamKey,
       platforms: input.platforms || ["youtube", "facebook", "linkedin", "twitter"],
       message: "Restream multi-stream activated. Open Restream Studio to go live."
@@ -20680,14 +20694,16 @@ A Voice for the Voiceless`
       FROM conferences WHERE id = ${input.conferenceId}
     `);
     const conf = rows[0];
-    if (!conf) return { active: false, platforms: [] };
+    const [cfgRows3] = await db2.execute(sql11`SELECT config_value FROM system_config WHERE config_key = 'restream_studio_url' LIMIT 1`);
+    const dynamicUrl3 = cfgRows3[0]?.config_value || "https://studio.restream.io";
+    if (!conf) return { active: false, platforms: [], studioUrl: dynamicUrl3 };
     return {
       active: !!conf.restream_active,
       streamKey: conf.restream_key || null,
       startedAt: conf.restream_started_at || null,
       endedAt: conf.restream_ended_at || null,
       platforms: conf.restream_platforms ? JSON.parse(conf.restream_platforms) : [],
-      studioUrl: "https://studio.restream.io/enk-osex-pju"
+      studioUrl: dynamicUrl3
     };
   }),
   // Get conferences starting within the next N minutes for auto-reminders
@@ -20743,6 +20759,8 @@ A Voice for the Voiceless`
     const db2 = await getDb();
     const [totalStreams] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1 OR restream_ended_at IS NOT NULL`);
     const [activeStreams] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1`);
+    const [cfgRows4] = await db2.execute(sql11`SELECT config_value FROM system_config WHERE config_key = 'restream_studio_url' LIMIT 1`);
+    const dynamicUrl4 = cfgRows4[0]?.config_value || "https://studio.restream.io";
     return {
       totalStreams: totalStreams[0]?.count || 0,
       activeStreams: activeStreams[0]?.count || 0,
@@ -20752,7 +20770,7 @@ A Voice for the Voiceless`
         linkedin: { name: "LinkedIn", streams: 0, viewers: 0, status: "connected" },
         twitter: { name: "Twitter/X", streams: 0, viewers: 0, status: "connected" }
       },
-      studioUrl: "https://studio.restream.io/enk-osex-pju"
+      studioUrl: dynamicUrl4
     };
   })
 });
@@ -29229,7 +29247,7 @@ var videoProductionWorkflowRouter = router({
   registerGeneratedVideo: protectedProcedure.input(videoProductionSchema).mutation(async ({ ctx, input }) => {
     try {
       const videoRecord = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq31 }) => eq31(videos2.id, input.videoId)
+        where: (videos2, { eq: eq32 }) => eq32(videos2.id, input.videoId)
       });
       if (!videoRecord) {
         await (void 0)(void 0).values({
@@ -29260,7 +29278,7 @@ var videoProductionWorkflowRouter = router({
   getVideoStatus: protectedProcedure.input(z73.object({ videoId: z73.string() })).query(async ({ input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq31 }) => eq31(videos2.id, input.videoId)
+        where: (videos2, { eq: eq32 }) => eq32(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29282,7 +29300,7 @@ var videoProductionWorkflowRouter = router({
   scheduleForRRBRadio: protectedProcedure.input(broadcastScheduleSchema).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq31 }) => eq31(videos2.id, input.videoId)
+        where: (videos2, { eq: eq32 }) => eq32(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29318,10 +29336,10 @@ var videoProductionWorkflowRouter = router({
   getScheduledBroadcasts: protectedProcedure.input(z73.object({ stationId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcastSchedules.findMany({
-        where: (schedules, { eq: eq31, and: and22 }) => input.stationId ? and22(
-          eq31(schedules.createdBy, String(ctx.user.id)),
-          eq31(schedules.stationId, input.stationId)
-        ) : eq31(schedules.createdBy, String(ctx.user.id))
+        where: (schedules, { eq: eq32, and: and22 }) => input.stationId ? and22(
+          eq32(schedules.createdBy, String(ctx.user.id)),
+          eq32(schedules.stationId, input.stationId)
+        ) : eq32(schedules.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         scheduleId: broadcast.id,
@@ -29346,7 +29364,7 @@ var videoProductionWorkflowRouter = router({
   ).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq31 }) => eq31(videos2.id, input.videoId)
+        where: (videos2, { eq: eq32 }) => eq32(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29378,10 +29396,10 @@ var videoProductionWorkflowRouter = router({
   getBroadcastHistory: protectedProcedure.input(z73.object({ videoId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq31, and: and22 }) => input.videoId ? and22(
-          eq31(broadcasts5.createdBy, String(ctx.user.id)),
-          eq31(broadcasts5.videoId, input.videoId)
-        ) : eq31(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq32, and: and22 }) => input.videoId ? and22(
+          eq32(broadcasts5.createdBy, String(ctx.user.id)),
+          eq32(broadcasts5.videoId, input.videoId)
+        ) : eq32(broadcasts5.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         broadcastId: broadcast.id,
@@ -29401,10 +29419,10 @@ var videoProductionWorkflowRouter = router({
   getWorkflowStats: protectedProcedure.query(async ({ ctx }) => {
     try {
       const videos2 = await (void 0).videos.findMany({
-        where: (videos3, { eq: eq31 }) => eq31(videos3.userId, String(ctx.user.id))
+        where: (videos3, { eq: eq32 }) => eq32(videos3.userId, String(ctx.user.id))
       });
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq31 }) => eq31(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq32 }) => eq32(broadcasts5.createdBy, String(ctx.user.id))
       });
       const statusCounts = {
         generated: videos2.filter((v) => v.status === "generated").length,
@@ -41321,6 +41339,92 @@ async function triggerAutoDistribution(db2, episode, publishedAt) {
   return results;
 }
 
+// server/routers/restreamConfigRouter.ts
+import { z as z96 } from "zod";
+init_db();
+init_schema();
+import { eq as eq29 } from "drizzle-orm";
+var restreamConfigRouter = router({
+  // Get the Restream studio URL (public — any component can read it)
+  getRestreamUrl: publicProcedure.query(async () => {
+    const db2 = getDb();
+    const rows = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
+    return {
+      url: rows[0]?.configValue || "",
+      isConfigured: !!rows[0]?.configValue
+    };
+  }),
+  // Get any system config by key (public)
+  getConfig: publicProcedure.input(z96.object({ key: z96.string() })).query(async ({ input }) => {
+    const db2 = getDb();
+    const rows = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, input.key));
+    return {
+      key: input.key,
+      value: rows[0]?.configValue || "",
+      description: rows[0]?.description || ""
+    };
+  }),
+  // Get all system configs (admin only)
+  getAllConfigs: protectedProcedure.query(async () => {
+    const db2 = getDb();
+    const rows = await db2.select().from(systemConfig);
+    return rows.map((r) => ({
+      id: r.id,
+      key: r.configKey,
+      value: r.configValue,
+      description: r.description,
+      updatedAt: r.updatedAt,
+      updatedBy: r.updatedBy
+    }));
+  }),
+  // Set a system config value (admin only)
+  setConfig: protectedProcedure.input(
+    z96.object({
+      key: z96.string(),
+      value: z96.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const db2 = getDb();
+    const existing = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, input.key));
+    if (existing.length > 0) {
+      await db2.update(systemConfig).set({
+        configValue: input.value,
+        updatedAt: Date.now(),
+        updatedBy: ctx.user?.name || ctx.user?.openId || "admin"
+      }).where(eq29(systemConfig.configKey, input.key));
+    } else {
+      await db2.insert(systemConfig).values({
+        configKey: input.key,
+        configValue: input.value,
+        updatedAt: Date.now(),
+        updatedBy: ctx.user?.name || ctx.user?.openId || "admin"
+      });
+    }
+    return { success: true, key: input.key };
+  }),
+  // Set Restream URL specifically (admin only)
+  setRestreamUrl: protectedProcedure.input(z96.object({ url: z96.string() })).mutation(async ({ input, ctx }) => {
+    const db2 = getDb();
+    const existing = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
+    if (existing.length > 0) {
+      await db2.update(systemConfig).set({
+        configValue: input.url,
+        updatedAt: Date.now(),
+        updatedBy: ctx.user?.name || ctx.user?.openId || "admin"
+      }).where(eq29(systemConfig.configKey, "restream_studio_url"));
+    } else {
+      await db2.insert(systemConfig).values({
+        configKey: "restream_studio_url",
+        configValue: input.url,
+        description: "Restream studio URL \u2014 paste your Restream room link here and all live/studio buttons will use it",
+        updatedAt: Date.now(),
+        updatedBy: ctx.user?.name || ctx.user?.openId || "admin"
+      });
+    }
+    return { success: true, url: input.url };
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -41329,6 +41433,8 @@ var appRouter = router({
   audio: audioRouter,
   // Studio Audio (S3 upload, recording, project persistence)
   studioAudio: studioAudioRouter,
+  // Restream config (dynamic URL for all live/studio buttons)
+  restreamConfig: restreamConfigRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -41344,11 +41450,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z96.object({
-        goal: z96.string().min(1, "Goal is required"),
-        priority: z96.number().int().min(1).max(10).optional().default(5),
-        steps: z96.array(z96.string()).optional(),
-        constraints: z96.array(z96.string()).optional()
+      z97.object({
+        goal: z97.string().min(1, "Goal is required"),
+        priority: z97.number().int().min(1).max(10).optional().default(5),
+        steps: z97.array(z97.string()).optional(),
+        constraints: z97.array(z97.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -41360,7 +41466,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z96.object({ taskId: z96.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z97.object({ taskId: z97.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -41370,11 +41476,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z96.object({
-        target: z96.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z96.string().min(1, "Action is required"),
-        params: z96.record(z96.any()).optional().default({}),
-        priority: z96.number().int().min(1).max(10).optional().default(5)
+      z97.object({
+        target: z97.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z97.string().min(1, "Action is required"),
+        params: z97.record(z97.any()).optional().default({}),
+        priority: z97.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -41386,10 +41492,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z96.object({ commandId: z96.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z97.object({ commandId: z97.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z96.object({ target: z96.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z97.object({ target: z97.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -41484,12 +41590,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z96.object({
-      sessionName: z96.string().min(1),
-      systemPrompt: z96.string().optional(),
-      temperature: z96.number().min(0).max(100).optional(),
-      model: z96.string().optional(),
-      maxSteps: z96.number().min(1).optional()
+    createSession: protectedProcedure.input(z97.object({
+      sessionName: z97.string().min(1),
+      systemPrompt: z97.string().optional(),
+      temperature: z97.number().min(0).max(100).optional(),
+      model: z97.string().optional(),
+      maxSteps: z97.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -41510,7 +41616,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z96.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z97.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -41519,7 +41625,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z96.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z97.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -41563,9 +41669,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z96.object({
-      dateRange: z96.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z96.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z97.object({
+      dateRange: z97.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z97.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -41576,24 +41682,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z96.object({
-      dateRange: z96.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z97.object({
+      dateRange: z97.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z96.object({
-      dateRange: z96.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z97.object({
+      dateRange: z97.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z96.object({
-      email: z96.string().email(),
-      name: z96.string().optional(),
-      source: z96.string().optional(),
-      language: z96.string().optional()
+    subscribe: publicProcedure.input(z97.object({
+      email: z97.string().email(),
+      name: z97.string().optional(),
+      source: z97.string().optional(),
+      language: z97.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
@@ -42211,7 +42317,7 @@ init_db();
 init_schema();
 init_notification();
 import Stripe2 from "stripe";
-import { eq as eq29 } from "drizzle-orm";
+import { eq as eq30 } from "drizzle-orm";
 
 // server/services/notificationService.ts
 init_db();
@@ -42534,7 +42640,7 @@ async function handlePaymentSucceeded(paymentIntent) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const user = await db2.select().from(users).where(eq29(users.id, parseInt(clientRefId))).limit(1);
+    const user = await db2.select().from(users).where(eq30(users.id, parseInt(clientRefId))).limit(1);
     if (user.length > 0) {
       await db2.insert(payments).values({
         userId: user[0].id,
@@ -42582,12 +42688,12 @@ async function handleSubscriptionUpdated(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq29(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq30(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq29(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq30(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       if (subscription.items.data.length > 0) {
@@ -42622,12 +42728,12 @@ async function handleSubscriptionCancelled(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq29(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq30(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq29(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq30(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Cancelled subscription for user ${user.id}`);
@@ -42650,12 +42756,12 @@ async function handleInvoicePaid(invoice) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq29(payments.stripePaymentIntentId, invoice.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq30(payments.stripePaymentIntentId, invoice.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for invoice ${invoice.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq29(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq30(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       await db2.insert(donations).values({
@@ -42685,12 +42791,12 @@ async function handleChargeRefunded(charge) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq29(payments.stripePaymentIntentId, charge.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq30(payments.stripePaymentIntentId, charge.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for charge ${charge.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq29(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq30(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Recorded refund: $${amount} for user ${user.id}`);
@@ -42768,7 +42874,7 @@ function registerAudioStreamProxy(app) {
 // server/routes/podcastRssFeed.ts
 init_db();
 init_schema();
-import { eq as eq30, desc as desc17, and as and21 } from "drizzle-orm";
+import { eq as eq31, desc as desc17, and as and21 } from "drizzle-orm";
 function escapeXml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 }
@@ -42821,11 +42927,11 @@ var showMetadata = {
 async function generateRssFeed(slug, baseUrl) {
   const db2 = await getDb();
   if (!db2) return null;
-  const [show] = await db2.select().from(podcastShows).where(eq30(podcastShows.slug, slug)).limit(1);
+  const [show] = await db2.select().from(podcastShows).where(eq31(podcastShows.slug, slug)).limit(1);
   if (!show) return null;
   const episodes = await db2.select().from(podcastEpisodes).where(and21(
-    eq30(podcastEpisodes.showId, show.id),
-    eq30(podcastEpisodes.status, "published")
+    eq31(podcastEpisodes.showId, show.id),
+    eq31(podcastEpisodes.status, "published")
   )).orderBy(desc17(podcastEpisodes.publishedAt)).limit(100);
   const meta = showMetadata[slug] || showMetadata["candys-corner"];
   const feedUrl = `${baseUrl}/api/podcasts/${slug}/feed.xml`;
@@ -42927,7 +43033,7 @@ function registerPodcastRssRoutes(app) {
       const protocol = req.protocol;
       const host = req.get("host") || "localhost:3000";
       const baseUrl = `${protocol}://${host}`;
-      const shows = await db2.select().from(podcastShows).where(eq30(podcastShows.isActive, 1));
+      const shows = await db2.select().from(podcastShows).where(eq31(podcastShows.isActive, 1));
       let opml = `<?xml version="1.0" encoding="UTF-8"?>
 <opml version="2.0">
   <head>

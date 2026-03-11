@@ -1,0 +1,120 @@
+import { z } from "zod";
+import { publicProcedure, protectedProcedure } from "../_core/trpc";
+import { router } from "../_core/trpc";
+import { getDb } from "../db";
+import { systemConfig } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
+
+export const restreamConfigRouter = router({
+  // Get the Restream studio URL (public — any component can read it)
+  getRestreamUrl: publicProcedure.query(async () => {
+    const db = getDb();
+    const rows = await db
+      .select()
+      .from(systemConfig)
+      .where(eq(systemConfig.configKey, "restream_studio_url"));
+    return {
+      url: rows[0]?.configValue || "",
+      isConfigured: !!(rows[0]?.configValue),
+    };
+  }),
+
+  // Get any system config by key (public)
+  getConfig: publicProcedure
+    .input(z.object({ key: z.string() }))
+    .query(async ({ input }) => {
+      const db = getDb();
+      const rows = await db
+        .select()
+        .from(systemConfig)
+        .where(eq(systemConfig.configKey, input.key));
+      return {
+        key: input.key,
+        value: rows[0]?.configValue || "",
+        description: rows[0]?.description || "",
+      };
+    }),
+
+  // Get all system configs (admin only)
+  getAllConfigs: protectedProcedure.query(async () => {
+    const db = getDb();
+    const rows = await db.select().from(systemConfig);
+    return rows.map((r) => ({
+      id: r.id,
+      key: r.configKey,
+      value: r.configValue,
+      description: r.description,
+      updatedAt: r.updatedAt,
+      updatedBy: r.updatedBy,
+    }));
+  }),
+
+  // Set a system config value (admin only)
+  setConfig: protectedProcedure
+    .input(
+      z.object({
+        key: z.string(),
+        value: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = getDb();
+      const existing = await db
+        .select()
+        .from(systemConfig)
+        .where(eq(systemConfig.configKey, input.key));
+
+      if (existing.length > 0) {
+        await db
+          .update(systemConfig)
+          .set({
+            configValue: input.value,
+            updatedAt: Date.now(),
+            updatedBy: ctx.user?.name || ctx.user?.openId || "admin",
+          })
+          .where(eq(systemConfig.configKey, input.key));
+      } else {
+        await db.insert(systemConfig).values({
+          configKey: input.key,
+          configValue: input.value,
+          updatedAt: Date.now(),
+          updatedBy: ctx.user?.name || ctx.user?.openId || "admin",
+        });
+      }
+
+      return { success: true, key: input.key };
+    }),
+
+  // Set Restream URL specifically (admin only)
+  setRestreamUrl: protectedProcedure
+    .input(z.object({ url: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = getDb();
+      const existing = await db
+        .select()
+        .from(systemConfig)
+        .where(eq(systemConfig.configKey, "restream_studio_url"));
+
+      if (existing.length > 0) {
+        await db
+          .update(systemConfig)
+          .set({
+            configValue: input.url,
+            updatedAt: Date.now(),
+            updatedBy: ctx.user?.name || ctx.user?.openId || "admin",
+          })
+          .where(eq(systemConfig.configKey, "restream_studio_url"));
+      } else {
+        await db.insert(systemConfig).values({
+          configKey: "restream_studio_url",
+          configValue: input.url,
+          description:
+            "Restream studio URL — paste your Restream room link here and all live/studio buttons will use it",
+          updatedAt: Date.now(),
+          updatedBy: ctx.user?.name || ctx.user?.openId || "admin",
+        });
+      }
+
+      return { success: true, url: input.url };
+    }),
+});
