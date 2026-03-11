@@ -3773,3 +3773,6 @@
 - [x] Add AI sign language avatar overlay — animated signing visualization for deaf/hard-of-hearing participants
 - [x] Add interpreter language auto-detect — use Web Speech API language detection to auto-identify speaker language
 - [x] Add closed captions subtitle bar over Jitsi video feed — real-time transcription as subtitles during conference
+- [x] Add screen reader ARIA live region announcements for captions and translations
+- [x] Add caption font size controls (Small/Medium/Large) for CC subtitle bar
+- [x] Add multi-speaker identification with color-coded captions by speaker

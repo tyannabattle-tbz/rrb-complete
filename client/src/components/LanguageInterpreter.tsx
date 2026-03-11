@@ -577,8 +577,24 @@ export default function LanguageInterpreter({
         </div>
       )}
 
+      {/* ── ARIA Live Region for Screen Readers ── */}
+      <div
+        role="log"
+        aria-live="polite"
+        aria-atomic="false"
+        aria-relevant="additions"
+        aria-label="Translation transcript"
+        className="sr-only"
+      >
+        {transcript.length > 0 && (
+          <p>
+            {transcript[transcript.length - 1].translated}
+          </p>
+        )}
+      </div>
+
       {/* ── Transcript ── */}
-      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 min-h-0">
+      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 min-h-0" role="region" aria-label="Translation history">
         {transcript.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Globe className="w-10 h-10 text-cyan-400/20 mb-3" />

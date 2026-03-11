@@ -220,9 +220,13 @@ export default function ConferenceRoom() {
   const [showMoreTools, setShowMoreTools] = useState(false);
   const [showInterpreter, setShowInterpreter] = useState(false);
   const [showCaptions, setShowCaptions] = useState(false);
-  const [captionText, setCaptionText] = useState<{ original: string; translated: string; sourceLang: string; targetLang: string } | null>(null);
+  const [captionText, setCaptionText] = useState<{ original: string; translated: string; sourceLang: string; targetLang: string; speaker?: string; speakerColor?: string } | null>(null);
   const [captionVisible, setCaptionVisible] = useState(true);
+  const [captionSize, setCaptionSize] = useState<'sm' | 'md' | 'lg'>('md');
   const captionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [speakerColors] = useState<Record<string, string>>({});
+  const speakerColorPalette = ['#60a5fa', '#f472b6', '#34d399', '#fbbf24', '#a78bfa', '#fb923c', '#22d3ee', '#e879f9'];
+  let speakerColorIdx = useRef(0);
   const [jitsiReady, setJitsiReady] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -230,16 +234,27 @@ export default function ConferenceRoom() {
   const [joinSettings, setJoinSettings] = useState({ audioEnabled: true, videoEnabled: true });
   const recordingTimer = useRef<NodeJS.Timeout | null>(null);
 
+  // Assign a consistent color to each speaker
+  const getSpeakerColor = useCallback((speaker: string) => {
+    if (!speakerColors[speaker]) {
+      speakerColors[speaker] = speakerColorPalette[speakerColorIdx.current % speakerColorPalette.length];
+      speakerColorIdx.current++;
+    }
+    return speakerColors[speaker];
+  }, [speakerColors]);
+
   // Handle caption updates from interpreter
   const handleCaptionUpdate = useCallback((caption: { original: string; translated: string; sourceLang: string; targetLang: string }) => {
-    setCaptionText(caption);
+    const speaker = user?.name || 'Speaker';
+    const color = getSpeakerColor(speaker);
+    setCaptionText({ ...caption, speaker, speakerColor: color });
     setCaptionVisible(true);
     // Auto-hide captions after 8 seconds
     if (captionTimeoutRef.current) clearTimeout(captionTimeoutRef.current);
     captionTimeoutRef.current = setTimeout(() => {
       setCaptionVisible(false);
     }, 8000);
-  }, []);
+  }, [user, getSpeakerColor]);
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
 
@@ -734,23 +749,58 @@ export default function ConferenceRoom() {
         />
       )}
 
+      {/* ── ARIA Live Region for Screen Readers ── */}
+      <div
+        role="log"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-label="Live captions and translations"
+        className="sr-only"
+      >
+        {captionText && (
+          <p>
+            {captionText.speaker && `${captionText.speaker}: `}
+            {captionText.translated || captionText.original}
+          </p>
+        )}
+      </div>
+
       {/* ── Closed Captions Subtitle Bar ── */}
       {showCaptions && captionText && captionVisible && (
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-40 max-w-[80%] sm:max-w-[60%] pointer-events-none">
-          <div className="bg-black/85 backdrop-blur-sm rounded-lg px-4 py-2.5 border border-white/10 shadow-2xl">
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-40 max-w-[85%] sm:max-w-[65%] pointer-events-none">
+          <div className="bg-black/90 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/10 shadow-2xl">
+            {/* Speaker name tag */}
+            {captionText.speaker && (
+              <div className="flex items-center gap-1.5 mb-1">
+                <span
+                  className="w-2 h-2 rounded-full inline-block"
+                  style={{ backgroundColor: captionText.speakerColor || '#60a5fa' }}
+                />
+                <span
+                  className="text-[10px] font-semibold"
+                  style={{ color: captionText.speakerColor || '#60a5fa' }}
+                >
+                  {captionText.speaker}
+                </span>
+              </div>
+            )}
             {/* Original text */}
-            <p className="text-white/50 text-xs mb-1 text-center">
+            <p className={`text-white/50 text-center mb-0.5 ${
+              captionSize === 'sm' ? 'text-[9px]' : captionSize === 'lg' ? 'text-xs' : 'text-[10px] sm:text-xs'
+            }`}>
               {captionText.original}
             </p>
             {/* Translated text - larger */}
-            <p className="text-white text-sm sm:text-base font-medium text-center leading-snug">
+            <p className={`text-white font-medium text-center leading-snug ${
+              captionSize === 'sm' ? 'text-xs' : captionSize === 'lg' ? 'text-lg sm:text-xl' : 'text-sm sm:text-base'
+            }`}>
               {captionText.translated}
             </p>
           </div>
         </div>
       )}
 
-      {/* ── Caption Toggle (bottom-center, above Jitsi controls) ── */}
+      {/* ── Caption Toggle + Font Size Controls (bottom-center, above Jitsi controls) ── */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
         <button
           onClick={() => {
@@ -774,6 +824,29 @@ export default function ConferenceRoom() {
           </svg>
           <span>{showCaptions ? 'CC On' : 'CC'}</span>
         </button>
+
+        {/* Font size controls - only show when CC is on */}
+        {showCaptions && (
+          <div className="flex items-center gap-0.5 bg-gray-800/80 rounded-full px-1.5 py-0.5 border border-white/10 shadow-lg">
+            {(['sm', 'md', 'lg'] as const).map((size) => (
+              <button
+                key={size}
+                onClick={() => setCaptionSize(size)}
+                className={`px-1.5 py-0.5 rounded-full transition-all ${
+                  captionSize === size
+                    ? 'bg-white text-black'
+                    : 'text-white/50 hover:text-white'
+                }`}
+                aria-label={`Caption size ${size === 'sm' ? 'small' : size === 'md' ? 'medium' : 'large'}`}
+                title={size === 'sm' ? 'Small captions' : size === 'md' ? 'Medium captions' : 'Large captions'}
+              >
+                <span className={size === 'sm' ? 'text-[9px]' : size === 'md' ? 'text-[11px]' : 'text-sm'}>
+                  A
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Jitsi Meet container */}
