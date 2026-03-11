@@ -30,7 +30,7 @@ export function MobileNavigationDrawer() {
     { label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub', section: 'qumus' },
     { label: 'Live Stream', icon: Eye, path: '/live', section: 'qumus' },
     { label: 'Sweet Miracles', icon: Heart, path: '/donate', section: 'qumus' },
-    { label: 'Ecosystem', icon: Globe, path: '/ecosystem-dashboard', section: 'qumus' },
+    { label: 'Ecosystem', icon: Globe, path: '/ecosystem', section: 'qumus' },
     { label: 'Analytics', icon: BarChart3, path: '/listener-analytics', section: 'qumus' },
     { label: 'Games', icon: Gamepad2, path: '/games', section: 'qumus' },
     { label: 'Legacy', icon: BookOpen, path: '/legacy', section: 'qumus' },

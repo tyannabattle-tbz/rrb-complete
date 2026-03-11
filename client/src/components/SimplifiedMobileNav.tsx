@@ -25,7 +25,7 @@ export function SimplifiedMobileNav() {
         { id: 'nav-home', label: 'Home', icon: Home, path: '/' },
         { id: 'nav-qumus', label: 'QUMUS Control', icon: Monitor, path: '/qumus' },
         { id: 'nav-chat', label: 'AI Chat', icon: MessageSquare, path: '/qumus-chat' },
-        { id: 'nav-ecosystem', label: 'Ecosystem', icon: Globe, path: '/ecosystem-dashboard' },
+        { id: 'nav-ecosystem', label: 'Ecosystem', icon: Globe, path: '/ecosystem' },
       ],
     },
     {

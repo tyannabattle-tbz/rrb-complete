@@ -23,7 +23,7 @@ export function MobileBottomNav() {
     { id: 'nav-live', label: 'Live', icon: Eye, path: '/live' },
     { id: 'nav-hybridcast', label: 'HybridCast', icon: Radio, path: '/hybridcast' },
     { id: 'nav-conventions', label: 'Events', icon: Calendar, path: '/convention-hub' },
-    { id: 'nav-ecosystem', label: 'Ecosystem', icon: Globe, path: '/ecosystem-dashboard' },
+    { id: 'nav-ecosystem', label: 'Ecosystem', icon: Globe, path: '/ecosystem' },
     { id: 'nav-games', label: 'Games', icon: Gamepad2, path: '/games' },
     { id: 'nav-legacy', label: 'Legacy', icon: BookOpen, path: '/legacy' },
     { id: 'nav-gps', label: 'GPS Map', icon: MapPin, path: '/gps-radar' },
