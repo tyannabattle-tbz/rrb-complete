@@ -30,6 +30,8 @@ import { ConferenceAiChatPanel } from './ConferenceAiChatPanel';
 import { SpeakingAvatar } from './SpeakingAvatar';
 import { useAiVoice } from '@/hooks/useAiVoice';
 import type { AiPersona } from '@/services/aiVoiceTts';
+import EpisodeManager from './EpisodeManager';
+import CallInSystem from './CallInSystem';
 
 // ─── Types ───
 export interface PodcastShowConfig {
@@ -98,20 +100,8 @@ function EpisodeCard({ episode, theme, onPlay }: { episode: any; theme: any; onP
   );
 }
 
-// ─── Call-In Panel ───
-function CallInPanel({ config, isOpen, onClose }: { config: PodcastShowConfig; isOpen: boolean; onClose: () => void }) {
-  const [callStatus, setCallStatus] = useState<'idle' | 'connecting' | 'live' | 'queue'>('idle');
-  const [queuePosition, setQueuePosition] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
-
-  const handleCallIn = () => {
-    setCallStatus('connecting');
-    setTimeout(() => {
-      setCallStatus('queue');
-      setQueuePosition(Math.floor(Math.random() * 3) + 1);
-    }, 2000);
-  };
-
+// ─── Call-In Panel (WebRTC-powered) ───
+function CallInPanel({ config, isOpen, onClose, showId, isHost }: { config: PodcastShowConfig; isOpen: boolean; onClose: () => void; showId: number; isHost?: boolean }) {
   if (!isOpen) return null;
 
   return (
@@ -123,54 +113,13 @@ function CallInPanel({ config, isOpen, onClose }: { config: PodcastShowConfig; i
         </div>
         <button onClick={onClose} className="text-white/40 hover:text-white"><X className="w-3.5 h-3.5" /></button>
       </div>
-      <div className="flex-1 flex flex-col items-center justify-center p-4 gap-4">
-        {callStatus === 'idle' && (
-          <>
-            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: config.theme.gradient }}>
-              <Phone className="w-7 h-7 text-white" />
-            </div>
-            <p className="text-white/60 text-xs text-center">Call in to join the live conversation with {config.host.name}</p>
-            <Button onClick={handleCallIn} className="w-full" style={{ background: config.theme.primary }}>
-              <Phone className="w-3.5 h-3.5 mr-1.5" /> Call In Now
-            </Button>
-          </>
-        )}
-        {callStatus === 'connecting' && (
-          <>
-            <Loader2 className="w-10 h-10 animate-spin" style={{ color: config.theme.primary }} />
-            <p className="text-white/60 text-xs">Connecting...</p>
-          </>
-        )}
-        {callStatus === 'queue' && (
-          <>
-            <div className="w-16 h-16 rounded-full flex items-center justify-center bg-amber-500/20">
-              <Clock className="w-7 h-7 text-amber-400" />
-            </div>
-            <p className="text-white text-sm font-medium">You're in the queue</p>
-            <p className="text-white/40 text-xs">Position: #{queuePosition}</p>
-            <div className="flex gap-2 w-full">
-              <Button variant="outline" size="sm" onClick={() => setIsMuted(!isMuted)} className="flex-1 border-gray-700 text-white/60">
-                {isMuted ? <MicOff className="w-3 h-3 mr-1" /> : <Mic className="w-3 h-3 mr-1" />}
-                {isMuted ? 'Unmute' : 'Mute'}
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => { setCallStatus('idle'); toast.info('Call ended'); }} className="flex-1 border-red-700 text-red-400">
-                <PhoneOff className="w-3 h-3 mr-1" /> Hang Up
-              </Button>
-            </div>
-          </>
-        )}
-        {callStatus === 'live' && (
-          <>
-            <div className="w-16 h-16 rounded-full flex items-center justify-center animate-pulse" style={{ background: config.theme.gradient }}>
-              <Mic className="w-7 h-7 text-white" />
-            </div>
-            <Badge className="bg-red-500 text-white animate-pulse">LIVE ON AIR</Badge>
-            <p className="text-white/60 text-xs text-center">You're live! Speak clearly into your microphone.</p>
-            <Button variant="outline" size="sm" onClick={() => { setCallStatus('idle'); toast.info('Call ended'); }} className="w-full border-red-700 text-red-400">
-              <PhoneOff className="w-3 h-3 mr-1" /> End Call
-            </Button>
-          </>
-        )}
+      <div className="flex-1 overflow-y-auto p-3">
+        <CallInSystem
+          showId={showId}
+          showSlug={config.id}
+          isHost={isHost}
+          accentColor={`text-[${config.theme.primary}]`}
+        />
       </div>
     </div>
   );
@@ -230,7 +179,7 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [viewerCount, setViewerCount] = useState(Math.floor(Math.random() * 50) + 12);
-  const [activeTab, setActiveTab] = useState<'episodes' | 'guests' | 'schedule'>('episodes');
+  const [activeTab, setActiveTab] = useState<'episodes' | 'guests' | 'schedule' | 'manage'>('episodes');
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // AI Voice
@@ -291,8 +240,27 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
     toast.info('Recording saved', { description: `${formatTime(recordingTime)} captured. Routing to pipeline...` });
   };
 
-  // Mock episodes
-  const episodes = [
+  // Fetch real show data from DB
+  const { data: shows } = trpc.podcastManagement.getShows.useQuery();
+  const currentShow = shows?.find((s: any) => s.slug === config.id);
+  const showId = currentShow?.id ?? 0;
+
+  // Fetch real episodes
+  const { data: episodeData } = trpc.podcastManagement.getEpisodes.useQuery(
+    { showId, limit: 20 },
+    { enabled: showId > 0 }
+  );
+  const realEpisodes = episodeData?.episodes ?? [];
+
+  // Fallback mock episodes if no real ones yet
+  const episodes = realEpisodes.length > 0
+    ? realEpisodes.map((ep: any) => ({
+        id: String(ep.id),
+        title: ep.title,
+        duration: ep.duration ? `${Math.floor(ep.duration / 60)}:${String(ep.duration % 60).padStart(2, '0')}` : '--:--',
+        date: ep.publishedAt ? new Date(ep.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Draft',
+      }))
+    : [
     { id: '1', title: `${config.title} - Episode 12: Special Guest`, duration: '58:32', date: 'Mar 8, 2026' },
     { id: '2', title: `${config.title} - Episode 11: Deep Dive`, duration: '45:18', date: 'Mar 1, 2026' },
     { id: '3', title: `${config.title} - Episode 10: Community Stories`, duration: '52:45', date: 'Feb 22, 2026' },
@@ -391,7 +359,7 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
             </div>
 
             {/* Overlay panels */}
-            <CallInPanel config={config} isOpen={showCallIn} onClose={() => setShowCallIn(false)} />
+            <CallInPanel config={config} isOpen={showCallIn} onClose={() => setShowCallIn(false)} showId={showId} isHost={!!user} />
             <GameScreen config={config} isOpen={showGame} onClose={() => setShowGame(false)} />
             <ConferenceAiChatPanel isOpen={showChat} onClose={() => setShowChat(false)} conferenceTitle={config.title} />
           </div>
@@ -501,7 +469,7 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
 
           {/* Tabs */}
           <div className="flex border-b border-gray-800/50">
-            {(['episodes', 'guests', 'schedule'] as const).map(tab => (
+            {(['episodes', 'manage', 'guests', 'schedule'] as const).map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -520,6 +488,19 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
                 {episodes.map(ep => (
                   <EpisodeCard key={ep.id} episode={ep} theme={config.theme} onPlay={() => toast.info(`Playing: ${ep.title}`)} />
                 ))}
+              </div>
+            )}
+
+            {activeTab === 'manage' && showId > 0 && (
+              <div className="p-1">
+                <EpisodeManager showId={showId} showSlug={config.id} accentColor="text-white" />
+              </div>
+            )}
+
+            {activeTab === 'manage' && showId === 0 && (
+              <div className="text-center py-8 text-white/40 text-xs">
+                <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
+                Loading show data...
               </div>
             )}
 

@@ -3840,3 +3840,17 @@
 - [x] Add call-in feature for live feedback and interaction
 - [x] Add mobile game screen activation for interactive elements
 - [x] Ensure accessibility for impaired community
+
+## Full Podcast Wiring — Hub, Episode Management, WebRTC Call-In
+- [x] Create database schema for podcast episodes (title, description, audioUrl, showId, duration, publishedAt, status)
+- [x] Create database schema for call-in queue (userId, showId, status, joinedAt)
+- [x] Push database migrations
+- [x] Build podcast tRPC router — episode CRUD, file upload to S3, auto-publish triggers
+- [x] Build auto-publish pipeline via QUMUS (Spotify, Apple, YouTube distribution)
+- [x] Create Podcasts hub page at /podcasts — show cards, next episode times, episode listings
+- [x] Add episode upload/management UI in each podcast room (upload audio, edit metadata, publish)
+- [x] Wire WebRTC call-in system — peer connection, signaling, audio mixing, queue management
+- [x] Add call-in queue UI with position tracking and go-live controls
+- [x] Wire episode playback with inline audio player on hub page
+- [x] Add /podcasts route to App.tsx
+- [x] Write vitest tests for podcast episode CRUD and call-in system

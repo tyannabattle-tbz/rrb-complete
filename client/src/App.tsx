@@ -50,6 +50,7 @@ import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
 import { MobileResponsiveLayout } from './components/MobileResponsiveLayout';
 import PodcastPage from './pages/PodcastPage';
+import PodcastsHub from './pages/PodcastsHub';
 import ListenerAnalyticsDashboard from './pages/ListenerAnalyticsDashboard';
 import SearchResults from './pages/SearchResults';
 import { MobileHeaderClean } from './components/MobileHeaderClean';
@@ -262,7 +263,7 @@ function Router() {
       <Route path="/rrb-radio" component={RRBRadioIntegration} />
       <Route path="/studio-suite" component={StudioSuite} />
       <Route path="/media-library" component={MediaLibrary} />
-      <Route path="/podcasts" component={PodcastPage} />
+      <Route path="/podcasts" component={PodcastsHub} />
       <Route path="/listener-analytics" component={ListenerAnalyticsDashboard} />
       <Route path="/search" component={SearchResults} />
       <Route path="/enhanced-chat" component={EnhancedChatPage} />

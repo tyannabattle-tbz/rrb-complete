@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { users, activityLogs, agentSessions, agentCollaboration, agentRegistry, agentExecutionLogs, agentMemory, agentPerformanceMetrics, agentSnapshots, agentTools, emergencyAlerts, alertBroadcastLog, radioChannels, alertDeliveryLog, hybridcastNodes, analyticsMetrics, anomalyBaselines, anomalyHistory, detectedAnomalies, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, autoSaveSettings, rockinBoogieContent, contentListenerHistory, emailConfigs, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningJobs, finetuningEvaluations, finetuningModels, integrationLogs, memoryStore, messages, modelComparisons, notifications, notificationEvents, notificationPreferences, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioStations, rateLimitEvents, reasoningChains, scheduledReports, reportHistory, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, suppressionRules, taskHistory, teams, teamMembers, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, subscriptionTiers, webhookEndpoints, webhookInstallations, webhookTemplates, webhookLogs, webhookMarketplaceReviews } from "./schema";
+import { users, activityLogs, agentSessions, agentCollaboration, agentRegistry, agentExecutionLogs, agentMemory, agentPerformanceMetrics, agentSnapshots, agentTools, emergencyAlerts, alertBroadcastLog, radioChannels, alertDeliveryLog, hybridcastNodes, analyticsMetrics, anomalyBaselines, anomalyHistory, detectedAnomalies, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, autoSaveSettings, autonomousTasks, broadcasts, conferences, conferenceAttendees, conferenceSpeakers, rockinBoogieContent, contentListenerHistory, conventions, conventionAttendees, conventionSessions, donations, ecosystemCommands, emailConfigs, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningJobs, finetuningEvaluations, finetuningModels, integrationLogs, listeners, memoryStore, messages, modelComparisons, notifications, notificationEvents, notificationPreferences, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioStations, rateLimitEvents, reasoningChains, scheduledReports, reportHistory, royaltyProjects, royaltyCollaborators, royaltyPayments, royaltyDistributions, royaltyStatements, rrbChannels, rrbChannelStats, rrbListeningHistory, rrbFrequencies, rrbStreamSources, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, studioSessions, studioGuests, studioRecordings, suppressionRules, systemAuditLog, taskExecutionLog, taskHistory, taskSteps, teams, teamMembers, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, subscriptionTiers, usersWithStripe, webhookEndpoints, webhookInstallations, webhookTemplates, webhookLogs, webhookMarketplaceReviews } from "./schema";
 
 export const activityLogsRelations = relations(activityLogs, ({one}) => ({
 	user: one(users, {
@@ -32,7 +32,13 @@ export const usersRelations = relations(users, ({many}) => ({
 	apiKeys: many(apiKeys),
 	apiUsages: many(apiUsage),
 	autoSaveSettings: many(autoSaveSettings),
+	autonomousTasks: many(autonomousTasks),
+	broadcasts: many(broadcasts),
+	conferenceAttendees: many(conferenceAttendees),
+	conferences: many(conferences),
 	detectedAnomalies: many(detectedAnomalies),
+	donations: many(donations),
+	ecosystemCommands: many(ecosystemCommands),
 	emailConfigs: many(emailConfigs),
 	emergencyAlerts: many(emergencyAlerts),
 	escalationPolicies: many(escalationPolicies),
@@ -44,6 +50,7 @@ export const usersRelations = relations(users, ({many}) => ({
 	finetuningModels: many(finetuningModels),
 	hybridcastNodes: many(hybridcastNodes),
 	integrationLogs: many(integrationLogs),
+	listeners: many(listeners),
 	modelComparisons: many(modelComparisons),
 	notificationPreferences: many(notificationPreferences),
 	notifications: many(notifications),
@@ -57,6 +64,9 @@ export const usersRelations = relations(users, ({many}) => ({
 	radioStations: many(radioStations),
 	rateLimitEvents: many(rateLimitEvents),
 	rockinBoogieContents: many(rockinBoogieContent),
+	royaltyCollaborators: many(royaltyCollaborators),
+	royaltyPayments: many(royaltyPayments),
+	rrbListeningHistories: many(rrbListeningHistory),
 	scheduledReports: many(scheduledReports),
 	sessionAnnotations: many(sessionAnnotations),
 	sessionShares_sharedBy: many(sessionShares, {
@@ -67,12 +77,14 @@ export const usersRelations = relations(users, ({many}) => ({
 	}),
 	sessionVersions: many(sessionVersions),
 	suppressionRules: many(suppressionRules),
+	systemAuditLogs: many(systemAuditLog),
 	teamMembers: many(teamMembers),
 	teams: many(teams),
 	toolUsageStats: many(toolUsageStats),
 	trainingData: many(trainingData),
 	usageQuotas: many(usageQuotas),
 	userSubscriptions: many(userSubscriptions),
+	usersWithStripes: many(usersWithStripe),
 	webhookEndpoints: many(webhookEndpoints),
 	webhookInstallations: many(webhookInstallations),
 	webhookMarketplaceReviews: many(webhookMarketplaceReviews),
@@ -334,6 +346,50 @@ export const autoSaveSettingsRelations = relations(autoSaveSettings, ({one}) => 
 	}),
 }));
 
+export const autonomousTasksRelations = relations(autonomousTasks, ({one, many}) => ({
+	user: one(users, {
+		fields: [autonomousTasks.userId],
+		references: [users.id]
+	}),
+	taskExecutionLogs: many(taskExecutionLog),
+	taskSteps: many(taskSteps),
+}));
+
+export const broadcastsRelations = relations(broadcasts, ({one, many}) => ({
+	user: one(users, {
+		fields: [broadcasts.createdBy],
+		references: [users.id]
+	}),
+	listeners: many(listeners),
+}));
+
+export const conferenceAttendeesRelations = relations(conferenceAttendees, ({one}) => ({
+	conference: one(conferences, {
+		fields: [conferenceAttendees.conferenceId],
+		references: [conferences.id]
+	}),
+	user: one(users, {
+		fields: [conferenceAttendees.userId],
+		references: [users.id]
+	}),
+}));
+
+export const conferencesRelations = relations(conferences, ({one, many}) => ({
+	conferenceAttendees: many(conferenceAttendees),
+	conferenceSpeakers: many(conferenceSpeakers),
+	user: one(users, {
+		fields: [conferences.hostUserId],
+		references: [users.id]
+	}),
+}));
+
+export const conferenceSpeakersRelations = relations(conferenceSpeakers, ({one}) => ({
+	conference: one(conferences, {
+		fields: [conferenceSpeakers.conferenceId],
+		references: [conferences.id]
+	}),
+}));
+
 export const contentListenerHistoryRelations = relations(contentListenerHistory, ({one}) => ({
 	rockinBoogieContent: one(rockinBoogieContent, {
 		fields: [contentListenerHistory.contentId],
@@ -345,6 +401,39 @@ export const rockinBoogieContentRelations = relations(rockinBoogieContent, ({one
 	contentListenerHistories: many(contentListenerHistory),
 	user: one(users, {
 		fields: [rockinBoogieContent.userId],
+		references: [users.id]
+	}),
+}));
+
+export const conventionAttendeesRelations = relations(conventionAttendees, ({one}) => ({
+	convention: one(conventions, {
+		fields: [conventionAttendees.conventionId],
+		references: [conventions.id]
+	}),
+}));
+
+export const conventionsRelations = relations(conventions, ({many}) => ({
+	conventionAttendees: many(conventionAttendees),
+	conventionSessions: many(conventionSessions),
+}));
+
+export const conventionSessionsRelations = relations(conventionSessions, ({one}) => ({
+	convention: one(conventions, {
+		fields: [conventionSessions.conventionId],
+		references: [conventions.id]
+	}),
+}));
+
+export const donationsRelations = relations(donations, ({one}) => ({
+	user: one(users, {
+		fields: [donations.userId],
+		references: [users.id]
+	}),
+}));
+
+export const ecosystemCommandsRelations = relations(ecosystemCommands, ({one}) => ({
+	user: one(users, {
+		fields: [ecosystemCommands.userId],
 		references: [users.id]
 	}),
 }));
@@ -437,6 +526,17 @@ export const finetuningModelsRelations = relations(finetuningModels, ({one, many
 export const integrationLogsRelations = relations(integrationLogs, ({one}) => ({
 	user: one(users, {
 		fields: [integrationLogs.userId],
+		references: [users.id]
+	}),
+}));
+
+export const listenersRelations = relations(listeners, ({one}) => ({
+	broadcast: one(broadcasts, {
+		fields: [listeners.broadcastId],
+		references: [broadcasts.id]
+	}),
+	user: one(users, {
+		fields: [listeners.userId],
 		references: [users.id]
 	}),
 }));
@@ -593,6 +693,98 @@ export const scheduledReportsRelations = relations(scheduledReports, ({one, many
 	}),
 }));
 
+export const royaltyCollaboratorsRelations = relations(royaltyCollaborators, ({one, many}) => ({
+	royaltyProject: one(royaltyProjects, {
+		fields: [royaltyCollaborators.projectId],
+		references: [royaltyProjects.id]
+	}),
+	user: one(users, {
+		fields: [royaltyCollaborators.userId],
+		references: [users.id]
+	}),
+	royaltyDistributions: many(royaltyDistributions),
+	royaltyStatements: many(royaltyStatements),
+}));
+
+export const royaltyProjectsRelations = relations(royaltyProjects, ({many}) => ({
+	royaltyCollaborators: many(royaltyCollaborators),
+	royaltyPayments: many(royaltyPayments),
+	royaltyStatements: many(royaltyStatements),
+}));
+
+export const royaltyDistributionsRelations = relations(royaltyDistributions, ({one}) => ({
+	royaltyPayment: one(royaltyPayments, {
+		fields: [royaltyDistributions.paymentId],
+		references: [royaltyPayments.id]
+	}),
+	royaltyCollaborator: one(royaltyCollaborators, {
+		fields: [royaltyDistributions.collaboratorId],
+		references: [royaltyCollaborators.id]
+	}),
+}));
+
+export const royaltyPaymentsRelations = relations(royaltyPayments, ({one, many}) => ({
+	royaltyDistributions: many(royaltyDistributions),
+	royaltyProject: one(royaltyProjects, {
+		fields: [royaltyPayments.projectId],
+		references: [royaltyProjects.id]
+	}),
+	user: one(users, {
+		fields: [royaltyPayments.recordedBy],
+		references: [users.id]
+	}),
+}));
+
+export const royaltyStatementsRelations = relations(royaltyStatements, ({one}) => ({
+	royaltyCollaborator: one(royaltyCollaborators, {
+		fields: [royaltyStatements.collaboratorId],
+		references: [royaltyCollaborators.id]
+	}),
+	royaltyProject: one(royaltyProjects, {
+		fields: [royaltyStatements.projectId],
+		references: [royaltyProjects.id]
+	}),
+}));
+
+export const rrbChannelStatsRelations = relations(rrbChannelStats, ({one}) => ({
+	rrbChannel: one(rrbChannels, {
+		fields: [rrbChannelStats.channelId],
+		references: [rrbChannels.id]
+	}),
+}));
+
+export const rrbChannelsRelations = relations(rrbChannels, ({many}) => ({
+	rrbChannelStats: many(rrbChannelStats),
+	rrbListeningHistories: many(rrbListeningHistory),
+	rrbStreamSources: many(rrbStreamSources),
+}));
+
+export const rrbListeningHistoryRelations = relations(rrbListeningHistory, ({one}) => ({
+	user: one(users, {
+		fields: [rrbListeningHistory.userId],
+		references: [users.id]
+	}),
+	rrbChannel: one(rrbChannels, {
+		fields: [rrbListeningHistory.channelId],
+		references: [rrbChannels.id]
+	}),
+	rrbFrequency: one(rrbFrequencies, {
+		fields: [rrbListeningHistory.frequencyId],
+		references: [rrbFrequencies.id]
+	}),
+}));
+
+export const rrbFrequenciesRelations = relations(rrbFrequencies, ({many}) => ({
+	rrbListeningHistories: many(rrbListeningHistory),
+}));
+
+export const rrbStreamSourcesRelations = relations(rrbStreamSources, ({one}) => ({
+	rrbChannel: one(rrbChannels, {
+		fields: [rrbStreamSources.channelId],
+		references: [rrbChannels.id]
+	}),
+}));
+
 export const sessionAnnotationsRelations = relations(sessionAnnotations, ({one}) => ({
 	agentSession: one(agentSessions, {
 		fields: [sessionAnnotations.sessionId],
@@ -643,6 +835,25 @@ export const sessionVersionsRelations = relations(sessionVersions, ({one}) => ({
 	}),
 }));
 
+export const studioGuestsRelations = relations(studioGuests, ({one}) => ({
+	studioSession: one(studioSessions, {
+		fields: [studioGuests.sessionId],
+		references: [studioSessions.id]
+	}),
+}));
+
+export const studioSessionsRelations = relations(studioSessions, ({many}) => ({
+	studioGuests: many(studioGuests),
+	studioRecordings: many(studioRecordings),
+}));
+
+export const studioRecordingsRelations = relations(studioRecordings, ({one}) => ({
+	studioSession: one(studioSessions, {
+		fields: [studioRecordings.sessionId],
+		references: [studioSessions.id]
+	}),
+}));
+
 export const suppressionRulesRelations = relations(suppressionRules, ({one}) => ({
 	user: one(users, {
 		fields: [suppressionRules.userId],
@@ -650,10 +861,31 @@ export const suppressionRulesRelations = relations(suppressionRules, ({one}) => 
 	}),
 }));
 
+export const systemAuditLogRelations = relations(systemAuditLog, ({one}) => ({
+	user: one(users, {
+		fields: [systemAuditLog.userId],
+		references: [users.id]
+	}),
+}));
+
+export const taskExecutionLogRelations = relations(taskExecutionLog, ({one}) => ({
+	autonomousTask: one(autonomousTasks, {
+		fields: [taskExecutionLog.taskId],
+		references: [autonomousTasks.id]
+	}),
+}));
+
 export const taskHistoryRelations = relations(taskHistory, ({one}) => ({
 	agentSession: one(agentSessions, {
 		fields: [taskHistory.sessionId],
 		references: [agentSessions.id]
+	}),
+}));
+
+export const taskStepsRelations = relations(taskSteps, ({one}) => ({
+	autonomousTask: one(autonomousTasks, {
+		fields: [taskSteps.taskId],
+		references: [autonomousTasks.id]
 	}),
 }));
 
@@ -721,6 +953,13 @@ export const userSubscriptionsRelations = relations(userSubscriptions, ({one}) =
 
 export const subscriptionTiersRelations = relations(subscriptionTiers, ({many}) => ({
 	userSubscriptions: many(userSubscriptions),
+}));
+
+export const usersWithStripeRelations = relations(usersWithStripe, ({one}) => ({
+	user: one(users, {
+		fields: [usersWithStripe.userId],
+		references: [users.id]
+	}),
 }));
 
 export const webhookEndpointsRelations = relations(webhookEndpoints, ({one, many}) => ({

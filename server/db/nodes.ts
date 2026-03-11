@@ -1,5 +1,5 @@
 import { getDb } from "../db";
-import { hybridCastNodes } from "../../drizzle/schema";
+import { hybridcastNodes } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 async function requireDb() {
@@ -12,18 +12,18 @@ export async function listNodes(userId: number) {
   const db = await requireDb();
   return await db
     .select()
-    .from(hybridCastNodes)
-    .where(eq(hybridCastNodes.userId, userId));
+    .from(hybridcastNodes)
+    .where(eq(hybridcastNodes.userId, userId));
 }
 
 export async function getNode(id: number, userId: number) {
   const db = await requireDb();
   return await db
     .select()
-    .from(hybridCastNodes)
+    .from(hybridcastNodes)
     .where(
-      eq(hybridCastNodes.id, id) &&
-      eq(hybridCastNodes.userId, userId)
+      eq(hybridcastNodes.id, id) &&
+      eq(hybridcastNodes.userId, userId)
     )
     .then((rows: any[]) => rows[0]);
 }
@@ -40,7 +40,7 @@ export async function createNode(
   }
 ) {
   const db = await requireDb();
-  return await db.insert(hybridCastNodes).values({
+  return await db.insert(hybridcastNodes).values({
     userId,
     name: data.name,
     region: data.region,
@@ -74,21 +74,21 @@ export async function updateNode(
     updateData.lastHealthCheck = new Date();
   }
   return await db
-    .update(hybridCastNodes)
+    .update(hybridcastNodes)
     .set(updateData)
     .where(
-      eq(hybridCastNodes.id, id) &&
-      eq(hybridCastNodes.userId, userId)
+      eq(hybridcastNodes.id, id) &&
+      eq(hybridcastNodes.userId, userId)
     );
 }
 
 export async function deleteNode(id: number, userId: number) {
   const db = await requireDb();
   return await db
-    .delete(hybridCastNodes)
+    .delete(hybridcastNodes)
     .where(
-      eq(hybridCastNodes.id, id) &&
-      eq(hybridCastNodes.userId, userId)
+      eq(hybridcastNodes.id, id) &&
+      eq(hybridcastNodes.userId, userId)
     );
 }
 
@@ -96,10 +96,10 @@ export async function getReadyNodes(userId: number) {
   const db = await requireDb();
   return await db
     .select()
-    .from(hybridCastNodes)
+    .from(hybridcastNodes)
     .where(
-      eq(hybridCastNodes.userId, userId) &&
-      eq(hybridCastNodes.status, "ready")
+      eq(hybridcastNodes.userId, userId) &&
+      eq(hybridcastNodes.status, "ready")
     );
 }
 
@@ -107,10 +107,10 @@ export async function getBroadcastingNodes(userId: number) {
   const db = await requireDb();
   return await db
     .select()
-    .from(hybridCastNodes)
+    .from(hybridcastNodes)
     .where(
-      eq(hybridCastNodes.userId, userId) &&
-      eq(hybridCastNodes.status, "broadcasting")
+      eq(hybridcastNodes.userId, userId) &&
+      eq(hybridcastNodes.status, "broadcasting")
     );
 }
 

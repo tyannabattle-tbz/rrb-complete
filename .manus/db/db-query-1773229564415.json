@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `station_analytics` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `station_id` int NOT NULL,\n  `date` date,\n  `listeners` int DEFAULT 0,\n  `peak_listeners` int DEFAULT 0,\n  `total_play_time` int DEFAULT 0,\n  `avg_session_duration` int DEFAULT 0,\n  `tracks_played` int DEFAULT 0,\n  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY(`id`)\n);\n\nCREATE TABLE IF NOT EXISTS `station_templates` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `description` text,\n  `genre` varchar(100),\n  `default_config` json,\n  `preview_url` text,\n  `is_active` tinyint DEFAULT 1,\n  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute CREATE TABLE IF NOT EXISTS `station_analytics` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `station_id` int NOT NULL,\n  `date` date,\n  `listeners` int DEFAULT 0,\n  `peak_listeners` int DEFAULT 0,\n  `total_play_time` int DEFAULT 0,\n  `avg_session_duration` int DEFAULT 0,\n  `tracks_played` int DEFAULT 0,\n  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY(`id`)\n);\n\nCREATE TABLE IF NOT EXISTS `station_templates` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `description` text,\n  `genre` varchar(100),\n  `default_config` json,\n  `preview_url` text,\n  `is_active` tinyint DEFAULT 1,\n  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 398
+}

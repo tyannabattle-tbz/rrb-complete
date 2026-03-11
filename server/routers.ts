@@ -86,6 +86,7 @@ import { advancedFeaturesRouter } from "./routers/advancedFeaturesRouter";
 import { studioAudioRouter } from "./routers/studioAudioRouter";
 import { interpreterRouter } from "./routers/interpreterRouter";
 import { mediaBlastRouter } from "./routers/mediaBlastRouter";
+import { podcastManagementRouter } from "./routers/podcastManagementRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -405,6 +406,9 @@ export const appRouter = router({
 
   // Interactive Call-In System
   callIn: callInRouter,
+
+  // Podcast Management (Shows, Episodes, Call-In, Distribution)
+  podcastManagement: podcastManagementRouter,
 
   // Advanced Features (Multi-Region Failover, Analytics, AI Recommendations)
   advancedFeatures: advancedFeaturesRouter,

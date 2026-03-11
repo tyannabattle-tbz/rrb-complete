@@ -15,11 +15,11 @@ var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc16) => {
+var __copyProps = (to, from, except, desc17) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc16 = __getOwnPropDesc(from, key)) || desc16.enumerable });
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc17 = __getOwnPropDesc(from, key)) || desc17.enumerable });
   }
   return to;
 };
@@ -39,6 +39,9 @@ var init_const = __esm({
 // drizzle/schema.ts
 var schema_exports = {};
 __export(schema_exports, {
+  accountingInvoices: () => accountingInvoices,
+  accountingPayments: () => accountingPayments,
+  accountingReconciliation: () => accountingReconciliation,
   activityLogs: () => activityLogs,
   adInventory: () => adInventory,
   agentCollaboration: () => agentCollaboration,
@@ -52,10 +55,9 @@ __export(schema_exports, {
   agentSnapshots: () => agentSnapshots,
   agentTools: () => agentTools,
   agents: () => agents,
+  aiRecommendations: () => aiRecommendations,
   alertBroadcastLog: () => alertBroadcastLog,
   alertDeliveryLog: () => alertDeliveryLog,
-  alertRules: () => alertRules,
-  alerts: () => alerts,
   analyticsMetrics: () => analyticsMetrics,
   analyticsSummary: () => analyticsSummary,
   anomalyBaselines: () => anomalyBaselines,
@@ -66,16 +68,32 @@ __export(schema_exports, {
   anomalyRules: () => anomalyRules,
   apiKeys: () => apiKeys,
   apiUsage: () => apiUsage,
-  arMetrics: () => arMetrics,
+  audioContent: () => audioContent,
+  audioPlayCounts: () => audioPlayCounts,
+  audioPlaybackHistory: () => audioPlaybackHistory,
   auditLogs: () => auditLogs,
   autoSaveSettings: () => autoSaveSettings,
   autonomousDecisions: () => autonomousDecisions,
   autonomousTasks: () => autonomousTasks,
+  bookkeepingAccounts: () => bookkeepingAccounts,
+  bookkeepingJournalEntries: () => bookkeepingJournalEntries,
+  bookkeepingLedgerLines: () => bookkeepingLedgerLines,
+  broadcastAuditLog: () => broadcastAuditLog,
+  broadcastChatCommands: () => broadcastChatCommands,
+  broadcastSchedule: () => broadcastSchedule,
+  broadcastSchedules: () => broadcastSchedules,
   broadcasts: () => broadcasts,
   bulkScheduleTemplates: () => bulkScheduleTemplates,
+  callInQueue: () => callInQueue,
   clientContentUploads: () => clientContentUploads,
   clientDonationHistory: () => clientDonationHistory,
   clientProfiles: () => clientProfiles,
+  commercialBreaks: () => commercialBreaks,
+  commercialImpressions: () => commercialImpressions,
+  commercials: () => commercials,
+  conferenceAttendees: () => conferenceAttendees,
+  conferenceSpeakers: () => conferenceSpeakers,
+  conferences: () => conferences,
   contentCalendarPosts: () => contentCalendarPosts,
   contentListenerHistory: () => contentListenerHistory,
   contentSchedule: () => contentSchedule,
@@ -84,22 +102,25 @@ __export(schema_exports, {
   conventions: () => conventions,
   customStations: () => customStations,
   decisionLogs: () => decisionLogs,
-  decisionPolicies: () => decisionPolicies,
   decisions: () => decisions,
   detectedAnomalies: () => detectedAnomalies,
   documentationPages: () => documentationPages,
-  donationAnalytics: () => donationAnalytics,
   donations: () => donations,
   donors: () => donors,
   ecosystemCommands: () => ecosystemCommands,
   ecosystemStatus: () => ecosystemStatus,
   emailConfigs: () => emailConfigs,
-  emailLogs: () => emailLogs,
   emailSubscribers: () => emailSubscribers,
   emergencyAlerts: () => emergencyAlerts,
+  entertainmentMetrics: () => entertainmentMetrics,
+  entertainmentPlaylistItems: () => entertainmentPlaylistItems,
+  entertainmentPlaylists: () => entertainmentPlaylists,
+  entertainmentUserPreferences: () => entertainmentUserPreferences,
   escalationPolicies: () => escalationPolicies,
   familyTree: () => familyTree,
   featureFlags: () => featureFlags,
+  fileAccessLogs: () => fileAccessLogs2,
+  files: () => files2,
   filterHistory: () => filterHistory,
   filterPresets: () => filterPresets,
   finetuningDatasets: () => finetuningDatasets,
@@ -107,18 +128,27 @@ __export(schema_exports, {
   finetuningJobs: () => finetuningJobs,
   finetuningModels: () => finetuningModels,
   fundraisingGoals: () => fundraisingGoals,
+  generatedContent: () => generatedContent,
   grants: () => grants,
-  hybridCastBroadcasts: () => hybridCastBroadcasts,
-  hybridCastConnections: () => hybridCastConnections,
-  hybridCastNodes: () => hybridCastNodes,
+  hrDepartments: () => hrDepartments,
+  hrEmployees: () => hrEmployees,
+  hrPayroll: () => hrPayroll,
+  hrTimeTracking: () => hrTimeTracking,
   hybridcastNodes: () => hybridcastNodes,
-  hybridcastPlans: () => hybridcastPlans,
   integrationLogs: () => integrationLogs,
+  legalComplianceItems: () => legalComplianceItems,
+  legalContracts: () => legalContracts,
+  legalIntellectualProperty: () => legalIntellectualProperty,
   listenerAnalytics: () => listenerAnalytics,
   listeners: () => listeners,
+  mediaDistribution: () => mediaDistribution,
+  mediaProjects: () => mediaProjects,
   memoryStore: () => memoryStore,
   messages: () => messages,
   modelComparisons: () => modelComparisons,
+  monetizationEvents: () => monetizationEvents,
+  musicPlaylists: () => musicPlaylists,
+  musicTracks: () => musicTracks,
   newsArticles: () => newsArticles,
   nonprofitOperations: () => nonprofitOperations,
   notificationEvents: () => notificationEvents,
@@ -128,12 +158,24 @@ __export(schema_exports, {
   performanceMetrics: () => performanceMetrics,
   performanceTrends: () => performanceTrends,
   platformEngagementMetrics: () => platformEngagementMetrics,
+  playlistTracks: () => playlistTracks,
+  playlists: () => playlists,
   plugins: () => plugins,
+  podcastEpisodes: () => podcastEpisodes,
+  podcastShows: () => podcastShows,
   policyDecisions: () => policyDecisions,
   predictiveAlerts: () => predictiveAlerts,
+  qumusAutonomousActions: () => qumusAutonomousActions,
+  qumusCorePolicies: () => qumusCorePolicies,
+  qumusDecisionLogs: () => qumusDecisionLogs,
+  qumusHumanReview: () => qumusHumanReview,
+  qumusMetrics: () => qumusMetrics,
+  qumusPolicyRecommendations: () => qumusPolicyRecommendations,
   quotaAlerts: () => quotaAlerts,
   quotas: () => quotas,
   radioChannels: () => radioChannels,
+  radioChannelsV2: () => radioChannelsV2,
+  radioChatMessages: () => radioChatMessages,
   radioStations: () => radioStations,
   rateLimitEvents: () => rateLimitEvents,
   reasoningChains: () => reasoningChains,
@@ -142,6 +184,16 @@ __export(schema_exports, {
   reviewResponses: () => reviewResponses,
   reviews: () => reviews,
   rockinBoogieContent: () => rockinBoogieContent,
+  royaltyCollaborators: () => royaltyCollaborators,
+  royaltyDistributions: () => royaltyDistributions,
+  royaltyPayments: () => royaltyPayments,
+  royaltyProjects: () => royaltyProjects,
+  royaltyStatements: () => royaltyStatements,
+  rrbChannelStats: () => rrbChannelStats,
+  rrbChannels: () => rrbChannels,
+  rrbFrequencies: () => rrbFrequencies,
+  rrbListeningHistory: () => rrbListeningHistory,
+  rrbStreamSources: () => rrbStreamSources,
   scheduledReports: () => scheduledReports,
   sessionAnnotations: () => sessionAnnotations,
   sessionMetrics: () => sessionMetrics,
@@ -156,6 +208,7 @@ __export(schema_exports, {
   stationPlaybackHistory: () => stationPlaybackHistory,
   stationSharing: () => stationSharing,
   stationTemplates: () => stationTemplates,
+  streamingStatus: () => streamingStatus,
   studioGuests: () => studioGuests,
   studioRecordings: () => studioRecordings,
   studioSessions: () => studioSessions,
@@ -167,6 +220,7 @@ __export(schema_exports, {
   systemAuditLog: () => systemAuditLog,
   systemCommands: () => systemCommands,
   systemMetrics: () => systemMetrics,
+  systemMetricsV2: () => systemMetricsV2,
   systemUpdates: () => systemUpdates,
   taskExecutionLog: () => taskExecutionLog,
   taskHistory: () => taskHistory,
@@ -181,7 +235,8 @@ __export(schema_exports, {
   userStationPreferences: () => userStationPreferences,
   userSubscriptions: () => userSubscriptions,
   users: () => users,
-  voiceCommands: () => voiceCommands,
+  usersWithStripe: () => usersWithStripe,
+  viewerMetrics: () => viewerMetrics,
   webhookEndpoints: () => webhookEndpoints,
   webhookInstallations: () => webhookInstallations,
   webhookLogs: () => webhookLogs,
@@ -189,11 +244,52 @@ __export(schema_exports, {
   webhookTemplates: () => webhookTemplates,
   wellnessCheckins: () => wellnessCheckins
 });
-import { mysqlTable, int, varchar, json, text, timestamp, mysqlEnum, decimal, date, index, boolean, bigint } from "drizzle-orm/mysql-core";
-import { sql } from "drizzle-orm";
-var activityLogs, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, auditLogs, autoSaveSettings, contentListenerHistory, detectedAnomalies, donors, emailConfigs, emergencyAlerts, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, grants, hybridcastNodes, integrationLogs, memoryStore, messages, modelComparisons, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioChannels, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAlerts, systemMetrics, taskHistory, teamMembers, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, hybridCastNodes, hybridCastConnections, hybridCastBroadcasts, alertRules, alerts, solbonesFrequencyRolls, solbonesLeaderboard, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, decisions, decisionLogs, decisionPolicies, agents, agentConnections, autonomousTasks, taskSteps, ecosystemCommands, taskExecutionLog, ecosystemStatus, arMetrics, voiceCommands, donations, subscriptions, payments, emailLogs, hybridcastPlans, donationAnalytics, broadcasts, listeners, autonomousDecisions, systemCommands, systemAuditLog, contentCalendarPosts, bulkScheduleTemplates, platformEngagementMetrics, analyticsSummary, customStations, stationTemplates, stationContentSources, stationPlaybackHistory, userStationPreferences, stationSharing, stationAnalytics, emailSubscribers, newsArticles, familyTree, documentationPages, contentSchedule, systemUpdates, teamNotifications, adInventory, listenerAnalytics, studioSessions, studioGuests, conventions, conventionSessions, conventionAttendees, studioRecordings, socialMediaPosts, squaddMembers, fundraisingGoals;
+import { mysqlTable, int, varchar, mysqlEnum, timestamp, decimal, text, json, bigint, index, tinyint, date } from "drizzle-orm/mysql-core";
+var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
+    accountingInvoices = mysqlTable("accounting_invoices", {
+      id: int().autoincrement().notNull(),
+      invoiceNumber: varchar("invoice_number", { length: 50 }).notNull(),
+      type: mysqlEnum(["receivable", "payable"]).notNull(),
+      clientName: varchar("client_name", { length: 255 }).notNull(),
+      clientEmail: varchar("client_email", { length: 320 }),
+      issueDate: timestamp("issue_date", { mode: "string" }).notNull(),
+      dueDate: timestamp("due_date", { mode: "string" }).notNull(),
+      subtotal: decimal({ precision: 15, scale: 2 }).notNull(),
+      tax: decimal({ precision: 15, scale: 2 }).default("0.00").notNull(),
+      total: decimal({ precision: 15, scale: 2 }).notNull(),
+      amountPaid: decimal("amount_paid", { precision: 15, scale: 2 }).default("0.00").notNull(),
+      status: mysqlEnum(["draft", "sent", "paid", "partial", "overdue", "cancelled", "void"]).default("draft").notNull(),
+      subsidiary: varchar({ length: 255 }),
+      notes: text(),
+      lineItems: json("line_items"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    accountingPayments = mysqlTable("accounting_payments", {
+      id: int().autoincrement().notNull(),
+      invoiceId: int("invoice_id"),
+      paymentDate: timestamp("payment_date", { mode: "string" }).notNull(),
+      amount: decimal({ precision: 15, scale: 2 }).notNull(),
+      method: mysqlEnum(["cash", "check", "wire", "ach", "credit_card", "stripe", "paypal", "other"]).default("stripe").notNull(),
+      reference: varchar({ length: 255 }),
+      notes: text(),
+      status: mysqlEnum(["pending", "completed", "failed", "refunded"]).default("completed").notNull(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    accountingReconciliation = mysqlTable("accounting_reconciliation", {
+      id: int().autoincrement().notNull(),
+      accountId: int("account_id").notNull(),
+      reconciliationDate: timestamp("reconciliation_date", { mode: "string" }).notNull(),
+      statementBalance: decimal("statement_balance", { precision: 15, scale: 2 }).notNull(),
+      bookBalance: decimal("book_balance", { precision: 15, scale: 2 }).notNull(),
+      difference: decimal({ precision: 15, scale: 2 }).notNull(),
+      status: mysqlEnum(["in_progress", "completed", "discrepancy"]).default("in_progress").notNull(),
+      notes: text(),
+      reconciledBy: int("reconciled_by"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
     activityLogs = mysqlTable("activity_logs", {
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -205,6 +301,27 @@ var init_schema = __esm({
       ipAddress: varchar({ length: 45 }),
       userAgent: text(),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    adInventory = mysqlTable("ad_inventory", {
+      id: int().autoincrement().notNull(),
+      sponsorName: varchar("sponsor_name", { length: 255 }).notNull(),
+      campaignName: varchar("campaign_name", { length: 255 }).notNull(),
+      audioUrl: text("audio_url"),
+      durationSeconds: int("duration_seconds").default(30).notNull(),
+      category: mysqlEnum(["commercial", "psa", "promo", "sponsor", "community"]).default("commercial").notNull(),
+      targetChannels: text("target_channels"),
+      rotationWeight: int("rotation_weight").default(1).notNull(),
+      maxPlaysPerHour: int("max_plays_per_hour").default(2),
+      timeSlotStart: varchar("time_slot_start", { length: 5 }),
+      timeSlotEnd: varchar("time_slot_end", { length: 5 }),
+      active: tinyint().default(1).notNull(),
+      totalPlays: int("total_plays").default(0).notNull(),
+      budgetCents: int("budget_cents"),
+      costPerPlayCents: int("cost_per_play_cents"),
+      startDate: bigint("start_date", { mode: "number" }),
+      endDate: bigint("end_date", { mode: "number" }),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
     });
     agentCollaboration = mysqlTable("agent_collaboration", {
       id: int().autoincrement().notNull(),
@@ -313,16 +430,41 @@ var init_schema = __esm({
       parameters: json(),
       rateLimit: int(),
       timeout: int().default(3e4),
-      isActive: int().default(1),
+      isActive: tinyint().default(1),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    agents = mysqlTable("agents", {
+      id: int().autoincrement().notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      type: varchar({ length: 100 }),
+      status: mysqlEnum(["active", "inactive", "maintenance"]).default("active"),
+      capabilities: json(),
+      configuration: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    aiRecommendations = mysqlTable("ai_recommendations", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      type: mysqlEnum(["content", "playlist", "channel", "track"]).default("content"),
+      itemId: int("item_id"),
+      itemType: varchar("item_type", { length: 100 }),
+      score: decimal({ precision: 5, scale: 4 }).default("0"),
+      reason: text(),
+      isActive: tinyint("is_active").default(1).notNull(),
+      approved: tinyint().default(0).notNull(),
+      clicked: tinyint().default(0).notNull(),
+      engaged: tinyint().default(0).notNull(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
     });
     alertBroadcastLog = mysqlTable("alert_broadcast_log", {
       id: int().autoincrement().notNull(),
       alertId: int().notNull().references(() => emergencyAlerts.id, { onDelete: "cascade" }),
-      channelId: int().notNull().references(() => radioChannels.id),
+      channelId: int().notNull().references(() => radioChannels.id, { onDelete: "set null" }),
       status: mysqlEnum(["pending", "broadcasting", "delivered", "failed"]).default("pending"),
       listenersReached: int().default(0),
-      interruptedRegularContent: int().default(0),
+      interruptedRegularContent: tinyint().default(0),
       error: text(),
       broadcastStartedAt: timestamp({ mode: "string" }),
       broadcastEndedAt: timestamp({ mode: "string" }),
@@ -331,7 +473,7 @@ var init_schema = __esm({
     alertDeliveryLog = mysqlTable("alert_delivery_log", {
       id: int().autoincrement().notNull(),
       alertId: int().notNull().references(() => emergencyAlerts.id, { onDelete: "cascade" }),
-      nodeId: int().references(() => hybridcastNodes.id),
+      nodeId: int().references(() => hybridcastNodes.id, { onDelete: "set null" }),
       region: varchar({ length: 255 }).notNull(),
       status: mysqlEnum(["pending", "delivered", "failed"]).default("pending"),
       recipientsReached: int().default(0),
@@ -423,9 +565,9 @@ var init_schema = __esm({
       condition: text().notNull(),
       threshold: decimal({ precision: 10, scale: 4 }).notNull(),
       severity: mysqlEnum(["low", "medium", "high", "critical"]).default("medium"),
-      isActive: int().default(1),
-      notifyOnTrigger: int().default(1),
-      autoResolve: int().default(0),
+      isActive: tinyint().default(1),
+      notifyOnTrigger: tinyint().default(1),
+      autoResolve: tinyint().default(0),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
     });
@@ -448,6 +590,49 @@ var init_schema = __esm({
       totalDuration: int().default(0),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
     });
+    audioContent = mysqlTable("audio_content", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 255 }).notNull(),
+      artist: varchar({ length: 255 }),
+      album: varchar({ length: 255 }),
+      genre: varchar({ length: 100 }),
+      duration: int().default(0),
+      fileUrl: text("file_url"),
+      coverUrl: text("cover_url"),
+      type: mysqlEnum(["music", "podcast", "audiobook", "ambient", "frequency"]).default("music"),
+      isPublic: tinyint("is_public").default(1).notNull(),
+      playCount: int("play_count").default(0),
+      isFavorited: tinyint("is_favorited").default(0).notNull(),
+      metadata: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    audioPlayCounts = mysqlTable(
+      "audio_play_counts",
+      {
+        id: int().autoincrement().notNull(),
+        trackId: varchar("track_id", { length: 255 }).notNull(),
+        title: varchar({ length: 255 }).notNull(),
+        artist: varchar({ length: 255 }).notNull(),
+        playCount: int("play_count").default(0).notNull(),
+        lastPlayedAt: timestamp("last_played_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+        createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+      },
+      (table) => [
+        index("idx_play_count").on(table.playCount),
+        index("track_id").on(table.trackId)
+      ]
+    );
+    audioPlaybackHistory = mysqlTable("audio_playback_history", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      contentId: int("content_id").notNull(),
+      playedAt: timestamp("played_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      durationPlayed: int("duration_played").default(0),
+      completed: tinyint().default(0).notNull(),
+      source: varchar({ length: 100 }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
     auditLogs = mysqlTable("audit_logs", {
       id: int().autoincrement().notNull(),
       userId: int(),
@@ -464,7 +649,7 @@ var init_schema = __esm({
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
       sessionId: int().notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
-      autoSaveEnabled: int().default(1),
+      autoSaveEnabled: tinyint().default(1),
       autoSaveInterval: int().default(6e4),
       maxVersions: int().default(50),
       retentionDays: int().default(30),
@@ -472,12 +657,335 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
     });
+    autonomousDecisions = mysqlTable(
+      "autonomousDecisions",
+      {
+        id: int().autoincrement().notNull(),
+        decisionId: varchar({ length: 255 }).notNull(),
+        policy: varchar({ length: 255 }).notNull(),
+        system: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
+        action: varchar({ length: 255 }).notNull(),
+        reasoning: text(),
+        autonomyLevel: int().default(90),
+        humanOverride: int().default(0),
+        overrideReason: text(),
+        result: mysqlEnum(["success", "failed", "pending"]).default("pending"),
+        metadata: json(),
+        createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
+        updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
+      },
+      (table) => [
+        index("decisionId").on(table.decisionId)
+      ]
+    );
+    autonomousTasks = mysqlTable(
+      "autonomous_tasks",
+      {
+        id: varchar({ length: 255 }).notNull(),
+        userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+        goal: text().notNull(),
+        priority: int().default(5).notNull(),
+        status: mysqlEnum(["queued", "executing", "completed", "failed", "cancelled"]).default("queued").notNull(),
+        steps: json(),
+        constraints: json(),
+        result: json(),
+        error: text(),
+        executionTime: int(),
+        retryCount: int().default(0),
+        maxRetries: int().default(3),
+        createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+        startedAt: timestamp({ mode: "string" }),
+        completedAt: timestamp({ mode: "string" }),
+        updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
+      },
+      (table) => [
+        index("idx_userId").on(table.userId),
+        index("idx_status").on(table.status),
+        index("idx_createdAt").on(table.createdAt)
+      ]
+    );
+    bookkeepingAccounts = mysqlTable("bookkeeping_accounts", {
+      id: int().autoincrement().notNull(),
+      accountCode: varchar("account_code", { length: 20 }).notNull(),
+      accountName: varchar("account_name", { length: 255 }).notNull(),
+      accountType: mysqlEnum("account_type", ["asset", "liability", "equity", "revenue", "expense"]).notNull(),
+      parentAccountId: int("parent_account_id"),
+      description: text(),
+      isActive: tinyint("is_active").default(1).notNull(),
+      balance: decimal({ precision: 15, scale: 2 }).default("0.00").notNull(),
+      subsidiary: varchar({ length: 255 }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    bookkeepingJournalEntries = mysqlTable("bookkeeping_journal_entries", {
+      id: int().autoincrement().notNull(),
+      entryNumber: varchar("entry_number", { length: 50 }).notNull(),
+      entryDate: timestamp("entry_date", { mode: "string" }).notNull(),
+      description: text().notNull(),
+      reference: varchar({ length: 255 }),
+      status: mysqlEnum(["draft", "posted", "voided"]).default("draft").notNull(),
+      createdBy: int("created_by"),
+      approvedBy: int("approved_by"),
+      totalDebit: decimal("total_debit", { precision: 15, scale: 2 }).default("0.00").notNull(),
+      totalCredit: decimal("total_credit", { precision: 15, scale: 2 }).default("0.00").notNull(),
+      subsidiary: varchar({ length: 255 }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    bookkeepingLedgerLines = mysqlTable("bookkeeping_ledger_lines", {
+      id: int().autoincrement().notNull(),
+      journalEntryId: int("journal_entry_id").notNull(),
+      accountId: int("account_id").notNull(),
+      debit: decimal({ precision: 15, scale: 2 }).default("0.00").notNull(),
+      credit: decimal({ precision: 15, scale: 2 }).default("0.00").notNull(),
+      memo: text(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    broadcastAuditLog = mysqlTable("broadcast_audit_log", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id"),
+      action: varchar({ length: 255 }).notNull(),
+      resourceType: varchar("resource_type", { length: 100 }).notNull(),
+      resourceId: int("resource_id"),
+      details: json(),
+      ipAddress: varchar("ip_address", { length: 45 }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    broadcastChatCommands = mysqlTable("broadcast_chat_commands", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id"),
+      command: varchar({ length: 255 }).notNull(),
+      description: text(),
+      responseTemplate: text("response_template"),
+      isActive: tinyint("is_active").default(1).notNull(),
+      usageCount: int("usage_count").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    broadcastSchedules = mysqlTable("broadcast_schedules", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      title: varchar({ length: 255 }).notNull(),
+      description: text(),
+      startTime: timestamp("start_time", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      endTime: timestamp("end_time", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      status: mysqlEnum(["scheduled", "live", "completed", "cancelled"]).default("scheduled"),
+      type: mysqlEnum(["music", "talk", "news", "emergency", "special"]).default("music"),
+      playlistId: int("playlist_id"),
+      autonomousScheduling: tinyint("autonomous_scheduling").default(0).notNull(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow(),
+      createdBy: int("created_by")
+    });
+    broadcasts = mysqlTable("broadcasts", {
+      id: int().autoincrement().notNull(),
+      system: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
+      createdBy: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+      title: varchar({ length: 255 }).notNull(),
+      description: text(),
+      content: text(),
+      status: mysqlEnum(["scheduled", "live", "completed", "cancelled"]).default("scheduled"),
+      startTime: timestamp({ mode: "string" }).notNull(),
+      endTime: timestamp({ mode: "string" }),
+      duration: int(),
+      channels: json(),
+      isEmergency: int().default(0),
+      metadata: json(),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
+    });
+    commercialBreaks = mysqlTable("commercial_breaks", {
+      id: int().autoincrement().notNull(),
+      scheduleId: int("schedule_id").notNull(),
+      position: int().default(0),
+      duration: int().default(30),
+      type: mysqlEnum(["pre_roll", "mid_roll", "post_roll"]).default("mid_roll"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    commercialImpressions = mysqlTable(
+      "commercial_impressions",
+      {
+        id: int().autoincrement().notNull(),
+        commercialId: varchar("commercial_id", { length: 100 }).notNull(),
+        commercialTitle: varchar("commercial_title", { length: 255 }).notNull(),
+        channelName: varchar("channel_name", { length: 255 }),
+        djVoice: varchar("dj_voice", { length: 50 }),
+        category: varchar({ length: 50 }),
+        impressionType: mysqlEnum("impression_type", ["view", "listen", "click", "complete"]).default("view"),
+        createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+      },
+      (table) => [
+        index("idx_commercial_id").on(table.commercialId),
+        index("idx_created_at").on(table.createdAt),
+        index("idx_channel").on(table.channelName)
+      ]
+    );
+    commercials = mysqlTable("commercials", {
+      id: int().autoincrement().notNull(),
+      breakId: int("break_id").notNull(),
+      advertiser: varchar({ length: 255 }),
+      title: varchar({ length: 255 }).notNull(),
+      fileUrl: text("file_url"),
+      duration: int().default(30),
+      isActive: tinyint("is_active").default(1).notNull(),
+      impressions: int().default(0),
+      clicks: int().default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    conferenceAttendees = mysqlTable("conference_attendees", {
+      id: int().autoincrement().notNull(),
+      conferenceId: int("conference_id").notNull().references(() => conferences.id, { onDelete: "cascade" }),
+      userId: int("user_id").references(() => users.id, { onDelete: "set null" }),
+      name: varchar({ length: 255 }),
+      email: varchar({ length: 320 }),
+      rsvpStatus: mysqlEnum("rsvp_status", ["invited", "accepted", "declined", "tentative", "attended"]).default("invited").notNull(),
+      role: mysqlEnum(["host", "co-host", "presenter", "attendee", "observer"]).default("attendee").notNull(),
+      joinedAt: timestamp("joined_at", { mode: "string" }),
+      leftAt: timestamp("left_at", { mode: "string" }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      qrCode: varchar("qr_code", { length: 255 }),
+      checkedIn: tinyint("checked_in").default(0),
+      checkedInAt: timestamp("checked_in_at", { mode: "string" }),
+      ticketType: varchar("ticket_type", { length: 32 }).default("general"),
+      organization: varchar({ length: 255 }),
+      accessibilityNeeds: text("accessibility_needs")
+    });
+    conferenceSpeakers = mysqlTable("conference_speakers", {
+      id: int().autoincrement().notNull(),
+      conferenceId: int("conference_id").notNull().references(() => conferences.id, { onDelete: "cascade" }),
+      userId: int("user_id"),
+      name: varchar({ length: 255 }).notNull(),
+      bio: text(),
+      photoUrl: varchar("photo_url", { length: 512 }),
+      title: varchar({ length: 255 }),
+      organization: varchar({ length: 255 }),
+      socialTwitter: varchar("social_twitter", { length: 255 }),
+      socialLinkedin: varchar("social_linkedin", { length: 255 }),
+      socialWebsite: varchar("social_website", { length: 512 }),
+      sessionTopic: varchar("session_topic", { length: 512 }),
+      speakerOrder: int("speaker_order").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    conferences = mysqlTable("conferences", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      description: text(),
+      type: mysqlEnum(["meeting", "conference", "webinar", "broadcast", "workshop", "huddle"]).default("meeting").notNull(),
+      platform: mysqlEnum(["jitsi", "zoom", "meet", "discord", "skype", "rrb-live", "phone"]).default("jitsi").notNull(),
+      hostUserId: int("host_user_id").references(() => users.id, { onDelete: "cascade" }),
+      hostName: varchar("host_name", { length: 255 }),
+      roomCode: varchar("room_code", { length: 100 }).notNull(),
+      externalUrl: varchar("external_url", { length: 2048 }),
+      scheduledAt: timestamp("scheduled_at", { mode: "string" }),
+      durationMinutes: int("duration_minutes").default(60),
+      maxAttendees: int("max_attendees").default(100),
+      status: mysqlEnum(["scheduled", "live", "completed", "cancelled"]).default("scheduled").notNull(),
+      isRecurring: tinyint("is_recurring").default(0),
+      recurrencePattern: varchar("recurrence_pattern", { length: 100 }),
+      password: varchar({ length: 100 }),
+      recordingEnabled: tinyint("recording_enabled").default(1),
+      captionsEnabled: tinyint("captions_enabled").default(1),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow(),
+      recordingUrl: text("recording_url"),
+      recordingKey: text("recording_key"),
+      recordingStatus: varchar("recording_status", { length: 20 }).default("none"),
+      actualAttendees: int("actual_attendees").default(0),
+      translationEnabled: tinyint("translation_enabled").default(0),
+      translationLanguages: text("translation_languages"),
+      transcript: text(),
+      transcriptStatus: varchar("transcript_status", { length: 32 }),
+      restreamActive: tinyint("restream_active").default(0),
+      restreamKey: varchar("restream_key", { length: 255 }),
+      restreamStartedAt: timestamp("restream_started_at", { mode: "string" }),
+      restreamEndedAt: timestamp("restream_ended_at", { mode: "string" }),
+      restreamPlatforms: text("restream_platforms")
+    });
     contentListenerHistory = mysqlTable("content_listener_history", {
       id: int().autoincrement().notNull(),
       contentId: int().notNull().references(() => rockinBoogieContent.id, { onDelete: "cascade" }),
       timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
       listenerCount: int().notNull(),
       engagementScore: decimal({ precision: 5, scale: 2 }).default("0")
+    });
+    contentSchedule = mysqlTable("content_schedule", {
+      id: int().autoincrement().notNull(),
+      channelId: int("channel_id").notNull(),
+      channelName: varchar("channel_name", { length: 255 }).notNull(),
+      showName: varchar("show_name", { length: 255 }).notNull(),
+      showType: mysqlEnum("show_type", ["music", "talk", "podcast", "commercial", "healing", "live_event", "news", "gospel", "emergency"]).default("music").notNull(),
+      dayOfWeek: mysqlEnum("day_of_week", ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "daily"]).default("daily").notNull(),
+      startTime: varchar("start_time", { length: 10 }).notNull(),
+      endTime: varchar("end_time", { length: 10 }).notNull(),
+      description: text(),
+      host: varchar({ length: 255 }),
+      isRecurring: tinyint("is_recurring").default(1).notNull(),
+      isActive: tinyint("is_active").default(1).notNull(),
+      priority: int().default(5).notNull(),
+      qumusManaged: tinyint("qumus_managed").default(1).notNull(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    conventionAttendees = mysqlTable("convention_attendees", {
+      id: int().autoincrement().notNull(),
+      conventionId: int("convention_id").notNull().references(() => conventions.id, { onDelete: "cascade" }),
+      userId: int("user_id"),
+      name: varchar({ length: 255 }).notNull(),
+      email: varchar({ length: 255 }).notNull(),
+      role: mysqlEnum(["attendee", "speaker", "panelist", "moderator", "vip", "sponsor", "organizer"]).default("attendee").notNull(),
+      ticketType: mysqlEnum("ticket_type", ["free", "general", "vip", "speaker", "sponsor"]).default("free").notNull(),
+      registrationStatus: mysqlEnum("registration_status", ["pending", "confirmed", "checked_in", "cancelled", "refunded"]).default("pending").notNull(),
+      stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
+      checkedInAt: bigint("checked_in_at", { mode: "number" }),
+      platform: varchar({ length: 100 }),
+      avatarUrl: text("avatar_url"),
+      bio: text(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    conventionSessions = mysqlTable("convention_sessions", {
+      id: int().autoincrement().notNull(),
+      conventionId: int("convention_id").notNull().references(() => conventions.id, { onDelete: "cascade" }),
+      studioSessionId: int("studio_session_id"),
+      title: varchar({ length: 500 }).notNull(),
+      description: text(),
+      sessionType: mysqlEnum("session_type", ["keynote", "panel", "workshop", "breakout", "networking", "performance", "qa", "fireside_chat"]).default("panel").notNull(),
+      track: varchar({ length: 100 }),
+      room: varchar({ length: 100 }),
+      startTime: bigint("start_time", { mode: "number" }).notNull(),
+      endTime: bigint("end_time", { mode: "number" }).notNull(),
+      maxParticipants: int("max_participants").default(50),
+      currentParticipants: int("current_participants").default(0),
+      speakers: json(),
+      isRecorded: tinyint("is_recorded").default(1),
+      recordingUrl: text("recording_url"),
+      status: mysqlEnum(["scheduled", "live", "ended", "cancelled"]).default("scheduled").notNull(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    conventions = mysqlTable("conventions", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      subtitle: varchar({ length: 500 }),
+      description: text(),
+      hostUserId: int("host_user_id"),
+      status: mysqlEnum(["draft", "announced", "registration_open", "active", "day_of", "ended", "archived"]).default("draft").notNull(),
+      startDate: bigint("start_date", { mode: "number" }).notNull(),
+      endDate: bigint("end_date", { mode: "number" }).notNull(),
+      timezone: varchar({ length: 50 }).default("America/New_York"),
+      maxAttendees: int("max_attendees").default(500),
+      currentAttendees: int("current_attendees").default(0),
+      isVirtual: tinyint("is_virtual").default(1),
+      isHybrid: tinyint("is_hybrid").default(0),
+      venueInfo: text("venue_info"),
+      bannerUrl: text("banner_url"),
+      logoUrl: text("logo_url"),
+      websiteUrl: text("website_url"),
+      registrationFee: decimal("registration_fee", { precision: 10, scale: 2 }).default("0.00"),
+      stripeProductId: varchar("stripe_product_id", { length: 255 }),
+      tags: json(),
+      sponsors: json(),
+      socialLinks: json("social_links"),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
     });
     detectedAnomalies = mysqlTable("detected_anomalies", {
       id: int().autoincrement().notNull(),
@@ -492,9 +1000,31 @@ var init_schema = __esm({
       description: text(),
       aiInsight: text(),
       recommendedAction: text(),
-      isResolved: int().default(0),
+      isResolved: tinyint().default(0),
       resolvedAt: timestamp({ mode: "string" }),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    documentationPages = mysqlTable("documentation_pages", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      slug: varchar({ length: 500 }).notNull(),
+      content: text(),
+      category: varchar({ length: 100 }).default("general"),
+      sortOrder: int("sort_order").default(0),
+      isPublished: tinyint("is_published").default(1),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    donations = mysqlTable("donations", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+      amount: varchar({ length: 20 }).notNull(),
+      stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
+      stripeInvoiceId: varchar("stripe_invoice_id", { length: 255 }),
+      stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
+      status: mysqlEnum(["pending", "completed", "refunded", "failed"]).default("pending").notNull(),
+      purpose: varchar({ length: 100 }).default("general-fund"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
     });
     donors = mysqlTable("donors", {
       id: int().autoincrement().notNull(),
@@ -508,6 +1038,45 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
     });
+    ecosystemCommands = mysqlTable(
+      "ecosystem_commands",
+      {
+        id: varchar({ length: 255 }).notNull(),
+        userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
+        target: mysqlEnum(["rrb", "hybridcast", "canryn", "sweet_miracles"]).notNull(),
+        action: varchar({ length: 255 }).notNull(),
+        params: json().notNull(),
+        priority: int().default(5).notNull(),
+        status: mysqlEnum(["queued", "executing", "completed", "failed"]).default("queued").notNull(),
+        result: json(),
+        error: text(),
+        executionTime: int(),
+        createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+        executedAt: timestamp({ mode: "string" }),
+        updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
+      },
+      (table) => [
+        index("idx_userId").on(table.userId),
+        index("idx_target").on(table.target),
+        index("idx_status").on(table.status)
+      ]
+    );
+    ecosystemStatus = mysqlTable(
+      "ecosystem_status",
+      {
+        id: int().autoincrement().notNull(),
+        entity: mysqlEnum(["rrb", "hybridcast", "canryn", "sweet_miracles"]).notNull(),
+        status: mysqlEnum(["online", "offline", "degraded", "maintenance"]).default("online").notNull(),
+        lastHeartbeat: timestamp({ mode: "string" }),
+        commandsProcessed: int().default(0),
+        failureRate: decimal({ precision: 5, scale: 2 }).default("0"),
+        metadata: json(),
+        updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
+      },
+      (table) => [
+        index("unique_entity").on(table.entity)
+      ]
+    );
     emailConfigs = mysqlTable("email_configs", {
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -515,9 +1084,18 @@ var init_schema = __esm({
       apiKey: text().notNull(),
       fromEmail: varchar({ length: 255 }).notNull(),
       fromName: varchar({ length: 255 }),
-      isActive: int().default(1),
+      isActive: tinyint().default(1),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    emailSubscribers = mysqlTable("email_subscribers", {
+      id: int().autoincrement().notNull(),
+      email: varchar({ length: 255 }).notNull(),
+      name: varchar({ length: 255 }),
+      source: varchar({ length: 100 }).default("flyer"),
+      interests: json(),
+      subscribedAt: timestamp("subscribed_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      unsubscribedAt: timestamp("unsubscribed_at", { mode: "string" })
     });
     emergencyAlerts = mysqlTable("emergency_alerts", {
       id: int().autoincrement().notNull(),
@@ -534,6 +1112,48 @@ var init_schema = __esm({
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow(),
       broadcastChannelIds: text()
     });
+    entertainmentMetrics = mysqlTable("entertainment_metrics", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id"),
+      metricType: varchar("metric_type", { length: 100 }).notNull(),
+      metricValue: decimal("metric_value", { precision: 10, scale: 2 }).default("0"),
+      period: varchar({ length: 50 }),
+      metadata: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    entertainmentPlaylistItems = mysqlTable("entertainment_playlist_items", {
+      id: int().autoincrement().notNull(),
+      playlistId: int("playlist_id").notNull(),
+      contentId: int("content_id").notNull(),
+      position: int().default(0).notNull(),
+      addedAt: timestamp("added_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    entertainmentPlaylists = mysqlTable("entertainment_playlists", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      description: text(),
+      coverUrl: text("cover_url"),
+      isPublic: tinyint("is_public").default(0).notNull(),
+      isPublished: tinyint("is_published").default(1).notNull(),
+      trackCount: int("track_count").default(0),
+      totalDuration: int("total_duration").default(0),
+      playCount: int("play_count").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    entertainmentUserPreferences = mysqlTable("entertainment_user_preferences", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      preferredGenres: json("preferred_genres"),
+      preferredArtists: json("preferred_artists"),
+      preferredTypes: json("preferred_types"),
+      notificationsEnabled: tinyint("notifications_enabled").default(1).notNull(),
+      autoPlayEnabled: tinyint("auto_play_enabled").default(1).notNull(),
+      qualityPreference: mysqlEnum("quality_preference", ["low", "medium", "high", "lossless"]).default("high"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
     escalationPolicies = mysqlTable("escalation_policies", {
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -541,15 +1161,29 @@ var init_schema = __esm({
       description: text(),
       triggers: json().notNull(),
       actions: json().notNull(),
-      isActive: int().default(1),
+      isActive: tinyint().default(1),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    familyTree = mysqlTable("family_tree", {
+      id: int().autoincrement().notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      nickname: varchar({ length: 255 }),
+      relationship: varchar({ length: 255 }),
+      birthYear: int("birth_year"),
+      deathYear: int("death_year"),
+      bio: text(),
+      imageUrl: varchar("image_url", { length: 1e3 }),
+      parentId: int("parent_id"),
+      generation: int().default(0),
+      isKeyFigure: tinyint("is_key_figure").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
     });
     featureFlags = mysqlTable("feature_flags", {
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
       flagName: varchar({ length: 255 }).notNull(),
-      isEnabled: int().default(0),
+      isEnabled: tinyint().default(0),
       rolloutPercentage: int().default(0),
       config: json(),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
@@ -569,7 +1203,7 @@ var init_schema = __esm({
       name: varchar({ length: 255 }).notNull(),
       description: text(),
       filterConfig: json().notNull(),
-      isPublic: int().default(0),
+      isPublic: tinyint().default(0),
       usageCount: int().default(0),
       lastUsed: timestamp({ mode: "string" }),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
@@ -637,6 +1271,33 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
     });
+    fundraisingGoals = mysqlTable("fundraising_goals", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 255 }).notNull(),
+      description: text().notNull(),
+      targetAmount: decimal("target_amount", { precision: 12, scale: 2 }).notNull(),
+      currentAmount: decimal("current_amount", { precision: 12, scale: 2 }).default("0").notNull(),
+      currency: varchar({ length: 10 }).default("USD").notNull(),
+      campaign: varchar({ length: 255 }).notNull(),
+      startDate: bigint("start_date", { mode: "number" }).notNull(),
+      endDate: bigint("end_date", { mode: "number" }),
+      donorCount: int("donor_count").default(0),
+      isActive: tinyint("is_active").default(1).notNull(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
+    generatedContent = mysqlTable("generated_content", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      type: mysqlEnum(["text", "image", "audio", "video"]).default("text"),
+      prompt: text(),
+      content: text(),
+      fileUrl: text("file_url"),
+      status: mysqlEnum(["pending", "generating", "completed", "failed"]).default("pending"),
+      metadata: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
     grants = mysqlTable("grants", {
       id: int().autoincrement().notNull(),
       title: varchar({ length: 255 }).notNull(),
@@ -650,6 +1311,63 @@ var init_schema = __esm({
       status: mysqlEnum(["open", "applied", "awarded", "rejected", "expired"]).default("open"),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
+    });
+    hrDepartments = mysqlTable("hr_departments", {
+      id: int().autoincrement().notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      code: varchar({ length: 20 }).notNull(),
+      subsidiary: varchar({ length: 255 }),
+      managerId: int("manager_id"),
+      description: text(),
+      budget: decimal({ precision: 15, scale: 2 }),
+      headcount: int().default(0).notNull(),
+      isActive: tinyint("is_active").default(1).notNull(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    hrEmployees = mysqlTable("hr_employees", {
+      id: int().autoincrement().notNull(),
+      employeeNumber: varchar("employee_number", { length: 20 }).notNull(),
+      firstName: varchar("first_name", { length: 100 }).notNull(),
+      lastName: varchar("last_name", { length: 100 }).notNull(),
+      email: varchar({ length: 320 }),
+      phone: varchar({ length: 20 }),
+      title: varchar({ length: 255 }),
+      departmentId: int("department_id"),
+      subsidiary: varchar({ length: 255 }),
+      hireDate: timestamp("hire_date", { mode: "string" }).notNull(),
+      terminationDate: timestamp("termination_date", { mode: "string" }),
+      status: mysqlEnum(["active", "on_leave", "terminated", "retired"]).default("active").notNull(),
+      employmentType: mysqlEnum("employment_type", ["full_time", "part_time", "contractor", "intern"]).default("full_time").notNull(),
+      salary: decimal({ precision: 12, scale: 2 }),
+      payFrequency: mysqlEnum("pay_frequency", ["weekly", "biweekly", "monthly", "annual"]).default("biweekly").notNull(),
+      notes: text(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    hrPayroll = mysqlTable("hr_payroll", {
+      id: int().autoincrement().notNull(),
+      employeeId: int("employee_id").notNull(),
+      payPeriodStart: timestamp("pay_period_start", { mode: "string" }).notNull(),
+      payPeriodEnd: timestamp("pay_period_end", { mode: "string" }).notNull(),
+      grossPay: decimal("gross_pay", { precision: 12, scale: 2 }).notNull(),
+      deductions: decimal({ precision: 12, scale: 2 }).default("0.00").notNull(),
+      netPay: decimal("net_pay", { precision: 12, scale: 2 }).notNull(),
+      taxWithheld: decimal("tax_withheld", { precision: 12, scale: 2 }).default("0.00").notNull(),
+      status: mysqlEnum(["pending", "processed", "paid", "voided"]).default("pending").notNull(),
+      paidDate: timestamp("paid_date", { mode: "string" }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    hrTimeTracking = mysqlTable("hr_time_tracking", {
+      id: int().autoincrement().notNull(),
+      employeeId: int("employee_id").notNull(),
+      date: timestamp({ mode: "string" }).notNull(),
+      hoursWorked: decimal("hours_worked", { precision: 5, scale: 2 }).notNull(),
+      overtime: decimal({ precision: 5, scale: 2 }).default("0.00").notNull(),
+      projectCode: varchar("project_code", { length: 50 }),
+      notes: text(),
+      status: mysqlEnum(["pending", "approved", "rejected"]).default("pending").notNull(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
     });
     hybridcastNodes = mysqlTable("hybridcast_nodes", {
       id: int().autoincrement().notNull(),
@@ -675,6 +1393,105 @@ var init_schema = __esm({
       error: text(),
       duration: int(),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    legalComplianceItems = mysqlTable("legal_compliance_items", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      category: mysqlEnum(["fcc", "copyright", "gdpr", "ccpa", "ada", "tax", "employment_law", "broadcast_license", "other"]).notNull(),
+      status: mysqlEnum(["compliant", "non_compliant", "pending_review", "in_progress", "waived"]).default("pending_review").notNull(),
+      dueDate: timestamp("due_date", { mode: "string" }),
+      assignedTo: int("assigned_to"),
+      description: text(),
+      resolution: text(),
+      subsidiary: varchar({ length: 255 }),
+      priority: mysqlEnum(["low", "medium", "high", "critical"]).default("medium").notNull(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    legalContracts = mysqlTable("legal_contracts", {
+      id: int().autoincrement().notNull(),
+      contractNumber: varchar("contract_number", { length: 50 }).notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      contractType: mysqlEnum("contract_type", ["artist_agreement", "licensing", "nda", "employment", "vendor", "distribution", "publishing", "sponsorship", "partnership", "other"]).notNull(),
+      counterparty: varchar({ length: 255 }).notNull(),
+      status: mysqlEnum(["draft", "review", "approved", "active", "expired", "terminated", "disputed"]).default("draft").notNull(),
+      startDate: timestamp("start_date", { mode: "string" }),
+      endDate: timestamp("end_date", { mode: "string" }),
+      value: decimal({ precision: 15, scale: 2 }),
+      subsidiary: varchar({ length: 255 }),
+      description: text(),
+      terms: text(),
+      assignedTo: int("assigned_to"),
+      approvedBy: int("approved_by"),
+      documentUrl: varchar("document_url", { length: 500 }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    legalIntellectualProperty = mysqlTable("legal_intellectual_property", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      ipType: mysqlEnum("ip_type", ["copyright", "trademark", "patent", "trade_secret", "licensing_right", "masters", "publishing_right"]).notNull(),
+      registrationNumber: varchar("registration_number", { length: 100 }),
+      owner: varchar({ length: 255 }).notNull(),
+      status: mysqlEnum(["pending", "registered", "active", "expired", "disputed", "transferred"]).default("pending").notNull(),
+      filingDate: timestamp("filing_date", { mode: "string" }),
+      expirationDate: timestamp("expiration_date", { mode: "string" }),
+      description: text(),
+      subsidiary: varchar({ length: 255 }),
+      value: decimal({ precision: 15, scale: 2 }),
+      notes: text(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    listenerAnalytics = mysqlTable("listener_analytics", {
+      id: int().autoincrement().notNull(),
+      channelId: int("channel_id").notNull(),
+      channelName: varchar("channel_name", { length: 255 }).notNull(),
+      listenerCount: int("listener_count").default(0).notNull(),
+      peakListeners: int("peak_listeners").default(0).notNull(),
+      geoRegion: varchar("geo_region", { length: 100 }),
+      deviceType: mysqlEnum("device_type", ["desktop", "mobile", "tablet", "smart_speaker", "other"]).default("desktop"),
+      sessionDurationSeconds: int("session_duration_seconds").default(0),
+      timestamp: bigint({ mode: "number" }).notNull(),
+      hourOfDay: int("hour_of_day"),
+      dayOfWeek: int("day_of_week"),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    listeners = mysqlTable("listeners", {
+      id: int().autoincrement().notNull(),
+      broadcastId: int().notNull().references(() => broadcasts.id, { onDelete: "cascade" }),
+      userId: int().references(() => users.id, { onDelete: "set null" }),
+      sessionId: varchar({ length: 255 }).notNull(),
+      joinedAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
+      leftAt: timestamp({ mode: "string" }),
+      duration: int(),
+      engagement: int().default(0),
+      metadata: json(),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    mediaDistribution = mysqlTable("media_distribution", {
+      id: int().autoincrement().notNull(),
+      projectId: int("project_id").notNull(),
+      platform: varchar({ length: 100 }).notNull(),
+      status: mysqlEnum(["pending", "distributed", "failed", "removed"]).default("pending"),
+      externalUrl: text("external_url"),
+      externalId: varchar("external_id", { length: 255 }),
+      metrics: json(),
+      distributedAt: timestamp("distributed_at", { mode: "string" }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    mediaProjects = mysqlTable("media_projects", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      title: varchar({ length: 255 }).notNull(),
+      description: text(),
+      type: mysqlEnum(["video", "audio", "image", "mixed"]).default("video"),
+      status: mysqlEnum(["draft", "in_progress", "review", "published", "archived"]).default("draft"),
+      fileUrl: text("file_url"),
+      thumbnailUrl: text("thumbnail_url"),
+      metadata: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
     });
     memoryStore = mysqlTable("memory_store", {
       id: int().autoincrement().notNull(),
@@ -704,6 +1521,71 @@ var init_schema = __esm({
       recommendation: mysqlEnum(["use_baseline", "use_candidate", "inconclusive"]).default("inconclusive"),
       comparedAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
     });
+    monetizationEvents = mysqlTable("monetization_events", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      type: mysqlEnum(["ad_impression", "ad_click", "subscription", "donation", "tip", "purchase"]).default("ad_impression"),
+      amount: decimal({ precision: 10, scale: 2 }).default("0"),
+      currency: varchar({ length: 10 }).default("USD"),
+      source: varchar({ length: 100 }),
+      referenceId: varchar("reference_id", { length: 255 }),
+      metadata: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    musicPlaylists = mysqlTable("music_playlists", {
+      id: int().autoincrement().notNull(),
+      playlistId: varchar("playlist_id", { length: 255 }).notNull(),
+      userId: int("user_id").notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      description: text(),
+      coverUrl: text("cover_url"),
+      isPublic: tinyint("is_public").default(0).notNull(),
+      trackCount: int("track_count").default(0),
+      totalDuration: int("total_duration").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow(),
+      createdBy: int("created_by")
+    });
+    musicTracks = mysqlTable("music_tracks", {
+      id: int().autoincrement().notNull(),
+      trackId: varchar("track_id", { length: 255 }).notNull(),
+      title: varchar({ length: 255 }).notNull(),
+      artist: varchar({ length: 255 }),
+      album: varchar({ length: 255 }),
+      genre: varchar({ length: 100 }),
+      duration: int().default(0),
+      fileUrl: text("file_url"),
+      coverArtUrl: text("cover_art_url"),
+      bpm: int(),
+      keySignature: varchar("key_signature", { length: 10 }),
+      energyLevel: decimal("energy_level", { precision: 3, scale: 2 }),
+      isPublic: tinyint("is_public").default(0).notNull(),
+      playCount: int("play_count").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow(),
+      // you can use { mode: 'date' }, if you want to have Date as type for this column
+      releaseDate: date("release_date", { mode: "string" }),
+      createdBy: int("created_by"),
+      isrc: varchar({ length: 255 }),
+      rights: varchar({ length: 255 })
+    });
+    newsArticles = mysqlTable("news_articles", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      slug: varchar({ length: 500 }).notNull(),
+      summary: text(),
+      content: text(),
+      category: varchar({ length: 100 }).default("general"),
+      source: varchar({ length: 255 }),
+      sourceUrl: varchar("source_url", { length: 1e3 }),
+      imageUrl: varchar("image_url", { length: 1e3 }),
+      isBreaking: tinyint("is_breaking").default(0),
+      isFeatured: tinyint("is_featured").default(0),
+      authorId: int("author_id"),
+      publishedAt: timestamp("published_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
     nonprofitOperations = mysqlTable("nonprofit_operations", {
       id: int().autoincrement().notNull(),
       metricType: varchar({ length: 100 }),
@@ -727,12 +1609,12 @@ var init_schema = __esm({
     notificationPreferences = mysqlTable("notification_preferences", {
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      enablePushNotifications: int().default(1),
-      enableSoundNotifications: int().default(1),
-      enableEmailNotifications: int().default(0),
+      enablePushNotifications: tinyint().default(1),
+      enableSoundNotifications: tinyint().default(1),
+      enableEmailNotifications: tinyint().default(0),
       soundVolume: int().default(70),
       notificationTypes: json(),
-      escalationEnabled: int().default(1),
+      escalationEnabled: tinyint().default(1),
       escalationDelay: int().default(3e5),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
@@ -745,7 +1627,7 @@ var init_schema = __esm({
       title: varchar({ length: 255 }).notNull(),
       content: text().notNull(),
       severity: mysqlEnum(["low", "medium", "high", "critical"]).default("medium"),
-      isRead: int().default(0),
+      isRead: tinyint().default(0),
       actionUrl: varchar({ length: 2048 }),
       metadata: json(),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
@@ -774,6 +1656,24 @@ var init_schema = __esm({
       estimatedCost: decimal({ precision: 10, scale: 4 }).default("0"),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
     });
+    playlistTracks = mysqlTable("playlist_tracks", {
+      id: int().autoincrement().notNull(),
+      playlistId: int("playlist_id").notNull(),
+      trackId: int("track_id").notNull(),
+      position: int().default(0).notNull(),
+      addedAt: timestamp("added_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    playlists = mysqlTable("playlists", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      description: text(),
+      coverUrl: text("cover_url"),
+      isPublic: tinyint("is_public").default(0).notNull(),
+      trackCount: int("track_count").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
     plugins = mysqlTable("plugins", {
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -782,7 +1682,7 @@ var init_schema = __esm({
       type: mysqlEnum(["tool", "integration", "middleware", "custom"]).default("custom"),
       code: text().notNull(),
       config: json(),
-      isActive: int().default(1),
+      isActive: tinyint().default(1),
       version: varchar({ length: 32 }).default("1.0.0"),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
@@ -808,8 +1708,133 @@ var init_schema = __esm({
       expectedOccurrenceTime: timestamp({ mode: "string" }).notNull(),
       severity: mysqlEnum(["low", "medium", "high", "critical"]).default("medium"),
       proactiveActions: json(),
-      triggered: int().default(0),
+      triggered: tinyint().default(0),
       triggeredAt: timestamp({ mode: "string" }),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    qumusAutonomousActions = mysqlTable(
+      "qumus_autonomous_actions",
+      {
+        id: int().autoincrement().notNull(),
+        decisionId: varchar("decision_id", { length: 255 }).notNull(),
+        policyId: varchar("policy_id", { length: 100 }).notNull(),
+        userId: int("user_id"),
+        actionType: varchar("action_type", { length: 100 }).notNull(),
+        input: json().notNull(),
+        output: json(),
+        confidence: decimal({ precision: 5, scale: 2 }).notNull(),
+        autonomousFlag: tinyint("autonomous_flag").notNull(),
+        status: mysqlEnum(["pending", "processing", "completed", "failed", "escalated"]).default("pending").notNull(),
+        result: mysqlEnum(["success", "failure", "escalated", "timeout"]).default("success").notNull(),
+        executionTime: int("execution_time"),
+        errorMessage: text("error_message"),
+        metadata: json(),
+        completedAt: timestamp("completed_at", { mode: "string" }),
+        timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+      },
+      (table) => [
+        index("qumus_autonomous_actions_decision_id_unique").on(table.decisionId)
+      ]
+    );
+    qumusCorePolicies = mysqlTable(
+      "qumus_core_policies",
+      {
+        id: int().autoincrement().notNull(),
+        policyId: varchar("policy_id", { length: 100 }).notNull(),
+        name: varchar({ length: 255 }).notNull(),
+        description: text(),
+        policyType: mysqlEnum("policy_type", ["recommendation_engine", "payment_processing", "content_moderation", "user_registration", "subscription_management", "performance_alert", "analytics_aggregation", "compliance_reporting"]).notNull(),
+        autonomyLevel: int("autonomy_level").notNull(),
+        confidenceThreshold: int("confidence_threshold").default(80).notNull(),
+        enabled: tinyint().default(1).notNull(),
+        priority: int().default(0).notNull(),
+        conditions: json(),
+        actions: json(),
+        escalationRules: json("escalation_rules"),
+        metadata: json(),
+        createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+        updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
+      },
+      (table) => [
+        index("qumus_core_policies_policy_id_unique").on(table.policyId)
+      ]
+    );
+    qumusDecisionLogs = mysqlTable(
+      "qumus_decision_logs",
+      {
+        id: int().autoincrement().notNull(),
+        decisionId: varchar("decision_id", { length: 255 }).notNull(),
+        policyId: varchar("policy_id", { length: 100 }).notNull(),
+        policyType: varchar("policy_type", { length: 100 }).notNull(),
+        userId: int("user_id"),
+        decisionType: varchar("decision_type", { length: 100 }).notNull(),
+        input: json().notNull(),
+        output: json(),
+        confidence: decimal({ precision: 5, scale: 2 }).notNull(),
+        autonomousFlag: tinyint("autonomous_flag").notNull(),
+        result: varchar({ length: 50 }).notNull(),
+        executionTime: int("execution_time"),
+        metadata: json(),
+        timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+      },
+      (table) => [
+        index("qumus_decision_logs_decision_id_unique").on(table.decisionId)
+      ]
+    );
+    qumusHumanReview = mysqlTable(
+      "qumus_human_review",
+      {
+        id: int().autoincrement().notNull(),
+        decisionId: varchar("decision_id", { length: 255 }).notNull(),
+        policyId: varchar("policy_id", { length: 100 }).notNull(),
+        userId: int("user_id"),
+        escalationReason: varchar("escalation_reason", { length: 100 }).notNull(),
+        priority: mysqlEnum(["low", "medium", "high", "critical"]).default("medium").notNull(),
+        originalInput: json("original_input").notNull(),
+        originalOutput: json("original_output"),
+        confidence: decimal({ precision: 5, scale: 2 }).notNull(),
+        decision: varchar({ length: 50 }),
+        reviewNotes: text("review_notes"),
+        reviewedBy: varchar("reviewed_by", { length: 255 }),
+        reviewedAt: timestamp("reviewed_at", { mode: "string" }),
+        status: mysqlEnum(["pending", "in_review", "completed", "expired"]).default("pending").notNull(),
+        metadata: json(),
+        createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+      },
+      (table) => [
+        index("qumus_human_review_decision_id_unique").on(table.decisionId)
+      ]
+    );
+    qumusMetrics = mysqlTable("qumus_metrics", {
+      id: int().autoincrement().notNull(),
+      policyId: varchar("policy_id", { length: 100 }).notNull(),
+      policyType: varchar("policy_type", { length: 100 }).notNull(),
+      totalDecisions: int("total_decisions").default(0).notNull(),
+      autonomousCount: int("autonomous_count").default(0).notNull(),
+      escalatedCount: int("escalated_count").default(0).notNull(),
+      approvedCount: int("approved_count").default(0).notNull(),
+      rejectedCount: int("rejected_count").default(0).notNull(),
+      autonomyPercentage: decimal("autonomy_percentage", { precision: 5, scale: 2 }).default("0").notNull(),
+      averageConfidence: decimal("average_confidence", { precision: 5, scale: 2 }).default("0").notNull(),
+      successRate: decimal("success_rate", { precision: 5, scale: 2 }).default("0").notNull(),
+      failureRate: decimal("failure_rate", { precision: 5, scale: 2 }).default("0").notNull(),
+      avgExecutionTime: int("avg_execution_time").default(0).notNull(),
+      escalationRate: decimal("escalation_rate", { precision: 5, scale: 2 }).default("0").notNull(),
+      period: varchar({ length: 50 }).notNull(),
+      timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    qumusPolicyRecommendations = mysqlTable("qumus_policy_recommendations", {
+      id: int().autoincrement().notNull(),
+      policyId: varchar("policy_id", { length: 100 }).notNull(),
+      policyType: varchar("policy_type", { length: 100 }).notNull(),
+      recommendationType: varchar("recommendation_type", { length: 100 }).notNull(),
+      currentValue: varchar("current_value", { length: 255 }),
+      recommendedValue: varchar("recommended_value", { length: 255 }).notNull(),
+      reason: text().notNull(),
+      confidence: decimal({ precision: 5, scale: 2 }).notNull(),
+      impact: varchar({ length: 50 }).notNull(),
+      implemented: tinyint().default(0).notNull(),
+      implementedAt: timestamp("implemented_at", { mode: "string" }),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
     });
     quotaAlerts = mysqlTable("quota_alerts", {
@@ -817,7 +1842,7 @@ var init_schema = __esm({
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
       quotaType: mysqlEnum(["requests", "tokens", "cost", "sessions"]).notNull(),
       threshold: int().notNull(),
-      isTriggered: int().default(0),
+      isTriggered: tinyint().default(0),
       lastTriggeredAt: timestamp({ mode: "string" }),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
@@ -833,7 +1858,20 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
     });
-    radioChannels = mysqlTable("radio_channels", {
+    radioChannels = mysqlTable("radioChannels", {
+      id: int().autoincrement().notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      description: text(),
+      frequency: decimal({ precision: 6, scale: 2 }),
+      healingFrequency: int(),
+      streamUrl: varchar({ length: 2048 }),
+      status: mysqlEnum(["active", "inactive", "maintenance"]).default("active"),
+      listeners: int().default(0),
+      metadata: json(),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
+    });
+    radioChannelsV2 = mysqlTable("radio_channels", {
       id: int().autoincrement().notNull(),
       stationId: int().notNull().references(() => radioStations.id, { onDelete: "cascade" }),
       name: varchar({ length: 255 }).notNull(),
@@ -847,6 +1885,25 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
     });
+    radioChatMessages = mysqlTable(
+      "radio_chat_messages",
+      {
+        id: int().autoincrement().notNull(),
+        channelId: int().notNull(),
+        channelName: varchar({ length: 255 }).notNull(),
+        userId: varchar({ length: 255 }),
+        userName: varchar({ length: 255 }).default("Listener").notNull(),
+        userAvatar: varchar({ length: 500 }),
+        message: text().notNull(),
+        messageType: mysqlEnum(["user", "dj_valanna", "dj_seraph", "dj_candy", "system"]).default("user").notNull(),
+        isAiGenerated: tinyint().default(0).notNull(),
+        createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+      },
+      (table) => [
+        index("idx_channel").on(table.channelId),
+        index("idx_created").on(table.createdAt)
+      ]
+    );
     radioStations = mysqlTable("radio_stations", {
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -907,6 +1964,138 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
     });
+    royaltyCollaborators = mysqlTable("royalty_collaborators", {
+      id: int().autoincrement().notNull(),
+      projectId: int().notNull().references(() => royaltyProjects.id, { onDelete: "cascade" }),
+      userId: int().references(() => users.id, { onDelete: "set null" }),
+      artistName: varchar({ length: 255 }).notNull(),
+      role: mysqlEnum(["artist", "producer", "songwriter", "engineer", "featured", "session_musician", "other"]).default("artist").notNull(),
+      splitPercentage: decimal({ precision: 5, scale: 2 }).default("0.00").notNull(),
+      email: varchar({ length: 320 }),
+      isRegistered: tinyint().default(0).notNull(),
+      inviteStatus: mysqlEnum(["pending", "accepted", "declined"]).default("pending").notNull(),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull(),
+      stripeConnectAccountId: varchar("stripe_connect_account_id", { length: 255 }),
+      stripeOnboardingComplete: tinyint("stripe_onboarding_complete").default(0).notNull(),
+      payoutMethod: mysqlEnum("payout_method", ["stripe_connect", "manual", "check", "wire", "paypal"]).default("manual").notNull()
+    });
+    royaltyDistributions = mysqlTable("royalty_distributions", {
+      id: int().autoincrement().notNull(),
+      paymentId: int().notNull().references(() => royaltyPayments.id, { onDelete: "cascade" }),
+      collaboratorId: int().notNull().references(() => royaltyCollaborators.id, { onDelete: "set null" }),
+      amount: decimal({ precision: 12, scale: 2 }).notNull(),
+      splitPercentage: decimal({ precision: 5, scale: 2 }).notNull(),
+      status: mysqlEnum(["calculated", "pending_payment", "paid", "disputed"]).default("calculated").notNull(),
+      paidAt: timestamp({ mode: "string" }),
+      transactionRef: varchar({ length: 255 }),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    royaltyPayments = mysqlTable("royalty_payments", {
+      id: int().autoincrement().notNull(),
+      projectId: int().notNull().references(() => royaltyProjects.id, { onDelete: "cascade" }),
+      source: varchar({ length: 255 }).notNull(),
+      sourceType: mysqlEnum(["streaming", "download", "sync_license", "performance", "mechanical", "merch", "other"]).default("streaming").notNull(),
+      grossAmount: decimal({ precision: 12, scale: 2 }).notNull(),
+      netAmount: decimal({ precision: 12, scale: 2 }).notNull(),
+      currency: varchar({ length: 3 }).default("USD").notNull(),
+      periodStart: timestamp({ mode: "string" }),
+      periodEnd: timestamp({ mode: "string" }),
+      statementRef: varchar({ length: 255 }),
+      notes: text(),
+      recordedBy: int().notNull().references(() => users.id, { onDelete: "set null" }),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    royaltyProjects = mysqlTable("royalty_projects", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 255 }).notNull(),
+      description: text(),
+      projectType: mysqlEnum(["single", "album", "ep", "compilation", "soundtrack", "podcast", "commercial", "other"]).default("single").notNull(),
+      releaseDate: timestamp({ mode: "string" }),
+      isrcCode: varchar({ length: 20 }),
+      upcCode: varchar({ length: 20 }),
+      totalRevenue: decimal({ precision: 12, scale: 2 }).default("0.00").notNull(),
+      currency: varchar({ length: 3 }).default("USD").notNull(),
+      status: mysqlEnum(["draft", "active", "completed", "archived"]).default("draft").notNull(),
+      createdBy: int().notNull(),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    royaltyStatements = mysqlTable("royalty_statements", {
+      id: int().autoincrement().notNull(),
+      collaboratorId: int().notNull().references(() => royaltyCollaborators.id, { onDelete: "cascade" }),
+      projectId: int().notNull().references(() => royaltyProjects.id, { onDelete: "set null" }),
+      periodStart: timestamp({ mode: "string" }).notNull(),
+      periodEnd: timestamp({ mode: "string" }).notNull(),
+      totalEarnings: decimal({ precision: 12, scale: 2 }).default("0.00").notNull(),
+      totalPaid: decimal({ precision: 12, scale: 2 }).default("0.00").notNull(),
+      balance: decimal({ precision: 12, scale: 2 }).default("0.00").notNull(),
+      status: mysqlEnum(["draft", "issued", "acknowledged"]).default("draft").notNull(),
+      generatedAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    rrbChannelStats = mysqlTable("rrb_channel_stats", {
+      id: int().autoincrement().notNull(),
+      channelId: int().notNull().references(() => rrbChannels.id, { onDelete: "cascade" }),
+      date: timestamp({ mode: "string" }).notNull(),
+      totalListeners: int().default(0),
+      peakListeners: int().default(0),
+      averageSessionDuration: int().default(0),
+      totalStreamTime: int().default(0),
+      uptime: decimal({ precision: 5, scale: 2 }).default("100"),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    rrbChannels = mysqlTable("rrb_channels", {
+      id: int().autoincrement().notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      description: text(),
+      category: varchar({ length: 64 }).notNull(),
+      genre: varchar({ length: 64 }),
+      artwork: varchar({ length: 512 }),
+      isActive: int().default(1),
+      priority: int().default(100),
+      listeners: int().default(0),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
+    });
+    rrbFrequencies = mysqlTable("rrb_frequencies", {
+      id: int().autoincrement().notNull(),
+      frequency: int().notNull(),
+      name: varchar({ length: 64 }).notNull(),
+      description: text(),
+      solfeggio: varchar({ length: 64 }),
+      benefits: text(),
+      color: varchar({ length: 7 }),
+      isDefault: int().default(0),
+      isActive: int().default(1),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    rrbListeningHistory = mysqlTable("rrb_listening_history", {
+      id: int().autoincrement().notNull(),
+      userId: int().references(() => users.id, { onDelete: "cascade" }),
+      channelId: int().notNull().references(() => rrbChannels.id, { onDelete: "set null" }),
+      frequencyId: int().references(() => rrbFrequencies.id, { onDelete: "set null" }),
+      sessionStartTime: timestamp({ mode: "string" }).notNull(),
+      sessionEndTime: timestamp({ mode: "string" }),
+      durationSeconds: int(),
+      deviceType: varchar({ length: 64 }),
+      userAgent: text(),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    rrbStreamSources = mysqlTable("rrb_stream_sources", {
+      id: int().autoincrement().notNull(),
+      channelId: int().notNull().references(() => rrbChannels.id, { onDelete: "cascade" }),
+      url: varchar({ length: 512 }).notNull(),
+      sourceType: mysqlEnum(["soma", "icecast", "shoutcast", "generic", "custom"]).notNull(),
+      priority: int().default(100),
+      bitrate: int(),
+      format: varchar({ length: 32 }),
+      isActive: int().default(1),
+      lastHealthCheck: timestamp({ mode: "string" }),
+      healthStatus: mysqlEnum(["healthy", "degraded", "offline", "unknown"]).default("unknown"),
+      failureCount: int().default(0),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
+    });
     scheduledReports = mysqlTable("scheduled_reports", {
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -916,7 +2105,7 @@ var init_schema = __esm({
       schedule: varchar({ length: 255 }).notNull(),
       recipients: text().notNull(),
       includeMetrics: json(),
-      isActive: int().default(1),
+      isActive: tinyint().default(1),
       lastRun: timestamp({ mode: "string" }),
       nextRun: timestamp({ mode: "string" }),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
@@ -929,7 +2118,7 @@ var init_schema = __esm({
       messageId: int().references(() => messages.id, { onDelete: "cascade" }),
       comment: text().notNull(),
       type: mysqlEnum(["note", "flag", "question", "suggestion"]).default("note"),
-      resolved: int().default(0),
+      resolved: tinyint().default(0),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
     });
@@ -968,6 +2157,144 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       createdBy: int().notNull().references(() => users.id)
     });
+    socialMediaPosts = mysqlTable("social_media_posts", {
+      id: int().autoincrement().notNull(),
+      platform: mysqlEnum(["twitter", "instagram", "discord", "facebook", "tiktok", "youtube"]).notNull(),
+      postType: mysqlEnum("post_type", ["text", "image", "video", "story", "reel", "announcement"]).default("text").notNull(),
+      content: text().notNull(),
+      mediaUrl: text("media_url"),
+      hashtags: text(),
+      scheduledAt: bigint("scheduled_at", { mode: "number" }).notNull(),
+      publishedAt: bigint("published_at", { mode: "number" }),
+      status: mysqlEnum(["draft", "scheduled", "published", "failed", "cancelled"]).default("scheduled").notNull(),
+      campaign: varchar({ length: 255 }).default("selma-to-un-csw70"),
+      qumusManaged: tinyint("qumus_managed").default(1).notNull(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
+    solbonesFrequencyRolls = mysqlTable("solbones_frequency_rolls", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id"),
+      dice1: int("dice_1").default(1).notNull(),
+      dice2: int("dice_2").default(1).notNull(),
+      dice3: int("dice_3").default(1).notNull(),
+      frequency: int(),
+      score: int().default(0).notNull(),
+      notes: text(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    solbonesLeaderboard = mysqlTable("solbones_leaderboard", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id"),
+      username: varchar({ length: 255 }),
+      score: int().default(0).notNull(),
+      gamesPlayed: int("games_played").default(1).notNull(),
+      highestScore: int("highest_score").default(0).notNull(),
+      totalTallies: int("total_tallies").default(0).notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    squaddMembers = mysqlTable("squadd_members", {
+      id: int().autoincrement().notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      title: varchar({ length: 255 }).notNull(),
+      organization: varchar({ length: 255 }),
+      missionArea: varchar("mission_area", { length: 100 }).notNull(),
+      missionIcon: varchar("mission_icon", { length: 50 }).notNull(),
+      bio: text().notNull(),
+      quote: text(),
+      email: varchar({ length: 255 }),
+      photoUrl: text("photo_url"),
+      focusAreas: json("focus_areas"),
+      achievements: json(),
+      slug: varchar({ length: 100 }).notNull(),
+      displayOrder: int("display_order").default(0),
+      isActive: tinyint("is_active").default(1).notNull(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
+    streamingStatus = mysqlTable("streaming_status", {
+      id: int().autoincrement().notNull(),
+      broadcastId: varchar("broadcast_id", { length: 255 }).notNull(),
+      channelId: int("channel_id"),
+      status: mysqlEnum(["offline", "starting", "live", "paused", "ending"]).default("offline"),
+      viewerCount: int("viewer_count").default(0),
+      peakViewers: int("peak_viewers").default(0),
+      streamUrl: text("stream_url"),
+      startedAt: timestamp("started_at", { mode: "string" }),
+      endedAt: timestamp("ended_at", { mode: "string" }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow(),
+      platform: mysqlEnum(["youtube", "twitch", "facebook", "instagram", "website", "radio", "podcast"]).default("website").notNull(),
+      bitrate: varchar({ length: 50 }),
+      resolution: varchar({ length: 50 }),
+      frameRate: varchar("frame_rate", { length: 20 }),
+      latency: int(),
+      errorMessage: text("error_message"),
+      lastUpdated: timestamp("last_updated", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    studioGuests = mysqlTable("studio_guests", {
+      id: int().autoincrement().notNull(),
+      sessionId: int("session_id").notNull().references(() => studioSessions.id, { onDelete: "cascade" }),
+      userId: int("user_id"),
+      guestName: varchar("guest_name", { length: 255 }).notNull(),
+      guestEmail: varchar("guest_email", { length: 255 }),
+      guestAvatar: text("guest_avatar"),
+      platform: mysqlEnum(["internal", "youtube", "twitch", "zoom", "discord", "twitter_spaces", "custom"]).default("internal").notNull(),
+      platformHandle: varchar("platform_handle", { length: 255 }),
+      role: mysqlEnum(["host", "co_host", "panelist", "guest", "moderator", "speaker", "attendee"]).default("guest").notNull(),
+      status: mysqlEnum(["invited", "accepted", "declined", "waiting", "connected", "on_air", "muted", "disconnected"]).default("invited").notNull(),
+      inviteToken: varchar("invite_token", { length: 64 }),
+      joinedAt: bigint("joined_at", { mode: "number" }),
+      leftAt: bigint("left_at", { mode: "number" }),
+      isMuted: tinyint("is_muted").default(0),
+      isVideoOn: tinyint("is_video_on").default(1),
+      isScreenSharing: tinyint("is_screen_sharing").default(0),
+      speakingOrder: int("speaking_order"),
+      bio: text(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    studioRecordings = mysqlTable("studio_recordings", {
+      id: int().autoincrement().notNull(),
+      sessionId: int("session_id").notNull().references(() => studioSessions.id, { onDelete: "cascade" }),
+      title: varchar({ length: 500 }).notNull(),
+      description: text(),
+      recordingUrl: text("recording_url").notNull(),
+      thumbnailUrl: text("thumbnail_url"),
+      durationSeconds: int("duration_seconds").default(0),
+      fileSizeMb: decimal("file_size_mb", { precision: 10, scale: 2 }),
+      format: mysqlEnum(["mp4", "mp3", "wav", "webm", "mkv"]).default("mp4"),
+      isPublished: tinyint("is_published").default(0),
+      viewCount: int("view_count").default(0),
+      tags: json(),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
+    studioSessions = mysqlTable("studio_sessions", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      description: text(),
+      hostUserId: int("host_user_id"),
+      sessionType: mysqlEnum("session_type", ["podcast", "live_show", "interview", "panel", "workshop", "convention_panel", "recording"]).default("podcast").notNull(),
+      status: mysqlEnum(["draft", "scheduled", "greenroom", "live", "recording", "ended", "archived"]).default("draft").notNull(),
+      scheduledAt: bigint("scheduled_at", { mode: "number" }),
+      startedAt: bigint("started_at", { mode: "number" }),
+      endedAt: bigint("ended_at", { mode: "number" }),
+      maxGuests: int("max_guests").default(8),
+      isPublic: tinyint("is_public").default(1),
+      streamPlatforms: json("stream_platforms"),
+      streamKeys: json("stream_keys"),
+      recordingEnabled: tinyint("recording_enabled").default(1),
+      recordingUrl: text("recording_url"),
+      thumbnailUrl: text("thumbnail_url"),
+      tags: json(),
+      conventionId: int("convention_id"),
+      breakoutRoomId: int("breakout_room_id"),
+      viewerCount: int("viewer_count").default(0),
+      peakViewers: int("peak_viewers").default(0),
+      joinCode: varchar("join_code", { length: 20 }),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
     subscriptionTiers = mysqlTable(
       "subscription_tiers",
       {
@@ -982,7 +2309,7 @@ var init_schema = __esm({
         maxConcurrentSessions: int().notNull(),
         maxTokensPerRequest: int().notNull(),
         features: json().notNull(),
-        isActive: int().default(1),
+        isActive: tinyint().default(1),
         createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
         updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
       },
@@ -1000,7 +2327,7 @@ var init_schema = __esm({
       suppressionDuration: int(),
       startTime: timestamp({ mode: "string" }),
       endTime: timestamp({ mode: "string" }),
-      isActive: int().default(1),
+      isActive: tinyint().default(1),
       suppressionCount: int().default(0),
       lastSuppressionAt: timestamp({ mode: "string" }),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
@@ -1018,6 +2345,53 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
     });
+    systemAuditLog = mysqlTable("systemAuditLog", {
+      id: int().autoincrement().notNull(),
+      system: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
+      userId: int().references(() => users.id, { onDelete: "cascade" }),
+      action: varchar({ length: 255 }).notNull(),
+      resourceType: varchar({ length: 64 }),
+      resourceId: varchar({ length: 255 }),
+      changes: json(),
+      ipAddress: varchar({ length: 45 }),
+      userAgent: text(),
+      status: mysqlEnum(["success", "failed"]).default("success"),
+      errorMessage: text(),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    systemCommands = mysqlTable(
+      "systemCommands",
+      {
+        id: int().autoincrement().notNull(),
+        commandId: varchar({ length: 255 }).notNull(),
+        sourceSystem: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
+        targetSystem: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
+        command: varchar({ length: 255 }).notNull(),
+        parameters: json(),
+        status: mysqlEnum(["pending", "executing", "completed", "failed"]).default("pending"),
+        result: json(),
+        errorMessage: text(),
+        createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
+        completedAt: timestamp({ mode: "string" })
+      },
+      (table) => [
+        index("commandId").on(table.commandId)
+      ]
+    );
+    systemMetrics = mysqlTable("systemMetrics", {
+      id: int().autoincrement().notNull(),
+      system: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
+      timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
+      activeListeners: int().default(0),
+      totalBroadcasts: int().default(0),
+      totalDonations: decimal({ precision: 15, scale: 2 }).default("0"),
+      uptime: decimal({ precision: 5, scale: 2 }).default("100"),
+      cpuUsage: decimal({ precision: 5, scale: 2 }),
+      memoryUsage: decimal({ precision: 5, scale: 2 }),
+      bandwidth: int(),
+      metadata: json(),
+      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
     systemAlerts = mysqlTable("system_alerts", {
       id: int().autoincrement().notNull(),
       severity: mysqlEnum(["critical", "warning", "info"]).default("info"),
@@ -1029,7 +2403,7 @@ var init_schema = __esm({
       resolvedAt: timestamp({ mode: "string" }),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
     });
-    systemMetrics = mysqlTable("system_metrics", {
+    systemMetricsV2 = mysqlTable("system_metrics", {
       id: int().autoincrement().notNull(),
       timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       activeUsers: int().default(0),
@@ -1042,6 +2416,35 @@ var init_schema = __esm({
       memoryUsage: decimal({ precision: 5, scale: 2 }).default("0"),
       storageUsage: decimal({ precision: 10, scale: 2 }).default("0")
     });
+    systemUpdates = mysqlTable("system_updates", {
+      id: int().autoincrement().notNull(),
+      version: varchar({ length: 50 }).notNull(),
+      title: varchar({ length: 255 }).notNull(),
+      changelog: text().notNull(),
+      category: mysqlEnum(["feature", "bugfix", "security", "content", "infrastructure"]).default("feature").notNull(),
+      severity: mysqlEnum(["critical", "major", "minor", "patch"]).default("minor").notNull(),
+      status: mysqlEnum(["draft", "published", "deployed", "rolled_back"]).default("draft").notNull(),
+      affectedSystems: text("affected_systems"),
+      publishedBy: varchar("published_by", { length: 255 }),
+      publishedAt: bigint("published_at", { mode: "number" }),
+      deployedAt: bigint("deployed_at", { mode: "number" }),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
+    taskExecutionLog = mysqlTable(
+      "task_execution_log",
+      {
+        id: int().autoincrement().notNull(),
+        taskId: varchar({ length: 255 }).notNull().references(() => autonomousTasks.id, { onDelete: "cascade" }),
+        eventType: mysqlEnum(["submitted", "started", "step_completed", "completed", "failed", "retried"]).notNull(),
+        details: json(),
+        timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+      },
+      (table) => [
+        index("idx_taskId").on(table.taskId),
+        index("idx_timestamp").on(table.timestamp)
+      ]
+    );
     taskHistory = mysqlTable("task_history", {
       id: int().autoincrement().notNull(),
       sessionId: int().notNull().references(() => agentSessions.id, { onDelete: "cascade" }),
@@ -1052,12 +2455,44 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
       completedAt: timestamp({ mode: "string" })
     });
+    taskSteps = mysqlTable(
+      "task_steps",
+      {
+        id: varchar({ length: 255 }).notNull(),
+        taskId: varchar({ length: 255 }).notNull().references(() => autonomousTasks.id, { onDelete: "cascade" }),
+        stepNumber: int().notNull(),
+        description: text().notNull(),
+        status: mysqlEnum(["pending", "executing", "completed", "failed", "skipped"]).default("pending").notNull(),
+        result: json(),
+        error: text(),
+        executionTime: int(),
+        createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+        startedAt: timestamp({ mode: "string" }),
+        completedAt: timestamp({ mode: "string" })
+      },
+      (table) => [
+        index("idx_taskId").on(table.taskId)
+      ]
+    );
     teamMembers = mysqlTable("team_members", {
       id: int().autoincrement().notNull(),
       teamId: int().notNull().references(() => teams.id, { onDelete: "cascade" }),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
       role: mysqlEnum(["viewer", "editor", "admin"]).default("viewer"),
       joinedAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    });
+    teamNotifications = mysqlTable("team_notifications", {
+      id: int().autoincrement().notNull(),
+      updateId: int("update_id").notNull(),
+      userId: int("user_id"),
+      channel: mysqlEnum(["push", "email", "in_app", "webhook", "sms"]).default("in_app").notNull(),
+      recipient: varchar({ length: 255 }).notNull(),
+      delivered: tinyint().default(0).notNull(),
+      readAt: bigint("read_at", { mode: "number" }),
+      acknowledgedAt: bigint("acknowledged_at", { mode: "number" }),
+      appliedAt: bigint("applied_at", { mode: "number" }),
+      errorMessage: text("error_message"),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
     });
     teams = mysqlTable("teams", {
       id: int().autoincrement().notNull(),
@@ -1125,7 +2560,7 @@ var init_schema = __esm({
       status: mysqlEnum(["active", "inactive", "suspended", "cancelled"]).default("active"),
       billingCycleStart: timestamp({ mode: "string" }).notNull(),
       billingCycleEnd: timestamp({ mode: "string" }).notNull(),
-      autoRenew: int().default(1),
+      autoRenew: tinyint().default(1),
       stripeCustomerId: varchar({ length: 255 }),
       stripeSubscriptionId: varchar({ length: 255 }),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
@@ -1139,15 +2574,11 @@ var init_schema = __esm({
         name: text(),
         email: varchar({ length: 320 }),
         loginMethod: varchar({ length: 64 }),
-        role: mysqlEnum(["user", "admin"]).default("user").notNull(),
-        systemRoles: json().default("[]"),
-        // ['qumus_admin', 'rrb_broadcaster', 'hybridcast_operator']
-        accessibleSystems: json().default('["qumus","rrb","hybridcast"]'),
-        // which systems user can access
+        role: mysqlEnum(["user", "admin", "editor"]).default("user").notNull(),
+        systemRoles: json(),
+        accessibleSystems: json(),
         preferences: json(),
-        // user preferences like theme, language, notifications
         lastActiveSystem: varchar({ length: 64 }).default("qumus"),
-        // last system accessed
         createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
         updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull(),
         lastSignedIn: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
@@ -1156,18 +2587,36 @@ var init_schema = __esm({
         index("users_openId_unique").on(table.openId)
       ]
     );
+    usersWithStripe = mysqlTable("users_with_stripe", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+      stripeCustomerId: varchar("stripe_customer_id", { length: 255 }).notNull(),
+      stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    });
+    viewerMetrics = mysqlTable("viewer_metrics", {
+      id: int().autoincrement().notNull(),
+      streamId: int("stream_id"),
+      timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
+      viewerCount: int("viewer_count").default(0),
+      chatMessages: int("chat_messages").default(0),
+      engagementScore: decimal("engagement_score", { precision: 5, scale: 2 }).default("0"),
+      avgWatchTime: int("avg_watch_time").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
     webhookEndpoints = mysqlTable("webhook_endpoints", {
       id: int().autoincrement().notNull(),
       userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
       url: varchar({ length: 2048 }).notNull(),
       events: text().notNull(),
       secret: varchar({ length: 255 }).notNull(),
-      isActive: int().default(1),
+      isActive: tinyint().default(1),
       retryCount: int().default(3),
-      failureCount: int("failure_count").default(0),
       lastTriggered: timestamp({ mode: "string" }),
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
+      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull(),
+      failureCount: int("failure_count").default(0)
     });
     webhookInstallations = mysqlTable("webhook_installations", {
       id: int().autoincrement().notNull(),
@@ -1175,7 +2624,7 @@ var init_schema = __esm({
       templateId: int().notNull().references(() => webhookTemplates.id),
       name: varchar({ length: 255 }).notNull(),
       config: json().notNull(),
-      isActive: int().default(1),
+      isActive: tinyint().default(1),
       lastTriggered: timestamp({ mode: "string" }),
       successCount: int().default(0),
       failureCount: int().default(0),
@@ -1211,7 +2660,7 @@ var init_schema = __esm({
       events: text().notNull(),
       configSchema: json(),
       documentation: text(),
-      isPublic: int().default(1),
+      isPublic: tinyint().default(1),
       downloads: int().default(0),
       rating: decimal({ precision: 3, scale: 2 }).default("0"),
       reviews: int().default(0),
@@ -1230,991 +2679,329 @@ var init_schema = __esm({
       createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP"),
       updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow()
     });
-    hybridCastNodes = mysqlTable("hybrid_cast_nodes", {
-      id: varchar("id", { length: 64 }).primaryKey(),
-      userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
-      nodeId: varchar("nodeId", { length: 64 }).notNull().unique(),
-      nodeType: mysqlEnum("nodeType", ["gateway", "relay", "endpoint", "hybrid"]).default("hybrid"),
-      status: mysqlEnum("status", ["online", "offline", "degraded", "unreachable"]).default("offline"),
-      location: varchar("location", { length: 255 }),
-      latitude: decimal("latitude", { precision: 10, scale: 8 }),
-      longitude: decimal("longitude", { precision: 11, scale: 8 }),
-      signalStrength: int("signalStrength"),
-      // -100 to 0 dBm
-      bandwidth: int("bandwidth"),
-      // Mbps
-      latency: int("latency"),
-      // milliseconds
-      isActive: int().default(true),
-      lastHeartbeat: timestamp("lastHeartbeat"),
-      createdAt: timestamp("createdAt").defaultNow().notNull(),
-      updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull()
-    });
-    hybridCastConnections = mysqlTable("hybrid_cast_connections", {
-      id: varchar("id", { length: 64 }).primaryKey(),
-      sourceNodeId: varchar("sourceNodeId", { length: 64 }).notNull().references(() => hybridCastNodes.id, { onDelete: "cascade" }),
-      targetNodeId: varchar("targetNodeId", { length: 64 }).notNull().references(() => hybridCastNodes.id, { onDelete: "cascade" }),
-      connectionType: mysqlEnum("connectionType", ["direct", "relay", "mesh"]).default("direct"),
-      signalQuality: int("signalQuality"),
-      // 0-100%
-      bandwidth: int("bandwidth"),
-      // Mbps
-      latency: int("latency"),
-      // milliseconds
-      packetLoss: int("packetLoss"),
-      // percentage
-      isActive: int().default(true),
-      createdAt: timestamp("createdAt").defaultNow().notNull(),
-      updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull()
-    });
-    hybridCastBroadcasts = mysqlTable("hybrid_cast_broadcasts", {
-      id: varchar("id", { length: 64 }).primaryKey(),
-      userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
-      title: varchar("title", { length: 255 }).notNull(),
-      description: text("description"),
-      contentUrl: varchar("contentUrl", { length: 512 }),
-      contentType: varchar("contentType", { length: 32 }),
-      // audio, video, data
-      broadcastMode: mysqlEnum("broadcastMode", ["online", "offline", "hybrid"]).default("hybrid"),
-      targetNodes: text("targetNodes"),
-      // JSON array of node IDs
-      status: mysqlEnum("status", ["scheduled", "broadcasting", "completed", "failed"]).default("scheduled"),
-      startedAt: timestamp("startedAt"),
-      completedAt: timestamp("completedAt"),
-      reachableNodes: int("reachableNodes").default(0),
-      totalNodes: int("totalNodes").default(0),
-      createdAt: timestamp("createdAt").defaultNow().notNull()
-    });
-    alertRules = mysqlTable("alert_rules", {
-      id: varchar("id", { length: 64 }).primaryKey(),
-      userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
-      name: varchar("name", { length: 255 }).notNull(),
-      description: text("description"),
-      metricName: varchar("metricName", { length: 255 }).notNull(),
-      operator: mysqlEnum("operator", ["gt", "lt", "eq", "gte", "lte", "ne"]).default("gt"),
-      threshold: decimal("threshold", { precision: 10, scale: 2 }),
-      duration: int("duration"),
-      // seconds
-      enabled: int().default(true),
-      notificationChannels: text("notificationChannels"),
-      // JSON array
-      createdAt: timestamp("createdAt").defaultNow().notNull(),
-      updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull()
-    });
-    alerts = mysqlTable("alerts", {
-      id: varchar("id", { length: 64 }).primaryKey(),
-      alertRuleId: varchar("alertRuleId", { length: 64 }).notNull().references(() => alertRules.id, { onDelete: "cascade" }),
-      userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
-      severity: mysqlEnum("severity", ["info", "warning", "critical"]).default("warning"),
-      message: text("message").notNull(),
-      value: decimal("value", { precision: 10, scale: 2 }),
-      status: mysqlEnum("status", ["active", "acknowledged", "resolved"]).default("active"),
-      acknowledgedAt: timestamp("acknowledgedAt"),
-      resolvedAt: timestamp("resolvedAt"),
-      createdAt: timestamp("createdAt").defaultNow().notNull()
-    });
-    solbonesFrequencyRolls = mysqlTable("solbones_frequency_rolls", {
-      id: int().autoincrement().notNull().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      frequencyName: varchar({ length: 50 }).notNull(),
-      // UT, RE, MI, FA, SOL, LA, TI, DO
-      frequency: int().notNull(),
-      // Hz value
-      timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      sessionId: varchar({ length: 255 }),
-      // Optional session identifier
-      notes: text(),
-      // User notes about the experience
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    });
-    solbonesLeaderboard = mysqlTable("solbones_leaderboard", {
-      id: int().autoincrement().notNull().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      totalRolls: int().default(0).notNull(),
-      favoriteFrequency: varchar({ length: 50 }),
-      streak: int().default(0).notNull(),
-      lastRollDate: timestamp({ mode: "string" }),
-      achievements: json(),
-      // JSON array of achievement badges
-      score: int().default(0).notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    clientProfiles = mysqlTable("client_profiles", {
-      id: int().autoincrement().notNull().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
-      fullName: varchar({ length: 255 }).notNull(),
-      email: varchar({ length: 320 }).notNull(),
-      phone: varchar({ length: 20 }),
-      subscriptionTier: mysqlEnum(["free", "silver", "gold", "platinum"]).default("free").notNull(),
-      totalDonated: decimal({ precision: 12, scale: 2 }).default("0").notNull(),
-      contentUploads: int().default(0).notNull(),
-      memberSince: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      lastActivityDate: timestamp({ mode: "string" }),
-      profilePicture: varchar({ length: 512 }),
-      // S3 URL
-      bio: text(),
-      preferences: json(),
-      // User preferences and settings
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    clientDonationHistory = mysqlTable("client_donation_history", {
-      id: int().autoincrement().notNull().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      amount: decimal({ precision: 12, scale: 2 }).notNull(),
-      currency: varchar({ length: 3 }).default("USD").notNull(),
-      purpose: varchar({ length: 255 }),
-      // e.g., "Sweet Miracles", "HybridCast", etc.
-      status: mysqlEnum(["pending", "completed", "failed", "refunded"]).default("pending").notNull(),
-      transactionId: varchar({ length: 255 }).unique(),
-      paymentMethod: varchar({ length: 50 }),
-      // stripe, paypal, etc.
-      notes: text(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    });
-    clientContentUploads = mysqlTable("client_content_uploads", {
-      id: int().autoincrement().notNull().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      title: varchar({ length: 255 }).notNull(),
-      description: text(),
-      contentType: mysqlEnum(["audio", "video", "document", "image"]).notNull(),
-      contentUrl: varchar({ length: 512 }).notNull(),
-      // S3 URL
-      fileSize: int(),
-      // bytes
-      duration: int(),
-      // seconds (for audio/video)
-      status: mysqlEnum(["draft", "published", "archived"]).default("draft").notNull(),
-      viewCount: int().default(0).notNull(),
-      downloadCount: int().default(0).notNull(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    reviews = mysqlTable("reviews", {
-      id: int().autoincrement().notNull().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      rating: int().notNull(),
-      // 1-5 stars
-      category: mysqlEnum(["content_quality", "user_experience", "platform_features", "customer_support", "general"]).default("general").notNull(),
-      title: varchar({ length: 255 }).notNull(),
-      content: text().notNull(),
-      isVerified: int().default(0).notNull(),
-      // 0 or 1
-      status: mysqlEnum(["pending", "approved", "rejected"]).default("pending").notNull(),
-      helpfulCount: int().default(0).notNull(),
-      notHelpfulCount: int().default(0).notNull(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    reviewHelpfulness = mysqlTable("review_helpfulness", {
-      id: int().autoincrement().notNull().primaryKey(),
-      reviewId: int().notNull().references(() => reviews.id, { onDelete: "cascade" }),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      isHelpful: int().notNull(),
-      // 1 for helpful, 0 for not helpful
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    }, (table) => [
-      // Ensure one vote per user per review
-      sql`UNIQUE KEY unique_review_user_vote (review_id, user_id)`
-    ]);
-    reviewResponses = mysqlTable("review_responses", {
-      id: int().autoincrement().notNull().primaryKey(),
-      reviewId: int().notNull().references(() => reviews.id, { onDelete: "cascade" }),
-      responderId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      response: text().notNull(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    decisions = mysqlTable("qumus_decisions", {
-      id: varchar({ length: 255 }).notNull().primaryKey(),
-      type: mysqlEnum(["broadcast", "content", "donation", "meditation", "emergency"]).notNull(),
-      description: text().notNull(),
-      subsystem: varchar({ length: 255 }).notNull(),
-      // HybridCast, Rockin Rockin Boogie, Sweet Miracles, Canryn
-      policy: varchar({ length: 255 }).notNull(),
-      // Policy that triggered this decision
-      autonomyLevel: int().notNull(),
-      // 0-100 percentage
-      impact: mysqlEnum(["low", "medium", "high"]).notNull(),
-      status: mysqlEnum(["pending", "approved", "vetoed"]).default("pending").notNull(),
-      approvedBy: varchar({ length: 255 }),
-      // User ID who approved
-      approvedAt: timestamp({ mode: "string" }),
-      vetoedBy: varchar({ length: 255 }),
-      // User ID who vetoed
-      vetoedAt: timestamp({ mode: "string" }),
-      metadata: json(),
-      // Additional decision context
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    decisionLogs = mysqlTable("qumus_decision_logs", {
-      id: int().autoincrement().notNull().primaryKey(),
-      decisionId: varchar({ length: 255 }).notNull().references(() => decisions.id, { onDelete: "cascade" }),
-      action: mysqlEnum(["created", "approved", "vetoed", "executed", "failed"]).notNull(),
-      userId: varchar({ length: 255 }).notNull(),
-      // User ID or 'system'
-      reason: text(),
-      timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    });
-    decisionPolicies = mysqlTable("qumus_decision_policies", {
-      id: varchar({ length: 255 }).notNull().primaryKey(),
-      name: varchar({ length: 255 }).notNull(),
-      description: text(),
-      subsystem: varchar({ length: 255 }).notNull(),
-      rules: json().notNull(),
-      // Policy rules in JSON format
-      autonomyThreshold: int().notNull(),
-      // Min autonomy level to auto-approve
-      requiresApproval: int().default(1).notNull(),
-      // 0 or 1
-      isActive: int().default(1).notNull(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    agents = mysqlTable("agents", {
-      id: int().autoincrement().notNull().primaryKey(),
-      agentId: varchar({ length: 255 }).notNull().unique(),
-      name: varchar({ length: 255 }).notNull(),
-      description: text(),
-      endpoint: varchar({ length: 512 }).notNull(),
-      capabilities: json().notNull(),
-      autonomyLevel: int().default(50),
-      publicKey: text().notNull(),
-      trustScore: int().default(50),
-      uptime: int().default(100),
-      messageCount: int().default(0),
-      lastSeen: timestamp({ mode: "string" }).defaultNow().onUpdateNow(),
-      owner: varchar({ length: 255 }),
-      metadata: json(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    });
-    agentConnections = mysqlTable("agent_connections", {
-      id: int().autoincrement().notNull().primaryKey(),
-      connectionId: varchar({ length: 512 }).notNull().unique(),
-      sourceAgentId: varchar({ length: 255 }).notNull(),
-      targetAgentId: varchar({ length: 255 }).notNull(),
-      status: mysqlEnum(["connected", "disconnected", "pending", "failed"]).default("pending"),
-      trustLevel: int().default(50),
-      messageCount: int().default(0),
-      encryptionEnabled: int().default(1),
-      lastCommunication: timestamp({ mode: "string" }).defaultNow().onUpdateNow(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    });
-    autonomousTasks = mysqlTable("autonomous_tasks", {
-      id: varchar({ length: 255 }).primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      goal: text().notNull(),
-      priority: int().notNull().default(5),
-      status: mysqlEnum(["queued", "executing", "completed", "failed", "cancelled"]).notNull().default("queued"),
-      steps: json(),
-      constraints: json(),
-      result: json(),
-      error: text(),
-      executionTime: int(),
-      retryCount: int().default(0),
-      maxRetries: int().default(3),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      startedAt: timestamp({ mode: "string" }),
-      completedAt: timestamp({ mode: "string" }),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    taskSteps = mysqlTable("task_steps", {
-      id: varchar({ length: 255 }).primaryKey(),
-      taskId: varchar({ length: 255 }).notNull().references(() => autonomousTasks.id, { onDelete: "cascade" }),
-      stepNumber: int().notNull(),
-      description: text().notNull(),
-      status: mysqlEnum(["pending", "executing", "completed", "failed", "skipped"]).notNull().default("pending"),
-      result: json(),
-      error: text(),
-      executionTime: int(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      startedAt: timestamp({ mode: "string" }),
-      completedAt: timestamp({ mode: "string" })
-    });
-    ecosystemCommands = mysqlTable("ecosystem_commands", {
-      id: varchar({ length: 255 }).primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      target: mysqlEnum(["rrb", "hybridcast", "canryn", "sweet_miracles"]).notNull(),
-      action: varchar({ length: 255 }).notNull(),
-      params: json().notNull(),
-      priority: int().notNull().default(5),
-      status: mysqlEnum(["queued", "executing", "completed", "failed"]).notNull().default("queued"),
-      result: json(),
-      error: text(),
-      executionTime: int(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      executedAt: timestamp({ mode: "string" }),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    taskExecutionLog = mysqlTable("task_execution_log", {
-      id: int().autoincrement().primaryKey(),
-      taskId: varchar({ length: 255 }).notNull().references(() => autonomousTasks.id, { onDelete: "cascade" }),
-      eventType: mysqlEnum(["submitted", "started", "step_completed", "completed", "failed", "retried"]).notNull(),
-      details: json(),
-      timestamp: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    });
-    ecosystemStatus = mysqlTable("ecosystem_status", {
-      id: int().autoincrement().primaryKey(),
-      entity: mysqlEnum(["rrb", "hybridcast", "canryn", "sweet_miracles"]).notNull(),
-      status: mysqlEnum(["online", "offline", "degraded", "maintenance"]).notNull().default("online"),
-      lastHeartbeat: timestamp({ mode: "string" }),
-      commandsProcessed: int().default(0),
-      failureRate: decimal({ precision: 5, scale: 2 }).default("0"),
-      metadata: json(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    arMetrics = mysqlTable("ar_metrics", {
-      id: int().autoincrement().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      cpuUsage: decimal({ precision: 5, scale: 2 }).notNull(),
-      // 0-100
-      memoryUsage: decimal({ precision: 5, scale: 2 }).notNull(),
-      // 0-100
-      storageUsage: decimal({ precision: 5, scale: 2 }).notNull(),
-      // 0-100
-      networkLatency: decimal({ precision: 10, scale: 2 }).notNull(),
-      // milliseconds
-      taskExecutionTime: decimal({ precision: 10, scale: 2 }).notNull(),
-      // milliseconds
-      successRate: decimal({ precision: 5, scale: 2 }).notNull(),
-      // 0-100
-      activeConnections: int().notNull(),
-      broadcastQuality: mysqlEnum(["low", "medium", "high", "ultra"]).notNull(),
-      timestamp: timestamp({ mode: "string" }).notNull(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    });
-    voiceCommands = mysqlTable("voice_commands", {
-      id: int().autoincrement().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      commandName: varchar({ length: 255 }).notNull(),
-      commandPhrase: text().notNull(),
-      targetSystem: mysqlEnum(["qumus", "hybridcast", "rrb", "canryn"]).notNull(),
-      targetAction: text().notNull(),
-      confidence: decimal({ precision: 5, scale: 2 }).notNull(),
-      // 0-100
-      usageCount: int().default(0),
-      successCount: int().default(0),
-      lastUsed: timestamp({ mode: "string" }),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    donations = mysqlTable("donations", {
-      id: int().autoincrement().primaryKey(),
-      donorName: varchar({ length: 255 }),
-      donorEmail: varchar({ length: 255 }).notNull(),
-      amount: int().notNull(),
-      // in cents
-      currency: mysqlEnum(["USD", "EUR", "GBP"]).default("USD"),
-      stripePaymentIntentId: varchar({ length: 255 }).notNull().unique(),
-      status: mysqlEnum(["pending", "succeeded", "failed", "refunded"]).default("pending"),
-      broadcastHoursFunded: decimal({ precision: 10, scale: 2 }).notNull(),
-      receiptSent: int().default(0),
-      receiptUrl: text(),
-      metadata: json(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    subscriptions = mysqlTable("subscriptions", {
-      id: int().autoincrement().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      stripeSubscriptionId: varchar({ length: 255 }).notNull().unique(),
-      plan: mysqlEnum(["ar_pro", "voice_training", "enterprise", "hybridcast_basic", "hybridcast_pro", "hybridcast_enterprise"]).notNull(),
-      status: mysqlEnum(["active", "past_due", "canceled", "unpaid"]).default("active"),
-      currentPeriodStart: timestamp({ mode: "string" }).notNull(),
-      currentPeriodEnd: timestamp({ mode: "string" }).notNull(),
-      cancelAtPeriodEnd: int().default(0),
-      canceledAt: timestamp({ mode: "string" }),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    payments = mysqlTable("payments", {
-      id: int().autoincrement().primaryKey(),
-      userId: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      stripePaymentIntentId: varchar({ length: 255 }).notNull().unique(),
-      amount: int().notNull(),
-      // in cents
-      currency: mysqlEnum(["USD", "EUR", "GBP"]).default("USD"),
-      status: mysqlEnum(["succeeded", "processing", "requires_payment_method", "requires_confirmation", "requires_action", "requires_capture", "canceled"]).default("processing"),
-      productName: varchar({ length: 255 }).notNull(),
-      metadata: json(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    emailLogs = mysqlTable("email_logs", {
-      id: int().autoincrement().primaryKey(),
-      recipientEmail: varchar({ length: 255 }).notNull(),
-      emailType: mysqlEnum(["donation_receipt", "payment_confirmation", "subscription_welcome", "subscription_renewal", "subscription_canceled"]).notNull(),
-      subject: varchar({ length: 255 }).notNull(),
-      status: mysqlEnum(["sent", "failed", "bounced", "opened", "clicked"]).default("sent"),
-      relatedId: varchar({ length: 255 }),
-      // donation_id or payment_id
-      retryCount: int().default(0),
-      errorMessage: text(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      sentAt: timestamp({ mode: "string" })
-    });
-    hybridcastPlans = mysqlTable("hybridcast_plans", {
-      id: int().autoincrement().primaryKey(),
-      planName: varchar({ length: 255 }).notNull(),
-      stripePriceId: varchar({ length: 255 }).notNull().unique(),
-      amount: int().notNull(),
-      // in cents
-      currency: mysqlEnum(["USD", "EUR", "GBP"]).default("USD"),
-      interval: mysqlEnum(["month", "year"]).notNull(),
-      features: json().notNull(),
-      // array of features
-      maxBroadcasts: int(),
-      maxListeners: int(),
-      maxStorageGb: int(),
-      priority: int().default(0),
-      description: text(),
-      isActive: int().default(1),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    donationAnalytics = mysqlTable("donation_analytics", {
-      id: int().autoincrement().primaryKey(),
-      period: varchar({ length: 64 }).notNull(),
-      // e.g., '2026-02-26'
-      totalDonations: decimal({ precision: 15, scale: 2 }).default("0"),
-      donationCount: int().default(0),
-      averageDonation: decimal({ precision: 10, scale: 2 }).default("0"),
-      totalBroadcastHoursFunded: decimal({ precision: 10, scale: 2 }).default("0"),
-      topDonor: varchar({ length: 255 }),
-      topDonorAmount: decimal({ precision: 10, scale: 2 }),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    broadcasts = mysqlTable("broadcasts", {
-      id: int().autoincrement().primaryKey(),
-      system: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
-      // which system owns this broadcast
-      createdBy: int().notNull().references(() => users.id, { onDelete: "cascade" }),
-      title: varchar({ length: 255 }).notNull(),
-      description: text(),
-      content: text(),
-      status: mysqlEnum(["scheduled", "live", "completed", "cancelled"]).default("scheduled"),
-      startTime: timestamp({ mode: "string" }).notNull(),
-      endTime: timestamp({ mode: "string" }),
-      duration: int(),
-      // in seconds
-      channels: json().default("[]"),
-      // array of channel IDs
-      isEmergency: int().default(0),
-      metadata: json(),
-      // system-specific metadata
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    listeners = mysqlTable("listeners", {
-      id: int().autoincrement().primaryKey(),
-      broadcastId: int().notNull().references(() => broadcasts.id, { onDelete: "cascade" }),
-      userId: int().references(() => users.id, { onDelete: "set null" }),
-      sessionId: varchar({ length: 255 }).notNull(),
-      // anonymous listener session
-      joinedAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      leftAt: timestamp({ mode: "string" }),
-      duration: int(),
-      // in seconds
-      engagement: int().default(0),
-      // 0-100 engagement score
-      metadata: json(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    });
-    autonomousDecisions = mysqlTable("autonomous_decisions", {
-      id: int().autoincrement().primaryKey(),
-      decisionId: varchar({ length: 255 }).unique().notNull(),
-      // unique decision identifier
-      policy: varchar({ length: 255 }).notNull(),
-      // which policy made this decision
-      system: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
-      action: varchar({ length: 255 }).notNull(),
-      reasoning: text(),
-      autonomyLevel: int().default(90),
-      // 0-100, how autonomous was this decision
-      humanOverride: int().default(0),
-      overrideReason: text(),
-      result: mysqlEnum(["success", "failed", "pending"]).default("pending"),
-      metadata: json(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      updatedAt: timestamp({ mode: "string" }).defaultNow().onUpdateNow().notNull()
-    });
-    systemCommands = mysqlTable("system_commands", {
-      id: int().autoincrement().primaryKey(),
-      commandId: varchar({ length: 255 }).unique().notNull(),
-      sourceSystem: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
-      targetSystem: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
-      command: varchar({ length: 255 }).notNull(),
-      parameters: json(),
-      status: mysqlEnum(["pending", "executing", "completed", "failed"]).default("pending"),
-      result: json(),
-      errorMessage: text(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
-      completedAt: timestamp({ mode: "string" })
-    });
-    systemAuditLog = mysqlTable("system_audit_log", {
-      id: int().autoincrement().primaryKey(),
-      system: mysqlEnum(["qumus", "rrb", "hybridcast"]).notNull(),
-      userId: int().references(() => users.id, { onDelete: "set null" }),
-      action: varchar({ length: 255 }).notNull(),
-      resourceType: varchar({ length: 64 }),
-      resourceId: varchar({ length: 255 }),
-      changes: json(),
-      ipAddress: varchar({ length: 45 }),
-      userAgent: text(),
-      status: mysqlEnum(["success", "failed"]).default("success"),
-      errorMessage: text(),
-      createdAt: timestamp({ mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
-    });
-    contentCalendarPosts = mysqlTable("content_calendar_posts", {
-      id: int("id").primaryKey().autoincrement(),
-      userId: varchar("user_id", { length: 255 }).notNull(),
-      title: varchar("title", { length: 255 }).notNull(),
-      content: text("content").notNull(),
-      scheduledTime: timestamp("scheduled_time").notNull(),
-      platforms: json("platforms").$type().notNull(),
-      status: varchar("status", { length: 20 }).default("draft"),
-      mediaUrls: json("media_urls").$type(),
-      hashtags: json("hashtags").$type(),
-      createdAt: timestamp("created_at").defaultNow(),
-      updatedAt: timestamp("updated_at").defaultNow(),
-      publishedAt: timestamp("published_at")
-    });
-    bulkScheduleTemplates = mysqlTable("bulk_schedule_templates", {
-      id: int("id").primaryKey().autoincrement(),
-      userId: varchar("user_id", { length: 255 }).notNull(),
-      name: varchar("name", { length: 255 }).notNull(),
-      description: text("description"),
-      posts: json("posts").$type().notNull(),
-      schedulePattern: varchar("schedule_pattern", { length: 20 }).notNull(),
-      startDate: timestamp("start_date").notNull(),
-      endDate: timestamp("end_date"),
-      isActive: int("is_active").default(1),
-      createdAt: timestamp("created_at").defaultNow(),
-      updatedAt: timestamp("updated_at").defaultNow()
-    });
-    platformEngagementMetrics = mysqlTable("platform_engagement_metrics", {
-      id: int("id").primaryKey().autoincrement(),
-      postId: int("post_id").notNull(),
-      platform: varchar("platform", { length: 20 }).notNull(),
-      externalPostId: varchar("external_post_id", { length: 255 }).notNull(),
-      likes: int("likes").default(0),
-      shares: int("shares").default(0),
-      comments: int("comments").default(0),
-      views: int("views").default(0),
-      clicks: int("clicks").default(0),
-      impressions: int("impressions").default(0),
-      engagementRate: varchar("engagement_rate", { length: 50 }).default("0%"),
-      lastUpdated: timestamp("last_updated").defaultNow(),
-      createdAt: timestamp("created_at").defaultNow()
-    });
-    analyticsSummary = mysqlTable("analytics_summary", {
-      id: int("id").primaryKey().autoincrement(),
-      userId: varchar("user_id", { length: 255 }).notNull(),
-      platform: varchar("platform", { length: 20 }).notNull(),
-      period: varchar("period", { length: 20 }).notNull(),
-      periodDate: timestamp("period_date").notNull(),
-      totalPosts: int("total_posts").default(0),
-      totalLikes: int("total_likes").default(0),
-      totalShares: int("total_shares").default(0),
-      totalComments: int("total_comments").default(0),
-      totalViews: int("total_views").default(0),
-      totalImpressions: int("total_impressions").default(0),
-      averageEngagementRate: varchar("average_engagement_rate", { length: 50 }).default("0%"),
-      topPost: json("top_post").$type(),
-      createdAt: timestamp("created_at").defaultNow()
-    });
-    customStations = mysqlTable("custom_stations", {
-      id: int("id").primaryKey().autoincrement(),
-      userId: varchar("user_id", { length: 255 }).notNull(),
-      name: varchar("name", { length: 255 }).notNull(),
-      description: text("description"),
-      contentTypes: json("content_types").$type().notNull(),
-      icon: varchar("icon", { length: 50 }),
-      color: varchar("color", { length: 20 }),
-      isPublic: int("is_public").default(0),
-      totalListeners: int("total_listeners").default(0),
-      currentListeners: int("current_listeners").default(0),
-      createdAt: timestamp("created_at").defaultNow(),
-      updatedAt: timestamp("updated_at").defaultNow()
-    });
-    stationTemplates = mysqlTable("station_templates", {
-      id: int("id").primaryKey().autoincrement(),
-      name: varchar("name", { length: 255 }).notNull(),
-      description: text("description"),
-      contentTypes: json("content_types").$type().notNull(),
-      icon: varchar("icon", { length: 50 }).notNull(),
-      color: varchar("color", { length: 20 }).notNull(),
-      isActive: int("is_active").default(1),
-      createdAt: timestamp("created_at").defaultNow()
-    });
-    stationContentSources = mysqlTable("station_content_sources", {
-      id: int("id").primaryKey().autoincrement(),
-      stationId: int("station_id").notNull(),
-      contentType: varchar("content_type", { length: 50 }).notNull(),
-      sourceUrl: varchar("source_url", { length: 500 }).notNull(),
-      priority: int("priority").default(1),
-      isActive: int("is_active").default(1),
-      createdAt: timestamp("created_at").defaultNow()
-    });
-    stationPlaybackHistory = mysqlTable("station_playback_history", {
-      id: int("id").primaryKey().autoincrement(),
-      stationId: int("station_id").notNull(),
-      contentType: varchar("content_type", { length: 50 }).notNull(),
-      title: varchar("title", { length: 255 }).notNull(),
-      description: text("description"),
-      duration: int("duration"),
-      startTime: timestamp("start_time").notNull(),
-      endTime: timestamp("end_time"),
-      listeners: int("listeners").default(0),
-      createdAt: timestamp("created_at").defaultNow()
-    });
-    userStationPreferences = mysqlTable("user_station_preferences", {
-      id: int("id").primaryKey().autoincrement(),
-      userId: varchar("user_id", { length: 255 }).notNull(),
-      stationId: int("station_id").notNull(),
-      isFavorite: int("is_favorite").default(0),
-      lastListenedAt: timestamp("last_listened_at"),
-      totalListenTime: int("total_listen_time").default(0),
-      createdAt: timestamp("created_at").defaultNow(),
-      updatedAt: timestamp("updated_at").defaultNow()
-    });
-    stationSharing = mysqlTable("station_sharing", {
-      id: int("id").primaryKey().autoincrement(),
-      stationId: int("station_id").notNull(),
-      ownerId: varchar("owner_id", { length: 255 }).notNull(),
-      sharedWithUserId: varchar("shared_with_user_id", { length: 255 }).notNull(),
-      permission: varchar("permission", { length: 20 }).default("view"),
-      createdAt: timestamp("created_at").defaultNow()
-    });
-    stationAnalytics = mysqlTable("station_analytics", {
-      id: int("id").primaryKey().autoincrement(),
-      stationId: int("station_id").notNull(),
-      date: timestamp("date").notNull(),
-      totalListeners: int("total_listeners").default(0),
-      peakListeners: int("peak_listeners").default(0),
-      totalListenTime: int("total_listen_time").default(0),
-      uniqueUsers: int("unique_users").default(0),
-      createdAt: timestamp("created_at").defaultNow()
-    });
-    emailSubscribers = mysqlTable("email_subscribers", {
-      id: int("id").autoincrement().primaryKey(),
-      email: varchar("email", { length: 255 }).notNull().unique(),
-      name: varchar("name", { length: 255 }),
-      source: varchar("source", { length: 100 }).default("flyer"),
-      language: varchar("language", { length: 10 }).default("en"),
-      subscribedAt: timestamp("subscribed_at").defaultNow(),
-      isActive: boolean("is_active").default(true)
-    });
-    newsArticles = mysqlTable("news_articles", {
-      id: int("id").autoincrement().primaryKey(),
-      title: varchar("title", { length: 500 }).notNull(),
-      slug: varchar("slug", { length: 500 }).notNull(),
-      summary: text("summary"),
-      content: text("content"),
-      category: varchar("category", { length: 100 }).default("general"),
-      source: varchar("source", { length: 255 }),
-      sourceUrl: varchar("source_url", { length: 1e3 }),
-      imageUrl: varchar("image_url", { length: 1e3 }),
-      isBreaking: boolean("is_breaking").default(false),
-      isFeatured: boolean("is_featured").default(false),
-      authorId: int("author_id"),
-      publishedAt: timestamp("published_at").defaultNow(),
-      createdAt: timestamp("created_at").defaultNow(),
-      updatedAt: timestamp("updated_at").defaultNow()
-    });
-    familyTree = mysqlTable("family_tree", {
-      id: int("id").autoincrement().primaryKey(),
-      name: varchar("name", { length: 255 }).notNull(),
-      nickname: varchar("nickname", { length: 255 }),
-      relationship: varchar("relationship", { length: 255 }),
-      birthYear: int("birth_year"),
-      deathYear: int("death_year"),
-      bio: text("bio"),
-      imageUrl: varchar("image_url", { length: 1e3 }),
-      parentId: int("parent_id"),
-      generation: int("generation").default(0),
-      isKeyFigure: boolean("is_key_figure").default(false),
-      createdAt: timestamp("created_at").defaultNow()
-    });
-    documentationPages = mysqlTable("documentation_pages", {
-      id: int("id").autoincrement().primaryKey(),
-      title: varchar("title", { length: 500 }).notNull(),
-      slug: varchar("slug", { length: 500 }).notNull(),
-      content: text("content"),
-      category: varchar("category", { length: 100 }).default("general"),
-      sortOrder: int("sort_order").default(0),
-      isPublished: boolean("is_published").default(true),
-      createdAt: timestamp("created_at").defaultNow(),
-      updatedAt: timestamp("updated_at").defaultNow()
-    });
-    contentSchedule = mysqlTable("content_schedule", {
-      id: int().autoincrement().primaryKey(),
-      channelId: int("channel_id").notNull(),
-      channelName: varchar("channel_name", { length: 255 }).notNull(),
-      showName: varchar("show_name", { length: 255 }).notNull(),
-      showType: mysqlEnum("show_type", ["music", "talk", "podcast", "commercial", "healing", "live_event", "news", "gospel", "emergency"]).default("music").notNull(),
-      dayOfWeek: mysqlEnum("day_of_week", ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "daily"]).default("daily").notNull(),
-      startTime: varchar("start_time", { length: 10 }).notNull(),
-      endTime: varchar("end_time", { length: 10 }).notNull(),
-      description: text(),
-      host: varchar({ length: 255 }),
-      isRecurring: boolean("is_recurring").default(true).notNull(),
-      isActive: boolean("is_active").default(true).notNull(),
-      priority: int().default(5).notNull(),
-      qumusManaged: boolean("qumus_managed").default(true).notNull(),
-      createdAt: timestamp("created_at").defaultNow(),
-      updatedAt: timestamp("updated_at").defaultNow()
-    });
-    systemUpdates = mysqlTable("system_updates", {
-      id: int().autoincrement().primaryKey(),
-      version: varchar({ length: 50 }).notNull(),
-      title: varchar({ length: 255 }).notNull(),
-      changelog: text().notNull(),
-      category: mysqlEnum(["feature", "bugfix", "security", "content", "infrastructure"]).default("feature").notNull(),
-      severity: mysqlEnum(["critical", "major", "minor", "patch"]).default("minor").notNull(),
-      status: mysqlEnum(["draft", "published", "deployed", "rolled_back"]).default("draft").notNull(),
-      affectedSystems: text("affected_systems"),
-      publishedBy: varchar("published_by", { length: 255 }),
-      publishedAt: bigint("published_at", { mode: "number" }),
-      deployedAt: bigint("deployed_at", { mode: "number" }),
-      createdAt: bigint("created_at", { mode: "number" }).notNull(),
-      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
-    });
-    teamNotifications = mysqlTable("team_notifications", {
-      id: int().autoincrement().primaryKey(),
-      updateId: int("update_id").notNull(),
-      userId: int("user_id"),
-      channel: mysqlEnum(["push", "email", "in_app", "webhook", "sms"]).default("in_app").notNull(),
-      recipient: varchar({ length: 255 }).notNull(),
-      delivered: boolean().default(false).notNull(),
-      readAt: bigint("read_at", { mode: "number" }),
-      acknowledgedAt: bigint("acknowledged_at", { mode: "number" }),
-      appliedAt: bigint("applied_at", { mode: "number" }),
-      errorMessage: text("error_message"),
-      createdAt: bigint("created_at", { mode: "number" }).notNull()
-    });
-    adInventory = mysqlTable("ad_inventory", {
-      id: int().autoincrement().primaryKey(),
-      sponsorName: varchar("sponsor_name", { length: 255 }).notNull(),
-      campaignName: varchar("campaign_name", { length: 255 }).notNull(),
-      audioUrl: text("audio_url"),
-      durationSeconds: int("duration_seconds").default(30).notNull(),
-      category: mysqlEnum(["commercial", "psa", "promo", "sponsor", "community"]).default("commercial").notNull(),
-      targetChannels: text("target_channels"),
-      rotationWeight: int("rotation_weight").default(1).notNull(),
-      maxPlaysPerHour: int("max_plays_per_hour").default(2),
-      timeSlotStart: varchar("time_slot_start", { length: 5 }),
-      timeSlotEnd: varchar("time_slot_end", { length: 5 }),
-      active: boolean().default(true).notNull(),
-      totalPlays: int("total_plays").default(0).notNull(),
-      budgetCents: int("budget_cents"),
-      costPerPlayCents: int("cost_per_play_cents"),
-      startDate: bigint("start_date", { mode: "number" }),
-      endDate: bigint("end_date", { mode: "number" }),
-      createdAt: bigint("created_at", { mode: "number" }).notNull(),
-      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
-    });
-    listenerAnalytics = mysqlTable("listener_analytics", {
-      id: int().autoincrement().primaryKey(),
-      channelId: int("channel_id").notNull(),
-      channelName: varchar("channel_name", { length: 255 }).notNull(),
-      listenerCount: int("listener_count").default(0).notNull(),
-      peakListeners: int("peak_listeners").default(0).notNull(),
-      geoRegion: varchar("geo_region", { length: 100 }),
-      deviceType: mysqlEnum("device_type", ["desktop", "mobile", "tablet", "smart_speaker", "other"]).default("desktop"),
-      sessionDurationSeconds: int("session_duration_seconds").default(0),
-      timestamp: bigint({ mode: "number" }).notNull(),
-      hourOfDay: int("hour_of_day"),
-      dayOfWeek: int("day_of_week"),
-      createdAt: bigint("created_at", { mode: "number" }).notNull()
-    });
-    studioSessions = mysqlTable("studio_sessions", {
-      id: int().autoincrement().primaryKey(),
-      title: varchar({ length: 500 }).notNull(),
-      description: text(),
-      hostUserId: int("host_user_id").references(() => users.id),
-      sessionType: mysqlEnum("session_type", ["podcast", "live_show", "interview", "panel", "workshop", "convention_panel", "recording"]).default("podcast").notNull(),
-      status: mysqlEnum("status", ["draft", "scheduled", "greenroom", "live", "recording", "ended", "archived"]).default("draft").notNull(),
-      scheduledAt: bigint("scheduled_at", { mode: "number" }),
-      startedAt: bigint("started_at", { mode: "number" }),
-      endedAt: bigint("ended_at", { mode: "number" }),
-      maxGuests: int("max_guests").default(8),
-      isPublic: boolean("is_public").default(true),
-      streamPlatforms: json("stream_platforms"),
-      // ["youtube", "twitch", "custom_rtmp"]
-      streamKeys: json("stream_keys"),
-      // encrypted platform stream keys
-      recordingEnabled: boolean("recording_enabled").default(true),
-      recordingUrl: text("recording_url"),
-      // S3 URL after archival
-      thumbnailUrl: text("thumbnail_url"),
-      tags: json("tags"),
-      // ["tech", "music", "interview"]
-      conventionId: int("convention_id"),
-      // links to convention if part of one
-      breakoutRoomId: int("breakout_room_id"),
-      viewerCount: int("viewer_count").default(0),
-      peakViewers: int("peak_viewers").default(0),
-      joinCode: varchar("join_code", { length: 20 }),
-      // unique code for guests to join
-      createdAt: bigint("created_at", { mode: "number" }).notNull(),
-      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
-    });
-    studioGuests = mysqlTable("studio_guests", {
-      id: int().autoincrement().primaryKey(),
-      sessionId: int("session_id").notNull().references(() => studioSessions.id, { onDelete: "cascade" }),
-      userId: int("user_id").references(() => users.id),
-      guestName: varchar("guest_name", { length: 255 }).notNull(),
-      guestEmail: varchar("guest_email", { length: 255 }),
-      guestAvatar: text("guest_avatar"),
-      platform: mysqlEnum("platform", ["internal", "youtube", "twitch", "zoom", "discord", "twitter_spaces", "custom"]).default("internal").notNull(),
-      platformHandle: varchar("platform_handle", { length: 255 }),
-      role: mysqlEnum("role", ["host", "co_host", "panelist", "guest", "moderator", "speaker", "attendee"]).default("guest").notNull(),
-      status: mysqlEnum("status", ["invited", "accepted", "declined", "waiting", "connected", "on_air", "muted", "disconnected"]).default("invited").notNull(),
-      inviteToken: varchar("invite_token", { length: 64 }),
-      joinedAt: bigint("joined_at", { mode: "number" }),
-      leftAt: bigint("left_at", { mode: "number" }),
-      isMuted: boolean("is_muted").default(false),
-      isVideoOn: boolean("is_video_on").default(true),
-      isScreenSharing: boolean("is_screen_sharing").default(false),
-      speakingOrder: int("speaking_order"),
-      bio: text(),
-      createdAt: bigint("created_at", { mode: "number" }).notNull()
-    });
-    conventions = mysqlTable("conventions", {
-      id: int().autoincrement().primaryKey(),
+    podcastShows = mysqlTable("podcast_shows", {
+      id: int().autoincrement().notNull(),
+      slug: varchar({ length: 100 }).notNull(),
       title: varchar({ length: 500 }).notNull(),
       subtitle: varchar({ length: 500 }),
       description: text(),
-      hostUserId: int("host_user_id").references(() => users.id),
-      status: mysqlEnum("status", ["draft", "announced", "registration_open", "active", "day_of", "ended", "archived"]).default("draft").notNull(),
-      startDate: bigint("start_date", { mode: "number" }).notNull(),
-      endDate: bigint("end_date", { mode: "number" }).notNull(),
-      timezone: varchar({ length: 50 }).default("America/New_York"),
-      maxAttendees: int("max_attendees").default(500),
-      currentAttendees: int("current_attendees").default(0),
-      isVirtual: boolean("is_virtual").default(true),
-      isHybrid: boolean("is_hybrid").default(false),
-      venueInfo: text("venue_info"),
-      bannerUrl: text("banner_url"),
-      logoUrl: text("logo_url"),
-      websiteUrl: text("website_url"),
-      registrationFee: decimal("registration_fee", { precision: 10, scale: 2 }).default("0.00"),
-      stripeProductId: varchar("stripe_product_id", { length: 255 }),
-      tags: json("tags"),
-      // ["tech", "music", "community"]
-      sponsors: json("sponsors"),
-      // [{name, logo, tier}]
-      socialLinks: json("social_links"),
-      // {twitter, discord, youtube}
+      hostPersona: mysqlEnum("host_persona", ["candy", "valanna", "seraph"]).notNull(),
+      hostName: varchar("host_name", { length: 255 }).notNull(),
+      coverImageUrl: text("cover_image_url"),
+      themeColor: varchar("theme_color", { length: 20 }).default("#a78bfa"),
+      scheduleDay: varchar("schedule_day", { length: 100 }),
+      scheduleTime: varchar("schedule_time", { length: 50 }),
+      scheduleTimezone: varchar("schedule_timezone", { length: 20 }).default("CT"),
+      isLive: tinyint("is_live").default(0),
+      totalEpisodes: int("total_episodes").default(0),
+      totalListeners: int("total_listeners").default(0),
+      spotifyUrl: text("spotify_url"),
+      appleUrl: text("apple_url"),
+      youtubeUrl: text("youtube_url"),
+      rssFeedUrl: text("rss_feed_url"),
+      isActive: tinyint("is_active").default(1).notNull(),
       createdAt: bigint("created_at", { mode: "number" }).notNull(),
       updatedAt: bigint("updated_at", { mode: "number" }).notNull()
     });
-    conventionSessions = mysqlTable("convention_sessions", {
-      id: int().autoincrement().primaryKey(),
-      conventionId: int("convention_id").notNull().references(() => conventions.id, { onDelete: "cascade" }),
-      studioSessionId: int("studio_session_id").references(() => studioSessions.id),
+    podcastEpisodes = mysqlTable("podcast_episodes", {
+      id: int().autoincrement().notNull(),
+      showId: int("show_id").notNull(),
+      episodeNumber: int("episode_number").notNull(),
       title: varchar({ length: 500 }).notNull(),
       description: text(),
-      sessionType: mysqlEnum("session_type", ["keynote", "panel", "workshop", "breakout", "networking", "performance", "qa", "fireside_chat"]).default("panel").notNull(),
-      track: varchar({ length: 100 }),
-      // "Main Stage", "Tech Track", "Music Track"
-      room: varchar({ length: 100 }),
-      // virtual room name
-      startTime: bigint("start_time", { mode: "number" }).notNull(),
-      endTime: bigint("end_time", { mode: "number" }).notNull(),
-      maxParticipants: int("max_participants").default(50),
-      currentParticipants: int("current_participants").default(0),
-      speakers: json("speakers"),
-      // [{name, bio, avatar, platform}]
-      isRecorded: boolean("is_recorded").default(true),
-      recordingUrl: text("recording_url"),
-      status: mysqlEnum("status", ["scheduled", "live", "ended", "cancelled"]).default("scheduled").notNull(),
-      createdAt: bigint("created_at", { mode: "number" }).notNull()
-    });
-    conventionAttendees = mysqlTable("convention_attendees", {
-      id: int().autoincrement().primaryKey(),
-      conventionId: int("convention_id").notNull().references(() => conventions.id, { onDelete: "cascade" }),
-      userId: int("user_id").references(() => users.id),
-      name: varchar({ length: 255 }).notNull(),
-      email: varchar({ length: 255 }).notNull(),
-      role: mysqlEnum("role", ["attendee", "speaker", "panelist", "moderator", "vip", "sponsor", "organizer"]).default("attendee").notNull(),
-      ticketType: mysqlEnum("ticket_type", ["free", "general", "vip", "speaker", "sponsor"]).default("free").notNull(),
-      registrationStatus: mysqlEnum("registration_status", ["pending", "confirmed", "checked_in", "cancelled", "refunded"]).default("pending").notNull(),
-      stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
-      checkedInAt: bigint("checked_in_at", { mode: "number" }),
-      platform: varchar({ length: 100 }),
-      // how they're connecting
-      avatarUrl: text("avatar_url"),
-      bio: text(),
-      createdAt: bigint("created_at", { mode: "number" }).notNull()
-    });
-    studioRecordings = mysqlTable("studio_recordings", {
-      id: int().autoincrement().primaryKey(),
-      sessionId: int("session_id").notNull().references(() => studioSessions.id, { onDelete: "cascade" }),
-      title: varchar({ length: 500 }).notNull(),
-      description: text(),
-      recordingUrl: text("recording_url").notNull(),
-      // S3 URL
+      audioUrl: text("audio_url"),
+      audioFileKey: varchar("audio_file_key", { length: 500 }),
+      videoUrl: text("video_url"),
       thumbnailUrl: text("thumbnail_url"),
-      durationSeconds: int("duration_seconds").default(0),
-      fileSizeMb: decimal("file_size_mb", { precision: 10, scale: 2 }),
-      format: mysqlEnum("format", ["mp4", "mp3", "wav", "webm", "mkv"]).default("mp4"),
-      isPublished: boolean("is_published").default(false),
-      viewCount: int("view_count").default(0),
+      duration: int(),
+      fileSize: int("file_size"),
+      status: mysqlEnum("status", ["draft", "uploading", "processing", "ready", "published", "scheduled", "archived"]).default("draft").notNull(),
+      publishedAt: bigint("published_at", { mode: "number" }),
+      scheduledPublishAt: bigint("scheduled_publish_at", { mode: "number" }),
+      spotifyEpisodeId: varchar("spotify_episode_id", { length: 255 }),
+      appleEpisodeId: varchar("apple_episode_id", { length: 255 }),
+      youtubeVideoId: varchar("youtube_video_id", { length: 255 }),
+      distributionStatus: json("distribution_status"),
+      playCount: int("play_count").default(0),
+      downloadCount: int("download_count").default(0),
+      likeCount: int("like_count").default(0),
       tags: json("tags"),
+      guestNames: json("guest_names"),
+      showNotes: text("show_notes"),
+      transcriptUrl: text("transcript_url"),
+      chapters: json("chapters"),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
+    callInQueue = mysqlTable("call_in_queue", {
+      id: int().autoincrement().notNull(),
+      showId: int("show_id").notNull(),
+      sessionId: int("session_id"),
+      userId: int("user_id"),
+      callerName: varchar("caller_name", { length: 255 }).notNull(),
+      callerEmail: varchar("caller_email", { length: 255 }),
+      topic: text(),
+      status: mysqlEnum("status", ["waiting", "screening", "ready", "on_air", "completed", "dropped", "rejected"]).default("waiting").notNull(),
+      queuePosition: int("queue_position").default(0),
+      peerId: varchar("peer_id", { length: 255 }),
+      connectionType: mysqlEnum("connection_type", ["webrtc", "phone", "sip"]).default("webrtc").notNull(),
+      isMuted: tinyint("is_muted").default(1),
+      joinedAt: bigint("joined_at", { mode: "number" }).notNull(),
+      onAirAt: bigint("on_air_at", { mode: "number" }),
+      endedAt: bigint("ended_at", { mode: "number" }),
+      durationOnAir: int("duration_on_air"),
+      rating: int(),
+      notes: text(),
       createdAt: bigint("created_at", { mode: "number" }).notNull()
     });
-    socialMediaPosts = mysqlTable("social_media_posts", {
-      id: int().autoincrement().primaryKey(),
-      platform: mysqlEnum("platform", ["twitter", "instagram", "discord", "facebook", "tiktok", "youtube"]).notNull(),
-      postType: mysqlEnum("post_type", ["text", "image", "video", "story", "reel", "announcement"]).default("text").notNull(),
+    clientProfiles = mysqlTable("client_profiles", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      displayName: varchar("display_name", { length: 255 }),
+      bio: text(),
+      avatarUrl: text("avatar_url"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    clientDonationHistory = mysqlTable("client_donation_history", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      amount: decimal({ precision: 10, scale: 2 }).notNull(),
+      currency: varchar({ length: 10 }).default("USD"),
+      status: varchar({ length: 50 }).default("completed"),
+      stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
+      campaign: varchar({ length: 255 }),
+      message: text(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    clientContentUploads = mysqlTable("client_content_uploads", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      fileName: varchar("file_name", { length: 500 }).notNull(),
+      fileUrl: text("file_url").notNull(),
+      fileKey: varchar("file_key", { length: 500 }),
+      fileType: varchar("file_type", { length: 100 }),
+      fileSize: int("file_size"),
+      status: varchar({ length: 50 }).default("uploaded"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    reviews = mysqlTable("reviews", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      targetType: varchar("target_type", { length: 100 }).notNull(),
+      targetId: int("target_id").notNull(),
+      rating: int().notNull(),
+      title: varchar({ length: 500 }),
+      content: text(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    reviewHelpfulness = mysqlTable("review_helpfulness", {
+      id: int().autoincrement().notNull(),
+      reviewId: int("review_id").notNull(),
+      userId: int("user_id").notNull(),
+      helpful: tinyint().default(1),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    reviewResponses = mysqlTable("review_responses", {
+      id: int().autoincrement().notNull(),
+      reviewId: int("review_id").notNull(),
+      userId: int("user_id").notNull(),
       content: text().notNull(),
-      mediaUrl: text("media_url"),
-      hashtags: text(),
-      scheduledAt: bigint("scheduled_at", { mode: "number" }).notNull(),
-      publishedAt: bigint("published_at", { mode: "number" }),
-      status: mysqlEnum("status", ["draft", "scheduled", "published", "failed", "cancelled"]).default("scheduled").notNull(),
-      campaign: varchar({ length: 255 }).default("selma-to-un-csw70"),
-      qumusManaged: boolean("qumus_managed").default(true).notNull(),
-      createdAt: bigint("created_at", { mode: "number" }).notNull(),
-      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
     });
-    squaddMembers = mysqlTable("squadd_members", {
-      id: int().primaryKey().autoincrement(),
+    agentConnections = mysqlTable("agent_connections", {
+      id: int().autoincrement().notNull(),
+      agentId: int("agent_id").notNull(),
+      connectedAgentId: int("connected_agent_id").notNull(),
+      status: varchar({ length: 50 }).default("active"),
+      connectionType: varchar("connection_type", { length: 100 }).default("peer"),
+      metadata: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    analyticsSummary = mysqlTable("analytics_summary", {
+      id: int().autoincrement().notNull(),
+      date: date().notNull(),
+      platform: varchar({ length: 100 }),
+      totalViews: int("total_views").default(0),
+      totalEngagement: int("total_engagement").default(0),
+      totalShares: int("total_shares").default(0),
+      totalComments: int("total_comments").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    broadcastSchedule = mysqlTable("broadcast_schedule", {
+      id: int().autoincrement().notNull(),
+      channelId: int("channel_id"),
+      title: varchar({ length: 500 }).notNull(),
+      description: text(),
+      startTime: timestamp("start_time", { mode: "string" }),
+      endTime: timestamp("end_time", { mode: "string" }),
+      status: varchar({ length: 50 }).default("scheduled"),
+      contentType: varchar("content_type", { length: 100 }),
+      contentUrl: text("content_url"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    bulkScheduleTemplates = mysqlTable("bulk_schedule_templates", {
+      id: int().autoincrement().notNull(),
       name: varchar({ length: 255 }).notNull(),
-      title: varchar({ length: 255 }).notNull(),
-      organization: varchar({ length: 255 }),
-      missionArea: varchar("mission_area", { length: 100 }).notNull(),
-      missionIcon: varchar("mission_icon", { length: 50 }).notNull(),
-      bio: text().notNull(),
-      quote: text(),
-      email: varchar({ length: 255 }),
-      photoUrl: text("photo_url"),
-      focusAreas: json("focus_areas").$type(),
-      achievements: json().$type(),
-      slug: varchar({ length: 100 }).notNull(),
-      displayOrder: int("display_order").default(0),
-      isActive: boolean("is_active").default(true).notNull(),
-      createdAt: bigint("created_at", { mode: "number" }).notNull(),
-      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+      description: text(),
+      templateData: json("template_data"),
+      createdBy: int("created_by"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
     });
-    fundraisingGoals = mysqlTable("fundraising_goals", {
-      id: int().primaryKey().autoincrement(),
-      title: varchar({ length: 255 }).notNull(),
-      description: text().notNull(),
-      targetAmount: decimal("target_amount", { precision: 12, scale: 2 }).notNull(),
-      currentAmount: decimal("current_amount", { precision: 12, scale: 2 }).default("0").notNull(),
-      currency: varchar({ length: 10 }).default("USD").notNull(),
-      campaign: varchar({ length: 255 }).notNull(),
-      startDate: bigint("start_date", { mode: "number" }).notNull(),
-      endDate: bigint("end_date", { mode: "number" }),
-      donorCount: int("donor_count").default(0),
-      isActive: boolean("is_active").default(true).notNull(),
-      createdAt: bigint("created_at", { mode: "number" }).notNull(),
-      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    contentCalendarPosts = mysqlTable("content_calendar_posts", {
+      id: int().autoincrement().notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      content: text(),
+      platform: varchar({ length: 100 }),
+      scheduledAt: timestamp("scheduled_at", { mode: "string" }),
+      status: varchar({ length: 50 }).default("draft"),
+      mediaUrls: json("media_urls"),
+      hashtags: json(),
+      createdBy: int("created_by"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    customStations = mysqlTable("custom_stations", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      description: text(),
+      genre: varchar({ length: 100 }),
+      themeColor: varchar("theme_color", { length: 20 }),
+      logoUrl: text("logo_url"),
+      isPublic: tinyint("is_public").default(1),
+      listenerCount: int("listener_count").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    decisionLogs = mysqlTable("decision_logs", {
+      id: int().autoincrement().notNull(),
+      decisionId: varchar("decision_id", { length: 255 }),
+      policyId: varchar("policy_id", { length: 255 }),
+      action: varchar({ length: 255 }),
+      result: text(),
+      confidence: decimal({ precision: 5, scale: 2 }),
+      metadata: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    fileAccessLogs2 = mysqlTable("file_access_logs", {
+      id: int().autoincrement().notNull(),
+      fileId: int("file_id").notNull(),
+      userId: int("user_id"),
+      action: varchar({ length: 50 }).notNull(),
+      ipAddress: varchar("ip_address", { length: 45 }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    platformEngagementMetrics = mysqlTable("platform_engagement_metrics", {
+      id: int().autoincrement().notNull(),
+      platform: varchar({ length: 100 }).notNull(),
+      date: date().notNull(),
+      impressions: int().default(0),
+      clicks: int().default(0),
+      engagementRate: decimal("engagement_rate", { precision: 5, scale: 2 }).default("0"),
+      followersGained: int("followers_gained").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    stationContentSources = mysqlTable("station_content_sources", {
+      id: int().autoincrement().notNull(),
+      stationId: int("station_id").notNull(),
+      sourceType: varchar("source_type", { length: 100 }).notNull(),
+      sourceUrl: text("source_url"),
+      isActive: tinyint("is_active").default(1),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    stationPlaybackHistory = mysqlTable("station_playback_history", {
+      id: int().autoincrement().notNull(),
+      stationId: int("station_id").notNull(),
+      trackTitle: varchar("track_title", { length: 500 }),
+      artist: varchar({ length: 255 }),
+      playedAt: timestamp("played_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      duration: int()
+    });
+    userStationPreferences = mysqlTable("user_station_preferences", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      stationId: int("station_id").notNull(),
+      isFavorite: tinyint("is_favorite").default(0),
+      volume: int().default(80),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    decisions = mysqlTable("decisions", {
+      id: int().autoincrement().notNull(),
+      policyId: varchar("policy_id", { length: 255 }),
+      decisionType: varchar("decision_type", { length: 100 }),
+      action: varchar({ length: 255 }),
+      confidence: decimal({ precision: 5, scale: 2 }),
+      status: varchar({ length: 50 }).default("pending"),
+      result: text(),
+      metadata: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      executedAt: timestamp("executed_at", { mode: "string" })
+    });
+    files2 = mysqlTable("files", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id"),
+      fileName: varchar("file_name", { length: 500 }).notNull(),
+      fileUrl: text("file_url").notNull(),
+      fileKey: varchar("file_key", { length: 500 }),
+      mimeType: varchar("mime_type", { length: 100 }),
+      fileSize: int("file_size"),
+      category: varchar({ length: 100 }),
+      isPublic: tinyint("is_public").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    payments = mysqlTable("payments", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
+      amount: decimal({ precision: 10, scale: 2 }).notNull(),
+      currency: varchar({ length: 10 }).default("USD"),
+      status: varchar({ length: 50 }).default("pending"),
+      description: text(),
+      metadata: json(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    subscriptions = mysqlTable("subscriptions", {
+      id: int().autoincrement().notNull(),
+      userId: int("user_id").notNull(),
+      plan: varchar({ length: 100 }).notNull(),
+      stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+      status: varchar({ length: 50 }).default("active"),
+      currentPeriodStart: timestamp("current_period_start", { mode: "string" }),
+      currentPeriodEnd: timestamp("current_period_end", { mode: "string" }),
+      cancelAtPeriodEnd: tinyint("cancel_at_period_end").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    stationAnalytics = mysqlTable("station_analytics", {
+      id: int().autoincrement().notNull(),
+      stationId: int("station_id").notNull(),
+      date: date(),
+      listeners: int().default(0),
+      peakListeners: int("peak_listeners").default(0),
+      totalPlayTime: int("total_play_time").default(0),
+      avgSessionDuration: int("avg_session_duration").default(0),
+      tracksPlayed: int("tracks_played").default(0),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    stationTemplates = mysqlTable("station_templates", {
+      id: int().autoincrement().notNull(),
+      name: varchar({ length: 255 }).notNull(),
+      description: text(),
+      genre: varchar({ length: 100 }),
+      defaultConfig: json("default_config"),
+      previewUrl: text("preview_url"),
+      isActive: tinyint("is_active").default(1),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
+    stationSharing = mysqlTable("station_sharing", {
+      id: int().autoincrement().notNull(),
+      stationId: int("station_id").notNull(),
+      sharedWithUserId: int("shared_with_user_id").notNull(),
+      permission: varchar({ length: 50 }).default("listen"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
     });
   }
 });
@@ -4149,12 +4936,12 @@ async function checkAndPublishScheduledPosts() {
   try {
     const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
     const { socialMediaPosts: socialMediaPosts2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
-    const { eq: eq29, and: and20, lte: lte4 } = await import("drizzle-orm");
+    const { eq: eq30, and: and21, lte: lte4 } = await import("drizzle-orm");
     const db2 = await getDb5();
     const now = Date.now();
     const duePosts = await db2.select().from(socialMediaPosts2).where(
-      and20(
-        eq29(socialMediaPosts2.status, "scheduled"),
+      and21(
+        eq30(socialMediaPosts2.status, "scheduled"),
         lte4(socialMediaPosts2.scheduledAt, now)
       )
     );
@@ -4184,7 +4971,7 @@ async function checkAndPublishScheduledPosts() {
         status: newStatus,
         publishedAt: result2.success ? Date.now() : void 0,
         updatedAt: Date.now()
-      }).where(eq29(socialMediaPosts2.id, post.id));
+      }).where(eq30(socialMediaPosts2.id, post.id));
       results.push({
         postId: post.id,
         platform: post.platform,
@@ -4308,13 +5095,13 @@ async function checkStudioPerformance(userId, metrics2) {
     confidence,
     inputData: metrics2
   });
-  const alerts2 = [];
-  if (metrics2.responseTime > 1e3) alerts2.push("High response time");
-  if (metrics2.errorRate > 5) alerts2.push("High error rate");
-  if (metrics2.cpuUsage > 80) alerts2.push("High CPU usage");
+  const alerts = [];
+  if (metrics2.responseTime > 1e3) alerts.push("High response time");
+  if (metrics2.errorRate > 5) alerts.push("High error rate");
+  if (metrics2.cpuUsage > 80) alerts.push("High CPU usage");
   return {
-    healthy: alerts2.length === 0,
-    alerts: alerts2,
+    healthy: alerts.length === 0,
+    alerts,
     autonomousMonitoring: decision.autonomousAction,
     decisionId: decision.decisionId
   };
@@ -6909,7 +7696,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z95 } from "zod";
+import { z as z96 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -7352,17 +8139,17 @@ async function requireDb2() {
 }
 async function listNodes(userId) {
   const db2 = await requireDb2();
-  return await db2.select().from(hybridCastNodes).where(eq4(hybridCastNodes.userId, userId));
+  return await db2.select().from(hybridcastNodes).where(eq4(hybridcastNodes.userId, userId));
 }
 async function getNode(id, userId) {
   const db2 = await requireDb2();
-  return await db2.select().from(hybridCastNodes).where(
-    eq4(hybridCastNodes.id, id) && eq4(hybridCastNodes.userId, userId)
+  return await db2.select().from(hybridcastNodes).where(
+    eq4(hybridcastNodes.id, id) && eq4(hybridcastNodes.userId, userId)
   ).then((rows) => rows[0]);
 }
 async function createNode(userId, data) {
   const db2 = await requireDb2();
-  return await db2.insert(hybridCastNodes).values({
+  return await db2.insert(hybridcastNodes).values({
     userId,
     name: data.name,
     region: data.region,
@@ -7382,26 +8169,26 @@ async function updateNode(id, userId, data) {
   if (data.lastHealthCheck === void 0) {
     updateData.lastHealthCheck = /* @__PURE__ */ new Date();
   }
-  return await db2.update(hybridCastNodes).set(updateData).where(
-    eq4(hybridCastNodes.id, id) && eq4(hybridCastNodes.userId, userId)
+  return await db2.update(hybridcastNodes).set(updateData).where(
+    eq4(hybridcastNodes.id, id) && eq4(hybridcastNodes.userId, userId)
   );
 }
 async function deleteNode(id, userId) {
   const db2 = await requireDb2();
-  return await db2.delete(hybridCastNodes).where(
-    eq4(hybridCastNodes.id, id) && eq4(hybridCastNodes.userId, userId)
+  return await db2.delete(hybridcastNodes).where(
+    eq4(hybridcastNodes.id, id) && eq4(hybridcastNodes.userId, userId)
   );
 }
 async function getReadyNodes(userId) {
   const db2 = await requireDb2();
-  return await db2.select().from(hybridCastNodes).where(
-    eq4(hybridCastNodes.userId, userId) && eq4(hybridCastNodes.status, "ready")
+  return await db2.select().from(hybridcastNodes).where(
+    eq4(hybridcastNodes.userId, userId) && eq4(hybridcastNodes.status, "ready")
   );
 }
 async function getBroadcastingNodes(userId) {
   const db2 = await requireDb2();
-  return await db2.select().from(hybridCastNodes).where(
-    eq4(hybridCastNodes.userId, userId) && eq4(hybridCastNodes.status, "broadcasting")
+  return await db2.select().from(hybridcastNodes).where(
+    eq4(hybridcastNodes.userId, userId) && eq4(hybridcastNodes.status, "broadcasting")
   );
 }
 async function updateNodeStatus(id, userId, status) {
@@ -10247,10 +11034,10 @@ var CommercialTtsService = class {
   /**
    * Generate audio for all commercials
    */
-  async generateAllCommercialAudio(commercials) {
+  async generateAllCommercialAudio(commercials2) {
     const generated = [];
     const fallback = [];
-    for (const commercial of commercials) {
+    for (const commercial of commercials2) {
       const audio = await this.generateCommercialAudio(
         commercial.id,
         commercial.title,
@@ -14358,7 +15145,7 @@ var seedDataRouter = router({
     }
     let alertIds = [];
     if (input.includeAlerts) {
-      const alerts2 = [
+      const alerts = [
         {
           userId: ctx.user.id,
           title: "Severe Weather Alert",
@@ -14393,7 +15180,7 @@ var seedDataRouter = router({
           scheduledFor: new Date(Date.now() - 9e5)
         }
       ];
-      for (const alert of alerts2) {
+      for (const alert of alerts) {
         const result2 = await db2.insert(emergencyAlerts).values(alert);
         alertIds.push(result2.insertId || alertIds.length + 1);
       }
@@ -14490,13 +15277,13 @@ var seedDataRouter = router({
     const db2 = await requireDb5();
     const stations = await db2.select().from(radioStations);
     const channels = await db2.select().from(radioChannels);
-    const alerts2 = await db2.select().from(emergencyAlerts);
+    const alerts = await db2.select().from(emergencyAlerts);
     const broadcasts4 = await db2.select().from(alertBroadcastLog);
     const content = await db2.select().from(rockinBoogieContent);
     return {
       stations: stations.length,
       channels: channels.length,
-      alerts: alerts2.length,
+      alerts: alerts.length,
       broadcasts: broadcasts4.length,
       content: content.length,
       hasData: stations.length > 0
@@ -14798,9 +15585,9 @@ var qumusFileUploadRouter = router({
       }
       const buffer = Buffer.from(input.base64Data, "base64");
       const timestamp2 = Date.now();
-      const randomSuffix2 = Math.random().toString(36).substring(2, 8);
+      const randomSuffix3 = Math.random().toString(36).substring(2, 8);
       const fileExtension = input.fileName.split(".").pop() || "";
-      const s3Key = `qumus-uploads/${ctx.user.id}/${fileType}/${timestamp2}-${randomSuffix2}.${fileExtension}`;
+      const s3Key = `qumus-uploads/${ctx.user.id}/${fileType}/${timestamp2}-${randomSuffix3}.${fileExtension}`;
       const { url: s3Url } = await storagePut(s3Key, buffer, input.mimeType);
       const metadata = {
         originalName: input.fileName,
@@ -14815,7 +15602,7 @@ var qumusFileUploadRouter = router({
       };
       return {
         success: true,
-        fileId: `${timestamp2}-${randomSuffix2}`,
+        fileId: `${timestamp2}-${randomSuffix3}`,
         metadata,
         s3Url,
         message: `${fileType} uploaded successfully`
@@ -15938,7 +16725,7 @@ var documentationRouter = router({
 // server/routers/rrbSeedData.ts
 init_db();
 init_schema();
-import { sql as sql2 } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 var FAMILY_SEED = [
   { name: 'Seabrun "Candy" Hunter Sr.', nickname: "Candy", relationship: "Patriarch / Founder", generation: 0, birthYear: "1945", deathYear: "2018", bio: 'The foundation of everything. Seabrun "Candy" Hunter Sr. was a visionary, protector, and builder. His spirit lives on through the Candy AI Guardian and the entire Canryn Production ecosystem. A man who believed in family, music, and building something that lasts.', isKeyFigure: true, parentId: null },
   { name: "Helen Hunter", nickname: "Grandma Helen", relationship: "Matriarch", generation: 0, birthYear: "1948", deathYear: "2020", bio: "The heart of the family. Helen Hunter held everything together with grace, strength, and unconditional love. Her pageant legacy and community leadership inspired generations. The family archive preserves her memory with honor.", isKeyFigure: true, parentId: null },
@@ -16006,7 +16793,7 @@ var rrbSeedDataRouter = router({
           bio: member.bio,
           isKeyFigure: member.isKeyFigure,
           parentId: member.parentId
-        }).onDuplicateKeyUpdate({ set: { name: sql2`name` } });
+        }).onDuplicateKeyUpdate({ set: { name: sql`name` } });
         results.familyTree++;
       }
     } catch (e) {
@@ -16022,7 +16809,7 @@ var rrbSeedDataRouter = router({
           isBreaking: article.isBreaking,
           isFeatured: article.isFeatured,
           author: article.author
-        }).onDuplicateKeyUpdate({ set: { title: sql2`title` } });
+        }).onDuplicateKeyUpdate({ set: { title: sql`title` } });
         results.news++;
       }
     } catch (e) {
@@ -16037,7 +16824,7 @@ var rrbSeedDataRouter = router({
           content: doc.content,
           sortOrder: doc.sortOrder,
           isPublished: doc.isPublished
-        }).onDuplicateKeyUpdate({ set: { title: sql2`title` } });
+        }).onDuplicateKeyUpdate({ set: { title: sql`title` } });
         results.docs++;
       }
     } catch (e) {
@@ -16052,9 +16839,9 @@ var rrbSeedDataRouter = router({
   // ── Check Seed Status ──
   status: publicProcedure.query(async () => {
     const db2 = await getDb();
-    const [familyCount] = await db2.select({ count: sql2`count(*)` }).from(familyTree);
-    const [newsCount] = await db2.select({ count: sql2`count(*)` }).from(newsArticles);
-    const [docsCount] = await db2.select({ count: sql2`count(*)` }).from(documentationPages);
+    const [familyCount] = await db2.select({ count: sql`count(*)` }).from(familyTree);
+    const [newsCount] = await db2.select({ count: sql`count(*)` }).from(newsArticles);
+    const [docsCount] = await db2.select({ count: sql`count(*)` }).from(documentationPages);
     return {
       familyTree: familyCount?.count ?? 0,
       news: newsCount?.count ?? 0,
@@ -16069,7 +16856,7 @@ import { z as z35 } from "zod";
 init_db();
 init_schema();
 import { TRPCError as TRPCError12 } from "@trpc/server";
-import { eq as eq11, and as and7, desc as desc4, asc as asc2, sql as sql3 } from "drizzle-orm";
+import { eq as eq11, and as and7, desc as desc4, asc as asc2, sql as sql2 } from "drizzle-orm";
 var DEFAULT_SCHEDULE_TEMPLATE = [
   // ── RRB Main (Channel 1) ──
   { channelId: 1, channelName: "RRB Main", showName: "Morning Motivation Mix", showType: "music", dayOfWeek: "daily", startTime: "06:00", endTime: "09:00", description: "Wake up with positive energy \u2014 curated soul, R&B, and uplifting tracks", host: "Valanna AI" },
@@ -16147,7 +16934,7 @@ var contentSchedulerRouter = router({
       const today = days[(/* @__PURE__ */ new Date()).getDay()];
       const results = await db2.select().from(contentSchedule).where(and7(
         eq11(contentSchedule.isActive, true),
-        sql3`(${contentSchedule.dayOfWeek} = ${today} OR ${contentSchedule.dayOfWeek} = 'daily')`
+        sql2`(${contentSchedule.dayOfWeek} = ${today} OR ${contentSchedule.dayOfWeek} = 'daily')`
       )).orderBy(asc2(contentSchedule.startTime));
       return results;
     } catch {
@@ -16164,9 +16951,9 @@ var contentSchedulerRouter = router({
       const today = days[now.getDay()];
       const results = await db2.select().from(contentSchedule).where(and7(
         eq11(contentSchedule.isActive, true),
-        sql3`(${contentSchedule.dayOfWeek} = ${today} OR ${contentSchedule.dayOfWeek} = 'daily')`,
-        sql3`${contentSchedule.startTime} <= ${currentTime}`,
-        sql3`${contentSchedule.endTime} > ${currentTime}`
+        sql2`(${contentSchedule.dayOfWeek} = ${today} OR ${contentSchedule.dayOfWeek} = 'daily')`,
+        sql2`${contentSchedule.startTime} <= ${currentTime}`,
+        sql2`${contentSchedule.endTime} > ${currentTime}`
       )).orderBy(asc2(contentSchedule.channelId));
       return results;
     } catch {
@@ -16269,14 +17056,14 @@ var contentSchedulerRouter = router({
       const today = days[now.getDay()];
       const programming = await db2.select().from(contentSchedule).where(and7(
         eq11(contentSchedule.isActive, true),
-        sql3`(${contentSchedule.dayOfWeek} = ${today} OR ${contentSchedule.dayOfWeek} = 'daily')`,
-        sql3`${contentSchedule.startTime} <= ${currentTime}`,
-        sql3`${contentSchedule.endTime} > ${currentTime}`
+        sql2`(${contentSchedule.dayOfWeek} = ${today} OR ${contentSchedule.dayOfWeek} = 'daily')`,
+        sql2`${contentSchedule.startTime} <= ${currentTime}`,
+        sql2`${contentSchedule.endTime} > ${currentTime}`
       )).orderBy(asc2(contentSchedule.channelId));
       const activeAds = await db2.select().from(adInventory).where(and7(
         eq11(adInventory.active, true),
-        sql3`(${adInventory.timeSlotStart} IS NULL OR ${adInventory.timeSlotStart} <= ${currentHour})`,
-        sql3`(${adInventory.timeSlotEnd} IS NULL OR ${adInventory.timeSlotEnd} >= ${currentHour})`
+        sql2`(${adInventory.timeSlotStart} IS NULL OR ${adInventory.timeSlotStart} <= ${currentHour})`,
+        sql2`(${adInventory.timeSlotEnd} IS NULL OR ${adInventory.timeSlotEnd} >= ${currentHour})`
       )).orderBy(desc4(adInventory.rotationWeight)).limit(5);
       const commercialSlots = programming.filter((p) => p.showType === "commercial");
       const regularProgramming = programming.filter((p) => p.showType !== "commercial");
@@ -16386,7 +17173,7 @@ var contentSchedulerRouter = router({
 
 // server/routers/rrbUpdateOrchestrator.ts
 init_db();
-import { sql as sql4 } from "drizzle-orm";
+import { sql as sql3 } from "drizzle-orm";
 var FAMILY_TREE_SEED = [
   { name: "Seabrun Whitney Hunter Sr.", relationship: "Grandfather", generation: 1, bio: "Patriarch of the Hunter family. A man of deep faith, hard work, and unwavering commitment to family. His legacy lives on through every branch of this tree.", birthYear: "1920", isKeyFigure: true },
   { name: "Helen Hunter", relationship: "Grandmother", generation: 1, bio: "The heart of the family. Known for her warmth, wisdom, and the way she held everyone together. Grandma Helen's love was the foundation everything was built on.", birthYear: "1922", isKeyFigure: true },
@@ -16446,7 +17233,7 @@ var rrbUpdateOrchestratorRouter = router({
     const results = [];
     try {
       const db2 = await getDb();
-      const tables = await db2.execute(sql4`SHOW TABLES`);
+      const tables = await db2.execute(sql3`SHOW TABLES`);
       const tableNames = tables.map((t2) => Object.values(t2)[0]);
       const requiredTables = ["news_articles", "family_tree", "documentation_pages", "content_schedule"];
       const missing = requiredTables.filter((t2) => !tableNames.includes(t2));
@@ -16454,7 +17241,7 @@ var rrbUpdateOrchestratorRouter = router({
         results.push({ step: "Database Verification", status: "warning", message: `Missing tables: ${missing.join(", ")}. Creating...` });
         for (const table of missing) {
           if (table === "content_schedule") {
-            await db2.execute(sql4`CREATE TABLE IF NOT EXISTS content_schedule (id INT AUTO_INCREMENT PRIMARY KEY, channel_id INT NOT NULL, channel_name VARCHAR(255) NOT NULL, show_name VARCHAR(255) NOT NULL, show_type VARCHAR(50) NOT NULL DEFAULT 'music', day_of_week VARCHAR(20) NOT NULL DEFAULT 'daily', start_time VARCHAR(10) NOT NULL, end_time VARCHAR(10) NOT NULL, description TEXT, host VARCHAR(255), is_recurring BOOLEAN NOT NULL DEFAULT TRUE, is_active BOOLEAN NOT NULL DEFAULT TRUE, priority INT NOT NULL DEFAULT 5, qumus_managed BOOLEAN NOT NULL DEFAULT TRUE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`);
+            await db2.execute(sql3`CREATE TABLE IF NOT EXISTS content_schedule (id INT AUTO_INCREMENT PRIMARY KEY, channel_id INT NOT NULL, channel_name VARCHAR(255) NOT NULL, show_name VARCHAR(255) NOT NULL, show_type VARCHAR(50) NOT NULL DEFAULT 'music', day_of_week VARCHAR(20) NOT NULL DEFAULT 'daily', start_time VARCHAR(10) NOT NULL, end_time VARCHAR(10) NOT NULL, description TEXT, host VARCHAR(255), is_recurring BOOLEAN NOT NULL DEFAULT TRUE, is_active BOOLEAN NOT NULL DEFAULT TRUE, priority INT NOT NULL DEFAULT 5, qumus_managed BOOLEAN NOT NULL DEFAULT TRUE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)`);
           }
         }
       } else {
@@ -16465,11 +17252,11 @@ var rrbUpdateOrchestratorRouter = router({
     }
     try {
       const db2 = await getDb();
-      const existing = await db2.execute(sql4`SELECT COUNT(*) as count FROM family_tree`);
+      const existing = await db2.execute(sql3`SELECT COUNT(*) as count FROM family_tree`);
       const count6 = existing[0]?.count || 0;
       if (count6 === 0) {
         for (const member of FAMILY_TREE_SEED) {
-          await db2.execute(sql4`INSERT INTO family_tree (name, relationship, generation, bio, birth_year, is_key_figure) VALUES (${member.name}, ${member.relationship}, ${member.generation}, ${member.bio}, ${member.birthYear || null}, ${member.isKeyFigure})`);
+          await db2.execute(sql3`INSERT INTO family_tree (name, relationship, generation, bio, birth_year, is_key_figure) VALUES (${member.name}, ${member.relationship}, ${member.generation}, ${member.bio}, ${member.birthYear || null}, ${member.isKeyFigure})`);
         }
         results.push({ step: "Family Tree Seed", status: "success", message: `Seeded ${FAMILY_TREE_SEED.length} family members`, count: FAMILY_TREE_SEED.length });
       } else {
@@ -16480,11 +17267,11 @@ var rrbUpdateOrchestratorRouter = router({
     }
     try {
       const db2 = await getDb();
-      const existing = await db2.execute(sql4`SELECT COUNT(*) as count FROM news_articles`);
+      const existing = await db2.execute(sql3`SELECT COUNT(*) as count FROM news_articles`);
       const count6 = existing[0]?.count || 0;
       if (count6 === 0) {
         for (const article of NEWS_SEED2) {
-          await db2.execute(sql4`INSERT INTO news_articles (title, slug, category, content, is_featured, is_breaking) VALUES (${article.title}, ${article.slug}, ${article.category}, ${article.content}, ${article.isFeatured}, ${article.isBreaking})`);
+          await db2.execute(sql3`INSERT INTO news_articles (title, slug, category, content, is_featured, is_breaking) VALUES (${article.title}, ${article.slug}, ${article.category}, ${article.content}, ${article.isFeatured}, ${article.isBreaking})`);
         }
         results.push({ step: "News Articles Seed", status: "success", message: `Seeded ${NEWS_SEED2.length} articles`, count: NEWS_SEED2.length });
       } else {
@@ -16495,11 +17282,11 @@ var rrbUpdateOrchestratorRouter = router({
     }
     try {
       const db2 = await getDb();
-      const existing = await db2.execute(sql4`SELECT COUNT(*) as count FROM documentation_pages`);
+      const existing = await db2.execute(sql3`SELECT COUNT(*) as count FROM documentation_pages`);
       const count6 = existing[0]?.count || 0;
       if (count6 === 0) {
         for (const doc of DOCS_SEED2) {
-          await db2.execute(sql4`INSERT INTO documentation_pages (title, slug, category, content, sort_order) VALUES (${doc.title}, ${doc.slug}, ${doc.category}, ${doc.content}, ${doc.sortOrder})`);
+          await db2.execute(sql3`INSERT INTO documentation_pages (title, slug, category, content, sort_order) VALUES (${doc.title}, ${doc.slug}, ${doc.category}, ${doc.content}, ${doc.sortOrder})`);
         }
         results.push({ step: "Documentation Seed", status: "success", message: `Seeded ${DOCS_SEED2.length} documentation pages`, count: DOCS_SEED2.length });
       } else {
@@ -16510,11 +17297,11 @@ var rrbUpdateOrchestratorRouter = router({
     }
     try {
       const db2 = await getDb();
-      const existing = await db2.execute(sql4`SELECT COUNT(*) as count FROM content_schedule`);
+      const existing = await db2.execute(sql3`SELECT COUNT(*) as count FROM content_schedule`);
       const count6 = existing[0]?.count || 0;
       if (count6 === 0) {
         for (const entry of SCHEDULE_SEED) {
-          await db2.execute(sql4`INSERT INTO content_schedule (channel_id, channel_name, show_name, show_type, day_of_week, start_time, end_time, description, host, is_recurring, is_active, priority, qumus_managed) VALUES (${entry.channelId}, ${entry.channelName}, ${entry.showName}, ${entry.showType}, ${entry.dayOfWeek}, ${entry.startTime}, ${entry.endTime}, ${entry.description}, ${entry.host}, TRUE, TRUE, 5, TRUE)`);
+          await db2.execute(sql3`INSERT INTO content_schedule (channel_id, channel_name, show_name, show_type, day_of_week, start_time, end_time, description, host, is_recurring, is_active, priority, qumus_managed) VALUES (${entry.channelId}, ${entry.channelName}, ${entry.showName}, ${entry.showType}, ${entry.dayOfWeek}, ${entry.startTime}, ${entry.endTime}, ${entry.description}, ${entry.host}, TRUE, TRUE, 5, TRUE)`);
         }
         results.push({ step: "Content Schedule Seed", status: "success", message: `Seeded ${SCHEDULE_SEED.length} schedule entries across all channels`, count: SCHEDULE_SEED.length });
       } else {
@@ -16567,7 +17354,7 @@ var rrbUpdateOrchestratorRouter = router({
       const db2 = await getDb();
       for (const table of ["news_articles", "family_tree", "documentation_pages", "content_schedule"]) {
         try {
-          const result2 = await db2.execute(sql4.raw(`SELECT COUNT(*) as count FROM ${table}`));
+          const result2 = await db2.execute(sql3.raw(`SELECT COUNT(*) as count FROM ${table}`));
           checks[table] = { exists: true, count: result2[0]?.count || 0 };
         } catch {
           checks[table] = { exists: false, count: 0 };
@@ -16601,7 +17388,7 @@ var rrbUpdateOrchestratorRouter = router({
       const counts = {};
       for (const table of ["news_articles", "family_tree", "documentation_pages", "content_schedule"]) {
         try {
-          const result2 = await db2.execute(sql4.raw(`SELECT COUNT(*) as count FROM ${table}`));
+          const result2 = await db2.execute(sql3.raw(`SELECT COUNT(*) as count FROM ${table}`));
           counts[table] = Number(result2[0]?.count || 0);
         } catch {
           counts[table] = 0;
@@ -16627,7 +17414,7 @@ import { z as z36 } from "zod";
 init_db();
 init_schema();
 init_notification();
-import { eq as eq12, desc as desc5, and as and8, sql as sql5, count as count2 } from "drizzle-orm";
+import { eq as eq12, desc as desc5, and as and8, sql as sql4, count as count2 } from "drizzle-orm";
 var teamUpdatesRouter = router({
   // ─── Publish a new system update ──────────────────────────
   publishUpdate: protectedProcedure.input(z36.object({
@@ -16865,7 +17652,7 @@ ${update2.changelog}` } },
     ));
     const [stats] = await db2.select({
       total: count2(),
-      applied: sql5`SUM(CASE WHEN ${teamNotifications.appliedAt} IS NOT NULL THEN 1 ELSE 0 END)`
+      applied: sql4`SUM(CASE WHEN ${teamNotifications.appliedAt} IS NOT NULL THEN 1 ELSE 0 END)`
     }).from(teamNotifications).where(eq12(teamNotifications.updateId, input.updateId));
     if (stats && stats.total > 0 && stats.applied >= stats.total) {
       await db2.update(systemUpdates).set({ status: "deployed", deployedAt: now, updatedAt: now }).where(eq12(systemUpdates.id, input.updateId));
@@ -16910,7 +17697,7 @@ ${update2.changelog}` } },
       update: systemUpdates
     }).from(teamNotifications).innerJoin(systemUpdates, eq12(teamNotifications.updateId, systemUpdates.id)).where(and8(
       eq12(teamNotifications.userId, ctx.user.id),
-      sql5`${teamNotifications.appliedAt} IS NULL`
+      sql4`${teamNotifications.appliedAt} IS NULL`
     )).orderBy(desc5(systemUpdates.createdAt));
     return myNotifications.map((row) => ({
       ...row.update,
@@ -16926,8 +17713,8 @@ ${update2.changelog}` } },
     const [totalUpdates] = await db2.select({ count: count2() }).from(systemUpdates);
     const [totalNotifications] = await db2.select({ count: count2() }).from(teamNotifications);
     const [deliveredCount] = await db2.select({ count: count2() }).from(teamNotifications).where(eq12(teamNotifications.delivered, true));
-    const [acknowledgedCount] = await db2.select({ count: count2() }).from(teamNotifications).where(sql5`${teamNotifications.acknowledgedAt} IS NOT NULL`);
-    const [appliedCount] = await db2.select({ count: count2() }).from(teamNotifications).where(sql5`${teamNotifications.appliedAt} IS NOT NULL`);
+    const [acknowledgedCount] = await db2.select({ count: count2() }).from(teamNotifications).where(sql4`${teamNotifications.acknowledgedAt} IS NOT NULL`);
+    const [appliedCount] = await db2.select({ count: count2() }).from(teamNotifications).where(sql4`${teamNotifications.appliedAt} IS NOT NULL`);
     const recentUpdates = await db2.select().from(systemUpdates).orderBy(desc5(systemUpdates.createdAt)).limit(5);
     return {
       totalUpdates: totalUpdates?.count || 0,
@@ -16944,7 +17731,7 @@ ${update2.changelog}` } },
 import { z as z37 } from "zod";
 init_db();
 init_schema();
-import { eq as eq13, desc as desc6, and as and9, sql as sql6, count as count3 } from "drizzle-orm";
+import { eq as eq13, desc as desc6, and as and9, sql as sql5, count as count3 } from "drizzle-orm";
 var adRotationRouter = router({
   // ─── Get all ads with filtering ───────────────────────────
   getAds: publicProcedure.input(z37.object({
@@ -17043,8 +17830,8 @@ var adRotationRouter = router({
     const currentTimeStr = `${String(currentHour).padStart(2, "0")}:00`;
     const activeAds = await db2.select().from(adInventory).where(and9(
       eq13(adInventory.active, true),
-      sql6`(${adInventory.startDate} IS NULL OR ${adInventory.startDate} <= ${now})`,
-      sql6`(${adInventory.endDate} IS NULL OR ${adInventory.endDate} >= ${now})`
+      sql5`(${adInventory.startDate} IS NULL OR ${adInventory.startDate} <= ${now})`,
+      sql5`(${adInventory.endDate} IS NULL OR ${adInventory.endDate} >= ${now})`
     )).orderBy(desc6(adInventory.rotationWeight));
     if (activeAds.length === 0) return null;
     const channelAds = activeAds.filter((ad) => {
@@ -17063,7 +17850,7 @@ var adRotationRouter = router({
     for (const ad of pool) {
       random -= ad.rotationWeight;
       if (random <= 0) {
-        await db2.update(adInventory).set({ totalPlays: sql6`${adInventory.totalPlays} + 1`, updatedAt: Date.now() }).where(eq13(adInventory.id, ad.id));
+        await db2.update(adInventory).set({ totalPlays: sql5`${adInventory.totalPlays} + 1`, updatedAt: Date.now() }).where(eq13(adInventory.id, ad.id));
         return ad;
       }
     }
@@ -17074,19 +17861,19 @@ var adRotationRouter = router({
     const db2 = await getDb();
     const [totalAds] = await db2.select({ count: count3() }).from(adInventory);
     const [activeAds] = await db2.select({ count: count3() }).from(adInventory).where(eq13(adInventory.active, true));
-    const [totalPlays] = await db2.select({ total: sql6`COALESCE(SUM(${adInventory.totalPlays}), 0)` }).from(adInventory);
+    const [totalPlays] = await db2.select({ total: sql5`COALESCE(SUM(${adInventory.totalPlays}), 0)` }).from(adInventory);
     const [totalRevenue] = await db2.select({
-      total: sql6`COALESCE(SUM(${adInventory.totalPlays} * ${adInventory.costPerPlayCents}), 0)`
-    }).from(adInventory).where(sql6`${adInventory.costPerPlayCents} IS NOT NULL`);
+      total: sql5`COALESCE(SUM(${adInventory.totalPlays} * ${adInventory.costPerPlayCents}), 0)`
+    }).from(adInventory).where(sql5`${adInventory.costPerPlayCents} IS NOT NULL`);
     const topSponsors = await db2.select({
       sponsorName: adInventory.sponsorName,
-      totalPlays: sql6`SUM(${adInventory.totalPlays})`,
+      totalPlays: sql5`SUM(${adInventory.totalPlays})`,
       campaignCount: count3()
-    }).from(adInventory).groupBy(adInventory.sponsorName).orderBy(desc6(sql6`SUM(${adInventory.totalPlays})`)).limit(10);
+    }).from(adInventory).groupBy(adInventory.sponsorName).orderBy(desc6(sql5`SUM(${adInventory.totalPlays})`)).limit(10);
     const categoryBreakdown = await db2.select({
       category: adInventory.category,
       count: count3(),
-      totalPlays: sql6`SUM(${adInventory.totalPlays})`
+      totalPlays: sql5`SUM(${adInventory.totalPlays})`
     }).from(adInventory).groupBy(adInventory.category);
     return {
       totalAds: totalAds?.count || 0,
@@ -17138,7 +17925,7 @@ var adRotationRouter = router({
 import { z as z38 } from "zod";
 init_db();
 init_schema();
-import { eq as eq14, desc as desc7, sql as sql7, count as count4, and as and10 } from "drizzle-orm";
+import { eq as eq14, desc as desc7, sql as sql6, count as count4, and as and10 } from "drizzle-orm";
 var listenerAnalyticsRouter = router({
   // ─── Record a listener event ──────────────────────────────
   recordEvent: publicProcedure.input(z38.object({
@@ -17173,24 +17960,24 @@ var listenerAnalyticsRouter = router({
     const now = Date.now();
     const oneHourAgo = now - 36e5;
     const oneDayAgo = now - 864e5;
-    const [hourlyEvents] = await db2.select({ count: count4() }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneHourAgo}`);
-    const [dailyEvents] = await db2.select({ count: count4() }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
+    const [hourlyEvents] = await db2.select({ count: count4() }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneHourAgo}`);
+    const [dailyEvents] = await db2.select({ count: count4() }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     const [totalListeners] = await db2.select({
-      count: sql7`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
-    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
+      count: sql6`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
+    }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     const topChannels = await db2.select({
       channelId: listenerAnalytics.channelId,
       eventCount: count4()
-    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.channelId).orderBy(desc7(count4())).limit(10);
+    }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.channelId).orderBy(desc7(count4())).limit(10);
     const eventBreakdown = await db2.select({
       eventType: listenerAnalytics.deviceType,
       count: count4()
-    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.deviceType);
+    }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.deviceType);
     const [avgDuration] = await db2.select({
-      avg: sql7`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`
+      avg: sql6`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`
     }).from(listenerAnalytics).where(and10(
-      sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`,
-      sql7`${listenerAnalytics.sessionDurationSeconds} > 0`
+      sql6`${listenerAnalytics.createdAt} >= ${oneDayAgo}`,
+      sql6`${listenerAnalytics.sessionDurationSeconds} > 0`
     ));
     return {
       hourlyEvents: hourlyEvents?.count || 0,
@@ -17220,10 +18007,10 @@ var listenerAnalyticsRouter = router({
     const now = Date.now();
     const oneDayAgo = now - 864e5;
     const hourlyData = await db2.select({
-      hour: sql7`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`,
+      hour: sql6`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`,
       eventCount: count4(),
-      totalListeners: sql7`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
-    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(sql7`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`).orderBy(sql7`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`);
+      totalListeners: sql6`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
+    }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(sql6`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`).orderBy(sql6`HOUR(FROM_UNIXTIME(${listenerAnalytics.createdAt} / 1000))`);
     return hourlyData;
   }),
   // ─── Get channel engagement heatmap ──────────────────────────
@@ -17235,8 +18022,8 @@ var listenerAnalyticsRouter = router({
       channelId: listenerAnalytics.channelId,
       deviceType: listenerAnalytics.deviceType,
       count: count4(),
-      avgDuration: sql7`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`
-    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneWeekAgo}`).groupBy(listenerAnalytics.channelId, listenerAnalytics.deviceType).orderBy(desc7(count4()));
+      avgDuration: sql6`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`
+    }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneWeekAgo}`).groupBy(listenerAnalytics.channelId, listenerAnalytics.deviceType).orderBy(desc7(count4()));
     return heatmap;
   }),
   // ─── Get engagement score per channel ────────────────────────
@@ -17247,10 +18034,10 @@ var listenerAnalyticsRouter = router({
     const scores = await db2.select({
       channelId: listenerAnalytics.channelId,
       totalEvents: count4(),
-      totalListeners: sql7`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`,
-      avgDuration: sql7`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`,
-      peakListeners: sql7`COALESCE(MAX(${listenerAnalytics.peakListeners}), 0)`
-    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.channelId).orderBy(desc7(count4()));
+      totalListeners: sql6`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`,
+      avgDuration: sql6`COALESCE(AVG(${listenerAnalytics.sessionDurationSeconds}), 0)`,
+      peakListeners: sql6`COALESCE(MAX(${listenerAnalytics.peakListeners}), 0)`
+    }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneDayAgo}`).groupBy(listenerAnalytics.channelId).orderBy(desc7(count4()));
     return scores.map((ch) => {
       const durationScore = Math.min(ch.avgDuration / 300, 1);
       const listenerScore = Math.min(ch.totalListeners / 100, 1);
@@ -17273,14 +18060,14 @@ var listenerAnalyticsRouter = router({
     const db2 = await getDb();
     const now = Date.now();
     const oneDayAgo = now - 864e5;
-    const [dailyListeners] = await db2.select({ count: count4() }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
+    const [dailyListeners] = await db2.select({ count: count4() }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     const [totalListeners] = await db2.select({
-      count: sql7`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
-    }).from(listenerAnalytics).where(sql7`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
+      count: sql6`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
+    }).from(listenerAnalytics).where(sql6`${listenerAnalytics.createdAt} >= ${oneDayAgo}`);
     const [adStats] = await db2.select({
       totalAds: count4(),
-      totalPlays: sql7`COALESCE(SUM(${adInventory.totalPlays}), 0)`,
-      totalRevenue: sql7`COALESCE(SUM(${adInventory.totalPlays} * ${adInventory.costPerPlayCents}), 0)`
+      totalPlays: sql6`COALESCE(SUM(${adInventory.totalPlays}), 0)`,
+      totalRevenue: sql6`COALESCE(SUM(${adInventory.totalPlays} * ${adInventory.costPerPlayCents}), 0)`
     }).from(adInventory).where(eq14(adInventory.active, true));
     return {
       dailyImpressions: dailyListeners?.count ?? 0,
@@ -17297,7 +18084,7 @@ var listenerAnalyticsRouter = router({
 import { z as z39 } from "zod";
 init_db();
 init_schema();
-import { eq as eq15, desc as desc8, sql as sql8 } from "drizzle-orm";
+import { eq as eq15, desc as desc8, sql as sql7 } from "drizzle-orm";
 var webhookManagerRouter = router({
   // ── List all webhook endpoints ──
   list: protectedProcedure.query(async () => {
@@ -17365,7 +18152,7 @@ var webhookManagerRouter = router({
         body: JSON.stringify(testPayload),
         signal: AbortSignal.timeout(1e4)
       });
-      await db2.update(webhookEndpoints).set({ lastTriggered: sql8`NOW()` }).where(eq15(webhookEndpoints.id, input.id));
+      await db2.update(webhookEndpoints).set({ lastTriggered: sql7`NOW()` }).where(eq15(webhookEndpoints.id, input.id));
       await db2.insert(webhookLogs).values({
         webhookId: endpoint.id,
         eventType: "test",
@@ -17387,7 +18174,7 @@ var webhookManagerRouter = router({
         error: error.message,
         retryCount: 0
       });
-      await db2.update(webhookEndpoints).set({ failureCount: sql8`failure_count + 1` }).where(eq15(webhookEndpoints.id, input.id));
+      await db2.update(webhookEndpoints).set({ failureCount: sql7`failure_count + 1` }).where(eq15(webhookEndpoints.id, input.id));
       return { success: false, message: `Webhook test failed: ${error.message}` };
     }
   }),
@@ -17484,7 +18271,7 @@ ${input.changelog || "No changelog provided."}`
           body,
           signal: AbortSignal.timeout(1e4)
         });
-        await db2.update(webhookEndpoints).set({ lastTriggered: sql8`NOW()` }).where(eq15(webhookEndpoints.id, endpoint.id));
+        await db2.update(webhookEndpoints).set({ lastTriggered: sql7`NOW()` }).where(eq15(webhookEndpoints.id, endpoint.id));
         await db2.insert(webhookLogs).values({
           webhookId: endpoint.id,
           eventType: input.event,
@@ -17495,7 +18282,7 @@ ${input.changelog || "No changelog provided."}`
         });
         results.push({ endpoint: endpoint.url, success: response.ok });
       } catch (error) {
-        await db2.update(webhookEndpoints).set({ failureCount: sql8`failure_count + 1` }).where(eq15(webhookEndpoints.id, endpoint.id));
+        await db2.update(webhookEndpoints).set({ failureCount: sql7`failure_count + 1` }).where(eq15(webhookEndpoints.id, endpoint.id));
         await db2.insert(webhookLogs).values({
           webhookId: endpoint.id,
           eventType: input.event,
@@ -17522,9 +18309,9 @@ ${input.changelog || "No changelog provided."}`
   // ── Get webhook stats ──
   stats: publicProcedure.query(async () => {
     const db2 = await getDb();
-    const [totalEndpoints] = await db2.select({ count: sql8`count(*)` }).from(webhookEndpoints);
-    const [activeEndpoints] = await db2.select({ count: sql8`count(*)` }).from(webhookEndpoints).where(eq15(webhookEndpoints.isActive, 1));
-    const [totalLogs] = await db2.select({ count: sql8`count(*)` }).from(webhookLogs);
+    const [totalEndpoints] = await db2.select({ count: sql7`count(*)` }).from(webhookEndpoints);
+    const [activeEndpoints] = await db2.select({ count: sql7`count(*)` }).from(webhookEndpoints).where(eq15(webhookEndpoints.isActive, 1));
+    const [totalLogs] = await db2.select({ count: sql7`count(*)` }).from(webhookLogs);
     return {
       totalEndpoints: totalEndpoints?.count ?? 0,
       activeEndpoints: activeEndpoints?.count ?? 0,
@@ -17539,7 +18326,7 @@ init_qumusProductionIntegration();
 init_db();
 init_schema();
 init_notification();
-import { eq as eq16, desc as desc9, sql as sql9, count as count5, and as and11 } from "drizzle-orm";
+import { eq as eq16, desc as desc9, sql as sql8, count as count5, and as and11 } from "drizzle-orm";
 var EVENT_TYPES = [
   "broadcast.started",
   "broadcast.stopped",
@@ -17581,7 +18368,7 @@ var productionIntegrationRouter = router({
     const [webhookCount] = await db2.select({ count: count5() }).from(webhookEndpoints).where(eq16(webhookEndpoints.isActive, 1));
     const [adCount] = await db2.select({ count: count5() }).from(adInventory).where(eq16(adInventory.active, true));
     const [recentListeners] = await db2.select({
-      count: sql9`COUNT(*)`
+      count: sql8`COUNT(*)`
     }).from(listenerAnalytics);
     return {
       ...status,
@@ -17641,8 +18428,8 @@ var productionIntegrationRouter = router({
     const now = Date.now();
     const activeAds = await db2.select().from(adInventory).where(and11(
       eq16(adInventory.active, true),
-      sql9`(${adInventory.startDate} IS NULL OR ${adInventory.startDate} <= ${now})`,
-      sql9`(${adInventory.endDate} IS NULL OR ${adInventory.endDate} >= ${now})`
+      sql8`(${adInventory.startDate} IS NULL OR ${adInventory.startDate} <= ${now})`,
+      sql8`(${adInventory.endDate} IS NULL OR ${adInventory.endDate} >= ${now})`
     )).orderBy(desc9(adInventory.rotationWeight)).limit(3);
     if (activeAds.length > 0) {
       const adEvent = engine.createEvent("ad.rotated", "ad-rotation", {
@@ -17721,8 +18508,8 @@ var productionIntegrationRouter = router({
     });
     await engine.emit(listenerEvent);
     const [currentListeners] = await db2.select({
-      count: sql9`SUM(${listenerAnalytics.listenerCount})`
-    }).from(listenerAnalytics).where(sql9`${listenerAnalytics.createdAt} > ${now - 36e5}`);
+      count: sql8`SUM(${listenerAnalytics.listenerCount})`
+    }).from(listenerAnalytics).where(sql8`${listenerAnalytics.createdAt} > ${now - 36e5}`);
     const listenerCount = currentListeners?.count ?? 0;
     const milestones = [10, 25, 50, 100, 250, 500, 1e3];
     if (milestones.includes(listenerCount)) {
@@ -17904,8 +18691,8 @@ Instructions: ${input.instructions || "Stand by for updates"}`
     const oneHourAgo = now - 36e5;
     const status = engine.getStatus();
     const [listeners2] = await db2.select({
-      count: sql9`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
-    }).from(listenerAnalytics).where(sql9`${listenerAnalytics.createdAt} > ${oneHourAgo}`);
+      count: sql8`COALESCE(SUM(${listenerAnalytics.listenerCount}), 0)`
+    }).from(listenerAnalytics).where(sql8`${listenerAnalytics.createdAt} > ${oneHourAgo}`);
     const [ads] = await db2.select({ count: count5() }).from(adInventory).where(eq16(adInventory.active, true));
     const [webhooks] = await db2.select({ count: count5() }).from(webhookEndpoints).where(eq16(webhookEndpoints.isActive, 1));
     const [webhookDeliveries] = await db2.select({ count: count5() }).from(webhookLogs);
@@ -17943,7 +18730,7 @@ Instructions: ${input.instructions || "Stand by for updates"}`
 import { z as z41 } from "zod";
 init_db();
 init_schema();
-import { eq as eq17, desc as desc10, and as and12, sql as sql10 } from "drizzle-orm";
+import { eq as eq17, desc as desc10, and as and12, sql as sql9 } from "drizzle-orm";
 import crypto3 from "crypto";
 function generateJoinCode() {
   return crypto3.randomBytes(5).toString("hex").toUpperCase();
@@ -18195,17 +18982,17 @@ var studioRouter = router({
   getStudioStats: protectedProcedure.query(async ({ ctx }) => {
     const db2 = await getDb();
     const [sessionStats] = await db2.select({
-      total: sql10`COUNT(*)`,
-      live: sql10`SUM(CASE WHEN status = 'live' THEN 1 ELSE 0 END)`,
-      scheduled: sql10`SUM(CASE WHEN status = 'scheduled' THEN 1 ELSE 0 END)`,
-      archived: sql10`SUM(CASE WHEN status IN ('ended', 'archived') THEN 1 ELSE 0 END)`,
-      totalViewers: sql10`COALESCE(SUM(viewer_count), 0)`,
-      peakViewers: sql10`COALESCE(MAX(peak_viewers), 0)`
+      total: sql9`COUNT(*)`,
+      live: sql9`SUM(CASE WHEN status = 'live' THEN 1 ELSE 0 END)`,
+      scheduled: sql9`SUM(CASE WHEN status = 'scheduled' THEN 1 ELSE 0 END)`,
+      archived: sql9`SUM(CASE WHEN status IN ('ended', 'archived') THEN 1 ELSE 0 END)`,
+      totalViewers: sql9`COALESCE(SUM(viewer_count), 0)`,
+      peakViewers: sql9`COALESCE(MAX(peak_viewers), 0)`
     }).from(studioSessions).where(eq17(studioSessions.hostUserId, ctx.user.id));
     const [recordingStats] = await db2.select({
-      total: sql10`COUNT(*)`,
-      published: sql10`SUM(CASE WHEN is_published = true THEN 1 ELSE 0 END)`,
-      totalViews: sql10`COALESCE(SUM(view_count), 0)`
+      total: sql9`COUNT(*)`,
+      published: sql9`SUM(CASE WHEN is_published = true THEN 1 ELSE 0 END)`,
+      totalViews: sql9`COALESCE(SUM(view_count), 0)`
     }).from(studioRecordings);
     return {
       sessions: sessionStats,
@@ -18218,7 +19005,7 @@ var studioRouter = router({
 import { z as z42 } from "zod";
 init_db();
 init_schema();
-import { eq as eq18, desc as desc11, and as and13, sql as sql11 } from "drizzle-orm";
+import { eq as eq18, desc as desc11, and as and13, sql as sql10 } from "drizzle-orm";
 var conventionRouter = router({
   // ─── Convention CRUD ───────────────────────────────────
   createConvention: protectedProcedure.input(z42.object({
@@ -18286,11 +19073,11 @@ var conventionRouter = router({
     if (!convention) throw new Error("Convention not found");
     const sessions = await db2.select().from(conventionSessions).where(eq18(conventionSessions.conventionId, input.id)).orderBy(conventionSessions.startTime);
     const [attendeeStats] = await db2.select({
-      total: sql11`COUNT(*)`,
-      confirmed: sql11`SUM(CASE WHEN registration_status = 'confirmed' THEN 1 ELSE 0 END)`,
-      checkedIn: sql11`SUM(CASE WHEN registration_status = 'checked_in' THEN 1 ELSE 0 END)`,
-      speakers: sql11`SUM(CASE WHEN role = 'speaker' THEN 1 ELSE 0 END)`,
-      vips: sql11`SUM(CASE WHEN role = 'vip' THEN 1 ELSE 0 END)`
+      total: sql10`COUNT(*)`,
+      confirmed: sql10`SUM(CASE WHEN registration_status = 'confirmed' THEN 1 ELSE 0 END)`,
+      checkedIn: sql10`SUM(CASE WHEN registration_status = 'checked_in' THEN 1 ELSE 0 END)`,
+      speakers: sql10`SUM(CASE WHEN role = 'speaker' THEN 1 ELSE 0 END)`,
+      vips: sql10`SUM(CASE WHEN role = 'vip' THEN 1 ELSE 0 END)`
     }).from(conventionAttendees).where(eq18(conventionAttendees.conventionId, input.id));
     return { ...convention, sessions, attendeeStats };
   }),
@@ -18405,7 +19192,7 @@ var conventionRouter = router({
       createdAt: now
     });
     await db2.update(conventions).set({
-      currentAttendees: sql11`current_attendees + 1`,
+      currentAttendees: sql10`current_attendees + 1`,
       updatedAt: now
     }).where(eq18(conventions.id, input.conventionId));
     return { id: result2.insertId, status: input.ticketType === "free" ? "confirmed" : "pending" };
@@ -18431,11 +19218,11 @@ var conventionRouter = router({
   getConventionStats: protectedProcedure.query(async ({ ctx }) => {
     const db2 = await getDb();
     const [stats] = await db2.select({
-      total: sql11`COUNT(*)`,
-      active: sql11`SUM(CASE WHEN status IN ('active', 'day_of') THEN 1 ELSE 0 END)`,
-      upcoming: sql11`SUM(CASE WHEN status IN ('announced', 'registration_open') THEN 1 ELSE 0 END)`,
-      past: sql11`SUM(CASE WHEN status IN ('ended', 'archived') THEN 1 ELSE 0 END)`,
-      totalAttendees: sql11`COALESCE(SUM(current_attendees), 0)`
+      total: sql10`COUNT(*)`,
+      active: sql10`SUM(CASE WHEN status IN ('active', 'day_of') THEN 1 ELSE 0 END)`,
+      upcoming: sql10`SUM(CASE WHEN status IN ('announced', 'registration_open') THEN 1 ELSE 0 END)`,
+      past: sql10`SUM(CASE WHEN status IN ('ended', 'archived') THEN 1 ELSE 0 END)`,
+      totalAttendees: sql10`COALESCE(SUM(current_attendees), 0)`
     }).from(conventions).where(eq18(conventions.hostUserId, ctx.user.id));
     return stats;
   }),
@@ -18485,7 +19272,7 @@ import { z as z44 } from "zod";
 init_db();
 init_notification();
 init_qumus_orchestration();
-import { sql as sql12 } from "drizzle-orm";
+import { sql as sql11 } from "drizzle-orm";
 function generateRoomCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
   let code = "rrb-";
@@ -18497,11 +19284,11 @@ function generateRoomCode() {
 var conferenceRouter = router({
   getStats: publicProcedure.query(async () => {
     const db2 = await getDb();
-    const [totalRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences`);
-    const [liveRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'live'`);
-    const [scheduledRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'scheduled'`);
-    const [completedRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed'`);
-    const [recordingRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE recording_status = 'available'`);
+    const [totalRows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences`);
+    const [liveRows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE status = 'live'`);
+    const [scheduledRows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE status = 'scheduled'`);
+    const [completedRows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed'`);
+    const [recordingRows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE recording_status = 'available'`);
     return {
       total: totalRows[0]?.count || 0,
       live: liveRows[0]?.count || 0,
@@ -18517,26 +19304,26 @@ var conferenceRouter = router({
     const db2 = await getDb();
     const status = input?.status || "all";
     const limit = input?.limit || 20;
-    const query2 = status === "all" ? sql12`SELECT * FROM conferences ORDER BY created_at DESC LIMIT ${limit}` : sql12`SELECT * FROM conferences WHERE status = ${status} ORDER BY created_at DESC LIMIT ${limit}`;
+    const query2 = status === "all" ? sql11`SELECT * FROM conferences ORDER BY created_at DESC LIMIT ${limit}` : sql11`SELECT * FROM conferences WHERE status = ${status} ORDER BY created_at DESC LIMIT ${limit}`;
     const [rows] = await db2.execute(query2);
     return rows;
   }),
   getByRoomCode: publicProcedure.input(z44.object({ roomCode: z44.string() })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`SELECT id, title, description, type, platform, host_name, room_code, status, scheduled_at, duration_minutes, max_attendees, captions_enabled, recording_enabled FROM conferences WHERE room_code = ${input.roomCode} LIMIT 1`);
-    const conferences = rows;
-    if (conferences.length === 0) return null;
-    return conferences[0];
+    const [rows] = await db2.execute(sql11`SELECT id, title, description, type, platform, host_name, room_code, status, scheduled_at, duration_minutes, max_attendees, captions_enabled, recording_enabled FROM conferences WHERE room_code = ${input.roomCode} LIMIT 1`);
+    const conferences2 = rows;
+    if (conferences2.length === 0) return null;
+    return conferences2[0];
   }),
   getConference: publicProcedure.input(z44.object({ id: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`SELECT * FROM conferences WHERE id = ${input.id}`);
-    const conferences = rows;
-    if (conferences.length === 0) return null;
+    const [rows] = await db2.execute(sql11`SELECT * FROM conferences WHERE id = ${input.id}`);
+    const conferences2 = rows;
+    if (conferences2.length === 0) return null;
     const [attendeeRows] = await db2.execute(
-      sql12`SELECT * FROM conference_attendees WHERE conference_id = ${input.id} ORDER BY created_at ASC`
+      sql11`SELECT * FROM conference_attendees WHERE conference_id = ${input.id} ORDER BY created_at ASC`
     );
-    return { ...conferences[0], attendees: attendeeRows };
+    return { ...conferences2[0], attendees: attendeeRows };
   }),
   // Calendar view - get conferences for a date range
   getCalendarEvents: publicProcedure.input(z44.object({
@@ -18546,7 +19333,7 @@ var conferenceRouter = router({
     const db2 = await getDb();
     const startDate = new Date(input.startDate);
     const endDate = new Date(input.endDate);
-    const [rows] = await db2.execute(sql12`
+    const [rows] = await db2.execute(sql11`
         SELECT id, title, type as meeting_type, platform, host_name, room_code, 
                UNIX_TIMESTAMP(scheduled_at)*1000 as scheduled_at, 
                duration_minutes, status, actual_attendees, recording_status,
@@ -18561,22 +19348,22 @@ var conferenceRouter = router({
   // Analytics - comprehensive conference metrics
   getAnalytics: publicProcedure.query(async () => {
     const db2 = await getDb();
-    const [platformRows] = await db2.execute(sql12`
+    const [platformRows] = await db2.execute(sql11`
       SELECT platform, COUNT(*) as count, SUM(actual_attendees) as total_attendees, AVG(duration_minutes) as avg_duration
       FROM conferences GROUP BY platform ORDER BY count DESC
     `);
-    const [typeRows] = await db2.execute(sql12`
+    const [typeRows] = await db2.execute(sql11`
       SELECT type, COUNT(*) as count FROM conferences GROUP BY type ORDER BY count DESC
     `);
-    const [hostRows] = await db2.execute(sql12`
+    const [hostRows] = await db2.execute(sql11`
       SELECT host_name, COUNT(*) as conferences_hosted, SUM(actual_attendees) as total_attendees
       FROM conferences GROUP BY host_name ORDER BY conferences_hosted DESC LIMIT 10
     `);
-    const [trendRows] = await db2.execute(sql12`
+    const [trendRows] = await db2.execute(sql11`
       SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count, SUM(actual_attendees) as attendees
       FROM conferences GROUP BY month ORDER BY month DESC LIMIT 6
     `);
-    const [totalStats] = await db2.execute(sql12`
+    const [totalStats] = await db2.execute(sql11`
       SELECT COUNT(*) as total_conferences, SUM(actual_attendees) as total_attendees, 
              AVG(duration_minutes) as avg_duration, SUM(duration_minutes) as total_minutes,
              COUNT(CASE WHEN recording_status = 'available' THEN 1 END) as total_recordings
@@ -18596,7 +19383,7 @@ var conferenceRouter = router({
   }).optional()).query(async ({ input }) => {
     const db2 = await getDb();
     const limit = input?.limit || 20;
-    const [rows] = await db2.execute(sql12`
+    const [rows] = await db2.execute(sql11`
         SELECT id, title, type, platform, host_name, duration_minutes, actual_attendees, recording_url, recording_status, created_at
         FROM conferences WHERE recording_status = 'available' ORDER BY created_at DESC LIMIT ${limit}
       `);
@@ -18628,11 +19415,11 @@ var conferenceRouter = router({
     const recordingStatus = input.recording ? "pending" : "none";
     const platformValue = input.platform === "rrb_builtin" ? "jitsi" : input.platform === "google_meet" ? "meet" : input.platform === "rrb_broadcast" ? "rrb-live" : input.platform;
     const scheduledAtDate = input.scheduledAt ? new Date(input.scheduledAt) : null;
-    await db2.execute(sql12`
+    await db2.execute(sql11`
         INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, password, captions_enabled, recording_enabled, status, actual_attendees, recording_status, created_at, updated_at)
         VALUES (${input.title}, ${input.description || null}, ${input.meetingType}, ${platformValue}, ${ctx.user.id}, ${ctx.user.name}, ${roomCode}, ${externalUrl}, ${scheduledAtDate}, ${input.durationMinutes}, ${input.maxAttendees}, ${input.password || null}, ${input.closedCaptions}, ${input.recording}, ${status}, 0, ${recordingStatus}, NOW(), NOW())
       `);
-    const [result2] = await db2.execute(sql12`SELECT LAST_INSERT_ID() as id`);
+    const [result2] = await db2.execute(sql11`SELECT LAST_INSERT_ID() as id`);
     const conferenceId = result2[0]?.id;
     if (status === "live") {
       await notifyOwner({
@@ -18647,7 +19434,7 @@ var conferenceRouter = router({
     conferenceId: z44.number()
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    const [confRows] = await db2.execute(sql12`SELECT title, room_code, platform, host_name FROM conferences WHERE id = ${input.conferenceId} AND status = 'live'`);
+    const [confRows] = await db2.execute(sql11`SELECT title, room_code, platform, host_name FROM conferences WHERE id = ${input.conferenceId} AND status = 'live'`);
     const conf = confRows[0];
     if (!conf) throw new Error("Conference not found or not live");
     const sent = await notifyOwner({
@@ -18671,7 +19458,7 @@ var conferenceRouter = router({
     recordingKey: z44.string().optional()
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    await db2.execute(sql12`
+    await db2.execute(sql11`
         UPDATE conferences SET recording_url = ${input.recordingUrl}, recording_key = ${input.recordingKey || null}, 
         recording_status = 'available', updated_at = NOW() WHERE id = ${input.conferenceId}
       `);
@@ -18680,16 +19467,16 @@ var conferenceRouter = router({
   joinConference: protectedProcedure.input(z44.object({ conferenceId: z44.number() })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
     const [existing] = await db2.execute(
-      sql12`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
+      sql11`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
     );
     if (existing.length > 0) {
-      await db2.execute(sql12`UPDATE conference_attendees SET joined_at = NOW() WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`);
+      await db2.execute(sql11`UPDATE conference_attendees SET joined_at = NOW() WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`);
     } else {
-      await db2.execute(sql12`
+      await db2.execute(sql11`
           INSERT INTO conference_attendees (conference_id, user_id, user_name, rsvp_status, joined_at, created_at)
           VALUES (${input.conferenceId}, ${ctx.user.id}, ${ctx.user.name}, 'going', NOW(), NOW())
         `);
-      await db2.execute(sql12`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
+      await db2.execute(sql11`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
     }
     return { success: true };
   }),
@@ -18699,12 +19486,12 @@ var conferenceRouter = router({
   })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
     const [existing] = await db2.execute(
-      sql12`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
+      sql11`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
     );
     if (existing.length > 0) {
-      await db2.execute(sql12`UPDATE conference_attendees SET rsvp_status = ${input.status} WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`);
+      await db2.execute(sql11`UPDATE conference_attendees SET rsvp_status = ${input.status} WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`);
     } else {
-      await db2.execute(sql12`
+      await db2.execute(sql11`
           INSERT INTO conference_attendees (conference_id, user_id, user_name, rsvp_status, created_at)
           VALUES (${input.conferenceId}, ${ctx.user.id}, ${ctx.user.name}, ${input.status}, NOW())
         `);
@@ -18714,16 +19501,16 @@ var conferenceRouter = router({
   endConference: protectedProcedure.input(z44.object({ id: z44.number(), actualAttendees: z44.number().optional() })).mutation(async ({ input }) => {
     const db2 = await getDb();
     if (input.actualAttendees !== void 0) {
-      await db2.execute(sql12`UPDATE conferences SET status = 'completed', actual_attendees = ${input.actualAttendees}, updated_at = NOW() WHERE id = ${input.id}`);
+      await db2.execute(sql11`UPDATE conferences SET status = 'completed', actual_attendees = ${input.actualAttendees}, updated_at = NOW() WHERE id = ${input.id}`);
     } else {
-      await db2.execute(sql12`UPDATE conferences SET status = 'completed', updated_at = NOW() WHERE id = ${input.id}`);
+      await db2.execute(sql11`UPDATE conferences SET status = 'completed', updated_at = NOW() WHERE id = ${input.id}`);
     }
     return { success: true };
   }),
   deleteConference: protectedProcedure.input(z44.object({ id: z44.number() })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    await db2.execute(sql12`DELETE FROM conference_attendees WHERE conference_id = ${input.id}`);
-    await db2.execute(sql12`DELETE FROM conferences WHERE id = ${input.id}`);
+    await db2.execute(sql11`DELETE FROM conference_attendees WHERE conference_id = ${input.id}`);
+    await db2.execute(sql11`DELETE FROM conferences WHERE id = ${input.id}`);
     return { success: true };
   }),
   // Notify attendees about upcoming conference
@@ -18732,10 +19519,10 @@ var conferenceRouter = router({
     message: z44.string().optional()
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    const [confRows] = await db2.execute(sql12`SELECT title, scheduled_at, room_code, platform FROM conferences WHERE id = ${input.conferenceId}`);
+    const [confRows] = await db2.execute(sql11`SELECT title, scheduled_at, room_code, platform FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = confRows[0];
     if (!conf) throw new Error("Conference not found");
-    const [attendeeRows] = await db2.execute(sql12`SELECT user_name FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND rsvp_status IN ('going', 'maybe')`);
+    const [attendeeRows] = await db2.execute(sql11`SELECT user_name FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND rsvp_status IN ('going', 'maybe')`);
     const attendeeCount = attendeeRows.length;
     await notifyOwner({
       title: `Conference Reminder: ${conf.title}`,
@@ -18756,7 +19543,7 @@ var conferenceRouter = router({
     conferenceId: z44.number()
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    const [confRows] = await db2.execute(sql12`SELECT recording_url, recording_status, title FROM conferences WHERE id = ${input.conferenceId}`);
+    const [confRows] = await db2.execute(sql11`SELECT recording_url, recording_status, title FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = confRows[0];
     if (!conf || conf.recording_status !== "available" || !conf.recording_url) {
       throw new Error("No recording available for transcription");
@@ -18769,7 +19556,7 @@ var conferenceRouter = router({
         prompt: `Transcribe conference recording: ${conf.title}`
       });
       const transcriptText = result2.text || "";
-      await db2.execute(sql12`UPDATE conferences SET description = CONCAT(COALESCE(description, ''), '\n\n--- TRANSCRIPT ---\n', ${transcriptText}), updated_at = NOW() WHERE id = ${input.conferenceId}`);
+      await db2.execute(sql11`UPDATE conferences SET description = CONCAT(COALESCE(description, ''), '\n\n--- TRANSCRIPT ---\n', ${transcriptText}), updated_at = NOW() WHERE id = ${input.conferenceId}`);
       try {
         await qumusEngine2.makeDecision({
           policyId: "policy_conference_scheduling",
@@ -18811,11 +19598,11 @@ var conferenceRouter = router({
       const scheduledAt = new Date(input.startDate + i * intervalMs);
       const roomCode = generateRoomCode();
       const titleWithNum = input.occurrences > 1 ? `${input.title} #${i + 1}` : input.title;
-      await db2.execute(sql12`
+      await db2.execute(sql11`
           INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, status, is_recurring, recurrence_pattern, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
           VALUES (${titleWithNum}, ${input.description || null}, ${input.meetingType}, ${platformValue}, ${ctx.user.id}, ${ctx.user.name}, ${roomCode}, ${externalUrl}, ${scheduledAt}, ${input.durationMinutes}, ${input.maxAttendees}, 'scheduled', true, ${input.recurrencePattern}, true, true, 0, 'none', NOW(), NOW())
         `);
-      const [result2] = await db2.execute(sql12`SELECT LAST_INSERT_ID() as id`);
+      const [result2] = await db2.execute(sql11`SELECT LAST_INSERT_ID() as id`);
       createdIds.push(result2[0]?.id);
     }
     try {
@@ -18921,11 +19708,11 @@ var conferenceRouter = router({
     const scheduledAt = new Date(input.scheduledAt);
     const title = input.customTitle || tmpl.title;
     const description = input.customDescription || tmpl.desc;
-    await db2.execute(sql12`
+    await db2.execute(sql11`
         INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, scheduled_at, duration_minutes, max_attendees, status, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
         VALUES (${title}, ${description}, ${tmpl.type}, ${tmpl.platform}, ${ctx.user.id}, ${ctx.user.name}, ${roomCode}, ${scheduledAt}, ${tmpl.duration}, ${tmpl.max}, 'scheduled', true, true, 0, 'none', NOW(), NOW())
       `);
-    const [result2] = await db2.execute(sql12`SELECT LAST_INSERT_ID() as id`);
+    const [result2] = await db2.execute(sql11`SELECT LAST_INSERT_ID() as id`);
     const conferenceId = result2[0]?.id;
     try {
       await qumusEngine2.makeDecision({
@@ -18944,7 +19731,7 @@ var conferenceRouter = router({
   // Get conference share data for social media
   getShareData: publicProcedure.input(z44.object({ id: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`SELECT title, description, type, platform, scheduled_at, room_code, host_name, max_attendees FROM conferences WHERE id = ${input.id}`);
+    const [rows] = await db2.execute(sql11`SELECT title, description, type, platform, scheduled_at, room_code, host_name, max_attendees FROM conferences WHERE id = ${input.id}`);
     const conf = rows[0];
     if (!conf) return null;
     const scheduledStr = conf.scheduled_at ? new Date(conf.scheduled_at).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "Live Now";
@@ -18973,10 +19760,10 @@ Room: ${conf.room_code}
     broadcastChannel: z44.string().default("RRB-Main")
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    const [confRows] = await db2.execute(sql12`SELECT title, room_code, platform FROM conferences WHERE id = ${input.conferenceId}`);
+    const [confRows] = await db2.execute(sql11`SELECT title, room_code, platform FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = confRows[0];
     if (!conf) throw new Error("Conference not found");
-    await db2.execute(sql12`UPDATE conferences SET type = 'broadcast', updated_at = NOW() WHERE id = ${input.conferenceId}`);
+    await db2.execute(sql11`UPDATE conferences SET type = 'broadcast', updated_at = NOW() WHERE id = ${input.conferenceId}`);
     try {
       await qumusEngine2.makeDecision({
         policyId: "policy_broadcast_management",
@@ -18994,16 +19781,16 @@ Room: ${conf.room_code}
   // Permanent test conference - always available for testing/demo
   seedTestConference: publicProcedure.mutation(async () => {
     const db2 = await getDb();
-    const [existing] = await db2.execute(sql12`SELECT id FROM conferences WHERE room_code = 'rrb-TESTROOM001'`);
+    const [existing] = await db2.execute(sql11`SELECT id FROM conferences WHERE room_code = 'rrb-TESTROOM001'`);
     if (existing.length > 0) {
-      await db2.execute(sql12`UPDATE conferences SET status = 'live', actual_attendees = 0, updated_at = NOW() WHERE room_code = 'rrb-TESTROOM001'`);
+      await db2.execute(sql11`UPDATE conferences SET status = 'live', actual_attendees = 0, updated_at = NOW() WHERE room_code = 'rrb-TESTROOM001'`);
       return { success: true, id: existing[0].id, roomCode: "rrb-TESTROOM001", message: "Test conference reset to live" };
     }
-    await db2.execute(sql12`
+    await db2.execute(sql11`
       INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, status, is_recurring, recurrence_pattern, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
       VALUES ('RRB Conference Test Room', 'Permanent test conference room for the Canryn Production ecosystem. Always available for testing, demos, and walk-throughs. Powered by QUMUS autonomous orchestration.', 'meeting', 'jitsi', 1, 'QUMUS System', 'rrb-TESTROOM001', NULL, NULL, 480, 1000, 'live', false, NULL, true, true, 0, 'none', NOW(), NOW())
     `);
-    const [result2] = await db2.execute(sql12`SELECT LAST_INSERT_ID() as id`);
+    const [result2] = await db2.execute(sql11`SELECT LAST_INSERT_ID() as id`);
     const conferenceId = result2[0]?.id;
     try {
       await qumusEngine2.makeDecision({
@@ -19018,10 +19805,10 @@ Room: ${conf.room_code}
   // Get the permanent test conference
   getTestConference: publicProcedure.query(async () => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`SELECT * FROM conferences WHERE room_code = 'rrb-TESTROOM001' LIMIT 1`);
+    const [rows] = await db2.execute(sql11`SELECT * FROM conferences WHERE room_code = 'rrb-TESTROOM001' LIMIT 1`);
     const conf = rows[0];
     if (!conf) return null;
-    const [attendeeRows] = await db2.execute(sql12`SELECT * FROM conference_attendees WHERE conference_id = ${conf.id} ORDER BY created_at ASC`);
+    const [attendeeRows] = await db2.execute(sql11`SELECT * FROM conference_attendees WHERE conference_id = ${conf.id} ORDER BY created_at ASC`);
     return { ...conf, attendees: attendeeRows, isTestRoom: true };
   }),
   // Stripe conference ticketing - create checkout for VIP/Speaker tickets
@@ -19030,7 +19817,7 @@ Room: ${conf.room_code}
     ticketType: z44.enum(["general", "vip", "speaker", "delegate"]).default("general")
   })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
-    const [confRows] = await db2.execute(sql12`SELECT title, scheduled_at, room_code FROM conferences WHERE id = ${input.conferenceId}`);
+    const [confRows] = await db2.execute(sql11`SELECT title, scheduled_at, room_code FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = confRows[0];
     if (!conf) throw new Error("Conference not found");
     const ticketPrices = {
@@ -19042,14 +19829,14 @@ Room: ${conf.room_code}
     const ticket = ticketPrices[input.ticketType];
     if (ticket.amount === 0) {
       const [existing] = await db2.execute(
-        sql12`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
+        sql11`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_id = ${ctx.user.id}`
       );
       if (existing.length === 0) {
-        await db2.execute(sql12`
+        await db2.execute(sql11`
             INSERT INTO conference_attendees (conference_id, user_id, user_name, rsvp_status, created_at)
             VALUES (${input.conferenceId}, ${ctx.user.id}, ${ctx.user.name}, 'going', NOW())
           `);
-        await db2.execute(sql12`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
+        await db2.execute(sql11`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
       }
       return { success: true, free: true, message: "Registered for free admission" };
     }
@@ -19102,7 +19889,7 @@ Room: ${conf.room_code}
     priority: z44.enum(["low", "medium", "high", "critical"]).default("medium")
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    const [confRows] = await db2.execute(sql12`SELECT title, room_code FROM conferences WHERE id = ${input.conferenceId}`);
+    const [confRows] = await db2.execute(sql11`SELECT title, room_code FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = confRows[0];
     if (!conf) throw new Error("Conference not found");
     try {
@@ -19130,23 +19917,23 @@ Room: ${conf.room_code}
     accessibilityNeeds: z44.string().optional()
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    const [confRows] = await db2.execute(sql12`SELECT * FROM conferences WHERE id = ${input.conferenceId}`);
+    const [confRows] = await db2.execute(sql11`SELECT * FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = confRows[0];
     if (!conf) throw new Error("Conference not found");
     if (conf.max_attendees && conf.actual_attendees >= conf.max_attendees) {
       throw new Error("Conference is at full capacity");
     }
     const [existing] = await db2.execute(
-      sql12`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_name = ${input.name} AND rsvp_status != 'declined'`
+      sql11`SELECT id FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND user_name = ${input.name} AND rsvp_status != 'declined'`
     );
     if (existing.length > 0) {
       throw new Error("Already registered for this conference");
     }
-    await db2.execute(sql12`
+    await db2.execute(sql11`
         INSERT INTO conference_attendees (conference_id, user_id, user_name, rsvp_status, created_at)
         VALUES (${input.conferenceId}, 0, ${input.name}, 'going', NOW())
       `);
-    await db2.execute(sql12`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
+    await db2.execute(sql11`UPDATE conferences SET actual_attendees = actual_attendees + 1, updated_at = NOW() WHERE id = ${input.conferenceId}`);
     const startDate = conf.scheduled_at ? new Date(conf.scheduled_at) : /* @__PURE__ */ new Date();
     const endDate = new Date(startDate.getTime() + (conf.duration_minutes || 60) * 60 * 1e3);
     const formatICSDate = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
@@ -19188,7 +19975,7 @@ Room: ${conf.room_code}
   // Get registration info for a conference
   getRegistrationInfo: publicProcedure.input(z44.object({ conferenceId: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [confRows] = await db2.execute(sql12`SELECT id, title, description, type, platform, host_name, room_code, scheduled_at, duration_minutes, max_attendees, actual_attendees, status FROM conferences WHERE id = ${input.conferenceId}`);
+    const [confRows] = await db2.execute(sql11`SELECT id, title, description, type, platform, host_name, room_code, scheduled_at, duration_minutes, max_attendees, actual_attendees, status FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = confRows[0];
     if (!conf) return null;
     const spotsRemaining = conf.max_attendees ? Math.max(0, conf.max_attendees - conf.actual_attendees) : 999;
@@ -19210,7 +19997,7 @@ Room: ${conf.room_code}
     recordingUrl: z44.string().url()
   })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
-    await db2.execute(sql12`
+    await db2.execute(sql11`
         UPDATE conferences 
         SET recording_url = ${input.recordingUrl}, 
             recording_status = 'processing',
@@ -19232,7 +20019,7 @@ Room: ${conf.room_code}
       transcriptionStatus = "failed";
       transcript = "Transcription failed - audio may be too large or in unsupported format.";
     }
-    await db2.execute(sql12`
+    await db2.execute(sql11`
         UPDATE conferences 
         SET recording_status = ${transcriptionStatus === "completed" ? "available" : "failed"},
             description = CONCAT(COALESCE(description, ''), '\n\n--- TRANSCRIPT ---\n', ${transcript}),
@@ -19256,13 +20043,13 @@ Room: ${conf.room_code}
   // Get transcript for a conference
   getTranscript: publicProcedure.input(z44.object({ conferenceId: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`SELECT id, title, description, recording_url, recording_status FROM conferences WHERE id = ${input.conferenceId}`);
+    const [rows] = await db2.execute(sql11`SELECT id, title, description, recording_url, recording_status FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = rows[0];
     if (!conf) return null;
-    const desc16 = conf.description || "";
+    const desc17 = conf.description || "";
     const transcriptMarker = "--- TRANSCRIPT ---";
-    const transcriptIdx = desc16.indexOf(transcriptMarker);
-    const transcript = transcriptIdx >= 0 ? desc16.substring(transcriptIdx + transcriptMarker.length).trim() : null;
+    const transcriptIdx = desc17.indexOf(transcriptMarker);
+    const transcript = transcriptIdx >= 0 ? desc17.substring(transcriptIdx + transcriptMarker.length).trim() : null;
     return {
       conferenceId: conf.id,
       title: conf.title,
@@ -19276,24 +20063,24 @@ Room: ${conf.room_code}
   getAnalyticsDigest: protectedProcedure.query(async () => {
     const db2 = await getDb();
     const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
-    const [weekSessions] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-    const [completedSessions] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
-    const [weekAttendees] = await db2.execute(sql12`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-    const [topHosts] = await db2.execute(sql12`
+    const [weekSessions] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+    const [completedSessions] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+    const [weekAttendees] = await db2.execute(sql11`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+    const [topHosts] = await db2.execute(sql11`
       SELECT host_name, COUNT(*) as sessions, SUM(actual_attendees) as total_attendees
       FROM conferences WHERE created_at >= ${oneWeekAgo} AND host_name IS NOT NULL
       GROUP BY host_name ORDER BY sessions DESC LIMIT 5
     `);
-    const [platformBreakdown] = await db2.execute(sql12`
+    const [platformBreakdown] = await db2.execute(sql11`
       SELECT platform, COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}
       GROUP BY platform ORDER BY count DESC
     `);
-    const [typeBreakdown] = await db2.execute(sql12`
+    const [typeBreakdown] = await db2.execute(sql11`
       SELECT type, COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}
       GROUP BY type ORDER BY count DESC
     `);
-    const [recordings] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE recording_status = 'available' AND updated_at >= ${oneWeekAgo}`);
-    const [allTime] = await db2.execute(sql12`SELECT COUNT(*) as total, COALESCE(SUM(actual_attendees), 0) as total_attendees FROM conferences`);
+    const [recordings] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE recording_status = 'available' AND updated_at >= ${oneWeekAgo}`);
+    const [allTime] = await db2.execute(sql11`SELECT COUNT(*) as total, COALESCE(SUM(actual_attendees), 0) as total_attendees FROM conferences`);
     return {
       period: { start: oneWeekAgo.toISOString(), end: (/* @__PURE__ */ new Date()).toISOString() },
       weeklyStats: {
@@ -19315,10 +20102,10 @@ Room: ${conf.room_code}
   sendWeeklyDigest: protectedProcedure.mutation(async () => {
     const db2 = await getDb();
     const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
-    const [weekSessions] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-    const [weekAttendees] = await db2.execute(sql12`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-    const [completedSessions] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
-    const [topHosts] = await db2.execute(sql12`
+    const [weekSessions] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+    const [weekAttendees] = await db2.execute(sql11`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+    const [completedSessions] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+    const [topHosts] = await db2.execute(sql11`
       SELECT host_name, COUNT(*) as sessions FROM conferences WHERE created_at >= ${oneWeekAgo} AND host_name IS NOT NULL
       GROUP BY host_name ORDER BY sessions DESC LIMIT 3
     `);
@@ -19344,25 +20131,25 @@ A Voice for the Voiceless`
   generateQRCode: protectedProcedure.input(z44.object({ attendeeId: z44.number() })).mutation(async ({ input }) => {
     const db2 = await getDb();
     const qrCode = `CONF-CHK-${input.attendeeId}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-    await db2.execute(sql12`UPDATE conference_attendees SET qr_code = ${qrCode} WHERE id = ${input.attendeeId}`);
+    await db2.execute(sql11`UPDATE conference_attendees SET qr_code = ${qrCode} WHERE id = ${input.attendeeId}`);
     return { qrCode, attendeeId: input.attendeeId };
   }),
   checkIn: publicProcedure.input(z44.object({ qrCode: z44.string() })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`SELECT ca.*, c.title as conference_title FROM conference_attendees ca JOIN conferences c ON ca.conference_id = c.id WHERE ca.qr_code = ${input.qrCode}`);
+    const [rows] = await db2.execute(sql11`SELECT ca.*, c.title as conference_title FROM conference_attendees ca JOIN conferences c ON ca.conference_id = c.id WHERE ca.qr_code = ${input.qrCode}`);
     const attendees = rows;
     if (attendees.length === 0) return { success: false, error: "Invalid QR code" };
     const attendee = attendees[0];
     if (attendee.checked_in) return { success: false, error: "Already checked in", attendee };
-    await db2.execute(sql12`UPDATE conference_attendees SET checked_in = TRUE, checked_in_at = NOW() WHERE id = ${attendee.id}`);
+    await db2.execute(sql11`UPDATE conference_attendees SET checked_in = TRUE, checked_in_at = NOW() WHERE id = ${attendee.id}`);
     return { success: true, attendee: { ...attendee, checked_in: true }, conferenceTitle: attendee.conference_title };
   }),
   getCheckInDashboard: publicProcedure.input(z44.object({ conferenceId: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [totalRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conference_attendees WHERE conference_id = ${input.conferenceId}`);
-    const [checkedInRows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND checked_in = TRUE`);
-    const [recentRows] = await db2.execute(sql12`SELECT name, email, ticket_type, organization, checked_in_at FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND checked_in = TRUE ORDER BY checked_in_at DESC LIMIT 20`);
-    const [tierRows] = await db2.execute(sql12`SELECT ticket_type, COUNT(*) as count, SUM(CASE WHEN checked_in = TRUE THEN 1 ELSE 0 END) as checked_in FROM conference_attendees WHERE conference_id = ${input.conferenceId} GROUP BY ticket_type`);
+    const [totalRows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conference_attendees WHERE conference_id = ${input.conferenceId}`);
+    const [checkedInRows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND checked_in = TRUE`);
+    const [recentRows] = await db2.execute(sql11`SELECT name, email, ticket_type, organization, checked_in_at FROM conference_attendees WHERE conference_id = ${input.conferenceId} AND checked_in = TRUE ORDER BY checked_in_at DESC LIMIT 20`);
+    const [tierRows] = await db2.execute(sql11`SELECT ticket_type, COUNT(*) as count, SUM(CASE WHEN checked_in = TRUE THEN 1 ELSE 0 END) as checked_in FROM conference_attendees WHERE conference_id = ${input.conferenceId} GROUP BY ticket_type`);
     const total = totalRows[0]?.count || 0;
     const checkedIn = checkedInRows[0]?.count || 0;
     return {
@@ -19388,20 +20175,20 @@ A Voice for the Voiceless`
     speakerOrder: z44.number().optional().default(0)
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    await db2.execute(sql12`INSERT INTO conference_speakers (conference_id, name, bio, photo_url, title, organization, social_twitter, social_linkedin, social_website, session_topic, speaker_order) VALUES (${input.conferenceId}, ${input.name}, ${input.bio || null}, ${input.photoUrl || null}, ${input.title || null}, ${input.organization || null}, ${input.socialTwitter || null}, ${input.socialLinkedin || null}, ${input.socialWebsite || null}, ${input.sessionTopic || null}, ${input.speakerOrder})`);
+    await db2.execute(sql11`INSERT INTO conference_speakers (conference_id, name, bio, photo_url, title, organization, social_twitter, social_linkedin, social_website, session_topic, speaker_order) VALUES (${input.conferenceId}, ${input.name}, ${input.bio || null}, ${input.photoUrl || null}, ${input.title || null}, ${input.organization || null}, ${input.socialTwitter || null}, ${input.socialLinkedin || null}, ${input.socialWebsite || null}, ${input.sessionTopic || null}, ${input.speakerOrder})`);
     return { success: true };
   }),
   getSpeakers: publicProcedure.input(z44.object({ conferenceId: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`SELECT * FROM conference_speakers WHERE conference_id = ${input.conferenceId} ORDER BY speaker_order ASC, created_at ASC`);
+    const [rows] = await db2.execute(sql11`SELECT * FROM conference_speakers WHERE conference_id = ${input.conferenceId} ORDER BY speaker_order ASC, created_at ASC`);
     return rows;
   }),
   getSpeakerProfile: publicProcedure.input(z44.object({ speakerId: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`SELECT * FROM conference_speakers WHERE id = ${input.speakerId}`);
+    const [rows] = await db2.execute(sql11`SELECT * FROM conference_speakers WHERE id = ${input.speakerId}`);
     if (rows.length === 0) return null;
     const speaker = rows[0];
-    const [sessions] = await db2.execute(sql12`SELECT cs.*, c.title as conference_title, c.scheduled_at, c.status FROM conference_speakers cs JOIN conferences c ON cs.conference_id = c.id WHERE cs.name = ${speaker.name} ORDER BY c.scheduled_at DESC`);
+    const [sessions] = await db2.execute(sql11`SELECT cs.*, c.title as conference_title, c.scheduled_at, c.status FROM conference_speakers cs JOIN conferences c ON cs.conference_id = c.id WHERE cs.name = ${speaker.name} ORDER BY c.scheduled_at DESC`);
     return { ...speaker, sessions };
   }),
   updateSpeaker: protectedProcedure.input(z44.object({
@@ -19428,13 +20215,13 @@ A Voice for the Voiceless`
     if (input.socialWebsite !== void 0) updates.push(`social_website = '${input.socialWebsite}'`);
     if (input.sessionTopic !== void 0) updates.push(`session_topic = '${input.sessionTopic}'`);
     if (updates.length > 0) {
-      await db2.execute(sql12.raw(`UPDATE conference_speakers SET ${updates.join(", ")} WHERE id = ${input.speakerId}`));
+      await db2.execute(sql11.raw(`UPDATE conference_speakers SET ${updates.join(", ")} WHERE id = ${input.speakerId}`));
     }
     return { success: true };
   }),
   deleteSpeaker: protectedProcedure.input(z44.object({ speakerId: z44.number() })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    await db2.execute(sql12`DELETE FROM conference_speakers WHERE id = ${input.speakerId}`);
+    await db2.execute(sql11`DELETE FROM conference_speakers WHERE id = ${input.speakerId}`);
     return { success: true };
   }),
   // === MULTI-LANGUAGE TRANSLATION ===
@@ -19444,12 +20231,12 @@ A Voice for the Voiceless`
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
     const languagesStr = input.languages.join(",");
-    await db2.execute(sql12`UPDATE conferences SET translation_enabled = TRUE, translation_languages = ${languagesStr} WHERE id = ${input.conferenceId}`);
+    await db2.execute(sql11`UPDATE conferences SET translation_enabled = TRUE, translation_languages = ${languagesStr} WHERE id = ${input.conferenceId}`);
     return { success: true, languages: input.languages };
   }),
   getTranslationConfig: publicProcedure.input(z44.object({ conferenceId: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`SELECT translation_enabled, translation_languages FROM conferences WHERE id = ${input.conferenceId}`);
+    const [rows] = await db2.execute(sql11`SELECT translation_enabled, translation_languages FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = rows[0];
     if (!conf) return { enabled: false, languages: [] };
     return {
@@ -19480,19 +20267,19 @@ A Voice for the Voiceless`
     const db2 = await getDb();
     const checks = [];
     try {
-      const [rows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences`);
+      const [rows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences`);
       checks.push({ name: "Conference Database", status: "pass", detail: `${rows[0]?.count || 0} conferences` });
     } catch {
       checks.push({ name: "Conference Database", status: "fail", detail: "Table not accessible" });
     }
     try {
-      const [rows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conference_speakers`);
+      const [rows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conference_speakers`);
       checks.push({ name: "Speaker Profiles", status: "pass", detail: `${rows[0]?.count || 0} speakers registered` });
     } catch {
       checks.push({ name: "Speaker Profiles", status: "fail", detail: "Table not accessible" });
     }
     try {
-      const [rows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conference_attendees`);
+      const [rows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conference_attendees`);
       checks.push({ name: "Attendee Registration", status: "pass", detail: `${rows[0]?.count || 0} registrations` });
     } catch {
       checks.push({ name: "Attendee Registration", status: "fail", detail: "Table not accessible" });
@@ -19504,7 +20291,7 @@ A Voice for the Voiceless`
       checks.push({ name: "QUMUS Orchestration", status: "warn", detail: "Health check unavailable" });
     }
     try {
-      const [rows] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE status = 'scheduled'`);
+      const [rows] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE status = 'scheduled'`);
       const count6 = rows[0]?.count || 0;
       checks.push({ name: "Scheduled Conferences", status: count6 > 0 ? "pass" : "warn", detail: `${count6} upcoming` });
     } catch {
@@ -19618,10 +20405,10 @@ A Voice for the Voiceless`
     for (const speaker of speakers) {
       try {
         const [existing] = await db2.execute(
-          sql12`SELECT id FROM conference_speakers WHERE name = ${speaker.name} LIMIT 1`
+          sql11`SELECT id FROM conference_speakers WHERE name = ${speaker.name} LIMIT 1`
         );
         if (existing.length > 0) continue;
-        await db2.execute(sql12`
+        await db2.execute(sql11`
           INSERT INTO conference_speakers (conference_id, name, title, organization, bio, session_topic,
             social_twitter, social_linkedin, social_website, photo_url, speaker_order, created_at)
           VALUES (0, ${speaker.name}, ${speaker.title}, ${speaker.organization}, ${speaker.bio},
@@ -19640,7 +20427,7 @@ A Voice for the Voiceless`
   getCSW70Speakers: publicProcedure.query(async () => {
     const db2 = await getDb();
     const [rows] = await db2.execute(
-      sql12`SELECT * FROM conference_speakers WHERE conference_id = 0 ORDER BY speaker_order ASC`
+      sql11`SELECT * FROM conference_speakers WHERE conference_id = 0 ORDER BY speaker_order ASC`
     );
     return rows;
   }),
@@ -19648,7 +20435,7 @@ A Voice for the Voiceless`
   startRecording: protectedProcedure.input(z44.object({ conferenceId: z44.number() })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
     const recordingKey = `conference-recordings/${input.conferenceId}/${Date.now()}-session.webm`;
-    await db2.execute(sql12`
+    await db2.execute(sql11`
         UPDATE conferences
         SET recording_status = 'recording',
             recording_url = ${recordingKey}
@@ -19670,14 +20457,14 @@ A Voice for the Voiceless`
   })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
     if (input.recordingUrl) {
-      await db2.execute(sql12`
+      await db2.execute(sql11`
           UPDATE conferences
           SET recording_status = 'available',
               recording_url = ${input.recordingUrl}
           WHERE id = ${input.conferenceId}
         `);
     } else {
-      await db2.execute(sql12`
+      await db2.execute(sql11`
           UPDATE conferences
           SET recording_status = 'processing'
           WHERE id = ${input.conferenceId}
@@ -19686,7 +20473,7 @@ A Voice for the Voiceless`
     let transcriptionTriggered = false;
     if (input.recordingUrl) {
       try {
-        await db2.execute(sql12`
+        await db2.execute(sql11`
             UPDATE conferences
             SET transcript_status = 'processing'
             WHERE id = ${input.conferenceId}
@@ -19720,8 +20507,8 @@ A Voice for the Voiceless`
     contentType: z44.string().optional()
   })).mutation(async ({ input }) => {
     const { storagePut: storagePut2 } = await Promise.resolve().then(() => (init_storage(), storage_exports));
-    const randomSuffix2 = Math.random().toString(36).substring(2, 10);
-    const fileKey = `conference-recordings/${input.conferenceId}/${input.fileName}-${randomSuffix2}`;
+    const randomSuffix3 = Math.random().toString(36).substring(2, 10);
+    const fileKey = `conference-recordings/${input.conferenceId}/${input.fileName}-${randomSuffix3}`;
     return {
       fileKey,
       uploadEndpoint: `/api/conference/upload/${input.conferenceId}`,
@@ -19732,7 +20519,7 @@ A Voice for the Voiceless`
   getRecordingStatus: publicProcedure.input(z44.object({ conferenceId: z44.number() })).query(async ({ input }) => {
     const db2 = await getDb();
     const [rows] = await db2.execute(
-      sql12`SELECT id, title, recording_status, recording_url, transcript_status, transcript
+      sql11`SELECT id, title, recording_status, recording_url, transcript_status, transcript
             FROM conferences WHERE id = ${input.conferenceId}`
     );
     const conf = rows[0];
@@ -19752,20 +20539,20 @@ A Voice for the Voiceless`
     const db2 = await getDb();
     const checks = [];
     try {
-      const [confCount] = await db2.execute(sql12`SELECT COUNT(*) as c FROM conferences`);
+      const [confCount] = await db2.execute(sql11`SELECT COUNT(*) as c FROM conferences`);
       checks.push({ name: "Conference Database", status: "pass", detail: `${confCount[0]?.c || 0} conferences`, category: "Infrastructure" });
     } catch {
       checks.push({ name: "Conference Database", status: "fail", detail: "Table not accessible", category: "Infrastructure" });
     }
     try {
-      const [speakerCount] = await db2.execute(sql12`SELECT COUNT(*) as c FROM conference_speakers`);
+      const [speakerCount] = await db2.execute(sql11`SELECT COUNT(*) as c FROM conference_speakers`);
       const count6 = speakerCount[0]?.c || 0;
       checks.push({ name: "Speaker Roster", status: count6 > 0 ? "pass" : "warn", detail: `${count6} speakers registered`, category: "Content" });
     } catch {
       checks.push({ name: "Speaker Roster", status: "fail", detail: "Table not accessible", category: "Content" });
     }
     try {
-      const [attCount] = await db2.execute(sql12`SELECT COUNT(*) as c FROM conference_attendees`);
+      const [attCount] = await db2.execute(sql11`SELECT COUNT(*) as c FROM conference_attendees`);
       checks.push({ name: "Attendee System", status: "pass", detail: `${attCount[0]?.c || 0} registrations`, category: "Infrastructure" });
     } catch {
       checks.push({ name: "Attendee System", status: "fail", detail: "Table not accessible", category: "Infrastructure" });
@@ -19849,7 +20636,7 @@ A Voice for the Voiceless`
   })).mutation(async ({ input, ctx }) => {
     const db2 = await getDb();
     const streamKey = `rrb-csw70-${input.conferenceId}-${Date.now()}`;
-    await db2.execute(sql12`
+    await db2.execute(sql11`
       UPDATE conferences SET 
         restream_active = 1,
         restream_key = ${streamKey},
@@ -19876,7 +20663,7 @@ A Voice for the Voiceless`
     conferenceId: z44.number()
   })).mutation(async ({ input }) => {
     const db2 = await getDb();
-    await db2.execute(sql12`
+    await db2.execute(sql11`
       UPDATE conferences SET 
         restream_active = 0,
         restream_ended_at = NOW()
@@ -19888,7 +20675,7 @@ A Voice for the Voiceless`
     conferenceId: z44.number()
   })).query(async ({ input }) => {
     const db2 = await getDb();
-    const [rows] = await db2.execute(sql12`
+    const [rows] = await db2.execute(sql11`
       SELECT restream_active, restream_key, restream_started_at, restream_ended_at, restream_platforms
       FROM conferences WHERE id = ${input.conferenceId}
     `);
@@ -19909,7 +20696,7 @@ A Voice for the Voiceless`
     const minutes = input?.minutesAhead || 5;
     const now = /* @__PURE__ */ new Date();
     const ahead = new Date(now.getTime() + minutes * 60 * 1e3);
-    const [rows] = await db2.execute(sql12`
+    const [rows] = await db2.execute(sql11`
         SELECT id, title, room_code, platform, host_name, scheduled_at, duration_minutes
         FROM conferences
         WHERE status = 'scheduled'
@@ -19923,15 +20710,15 @@ A Voice for the Voiceless`
     const db2 = await getDb();
     const now = /* @__PURE__ */ new Date();
     const fiveMinAhead = new Date(now.getTime() + 5 * 60 * 1e3);
-    const [upcoming] = await db2.execute(sql12`
+    const [upcoming] = await db2.execute(sql11`
       SELECT id, title, room_code, platform, host_name, scheduled_at
       FROM conferences
       WHERE status = 'scheduled'
         AND scheduled_at BETWEEN ${now} AND ${fiveMinAhead}
     `);
-    const conferences = upcoming;
+    const conferences2 = upcoming;
     let reminded = 0;
-    for (const conf of conferences) {
+    for (const conf of conferences2) {
       try {
         await notifyOwner({
           title: `\u23F0 Starting Soon: ${conf.title}`,
@@ -19941,21 +20728,21 @@ A Voice for the Voiceless`
       } catch (e) {
       }
     }
-    const [pastDue] = await db2.execute(sql12`
+    const [pastDue] = await db2.execute(sql11`
       SELECT id, title FROM conferences
       WHERE status = 'scheduled' AND scheduled_at <= ${now}
     `);
     let started = 0;
     for (const conf of pastDue) {
-      await db2.execute(sql12`UPDATE conferences SET status = 'live', updated_at = NOW() WHERE id = ${conf.id}`);
+      await db2.execute(sql11`UPDATE conferences SET status = 'live', updated_at = NOW() WHERE id = ${conf.id}`);
       started++;
     }
     return { reminded, started, checkedAt: now.toISOString() };
   }),
   getRestreamAnalytics: protectedProcedure.query(async () => {
     const db2 = await getDb();
-    const [totalStreams] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1 OR restream_ended_at IS NOT NULL`);
-    const [activeStreams] = await db2.execute(sql12`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1`);
+    const [totalStreams] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1 OR restream_ended_at IS NOT NULL`);
+    const [activeStreams] = await db2.execute(sql11`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1`);
     return {
       totalStreams: totalStreams[0]?.count || 0,
       activeStreams: activeStreams[0]?.count || 0,
@@ -22520,7 +23307,7 @@ import { z as z53 } from "zod";
 init_db();
 init_schema();
 init_db();
-import { eq as eq20, desc as desc13, and as and14, sql as sql13 } from "drizzle-orm";
+import { eq as eq20, desc as desc13, and as and14, sql as sql12 } from "drizzle-orm";
 var drizzleDb = null;
 async function getDatabase() {
   if (!drizzleDb) {
@@ -22624,15 +23411,15 @@ async function recordReviewHelpfulness(reviewId, userId, isHelpful) {
 }
 async function getReviewHelpfulnessStats(reviewId) {
   const stats = await (void 0)({
-    helpful: sql13`SUM(CASE WHEN is_helpful = 1 THEN 1 ELSE 0 END)`,
-    notHelpful: sql13`SUM(CASE WHEN is_helpful = 0 THEN 1 ELSE 0 END)`
+    helpful: sql12`SUM(CASE WHEN is_helpful = 1 THEN 1 ELSE 0 END)`,
+    notHelpful: sql12`SUM(CASE WHEN is_helpful = 0 THEN 1 ELSE 0 END)`
   }).from(reviewHelpfulness).where(eq20(reviewHelpfulness.reviewId, reviewId));
   return stats[0];
 }
 async function getAverageRating() {
   const result2 = await (void 0)({
-    average: sql13`AVG(rating)`,
-    count: sql13`COUNT(*)`
+    average: sql12`AVG(rating)`,
+    count: sql12`COUNT(*)`
   }).from(reviews).where(eq20(reviews.status, "approved"));
   return result2[0];
 }
@@ -23210,7 +23997,7 @@ import { randomUUID as randomUUID2 } from "crypto";
 
 // server/_core/realtimeStats.ts
 init_db();
-import { sql as sql14 } from "drizzle-orm";
+import { sql as sql13 } from "drizzle-orm";
 function extractRows(result2) {
   if (Array.isArray(result2) && Array.isArray(result2[0])) {
     return result2[0];
@@ -23224,7 +24011,7 @@ async function getPlatformStats() {
   const oneDayAgo = now - 864e5;
   const channelRows = extractRows(
     await db2.execute(
-      sql14`SELECT id, name, genre, frequency, currentListeners, totalListeners, status, streamUrl 
+      sql13`SELECT id, name, genre, frequency, currentListeners, totalListeners, status, streamUrl 
           FROM radio_channels WHERE status = 'active' ORDER BY currentListeners DESC`
     )
   );
@@ -23243,37 +24030,37 @@ async function getPlatformStats() {
   const activeChannels = channels.filter((ch) => ch.status === "active").length;
   const hourlyRows = extractRows(
     await db2.execute(
-      sql14`SELECT COUNT(*) as cnt FROM listener_analytics WHERE created_at >= ${oneHourAgo}`
+      sql13`SELECT COUNT(*) as cnt FROM listener_analytics WHERE created_at >= ${oneHourAgo}`
     )
   );
   const hourlyEvents = Number(hourlyRows[0]?.cnt) || 0;
   const dailyRows = extractRows(
     await db2.execute(
-      sql14`SELECT COUNT(*) as cnt FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
+      sql13`SELECT COUNT(*) as cnt FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
     )
   );
   const dailyEvents = Number(dailyRows[0]?.cnt) || 0;
   const sessionRows = extractRows(
     await db2.execute(
-      sql14`SELECT COALESCE(SUM(listener_count), 0) as total FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
+      sql13`SELECT COALESCE(SUM(listener_count), 0) as total FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
     )
   );
   const uniqueSessions = Number(sessionRows[0]?.total) || 0;
   const peakRows = extractRows(
     await db2.execute(
-      sql14`SELECT COALESCE(MAX(peak_listeners), 0) as peak FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
+      sql13`SELECT COALESCE(MAX(peak_listeners), 0) as peak FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
     )
   );
   const peakListenersToday = Number(peakRows[0]?.peak) || 0;
   const avgRows = extractRows(
     await db2.execute(
-      sql14`SELECT COALESCE(AVG(session_duration_seconds), 0) as avg_dur FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
+      sql13`SELECT COALESCE(AVG(session_duration_seconds), 0) as avg_dur FROM listener_analytics WHERE created_at >= ${oneDayAgo}`
     )
   );
   const avgSessionDurationSeconds = Math.round(Number(avgRows[0]?.avg_dur) || 0);
   const topChannelRows = extractRows(
     await db2.execute(
-      sql14`SELECT channel_id as channelId, channel_name as channelName, SUM(listener_count) as listeners 
+      sql13`SELECT channel_id as channelId, channel_name as channelName, SUM(listener_count) as listeners 
           FROM listener_analytics WHERE created_at >= ${oneDayAgo} 
           GROUP BY channel_id, channel_name ORDER BY listeners DESC LIMIT 7`
     )
@@ -23285,7 +24072,7 @@ async function getPlatformStats() {
   }));
   const deviceRows = extractRows(
     await db2.execute(
-      sql14`SELECT device_type as device, COUNT(*) as cnt FROM listener_analytics 
+      sql13`SELECT device_type as device, COUNT(*) as cnt FROM listener_analytics 
           WHERE created_at >= ${oneDayAgo} GROUP BY device_type ORDER BY cnt DESC`
     )
   );
@@ -23295,7 +24082,7 @@ async function getPlatformStats() {
   }));
   const regionRows = extractRows(
     await db2.execute(
-      sql14`SELECT geo_region as region, COUNT(*) as cnt FROM listener_analytics 
+      sql13`SELECT geo_region as region, COUNT(*) as cnt FROM listener_analytics 
           WHERE created_at >= ${oneDayAgo} GROUP BY geo_region ORDER BY cnt DESC`
     )
   );
@@ -25502,7 +26289,7 @@ import { z as z66 } from "zod";
 import axios3 from "axios";
 
 // server/_core/audioStreamingService.ts
-import { sql as sql15 } from "drizzle-orm";
+import { sql as sql14 } from "drizzle-orm";
 var _getDb = null;
 async function getDb2() {
   if (!_getDb) {
@@ -25583,7 +26370,7 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return [];
       const result2 = await db2.execute(
-        sql15`SELECT id, name, frequency, genre, status, currentListeners, totalListeners, streamUrl FROM radio_channels WHERE status = 'active' ORDER BY id`
+        sql14`SELECT id, name, frequency, genre, status, currentListeners, totalListeners, streamUrl FROM radio_channels WHERE status = 'active' ORDER BY id`
       );
       const rows = extractRows2(result2);
       return rows.map((row, index2) => ({
@@ -25609,7 +26396,7 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql15`SELECT COALESCE(SUM(currentListeners), 0) as total FROM radio_channels WHERE status = 'active'`
+        sql14`SELECT COALESCE(SUM(currentListeners), 0) as total FROM radio_channels WHERE status = 'active'`
       );
       const rows = extractRows2(result2);
       return Number(rows?.[0]?.total) || 0;
@@ -25626,7 +26413,7 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql15`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'active'`
+        sql14`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'active'`
       );
       const rows = extractRows2(result2);
       return Number(rows?.[0]?.cnt) || 0;
@@ -25642,7 +26429,7 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return [];
       const result2 = await db2.execute(
-        sql15`SELECT id, name, genre, frequency, streamUrl, metadata, currentListeners, totalListeners, status FROM radio_channels WHERE status = 'active' ORDER BY name`
+        sql14`SELECT id, name, genre, frequency, streamUrl, metadata, currentListeners, totalListeners, status FROM radio_channels WHERE status = 'active' ORDER BY name`
       );
       const rows = extractRows2(result2);
       return rows.map((r) => ({
@@ -25669,7 +26456,7 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return;
       await db2.execute(
-        sql15`UPDATE radio_channels SET currentListeners = currentListeners + 1, totalListeners = totalListeners + 1 WHERE id = ${channelId}`
+        sql14`UPDATE radio_channels SET currentListeners = currentListeners + 1, totalListeners = totalListeners + 1 WHERE id = ${channelId}`
       );
     } catch (error) {
       console.error("[Audio Streaming] recordListenerJoin failed:", error);
@@ -25683,7 +26470,7 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return;
       await db2.execute(
-        sql15`UPDATE radio_channels SET currentListeners = GREATEST(currentListeners - 1, 0) WHERE id = ${channelId}`
+        sql14`UPDATE radio_channels SET currentListeners = GREATEST(currentListeners - 1, 0) WHERE id = ${channelId}`
       );
     } catch (error) {
       console.error("[Audio Streaming] recordListenerLeave failed:", error);
@@ -25768,7 +26555,7 @@ var AudioStreamingService = class {
       const db2 = await getDb2();
       if (!db2) return [];
       const result2 = await db2.execute(
-        sql15`SELECT id, title, description, start_time, end_time, status, type, autonomous_scheduling FROM broadcast_schedules ORDER BY start_time`
+        sql14`SELECT id, title, description, start_time, end_time, status, type, autonomous_scheduling FROM broadcast_schedules ORDER BY start_time`
       );
       return extractRows2(result2);
     } catch (error) {
@@ -28442,7 +29229,7 @@ var videoProductionWorkflowRouter = router({
   registerGeneratedVideo: protectedProcedure.input(videoProductionSchema).mutation(async ({ ctx, input }) => {
     try {
       const videoRecord = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq29 }) => eq29(videos2.id, input.videoId)
+        where: (videos2, { eq: eq30 }) => eq30(videos2.id, input.videoId)
       });
       if (!videoRecord) {
         await (void 0)(void 0).values({
@@ -28473,7 +29260,7 @@ var videoProductionWorkflowRouter = router({
   getVideoStatus: protectedProcedure.input(z73.object({ videoId: z73.string() })).query(async ({ input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq29 }) => eq29(videos2.id, input.videoId)
+        where: (videos2, { eq: eq30 }) => eq30(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -28495,7 +29282,7 @@ var videoProductionWorkflowRouter = router({
   scheduleForRRBRadio: protectedProcedure.input(broadcastScheduleSchema).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq29 }) => eq29(videos2.id, input.videoId)
+        where: (videos2, { eq: eq30 }) => eq30(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -28531,10 +29318,10 @@ var videoProductionWorkflowRouter = router({
   getScheduledBroadcasts: protectedProcedure.input(z73.object({ stationId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcastSchedules.findMany({
-        where: (schedules, { eq: eq29, and: and20 }) => input.stationId ? and20(
-          eq29(schedules.createdBy, String(ctx.user.id)),
-          eq29(schedules.stationId, input.stationId)
-        ) : eq29(schedules.createdBy, String(ctx.user.id))
+        where: (schedules, { eq: eq30, and: and21 }) => input.stationId ? and21(
+          eq30(schedules.createdBy, String(ctx.user.id)),
+          eq30(schedules.stationId, input.stationId)
+        ) : eq30(schedules.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         scheduleId: broadcast.id,
@@ -28559,7 +29346,7 @@ var videoProductionWorkflowRouter = router({
   ).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq29 }) => eq29(videos2.id, input.videoId)
+        where: (videos2, { eq: eq30 }) => eq30(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -28591,10 +29378,10 @@ var videoProductionWorkflowRouter = router({
   getBroadcastHistory: protectedProcedure.input(z73.object({ videoId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq29, and: and20 }) => input.videoId ? and20(
-          eq29(broadcasts5.createdBy, String(ctx.user.id)),
-          eq29(broadcasts5.videoId, input.videoId)
-        ) : eq29(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq30, and: and21 }) => input.videoId ? and21(
+          eq30(broadcasts5.createdBy, String(ctx.user.id)),
+          eq30(broadcasts5.videoId, input.videoId)
+        ) : eq30(broadcasts5.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         broadcastId: broadcast.id,
@@ -28614,10 +29401,10 @@ var videoProductionWorkflowRouter = router({
   getWorkflowStats: protectedProcedure.query(async ({ ctx }) => {
     try {
       const videos2 = await (void 0).videos.findMany({
-        where: (videos3, { eq: eq29 }) => eq29(videos3.userId, String(ctx.user.id))
+        where: (videos3, { eq: eq30 }) => eq30(videos3.userId, String(ctx.user.id))
       });
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq29 }) => eq29(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq30 }) => eq30(broadcasts5.createdBy, String(ctx.user.id))
       });
       const statusCounts = {
         generated: videos2.filter((v) => v.status === "generated").length,
@@ -29252,7 +30039,7 @@ var qumusOrchestrationRouter2 = router({
 });
 
 // server/_core/stateOfStudio.ts
-import { sql as sql16 } from "drizzle-orm";
+import { sql as sql15 } from "drizzle-orm";
 var _getDb2 = null;
 async function getDb3() {
   if (!_getDb2) {
@@ -29295,7 +30082,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql16`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE result = 'success'`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE result = 'success'`
       );
       const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
@@ -29308,7 +30095,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql16`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE result = 'escalated' OR autonomous_flag = 0`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE result = 'escalated' OR autonomous_flag = 0`
       );
       const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
@@ -29321,7 +30108,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql16`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions`
       );
       const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
@@ -29334,7 +30121,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql16`SELECT COUNT(*) as total, SUM(CASE WHEN result = 'success' THEN 1 ELSE 0 END) as successful FROM qumus_autonomous_actions`
+        sql15`SELECT COUNT(*) as total, SUM(CASE WHEN result = 'success' THEN 1 ELSE 0 END) as successful FROM qumus_autonomous_actions`
       );
       const rows = extractRows3(result2);
       const total = Number(rows?.[0]?.total) || 0;
@@ -29350,7 +30137,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql16`SELECT COUNT(*) as cnt FROM qumus_core_policies WHERE enabled = 1`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_core_policies WHERE enabled = 1`
       );
       const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
@@ -29363,7 +30150,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return [];
       const result2 = await db2.execute(
-        sql16`SELECT policy_id, name, policy_type, autonomy_level, enabled FROM qumus_core_policies WHERE enabled = 1`
+        sql15`SELECT policy_id, name, policy_type, autonomy_level, enabled FROM qumus_core_policies WHERE enabled = 1`
       );
       return extractRows3(result2);
     } catch {
@@ -29375,7 +30162,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql16`SELECT COUNT(*) as cnt FROM ecosystem_commands`
+        sql15`SELECT COUNT(*) as cnt FROM ecosystem_commands`
       );
       const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
@@ -29388,7 +30175,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return 0;
       const result2 = await db2.execute(
-        sql16`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE status = 'pending' OR status = 'processing'`
+        sql15`SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE status = 'pending' OR status = 'processing'`
       );
       const rows = extractRows3(result2);
       return Number(rows?.[0]?.cnt) || 0;
@@ -29401,7 +30188,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return { total: 0, avgSuccessRate: 0 };
       const result2 = await db2.execute(
-        sql16`SELECT COUNT(*) as total, AVG(successRate) as avgRate FROM policy_decisions`
+        sql15`SELECT COUNT(*) as total, AVG(successRate) as avgRate FROM policy_decisions`
       );
       const rows = extractRows3(result2);
       return {
@@ -29417,7 +30204,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return { autonomous: 0, human: 0 };
       const result2 = await db2.execute(
-        sql16`SELECT COUNT(*) as total,
+        sql15`SELECT COUNT(*) as total,
           SUM(CASE WHEN autonomous_flag = 1 THEN 1 ELSE 0 END) as autonomous,
           SUM(CASE WHEN autonomous_flag = 0 THEN 1 ELSE 0 END) as human
         FROM qumus_autonomous_actions`
@@ -29439,7 +30226,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return;
       await db2.execute(
-        sql16`INSERT INTO qumus_autonomous_actions (decision_id, action_type, policy_id, input, output, status, result, autonomous_flag, confidence, execution_time, timestamp) 
+        sql15`INSERT INTO qumus_autonomous_actions (decision_id, action_type, policy_id, input, output, status, result, autonomous_flag, confidence, execution_time, timestamp) 
         VALUES (CONCAT('dec_', UNIX_TIMESTAMP()), 'system_decision', 'policy_performance_alert', '{}', '{"result":"auto_executed"}', 'completed', 'success', 1, 95.00, 150, NOW())`
       );
     } catch (error) {
@@ -29451,7 +30238,7 @@ var StateOfStudio = class {
       const db2 = await getDb3();
       if (!db2) return;
       await db2.execute(
-        sql16`INSERT INTO qumus_autonomous_actions (decision_id, action_type, policy_id, input, output, status, result, autonomous_flag, confidence, execution_time, timestamp) 
+        sql15`INSERT INTO qumus_autonomous_actions (decision_id, action_type, policy_id, input, output, status, result, autonomous_flag, confidence, execution_time, timestamp) 
         VALUES (CONCAT('dec_', UNIX_TIMESTAMP()), 'human_override', 'policy_content_moderation', '{}', '{"result":"escalated"}', 'escalated', 'escalated', 0, 45.00, 0, NOW())`
       );
     } catch (error) {
@@ -30081,7 +30868,7 @@ function getDailySchedule() {
 
 // server/_core/commercialCampaignService.ts
 init_db();
-import { sql as sql17 } from "drizzle-orm";
+import { sql as sql16 } from "drizzle-orm";
 var UN_CAMPAIGN_COMMERCIALS = [
   // ─── HERO SPOT (60s) ───
   {
@@ -30341,27 +31128,27 @@ function getDefaultIntro(dj, commercial) {
 }
 async function seedCommercialsToDb() {
   const db2 = await getDb();
-  const existing = await db2.execute(sql17`SELECT COUNT(*) as cnt FROM commercials`);
+  const existing = await db2.execute(sql16`SELECT COUNT(*) as cnt FROM commercials`);
   const rows = Array.isArray(existing[0]) ? existing[0] : existing;
   const count6 = rows[0]?.cnt || 0;
   if (count6 > 0) {
     console.log(`[CommercialCampaign] ${count6} commercials already exist, skipping seed`);
     return count6;
   }
-  const breaks = await db2.execute(sql17`SELECT id FROM commercial_breaks LIMIT 1`);
+  const breaks = await db2.execute(sql16`SELECT id FROM commercial_breaks LIMIT 1`);
   const breakRows = Array.isArray(breaks[0]) ? breaks[0] : breaks;
   let breakId = breakRows[0]?.id;
   if (!breakId) {
-    const schedules = await db2.execute(sql17`SELECT id FROM broadcast_schedules LIMIT 1`);
+    const schedules = await db2.execute(sql16`SELECT id FROM broadcast_schedules LIMIT 1`);
     const scheduleRows = Array.isArray(schedules[0]) ? schedules[0] : schedules;
     const scheduleId = scheduleRows[0]?.id || 1;
-    await db2.execute(sql17`INSERT INTO commercial_breaks (schedule_id, position, duration, type) VALUES (${scheduleId}, 0, 30, 'mid_roll')`);
-    const newBreaks = await db2.execute(sql17`SELECT id FROM commercial_breaks ORDER BY id DESC LIMIT 1`);
+    await db2.execute(sql16`INSERT INTO commercial_breaks (schedule_id, position, duration, type) VALUES (${scheduleId}, 0, 30, 'mid_roll')`);
+    const newBreaks = await db2.execute(sql16`SELECT id FROM commercial_breaks ORDER BY id DESC LIMIT 1`);
     const newBreakRows = Array.isArray(newBreaks[0]) ? newBreaks[0] : newBreaks;
     breakId = newBreakRows[0]?.id;
   }
   for (const commercial of UN_CAMPAIGN_COMMERCIALS) {
-    await db2.execute(sql17`
+    await db2.execute(sql16`
       INSERT INTO commercials (break_id, advertiser, title, file_url, duration, is_active, impressions, clicks)
       VALUES (
         ${breakId},
@@ -30381,7 +31168,7 @@ async function seedCommercialsToDb() {
 
 // server/routers/ecosystemIntegrationRouter.ts
 init_db();
-import { sql as sql18 } from "drizzle-orm";
+import { sql as sql17 } from "drizzle-orm";
 var ecosystemIntegrationRouter = router({
   /**
    * Get centralized platform stats — single source of truth for all listener/channel metrics
@@ -30606,7 +31393,7 @@ var ecosystemIntegrationRouter = router({
     try {
       const db2 = await getDb();
       const result2 = await db2.execute(
-        sql18`SELECT id, title, description, start_time, end_time, status, type, autonomous_scheduling
+        sql17`SELECT id, title, description, start_time, end_time, status, type, autonomous_scheduling
             FROM broadcast_schedules ORDER BY start_time`
       );
       const rows = Array.isArray(result2[0]) ? result2[0] : result2;
@@ -30679,7 +31466,7 @@ var ecosystemIntegrationRouter = router({
   })).mutation(async ({ input }) => {
     try {
       const db2 = await getDb();
-      await db2.execute(sql18`
+      await db2.execute(sql17`
           UPDATE commercials SET impressions = impressions + 1 
           WHERE title IN (
             SELECT title FROM (SELECT title FROM commercials WHERE file_url LIKE ${`%${input.commercialId}%`}) AS t
@@ -30715,13 +31502,13 @@ var ecosystemIntegrationRouter = router({
    * Generate TTS audio for ALL commercials
    */
   generateAllCommercialAudio: protectedProcedure.mutation(async () => {
-    const commercials = UN_CAMPAIGN_COMMERCIALS.map((c) => ({
+    const commercials2 = UN_CAMPAIGN_COMMERCIALS.map((c) => ({
       id: c.id,
       title: c.title,
       script: c.script,
       djVoice: c.djVoice
     }));
-    const result2 = await commercialTtsService.generateAllCommercialAudio(commercials);
+    const result2 = await commercialTtsService.generateAllCommercialAudio(commercials2);
     return {
       generated: result2.generated.length,
       fallback: result2.fallback.length,
@@ -30758,7 +31545,7 @@ var ecosystemIntegrationRouter = router({
     const sinceStr = since.toISOString().slice(0, 19).replace("T", " ");
     try {
       const [typeRows] = await db2.execute(
-        sql18`SELECT impression_type, COUNT(*) as cnt FROM commercial_impressions WHERE created_at >= ${sinceStr} GROUP BY impression_type`
+        sql17`SELECT impression_type, COUNT(*) as cnt FROM commercial_impressions WHERE created_at >= ${sinceStr} GROUP BY impression_type`
       );
       const rows = Array.isArray(typeRows) && Array.isArray(typeRows[0]) ? typeRows[0] : typeRows;
       const byType = {};
@@ -30770,7 +31557,7 @@ var ecosystemIntegrationRouter = router({
       const totalClicks = byType["click"] || 0;
       const totalCompletions = byType["complete"] || 0;
       const [chRows] = await db2.execute(
-        sql18`SELECT channel_name, impression_type, COUNT(*) as cnt FROM commercial_impressions WHERE created_at >= ${sinceStr} GROUP BY channel_name, impression_type ORDER BY channel_name`
+        sql17`SELECT channel_name, impression_type, COUNT(*) as cnt FROM commercial_impressions WHERE created_at >= ${sinceStr} GROUP BY channel_name, impression_type ORDER BY channel_name`
       );
       const channelRows = Array.isArray(chRows) && Array.isArray(chRows[0]) ? chRows[0] : chRows;
       const channelMap = {};
@@ -30783,7 +31570,7 @@ var ecosystemIntegrationRouter = router({
         ctr: ch.views > 0 ? (ch.clicks / ch.views * 100).toFixed(1) : "0.0"
       }));
       const [djRows] = await db2.execute(
-        sql18`SELECT dj_voice, COUNT(*) as impressions FROM commercial_impressions WHERE created_at >= ${sinceStr} GROUP BY dj_voice`
+        sql17`SELECT dj_voice, COUNT(*) as impressions FROM commercial_impressions WHERE created_at >= ${sinceStr} GROUP BY dj_voice`
       );
       const djData = Array.isArray(djRows) && Array.isArray(djRows[0]) ? djRows[0] : djRows;
       const byDj = djData.map((r) => ({ voice: r.dj_voice, impressions: Number(r.impressions) }));
@@ -30822,7 +31609,7 @@ var ecosystemIntegrationRouter = router({
       const db2 = await getDb();
       const limit = input.limit || 50;
       const rows = await db2.execute(
-        sql18`SELECT id, channelId, channelName, userName, userAvatar, message, messageType, isAiGenerated, createdAt
+        sql17`SELECT id, channelId, channelName, userName, userAvatar, message, messageType, isAiGenerated, createdAt
               FROM radio_chat_messages
               WHERE channelName = ${input.channelName} OR channelId = 0
               ORDER BY createdAt DESC LIMIT ${limit}`
@@ -30843,7 +31630,7 @@ var ecosystemIntegrationRouter = router({
     try {
       const db2 = await getDb();
       await db2.execute(
-        sql18`INSERT INTO radio_chat_messages (channelId, channelName, userName, message, messageType, isAiGenerated)
+        sql17`INSERT INTO radio_chat_messages (channelId, channelName, userName, message, messageType, isAiGenerated)
               VALUES (${input.channelId}, ${input.channelName}, ${input.userName}, ${input.message}, 'user', false)`
       );
       if (Math.random() < 0.3) {
@@ -30859,7 +31646,7 @@ var ecosystemIntegrationRouter = router({
         ];
         const response = responses[Math.floor(Math.random() * responses.length)];
         await db2.execute(
-          sql18`INSERT INTO radio_chat_messages (channelId, channelName, userName, message, messageType, isAiGenerated)
+          sql17`INSERT INTO radio_chat_messages (channelId, channelName, userName, message, messageType, isAiGenerated)
                 VALUES (${input.channelId}, ${input.channelName}, ${djName}, ${response}, ${djType}, true)`
         );
       }
@@ -30873,7 +31660,7 @@ var ecosystemIntegrationRouter = router({
     try {
       const db2 = await getDb();
       const rows = await db2.execute(
-        sql18`SELECT COUNT(*) as total,
+        sql17`SELECT COUNT(*) as total,
             SUM(CASE WHEN isAiGenerated = 1 THEN 1 ELSE 0 END) as aiMessages,
             SUM(CASE WHEN isAiGenerated = 0 THEN 1 ELSE 0 END) as userMessages,
             COUNT(DISTINCT userName) as uniqueUsers
@@ -33365,8 +34152,8 @@ init_storage();
 async function uploadTaskArtifact(taskId, userId, fileName, fileBuffer, mimeType, metadata) {
   try {
     const timestamp2 = Date.now();
-    const randomSuffix2 = Math.random().toString(36).substring(7);
-    const fileKey = `tasks/${userId}/${taskId}/${timestamp2}-${randomSuffix2}-${fileName}`;
+    const randomSuffix3 = Math.random().toString(36).substring(7);
+    const fileKey = `tasks/${userId}/${taskId}/${timestamp2}-${randomSuffix3}-${fileName}`;
     const { url } = await storagePut(fileKey, fileBuffer, mimeType);
     const artifact = await db.insert("task_artifacts").values({
       taskId,
@@ -33986,8 +34773,8 @@ var filesRouter = router({
    * Search files by name
    */
   search: protectedProcedure.input(z82.object({ query: z82.string() })).query(async ({ ctx, input }) => {
-    const { files: files2 } = await listUserFiles(ctx.user.id, 1e3);
-    return files2.filter(
+    const { files: files3 } = await listUserFiles(ctx.user.id, 1e3);
+    return files3.filter(
       (f) => f.fileName.toLowerCase().includes(input.query.toLowerCase())
     );
   })
@@ -37321,14 +38108,14 @@ var EngagementWebhooksService = class {
    */
   static async checkForAnomalies(stationId, platform) {
     try {
-      const alerts2 = [];
+      const alerts = [];
       const historicalMetrics = await this.getRealTimeMetrics(stationId);
       const currentMetrics = historicalMetrics.find((m) => m.platform === platform);
-      if (!currentMetrics) return alerts2;
+      if (!currentMetrics) return alerts;
       const spikeThreshold = 1.5;
       const dropThreshold = 0.5;
       if (currentMetrics.views > 5e4) {
-        alerts2.push({
+        alerts.push({
           stationId,
           alertType: "spike",
           severity: "high",
@@ -37343,7 +38130,7 @@ var EngagementWebhooksService = class {
         });
       }
       if (currentMetrics.followers < 5e3 && platform === "twitter") {
-        alerts2.push({
+        alerts.push({
           stationId,
           alertType: "drop",
           severity: "medium",
@@ -37355,7 +38142,7 @@ var EngagementWebhooksService = class {
           acknowledged: false
         });
       }
-      return alerts2;
+      return alerts;
     } catch (error) {
       console.error("[Webhooks] Error checking for anomalies:", error);
       return [];
@@ -37366,7 +38153,7 @@ var EngagementWebhooksService = class {
    */
   static async getAnomalyAlerts(stationId) {
     try {
-      const alerts2 = [
+      const alerts = [
         {
           id: 1,
           stationId,
@@ -37388,7 +38175,7 @@ var EngagementWebhooksService = class {
           acknowledged: true
         }
       ];
-      return alerts2;
+      return alerts;
     } catch (error) {
       console.error("[Webhooks] Error fetching anomaly alerts:", error);
       return [];
@@ -37487,8 +38274,8 @@ var engagementWebhooksRouter = router({
   }),
   // Get anomaly alerts
   getAnomalyAlerts: protectedProcedure.input(z89.object({ stationId: z89.number() })).query(async ({ input }) => {
-    const alerts2 = await engagementWebhooks_default.getAnomalyAlerts(input.stationId);
-    return alerts2;
+    const alerts = await engagementWebhooks_default.getAnomalyAlerts(input.stationId);
+    return alerts;
   }),
   // Acknowledge alert
   acknowledgeAlert: protectedProcedure.input(z89.object({ alertId: z89.number() })).mutation(async ({ input }) => {
@@ -40142,6 +40929,398 @@ var mediaBlastRouter = router({
   })
 });
 
+// server/routers/podcastManagementRouter.ts
+import { z as z95 } from "zod";
+init_storage();
+init_db();
+init_schema();
+import { eq as eq28, desc as desc16, and as and20, sql as sql18 } from "drizzle-orm";
+function randomSuffix2() {
+  return Math.random().toString(36).substring(2, 10);
+}
+var podcastManagementRouter = router({
+  // ─── SHOWS ─────────────────────────────────────────────────
+  /** List all active podcast shows */
+  getShows: publicProcedure.query(async () => {
+    const db2 = await getDb();
+    if (!db2) return [];
+    const shows = await db2.select().from(podcastShows).where(eq28(podcastShows.isActive, 1)).orderBy(podcastShows.title);
+    return shows;
+  }),
+  /** Get a single show by slug */
+  getShowBySlug: publicProcedure.input(z95.object({ slug: z95.string() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) return null;
+    const [show] = await db2.select().from(podcastShows).where(eq28(podcastShows.slug, input.slug)).limit(1);
+    return show ?? null;
+  }),
+  /** Update show details (admin) */
+  updateShow: protectedProcedure.input(z95.object({
+    id: z95.number(),
+    title: z95.string().optional(),
+    subtitle: z95.string().optional(),
+    description: z95.string().optional(),
+    scheduleDay: z95.string().optional(),
+    scheduleTime: z95.string().optional(),
+    spotifyUrl: z95.string().optional(),
+    appleUrl: z95.string().optional(),
+    youtubeUrl: z95.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const { id, ...updates } = input;
+    const updateData = { updatedAt: Date.now() };
+    if (updates.title) updateData.title = updates.title;
+    if (updates.subtitle) updateData.subtitle = updates.subtitle;
+    if (updates.description) updateData.description = updates.description;
+    if (updates.scheduleDay) updateData.scheduleDay = updates.scheduleDay;
+    if (updates.scheduleTime) updateData.scheduleTime = updates.scheduleTime;
+    if (updates.spotifyUrl) updateData.spotifyUrl = updates.spotifyUrl;
+    if (updates.appleUrl) updateData.appleUrl = updates.appleUrl;
+    if (updates.youtubeUrl) updateData.youtubeUrl = updates.youtubeUrl;
+    await db2.update(podcastShows).set(updateData).where(eq28(podcastShows.id, id));
+    return { success: true };
+  }),
+  /** Toggle show live status */
+  toggleLive: protectedProcedure.input(z95.object({ showId: z95.number(), isLive: z95.boolean() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    await db2.update(podcastShows).set({ isLive: input.isLive ? 1 : 0, updatedAt: Date.now() }).where(eq28(podcastShows.id, input.showId));
+    return { success: true, isLive: input.isLive };
+  }),
+  // ─── EPISODES ──────────────────────────────────────────────
+  /** List episodes for a show */
+  getEpisodes: publicProcedure.input(z95.object({
+    showId: z95.number(),
+    status: z95.enum(["draft", "uploading", "processing", "ready", "published", "scheduled", "archived"]).optional(),
+    limit: z95.number().min(1).max(100).optional().default(50),
+    offset: z95.number().min(0).optional().default(0)
+  })).query(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) return { episodes: [], total: 0 };
+    const conditions = [eq28(podcastEpisodes.showId, input.showId)];
+    if (input.status) {
+      conditions.push(eq28(podcastEpisodes.status, input.status));
+    }
+    const episodes = await db2.select().from(podcastEpisodes).where(and20(...conditions)).orderBy(desc16(podcastEpisodes.episodeNumber)).limit(input.limit).offset(input.offset);
+    const [countResult] = await db2.select({ count: sql18`COUNT(*)` }).from(podcastEpisodes).where(and20(...conditions));
+    return { episodes, total: countResult?.count ?? 0 };
+  }),
+  /** Get a single episode */
+  getEpisode: publicProcedure.input(z95.object({ id: z95.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) return null;
+    const [episode] = await db2.select().from(podcastEpisodes).where(eq28(podcastEpisodes.id, input.id)).limit(1);
+    return episode ?? null;
+  }),
+  /** Create a new episode (draft) */
+  createEpisode: protectedProcedure.input(z95.object({
+    showId: z95.number(),
+    title: z95.string().min(1),
+    description: z95.string().optional(),
+    tags: z95.array(z95.string()).optional(),
+    guestNames: z95.array(z95.string()).optional(),
+    showNotes: z95.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const [lastEp] = await db2.select({ maxNum: sql18`COALESCE(MAX(episode_number), 0)` }).from(podcastEpisodes).where(eq28(podcastEpisodes.showId, input.showId));
+    const episodeNumber = (lastEp?.maxNum ?? 0) + 1;
+    const now = Date.now();
+    const [result2] = await db2.insert(podcastEpisodes).values({
+      showId: input.showId,
+      episodeNumber,
+      title: input.title,
+      description: input.description ?? null,
+      tags: input.tags ? JSON.stringify(input.tags) : null,
+      guestNames: input.guestNames ? JSON.stringify(input.guestNames) : null,
+      showNotes: input.showNotes ?? null,
+      status: "draft",
+      createdAt: now,
+      updatedAt: now
+    });
+    await db2.update(podcastShows).set({
+      totalEpisodes: sql18`total_episodes + 1`,
+      updatedAt: now
+    }).where(eq28(podcastShows.id, input.showId));
+    return { success: true, episodeId: result2.insertId, episodeNumber };
+  }),
+  /** Update episode metadata */
+  updateEpisode: protectedProcedure.input(z95.object({
+    id: z95.number(),
+    title: z95.string().optional(),
+    description: z95.string().optional(),
+    tags: z95.array(z95.string()).optional(),
+    guestNames: z95.array(z95.string()).optional(),
+    showNotes: z95.string().optional(),
+    scheduledPublishAt: z95.number().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const { id, ...updates } = input;
+    const updateData = { updatedAt: Date.now() };
+    if (updates.title) updateData.title = updates.title;
+    if (updates.description !== void 0) updateData.description = updates.description;
+    if (updates.tags) updateData.tags = JSON.stringify(updates.tags);
+    if (updates.guestNames) updateData.guestNames = JSON.stringify(updates.guestNames);
+    if (updates.showNotes !== void 0) updateData.showNotes = updates.showNotes;
+    if (updates.scheduledPublishAt) {
+      updateData.scheduledPublishAt = updates.scheduledPublishAt;
+      updateData.status = "scheduled";
+    }
+    await db2.update(podcastEpisodes).set(updateData).where(eq28(podcastEpisodes.id, id));
+    return { success: true };
+  }),
+  /** Upload audio file for an episode */
+  uploadAudio: protectedProcedure.input(z95.object({
+    episodeId: z95.number(),
+    fileName: z95.string(),
+    fileData: z95.string(),
+    // base64 encoded
+    contentType: z95.string().default("audio/mpeg"),
+    duration: z95.number().optional(),
+    // seconds
+    fileSize: z95.number().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const buffer = Buffer.from(input.fileData, "base64");
+    const suffix = randomSuffix2();
+    const fileKey = `podcast-episodes/ep-${input.episodeId}-${suffix}-${input.fileName}`;
+    const { url } = await storagePut(fileKey, buffer, input.contentType);
+    await db2.update(podcastEpisodes).set({
+      audioUrl: url,
+      audioFileKey: fileKey,
+      duration: input.duration ?? null,
+      fileSize: input.fileSize ?? buffer.length,
+      status: "ready",
+      updatedAt: Date.now()
+    }).where(eq28(podcastEpisodes.id, input.episodeId));
+    return { success: true, audioUrl: url, fileKey };
+  }),
+  /** Publish an episode — marks as published and triggers auto-distribution */
+  publishEpisode: protectedProcedure.input(z95.object({ episodeId: z95.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const now = Date.now();
+    const [episode] = await db2.select().from(podcastEpisodes).where(eq28(podcastEpisodes.id, input.episodeId)).limit(1);
+    if (!episode) throw new Error("Episode not found");
+    if (!episode.audioUrl) throw new Error("Episode has no audio file \u2014 upload audio first");
+    await db2.update(podcastEpisodes).set({
+      status: "published",
+      publishedAt: now,
+      distributionStatus: JSON.stringify({
+        spotify: "queued",
+        apple: "queued",
+        youtube: "queued",
+        rss: "published"
+      }),
+      updatedAt: now
+    }).where(eq28(podcastEpisodes.id, input.episodeId));
+    const distributionResults = await triggerAutoDistribution(db2, episode, now);
+    return {
+      success: true,
+      publishedAt: now,
+      distribution: distributionResults
+    };
+  }),
+  /** Delete an episode */
+  deleteEpisode: protectedProcedure.input(z95.object({ episodeId: z95.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const [episode] = await db2.select().from(podcastEpisodes).where(eq28(podcastEpisodes.id, input.episodeId)).limit(1);
+    if (episode) {
+      await db2.delete(podcastEpisodes).where(eq28(podcastEpisodes.id, input.episodeId));
+      await db2.update(podcastShows).set({
+        totalEpisodes: sql18`GREATEST(total_episodes - 1, 0)`,
+        updatedAt: Date.now()
+      }).where(eq28(podcastShows.id, episode.showId));
+    }
+    return { success: true };
+  }),
+  /** Track episode play */
+  trackPlay: publicProcedure.input(z95.object({ episodeId: z95.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) return { success: false };
+    await db2.update(podcastEpisodes).set({ playCount: sql18`play_count + 1` }).where(eq28(podcastEpisodes.id, input.episodeId));
+    const [episode] = await db2.select({ showId: podcastEpisodes.showId }).from(podcastEpisodes).where(eq28(podcastEpisodes.id, input.episodeId)).limit(1);
+    if (episode) {
+      await db2.update(podcastShows).set({ totalListeners: sql18`total_listeners + 1` }).where(eq28(podcastShows.id, episode.showId));
+    }
+    return { success: true };
+  }),
+  // ─── CALL-IN QUEUE ─────────────────────────────────────────
+  /** Join the call-in queue */
+  joinCallIn: publicProcedure.input(z95.object({
+    showId: z95.number(),
+    callerName: z95.string().min(1),
+    callerEmail: z95.string().email().optional(),
+    topic: z95.string().optional(),
+    peerId: z95.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const now = Date.now();
+    const [maxPos] = await db2.select({ maxPos: sql18`COALESCE(MAX(queue_position), 0)` }).from(callInQueue).where(and20(
+      eq28(callInQueue.showId, input.showId),
+      eq28(callInQueue.status, "waiting")
+    ));
+    const position = (maxPos?.maxPos ?? 0) + 1;
+    const [result2] = await db2.insert(callInQueue).values({
+      showId: input.showId,
+      callerName: input.callerName,
+      callerEmail: input.callerEmail ?? null,
+      topic: input.topic ?? null,
+      peerId: input.peerId ?? null,
+      status: "waiting",
+      queuePosition: position,
+      connectionType: "webrtc",
+      isMuted: 1,
+      joinedAt: now,
+      createdAt: now
+    });
+    return { success: true, callInId: result2.insertId, position };
+  }),
+  /** Get the call-in queue for a show */
+  getCallInQueue: publicProcedure.input(z95.object({ showId: z95.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) return [];
+    const queue = await db2.select().from(callInQueue).where(and20(
+      eq28(callInQueue.showId, input.showId),
+      sql18`status IN ('waiting', 'screening', 'ready', 'on_air')`
+    )).orderBy(callInQueue.queuePosition);
+    return queue;
+  }),
+  /** Move a caller to on-air (host action) */
+  putCallerOnAir: protectedProcedure.input(z95.object({ callInId: z95.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    await db2.update(callInQueue).set({
+      status: "on_air",
+      isMuted: 0,
+      onAirAt: Date.now()
+    }).where(eq28(callInQueue.id, input.callInId));
+    return { success: true };
+  }),
+  /** End a caller's on-air session */
+  endCallerOnAir: protectedProcedure.input(z95.object({
+    callInId: z95.number(),
+    rating: z95.number().min(1).max(5).optional(),
+    notes: z95.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const now = Date.now();
+    const [caller] = await db2.select().from(callInQueue).where(eq28(callInQueue.id, input.callInId)).limit(1);
+    const durationOnAir = caller?.onAirAt ? Math.round((now - Number(caller.onAirAt)) / 1e3) : 0;
+    await db2.update(callInQueue).set({
+      status: "completed",
+      endedAt: now,
+      durationOnAir,
+      rating: input.rating ?? null,
+      notes: input.notes ?? null
+    }).where(eq28(callInQueue.id, input.callInId));
+    return { success: true, durationOnAir };
+  }),
+  /** Remove/reject a caller from queue */
+  removeFromQueue: protectedProcedure.input(z95.object({ callInId: z95.number(), reason: z95.string().optional() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    await db2.update(callInQueue).set({
+      status: "rejected",
+      endedAt: Date.now(),
+      notes: input.reason ?? null
+    }).where(eq28(callInQueue.id, input.callInId));
+    return { success: true };
+  }),
+  // ─── WebRTC SIGNALING ──────────────────────────────────────
+  /** Get WebRTC signaling info for a caller */
+  getSignalingInfo: publicProcedure.input(z95.object({ callInId: z95.number() })).query(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) return null;
+    const [caller] = await db2.select().from(callInQueue).where(eq28(callInQueue.id, input.callInId)).limit(1);
+    if (!caller) return null;
+    return {
+      callInId: caller.id,
+      peerId: caller.peerId,
+      status: caller.status,
+      isMuted: caller.isMuted === 1,
+      // ICE servers for WebRTC
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
+        { urls: "stun:stun2.l.google.com:19302" }
+      ]
+    };
+  }),
+  /** Update caller's WebRTC peer ID */
+  updatePeerId: publicProcedure.input(z95.object({
+    callInId: z95.number(),
+    peerId: z95.string()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    await db2.update(callInQueue).set({ peerId: input.peerId }).where(eq28(callInQueue.id, input.callInId));
+    return { success: true };
+  }),
+  // ─── STATS ─────────────────────────────────────────────────
+  /** Get podcast stats for dashboard */
+  getStats: publicProcedure.query(async () => {
+    const db2 = await getDb();
+    if (!db2) return { showCount: 0, totalEpisodes: 0, publishedEpisodes: 0, totalPlays: 0, totalDownloads: 0, shows: [] };
+    const shows = await db2.select().from(podcastShows).where(eq28(podcastShows.isActive, 1));
+    const [episodeStats] = await db2.select({
+      totalEpisodes: sql18`COUNT(*)`,
+      totalPlays: sql18`COALESCE(SUM(play_count), 0)`,
+      totalDownloads: sql18`COALESCE(SUM(download_count), 0)`,
+      publishedCount: sql18`SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END)`
+    }).from(podcastEpisodes);
+    return {
+      showCount: shows.length,
+      totalEpisodes: episodeStats?.totalEpisodes ?? 0,
+      publishedEpisodes: episodeStats?.publishedCount ?? 0,
+      totalPlays: episodeStats?.totalPlays ?? 0,
+      totalDownloads: episodeStats?.totalDownloads ?? 0,
+      shows: shows.map((s) => ({
+        id: s.id,
+        slug: s.slug,
+        title: s.title,
+        hostPersona: s.hostPersona,
+        isLive: s.isLive === 1,
+        totalEpisodes: s.totalEpisodes ?? 0,
+        totalListeners: s.totalListeners ?? 0,
+        scheduleDay: s.scheduleDay,
+        scheduleTime: s.scheduleTime
+      }))
+    };
+  })
+});
+async function triggerAutoDistribution(db2, episode, publishedAt) {
+  const results = {};
+  try {
+    results.spotify = "queued_for_distribution";
+    console.log(`[PodcastDistribution] Spotify: Queued episode ${episode.id} - "${episode.title}"`);
+  } catch (e) {
+    results.spotify = "failed";
+  }
+  try {
+    results.apple = "queued_for_distribution";
+    console.log(`[PodcastDistribution] Apple: Queued episode ${episode.id} - "${episode.title}"`);
+  } catch (e) {
+    results.apple = "failed";
+  }
+  try {
+    results.youtube = "queued_for_distribution";
+    console.log(`[PodcastDistribution] YouTube: Queued episode ${episode.id} - "${episode.title}"`);
+  } catch (e) {
+    results.youtube = "failed";
+  }
+  results.rss = "published";
+  console.log(`[PodcastDistribution] RSS: Published episode ${episode.id} - "${episode.title}"`);
+  await db2.update(podcastEpisodes).set({ distributionStatus: JSON.stringify(results) }).where(eq28(podcastEpisodes.id, episode.id));
+  return results;
+}
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -40165,11 +41344,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z95.object({
-        goal: z95.string().min(1, "Goal is required"),
-        priority: z95.number().int().min(1).max(10).optional().default(5),
-        steps: z95.array(z95.string()).optional(),
-        constraints: z95.array(z95.string()).optional()
+      z96.object({
+        goal: z96.string().min(1, "Goal is required"),
+        priority: z96.number().int().min(1).max(10).optional().default(5),
+        steps: z96.array(z96.string()).optional(),
+        constraints: z96.array(z96.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -40181,7 +41360,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z95.object({ taskId: z95.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z96.object({ taskId: z96.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -40191,11 +41370,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z95.object({
-        target: z95.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z95.string().min(1, "Action is required"),
-        params: z95.record(z95.any()).optional().default({}),
-        priority: z95.number().int().min(1).max(10).optional().default(5)
+      z96.object({
+        target: z96.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z96.string().min(1, "Action is required"),
+        params: z96.record(z96.any()).optional().default({}),
+        priority: z96.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -40207,10 +41386,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z95.object({ commandId: z95.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z96.object({ commandId: z96.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z95.object({ target: z95.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z96.object({ target: z96.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -40305,12 +41484,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z95.object({
-      sessionName: z95.string().min(1),
-      systemPrompt: z95.string().optional(),
-      temperature: z95.number().min(0).max(100).optional(),
-      model: z95.string().optional(),
-      maxSteps: z95.number().min(1).optional()
+    createSession: protectedProcedure.input(z96.object({
+      sessionName: z96.string().min(1),
+      systemPrompt: z96.string().optional(),
+      temperature: z96.number().min(0).max(100).optional(),
+      model: z96.string().optional(),
+      maxSteps: z96.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -40331,7 +41510,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z95.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z96.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -40340,7 +41519,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z95.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z96.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -40378,13 +41557,15 @@ var appRouter = router({
   engagementWebhooks: engagementWebhooksRouter,
   // Interactive Call-In System
   callIn: callInRouter,
+  // Podcast Management (Shows, Episodes, Call-In, Distribution)
+  podcastManagement: podcastManagementRouter,
   // Advanced Features (Multi-Region Failover, Analytics, AI Recommendations)
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z95.object({
-      dateRange: z95.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z95.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z96.object({
+      dateRange: z96.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z96.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -40395,24 +41576,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z95.object({
-      dateRange: z95.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z96.object({
+      dateRange: z96.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z95.object({
-      dateRange: z95.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z96.object({
+      dateRange: z96.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z95.object({
-      email: z95.string().email(),
-      name: z95.string().optional(),
-      source: z95.string().optional(),
-      language: z95.string().optional()
+    subscribe: publicProcedure.input(z96.object({
+      email: z96.string().email(),
+      name: z96.string().optional(),
+      source: z96.string().optional(),
+      language: z96.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
@@ -40792,7 +41973,7 @@ init_db();
 init_schema();
 init_notification();
 import Stripe2 from "stripe";
-import { eq as eq28 } from "drizzle-orm";
+import { eq as eq29 } from "drizzle-orm";
 
 // server/services/notificationService.ts
 init_db();
@@ -41115,7 +42296,7 @@ async function handlePaymentSucceeded(paymentIntent) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const user = await db2.select().from(users).where(eq28(users.id, parseInt(clientRefId))).limit(1);
+    const user = await db2.select().from(users).where(eq29(users.id, parseInt(clientRefId))).limit(1);
     if (user.length > 0) {
       await db2.insert(payments).values({
         userId: user[0].id,
@@ -41163,12 +42344,12 @@ async function handleSubscriptionUpdated(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq28(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq29(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq28(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq29(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       if (subscription.items.data.length > 0) {
@@ -41203,12 +42384,12 @@ async function handleSubscriptionCancelled(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq28(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq29(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq28(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq29(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Cancelled subscription for user ${user.id}`);
@@ -41231,12 +42412,12 @@ async function handleInvoicePaid(invoice) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq28(payments.stripePaymentIntentId, invoice.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq29(payments.stripePaymentIntentId, invoice.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for invoice ${invoice.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq28(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq29(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       await db2.insert(donations).values({
@@ -41266,12 +42447,12 @@ async function handleChargeRefunded(charge) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq28(payments.stripePaymentIntentId, charge.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq29(payments.stripePaymentIntentId, charge.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for charge ${charge.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq28(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq29(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Recorded refund: $${amount} for user ${user.id}`);
