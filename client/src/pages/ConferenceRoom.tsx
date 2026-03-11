@@ -8,8 +8,10 @@ import { toast } from 'sonner';
 import {
   ArrowLeft, PhoneOff, Users, Clock, Copy, Mic, MicOff,
   Video as VideoIcon, Globe, Shield, UserCircle, Circle,
-  Radio, Tv, ExternalLink, MoreHorizontal, X, Loader2
+  Radio, Tv, ExternalLink, MoreHorizontal, X, Loader2,
+  Share2, Link2, QrCode
 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 // Declare the JitsiMeetExternalAPI on window
 declare global {
@@ -240,10 +242,28 @@ export default function ConferenceRoom() {
     };
   }, [conference, initJitsi]);
 
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const shareUrl = `${window.location.origin}/conference/room/${conferenceId}`;
+
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/conference/room/${conferenceId}`;
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(shareUrl);
     toast.success('Conference link copied!');
+  };
+
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: conference?.title || 'Join Conference',
+          text: `Join the conference: ${conference?.title}`,
+          url: shareUrl,
+        });
+      } catch (err: any) {
+        if (err.name !== 'AbortError') handleCopyLink();
+      }
+    } else {
+      setShowShareDialog(true);
+    }
   };
 
   const handleStartRecording = () => {
@@ -370,8 +390,8 @@ export default function ConferenceRoom() {
 
           {/* Right: Share + End + More */}
           <div className="flex items-center gap-1 shrink-0">
-            <button onClick={handleCopyLink} className="text-white/50 hover:text-white h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Copy link">
-              <Copy className="w-3.5 h-3.5" />
+            <button onClick={handleNativeShare} className="text-amber-400/70 hover:text-amber-400 h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Share room link">
+              <Share2 className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={handleEndConference}
@@ -389,8 +409,8 @@ export default function ConferenceRoom() {
               </button>
               {showMoreTools && (
                 <div className="absolute right-0 top-9 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 py-1 min-w-[180px]">
-                  <button onClick={() => { handleCopyLink(); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
-                    <Copy className="w-4 h-4" /> Share Link
+                  <button onClick={() => { handleNativeShare(); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
+                    <Share2 className="w-4 h-4" /> Share Room Link
                   </button>
                   <button onClick={() => { navigate(`/conference/translation/${conferenceId}`); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
                     <Globe className="w-4 h-4" /> Translation
@@ -425,6 +445,43 @@ export default function ConferenceRoom() {
           )}
         </div>
       )}
+
+      {/* ── Share Dialog ── */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-white">Share Conference Link</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-white/60 text-sm">Share this link with anyone to join the conference:</p>
+            <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-3">
+              <Link2 className="w-4 h-4 text-amber-400 shrink-0" />
+              <code className="text-xs text-amber-300 break-all flex-1">{shareUrl}</code>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => { handleCopyLink(); setShowShareDialog(false); }}
+                className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
+              >
+                <Copy className="w-4 h-4 mr-2" /> Copy Link
+              </Button>
+              <Button
+                onClick={() => {
+                  const roomCode = conference?.room_code || `rrb-room-${conferenceId}`;
+                  navigator.clipboard.writeText(roomCode);
+                  toast.success('Room code copied!');
+                  setShowShareDialog(false);
+                }}
+                variant="outline"
+                className="border-gray-600 text-white/70 hover:text-white"
+              >
+                <Copy className="w-4 h-4 mr-2" /> Code
+              </Button>
+            </div>
+            <p className="text-white/40 text-[11px] text-center">Room code: {conference?.room_code || `rrb-room-${conferenceId}`}</p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* ── Jitsi Meet container (JS API renders here) ── */}
       <div className="flex-1 relative bg-black">

@@ -127,14 +127,27 @@ async function syncBroadcasts() {
 // Push notifications
 self.addEventListener('push', (event) => {
   const data = event.data?.json() ?? {};
-  const title = data.title || 'HybridCast Notification';
+  const title = data.title || 'QUMUS Notification';
   const options = {
     body: data.body || '',
     icon: '/icon-192x192.png',
     badge: '/badge-72x72.png',
     tag: data.tag || 'notification',
     requireInteraction: data.requireInteraction || false,
+    data: data.data || {},
+    actions: data.actions || [],
   };
+
+  // Conference-specific notifications get special treatment
+  if (data.type === 'conference_live') {
+    options.tag = `conference-live-${data.conferenceId}`;
+    options.requireInteraction = true;
+    options.actions = [
+      { action: 'join', title: 'Join Now' },
+      { action: 'dismiss', title: 'Later' },
+    ];
+    options.data = { url: `/conference/room/${data.conferenceId}`, type: 'conference_live' };
+  }
 
   event.waitUntil(self.registration.showNotification(title, options));
 });
@@ -142,16 +155,31 @@ self.addEventListener('push', (event) => {
 // Notification click
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+  const data = event.notification.data || {};
+  const targetUrl = data.url || '/';
+
+  // Handle action buttons
+  if (event.action === 'join' && data.url) {
+    event.waitUntil(clients.openWindow(data.url));
+    return;
+  }
+  if (event.action === 'dismiss') {
+    return;
+  }
+
+  // Default click — open the target URL
   event.waitUntil(
     clients.matchAll({ type: 'window' }).then((clientList) => {
+      // Try to focus an existing window
       for (let i = 0; i < clientList.length; i++) {
         const client = clientList[i];
-        if (client.url === '/' && 'focus' in client) {
+        if ('focus' in client) {
+          client.navigate(targetUrl);
           return client.focus();
         }
       }
       if (clients.openWindow) {
-        return clients.openWindow('/');
+        return clients.openWindow(targetUrl);
       }
     })
   );

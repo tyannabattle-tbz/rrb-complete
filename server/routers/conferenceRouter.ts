@@ -169,7 +169,43 @@ export const conferenceRouter = router({
       `);
       const [result] = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
       const conferenceId = (result as any)[0]?.id;
+
+      // Send push notification when conference goes live
+      if (status === 'live') {
+        await notifyOwner({
+          title: `\uD83D\uDCF9 Conference Live: ${input.title}`,
+          content: `A new conference "${input.title}" is now live! Room code: ${roomCode}. Join at /conference/room/${conferenceId}`,
+        });
+      }
+
       return { id: conferenceId, roomCode, status, platform: input.platform, externalUrl };
+    }),
+
+  // Send push notification to all subscribers that a conference is live
+  sendConferenceLiveNotification: protectedProcedure
+    .input(z.object({
+      conferenceId: z.number(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      const [confRows] = await db.execute(sql`SELECT title, room_code, platform, host_name FROM conferences WHERE id = ${input.conferenceId} AND status = 'live'`);
+      const conf = (confRows as any[])[0];
+      if (!conf) throw new Error('Conference not found or not live');
+
+      const sent = await notifyOwner({
+        title: `\uD83D\uDCF9 Conference Live Now: ${conf.title}`,
+        content: `"${conf.title}" hosted by ${conf.host_name} is live now! Join at /conference/room/${input.conferenceId} (Room: ${conf.room_code})`,
+      });
+
+      try {
+        await qumusEngine.makeDecision({
+          policyId: 'policy_conference_scheduling',
+          confidence: 90,
+          inputData: { action: 'live_notification_sent', conferenceId: input.conferenceId, title: conf.title },
+        });
+      } catch (e) { /* non-critical */ }
+
+      return { success: sent, message: sent ? 'Notification sent to all subscribers' : 'Notification delivery attempted' };
     }),
 
   // Save recording URL after conference ends

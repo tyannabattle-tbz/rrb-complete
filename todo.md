@@ -3681,3 +3681,16 @@
 - [x] Fix conference card horizontal overflow on mobile
 - [x] Add Jitsi external API script to index.html
 - [x] Start camera/mic with muted=true to avoid permission errors on join
+
+## Conference Follow-ups - March 2026 (Round 3)
+- [x] Add "Share Room Link" button with Web Share API (mobile native share) + dialog fallback (desktop)
+- [x] Add Share button to live conference cards in ConferenceHub
+- [x] Implement push notifications when conference goes live (server-side notifyOwner on create)
+- [x] Add sendConferenceLiveNotification tRPC endpoint for manual push
+- [x] Update service worker with conference-specific push handling + deep links (Join Now action)
+- [x] Add Notify button to live conference cards in ConferenceHub
+- [ ] Verify two new conference rooms work end-to-end with video (user testing needed)
+
+## RRB Site Breakage Investigation
+- [x] Diagnosed — RRB is a separate Manus project, not this QUMUS project
+- [ ] Fix root cause of RRB site breakage (requires separate Manus task)

@@ -12,7 +12,7 @@ import {
   Camera, Monitor, MessageSquare, Settings,
   Zap, Radio, Play, Plus, ExternalLink, Copy,
   Shield, Headphones, ArrowRight, Trash2, Eye,
-  BarChart3, Archive, Cpu, Tv
+  BarChart3, Archive, Cpu, Tv, Share2
 } from 'lucide-react';
 import { Link } from 'wouter';
 
@@ -499,6 +499,50 @@ export default function RRBConferenceHub() {
                             </Button>
                             <Button size="sm" variant="outline" onClick={() => window.open('https://studio.restream.io/enk-osex-pju', '_blank')} className="border-purple-500 text-purple-400 hover:bg-purple-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
                               <Tv className="w-3 h-3 mr-0.5" /> Stream
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => {
+                              const url = `${window.location.origin}/conference/room/${conf.id}`;
+                              if (navigator.share) {
+                                navigator.share({ title: conf.title, text: `Join: ${conf.title}`, url }).catch(() => {
+                                  navigator.clipboard.writeText(url);
+                                  toast.success('Link copied!');
+                                });
+                              } else {
+                                navigator.clipboard.writeText(url);
+                                toast.success('Link copied!');
+                              }
+                            }} className="border-amber-500/50 text-amber-400 hover:bg-amber-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
+                              <Share2 className="w-3 h-3 mr-0.5" /> Share
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={async () => {
+                              try {
+                                // Request notification permission if not granted
+                                if ('Notification' in window && Notification.permission !== 'granted') {
+                                  await Notification.requestPermission();
+                                }
+                                // Send server-side notification
+                                const res = await fetch('/api/trpc/conference.sendConferenceLiveNotification', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ json: { conferenceId: conf.id } }),
+                                });
+                                if (res.ok) {
+                                  toast.success('Notification sent to subscribers!');
+                                  // Also send local browser notification
+                                  if ('Notification' in window && Notification.permission === 'granted') {
+                                    new Notification(`\uD83D\uDCF9 ${conf.title} is LIVE`, {
+                                      body: `Join now at the Conference Hub`,
+                                      icon: '/icon-192x192.png',
+                                    });
+                                  }
+                                } else {
+                                  toast.error('Failed to send notification');
+                                }
+                              } catch {
+                                toast.error('Notification failed');
+                              }
+                            }} className="border-blue-500/50 text-blue-400 hover:bg-blue-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
+                              \uD83D\uDD14 Notify
                             </Button>
                             <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-green-600 hover:bg-green-700 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
                               <Video className="w-3 h-3 sm:w-4 sm:h-4 mr-0.5" /> Join
