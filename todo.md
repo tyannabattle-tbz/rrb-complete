@@ -3815,3 +3815,9 @@
 - [x] Route recordings to streaming platforms (YouTube, Facebook, etc.)
 - [x] Route recordings through QUMUS automation for full pipeline control
 - [x] Update Candy identity/description to reflect male persona (already correct)
+
+## Bug Fix: Conference Mode Candy Audio
+- [x] Fix ALL AI voices in conference mode — only Candy is audible, Seraph/Valanna/others only show as chat text
+- [x] Ensure Seraph AI TTS audio plays through speakers in conference mode
+- [x] Ensure Valanna TTS audio plays through speakers in conference mode
+- [x] Ensure all other AI voices play through speakers in conference mode

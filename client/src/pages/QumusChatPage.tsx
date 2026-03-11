@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Send, Menu, X } from 'lucide-react';
+import { Send, Menu, X, Volume2, VolumeX } from 'lucide-react';
 import { useSwipeGesture } from '@/hooks/useSwipeGesture';
 import { trpc } from '@/lib/trpc';
 import AdminOverridePanel from '@/components/AdminOverridePanel';
@@ -11,6 +11,8 @@ import { QumusChatCommandCenter } from '@/components/QumusChatCommandCenter';
 import { VoiceToText } from '@/components/VoiceToText';
 import { FunctionalFeatures } from '@/components/FunctionalFeatures';
 import { MonitoringDashboard } from '@/components/MonitoringDashboard';
+import { useAiVoice } from '@/hooks/useAiVoice';
+import type { AiPersona } from '@/services/aiVoiceTts';
 
 interface ChatMessage {
   id: string;
@@ -32,6 +34,14 @@ export default function QumusChatPage() {
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [selectedPersona, setSelectedPersona] = useState<AiPersona>('valanna');
+
+  // AI Voice TTS — auto-speaks all AI responses
+  const { voiceEnabled, toggleVoice, isSpeaking, speakAiResponse, stop: stopSpeaking } = useAiVoice({
+    persona: selectedPersona,
+    defaultEnabled: true,
+    autoSpeak: true,
+  });
 
   // Track window resize for mobile detection
   useEffect(() => {
@@ -106,6 +116,7 @@ export default function QumusChatPage() {
           content: m.content,
         })),
         query: input,
+        persona: selectedPersona,
       });
 
       const assistantMsg: ChatMessage = {
@@ -116,6 +127,26 @@ export default function QumusChatPage() {
       };
 
       setMessages(prev => [...prev, assistantMsg]);
+
+      // Auto-play TTS audio for the AI response
+      if (voiceEnabled && response.message) {
+        const audioUrl = (response as any).audioUrl;
+        if (audioUrl) {
+          // Play server-generated high-quality TTS audio
+          try {
+            const audio = new Audio(audioUrl);
+            audio.play().catch(() => {
+              // Fallback to browser TTS if autoplay blocked
+              speakAiResponse(response.message, selectedPersona);
+            });
+          } catch {
+            speakAiResponse(response.message, selectedPersona);
+          }
+        } else {
+          // Fallback to browser TTS
+          speakAiResponse(response.message, selectedPersona);
+        }
+      }
     } catch (error) {
       const errorMsg: ChatMessage = {
         id: `msg-${Date.now()}-error`,
@@ -310,9 +341,34 @@ export default function QumusChatPage() {
 
           {/* Chat Tab */}
           <TabsContent value="chat" className="flex-1 overflow-hidden flex flex-col">
-            {/* Header - simplified for mobile */}
-            <div className="bg-white border-b border-slate-200 p-4 flex items-center justify-center">
-              <h1 className="text-lg md:text-xl font-bold text-slate-900">Qumus AI Assistant</h1>
+            {/* Header with persona selector and voice toggle */}
+            <div className="bg-white border-b border-slate-200 p-3 md:p-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg md:text-xl font-bold text-slate-900">AI Chat</h1>
+                <select
+                  value={selectedPersona}
+                  onChange={(e) => setSelectedPersona(e.target.value as AiPersona)}
+                  className="text-sm border border-slate-300 rounded-md px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="valanna">Valanna</option>
+                  <option value="candy">Candy</option>
+                  <option value="seraph">Seraph</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                {isSpeaking && (
+                  <span className="text-xs text-blue-500 animate-pulse">Speaking...</span>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => { if (isSpeaking) stopSpeaking(); else toggleVoice(); }}
+                  className={`h-8 w-8 p-0 ${voiceEnabled ? 'text-blue-500' : 'text-slate-400'}`}
+                  title={voiceEnabled ? 'Voice ON — click to mute' : 'Voice OFF — click to unmute'}
+                >
+                  {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                </Button>
+              </div>
             </div>
 
             {/* Messages */}

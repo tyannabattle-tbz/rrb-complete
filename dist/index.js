@@ -24624,6 +24624,11 @@ var QumusOrchestrationEngine = class {
 QumusOrchestrationEngine.initialize();
 
 // server/routers/qumusChatRouter.ts
+var PERSONA_VOICES = {
+  valanna: "nova",
+  candy: "echo",
+  seraph: "onyx"
+};
 var qumusChatRouter = router({
   chat: publicProcedure.input(z61.object({
     messages: z61.array(z61.object({
@@ -24653,9 +24658,26 @@ var qumusChatRouter = router({
         messages: messages2
       });
       const assistantMessage = response.choices?.[0]?.message?.content || "I encountered an error generating a response.";
+      let audioUrl = null;
+      try {
+        const ttsText = assistantMessage.length > 500 ? assistantMessage.slice(0, 500) + "..." : assistantMessage;
+        const voice = PERSONA_VOICES[input.persona] || "nova";
+        const ttsResult = await realTtsService.generateSpeech({
+          text: ttsText,
+          voice,
+          speed: 1
+        });
+        if (ttsResult.success && ttsResult.audioUrl) {
+          audioUrl = ttsResult.audioUrl;
+        }
+      } catch (ttsErr) {
+        console.warn(`[QUMUS Chat] TTS generation failed for ${input.persona}:`, ttsErr);
+      }
       return {
         success: true,
-        message: assistantMessage
+        message: assistantMessage,
+        audioUrl,
+        persona: input.persona
       };
     } catch (error) {
       console.error("Chat error:", error);

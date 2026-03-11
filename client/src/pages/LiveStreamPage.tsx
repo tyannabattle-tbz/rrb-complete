@@ -892,7 +892,7 @@ function CommercialBanner({ channelGenre }: { channelGenre: string }) {
     switch (djName) {
       case 'valanna': return { voice: femaleVoices[0] || anyVoice, rate: 0.92, pitch: 1.05 };
       case 'seraph': return { voice: maleVoices[0] || anyVoice, rate: 0.88, pitch: 0.85 };
-      case 'candy': return { voice: femaleVoices[1] || femaleVoices[0] || anyVoice, rate: 1.05, pitch: 1.15 };
+      case 'candy': return { voice: maleVoices[1] || maleVoices[0] || anyVoice, rate: 0.95, pitch: 0.85 };
       default: return { voice: anyVoice, rate: 1.0, pitch: 1.0 };
     }
   }, []);

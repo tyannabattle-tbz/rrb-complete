@@ -5,6 +5,14 @@ import { CandyIdentitySystem } from '../_core/candyIdentity';
 import { SeraphIdentitySystem } from '../_core/seraphIdentity';
 import { QumusOrchestrationEngine } from '../_core/qumusOrchestrationEngine';
 import { invokeLLM } from '../_core/llm';
+import { realTtsService } from '../_core/realTtsService';
+
+// Voice mapping for each persona (server-side Forge TTS)
+const PERSONA_VOICES: Record<string, string> = {
+  valanna: 'nova',
+  candy: 'echo',
+  seraph: 'onyx',
+};
 
 export const qumusChatRouter = router({
   chat: publicProcedure
@@ -46,9 +54,32 @@ export const qumusChatRouter = router({
 
         const assistantMessage = response.choices?.[0]?.message?.content || 'I encountered an error generating a response.';
 
+        // Generate TTS audio for the response
+        let audioUrl: string | null = null;
+        try {
+          // Truncate for TTS — max 500 chars to keep audio reasonable
+          const ttsText = assistantMessage.length > 500 
+            ? assistantMessage.slice(0, 500) + '...' 
+            : assistantMessage;
+          const voice = PERSONA_VOICES[input.persona] || 'nova';
+          const ttsResult = await realTtsService.generateSpeech({
+            text: ttsText,
+            voice,
+            speed: 1.0,
+          });
+          if (ttsResult.success && ttsResult.audioUrl) {
+            audioUrl = ttsResult.audioUrl;
+          }
+        } catch (ttsErr) {
+          console.warn(`[QUMUS Chat] TTS generation failed for ${input.persona}:`, ttsErr);
+          // Non-fatal — chat still works without audio
+        }
+
         return {
           success: true,
           message: assistantMessage,
+          audioUrl,
+          persona: input.persona,
         };
       } catch (error) {
         console.error('Chat error:', error);

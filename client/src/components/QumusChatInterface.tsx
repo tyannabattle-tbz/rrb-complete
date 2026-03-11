@@ -2,13 +2,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ChatHeader } from './ChatHeader';
-import { Send, Loader, Upload, X, FileIcon, Music, Image as ImageIcon, AlertCircle, Trash2 } from 'lucide-react';
+import { Send, Loader, Upload, X, FileIcon, Music, Image as ImageIcon, AlertCircle, Trash2, Volume2, VolumeX } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { useState, useRef, useEffect } from 'react';
 import VoiceChat from './VoiceChat';
 import TypingIndicator from './TypingIndicator';
 import { saveChatHistory, loadChatHistory, clearChatHistory } from '@/lib/chatHistoryStorage';
+import { useAiVoice } from '@/hooks/useAiVoice';
+import type { AiPersona } from '@/services/aiVoiceTts';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -49,8 +51,16 @@ export function QumusChatInterface() {
   });
   const [dragActive, setDragActive] = useState(false);
   const [showVoiceChat, setShowVoiceChat] = useState(false);
+  const [selectedPersona, setSelectedPersona] = useState<AiPersona>('valanna');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // AI Voice TTS — auto-speaks all AI responses
+  const { voiceEnabled, toggleVoice: toggleTts, isSpeaking, speakAiResponse, stop: stopSpeaking } = useAiVoice({
+    persona: selectedPersona,
+    defaultEnabled: true,
+    autoSpeak: true,
+  });
 
   // Use tRPC mutation for chat with improved error handling
   const chatMutation = trpc.ai.qumusChat.chat.useMutation({
@@ -79,6 +89,23 @@ export function QumusChatInterface() {
         timestamp: Date.now(),
       };
       setMessages(prev => [...prev, assistantMessage]);
+
+      // Auto-play TTS audio for the AI response
+      if (voiceEnabled && messageContent) {
+        const audioUrl = (data as any).audioUrl;
+        if (audioUrl) {
+          try {
+            const audio = new Audio(audioUrl);
+            audio.play().catch(() => {
+              speakAiResponse(messageContent, selectedPersona);
+            });
+          } catch {
+            speakAiResponse(messageContent, selectedPersona);
+          }
+        } else {
+          speakAiResponse(messageContent, selectedPersona);
+        }
+      }
       toast.success('Response received');
     },
     onError: (error) => {
@@ -233,6 +260,7 @@ export function QumusChatInterface() {
           await chatMutation.mutateAsync({
             messages: messagesForAPI,
             query: input,
+            persona: selectedPersona,
           });
           break;
         } catch (error) {
@@ -275,6 +303,36 @@ export function QumusChatInterface() {
   return (
     <div className="flex flex-col h-full bg-white">
       <ChatHeader />
+
+      {/* Persona Selector & Voice Toggle */}
+      <div className="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-500 font-medium">Talking to:</span>
+          <select
+            value={selectedPersona}
+            onChange={(e) => setSelectedPersona(e.target.value as AiPersona)}
+            className="text-sm border border-slate-300 rounded-md px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="valanna">Valanna</option>
+            <option value="candy">Candy</option>
+            <option value="seraph">Seraph</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          {isSpeaking && (
+            <span className="text-xs text-blue-500 animate-pulse">Speaking...</span>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => { if (isSpeaking) stopSpeaking(); else toggleTts(); }}
+            className={`h-8 w-8 p-0 ${voiceEnabled ? 'text-blue-500' : 'text-slate-400'}`}
+            title={voiceEnabled ? 'Voice ON' : 'Voice OFF'}
+          >
+            {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+          </Button>
+        </div>
+      </div>
 
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">

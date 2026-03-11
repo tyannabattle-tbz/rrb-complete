@@ -1,15 +1,25 @@
 import { useState, useRef, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
-import { Mic, Send, Plus, Trash2 } from 'lucide-react';
+import { Mic, Send, Plus, Volume2, VolumeX } from 'lucide-react';
+import { useAiVoice } from '@/hooks/useAiVoice';
+import type { AiPersona } from '@/services/aiVoiceTts';
 
 export default function EnhancedChatPage() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [selectedPersona, setSelectedPersona] = useState<AiPersona>('valanna');
   const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // AI Voice TTS — auto-speaks all AI responses
+  const { voiceEnabled, toggleVoice: toggleTts, isSpeaking, speakAiResponse, stop: stopSpeaking } = useAiVoice({
+    persona: selectedPersona,
+    defaultEnabled: true,
+    autoSpeak: true,
+  });
 
   const sendChat = trpc.ai.qumusChat.chat.useMutation();
 
@@ -37,7 +47,7 @@ export default function EnhancedChatPage() {
     setMessages([]);
   };
 
-  const toggleVoice = () => {
+  const toggleMic = () => {
     if (recognitionRef.current) {
       if (isListening) {
         recognitionRef.current.stop();
@@ -54,16 +64,32 @@ export default function EnhancedChatPage() {
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
 
-    // Session tracking for future persistence
-
     const response = await sendChat.mutateAsync({
       messages,
       query: userMessage,
+      persona: selectedPersona,
     });
 
     if (response.success) {
-      setMessages(prev => [...prev, { role: 'assistant' as const, content: String(response.message) }]);
-      // Session tracking for future persistence
+      const responseText = String(response.message);
+      setMessages(prev => [...prev, { role: 'assistant' as const, content: responseText }]);
+
+      // Auto-play TTS audio for the AI response
+      if (voiceEnabled && responseText) {
+        const audioUrl = (response as any).audioUrl;
+        if (audioUrl) {
+          try {
+            const audio = new Audio(audioUrl);
+            audio.play().catch(() => {
+              speakAiResponse(responseText, selectedPersona);
+            });
+          } catch {
+            speakAiResponse(responseText, selectedPersona);
+          }
+        } else {
+          speakAiResponse(responseText, selectedPersona);
+        }
+      }
     }
   };
 
@@ -83,6 +109,36 @@ export default function EnhancedChatPage() {
 
   return (
     <div className="flex flex-col h-screen bg-background">
+      {/* Header with persona selector and voice toggle */}
+      <div className="border-b p-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <h1 className="text-lg font-bold">AI Chat</h1>
+          <select
+            value={selectedPersona}
+            onChange={(e) => setSelectedPersona(e.target.value as AiPersona)}
+            className="text-sm border rounded-md px-2 py-1 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="valanna">Valanna</option>
+            <option value="candy">Candy</option>
+            <option value="seraph">Seraph</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          {isSpeaking && (
+            <span className="text-xs text-primary animate-pulse">Speaking...</span>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => { if (isSpeaking) stopSpeaking(); else toggleTts(); }}
+            className={`h-8 w-8 p-0 ${voiceEnabled ? 'text-primary' : 'text-muted-foreground'}`}
+            title={voiceEnabled ? 'Voice ON — click to mute' : 'Voice OFF — click to unmute'}
+          >
+            {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+          </Button>
+        </div>
+      </div>
+
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -108,7 +164,7 @@ export default function EnhancedChatPage() {
             placeholder="Type or speak..."
             className="flex-1 px-4 py-2 border rounded-lg bg-background text-foreground"
           />
-          <Button onClick={toggleVoice} variant={isListening ? 'destructive' : 'outline'}>
+          <Button onClick={toggleMic} variant={isListening ? 'destructive' : 'outline'}>
             <Mic size={18} />
           </Button>
           <Button onClick={handleSendMessage}>
