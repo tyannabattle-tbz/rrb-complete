@@ -3725,3 +3725,11 @@
 - [x] Ensure Jitsi loads properly on both mobile and desktop
 - [x] Add error handling and fallback if Jitsi API fails to load (timeout + retry + open in tab)
 - [x] Suppress Getting Started tour on conference room pages
+
+## Conference Lobby & Full System Audit - March 2026
+- [ ] Build conference pre-join lobby with camera/mic preview and display name
+- [ ] Add pre-join screen before entering Jitsi room
+- [ ] Full system route audit — find and fix all 404s and broken pages
+- [ ] Verify all key pages load correctly on mobile viewport
+- [ ] Ensure accessibility features for impaired users on conference pages
+- [x] Fix conference room moderator lock - switched from meet.jit.si to meet.ffmuc.net (community server without auth) so rooms connect immediately

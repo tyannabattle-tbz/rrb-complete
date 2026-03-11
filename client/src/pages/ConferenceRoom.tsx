@@ -4,22 +4,211 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import {
   ArrowLeft, PhoneOff, Users, Clock, Copy, Mic, MicOff,
-  Video as VideoIcon, Globe, Shield, UserCircle, Circle,
+  Video as VideoIcon, VideoOff, Globe, Shield, UserCircle, Circle,
   Radio, Tv, ExternalLink, MoreHorizontal, X, Loader2,
-  Share2, Link2, QrCode
+  Share2, Link2, QrCode, Camera, Settings, Volume2
 } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-// Declare the JitsiMeetExternalAPI on window
 declare global {
   interface Window {
     JitsiMeetExternalAPI: any;
   }
 }
 
+// ─── Pre-Join Lobby Component ───
+function PreJoinLobby({
+  conference,
+  defaultName,
+  onJoin,
+  onBack,
+}: {
+  conference: any;
+  defaultName: string;
+  onJoin: (displayName: string, audioEnabled: boolean, videoEnabled: boolean) => void;
+  onBack: () => void;
+}) {
+  const [displayName, setDisplayName] = useState(defaultName);
+  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [videoEnabled, setVideoEnabled] = useState(true);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const videoPreviewRef = useRef<HTMLVideoElement>(null);
+
+  // Get camera preview
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+
+    const startPreview = async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: videoEnabled,
+          audio: audioEnabled,
+        });
+        setCameraStream(stream);
+        setCameraError(null);
+        if (videoPreviewRef.current) {
+          videoPreviewRef.current.srcObject = stream;
+        }
+
+        // Enumerate devices after permission granted
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        setAudioDevices(devices.filter(d => d.kind === 'audioinput'));
+        setVideoDevices(devices.filter(d => d.kind === 'videoinput'));
+      } catch (err: any) {
+        setCameraError(
+          err.name === 'NotAllowedError'
+            ? 'Camera/mic access denied. Check browser permissions.'
+            : 'Could not access camera/mic. You can still join.'
+        );
+      }
+    };
+
+    startPreview();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+      }
+    };
+  }, [videoEnabled, audioEnabled]);
+
+  // Cleanup stream on unmount
+  useEffect(() => {
+    return () => {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+      }
+    };
+  }, [cameraStream]);
+
+  const handleJoin = () => {
+    // Stop preview stream before joining Jitsi
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(t => t.stop());
+      setCameraStream(null);
+    }
+    onJoin(displayName || 'Guest', audioEnabled, videoEnabled);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 to-black flex items-center justify-center p-4">
+      <div className="w-full max-w-lg space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <button onClick={onBack} className="absolute top-4 left-4 text-white/60 hover:text-white p-2 rounded-lg hover:bg-white/10">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">{conference?.title || 'Conference Room'}</h1>
+          <p className="text-white/50 text-sm">
+            {conference?.status === 'live' && (
+              <span className="text-green-400 font-medium">● Live Now</span>
+            )}
+            {conference?.room_code && (
+              <span className="ml-2 text-white/40">Room: {conference.room_code}</span>
+            )}
+          </p>
+        </div>
+
+        {/* Camera Preview */}
+        <div className="relative rounded-xl overflow-hidden bg-gray-900 border border-gray-800 aspect-video">
+          {videoEnabled && !cameraError ? (
+            <video
+              ref={videoPreviewRef}
+              autoPlay
+              muted
+              playsInline
+              className="w-full h-full object-cover mirror"
+              style={{ transform: 'scaleX(-1)' }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-20 h-20 rounded-full bg-amber-600/20 flex items-center justify-center mx-auto mb-3">
+                  <UserCircle className="w-12 h-12 text-amber-400" />
+                </div>
+                <p className="text-white/60 text-sm">
+                  {cameraError || (videoEnabled ? 'Loading camera...' : 'Camera off')}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Audio/Video toggle overlay */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
+            <button
+              onClick={() => setAudioEnabled(!audioEnabled)}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
+                audioEnabled ? 'bg-gray-700/80 text-white hover:bg-gray-600/80' : 'bg-red-600 text-white hover:bg-red-700'
+              }`}
+              title={audioEnabled ? 'Mute microphone' : 'Unmute microphone'}
+            >
+              {audioEnabled ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+            </button>
+            <button
+              onClick={() => setVideoEnabled(!videoEnabled)}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition-all ${
+                videoEnabled ? 'bg-gray-700/80 text-white hover:bg-gray-600/80' : 'bg-red-600 text-white hover:bg-red-700'
+              }`}
+              title={videoEnabled ? 'Turn off camera' : 'Turn on camera'}
+            >
+              {videoEnabled ? <VideoIcon className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Display Name */}
+        <div className="space-y-2">
+          <label className="text-white/70 text-sm font-medium">Your display name</label>
+          <Input
+            value={displayName}
+            onChange={e => setDisplayName(e.target.value)}
+            placeholder="Enter your name"
+            className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 h-11"
+          />
+        </div>
+
+        {/* Device info */}
+        {(audioDevices.length > 0 || videoDevices.length > 0) && (
+          <div className="text-xs text-white/40 flex items-center gap-4">
+            {videoDevices.length > 0 && (
+              <span className="flex items-center gap-1">
+                <Camera className="w-3 h-3" /> {videoDevices[0]?.label?.split('(')[0]?.trim() || 'Camera'}
+              </span>
+            )}
+            {audioDevices.length > 0 && (
+              <span className="flex items-center gap-1">
+                <Volume2 className="w-3 h-3" /> {audioDevices[0]?.label?.split('(')[0]?.trim() || 'Microphone'}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Join Button */}
+        <Button
+          onClick={handleJoin}
+          className="w-full h-12 bg-amber-600 hover:bg-amber-700 text-white text-base font-semibold"
+        >
+          Join Conference
+        </Button>
+
+        {/* Accessibility note */}
+        <p className="text-white/30 text-xs text-center">
+          You can change your camera and microphone settings after joining.
+          {cameraError && ' Camera/mic access is optional — you can still participate.'}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Conference Room ───
 export default function ConferenceRoom() {
   const [, params] = useRoute('/conference/room/:id');
   const [, navigate] = useLocation();
@@ -31,6 +220,8 @@ export default function ConferenceRoom() {
   const [jitsiReady, setJitsiReady] = useState(false);
   const [participantCount, setParticipantCount] = useState(0);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [inLobby, setInLobby] = useState(true);
+  const [joinSettings, setJoinSettings] = useState({ audioEnabled: true, videoEnabled: true });
   const recordingTimer = useRef<NodeJS.Timeout | null>(null);
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
@@ -42,12 +233,12 @@ export default function ConferenceRoom() {
 
   const { data: recordingStatus } = trpc.conference.getRecordingStatus.useQuery(
     { conferenceId },
-    { enabled: conferenceId > 0, refetchInterval: 10000 }
+    { enabled: conferenceId > 0 && !inLobby, refetchInterval: 10000 }
   );
 
   const { data: restreamStatus } = trpc.conference.getRestreamStatus.useQuery(
     { conferenceId },
-    { enabled: conferenceId > 0, refetchInterval: 10000 }
+    { enabled: conferenceId > 0 && !inLobby, refetchInterval: 10000 }
   );
   const startRestreamMutation = trpc.conference.startRestream.useMutation({
     onSuccess: (data) => {
@@ -86,13 +277,6 @@ export default function ConferenceRoom() {
     onError: () => toast.error('Failed to stop recording'),
   });
 
-  // Register join in our backend
-  useEffect(() => {
-    if (conferenceId > 0 && user) {
-      joinMutation.mutate({ conferenceId });
-    }
-  }, [conferenceId, user?.id]);
-
   // Recording timer
   useEffect(() => {
     if (isRecording) {
@@ -116,18 +300,16 @@ export default function ConferenceRoom() {
     if (!conference || !jitsiContainerRef.current || jitsiApiRef.current) return;
 
     const roomName = conference.room_code || `rrb-room-${conferenceId}`;
-    const displayName = user?.name || 'Guest';
+    const displayName = joinSettings.audioEnabled ? user?.name || 'Guest' : user?.name || 'Guest';
 
-    // Wait for the external API script to load
     if (!window.JitsiMeetExternalAPI) {
       let attempts = 0;
       const checkInterval = setInterval(() => {
         attempts++;
         if (window.JitsiMeetExternalAPI) {
           clearInterval(checkInterval);
-          createJitsiInstance(roomName, displayName);
+          createJitsiInstance(roomName, user?.name || 'Guest');
         } else if (attempts > 50) {
-          // 10s timeout — show error and offer fallback
           clearInterval(checkInterval);
           setConnectionError('Jitsi API failed to load. Try opening in a new tab.');
         }
@@ -135,14 +317,14 @@ export default function ConferenceRoom() {
       return;
     }
 
-    createJitsiInstance(roomName, displayName);
-  }, [conference, conferenceId, user?.name]);
+    createJitsiInstance(roomName, user?.name || 'Guest');
+  }, [conference, conferenceId, user?.name, joinSettings]);
 
   const createJitsiInstance = (roomName: string, displayName: string) => {
     if (jitsiApiRef.current || !jitsiContainerRef.current) return;
 
     try {
-      const api = new window.JitsiMeetExternalAPI('meet.jit.si', {
+      const api = new window.JitsiMeetExternalAPI('meet.ffmuc.net', {
         roomName,
         parentNode: jitsiContainerRef.current,
         width: '100%',
@@ -152,36 +334,29 @@ export default function ConferenceRoom() {
           email: user?.email || '',
         },
         configOverwrite: {
-          // ── Disable lobby & moderator requirement ──
           prejoinConfig: { enabled: false },
           prejoinPageEnabled: false,
-          startWithAudioMuted: true,
-          startWithVideoMuted: false,
+          startWithAudioMuted: !joinSettings.audioEnabled,
+          startWithVideoMuted: !joinSettings.videoEnabled,
           enableLobbyChat: false,
           hideLobbyButton: true,
           requireDisplayName: false,
           enableUserRolesBasedOnToken: false,
-          // Disable Jitsi recording (we use our own S3 flow)
           enableRecording: false,
           fileRecordingsEnabled: false,
           liveStreamingEnabled: false,
           localRecording: { disable: true },
-          // Mobile-friendly settings
           disableDeepLinking: true,
           enableClosePage: false,
           enableWelcomePage: false,
           enableInsecureRoomNameWarning: false,
-          // P2P for direct 2-person calls
           p2p: { enabled: true },
-          // UI
           hideConferenceSubject: true,
           hideConferenceTimer: false,
           disableModeratorIndicator: true,
           defaultLanguage: 'en',
-          // Disable notifications about lone moderator
           notifications: [],
           disableThirdPartyRequests: false,
-          // Allow anyone to be moderator
           enableForcedReload: false,
         },
         interfaceConfigOverwrite: {
@@ -205,13 +380,26 @@ export default function ConferenceRoom() {
         },
       });
 
-      // Auto-hide connecting overlay after 5s even if event doesn't fire
-      setTimeout(() => {
-        if (!jitsiReady) setJitsiReady(true);
-      }, 5000);
+      // Use a flag to auto-dismiss overlay after 3 seconds
+      // (stale closure means jitsiReady is always false here)
+      const readyTimer = setTimeout(() => {
+        setJitsiReady(true);
+      }, 3000);
 
-      // Event listeners
+      // Also check if iframe loaded by looking for it
+      const iframeCheck = setInterval(() => {
+        const iframe = jitsiContainerRef.current?.querySelector('iframe');
+        if (iframe) {
+          clearInterval(iframeCheck);
+          clearTimeout(readyTimer);
+          // Give iframe a moment to render content
+          setTimeout(() => setJitsiReady(true), 500);
+        }
+      }, 300);
+
       api.addEventListener('videoConferenceJoined', () => {
+        clearTimeout(readyTimer);
+        clearInterval(iframeCheck);
         setJitsiReady(true);
         setConnectionError(null);
         toast.success('Connected to conference room');
@@ -230,10 +418,17 @@ export default function ConferenceRoom() {
       });
 
       jitsiApiRef.current = api;
+
+      // Cleanup timers on dispose
+      const origDispose = api.dispose.bind(api);
+      api.dispose = () => {
+        clearTimeout(readyTimer);
+        clearInterval(iframeCheck);
+        origDispose();
+      };
     } catch (err) {
       console.error('[ConferenceRoom] Failed to initialize Jitsi:', err);
       toast.error('Failed to connect to conference. Retrying...');
-      // Retry once after 2s
       setTimeout(() => {
         jitsiApiRef.current = null;
         createJitsiInstance(roomName, displayName);
@@ -241,8 +436,13 @@ export default function ConferenceRoom() {
     }
   };
 
+  // Only init Jitsi after leaving lobby
   useEffect(() => {
-    if (conference) {
+    if (conference && !inLobby) {
+      // Register join in backend
+      if (user) {
+        joinMutation.mutate({ conferenceId });
+      }
       initJitsi();
     }
     return () => {
@@ -251,7 +451,7 @@ export default function ConferenceRoom() {
         jitsiApiRef.current = null;
       }
     };
-  }, [conference, initJitsi]);
+  }, [conference, inLobby]);
 
   const [showShareDialog, setShowShareDialog] = useState(false);
   const shareUrl = `${window.location.origin}/conference/room/${conferenceId}`;
@@ -326,6 +526,22 @@ export default function ConferenceRoom() {
     );
   }
 
+  // ─── Pre-Join Lobby ───
+  if (inLobby) {
+    return (
+      <PreJoinLobby
+        conference={conference}
+        defaultName={user?.name || 'Guest'}
+        onJoin={(name, audio, video) => {
+          setJoinSettings({ audioEnabled: audio, videoEnabled: video });
+          setInLobby(false);
+        }}
+        onBack={() => navigate('/conference')}
+      />
+    );
+  }
+
+  // ─── Active Conference Room ───
   return (
     <div className="h-screen bg-black flex flex-col overflow-hidden">
       {/* ── Single compact toolbar ── */}
@@ -344,7 +560,6 @@ export default function ConferenceRoom() {
 
           {/* Center: Main controls */}
           <div className="flex items-center gap-1 shrink-0">
-            {/* Recording */}
             {isRecording ? (
               <button
                 onClick={handleStopRecording}
@@ -365,7 +580,6 @@ export default function ConferenceRoom() {
               </button>
             )}
 
-            {/* Restream */}
             {restreamStatus?.active ? (
               <button
                 onClick={() => stopRestreamMutation.mutate({ conferenceId })}
@@ -390,7 +604,6 @@ export default function ConferenceRoom() {
               </button>
             )}
 
-            {/* Quick tool icons — desktop */}
             <button onClick={() => navigate(`/conference/translation/${conferenceId}`)} className="text-cyan-400/70 hover:text-cyan-400 h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Translation">
               <Globe className="w-3.5 h-3.5" />
             </button>
@@ -413,7 +626,6 @@ export default function ConferenceRoom() {
               <span className="hidden sm:inline">End</span>
             </button>
 
-            {/* Mobile overflow menu */}
             <div className="relative sm:hidden">
               <button onClick={() => setShowMoreTools(!showMoreTools)} className="text-white/50 hover:text-white h-7 w-7 flex items-center justify-center rounded hover:bg-white/5" title="More">
                 {showMoreTools ? <X className="w-4 h-4" /> : <MoreHorizontal className="w-4 h-4" />}
@@ -457,7 +669,7 @@ export default function ConferenceRoom() {
         </div>
       )}
 
-      {/* ── Share Dialog ── */}
+      {/* Share Dialog */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-sm">
           <DialogHeader>
@@ -494,7 +706,7 @@ export default function ConferenceRoom() {
         </DialogContent>
       </Dialog>
 
-      {/* ── Jitsi Meet container (JS API renders here) ── */}
+      {/* Jitsi Meet container */}
       <div className="flex-1 relative bg-black">
         {!jitsiReady && !connectionError && (
           <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/80">
@@ -516,7 +728,7 @@ export default function ConferenceRoom() {
                 <Button onClick={() => { setConnectionError(null); jitsiApiRef.current = null; initJitsi(); }} variant="outline" className="border-amber-500 text-amber-400">
                   Retry
                 </Button>
-                <Button onClick={() => { const roomName = conference?.room_code || `rrb-room-${conferenceId}`; window.open(`https://meet.jit.si/${roomName}`, '_blank'); }} className="bg-amber-600 hover:bg-amber-700 text-white">
+                <Button onClick={() => { const roomName = conference?.room_code || `rrb-room-${conferenceId}`; window.open(`https://meet.ffmuc.net/${roomName}`, '_blank'); }} className="bg-amber-600 hover:bg-amber-700 text-white">
                   Open in Jitsi Tab
                 </Button>
               </div>

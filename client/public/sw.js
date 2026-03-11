@@ -97,11 +97,10 @@ self.addEventListener('fetch', (event) => {
         cache.then((c) => c.put(request, response.clone()));
 
         return response;
-      );
+      });
     })
   );
-  event.waitUntil(self.clients.claim());
-});;
+});
 
 // Background sync for pending items
 self.addEventListener('sync', (event) => {
