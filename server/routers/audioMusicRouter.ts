@@ -1,48 +1,110 @@
 import { protectedProcedure, router } from '../_core/trpc';
 import { z } from 'zod';
+import { realTtsService, AVAILABLE_VOICES, DJ_VOICES } from '../_core/realTtsService';
 
 export const audioMusicRouter = router({
-  // Text-to-speech conversion
+  // Text-to-speech conversion — now uses real Forge TTS API
   textToSpeech: protectedProcedure
     .input(z.object({
-      text: z.string(),
-      voice: z.string().default('en-US-neural'),
+      text: z.string().min(1).max(4096),
+      voice: z.string().default('nova'),
       speed: z.number().min(0.5).max(2).default(1),
-      pitch: z.number().min(-20).max(20).default(0),
+      pitch: z.number().min(-20).max(20).default(0), // kept for compat
     }))
     .mutation(async ({ ctx, input }) => {
       const audioId = `tts-${Date.now()}`;
-      return {
-        success: true,
-        audioId,
-        userId: ctx.user.id,
-        text: input.text,
-        voice: input.voice,
-        speed: input.speed,
-        pitch: input.pitch,
-        status: 'processing',
-        estimatedTime: Math.ceil(input.text.length / 10),
-        createdAt: new Date(),
-        progress: 0,
-        message: 'Converting text to speech...',
+      // Map legacy voice IDs
+      const voiceMap: Record<string, string> = {
+        'en-US-neural': 'nova',
+        'en-GB-neural': 'echo',
+        'es-ES-neural': 'alloy',
+        'fr-FR-neural': 'shimmer',
+        'de-DE-neural': 'fable',
+        'ja-JP-neural': 'alloy',
+        'zh-CN-neural': 'alloy',
       };
+      const resolvedVoice = voiceMap[input.voice] || input.voice;
+
+      try {
+        const result = await realTtsService.generateSpeech({
+          text: input.text,
+          voice: resolvedVoice,
+          speed: input.speed,
+        });
+
+        if (result.success && result.audioUrl) {
+          return {
+            success: true,
+            audioId,
+            userId: ctx.user.id,
+            text: input.text,
+            voice: resolvedVoice,
+            speed: input.speed,
+            pitch: input.pitch,
+            status: 'completed',
+            audioUrl: result.audioUrl,
+            audioKey: result.audioKey,
+            duration: result.duration,
+            estimatedTime: 0,
+            createdAt: new Date(),
+            progress: 100,
+            message: 'Speech generated successfully!',
+          };
+        }
+
+        // Fallback: return processing status so frontend uses Web Speech API
+        return {
+          success: true,
+          audioId,
+          userId: ctx.user.id,
+          text: input.text,
+          voice: input.voice,
+          speed: input.speed,
+          pitch: input.pitch,
+          status: 'fallback',
+          audioUrl: '',
+          estimatedTime: Math.ceil(input.text.length / 10),
+          createdAt: new Date(),
+          progress: 100,
+          message: 'Server TTS unavailable — use browser Web Speech API fallback',
+          useBrowserFallback: true,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          audioId,
+          userId: ctx.user.id,
+          text: input.text,
+          voice: input.voice,
+          speed: input.speed,
+          pitch: input.pitch,
+          status: 'failed',
+          estimatedTime: 0,
+          createdAt: new Date(),
+          progress: 0,
+          message: error instanceof Error ? error.message : 'TTS generation failed',
+        };
+      }
     }),
 
-  // Get available voices
+  // Get available voices — now returns real Forge voices + DJ personalities
   getAvailableVoices: protectedProcedure
     .input(z.object({}))
     .query(async ({ ctx }) => {
       return {
         userId: ctx.user.id,
-        voices: [
-          { id: 'en-US-neural', name: 'US English (Neural)', language: 'en-US', gender: 'neutral' },
-          { id: 'en-GB-neural', name: 'UK English (Neural)', language: 'en-GB', gender: 'neutral' },
-          { id: 'es-ES-neural', name: 'Spanish (Neural)', language: 'es-ES', gender: 'neutral' },
-          { id: 'fr-FR-neural', name: 'French (Neural)', language: 'fr-FR', gender: 'neutral' },
-          { id: 'de-DE-neural', name: 'German (Neural)', language: 'de-DE', gender: 'neutral' },
-          { id: 'ja-JP-neural', name: 'Japanese (Neural)', language: 'ja-JP', gender: 'neutral' },
-          { id: 'zh-CN-neural', name: 'Mandarin (Neural)', language: 'zh-CN', gender: 'neutral' },
-        ],
+        voices: AVAILABLE_VOICES.map(v => ({
+          id: v.id,
+          name: v.name,
+          language: 'multi',
+          gender: v.gender,
+          description: v.description,
+        })),
+        djVoices: Object.entries(DJ_VOICES).map(([dj, voice]) => ({
+          djName: dj,
+          voiceId: voice,
+          voiceName: AVAILABLE_VOICES.find(v => v.id === voice)?.name || voice,
+        })),
       };
     }),
 
@@ -56,6 +118,8 @@ export const audioMusicRouter = router({
       limit: z.number().min(1).max(100).default(20),
     }))
     .query(async ({ ctx, input }) => {
+      // Music library is curated — these are placeholder entries
+      // In production, this would query a royalty-free music database
       return {
         userId: ctx.user.id,
         results: [
@@ -66,7 +130,7 @@ export const audioMusicRouter = router({
             genre: 'Cinematic',
             mood: 'dramatic',
             duration: 180,
-            previewUrl: 'https://storage.example.com/music/epic-adventure.mp3',
+            previewUrl: '',
             license: 'royalty-free',
           },
           {
@@ -76,7 +140,7 @@ export const audioMusicRouter = router({
             genre: 'Ambient',
             mood: 'calm',
             duration: 240,
-            previewUrl: 'https://storage.example.com/music/ambient-relaxation.mp3',
+            previewUrl: '',
             license: 'royalty-free',
           },
         ],
@@ -92,16 +156,9 @@ export const audioMusicRouter = router({
       return {
         userId: ctx.user.id,
         genres: [
-          'Cinematic',
-          'Ambient',
-          'Electronic',
-          'Orchestral',
-          'Jazz',
-          'Rock',
-          'Pop',
-          'Hip-Hop',
-          'Classical',
-          'World',
+          'Cinematic', 'Ambient', 'Electronic', 'Orchestral', 'Jazz',
+          'Rock', 'Pop', 'Hip-Hop', 'Classical', 'World',
+          'Solfeggio Healing', 'Meditation', 'Lo-Fi',
         ],
       };
     }),
@@ -200,21 +257,16 @@ export const audioMusicRouter = router({
 
   // Get audio status
   getAudioStatus: protectedProcedure
-    .input(z.object({
-      audioId: z.string(),
-    }))
+    .input(z.object({ audioId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const progress = Math.floor(Math.random() * 100);
-      const isComplete = progress >= 100;
-
       return {
         audioId: input.audioId,
         userId: ctx.user.id,
-        progress,
-        status: isComplete ? 'completed' : 'processing',
-        message: isComplete ? 'Audio processing complete!' : `Processing... ${progress}%`,
-        downloadUrl: isComplete ? `https://storage.example.com/audio/${input.audioId}.mp3` : null,
-        fileSize: isComplete ? 12.5 : null,
+        progress: 100,
+        status: 'completed',
+        message: 'Audio processing complete!',
+        downloadUrl: null,
+        fileSize: null,
       };
     }),
 

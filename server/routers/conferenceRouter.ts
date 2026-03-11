@@ -47,6 +47,16 @@ export const conferenceRouter = router({
       return rows as any[];
     }),
 
+  getByRoomCode: publicProcedure
+    .input(z.object({ roomCode: z.string() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      const [rows] = await db.execute(sql`SELECT id, title, description, type, platform, host_name, room_code, status, scheduled_at, duration_minutes, max_attendees, captions_enabled, recording_enabled FROM conferences WHERE room_code = ${input.roomCode} LIMIT 1`);
+      const conferences = rows as any[];
+      if (conferences.length === 0) return null;
+      return conferences[0];
+    }),
+
   getConference: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
@@ -1608,6 +1618,60 @@ export const conferenceRouter = router({
       platforms: conf.restream_platforms ? JSON.parse(conf.restream_platforms) : [],
       studioUrl: 'https://studio.restream.io/enk-osex-pju',
     };
+  }),
+
+  // Get conferences starting within the next N minutes for auto-reminders
+  getUpcomingReminders: publicProcedure
+    .input(z.object({ minutesAhead: z.number().min(1).max(60).default(5) }).optional())
+    .query(async ({ input }) => {
+      const db = await getDb();
+      const minutes = input?.minutesAhead || 5;
+      const now = new Date();
+      const ahead = new Date(now.getTime() + minutes * 60 * 1000);
+      const [rows] = await db.execute(sql`
+        SELECT id, title, room_code, platform, host_name, scheduled_at, duration_minutes
+        FROM conferences
+        WHERE status = 'scheduled'
+          AND scheduled_at BETWEEN ${now} AND ${ahead}
+        ORDER BY scheduled_at ASC
+      `);
+      return rows as any[];
+    }),
+
+  // Auto-start scheduled conferences and send reminders (called by QUMUS cron)
+  processScheduledReminders: publicProcedure.mutation(async () => {
+    const db = await getDb();
+    const now = new Date();
+    const fiveMinAhead = new Date(now.getTime() + 5 * 60 * 1000);
+    // Find conferences starting in next 5 minutes that haven't been reminded
+    const [upcoming] = await db.execute(sql`
+      SELECT id, title, room_code, platform, host_name, scheduled_at
+      FROM conferences
+      WHERE status = 'scheduled'
+        AND scheduled_at BETWEEN ${now} AND ${fiveMinAhead}
+    `);
+    const conferences = upcoming as any[];
+    let reminded = 0;
+    for (const conf of conferences) {
+      try {
+        await notifyOwner({
+          title: `\u23F0 Starting Soon: ${conf.title}`,
+          content: `"${conf.title}" starts in less than 5 minutes! Room: ${conf.room_code} | Join at /conference/room/${conf.id}`,
+        });
+        reminded++;
+      } catch (e) { /* non-critical */ }
+    }
+    // Auto-start conferences whose scheduled time has passed
+    const [pastDue] = await db.execute(sql`
+      SELECT id, title FROM conferences
+      WHERE status = 'scheduled' AND scheduled_at <= ${now}
+    `);
+    let started = 0;
+    for (const conf of (pastDue as any[])) {
+      await db.execute(sql`UPDATE conferences SET status = 'live', updated_at = NOW() WHERE id = ${conf.id}`);
+      started++;
+    }
+    return { reminded, started, checkedAt: now.toISOString() };
   }),
 
   getRestreamAnalytics: protectedProcedure.query(async () => {

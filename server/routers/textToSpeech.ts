@@ -1,31 +1,62 @@
 import { router, protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
+import { realTtsService, AVAILABLE_VOICES, DJ_VOICES } from "../_core/realTtsService";
 
 export const textToSpeechRouter = router({
-  // Generate speech from text
+  // Generate speech from text using real Forge TTS API
   generateSpeech: protectedProcedure
     .input(
       z.object({
-        text: z.string(),
+        text: z.string().min(1).max(4096),
         language: z.string().default("en"),
-        voice: z.string().default("default"),
-        speed: z.number().default(1.0),
-        pitch: z.number().default(1.0),
+        voice: z.string().default("nova"),
+        speed: z.number().min(0.25).max(4.0).default(1.0),
+        pitch: z.number().default(1.0), // kept for API compat, not used by Forge
       })
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        // Simulate speech generation
-        const audioUrl = `https://api.manus.im/audio/tts-${Date.now()}.mp3`;
+        // Map legacy voice IDs to new voice names
+        const voiceMap: Record<string, string> = {
+          'default': 'nova',
+          'en-US-Neural2-A': 'nova',
+          'en-US-Neural2-C': 'onyx',
+          'en-GB-Neural2-A': 'shimmer',
+          'en-GB-Neural2-B': 'echo',
+          'en-US-neural': 'nova',
+          'en-GB-neural': 'echo',
+        };
+        const resolvedVoice = voiceMap[input.voice] || input.voice;
 
+        const result = await realTtsService.generateSpeech({
+          text: input.text,
+          voice: resolvedVoice,
+          speed: input.speed,
+        });
+
+        if (result.success && result.audioUrl) {
+          return {
+            success: true,
+            audioUrl: result.audioUrl,
+            audioKey: result.audioKey,
+            duration: result.duration || Math.ceil(input.text.length / 15),
+            language: input.language,
+            voice: resolvedVoice,
+            format: "mp3",
+            bitrate: "128k",
+          };
+        }
+
+        // Fallback: return a flag so frontend uses Web Speech API
         return {
           success: true,
-          audioUrl,
+          audioUrl: '', // empty = frontend should use Web Speech API
           duration: Math.ceil(input.text.length / 15),
           language: input.language,
           voice: input.voice,
-          format: "mp3",
-          bitrate: "128k",
+          format: "browser-tts",
+          bitrate: "n/a",
+          useBrowserFallback: true,
         };
       } catch (error) {
         return {
@@ -35,47 +66,83 @@ export const textToSpeechRouter = router({
       }
     }),
 
-  // Get available voices
+  // Generate speech with DJ personality voice
+  generateDjSpeech: protectedProcedure
+    .input(
+      z.object({
+        text: z.string().min(1).max(4096),
+        djName: z.enum(['valanna', 'seraph', 'candy', 'qumus']).default('valanna'),
+        speed: z.number().min(0.25).max(4.0).default(1.0),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const result = await realTtsService.generateDjSpeech(
+          input.text,
+          input.djName,
+          input.speed
+        );
+
+        return {
+          success: result.success,
+          audioUrl: result.audioUrl || '',
+          audioKey: result.audioKey,
+          duration: result.duration,
+          djName: input.djName,
+          voice: result.voice,
+          error: result.error,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : "DJ speech generation failed",
+        };
+      }
+    }),
+
+  // Get available voices — now returns real Forge voices
   getAvailableVoices: protectedProcedure
     .input(z.object({ language: z.string().default("en") }))
     .query(async ({ ctx, input }) => {
-      const voices: Record<string, Array<{ id: string; name: string; gender: string }>> = {
-        en: [
-          { id: "en-US-Neural2-A", name: "Google US English (Female)", gender: "female" },
-          { id: "en-US-Neural2-C", name: "Google US English (Male)", gender: "male" },
-          { id: "en-GB-Neural2-A", name: "Google UK English (Female)", gender: "female" },
-          { id: "en-GB-Neural2-B", name: "Google UK English (Male)", gender: "male" },
-        ],
-        es: [
-          { id: "es-ES-Neural2-A", name: "Spanish (Female)", gender: "female" },
-          { id: "es-ES-Neural2-B", name: "Spanish (Male)", gender: "male" },
-        ],
-        fr: [
-          { id: "fr-FR-Neural2-A", name: "French (Female)", gender: "female" },
-          { id: "fr-FR-Neural2-B", name: "French (Male)", gender: "male" },
-        ],
-        de: [
-          { id: "de-DE-Neural2-A", name: "German (Female)", gender: "female" },
-          { id: "de-DE-Neural2-B", name: "German (Male)", gender: "male" },
-        ],
-      };
-
       return {
         language: input.language,
-        voices: voices[input.language] || voices.en,
+        voices: AVAILABLE_VOICES.map(v => ({
+          id: v.id,
+          name: v.name,
+          gender: v.gender,
+          description: v.description,
+        })),
+        djVoices: Object.entries(DJ_VOICES).map(([dj, voice]) => ({
+          djName: dj,
+          voiceId: voice,
+          voiceName: AVAILABLE_VOICES.find(v => v.id === voice)?.name || voice,
+        })),
       };
     }),
 
+  // Check TTS service availability
+  checkAvailability: protectedProcedure.query(async () => {
+    const available = await realTtsService.checkAvailability();
+    return {
+      serverTtsAvailable: available,
+      fallback: available ? 'none' : 'browser-web-speech-api',
+      voices: AVAILABLE_VOICES.length,
+    };
+  }),
+
   // Get TTS settings
   getTTSSettings: protectedProcedure.query(async ({ ctx }) => {
+    const available = await realTtsService.checkAvailability();
     return {
       enabled: true,
+      serverTtsAvailable: available,
       defaultLanguage: "en",
-      defaultVoice: "en-US-Neural2-A",
+      defaultVoice: "nova",
       defaultSpeed: 1.0,
       defaultPitch: 1.0,
       autoPlay: false,
       supportedLanguages: ["en", "es", "fr", "de", "it", "pt", "ru", "ja", "zh", "ko"],
+      supportedVoices: AVAILABLE_VOICES.map(v => v.id),
     };
   }),
 
@@ -97,41 +164,44 @@ export const textToSpeechRouter = router({
       };
     }),
 
-  // Get speech history
+  // Get speech history (placeholder — would need DB table)
   getSpeechHistory: protectedProcedure
     .input(z.object({ limit: z.number().default(50) }))
     .query(async ({ ctx, input }) => {
-      return {
-        history: [
-          {
-            id: "speech1",
-            text: "I've generated an image based on your request",
-            language: "en",
-            voice: "en-US-Neural2-A",
-            audioUrl: "https://api.manus.im/audio/sample.mp3",
-            duration: 5,
-            createdAt: new Date(),
-          },
-        ],
-      };
+      return { history: [] };
     }),
 
   // Download speech as file
   downloadSpeech: protectedProcedure
     .input(
       z.object({
-        text: z.string(),
+        text: z.string().min(1).max(4096),
         language: z.string(),
         voice: z.string(),
         format: z.enum(["mp3", "wav", "ogg"]).default("mp3"),
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const result = await realTtsService.generateSpeech({
+        text: input.text,
+        voice: input.voice,
+      });
+
+      if (result.success && result.audioUrl) {
+        return {
+          success: true,
+          downloadUrl: result.audioUrl,
+          filename: `speech-${Date.now()}.mp3`,
+          format: "mp3",
+        };
+      }
+
       return {
-        success: true,
-        downloadUrl: `https://api.manus.im/audio/download-${Date.now()}.${input.format}`,
-        filename: `speech-${Date.now()}.${input.format}`,
+        success: false,
+        downloadUrl: '',
+        filename: '',
         format: input.format,
+        error: result.error || 'Generation failed',
       };
     }),
 });

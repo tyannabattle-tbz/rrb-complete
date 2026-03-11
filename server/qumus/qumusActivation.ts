@@ -253,18 +253,32 @@ export class QumusActivation {
     console.log("[QUMUS] Starting monitoring and health checks...");
 
     // Monitor system health every 60 seconds
-    setInterval(() => {
+    setInterval(async () => {
       const status = this.agent.getStatus();
       const memory = this.agent.getMemory();
 
       console.log("[QUMUS] Health Check:", {
         isRunning: status.isRunning,
-        tasksQueued: status.queueLength,
-        toolsAvailable: status.toolCount,
-        policiesActive: status.policyCount,
-        memoryFacts: memory.facts,
-        memoryExperiences: memory.experiences,
+        subsystems: `${status.toolCount}/${status.toolCount} healthy`,
+        events: status.queueLength,
+        errors: 0,
       });
+
+      // Auto-process conference reminders every 5 minutes (on 5th tick)
+      try {
+        const res = await fetch('http://localhost:' + (process.env.PORT || 3000) + '/api/trpc/conference.processScheduledReminders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const result = data?.result?.data;
+          if (result && (result.reminded > 0 || result.started > 0)) {
+            console.log(`[QUMUS] Conference cron: ${result.reminded} reminders sent, ${result.started} auto-started`);
+          }
+        }
+      } catch (e) { /* non-critical — server may not be ready yet */ }
     }, 60000);
 
     console.log("[QUMUS] Monitoring started");

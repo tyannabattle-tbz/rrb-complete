@@ -199,6 +199,7 @@ import ConferenceRegister from '@/pages/ConferenceRegister';
 import SpeakerProfile from '@/pages/SpeakerProfile';
 import ConferenceCheckIn from '@/pages/ConferenceCheckIn';
 import ConferenceTranslation from '@/pages/ConferenceTranslation';
+import GuestJoin from '@/pages/GuestJoin';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -378,6 +379,8 @@ function Router() {
       <Route path="/conference/register/:id" component={ConferenceRegister} />
       <Route path="/conference/checkin/:id" component={ConferenceCheckIn} />
       <Route path="/conference/translation/:id" component={ConferenceTranslation} />
+      <Route path="/join/:roomCode" component={GuestJoin} />
+      <Route path="/join" component={GuestJoin} />
       <Route path="/conference/speaker/:id" component={SpeakerProfile} />
       <Route path="/conference" component={RRBConferenceHub} />
       <Route path="/command-console" component={QumusCommandConsole} />

@@ -3694,3 +3694,16 @@
 ## RRB Site Breakage Investigation
 - [x] Diagnosed — RRB is a separate Manus project, not this QUMUS project
 - [ ] Fix root cause of RRB site breakage (requires separate Manus task)
+
+## Conference Follow-ups - March 2026 (Round 4)
+- [x] Add public guest join route /join/:roomCode for external delegates (no login required)
+- [x] Add conference scheduling with push reminders 5 min before start (QUMUS cron)
+- [x] Add one-tap "Join Now" button in push notification for scheduled conferences
+
+## Video & Audio Production - Open Source Integration
+- [x] Replace mockVideoService with realVideoProductionService (LLM scripts + generateImage storyboards + TTS narration)
+- [x] Wire textToSpeech router to use real Forge TTS API (tts-1-hd model)
+- [x] Wire audioMusicRouter to use real Forge TTS API with DJ voice personalities
+- [x] motionGenerationRouter rewritten with real AI services (no mock)
+- [x] Audio routers rewritten with real Forge TTS (valanna, seraph, candy, qumus voices)
+- [x] VEO/proprietary dependencies removed — all open-source compatible (generateImage + invokeLLM + Forge TTS)
