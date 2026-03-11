@@ -4012,3 +4012,15 @@
 - [x] Fallback to manual mode when no API key (returns instructions)
 - [x] Test connection endpoint in Admin Control Panel
 - [x] Owner notification on room creation
+
+## CRITICAL: Fix ALL 51 Channel Connections (Pre-Airtime)
+- [ ] Diagnose all 51 channel stream URLs from live site
+- [ ] Replace every broken/non-responding stream with verified working alternative
+- [ ] Verify all 51 channels produce audio — 100% success required
+- [ ] Update frontend, database, and seed data with working URLs
+
+## SQUADD Members Zoom Presentation
+- [ ] Build presentation for tonight's Zoom with SQUADD members
+- [ ] Include QUMUS ecosystem demo section
+- [ ] Include RRB Radio 51-channel showcase
+- [ ] Include live video integration concept for QUMUS demo
