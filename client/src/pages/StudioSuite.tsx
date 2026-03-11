@@ -5,10 +5,12 @@ import {
   Settings, Save, Download, Upload, Plus, Minus, Maximize2, Minimize2,
   Headphones, Radio, Sliders, Layers, Waveform, Zap, Eye, EyeOff,
   Lock, Unlock, Trash2, Copy, Scissors, RotateCcw, RotateCw,
-  ZoomIn, ZoomOut, Grid, Magnet, Clock, Activity, Monitor
+  ZoomIn, ZoomOut, Grid, Magnet, Clock, Activity, Monitor,
+  FolderOpen, FileDown, FileUp, FileText, Power, GripVertical
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useAudioEngine } from '@/hooks/useAudioEngine';
 
 // ============================================================
 // TYPE DEFINITIONS
@@ -42,6 +44,19 @@ interface Region {
   durationBeats: number;
   color: string;
   waveformData: number[];
+  audioFile?: File;
+  audioUrl?: string;
+}
+
+// Serializable project format for Save/Load
+interface StudioProject {
+  name: string;
+  version: string;
+  bpm: number;
+  timeSignature: string;
+  tracks: Track[];
+  createdAt: number;
+  updatedAt: number;
 }
 
 interface Effect {
@@ -183,6 +198,9 @@ const DEFAULT_TRACKS: Track[] = [
 // MAIN COMPONENT
 // ============================================================
 export function StudioSuite() {
+  // Audio Engine
+  const audioEngine = useAudioEngine();
+
   // Transport state
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -205,8 +223,18 @@ export function StudioSuite() {
   const [snapToGrid, setSnapToGrid] = useState(true);
   const [fullscreen, setFullscreen] = useState(false);
   const [activeTab, setActiveTab] = useState<'tracks' | 'mixer' | 'editor'>('tracks');
+  const [showFileMenu, setShowFileMenu] = useState(false);
+  const [projectName, setProjectName] = useState('Untitled Project');
+  const [isDirty, setIsDirty] = useState(false);
+  const [dragOverTrackId, setDragOverTrackId] = useState<string | null>(null);
+  const [draggingRegion, setDraggingRegion] = useState<{ trackId: string; regionId: string; startX: number; startBeat: number } | null>(null);
 
-  // Meters (simulated)
+  // File input ref for importing
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const audioFileInputRef = useRef<HTMLInputElement>(null);
+  const importTrackIdRef = useRef<string>('');
+
+  // Meters — use real engine meters when available, fall back to simulated
   const [meterLevels, setMeterLevels] = useState({ left: -12, right: -14 });
 
   // Playback timer
@@ -227,10 +255,15 @@ export function StudioSuite() {
     return () => { if (playIntervalRef.current) clearInterval(playIntervalRef.current); };
   }, [isPlaying, bpm, isLooping, totalBeats]);
 
-  // Simulated meter animation
+  // Meter animation — use real audio engine meters when initialized, otherwise simulate
   useEffect(() => {
     const meterInterval = setInterval(() => {
-      if (isPlaying) {
+      if (audioEngine.engineState.isInitialized) {
+        setMeterLevels({
+          left: audioEngine.masterMeters.leftPeak,
+          right: audioEngine.masterMeters.rightPeak,
+        });
+      } else if (isPlaying) {
         setMeterLevels({
           left: -20 + Math.random() * 18,
           right: -20 + Math.random() * 18,
@@ -240,11 +273,22 @@ export function StudioSuite() {
       }
     }, 50);
     return () => clearInterval(meterInterval);
-  }, [isPlaying]);
+  }, [isPlaying, audioEngine.engineState.isInitialized, audioEngine.masterMeters]);
+
+  // Sync track volume/pan/mute changes to audio engine
+  useEffect(() => {
+    if (!audioEngine.engineState.isInitialized) return;
+    tracks.forEach(track => {
+      audioEngine.setTrackVolume(track.id, track.volume);
+      audioEngine.setTrackPan(track.id, track.pan);
+      audioEngine.setTrackMute(track.id, track.muted);
+    });
+  }, [tracks, audioEngine]);
 
   // Track operations
   const updateTrack = useCallback((id: string, updates: Partial<Track>) => {
     setTracks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
+    setIsDirty(true);
   }, []);
 
   const selectedTrack = useMemo(() => tracks.find(t => t.id === selectedTrackId), [tracks, selectedTrackId]);
@@ -266,14 +310,300 @@ export function StudioSuite() {
 
   const dBToPercent = (db: number) => Math.max(0, Math.min(100, ((db + 60) / 66) * 100));
 
-  // Keyboard shortcuts (Logic Pro style)
+  // Add new track
+  const addTrack = useCallback((type: TrackType) => {
+    const id = `t${Date.now()}`;
+    const names: Record<TrackType, string> = {
+      audio: `Audio ${tracks.filter(t => t.type === 'audio').length + 1}`,
+      midi: `MIDI ${tracks.filter(t => t.type === 'midi').length + 1}`,
+      video: `Video ${tracks.filter(t => t.type === 'video').length + 1}`,
+      bus: `Bus ${tracks.filter(t => t.type === 'bus').length + 1}`,
+      master: 'Master',
+    };
+    const newTrack: Track = {
+      id, name: names[type], type, color: TRACK_COLORS[type],
+      volume: -12, pan: 0, muted: false, solo: false, armed: false, locked: false, visible: true,
+      regions: [], effects: [], automationVisible: false,
+      inputSource: type === 'midi' ? 'Virtual' : `Input ${tracks.length + 1}`,
+      outputBus: 'Stereo Out',
+    };
+    setTracks(prev => [...prev.filter(t => t.type !== 'master'), newTrack, ...prev.filter(t => t.type === 'master')]);
+    setSelectedTrackId(id);
+    toast.success(`Added ${names[type]} track`);
+  }, [tracks]);
+
+  // Delete selected track
+  const deleteTrack = useCallback(() => {
+    if (selectedTrack && selectedTrack.type !== 'master') {
+      setTracks(prev => prev.filter(t => t.id !== selectedTrackId));
+      setSelectedTrackId(tracks[0]?.id || '');
+      setIsDirty(true);
+      toast.success(`Deleted ${selectedTrack.name}`);
+    }
+  }, [selectedTrack, selectedTrackId, tracks]);
+
+  // ============================================================
+  // AUDIO ENGINE INTEGRATION
+  // ============================================================
+  const handleInitAudio = useCallback(async () => {
+    const success = await audioEngine.initEngine();
+    if (success) {
+      toast.success('Audio engine initialized — 48kHz / 24-bit');
+      // Create nodes for all existing tracks
+      tracks.forEach(track => {
+        audioEngine.createTrackNode(track.id);
+        audioEngine.setTrackVolume(track.id, track.volume);
+        audioEngine.setTrackPan(track.id, track.pan);
+      });
+    } else {
+      toast.error('Failed to initialize audio engine');
+    }
+  }, [audioEngine, tracks]);
+
+  const handlePlayWithEngine = useCallback(() => {
+    if (audioEngine.engineState.isInitialized) {
+      audioEngine.playAll(currentBeat, bpm);
+    }
+    setIsPlaying(true);
+  }, [audioEngine, currentBeat, bpm]);
+
+  const handleStopWithEngine = useCallback(() => {
+    if (audioEngine.engineState.isInitialized) {
+      audioEngine.stopAll();
+    }
+    setIsPlaying(false);
+  }, [audioEngine]);
+
+  // Load audio file onto a track
+  const handleLoadAudioToTrack = useCallback(async (trackId: string, file: File) => {
+    if (!audioEngine.engineState.isInitialized) {
+      await handleInitAudio();
+    }
+    const success = await audioEngine.loadAudioToTrack(trackId, file);
+    if (success) {
+      // Generate waveform data from file name hash for visual
+      const waveform = generateWaveform(200);
+      const newRegion: Region = {
+        id: `r${Date.now()}`,
+        name: file.name.replace(/\.[^.]+$/, ''),
+        startBeat: 0,
+        durationBeats: 32,
+        color: tracks.find(t => t.id === trackId)?.color || '#4ade80',
+        waveformData: waveform,
+        audioFile: file,
+      };
+      setTracks(prev => prev.map(t =>
+        t.id === trackId
+          ? { ...t, regions: [...t.regions, newRegion] }
+          : t
+      ));
+      setIsDirty(true);
+      toast.success(`Loaded "${file.name}" onto track`);
+    } else {
+      toast.error(`Failed to load "${file.name}"`);
+    }
+  }, [audioEngine, handleInitAudio, tracks]);
+
+  // ============================================================
+  // DRAG AND DROP
+  // ============================================================
+  const handleFileDrop = useCallback((trackId: string, e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverTrackId(null);
+
+    // Handle files from browser panel (data transfer)
+    const browserFileName = e.dataTransfer.getData('text/plain');
+    if (browserFileName) {
+      // Simulate adding a region from browser panel
+      const track = tracks.find(t => t.id === trackId);
+      if (track) {
+        const lastRegionEnd = track.regions.reduce((max, r) => Math.max(max, r.startBeat + r.durationBeats), 0);
+        const newRegion: Region = {
+          id: `r${Date.now()}`,
+          name: browserFileName.replace(/\.[^.]+$/, ''),
+          startBeat: snapToGrid ? Math.round(lastRegionEnd / 4) * 4 : lastRegionEnd,
+          durationBeats: 16,
+          color: track.color,
+          waveformData: generateWaveform(64),
+        };
+        updateTrack(trackId, { regions: [...track.regions, newRegion] });
+        toast.success(`Added "${browserFileName}" to ${track.name}`);
+      }
+      return;
+    }
+
+    // Handle real audio files dropped from OS
+    const files = Array.from(e.dataTransfer.files);
+    const audioFiles = files.filter(f => f.type.startsWith('audio/') || /\.(wav|mp3|ogg|m4a|flac|aac)$/i.test(f.name));
+    if (audioFiles.length > 0) {
+      audioFiles.forEach(file => handleLoadAudioToTrack(trackId, file));
+    } else if (files.length > 0) {
+      toast.error('Only audio files can be dropped onto tracks');
+    }
+  }, [tracks, snapToGrid, updateTrack, handleLoadAudioToTrack]);
+
+  const handleDragOver = useCallback((trackId: string, e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverTrackId(trackId);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setDragOverTrackId(null);
+  }, []);
+
+  // Region drag to reposition
+  const handleRegionDragStart = useCallback((trackId: string, regionId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const startX = e.clientX;
+    const region = tracks.find(t => t.id === trackId)?.regions.find(r => r.id === regionId);
+    if (region) {
+      setDraggingRegion({ trackId, regionId, startX, startBeat: region.startBeat });
+    }
+  }, [tracks]);
+
+  // Mouse move handler for region dragging
+  useEffect(() => {
+    if (!draggingRegion) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - draggingRegion.startX;
+      const beatsPerPixel = totalBeats / (window.innerWidth * zoom * 0.6);
+      let newStart = draggingRegion.startBeat + deltaX * beatsPerPixel;
+      if (snapToGrid) newStart = Math.round(newStart / 4) * 4;
+      newStart = Math.max(0, newStart);
+
+      setTracks(prev => prev.map(t =>
+        t.id === draggingRegion.trackId
+          ? { ...t, regions: t.regions.map(r => r.id === draggingRegion.regionId ? { ...r, startBeat: newStart } : r) }
+          : t
+      ));
+    };
+
+    const handleMouseUp = () => {
+      setDraggingRegion(null);
+      setIsDirty(true);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [draggingRegion, totalBeats, zoom, snapToGrid]);
+
+  // ============================================================
+  // FILE MENU: SAVE / EXPORT / IMPORT
+  // ============================================================
+  const serializeProject = useCallback((): StudioProject => {
+    return {
+      name: projectName,
+      version: '1.0.0',
+      bpm,
+      timeSignature,
+      tracks: tracks.map(t => ({
+        ...t,
+        regions: t.regions.map(r => ({ ...r, audioFile: undefined })),
+      })),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+  }, [projectName, bpm, timeSignature, tracks]);
+
+  const handleSaveProject = useCallback(() => {
+    const project = serializeProject();
+    localStorage.setItem('rrb-studio-project', JSON.stringify(project));
+    setIsDirty(false);
+    toast.success(`Project "${projectName}" saved`);
+  }, [serializeProject, projectName]);
+
+  const handleExportProject = useCallback(() => {
+    const project = serializeProject();
+    const blob = new Blob([JSON.stringify(project, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${projectName.replace(/\s+/g, '_')}.rrbstudio`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported "${projectName}.rrbstudio"`);
+  }, [serializeProject, projectName]);
+
+  const handleImportProject = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const project: StudioProject = JSON.parse(ev.target?.result as string);
+        setProjectName(project.name);
+        setBpm(project.bpm);
+        setTimeSignature(project.timeSignature);
+        setTracks(project.tracks);
+        setSelectedTrackId(project.tracks[0]?.id || '');
+        setIsDirty(false);
+        toast.success(`Imported project "${project.name}"`);
+      } catch {
+        toast.error('Invalid project file');
+      }
+    };
+    reader.readAsText(file);
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }, []);
+
+  const handleLoadSavedProject = useCallback(() => {
+    const saved = localStorage.getItem('rrb-studio-project');
+    if (saved) {
+      try {
+        const project: StudioProject = JSON.parse(saved);
+        setProjectName(project.name);
+        setBpm(project.bpm);
+        setTimeSignature(project.timeSignature);
+        setTracks(project.tracks);
+        setSelectedTrackId(project.tracks[0]?.id || '');
+        setIsDirty(false);
+        toast.success(`Loaded project "${project.name}"`);
+      } catch {
+        toast.error('Failed to load saved project');
+      }
+    } else {
+      toast.info('No saved project found');
+    }
+  }, []);
+
+  const handleNewProject = useCallback(() => {
+    setProjectName('Untitled Project');
+    setBpm(120);
+    setTimeSignature('4/4');
+    setTracks(DEFAULT_TRACKS);
+    setSelectedTrackId('t1');
+    setCurrentBeat(0);
+    setIsPlaying(false);
+    setIsRecording(false);
+    setIsDirty(false);
+    toast.success('New project created');
+  }, []);
+
+  // Handle audio file import for track
+  const handleAudioFileImport = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !importTrackIdRef.current) return;
+    handleLoadAudioToTrack(importTrackIdRef.current, file);
+    if (audioFileInputRef.current) audioFileInputRef.current.value = '';
+  }, [handleLoadAudioToTrack]);
+
+  // Keyboard shortcuts (Logic Pro style) — placed after all callbacks
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement) return;
       switch (e.key) {
         case ' ':
           e.preventDefault();
-          setIsPlaying(prev => !prev);
+          if (isPlaying) { handleStopWithEngine(); } else { handlePlayWithEngine(); }
           break;
         case 'r':
         case 'R':
@@ -284,7 +614,7 @@ export function StudioSuite() {
           break;
         case 'Enter':
           e.preventDefault();
-          setIsPlaying(false);
+          handleStopWithEngine();
           setCurrentBeat(0);
           break;
         case 'c':
@@ -303,7 +633,10 @@ export function StudioSuite() {
           break;
         case 's':
         case 'S':
-          if (selectedTrack && !e.metaKey && !e.ctrlKey) {
+          if (e.metaKey || e.ctrlKey) {
+            e.preventDefault();
+            handleSaveProject();
+          } else if (selectedTrack) {
             e.preventDefault();
             updateTrack(selectedTrack.id, { solo: !selectedTrack.solo });
           }
@@ -339,38 +672,22 @@ export function StudioSuite() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedTrack, selectedTrackId, tracks, updateTrack]);
+  }, [selectedTrack, selectedTrackId, tracks, updateTrack, isPlaying, handlePlayWithEngine, handleStopWithEngine, handleSaveProject]);
 
-  // Add new track
-  const addTrack = useCallback((type: TrackType) => {
-    const id = `t${Date.now()}`;
-    const names: Record<TrackType, string> = {
-      audio: `Audio ${tracks.filter(t => t.type === 'audio').length + 1}`,
-      midi: `MIDI ${tracks.filter(t => t.type === 'midi').length + 1}`,
-      video: `Video ${tracks.filter(t => t.type === 'video').length + 1}`,
-      bus: `Bus ${tracks.filter(t => t.type === 'bus').length + 1}`,
-      master: 'Master',
-    };
-    const newTrack: Track = {
-      id, name: names[type], type, color: TRACK_COLORS[type],
-      volume: -12, pan: 0, muted: false, solo: false, armed: false, locked: false, visible: true,
-      regions: [], effects: [], automationVisible: false,
-      inputSource: type === 'midi' ? 'Virtual' : `Input ${tracks.length + 1}`,
-      outputBus: 'Stereo Out',
-    };
-    setTracks(prev => [...prev.filter(t => t.type !== 'master'), newTrack, ...prev.filter(t => t.type === 'master')]);
-    setSelectedTrackId(id);
-    toast.success(`Added ${names[type]} track`);
-  }, [tracks]);
-
-  // Delete selected track
-  const deleteTrack = useCallback(() => {
-    if (selectedTrack && selectedTrack.type !== 'master') {
-      setTracks(prev => prev.filter(t => t.id !== selectedTrackId));
-      setSelectedTrackId(tracks[0]?.id || '');
-      toast.success(`Deleted ${selectedTrack.name}`);
+  // Auto-load saved project on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('rrb-studio-project');
+    if (saved) {
+      try {
+        const project: StudioProject = JSON.parse(saved);
+        setProjectName(project.name);
+        setBpm(project.bpm);
+        setTimeSignature(project.timeSignature);
+        setTracks(project.tracks);
+        setSelectedTrackId(project.tracks[0]?.id || '');
+      } catch { /* use defaults */ }
     }
-  }, [selectedTrack, selectedTrackId, tracks]);
+  }, []);
 
   // ============================================================
   // RENDER
@@ -383,12 +700,59 @@ export function StudioSuite() {
       <div className="flex items-center h-7 bg-[#2a2a2a] border-b border-[#3a3a3a] px-2 gap-1 shrink-0"
         style={{ fontSize: '11px' }}>
         <span className="font-bold text-[#e0e0e0] mr-3" style={{ fontSize: '12px' }}>⚡ RRB Studio Pro</span>
-        {['File', 'Edit', 'Track', 'Mix', 'Navigate', 'Window', 'Help'].map(menu => (
+        {/* File Menu with dropdown */}
+        <div className="relative">
+          <button className={`px-2 py-0.5 rounded text-[#bbbbbb] transition-colors ${showFileMenu ? 'bg-[#4a4a4a]' : 'hover:bg-[#4a4a4a]'}`}
+            onClick={() => setShowFileMenu(!showFileMenu)}>
+            File
+          </button>
+          {showFileMenu && (
+            <div className="absolute top-full left-0 mt-0.5 w-56 bg-[#333] border border-[#4a4a4a] rounded-md shadow-xl z-50 py-1"
+              onMouseLeave={() => setShowFileMenu(false)}>
+              <button onClick={() => { handleNewProject(); setShowFileMenu(false); }}
+                className="w-full px-3 py-1.5 text-left text-[11px] text-[#ccc] hover:bg-[#4a6fa5] hover:text-white flex items-center gap-2">
+                <FileText className="w-3 h-3" /> New Project
+                <span className="ml-auto text-[9px] text-[#666]">⌘N</span>
+              </button>
+              <button onClick={() => { handleLoadSavedProject(); setShowFileMenu(false); }}
+                className="w-full px-3 py-1.5 text-left text-[11px] text-[#ccc] hover:bg-[#4a6fa5] hover:text-white flex items-center gap-2">
+                <FolderOpen className="w-3 h-3" /> Open Saved Project
+                <span className="ml-auto text-[9px] text-[#666]">⌘O</span>
+              </button>
+              <div className="border-t border-[#4a4a4a] my-1" />
+              <button onClick={() => { handleSaveProject(); setShowFileMenu(false); }}
+                className="w-full px-3 py-1.5 text-left text-[11px] text-[#ccc] hover:bg-[#4a6fa5] hover:text-white flex items-center gap-2">
+                <Save className="w-3 h-3" /> Save Project
+                <span className="ml-auto text-[9px] text-[#666]">⌘S</span>
+              </button>
+              <button onClick={() => { handleExportProject(); setShowFileMenu(false); }}
+                className="w-full px-3 py-1.5 text-left text-[11px] text-[#ccc] hover:bg-[#4a6fa5] hover:text-white flex items-center gap-2">
+                <FileDown className="w-3 h-3" /> Export Project (.rrbstudio)
+                <span className="ml-auto text-[9px] text-[#666]">⇧⌘E</span>
+              </button>
+              <button onClick={() => { fileInputRef.current?.click(); setShowFileMenu(false); }}
+                className="w-full px-3 py-1.5 text-left text-[11px] text-[#ccc] hover:bg-[#4a6fa5] hover:text-white flex items-center gap-2">
+                <FileUp className="w-3 h-3" /> Import Project (.rrbstudio)
+                <span className="ml-auto text-[9px] text-[#666]">⇧⌘I</span>
+              </button>
+              <div className="border-t border-[#4a4a4a] my-1" />
+              <button onClick={() => { toast.info('Bounce/Export audio — coming soon'); setShowFileMenu(false); }}
+                className="w-full px-3 py-1.5 text-left text-[11px] text-[#ccc] hover:bg-[#4a6fa5] hover:text-white flex items-center gap-2">
+                <Download className="w-3 h-3" /> Bounce / Export Audio
+                <span className="ml-auto text-[9px] text-[#666]">⌘B</span>
+              </button>
+            </div>
+          )}
+        </div>
+        {['Edit', 'Track', 'Mix', 'Navigate', 'Window', 'Help'].map(menu => (
           <button key={menu} className="px-2 py-0.5 hover:bg-[#4a4a4a] rounded text-[#bbbbbb] transition-colors"
             onClick={() => toast.info(`${menu} menu — Feature coming soon`)}>
             {menu}
           </button>
         ))}
+        {/* Hidden file inputs */}
+        <input ref={fileInputRef} type="file" accept=".rrbstudio,.json" className="hidden" onChange={handleImportProject} />
+        <input ref={audioFileInputRef} type="file" accept="audio/*,.wav,.mp3,.ogg,.m4a,.flac,.aac" className="hidden" onChange={handleAudioFileImport} />
         <div className="w-px h-4 bg-[#3a3a3a] mx-1" />
         <div className="flex items-center gap-0.5">
           <button onClick={() => addTrack('audio')}
@@ -453,12 +817,12 @@ export function StudioSuite() {
             title="Rewind">
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
-          <button onClick={() => { setIsPlaying(!isPlaying); if (!isPlaying) toast.success('Playback started'); }}
+          <button onClick={() => { if (!isPlaying) { handlePlayWithEngine(); toast.success('Playback started'); } else { handleStopWithEngine(); } }}
             className={`w-9 h-8 flex items-center justify-center rounded transition-colors ${isPlaying ? 'bg-[#4a6fa5] text-white' : 'hover:bg-[#4a4a4a] text-[#aaa] hover:text-white'}`}
             title={isPlaying ? 'Pause' : 'Play'}>
             {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
           </button>
-          <button onClick={() => { setIsPlaying(false); setCurrentBeat(0); }}
+          <button onClick={() => { handleStopWithEngine(); setCurrentBeat(0); }}
             className="w-8 h-8 flex items-center justify-center rounded hover:bg-[#4a4a4a] text-[#aaa] hover:text-white transition-colors"
             title="Stop">
             <Square className="w-3.5 h-3.5" />
@@ -539,11 +903,27 @@ export function StudioSuite() {
           </button>
         </div>
 
+        {/* Audio Engine Init */}
+        <button onClick={handleInitAudio}
+          className={`flex items-center gap-1 px-2 py-1 rounded border transition-colors ${
+            audioEngine.engineState.isInitialized
+              ? 'bg-[#1a3a1a] border-[#4ade80] text-[#4ade80]'
+              : 'bg-[#3a2a1a] border-[#fbbf24] text-[#fbbf24] hover:bg-[#4a3a2a]'
+          }`}
+          title={audioEngine.engineState.isInitialized ? 'Audio Engine Active' : 'Click to Initialize Audio Engine'}>
+          <Power className="w-3 h-3" />
+          <span className="text-[10px]">{audioEngine.engineState.isInitialized ? 'Engine ON' : 'Init Audio'}</span>
+        </button>
+
         {/* Save */}
-        <button onClick={() => toast.success('Project saved')}
-          className="flex items-center gap-1 px-2 py-1 bg-[#222222] rounded border border-[#3a3a3a] hover:bg-[#3a3a3a] text-[#aaa] hover:text-white transition-colors">
+        <button onClick={handleSaveProject}
+          className={`flex items-center gap-1 px-2 py-1 rounded border transition-colors ${
+            isDirty
+              ? 'bg-[#3a2a1a] border-[#fbbf24] text-[#fbbf24] hover:bg-[#4a3a2a]'
+              : 'bg-[#222222] border-[#3a3a3a] text-[#aaa] hover:bg-[#3a3a3a] hover:text-white'
+          }`}>
           <Save className="w-3 h-3" />
-          <span className="text-[10px]">Save</span>
+          <span className="text-[10px]">{isDirty ? 'Save*' : 'Save'}</span>
         </button>
       </div>
 
@@ -692,26 +1072,44 @@ export function StudioSuite() {
                   </div>
                 </div>
 
-                {/* Track Lane (Regions/Waveforms) */}
-                <div className="flex-1 relative overflow-hidden" style={{ backgroundColor: track.muted ? '#1a1a1a' : '#1e1e1e' }}>
+                {/* Track Lane (Regions/Waveforms) — Drop Target */}
+                <div className={`flex-1 relative overflow-hidden transition-colors ${dragOverTrackId === track.id ? 'ring-1 ring-[#4a6fa5] bg-[#1a2a3a]' : ''}`}
+                  style={{ backgroundColor: dragOverTrackId === track.id ? undefined : (track.muted ? '#1a1a1a' : '#1e1e1e') }}
+                  onDragOver={(e) => handleDragOver(track.id, e)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleFileDrop(track.id, e)}>
                   {/* Grid lines */}
                   {Array.from({ length: Math.ceil(totalBeats / 4) + 1 }, (_, i) => (
                     <div key={i} className="absolute top-0 bottom-0 w-px bg-[#2a2a2a]"
                       style={{ left: `${(i * 4 * zoom * 100) / totalBeats}%` }} />
                   ))}
 
-                  {/* Regions */}
+                  {/* Drop hint */}
+                  {dragOverTrackId === track.id && (
+                    <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
+                      <div className="bg-[#4a6fa5] bg-opacity-20 border-2 border-dashed border-[#4a6fa5] rounded px-3 py-1 text-[10px] text-[#88bbff]">
+                        Drop audio file here
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Regions — draggable */}
                   {track.regions.map(region => (
                     <div key={region.id}
-                      className="absolute top-1 bottom-1 rounded-sm overflow-hidden border border-opacity-30"
+                      className={`absolute top-1 bottom-1 rounded-sm overflow-hidden border border-opacity-30 cursor-grab active:cursor-grabbing ${draggingRegion?.regionId === region.id ? 'ring-1 ring-white opacity-80' : ''}`}
                       style={{
                         left: `${(region.startBeat * zoom * 100) / totalBeats}%`,
                         width: `${(region.durationBeats * zoom * 100) / totalBeats}%`,
                         backgroundColor: region.color + '20',
                         borderColor: region.color + '60',
-                      }}>
+                      }}
+                      onMouseDown={(e) => handleRegionDragStart(track.id, region.id, e)}>
+                      {/* Drag handle */}
+                      <div className="absolute top-0 left-0 w-3 h-full flex items-center justify-center opacity-30 hover:opacity-80 z-20">
+                        <GripVertical className="w-2 h-2" style={{ color: region.color }} />
+                      </div>
                       {/* Region name */}
-                      <div className="absolute top-0 left-1 text-[8px] font-medium z-10"
+                      <div className="absolute top-0 left-3 text-[8px] font-medium z-10"
                         style={{ color: region.color }}>
                         {region.name}
                       </div>
@@ -906,10 +1304,11 @@ export function StudioSuite() {
         <span>Shortcuts: Space=Play  R=Record  Enter=Stop  C=Loop  M=Mute  S=Solo  ↑↓=Track  +/-=Zoom</span>
         <div className="flex-1" />
         <span className="flex items-center gap-1">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
-          Audio Engine Active
+          <div className={`w-1.5 h-1.5 rounded-full ${audioEngine.engineState.isInitialized ? 'bg-[#4ade80]' : 'bg-[#fbbf24]'}`} />
+          {audioEngine.engineState.isInitialized ? 'Audio Engine Active' : 'Audio Engine Standby'}
         </span>
-        <span>CPU: 12%</span>
+        <span>CPU: {audioEngine.engineState.isInitialized ? `${Math.round(audioEngine.engineState.cpuLoad)}%` : '—'}</span>
+        <span>SR: {audioEngine.engineState.sampleRate}Hz</span>
         <span>Disk: 2.1 MB/s</span>
         <span className="text-[#888]">Canryn Production &amp; Subsidiaries</span>
       </div>
@@ -1061,8 +1460,20 @@ function BrowserFile({ name, type }: { name: string; type: 'audio' | 'video' | '
   const Icon = type === 'audio' ? Music : type === 'video' ? Film : Layers;
   const color = type === 'audio' ? '#4ade80' : type === 'video' ? '#c084fc' : '#888';
   return (
-    <div className="flex items-center gap-1.5 py-0.5 px-1 rounded hover:bg-[#333] cursor-pointer text-[10px] text-[#888] hover:text-[#ccc]"
-      draggable>
+    <div className="flex items-center gap-1.5 py-0.5 px-1 rounded hover:bg-[#333] cursor-grab active:cursor-grabbing text-[10px] text-[#888] hover:text-[#ccc]"
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData('text/plain', name);
+        e.dataTransfer.effectAllowed = 'copy';
+        // Create a drag image
+        const ghost = document.createElement('div');
+        ghost.textContent = name;
+        ghost.style.cssText = 'position:fixed;top:-100px;background:#333;color:#ccc;padding:2px 8px;border-radius:4px;font-size:10px;font-family:monospace';
+        document.body.appendChild(ghost);
+        e.dataTransfer.setDragImage(ghost, 0, 0);
+        setTimeout(() => document.body.removeChild(ghost), 0);
+      }}>
+      <GripVertical className="w-2 h-2 opacity-30" style={{ color }} />
       <Icon className="w-3 h-3 shrink-0" style={{ color }} />
       <span className="truncate">{name}</span>
     </div>

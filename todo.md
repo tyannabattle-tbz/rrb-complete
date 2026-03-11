@@ -3758,3 +3758,6 @@
 - [ ] Add meter bridge with real-time level visualization
 - [ ] Add properties/inspector panel for selected track/clip details
 - [ ] Add dark professional theme matching Logic Pro / Premiere Pro aesthetic
+- [x] Connect real Web Audio API engine to transport controls for audio playback, mixing, and real-time metering
+- [x] Implement drag-and-drop: drag files from browser panel onto tracks, reposition regions on timeline
+- [x] Build File menu with Save/Export/Import project functionality persisted to localStorage (.rrbstudio format)
