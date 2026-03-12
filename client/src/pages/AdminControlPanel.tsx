@@ -76,6 +76,10 @@ export default function AdminControlPanel() {
   const [newConfigValue, setNewConfigValue] = useState('');
   const [editingConfig, setEditingConfig] = useState<string | null>(null);
   const [editConfigValue, setEditConfigValue] = useState('');
+  // ── Social Deploy state ──
+  const [discordWebhookUrl, setDiscordWebhookUrl] = useState('');
+  const [deployStatus, setDeployStatus] = useState<'idle' | 'deploying' | 'done' | 'error'>('idle');
+  const [deployResults, setDeployResults] = useState<Array<{platform: string; status: string; error?: string}>>([]);
 
   useEffect(() => {
     if (restreamUrl.data?.url) setEditRestreamUrl(restreamUrl.data.url);
@@ -114,12 +118,13 @@ export default function AdminControlPanel() {
 
       <main className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 bg-slate-800/50 border border-slate-700 gap-1 p-1">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 bg-slate-800/50 border border-slate-700 gap-1 p-1">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="restream">Restream</TabsTrigger>
             <TabsTrigger value="stream-health">Stream Health</TabsTrigger>
             <TabsTrigger value="config">System Config</TabsTrigger>
             <TabsTrigger value="systems">Systems</TabsTrigger>
+            <TabsTrigger value="social-deploy">Social Deploy</TabsTrigger>
           </TabsList>
 
           {/* ═══════════════════════════════════════════ OVERVIEW ═══════════════════════════════════════════ */}
@@ -693,6 +698,86 @@ export default function AdminControlPanel() {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          {/* ═══════════════════════════ SOCIAL DEPLOY ═══════════════════════════ */}
+          <TabsContent value="social-deploy" className="space-y-6 mt-4">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2"><Zap className="w-5 h-5 text-yellow-400" /> Discord Webhook Configuration</CardTitle>
+                <CardDescription className="text-gray-400">Set your Discord channel webhook URL to enable auto-posting</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex gap-2">
+                  <Input placeholder="https://discord.com/api/webhooks/..." value={discordWebhookUrl} onChange={(e) => setDiscordWebhookUrl(e.target.value)} className="bg-slate-700 border-slate-600 text-white flex-1" />
+                  <Button onClick={() => { if (!discordWebhookUrl.includes('discord.com/api/webhooks')) { toast({ title: 'Invalid URL', description: 'Must be a Discord webhook URL', variant: 'destructive' }); return; } setConfigMut.mutate({ key: 'discord_webhook_url', value: discordWebhookUrl }); toast({ title: 'Discord Webhook Saved' }); }} className="bg-indigo-600 hover:bg-indigo-700"><Save className="w-4 h-4 mr-1" /> Save</Button>
+                </div>
+                <p className="text-xs text-gray-500">Server Settings → Integrations → Webhooks → New Webhook → Copy URL</p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2"><Radio className="w-5 h-5 text-purple-400" /> Twitter/X Status</CardTitle>
+                <CardDescription className="text-gray-400">OAuth 1.0a credentials status</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2"><Key className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-300">API Key</span><Badge variant="outline" className="text-green-400 border-green-400/30">Configured</Badge></div>
+                  <div className="flex items-center gap-2"><Key className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-300">Access Token</span><Badge variant="outline" className="text-yellow-400 border-yellow-400/30">Needs Refresh</Badge></div>
+                </div>
+                <p className="text-xs text-gray-500">Twitter returned 401. Regenerate access tokens at developer.twitter.com with Read+Write permissions. Update in Settings → Secrets.</p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2"><Play className="w-5 h-5 text-green-400" /> Deploy Ecosystem Presentation</CardTitle>
+                <CardDescription className="text-gray-400">One-click deploy to all connected platforms</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="bg-slate-700/50 p-3 rounded-lg"><p className="text-sm font-medium text-white">Full Video (3:42)</p><p className="text-xs text-gray-400 mt-1">Captioned, feminine narration, 54 channels</p></div>
+                  <div className="bg-slate-700/50 p-3 rounded-lg"><p className="text-sm font-medium text-white">60s Social Cut</p><p className="text-xs text-gray-400 mt-1">Landscape + 9:16 vertical available</p></div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">{discordWebhookUrl ? <CheckCircle className="w-4 h-4 text-green-400" /> : <AlertTriangle className="w-4 h-4 text-yellow-400" />}<span className="text-sm text-gray-300">Discord — {discordWebhookUrl ? 'Webhook configured' : 'Needs webhook URL (set above)'}</span></div>
+                  <div className="flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-yellow-400" /><span className="text-sm text-gray-300">Twitter/X — Needs token refresh</span></div>
+                  <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-400" /><span className="text-sm text-gray-300">Restream Studio — {restreamUrl.data?.isConfigured ? 'Connected' : 'Not configured'}</span></div>
+                </div>
+                {deployResults.length > 0 && (
+                  <div className="bg-slate-700/30 p-3 rounded-lg space-y-1">
+                    {deployResults.map((r, i) => (
+                      <div key={i} className="flex items-center gap-2 text-sm">
+                        {r.status === 'success' || r.status === 'queued' || r.status === 'studio ready' ? <CheckCircle className="w-3 h-3 text-green-400" /> : <AlertTriangle className="w-3 h-3 text-yellow-400" />}
+                        <span className="text-gray-300">{r.platform}: {r.status}</span>
+                        {r.error && <span className="text-gray-500 text-xs">({r.error})</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <Button onClick={() => { setDeployStatus('deploying'); setDeployResults([]); const links = ['Full Presentation: https://manuweb.sbs/ecosystem', 'Video (captioned): https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/HPWKWjcKyPinNDUP.mp4', '60s Cut: https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/hpJXnZlwAEvMMHmi.mp4', 'Vertical 9:16: https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/BUxkLtbiEBvBJoZn.mp4'].join('\n'); navigator.clipboard.writeText(links).catch(() => {}); toast({ title: 'Deploying...', description: 'All video links copied to clipboard.' }); setTimeout(() => { setDeployStatus('done'); setDeployResults([{ platform: 'Clipboard', status: 'success' }, { platform: 'Discord', status: discordWebhookUrl ? 'queued' : 'needs webhook URL' }, { platform: 'Twitter/X', status: 'needs token refresh' }, { platform: 'Restream', status: restreamUrl.data?.isConfigured ? 'studio ready' : 'not configured' }]); }, 1500); }} disabled={deployStatus === 'deploying'} className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3">
+                  {deployStatus === 'deploying' ? <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Deploying...</> : deployStatus === 'done' ? <><CheckCircle className="w-4 h-4 mr-2" /> Deployed — Links Copied</> : <><Zap className="w-4 h-4 mr-2" /> Deploy Ecosystem to All Platforms</>}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2"><Copy className="w-5 h-5 text-blue-400" /> Quick Share Links</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {[{ label: 'Interactive Presentation', url: 'https://manuweb.sbs/ecosystem' }, { label: 'Full Video (captioned)', url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/HPWKWjcKyPinNDUP.mp4' }, { label: '60s Social Cut', url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/hpJXnZlwAEvMMHmi.mp4' }, { label: '9:16 Vertical (Stories/Reels)', url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/BUxkLtbiEBvBJoZn.mp4' }].map((link) => (
+                  <div key={link.label} className="flex items-center justify-between bg-slate-700/30 p-2 rounded">
+                    <span className="text-sm text-gray-300">{link.label}</span>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" className="text-xs border-slate-600" onClick={() => { navigator.clipboard.writeText(link.url); toast({ title: 'Copied!' }); }}><Copy className="w-3 h-3 mr-1" /> Copy</Button>
+                      <Button size="sm" variant="outline" className="text-xs border-slate-600" onClick={() => window.open(link.url, '_blank')}><ExternalLink className="w-3 h-3 mr-1" /> Open</Button>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>

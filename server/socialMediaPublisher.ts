@@ -180,9 +180,15 @@ export async function checkAndPublishScheduledPosts(): Promise<PublishResult[]> 
         case 'twitter':
           result = await postToTwitter(post.content);
           break;
-        case 'discord':
-          result = await postToDiscord(post.content);
+        case 'discord': {
+          // Look up Discord webhook URL from system_config (set via Admin Control Panel)
+          const { systemConfig } = await import('../drizzle/schema');
+          const { eq: eq2 } = await import('drizzle-orm');
+          const webhookRows = await db.select().from(systemConfig).where(eq2(systemConfig.configKey, 'discord_webhook_url'));
+          const dbWebhookUrl = webhookRows[0]?.configValue || undefined;
+          result = await postToDiscord(post.content, dbWebhookUrl);
           break;
+        }
         case 'instagram':
           result = await postToInstagram(post.content);
           break;

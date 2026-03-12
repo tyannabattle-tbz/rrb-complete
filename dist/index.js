@@ -4962,9 +4962,14 @@ async function checkAndPublishScheduledPosts() {
         case "twitter":
           result2 = await postToTwitter(post.content);
           break;
-        case "discord":
-          result2 = await postToDiscord(post.content);
+        case "discord": {
+          const { systemConfig: systemConfig2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
+          const { eq: eq210 } = await import("drizzle-orm");
+          const webhookRows = await db2.select().from(systemConfig2).where(eq210(systemConfig2.configKey, "discord_webhook_url"));
+          const dbWebhookUrl = webhookRows[0]?.configValue || void 0;
+          result2 = await postToDiscord(post.content, dbWebhookUrl);
           break;
+        }
         case "instagram":
           result2 = await postToInstagram(post.content);
           break;
