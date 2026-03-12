@@ -209,22 +209,34 @@ export default function VideoGallery() {
               <Subtitles className="w-4 h-4 text-[#D4A843]" />
               <span className="text-sm text-[#D4A843]">All videos include closed captions</span>
             </div>
-            {user && (
-              <Button
-                size="sm"
-                className="bg-[#D4A843] hover:bg-[#B8922E] text-black font-bold h-8"
-                onClick={() => setShowUploadForm(!showUploadForm)}
-              >
-                {showUploadForm ? <X className="w-3 h-3 mr-1" /> : <Plus className="w-3 h-3 mr-1" />}
-                {showUploadForm ? 'Cancel' : 'Upload Video'}
-              </Button>
-            )}
+            <Button
+              size="sm"
+              className="bg-[#D4A843] hover:bg-[#B8922E] text-black font-bold h-8"
+              onClick={() => {
+                if (!user) {
+                  toast.info('Sign in to upload videos to the gallery.', {
+                    action: {
+                      label: 'Sign In',
+                      onClick: () => {
+                        const loginUrl = `${import.meta.env.VITE_OAUTH_PORTAL_URL || ''}/login?app_id=${import.meta.env.VITE_APP_ID || ''}`;
+                        window.location.href = loginUrl;
+                      },
+                    },
+                  });
+                  return;
+                }
+                setShowUploadForm(!showUploadForm);
+              }}
+            >
+              {showUploadForm ? <X className="w-3 h-3 mr-1" /> : <Plus className="w-3 h-3 mr-1" />}
+              {showUploadForm ? 'Cancel' : 'Upload Video'}
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Upload Form */}
-      {showUploadForm && user && (
+      {showUploadForm && (
         <div className="max-w-7xl mx-auto px-4 py-4">
           <Card className="bg-[#111111] border-[#D4A843]/20">
             <CardContent className="p-6">

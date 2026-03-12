@@ -4149,3 +4149,11 @@
 - [x] FIX: Meeting room disconnects when navigating to other pages
 - [x] Persist Jitsi meeting in background overlay when user browses other pages
 - [x] Add floating mini meeting indicator/PiP when away from meeting page
+- [x] Add Rejoin Meeting quick-action button in bottom nav when PiP is active
+- [x] One-tap button to jump back to full meeting room view from any page
+- [x] Fix video upload visibility for non-signed-in users (show sign-in prompt instead of hiding)
+- [x] Add SMS/urgent alerts for critical outages (>50% channels down)
+- [x] Use notification system for critical outage escalation
+- [x] Build channel performance leaderboard with 30-day uptime ranking
+- [x] Rank channels by uptime percentage to identify weak stream sources
+- [x] Display leaderboard on Stream Health Dashboard

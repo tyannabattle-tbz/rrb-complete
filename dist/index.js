@@ -6085,6 +6085,131 @@ var init_voiceTranscription = __esm({
 
 // server/services/streamHealthMonitor.ts
 import { sql as sql16 } from "drizzle-orm";
+async function sendCriticalOutageAlert(downCount, totalCount, rootCauseDetails, downChannels) {
+  const now = Date.now();
+  if (now - lastCriticalAlertTime < CRITICAL_ALERT_COOLDOWN_MS) {
+    console.log("[StreamHealth] Critical alert throttled \u2014 too soon since last alert");
+    return false;
+  }
+  if (now - criticalAlertHourStart > 60 * 60 * 1e3) {
+    criticalAlertCount = 0;
+    criticalAlertHourStart = now;
+  }
+  if (criticalAlertCount >= MAX_CRITICAL_ALERTS_PER_HOUR) {
+    console.log("[StreamHealth] Critical alert suppressed \u2014 hourly limit reached");
+    return false;
+  }
+  const downPercent = Math.round(downCount / totalCount * 100);
+  const severity = downPercent >= 80 ? "CRITICAL" : downPercent >= 50 ? "SEVERE" : "WARNING";
+  const emoji = downPercent >= 80 ? "\u{1F6A8}" : downPercent >= 50 ? "\u26A0\uFE0F" : "\u{1F7E1}";
+  const title = `${emoji} ${severity}: ${downCount}/${totalCount} RRB Radio Channels DOWN (${downPercent}%)`;
+  let content = `URGENT STREAM OUTAGE ALERT
+`;
+  content += `\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+`;
+  content += `Severity: ${severity}
+`;
+  content += `Channels Down: ${downCount}/${totalCount} (${downPercent}%)
+`;
+  content += `Root Cause: ${rootCauseDetails}
+`;
+  content += `Circuit Breaker: ${circuitBreakerTripped ? "ACTIVE (auto-heal paused)" : "Normal"}
+`;
+  content += `Time: ${(/* @__PURE__ */ new Date()).toLocaleString("en-US", { timeZone: "America/Chicago" })} CT
+
+`;
+  content += `Top Affected Channels:
+`;
+  downChannels.slice(0, 15).forEach((ch) => {
+    content += `  \u2022 ch-${String(ch.channelId).padStart(3, "0")}: ${ch.channelName} \u2014 ${ch.error || "unknown error"}
+`;
+  });
+  if (downCount > 15) {
+    content += `  ... and ${downCount - 15} more channels
+`;
+  }
+  content += `
+Action Required:
+`;
+  content += `  1. Check stream provider status (181.fm, Zeno.fm)
+`;
+  content += `  2. Verify network connectivity
+`;
+  content += `  3. Monitor /stream-health dashboard for recovery
+`;
+  content += `  4. Circuit breaker will auto-reset when channels recover
+`;
+  content += `
+Alert ${criticalAlertCount + 1} of max ${MAX_CRITICAL_ALERTS_PER_HOUR}/hour`;
+  const sent = await notifyOwner({ title, content }).catch((err) => {
+    console.error("[StreamHealth] Critical alert notification failed:", err);
+    return false;
+  });
+  console.log(`[StreamHealth] ${emoji} CRITICAL ALERT SENT: ${title}`);
+  console.log(`[StreamHealth] SMS-ready payload: { severity: "${severity}", down: ${downCount}, total: ${totalCount}, percent: ${downPercent}, rootCause: "${rootCauseDetails.substring(0, 160)}" }`);
+  lastCriticalAlertTime = now;
+  criticalAlertCount++;
+  return !!sent;
+}
+function updateChannelPerformance(results) {
+  const now = Date.now();
+  for (const r of results) {
+    let perf = channelPerformanceMap.get(r.channelId);
+    if (!perf) {
+      perf = {
+        channelId: r.channelId,
+        channelName: r.channelName,
+        genre: r.genre || "",
+        totalChecks: 0,
+        healthyChecks: 0,
+        degradedChecks: 0,
+        downChecks: 0,
+        avgResponseTimeMs: 0,
+        totalResponseTimeMs: 0,
+        lastStatus: r.status,
+        lastCheckedAt: now,
+        healCount: 0,
+        firstCheckAt: now
+      };
+    }
+    perf.totalChecks++;
+    perf.channelName = r.channelName;
+    perf.genre = r.genre || perf.genre;
+    perf.lastStatus = r.status;
+    perf.lastCheckedAt = now;
+    perf.totalResponseTimeMs += r.responseTimeMs;
+    perf.avgResponseTimeMs = Math.round(perf.totalResponseTimeMs / perf.totalChecks);
+    if (r.status === "healthy") perf.healthyChecks++;
+    else if (r.status === "degraded") perf.degradedChecks++;
+    else if (r.status === "down") perf.downChecks++;
+    channelPerformanceMap.set(r.channelId, perf);
+  }
+}
+function getChannelLeaderboard() {
+  const entries = Array.from(channelPerformanceMap.values());
+  const withUptime = entries.map((p) => ({
+    ...p,
+    uptimePercent: p.totalChecks > 0 ? Math.round((p.healthyChecks + p.degradedChecks) / p.totalChecks * 1e4) / 100 : 0,
+    rank: 0
+  }));
+  withUptime.sort((a, b) => {
+    if (b.uptimePercent !== a.uptimePercent) return b.uptimePercent - a.uptimePercent;
+    return a.avgResponseTimeMs - b.avgResponseTimeMs;
+  });
+  withUptime.forEach((entry, i) => {
+    entry.rank = i + 1;
+  });
+  return withUptime;
+}
+function getCriticalAlertStatus() {
+  return {
+    lastAlertTime: lastCriticalAlertTime || null,
+    alertsThisHour: criticalAlertCount,
+    maxAlertsPerHour: MAX_CRITICAL_ALERTS_PER_HOUR,
+    cooldownMs: CRITICAL_ALERT_COOLDOWN_MS,
+    nextAlertAvailableAt: lastCriticalAlertTime ? lastCriticalAlertTime + CRITICAL_ALERT_COOLDOWN_MS : null
+  };
+}
 function findGenreBackups(channelName, genre) {
   if (genre) {
     for (const [key, urls] of Object.entries(GENRE_BACKUP_STREAMS)) {
@@ -6183,6 +6308,7 @@ async function runHealthCheck() {
   results.filter((r) => r.status !== "healthy").forEach((r) => {
     console.log(`[StreamHealth] ${r.status.toUpperCase()}: ch-${r.channelId} ${r.channelName} \u2014 ${r.error || "slow response"} (${r.responseTimeMs}ms)`);
   });
+  updateChannelPerformance(results);
   const downPercent = results.length > 0 ? down / results.length : 0;
   let rootCause = "unknown";
   let rootCauseDetails = "";
@@ -6208,6 +6334,8 @@ async function runHealthCheck() {
       circuitBreakerTripped = true;
       lastCircuitBreakerTrip = Date.now();
       console.log(`[StreamHealth] \u26A1 CIRCUIT BREAKER TRIPPED: ${rootCauseDetails}`);
+      const downChannels2 = results.filter((r) => r.status === "down");
+      sendCriticalOutageAlert(down, results.length, rootCauseDetails, downChannels2).catch((err) => console.error("[StreamHealth] Critical alert send failed:", err));
     } else if (down <= 3) {
       rootCause = "individual_failure";
       rootCauseDetails = `${down} individual channel(s) down \u2014 normal auto-healing applies.`;
@@ -6490,7 +6618,7 @@ function getMonitorStatus() {
 function getOutageHistory() {
   return outageHistory;
 }
-var GENRE_BACKUP_STREAMS, UNIVERSAL_FALLBACKS, originalUrls, restoredCount, lastNotificationTime, NOTIFICATION_COOLDOWN_MS, pendingDigestItems, CIRCUIT_BREAKER_THRESHOLD, circuitBreakerTripped, lastCircuitBreakerTrip, outageHistory, MAX_OUTAGE_HISTORY, healthHistory, MAX_HISTORY, monitorInterval, isRunning, lastReport;
+var GENRE_BACKUP_STREAMS, UNIVERSAL_FALLBACKS, originalUrls, restoredCount, lastNotificationTime, NOTIFICATION_COOLDOWN_MS, pendingDigestItems, lastCriticalAlertTime, CRITICAL_ALERT_COOLDOWN_MS, criticalAlertCount, MAX_CRITICAL_ALERTS_PER_HOUR, criticalAlertHourStart, channelPerformanceMap, CIRCUIT_BREAKER_THRESHOLD, circuitBreakerTripped, lastCircuitBreakerTrip, outageHistory, MAX_OUTAGE_HISTORY, healthHistory, MAX_HISTORY, monitorInterval, isRunning, lastReport;
 var init_streamHealthMonitor = __esm({
   "server/services/streamHealthMonitor.ts"() {
     init_notification();
@@ -6640,6 +6768,12 @@ var init_streamHealthMonitor = __esm({
     lastNotificationTime = 0;
     NOTIFICATION_COOLDOWN_MS = 14 * 60 * 1e3;
     pendingDigestItems = [];
+    lastCriticalAlertTime = 0;
+    CRITICAL_ALERT_COOLDOWN_MS = 5 * 60 * 1e3;
+    criticalAlertCount = 0;
+    MAX_CRITICAL_ALERTS_PER_HOUR = 6;
+    criticalAlertHourStart = 0;
+    channelPerformanceMap = /* @__PURE__ */ new Map();
     CIRCUIT_BREAKER_THRESHOLD = 0.5;
     circuitBreakerTripped = false;
     lastCircuitBreakerTrip = 0;
@@ -42508,6 +42642,27 @@ var streamHealthRouter = router({
   stopMonitor: protectedProcedure.mutation(async () => {
     stopStreamHealthMonitor();
     return { success: true, message: "Stream health monitor stopped" };
+  }),
+  // Get channel performance leaderboard
+  getLeaderboard: publicProcedure.query(async () => {
+    return getChannelLeaderboard().map((ch) => ({
+      rank: ch.rank,
+      channelId: ch.channelId,
+      channelName: ch.channelName,
+      genre: ch.genre,
+      uptimePercent: ch.uptimePercent,
+      totalChecks: ch.totalChecks,
+      healthyChecks: ch.healthyChecks,
+      degradedChecks: ch.degradedChecks,
+      downChecks: ch.downChecks,
+      avgResponseTimeMs: ch.avgResponseTimeMs,
+      lastStatus: ch.lastStatus,
+      healCount: ch.healCount
+    }));
+  }),
+  // Get critical alert status
+  getCriticalAlertStatus: publicProcedure.query(async () => {
+    return getCriticalAlertStatus();
   })
 });
 

@@ -192,6 +192,184 @@ let lastNotificationTime = 0;
 const NOTIFICATION_COOLDOWN_MS = 14 * 60 * 1000; // 14 minutes (just under 15-min cycle)
 let pendingDigestItems: string[] = [];
 
+// ─── Critical Outage Escalation ─────────────────────────────────────────────
+// When >50% channels are down, send URGENT escalation alerts via all channels
+let lastCriticalAlertTime = 0;
+const CRITICAL_ALERT_COOLDOWN_MS = 5 * 60 * 1000; // 5-minute cooldown for critical alerts
+let criticalAlertCount = 0;
+const MAX_CRITICAL_ALERTS_PER_HOUR = 6; // Cap at 6 critical alerts per hour
+let criticalAlertHourStart = 0;
+
+/**
+ * Send critical outage escalation alert via all available channels.
+ * Uses notifyOwner for push notification + logs for SMS-ready webhook.
+ * Returns true if alert was sent.
+ */
+async function sendCriticalOutageAlert(downCount: number, totalCount: number, rootCauseDetails: string, downChannels: StreamHealthResult[]): Promise<boolean> {
+  const now = Date.now();
+  
+  // Rate limiting: max 6 per hour, min 5 minutes apart
+  if (now - lastCriticalAlertTime < CRITICAL_ALERT_COOLDOWN_MS) {
+    console.log('[StreamHealth] Critical alert throttled — too soon since last alert');
+    return false;
+  }
+  
+  // Reset hourly counter if needed
+  if (now - criticalAlertHourStart > 60 * 60 * 1000) {
+    criticalAlertCount = 0;
+    criticalAlertHourStart = now;
+  }
+  
+  if (criticalAlertCount >= MAX_CRITICAL_ALERTS_PER_HOUR) {
+    console.log('[StreamHealth] Critical alert suppressed — hourly limit reached');
+    return false;
+  }
+  
+  const downPercent = Math.round((downCount / totalCount) * 100);
+  const severity = downPercent >= 80 ? 'CRITICAL' : downPercent >= 50 ? 'SEVERE' : 'WARNING';
+  const emoji = downPercent >= 80 ? '🚨' : downPercent >= 50 ? '⚠️' : '🟡';
+  
+  const title = `${emoji} ${severity}: ${downCount}/${totalCount} RRB Radio Channels DOWN (${downPercent}%)`;
+  
+  let content = `URGENT STREAM OUTAGE ALERT\n`;
+  content += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  content += `Severity: ${severity}\n`;
+  content += `Channels Down: ${downCount}/${totalCount} (${downPercent}%)\n`;
+  content += `Root Cause: ${rootCauseDetails}\n`;
+  content += `Circuit Breaker: ${circuitBreakerTripped ? 'ACTIVE (auto-heal paused)' : 'Normal'}\n`;
+  content += `Time: ${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT\n\n`;
+  
+  content += `Top Affected Channels:\n`;
+  downChannels.slice(0, 15).forEach(ch => {
+    content += `  • ch-${String(ch.channelId).padStart(3, '0')}: ${ch.channelName} — ${ch.error || 'unknown error'}\n`;
+  });
+  if (downCount > 15) {
+    content += `  ... and ${downCount - 15} more channels\n`;
+  }
+  
+  content += `\nAction Required:\n`;
+  content += `  1. Check stream provider status (181.fm, Zeno.fm)\n`;
+  content += `  2. Verify network connectivity\n`;
+  content += `  3. Monitor /stream-health dashboard for recovery\n`;
+  content += `  4. Circuit breaker will auto-reset when channels recover\n`;
+  
+  content += `\nAlert ${criticalAlertCount + 1} of max ${MAX_CRITICAL_ALERTS_PER_HOUR}/hour`;
+  
+  // Send via all available notification channels
+  const sent = await notifyOwner({ title, content }).catch(err => {
+    console.error('[StreamHealth] Critical alert notification failed:', err);
+    return false;
+  });
+  
+  // Log for external SMS/webhook integration
+  console.log(`[StreamHealth] ${emoji} CRITICAL ALERT SENT: ${title}`);
+  console.log(`[StreamHealth] SMS-ready payload: { severity: "${severity}", down: ${downCount}, total: ${totalCount}, percent: ${downPercent}, rootCause: "${rootCauseDetails.substring(0, 160)}" }`);
+  
+  lastCriticalAlertTime = now;
+  criticalAlertCount++;
+  
+  return !!sent;
+}
+
+// ─── Channel Performance Tracking ───────────────────────────────────────────
+// Track per-channel uptime over time for leaderboard
+interface ChannelPerformance {
+  channelId: number;
+  channelName: string;
+  genre: string;
+  totalChecks: number;
+  healthyChecks: number;
+  degradedChecks: number;
+  downChecks: number;
+  avgResponseTimeMs: number;
+  totalResponseTimeMs: number;
+  lastStatus: string;
+  lastCheckedAt: number;
+  healCount: number;
+  firstCheckAt: number;
+}
+const channelPerformanceMap: Map<number, ChannelPerformance> = new Map();
+
+/**
+ * Update channel performance tracking after each health check
+ */
+function updateChannelPerformance(results: StreamHealthResult[]): void {
+  const now = Date.now();
+  for (const r of results) {
+    let perf = channelPerformanceMap.get(r.channelId);
+    if (!perf) {
+      perf = {
+        channelId: r.channelId,
+        channelName: r.channelName,
+        genre: r.genre || '',
+        totalChecks: 0,
+        healthyChecks: 0,
+        degradedChecks: 0,
+        downChecks: 0,
+        avgResponseTimeMs: 0,
+        totalResponseTimeMs: 0,
+        lastStatus: r.status,
+        lastCheckedAt: now,
+        healCount: 0,
+        firstCheckAt: now,
+      };
+    }
+    perf.totalChecks++;
+    perf.channelName = r.channelName; // Update name in case it changed
+    perf.genre = r.genre || perf.genre;
+    perf.lastStatus = r.status;
+    perf.lastCheckedAt = now;
+    perf.totalResponseTimeMs += r.responseTimeMs;
+    perf.avgResponseTimeMs = Math.round(perf.totalResponseTimeMs / perf.totalChecks);
+    
+    if (r.status === 'healthy') perf.healthyChecks++;
+    else if (r.status === 'degraded') perf.degradedChecks++;
+    else if (r.status === 'down') perf.downChecks++;
+    
+    channelPerformanceMap.set(r.channelId, perf);
+  }
+}
+
+/**
+ * Get channel performance leaderboard sorted by uptime percentage
+ */
+export function getChannelLeaderboard(): Array<ChannelPerformance & { uptimePercent: number; rank: number }> {
+  const entries = Array.from(channelPerformanceMap.values());
+  
+  // Calculate uptime percentage (healthy + degraded counts as "up")
+  const withUptime = entries.map(p => ({
+    ...p,
+    uptimePercent: p.totalChecks > 0 
+      ? Math.round(((p.healthyChecks + p.degradedChecks) / p.totalChecks) * 10000) / 100 
+      : 0,
+    rank: 0,
+  }));
+  
+  // Sort by uptime desc, then by avg response time asc
+  withUptime.sort((a, b) => {
+    if (b.uptimePercent !== a.uptimePercent) return b.uptimePercent - a.uptimePercent;
+    return a.avgResponseTimeMs - b.avgResponseTimeMs;
+  });
+  
+  // Assign ranks
+  withUptime.forEach((entry, i) => { entry.rank = i + 1; });
+  
+  return withUptime;
+}
+
+/**
+ * Get critical alert status
+ */
+export function getCriticalAlertStatus() {
+  return {
+    lastAlertTime: lastCriticalAlertTime || null,
+    alertsThisHour: criticalAlertCount,
+    maxAlertsPerHour: MAX_CRITICAL_ALERTS_PER_HOUR,
+    cooldownMs: CRITICAL_ALERT_COOLDOWN_MS,
+    nextAlertAvailableAt: lastCriticalAlertTime ? lastCriticalAlertTime + CRITICAL_ALERT_COOLDOWN_MS : null,
+  };
+}
+
 // ─── Circuit Breaker ─────────────────────────────────────────────────────────
 // If >50% of channels are down simultaneously, it's likely a network/provider issue
 // not individual channel failures. Skip auto-healing to prevent mass URL overwrites.
@@ -345,6 +523,9 @@ export async function runHealthCheck(): Promise<HealthReport> {
     console.log(`[StreamHealth] ${r.status.toUpperCase()}: ch-${r.channelId} ${r.channelName} — ${r.error || 'slow response'} (${r.responseTimeMs}ms)`);
   });
 
+  // Update channel performance tracking
+  updateChannelPerformance(results);
+
   // ─── Root Cause Analysis ────────────────────────────────────────────────────
   const downPercent = results.length > 0 ? down / results.length : 0;
   let rootCause: OutageEvent['rootCause'] = 'unknown';
@@ -380,6 +561,11 @@ export async function runHealthCheck(): Promise<HealthReport> {
       circuitBreakerTripped = true;
       lastCircuitBreakerTrip = Date.now();
       console.log(`[StreamHealth] ⚡ CIRCUIT BREAKER TRIPPED: ${rootCauseDetails}`);
+      
+      // Send critical outage escalation alert
+      const downChannels = results.filter(r => r.status === 'down');
+      sendCriticalOutageAlert(down, results.length, rootCauseDetails, downChannels)
+        .catch(err => console.error('[StreamHealth] Critical alert send failed:', err));
     } else if (down <= 3) {
       rootCause = 'individual_failure';
       rootCauseDetails = `${down} individual channel(s) down — normal auto-healing applies.`;

@@ -11,7 +11,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import {
   Activity, Radio, Shield, AlertTriangle, CheckCircle, XCircle,
-  Clock, Zap, RefreshCw, TrendingUp, Server, Wifi, WifiOff
+  Clock, Zap, RefreshCw, TrendingUp, Server, Wifi, WifiOff,
+  Trophy, Medal, Bell, BellRing
 } from 'lucide-react';
 
 function formatTime(ts: number) {
@@ -77,6 +78,12 @@ export default function StreamHealthDashboard() {
   });
   const { data: outages } = trpc.streamHealth.getOutages.useQuery(undefined, {
     refetchInterval: autoRefresh ? 60000 : false,
+  });
+  const { data: leaderboard } = trpc.streamHealth.getLeaderboard.useQuery(undefined, {
+    refetchInterval: autoRefresh ? 60000 : false,
+  });
+  const { data: criticalAlertStatus } = trpc.streamHealth.getCriticalAlertStatus.useQuery(undefined, {
+    refetchInterval: autoRefresh ? 30000 : false,
   });
 
   const runCheckMutation = trpc.streamHealth.runCheck.useMutation({
@@ -366,6 +373,36 @@ export default function StreamHealthDashboard() {
               </CardContent>
             </Card>
 
+            {/* Critical Alert Status */}
+            <Card className="bg-[#111111] border-red-500/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg text-red-400 flex items-center gap-2">
+                  {criticalAlertStatus?.alertsThisHour ? <BellRing className="w-5 h-5" /> : <Bell className="w-5 h-5" />} Critical Alerts
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#E8E0D0]/50">Alerts This Hour</span>
+                  <Badge className={criticalAlertStatus?.alertsThisHour ? 'bg-red-900/30 text-red-400 border-red-700/30' : 'bg-green-900/30 text-green-400 border-green-700/30'}>
+                    {criticalAlertStatus?.alertsThisHour || 0} / {criticalAlertStatus?.maxAlertsPerHour || 6}
+                  </Badge>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#E8E0D0]/50">Last Alert</span>
+                  <span className="text-[#E8E0D0]">{criticalAlertStatus?.lastAlertTime ? formatDate(criticalAlertStatus.lastAlertTime) : 'None'}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#E8E0D0]/50">Trigger</span>
+                  <span className="text-[#E8E0D0]">&gt;50% channels down</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#E8E0D0]/50">Cooldown</span>
+                  <span className="text-[#E8E0D0]">5 minutes</span>
+                </div>
+                <p className="text-[10px] text-[#E8E0D0]/30 pt-1">Escalation alerts fire automatically when circuit breaker trips. Push notification + SMS-ready webhook payload logged.</p>
+              </CardContent>
+            </Card>
+
             {/* Monitor Info */}
             <Card className="bg-[#111111] border-purple-500/20">
               <CardHeader className="pb-3">
@@ -399,6 +436,86 @@ export default function StreamHealthDashboard() {
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* Channel Performance Leaderboard — Full Width */}
+        <div className="mt-8">
+          <Card className="bg-[#111111] border-[#D4A843]/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-[#D4A843] flex items-center gap-2">
+                <Trophy className="w-5 h-5" /> Channel Performance Leaderboard
+              </CardTitle>
+              <p className="text-xs text-[#E8E0D0]/40 mt-1">Ranked by uptime percentage across all health checks. Updates every 15 minutes.</p>
+            </CardHeader>
+            <CardContent>
+              {leaderboard && leaderboard.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-[#D4A843]/10">
+                        <th className="text-left py-2 px-2 text-[#E8E0D0]/50 font-medium text-xs w-12">#</th>
+                        <th className="text-left py-2 px-2 text-[#E8E0D0]/50 font-medium text-xs">Channel</th>
+                        <th className="text-left py-2 px-2 text-[#E8E0D0]/50 font-medium text-xs hidden sm:table-cell">Genre</th>
+                        <th className="text-center py-2 px-2 text-[#E8E0D0]/50 font-medium text-xs">Uptime</th>
+                        <th className="text-center py-2 px-2 text-[#E8E0D0]/50 font-medium text-xs hidden md:table-cell">Checks</th>
+                        <th className="text-center py-2 px-2 text-[#E8E0D0]/50 font-medium text-xs hidden md:table-cell">Avg Response</th>
+                        <th className="text-center py-2 px-2 text-[#E8E0D0]/50 font-medium text-xs">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {leaderboard.map((ch: any) => {
+                        const rankIcon = ch.rank === 1 ? '🥇' : ch.rank === 2 ? '🥈' : ch.rank === 3 ? '🥉' : null;
+                        const uptimeColor = ch.uptimePercent >= 99 ? 'text-green-400' : ch.uptimePercent >= 95 ? 'text-green-300' : ch.uptimePercent >= 80 ? 'text-yellow-400' : ch.uptimePercent >= 50 ? 'text-orange-400' : 'text-red-400';
+                        const statusColor = ch.lastStatus === 'healthy' ? 'bg-green-900/30 text-green-400 border-green-700/30' : ch.lastStatus === 'degraded' ? 'bg-yellow-900/30 text-yellow-400 border-yellow-700/30' : 'bg-red-900/30 text-red-400 border-red-700/30';
+                        
+                        return (
+                          <tr key={ch.channelId} className={`border-b border-[#D4A843]/5 ${ch.rank <= 3 ? 'bg-[#D4A843]/5' : ''}`}>
+                            <td className="py-2 px-2">
+                              {rankIcon ? (
+                                <span className="text-base">{rankIcon}</span>
+                              ) : (
+                                <span className="text-[#E8E0D0]/40 text-xs font-mono">{ch.rank}</span>
+                              )}
+                            </td>
+                            <td className="py-2 px-2">
+                              <div className="text-xs font-medium text-[#E8E0D0] truncate max-w-[200px]">{ch.channelName}</div>
+                            </td>
+                            <td className="py-2 px-2 hidden sm:table-cell">
+                              <span className="text-[10px] text-[#E8E0D0]/40">{ch.genre || '—'}</span>
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              <div className="flex items-center justify-center gap-2">
+                                <div className="w-16 h-1.5 bg-gray-800 rounded-full overflow-hidden hidden sm:block">
+                                  <div className={`h-full rounded-full ${ch.uptimePercent >= 95 ? 'bg-green-500' : ch.uptimePercent >= 80 ? 'bg-yellow-500' : ch.uptimePercent >= 50 ? 'bg-orange-500' : 'bg-red-500'}`} style={{ width: `${ch.uptimePercent}%` }} />
+                                </div>
+                                <span className={`text-xs font-mono font-bold ${uptimeColor}`}>{ch.uptimePercent.toFixed(1)}%</span>
+                              </div>
+                            </td>
+                            <td className="py-2 px-2 text-center hidden md:table-cell">
+                              <span className="text-[10px] text-[#E8E0D0]/40 font-mono">{ch.healthyChecks}/{ch.totalChecks}</span>
+                            </td>
+                            <td className="py-2 px-2 text-center hidden md:table-cell">
+                              <span className="text-[10px] text-[#E8E0D0]/40 font-mono">{ch.avgResponseTimeMs}ms</span>
+                            </td>
+                            <td className="py-2 px-2 text-center">
+                              <Badge className={`text-[10px] ${statusColor}`}>
+                                {ch.lastStatus}
+                              </Badge>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-[#E8E0D0]/40">
+                  <Trophy className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No performance data yet. Run a health check to start tracking channel uptime.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

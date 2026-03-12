@@ -10,6 +10,8 @@ import {
   getHealthHistory,
   getMonitorStatus,
   getOutageHistory,
+  getChannelLeaderboard,
+  getCriticalAlertStatus,
   startStreamHealthMonitor,
   stopStreamHealthMonitor,
 } from "../services/streamHealthMonitor";
@@ -92,5 +94,28 @@ export const streamHealthRouter = router({
   stopMonitor: protectedProcedure.mutation(async () => {
     stopStreamHealthMonitor();
     return { success: true, message: 'Stream health monitor stopped' };
+  }),
+
+  // Get channel performance leaderboard
+  getLeaderboard: publicProcedure.query(async () => {
+    return getChannelLeaderboard().map(ch => ({
+      rank: ch.rank,
+      channelId: ch.channelId,
+      channelName: ch.channelName,
+      genre: ch.genre,
+      uptimePercent: ch.uptimePercent,
+      totalChecks: ch.totalChecks,
+      healthyChecks: ch.healthyChecks,
+      degradedChecks: ch.degradedChecks,
+      downChecks: ch.downChecks,
+      avgResponseTimeMs: ch.avgResponseTimeMs,
+      lastStatus: ch.lastStatus,
+      healCount: ch.healCount,
+    }));
+  }),
+
+  // Get critical alert status
+  getCriticalAlertStatus: publicProcedure.query(async () => {
+    return getCriticalAlertStatus();
   }),
 });
