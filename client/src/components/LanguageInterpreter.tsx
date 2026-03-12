@@ -110,7 +110,7 @@ export default function LanguageInterpreter({
 
   // Auto-scroll transcript
   useEffect(() => {
-    transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [transcript]);
 
   // Auto-start if requested

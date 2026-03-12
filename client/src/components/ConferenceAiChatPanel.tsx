@@ -72,7 +72,7 @@ export function ConferenceAiChatPanel({ isOpen, onClose, conferenceTitle }: Conf
 
   // Auto-scroll
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [messages]);
 
   // Focus input when panel opens

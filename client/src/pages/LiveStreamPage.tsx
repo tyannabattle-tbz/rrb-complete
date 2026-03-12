@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
+import { useRadio } from '@/contexts/RadioContext';
 import { useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { useRestreamUrl } from '@/hooks/useRestreamUrl';
@@ -73,9 +74,11 @@ export default function LiveStreamPage() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const { openRestream, restreamUrl } = useRestreamUrl();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(75);
+  const { radio: globalRadio, play: globalPlay, pause: globalPause, resume: globalResume, setVolume: globalSetVolume, toggleMute: globalToggleMute, audioRef } = useRadio();
+  // Derive radio playback state from global context
+  const isPlaying = globalRadio.isPlaying;
+  const isMuted = globalRadio.isMuted;
+  const volume = globalRadio.volume;
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeChannelId, setActiveChannelId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'video' | 'radio' | 'podcast' | 'conference'>('radio');
@@ -86,7 +89,6 @@ export default function LiveStreamPage() {
   const [showStreamSettings, setShowStreamSettings] = useState(false);
   const [customStreamUrl, setCustomStreamUrl] = useState(getStreamUrl());
   const videoRef = useRef<HTMLDivElement>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -187,49 +189,24 @@ export default function LiveStreamPage() {
     return genreColors[activeChannel.genre] || 'from-purple-600 to-blue-600';
   }, [activeChannel]);
 
-  // Create and manage audio element
+  // Sync active channel from global radio context when returning to this page
   useEffect(() => {
-    const audio = new Audio();
-    audio.crossOrigin = 'anonymous';
-    audio.preload = 'none';
-    audioRef.current = audio;
-
-    audio.addEventListener('error', () => {
-      setAudioError('Stream temporarily unavailable. Try another channel.');
-      setIsPlaying(false);
-    });
-
-    audio.addEventListener('playing', () => {
-      setAudioError(null);
-    });
-
-    return () => {
-      audio.pause();
-      audio.src = '';
-    };
-  }, []);
-
-  // Handle channel changes
-  useEffect(() => {
-    if (audioRef.current && activeTab === 'radio' && activeChannel?.streamUrl) {
-      const wasPlaying = isPlaying;
-      audioRef.current.pause();
-      audioRef.current.src = getProxiedStreamUrl(activeChannel.streamUrl);
-      if (wasPlaying) {
-        audioRef.current.play().catch(() => {
-          setAudioError('Tap play to start streaming');
-          setIsPlaying(false);
-        });
+    if (globalRadio.channel && channels) {
+      const found = channels.find((c: any) => c.id === globalRadio.channel!.id);
+      if (found && found.id !== activeChannelId) {
+        setActiveChannelId(found.id);
       }
     }
-  }, [activeChannelId]);
+  }, [globalRadio.channel, channels]);
 
-  // Handle volume changes
+  // Sync audio error from global context
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume / 100;
+    if (globalRadio.errorMessage) {
+      setAudioError(globalRadio.errorMessage);
+    } else if (globalRadio.status === 'playing') {
+      setAudioError(null);
     }
-  }, [volume, isMuted]);
+  }, [globalRadio.errorMessage, globalRadio.status]);
 
   // Fetch real chat messages from DB
   const channelNameForChat = activeChannel?.name || 'RRB Gospel Hour';
@@ -249,24 +226,24 @@ export default function LiveStreamPage() {
   }, [chatMessages]);
 
   const handlePlayPause = () => {
-    if (activeTab === 'radio' && audioRef.current && activeChannel?.streamUrl) {
+    if (activeTab === 'radio' && activeChannel?.streamUrl) {
       if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
+        globalPause();
         recordTuneOut(activeChannel);
       } else {
         setAudioError(null);
-        audioRef.current.src = getProxiedStreamUrl(activeChannel.streamUrl);
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-          recordTuneIn(activeChannel);
-        }).catch(() => {
-          setAudioError('Unable to connect to stream. Please try again.');
-          setIsPlaying(false);
+        globalPlay({
+          id: activeChannel.id,
+          name: activeChannel.name,
+          genre: activeChannel.genre,
+          frequency: activeChannel.frequency,
+          streamUrl: activeChannel.streamUrl,
+          nowPlaying: activeChannel.nowPlaying,
+          description: activeChannel.description,
+          listeners: activeChannel.currentListeners,
         });
+        recordTuneIn(activeChannel);
       }
-    } else {
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -334,9 +311,8 @@ export default function LiveStreamPage() {
                       return;
                     }
                     setActiveTab(tab.id);
-                    if (tab.id !== 'radio' && audioRef.current) {
-                      audioRef.current.pause();
-                      setIsPlaying(false);
+                    if (tab.id !== 'radio') {
+                      globalPause();
                     }
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all ${
@@ -484,6 +460,7 @@ export default function LiveStreamPage() {
                           const idx = channels.findIndex(c => c.id === activeChannel.id);
                           const prev = channels[(idx - 1 + channels.length) % channels.length];
                           setActiveChannelId(prev.id);
+                          if (isPlaying) globalPlay({ id: prev.id, name: prev.name, genre: prev.genre, frequency: prev.frequency, streamUrl: prev.streamUrl, nowPlaying: prev.nowPlaying, description: prev.description, listeners: prev.currentListeners });
                         }
                       }}
                     >
@@ -496,6 +473,7 @@ export default function LiveStreamPage() {
                           const idx = channels.findIndex(c => c.id === activeChannel.id);
                           const next = channels[(idx + 1) % channels.length];
                           setActiveChannelId(next.id);
+                          if (isPlaying) globalPlay({ id: next.id, name: next.name, genre: next.genre, frequency: next.frequency, streamUrl: next.streamUrl, nowPlaying: next.nowPlaying, description: next.description, listeners: next.currentListeners });
                         }
                       }}
                     >
@@ -505,7 +483,7 @@ export default function LiveStreamPage() {
                     {/* Volume */}
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => setIsMuted(!isMuted)}
+                        onClick={() => globalToggleMute()}
                         className="p-1.5 text-[#E8E0D0]/60 hover:text-[#E8E0D0]"
                       >
                         {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -516,8 +494,7 @@ export default function LiveStreamPage() {
                         max="100"
                         value={isMuted ? 0 : volume}
                         onChange={(e) => {
-                          setVolume(parseInt(e.target.value));
-                          setIsMuted(false);
+                          globalSetVolume(parseInt(e.target.value));
                         }}
                         className="w-20 h-1 accent-[#D4A843]"
                       />
@@ -554,7 +531,22 @@ export default function LiveStreamPage() {
                   return (
                     <button
                       key={channel.id}
-                      onClick={() => setActiveChannelId(channel.id)}
+                      onClick={() => {
+                        setActiveChannelId(channel.id);
+                        if (isPlaying) {
+                          globalPlay({
+                            id: channel.id,
+                            name: channel.name,
+                            genre: channel.genre,
+                            frequency: channel.frequency,
+                            streamUrl: channel.streamUrl,
+                            nowPlaying: channel.nowPlaying,
+                            description: channel.description,
+                            listeners: channel.currentListeners,
+                          });
+                          recordTuneIn(channel);
+                        }
+                      }}
                       className={`p-3 rounded-lg border text-left transition-all ${
                         activeChannelId === channel.id
                           ? 'bg-[#D4A843]/10 border-[#D4A843]/50'

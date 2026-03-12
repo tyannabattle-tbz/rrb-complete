@@ -191,6 +191,8 @@ import { OnboardingTour } from '@/components/OnboardingTour';
 import { MeetingProvider } from '@/contexts/MeetingContext';
 import { FloatingMeetingPiP } from '@/components/FloatingMeetingPiP';
 import { PersistentMeetingContainer } from '@/components/PersistentMeetingContainer';
+import { RadioProvider } from '@/contexts/RadioContext';
+import { PersistentRadioPlayer } from '@/components/PersistentRadioPlayer';
 import RRBConferenceHub from '@/pages/RRBConferenceHub';
 import ConferenceRoom from '@/pages/ConferenceRoom';
 import QumusCommandConsole from '@/pages/QumusCommandConsole';
@@ -463,6 +465,7 @@ function App() {
       >
         <PresetProvider>
           <MeetingProvider>
+          <RadioProvider>
           <TooltipProvider>
             <Toaster />
             <KeyboardShortcutsGuide />
@@ -495,6 +498,9 @@ function App() {
             
             {/* Floating PiP when in meeting but on another page */}
             <FloatingMeetingPiP />
+
+            {/* Persistent Radio Mini-Player — stays alive across navigation */}
+            <PersistentRadioPlayer />
             
             {/* Valanna - QUMUS AI Brain Voice Assistant */}
             <ValannaVoiceAssistant />
@@ -502,6 +508,7 @@ function App() {
             {/* Getting Started Onboarding Tour */}
             <OnboardingTour />
           </TooltipProvider>
+          </RadioProvider>
           </MeetingProvider>
         </PresetProvider>
       </ThemeProvider>

@@ -76,7 +76,7 @@ export const RealTimeTranscription: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    transcriptEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    transcriptEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [transcript, currentText]);
 
   const toggleTranscription = () => {

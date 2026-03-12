@@ -237,6 +237,7 @@ export default function ValannaVoiceAssistant() {
 
   const recognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -293,9 +294,11 @@ export default function ValannaVoiceAssistant() {
     };
   }, []);
 
-  // Auto-scroll messages
+  // Auto-scroll messages — scoped to container only, never scrolls the page
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   // Greeting when opened or persona switched
@@ -764,7 +767,7 @@ export default function ValannaVoiceAssistant() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ minHeight: '250px', maxHeight: '350px' }}>
+          <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4" style={{ minHeight: '250px', maxHeight: '350px' }}>
             {messages.map((msg, i) => {
               const msgColors = getMessageColors(msg);
               return (

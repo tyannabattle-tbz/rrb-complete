@@ -45,7 +45,7 @@ export function QumusChatCommandCenter() {
   }, [suggestionsQuery.data]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [messages]);
 
   const detectSubsystem = (text: string): string => {

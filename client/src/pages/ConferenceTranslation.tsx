@@ -49,7 +49,7 @@ export default function ConferenceTranslation() {
 
   // Scroll to bottom of transcript
   useEffect(() => {
-    transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [transcript]);
 
   // Speech Recognition

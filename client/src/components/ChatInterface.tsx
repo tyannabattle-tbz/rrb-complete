@@ -82,7 +82,7 @@ export default function ChatInterface({
   useEffect(() => {
     if (messages.length > messageCount) {
       setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }, 0);
       setMessageCount(messages.length);
     }

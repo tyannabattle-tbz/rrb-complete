@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { useLocation } from 'wouter';
 import {
@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useRestreamUrl } from '@/hooks/useRestreamUrl';
+import { useRadio } from '@/contexts/RadioContext';
 
 /**
  * Returns a proxied URL for HTTP streams when running on HTTPS.
@@ -100,19 +101,27 @@ const channels = [
 export const RRBRadioIntegration: React.FC = () => {
   const [, navigate] = useLocation();
   const { openRestream } = useRestreamUrl();
-  const [selectedChannel, setSelectedChannel] = useState(channels[0]);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(75);
-  const [isMuted, setIsMuted] = useState(false);
-  const [audioError, setAudioError] = useState<string | null>(null);
-  const [streamStatus, setStreamStatus] = useState<'connected' | 'reconnecting' | 'failover'>('connected');
+  const { radio, play: globalPlay, pause: globalPause, resume: globalResume, setVolume: globalSetVolume, toggleMute: globalToggleMute, audioRef } = useRadio();
+  const [selectedChannel, setSelectedChannel] = useState(() => {
+    // If radio context already has a channel playing, use that
+    if (radio.channel) {
+      const found = channels.find(c => c.id === radio.channel!.id);
+      if (found) return found;
+    }
+    return channels[0];
+  });
+  // Derive state from global radio context
+  const isPlaying = radio.isPlaying;
+  const volume = radio.volume;
+  const isMuted = radio.isMuted;
+  const audioError = radio.errorMessage || null;
+  const streamStatus: 'connected' | 'reconnecting' | 'failover' = 
+    radio.status === 'reconnecting' ? 'reconnecting' : 
+    radio.status === 'error' ? 'failover' : 'connected';
   const [totalListeners, setTotalListeners] = useState(3847);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [showAllFilters, setShowAllFilters] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const failoverAttemptsRef = useRef(0);
-  const isRetryingRef = useRef(false);
 
   // Filtered channels
   const filteredChannels = useMemo(() => {
@@ -126,87 +135,15 @@ export const RRBRadioIntegration: React.FC = () => {
     });
   }, [activeFilter, searchQuery]);
 
-  // Backup stream pool for failover — QUMUS auto-recovery
-  const backupStreams = useMemo(() => [
-    'https://funkyradio.streamingmedia.it/play.mp3',
-    'https://listen.181fm.com/181-soul_128k.mp3',
-    'https://npr-ice.streamguys1.com/live.mp3',
-    'https://fm939.wnyc.org/wnycfm',
-    'https://tunein.cdnstream1.com/2868_96.mp3',
-    'https://stream.0nlineradio.com/soul',
-    'https://stream.zeno.fm/yn65fsaurfhvv',
-  ], []);
-
-  // Create audio element with auto-failover — stable ref, no re-creation
+  // Sync selected channel from global context when returning to radio page
   useEffect(() => {
-    const audio = new Audio();
-    audio.crossOrigin = 'anonymous';
-    audio.preload = 'none';
-    audioRef.current = audio;
-
-    audio.addEventListener('error', () => {
-      // Guard against concurrent retries
-      if (isRetryingRef.current) return;
-      
-      failoverAttemptsRef.current += 1;
-      const attempt = failoverAttemptsRef.current;
-      
-      if (attempt <= 3) {
-        isRetryingRef.current = true;
-        setStreamStatus('reconnecting');
-        setAudioError(`Reconnecting... (attempt ${attempt}/3)`);
-        const backup = backupStreams[Math.floor(Math.random() * backupStreams.length)];
-        setTimeout(() => {
-          if (audioRef.current) {
-            audioRef.current.src = getProxiedStreamUrl(backup);
-            audioRef.current.play().then(() => {
-              setStreamStatus('failover');
-              setAudioError('Playing backup stream \u2014 primary stream recovering');
-              setIsPlaying(true);
-              isRetryingRef.current = false;
-            }).catch(() => {
-              isRetryingRef.current = false;
-              // Don't trigger error handler again — we already counted this attempt
-              if (failoverAttemptsRef.current >= 3) {
-                setAudioError('Stream temporarily unavailable. Try another channel.');
-                setIsPlaying(false);
-                setStreamStatus('connected');
-                failoverAttemptsRef.current = 0;
-              }
-            });
-          } else {
-            isRetryingRef.current = false;
-          }
-        }, 1500 * attempt); // Exponential backoff: 1.5s, 3s, 4.5s
-      } else {
-        setAudioError('All streams unavailable. QUMUS is working to restore service.');
-        setIsPlaying(false);
-        setStreamStatus('connected');
-        failoverAttemptsRef.current = 0;
+    if (radio.channel) {
+      const found = channels.find(c => c.id === radio.channel!.id);
+      if (found && found.id !== selectedChannel.id) {
+        setSelectedChannel(found);
       }
-    });
-    
-    audio.addEventListener('playing', () => {
-      setAudioError(null);
-      setStreamStatus(failoverAttemptsRef.current > 0 ? 'failover' : 'connected');
-      failoverAttemptsRef.current = 0;
-      isRetryingRef.current = false;
-    });
-    
-    audio.addEventListener('canplay', () => {
-      // Stream is ready to play — clear any reconnection state
-      isRetryingRef.current = false;
-    });
-
-    return () => { audio.pause(); audio.src = ''; };
-  }, [backupStreams]); // Removed streamStatus dependency to prevent audio element recreation
-
-  // Volume control
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume / 100;
     }
-  }, [volume, isMuted]);
+  }, [radio.channel]);
 
   // Listener count simulation
   useEffect(() => {
@@ -216,51 +153,27 @@ export const RRBRadioIntegration: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleChannelSelect = (channel: typeof channels[0]) => {
-    const wasPlaying = isPlaying;
-    // Reset retry state on channel switch
-    failoverAttemptsRef.current = 0;
-    isRetryingRef.current = false;
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = ''; // Clear source to prevent stale error events
-    }
+  const handleChannelSelect = useCallback((channel: typeof channels[0]) => {
     setSelectedChannel(channel);
-    setAudioError(null);
-    setStreamStatus('connected');
-    if (wasPlaying && audioRef.current) {
-      audioRef.current.src = getProxiedStreamUrl(channel.streamUrl);
-      audioRef.current.play().catch(() => {
-        setAudioError('Tap play to start streaming');
-        setIsPlaying(false);
-      });
-    }
-  };
-
-  const handlePlayPause = () => {
-    if (!audioRef.current) return;
     if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      // Reset retry state on fresh play
-      failoverAttemptsRef.current = 0;
-      isRetryingRef.current = false;
-      setAudioError(null);
-      setStreamStatus('connected');
-      audioRef.current.src = getProxiedStreamUrl(selectedChannel.streamUrl);
-      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {
-        setAudioError('Unable to connect. Please try again.');
-        setIsPlaying(false);
-      });
+      // Switch channel while playing — use global context
+      globalPlay(channel);
     }
-  };
+  }, [isPlaying, globalPlay]);
 
-  const handleNextChannel = () => {
+  const handlePlayPause = useCallback(() => {
+    if (isPlaying) {
+      globalPause();
+    } else {
+      globalPlay(selectedChannel);
+    }
+  }, [isPlaying, selectedChannel, globalPlay, globalPause]);
+
+  const handleNextChannel = useCallback(() => {
     const currentIndex = channels.findIndex(c => c.id === selectedChannel.id);
     const nextChannel = channels[(currentIndex + 1) % channels.length];
     handleChannelSelect(nextChannel);
-  };
+  }, [selectedChannel, handleChannelSelect]);
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8E0D0]">
@@ -372,13 +285,13 @@ export const RRBRadioIntegration: React.FC = () => {
 
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <button onClick={() => setIsMuted(!isMuted)} className="text-[#E8E0D0]/60 hover:text-[#E8E0D0]">
+                <button onClick={() => globalToggleMute()} className="text-[#E8E0D0]/60 hover:text-[#E8E0D0]">
                   {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                 </button>
                 <input
                   type="range" min="0" max="100"
                   value={isMuted ? 0 : volume}
-                  onChange={(e) => { setVolume(parseInt(e.target.value)); setIsMuted(false); }}
+                  onChange={(e) => { globalSetVolume(parseInt(e.target.value)); }}
                   className="w-24 h-1 accent-[#D4A843]"
                 />
               </div>
