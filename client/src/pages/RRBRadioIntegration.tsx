@@ -4,26 +4,13 @@ import { useLocation } from 'wouter';
 import {
   Play, Pause, SkipForward, Volume2, VolumeX, Radio, Heart,
   Share2, Users, Music, Headphones, Wifi, Earth, ArrowRight,
-  Calendar, MapPin, Phone, FileText, Search, ChevronDown, ChevronUp
+  Calendar, MapPin, Phone, FileText, Search, ChevronDown, ChevronUp, Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { useRadio } from '@/contexts/RadioContext';
-
-/**
- * Returns a proxied URL for HTTP streams when running on HTTPS.
- * HTTPS streams pass through directly. HTTP streams are routed through
- * our server-side proxy at /api/stream-proxy to avoid mixed-content blocking.
- */
-function getProxiedStreamUrl(streamUrl: string): string {
-  if (!streamUrl) return streamUrl;
-  if (streamUrl.startsWith('https://')) return streamUrl;
-  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-    return `/api/stream-proxy?url=${encodeURIComponent(streamUrl)}`;
-  }
-  return streamUrl;
-}
+import { trpc } from '@/lib/trpc';
 
 // Genre categories for filtering
 const GENRE_FILTERS = [
@@ -31,97 +18,162 @@ const GENRE_FILTERS = [
   'Education', 'Entertainment', 'Specialty', 'Community'
 ];
 
-// RRB Radio — 54 Channels: Official Station List | Canryn Production | QUMUS Orchestrated
-const channels = [
-  // === MUSIC (22 Stations) ===
-  { id: 1, name: 'RRB Main Radio', icon: '📻', genre: 'Soul, Funk, R&B', frequency: '432 Hz', color: 'from-purple-600 to-blue-600', description: 'Soul, funk, R&B, and legacy music — the heartbeat of Canryn Production.', streamUrl: 'https://funkyradio.streamingmedia.it/play.mp3', listeners: 127, nowPlaying: 'Community Hour with Sweet Miracles', category: 'Music' },
-  { id: 5, name: 'Music Discovery', icon: '🔍', genre: 'Indie, Emerging', frequency: '432 Hz', color: 'from-violet-500 to-purple-600', description: 'New artists and deep cuts from emerging talent.', streamUrl: 'https://premium.shoutcastsolutions.com/radio/8050/256.mp3', listeners: 83, nowPlaying: 'Fresh Finds Friday', category: 'Music' },
-  { id: 9, name: 'Gospel & Praise', icon: '🙏', genre: 'Gospel, Worship', frequency: '432 Hz', color: 'from-pink-600 to-rose-600', description: 'Gospel music, worship, and praise.', streamUrl: 'https://s3.radio.co/s97f38db97/listen', listeners: 84, nowPlaying: 'Sunday Morning Praise', category: 'Music' },
-  { id: 10, name: 'Smooth Jazz Lounge', icon: '🎷', genre: 'Jazz, Bebop, Fusion', frequency: '432 Hz', color: 'from-indigo-600 to-violet-600', description: 'Smooth jazz, bebop, and fusion.', streamUrl: 'http://ice-the.musicradio.com/ClassicFMMP3', listeners: 108, nowPlaying: 'Smooth Sax Sessions', category: 'Music' },
-  { id: 11, name: 'Hip-Hop Classics', icon: '🎤', genre: 'Hip-Hop, Rap, Conscious', frequency: '440 Hz', color: 'from-red-600 to-orange-600', description: 'Golden era hip-hop and conscious rap.', streamUrl: 'https://streams.fluxfm.de/hiphop/mp3-320/audio/', listeners: 142, nowPlaying: 'Conscious Hip-Hop Hour', category: 'Music' },
-  { id: 12, name: 'Neo-Soul', icon: '🛋️', genre: 'Neo-Soul, Alt R&B', frequency: '432 Hz', color: 'from-fuchsia-600 to-purple-700', description: 'Contemporary soul and neo-soul artists.', streamUrl: 'https://listen.181fm.com/181-soul_128k.mp3', listeners: 76, nowPlaying: 'Neo Soul Essentials', category: 'Music' },
-  { id: 13, name: 'Reggae & Dancehall', icon: '🦁', genre: 'Reggae, Dancehall, Ska', frequency: '432 Hz', color: 'from-yellow-600 to-green-700', description: 'Roots reggae, dancehall, and island vibes.', streamUrl: 'https://stream.zeno.fm/0r0xa792kwzuv', listeners: 87, nowPlaying: 'One Love Sessions', category: 'Music' },
-  { id: 14, name: 'Afrobeats Global', icon: '🥁', genre: 'Afrobeats, Amapiano', frequency: '432 Hz', color: 'from-green-500 to-emerald-600', description: 'Afrobeats, Amapiano, and African pop.', streamUrl: 'https://radio.gotright.net/radio/8000/radio.mp3', listeners: 178, nowPlaying: 'Afrobeats Top Hits', category: 'Music' },
-  { id: 15, name: 'Blues Highway', icon: '🎸', genre: 'Blues, Delta, Chicago', frequency: '432 Hz', color: 'from-blue-800 to-indigo-900', description: 'Delta blues, Chicago blues, and modern blues.', streamUrl: 'http://jazzblues.ice.infomaniak.ch/jazzblues-high.mp3', listeners: 54, nowPlaying: 'Mississippi Delta Blues', category: 'Music' },
-  { id: 16, name: 'Classical Serenity', icon: '🎻', genre: 'Classical, Orchestral', frequency: '432 Hz', color: 'from-amber-300 to-yellow-500', description: 'Classical orchestral and chamber music.', streamUrl: 'http://ice-the.musicradio.com/ClassicFMMP3', listeners: 62, nowPlaying: 'Evening Concerto', category: 'Music' },
-  { id: 17, name: 'Latin Rhythms', icon: '💃', genre: 'Salsa, Bachata, Reggaeton', frequency: '432 Hz', color: 'from-red-500 to-orange-500', description: 'Salsa, bachata, reggaeton, and Latin jazz.', streamUrl: 'http://streaming5.elitecomunicacion.es:8082/live.mp3', listeners: 95, nowPlaying: 'Salsa Caliente', category: 'Music' },
-  { id: 18, name: 'Country Crossroads', icon: '🤠', genre: 'Country, Americana, Folk', frequency: '432 Hz', color: 'from-amber-600 to-yellow-700', description: 'Country, Americana, and folk roots.', streamUrl: 'http://26343.live.streamtheworld.com/977_COUNTRY_SC', listeners: 41, nowPlaying: 'Country Chapel Hour', category: 'Music' },
-  { id: 19, name: 'Electronic Pulse', icon: '⚡', genre: 'EDM, House, Techno', frequency: '440 Hz', color: 'from-cyan-400 to-blue-500', description: 'EDM, house, techno, and ambient.', streamUrl: 'http://novazz.ice.infomaniak.ch/novazz-128.mp3', listeners: 134, nowPlaying: 'Deep House Sessions', category: 'Music' },
-  { id: 20, name: 'Rock Legends', icon: '🎸', genre: 'Rock, Alternative, Indie', frequency: '440 Hz', color: 'from-red-700 to-gray-800', description: 'Classic rock, alternative, and indie rock.', streamUrl: 'https://cast1.torontocast.com:4610/stream', listeners: 97, nowPlaying: 'Rock Anthems', category: 'Music' },
-  { id: 32, name: 'Worship & Devotional', icon: '⛪', genre: 'Worship, Devotional', frequency: '432 Hz', color: 'from-sky-600 to-blue-700', description: 'Multi-faith worship music and devotionals.', streamUrl: 'https://listen.christianrock.net/stream/13/', listeners: 48, nowPlaying: 'Morning Devotional', category: 'Music' },
-  { id: 33, name: 'Caribbean Vibes', icon: '🏝️', genre: 'Soca, Calypso, Zouk', frequency: '432 Hz', color: 'from-cyan-500 to-green-500', description: 'Soca, calypso, zouk, and island music.', streamUrl: 'https://stream.zeno.fm/0r0xa792kwzuv', listeners: 73, nowPlaying: 'Island Vibes', category: 'Music' },
-  { id: 34, name: 'Women in Music', icon: '👩‍🎤', genre: 'Women Artists, All Genres', frequency: '432 Hz', color: 'from-fuchsia-500 to-pink-600', description: 'Celebrating women artists across all genres.', streamUrl: 'https://fm939.wnyc.org/wnycfm', listeners: 95, nowPlaying: 'Queens of Music', category: 'Music' },
-  { id: 35, name: 'Indie & Underground', icon: '🎵', genre: 'Indie, Underground', frequency: '440 Hz', color: 'from-zinc-600 to-slate-700', description: 'Independent artists and underground scenes.', streamUrl: 'https://wdr-wdr5-live.icecastssl.wdr.de/wdr/wdr5/live/mp3/128/stream.mp3', listeners: 67, nowPlaying: 'Underground Discoveries', category: 'Music' },
-  { id: 36, name: 'World Fusion', icon: '🌐', genre: 'World Music, Fusion', frequency: '432 Hz', color: 'from-teal-500 to-green-600', description: 'Global music fusion and cross-cultural sounds.', streamUrl: 'https://tv.radiohosting.online:9484/stream', listeners: 53, nowPlaying: 'Global Fusion Mix', category: 'Music' },
-  { id: 37, name: 'Throwback Radio', icon: '📼', genre: '70s, 80s, 90s, 2000s', frequency: '440 Hz', color: 'from-orange-500 to-amber-600', description: "70s, 80s, 90s, and 2000s hits.", streamUrl: 'https://icecast.walmradio.com:8443/classic', listeners: 143, nowPlaying: '90s Throwback Jams', category: 'Music' },
-  { id: 38, name: 'Love Songs', icon: '💕', genre: 'Love Songs, Ballads', frequency: '432 Hz', color: 'from-rose-500 to-pink-600', description: 'Romantic ballads and love songs across eras.', streamUrl: 'https://maggie.torontocast.com:2020/stream/rdmixlovesongs', listeners: 112, nowPlaying: 'Love Ballads Hour', category: 'Music' },
-  { id: 51, name: 'C.J. Battle Radio', icon: '🎤', genre: 'Hip-Hop, Alternative', frequency: '432 Hz', color: 'from-blue-600 to-cyan-500', description: 'C.J. Battle — OLD SOUL, Searching, TRIGONOMETRY and more. Most.High.Ova.Everything.', streamUrl: 'https://streams.fluxfm.de/hiphop/mp3-320/audio/', listeners: 89, nowPlaying: 'C.J. Battle — OLD SOUL', category: 'Music', appleMusicUrl: 'https://music.apple.com/us/artist/c-j-battle/1438716457', spotifyUrl: 'https://open.spotify.com/artist/2kFnLPBd40yxliDHZZpAPy', isArtistStation: true, soundcloudUrl: 'https://soundcloud.com/cjbttle', tidalUrl: 'https://tidal.com/artist/10464604', deezerUrl: 'https://www.deezer.com/en/artist/52608732', youtubeUrl: 'https://www.youtube.com/channel/UCR_UZEE4FkpCR9THocyutkQ', instagramUrl: 'https://www.instagram.com/c.j.battle/' },
-  // === TALK (3 Stations) ===
-  { id: 2, name: 'Podcast Network', icon: '🎙️', genre: 'Podcast, Interviews', frequency: '432 Hz', color: 'from-red-500 to-pink-600', description: 'Original podcasts and interviews — In Battle Tyme and more.', streamUrl: 'https://premium.shoutcastsolutions.com/radio/8050/256.mp3', listeners: 58, nowPlaying: 'In Battle Tyme', category: 'Talk' },
-  { id: 8, name: 'Sports Talk', icon: '🏈', genre: 'Sports, Analysis', frequency: '440 Hz', color: 'from-green-600 to-teal-600', description: 'Live scores, analysis, and game day coverage.', streamUrl: 'http://playerservices.streamtheworld.com/api/livestream-redirect/CADENASER.mp3', listeners: 67, nowPlaying: 'Game Day Live', category: 'Talk' },
-  { id: 24, name: 'News & Current Affairs', icon: '📰', genre: 'News, Commentary', frequency: '440 Hz', color: 'from-gray-600 to-slate-700', description: 'Breaking news, analysis, and commentary.', streamUrl: 'https://tunein.cdnstream1.com/2868_96.mp3', listeners: 67, nowPlaying: 'Evening News Roundup', category: 'Talk' },
-  // === AI-CURATED (3 Stations) ===
-  { id: 41, name: 'Seraph AI Radio', icon: '🤖', genre: 'AI-Curated, Eclectic', frequency: '432 Hz', color: 'from-violet-600 to-purple-700', description: 'AI-curated music by Seraph intelligence.', streamUrl: 'http://s1.voscast.com:8652/stream', listeners: 183, nowPlaying: 'Seraph Selection', category: 'AI-Curated' },
-  { id: 42, name: 'Candy AI Radio', icon: '🍬', genre: 'AI-Curated, Legacy, Soul', frequency: '432 Hz', color: 'from-pink-500 to-fuchsia-600', description: 'AI-curated playlists by Candy guardian.', streamUrl: 'https://stream.nightride.fm/nightride.mp3', listeners: 156, nowPlaying: 'Candy Legacy Mix', category: 'AI-Curated' },
-  { id: 43, name: 'Valanna AI Radio', icon: '🧠', genre: 'AI-Curated, Orchestrated', frequency: '432 Hz', color: 'from-indigo-500 to-blue-600', description: 'QUMUS brain-curated intelligent programming.', streamUrl: 'https://pub0201.101.ru/stream/trust/mp3/128/24?', listeners: 215, nowPlaying: "Valanna's Evening Selection", category: 'AI-Curated' },
-  // === WELLNESS (5 Stations) ===
-  { id: 7, name: 'Drop Radio 432Hz', icon: '🧘', genre: 'Healing, Solfeggio', frequency: '432 Hz', color: 'from-green-600 to-emerald-600', description: 'Solfeggio healing frequencies — Crystal Essentials.', streamUrl: 'http://radio.stereoscenic.com/asp-h', listeners: 203, nowPlaying: '432 Hz Deep Healing Session', category: 'Wellness' },
-  { id: 23, name: 'Meditation & Mindfulness', icon: '🕉️', genre: 'Meditation, Guided', frequency: '432 Hz', color: 'from-emerald-500 to-teal-600', description: 'Guided meditation and mindfulness sessions.', streamUrl: 'https://icecast.multhielemedia.de/listen/kontrafunk/radio.mp3', listeners: 145, nowPlaying: 'Guided Mindfulness', category: 'Wellness' },
-  { id: 27, name: 'Health & Wellness', icon: '💚', genre: 'Health, Fitness, Nutrition', frequency: '432 Hz', color: 'from-teal-500 to-cyan-600', description: 'Holistic health, fitness, and nutrition.', streamUrl: 'https://stream.nightride.fm/nightride.mp3', listeners: 78, nowPlaying: 'Wellness Hour', category: 'Wellness' },
-  { id: 39, name: 'Workout & Energy', icon: '💪', genre: 'Workout, Energy, Motivation', frequency: '440 Hz', color: 'from-orange-500 to-red-500', description: 'High-energy music for fitness and motivation.', streamUrl: 'https://workout-high.rautemusik.fm/?ref=radiobrowser', listeners: 167, nowPlaying: 'Power Hour', category: 'Wellness' },
-  { id: 40, name: 'Sleep & Relaxation', icon: '🌙', genre: 'Sleep, Ambient, ASMR', frequency: '432 Hz', color: 'from-indigo-700 to-purple-800', description: 'Ambient sounds, sleep music, and ASMR.', streamUrl: 'http://radio.stereoscenic.com/asp-h', listeners: 134, nowPlaying: 'Deep Sleep Sounds', category: 'Wellness' },
-  // === EDUCATION (3 Stations) ===
-  { id: 25, name: 'Business & Finance', icon: '💼', genre: 'Business, Entrepreneurship', frequency: '440 Hz', color: 'from-slate-600 to-gray-700', description: 'Markets, entrepreneurship, and wealth building.', streamUrl: 'https://fm939.wnyc.org/wnycfm', listeners: 45, nowPlaying: 'Market Watch', category: 'Education' },
-  { id: 26, name: 'Science & Technology', icon: '🔬', genre: 'Science, Technology, AI', frequency: '440 Hz', color: 'from-blue-500 to-cyan-600', description: 'Tech trends, science discoveries, and innovation.', streamUrl: 'http://radio.stereoscenic.com/asp-h', listeners: 38, nowPlaying: 'Tech Trends Today', category: 'Education' },
-  { id: 28, name: 'Education & Learning', icon: '📚', genre: 'Education, Skills', frequency: '440 Hz', color: 'from-green-500 to-teal-500', description: 'Educational content and skill building.', streamUrl: 'https://pub0201.101.ru/stream/trust/mp3/128/24?', listeners: 33, nowPlaying: 'Learning Hour', category: 'Education' },
-  // === ENTERTAINMENT (7 Stations) ===
-  { id: 3, name: 'Audiobook Stream', icon: '📖', genre: 'Audiobooks, Stories', frequency: '432 Hz', color: 'from-amber-400 to-orange-500', description: 'Narrated books and stories.', streamUrl: 'http://bookradio.hostingradio.ru:8069/fm', listeners: 56, nowPlaying: 'Story Hour', category: 'Entertainment' },
-  { id: 21, name: 'Kids & Family', icon: '👨‍👩‍👧‍👦', genre: 'Kids, Family, Educational', frequency: '432 Hz', color: 'from-pink-400 to-purple-400', description: 'Family-friendly music and storytelling.', streamUrl: 'http://stream01.zogl.net:8906/stream', listeners: 44, nowPlaying: 'Storytime Adventures', category: 'Entertainment' },
-  { id: 22, name: 'Spoken Word & Poetry', icon: '📝', genre: 'Spoken Word, Poetry', frequency: '432 Hz', color: 'from-slate-600 to-gray-700', description: 'Poetry slams, spoken word, and literary arts.', streamUrl: 'https://stream.live.vc.bbcmedia.co.uk/bbc_world_service', listeners: 33, nowPlaying: 'Open Mic Poetry', category: 'Entertainment' },
-  { id: 29, name: 'Comedy Central', icon: '😂', genre: 'Comedy, Stand-Up, Humor', frequency: '440 Hz', color: 'from-yellow-400 to-orange-400', description: 'Stand-up comedy, sketches, and humor.', streamUrl: 'https://icecast.walmradio.com:8443/otr', listeners: 67, nowPlaying: 'Comedy Hour', category: 'Entertainment' },
-  { id: 30, name: 'Drama & Theater', icon: '🎭', genre: 'Drama, Radio Drama', frequency: '432 Hz', color: 'from-red-700 to-rose-800', description: 'Radio dramas, audio theater, and storytelling.', streamUrl: 'https://icecast.walmradio.com:8443/otr', listeners: 29, nowPlaying: 'Evening Drama', category: 'Entertainment' },
-  { id: 31, name: 'Anime & Gaming', icon: '🎮', genre: 'Anime, Gaming, J-Pop', frequency: '440 Hz', color: 'from-purple-500 to-pink-500', description: 'Anime OSTs, gaming soundtracks, and J-pop.', streamUrl: 'https://stream.zeno.fm/qpn8mkt8c4duv', listeners: 89, nowPlaying: 'Anime Hits', category: 'Entertainment' },
-  { id: 48, name: 'Gaming Battle Arena', icon: '🕹️', genre: 'Esports, Gaming, Tournaments', frequency: '440 Hz', color: 'from-green-600 to-cyan-600', description: 'Gaming tournaments, esports, and battle commentary.', streamUrl: 'https://listen.reyfm.de/gaming_192kbps.mp3', listeners: 72, nowPlaying: 'Battle Arena Live', category: 'Entertainment' },
-  // === SPECIALTY (5 Stations) ===
-  { id: 4, name: 'HybridCast Emergency', icon: '🚨', genre: 'Emergency, Public Safety', frequency: '440 Hz', color: 'from-red-700 to-red-900', description: '24/7 standby — emergency alerts and public safety.', streamUrl: 'http://jking.cdnstream1.com/b22139_128mp3', listeners: 22, nowPlaying: 'All Clear — No Active Alerts', category: 'Specialty' },
-  { id: 44, name: 'Ty Battle Live', icon: '🎙️', genre: 'Live, Events, Broadcast', frequency: '432 Hz', color: 'from-orange-600 to-amber-600', description: 'Live broadcasts and special events from Ty Battle.', streamUrl: 'https://broadcastify.cdnstream1.com/8705', listeners: 56, nowPlaying: 'Live Broadcast', category: 'Specialty' },
-  { id: 46, name: 'Canryn Production', icon: '🎬', genre: 'Production, Studio', frequency: '432 Hz', color: 'from-amber-500 to-orange-600', description: 'Behind-the-scenes production and studio sessions.', streamUrl: 'https://listen.181fm.com/181-soul_128k.mp3', listeners: 31, nowPlaying: 'Studio Sessions', category: 'Specialty' },
-  { id: 47, name: 'Dragon Frequencies', icon: '🐉', genre: 'Frequencies, Elemental', frequency: '432 Hz', color: 'from-emerald-600 to-teal-700', description: "Wisdom's Dragon elemental frequency broadcasts.", streamUrl: 'https://stream.drugradio.ru:8020/stream128', listeners: 45, nowPlaying: 'Dragon Healing Tones', category: 'Specialty' },
-  { id: 49, name: 'Legacy Archives', icon: '🏛️', genre: 'Archives, History', frequency: '432 Hz', color: 'from-yellow-600 to-orange-600', description: 'Historical recordings, interviews, and family archives.', streamUrl: 'https://tunein.cdnstream1.com/2868_96.mp3', listeners: 29, nowPlaying: 'Voices of the Past', category: 'Specialty' },
-  // === COMMUNITY (3 Stations) ===
-  { id: 6, name: 'Community Voice', icon: '📞', genre: 'Community, Call-In', frequency: '432 Hz', color: 'from-blue-600 to-indigo-700', description: 'Listener stories and call-ins.', streamUrl: 'https://tunein.cdnstream1.com/2868_96.mp3', listeners: 38, nowPlaying: 'Listener Stories', category: 'Community' },
-  { id: 45, name: 'Sweet Miracles', icon: '🍬', genre: 'Nonprofit, Charity', frequency: '528 Hz', color: 'from-pink-500 to-fuchsia-600', description: 'Nonprofit awareness, fundraising, and community impact (501c/508).', streamUrl: 'https://streams.fluxfm.de/hiphop/mp3-320/audio/', listeners: 38, nowPlaying: 'Elder Advocacy Hour', category: 'Community' },
-  { id: 50, name: 'Open Mic', icon: '🎤', genre: 'Open Mic, Freestyle', frequency: '432 Hz', color: 'from-amber-400 to-yellow-500', description: 'Community open mic, freestyle, and live performances.', streamUrl: 'https://s3.radio.co/s97f38db97/listen', listeners: 28, nowPlaying: 'Open Mic Night', category: 'Community' },
-  // === NEW CHANNELS (52-54) ===
-  { id: 52, name: 'SQUADD Coalition Radio', icon: '👑', genre: 'Empowerment, Talk', frequency: '432 Hz', color: 'from-purple-600 to-fuchsia-700', description: 'SQUADD Coalition programming — Sisters Questing Unapologetically After Divine Destiny.', streamUrl: 'https://tunein.cdnstream1.com/2868_96.mp3', listeners: 42, nowPlaying: 'SQUADD Empowerment Hour', category: 'Community', coverImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch52_squadd_coalition_radio-NR3GhZyxLVQoHdGHN6Lso8.webp' },
-  { id: 53, name: 'UN Advocacy Radio', icon: '🌍', genre: 'Advocacy, International', frequency: '528 Hz', color: 'from-blue-700 to-indigo-800', description: 'United Nations advocacy, CSW70 coverage, and international human rights programming.', streamUrl: 'https://fm939.wnyc.org/wnycfm', listeners: 35, nowPlaying: 'CSW70 Coverage', category: 'Community', coverImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch53_un_advocacy_radio-QaoRfuZ5ywAyd7KzLfNzUR.webp' },
-  { id: 54, name: 'Canryn Production Radio', icon: '🏢', genre: 'Corporate, Updates', frequency: '432 Hz', color: 'from-amber-600 to-orange-700', description: 'Official Canryn Production updates, ecosystem news, and subsidiary highlights.', streamUrl: 'https://listen.181fm.com/181-soul_128k.mp3', listeners: 31, nowPlaying: 'Ecosystem Update', category: 'Specialty', coverImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch54_canryn_production_radio-kozFcvbMZTksygAHNvcFfq.webp' },
-];
+// Icon map for channels based on genre/name
+const CHANNEL_ICONS: Record<string, string> = {
+  'RRB Main Radio': '📻', 'Music Discovery': '🔍', 'Gospel & Praise': '🙏',
+  'Smooth Jazz Lounge': '🎷', 'Hip-Hop Classics': '🎤', 'Neo-Soul': '🛋️',
+  'Reggae & Dancehall': '🦁', 'Afrobeats Global': '🥁', 'Blues Highway': '🎸',
+  'Classical Serenity': '🎻', 'Latin Rhythms': '💃', 'Country Crossroads': '🤠',
+  'Electronic Pulse': '⚡', 'Rock Legends': '🎸', 'Worship & Devotional': '⛪',
+  'Caribbean Vibes': '🏝️', 'Women in Music': '👩‍🎤', 'Indie & Underground': '🎵',
+  'World Fusion': '🌐', 'Throwback Radio': '📼', 'Love Songs': '💕',
+  'C.J. Battle Radio': '🎤', 'Podcast Network': '🎙️', 'Sports Talk': '🏈',
+  'News & Current Affairs': '📰', 'Seraph AI Radio': '🤖', 'Candy AI Radio': '🍬',
+  'Valanna AI Radio': '🧠', 'Drop Radio 432Hz': '🧘', 'Meditation & Mindfulness': '🕉️',
+  'Health & Wellness': '💚', 'Workout & Energy': '💪', 'Sleep & Relaxation': '🌙',
+  'Business & Finance': '💼', 'Science & Technology': '🔬', 'Education & Learning': '📚',
+  'Audiobook Stream': '📖', 'Kids & Family': '👨‍👩‍👧‍👦', 'Spoken Word & Poetry': '📝',
+  'Comedy Central': '😂', 'Drama & Theater': '🎭', 'Anime & Gaming': '🎮',
+  'Gaming Battle Arena': '🕹️', 'HybridCast Emergency': '🚨', 'Ty Battle Live': '🎙️',
+  'Canryn Production': '🎬', 'Dragon Frequencies': '🐉', 'Legacy Archives': '🏛️',
+  'Community Voice': '📞', 'Sweet Miracles': '🍬', 'Open Mic': '🎤',
+  'SQUADD Coalition Radio': '👑', 'UN Advocacy Radio': '🌍', 'Canryn Production Radio': '🏢',
+};
+
+// Color map for channels
+const CHANNEL_COLORS: Record<string, string> = {
+  'RRB Main Radio': 'from-purple-600 to-blue-600', 'Music Discovery': 'from-violet-500 to-purple-600',
+  'Gospel & Praise': 'from-pink-600 to-rose-600', 'Smooth Jazz Lounge': 'from-indigo-600 to-violet-600',
+  'Hip-Hop Classics': 'from-red-600 to-orange-600', 'Neo-Soul': 'from-fuchsia-600 to-purple-700',
+  'Reggae & Dancehall': 'from-yellow-600 to-green-700', 'Afrobeats Global': 'from-green-500 to-emerald-600',
+  'Blues Highway': 'from-blue-800 to-indigo-900', 'Classical Serenity': 'from-amber-300 to-yellow-500',
+  'Latin Rhythms': 'from-red-500 to-orange-500', 'Country Crossroads': 'from-amber-600 to-yellow-700',
+  'Electronic Pulse': 'from-cyan-400 to-blue-500', 'Rock Legends': 'from-red-700 to-gray-800',
+  'Worship & Devotional': 'from-sky-600 to-blue-700', 'Caribbean Vibes': 'from-cyan-500 to-green-500',
+  'Women in Music': 'from-fuchsia-500 to-pink-600', 'Indie & Underground': 'from-zinc-600 to-slate-700',
+  'World Fusion': 'from-teal-500 to-green-600', 'Throwback Radio': 'from-orange-500 to-amber-600',
+  'Love Songs': 'from-rose-500 to-pink-600', 'C.J. Battle Radio': 'from-blue-600 to-cyan-500',
+  'Podcast Network': 'from-red-500 to-pink-600', 'Sports Talk': 'from-green-600 to-teal-600',
+  'News & Current Affairs': 'from-gray-600 to-slate-700', 'Seraph AI Radio': 'from-violet-600 to-purple-700',
+  'Candy AI Radio': 'from-pink-500 to-fuchsia-600', 'Valanna AI Radio': 'from-indigo-500 to-blue-600',
+  'Drop Radio 432Hz': 'from-green-600 to-emerald-600', 'Meditation & Mindfulness': 'from-emerald-500 to-teal-600',
+  'Health & Wellness': 'from-teal-500 to-cyan-600', 'Workout & Energy': 'from-orange-500 to-red-500',
+  'Sleep & Relaxation': 'from-indigo-700 to-purple-800', 'Business & Finance': 'from-slate-600 to-gray-700',
+  'Science & Technology': 'from-blue-500 to-cyan-600', 'Education & Learning': 'from-green-500 to-teal-500',
+  'Audiobook Stream': 'from-amber-400 to-orange-500', 'Kids & Family': 'from-pink-400 to-purple-400',
+  'Spoken Word & Poetry': 'from-slate-600 to-gray-700', 'Comedy Central': 'from-yellow-400 to-orange-400',
+  'Drama & Theater': 'from-red-700 to-rose-800', 'Anime & Gaming': 'from-purple-500 to-pink-500',
+  'Gaming Battle Arena': 'from-green-600 to-cyan-600', 'HybridCast Emergency': 'from-red-700 to-red-900',
+  'Ty Battle Live': 'from-orange-600 to-amber-600', 'Canryn Production': 'from-amber-500 to-orange-600',
+  'Dragon Frequencies': 'from-emerald-600 to-teal-700', 'Legacy Archives': 'from-yellow-600 to-orange-600',
+  'Community Voice': 'from-blue-600 to-indigo-700', 'Sweet Miracles': 'from-pink-500 to-fuchsia-600',
+  'Open Mic': 'from-amber-400 to-yellow-500', 'SQUADD Coalition Radio': 'from-purple-600 to-fuchsia-700',
+  'UN Advocacy Radio': 'from-blue-700 to-indigo-800', 'Canryn Production Radio': 'from-amber-600 to-orange-700',
+};
+
+// C.J. Battle artist links
+const CJ_BATTLE_LINKS = {
+  appleMusicUrl: 'https://music.apple.com/us/artist/c-j-battle/1438716457',
+  spotifyUrl: 'https://open.spotify.com/artist/2kFnLPBd40yxliDHZZpAPy',
+  soundcloudUrl: 'https://soundcloud.com/cjbttle',
+  tidalUrl: 'https://tidal.com/artist/10464604',
+  deezerUrl: 'https://www.deezer.com/en/artist/52608732',
+  youtubeUrl: 'https://www.youtube.com/channel/UCR_UZEE4FkpCR9THocyutkQ',
+  instagramUrl: 'https://www.instagram.com/c.j.battle/',
+};
+
+// Now Playing defaults (will be replaced by real data when available)
+const NOW_PLAYING: Record<string, string> = {
+  'RRB Main Radio': 'Community Hour with Sweet Miracles',
+  'C.J. Battle Radio': 'C.J. Battle — OLD SOUL',
+  'Seraph AI Radio': 'Seraph Selection',
+  'Candy AI Radio': 'Candy Legacy Mix',
+  'Valanna AI Radio': "Valanna's Evening Selection",
+  'HybridCast Emergency': 'All Clear — No Active Alerts',
+};
+
+interface ChannelData {
+  id: number;
+  name: string;
+  genre: string;
+  frequency: string;
+  streamUrl: string;
+  icon: string;
+  color: string;
+  description: string;
+  category: string;
+  listeners: number;
+  nowPlaying: string;
+  isArtistStation?: boolean;
+  coverImage?: string;
+}
+
+function mapDbChannelToLocal(dbCh: any): ChannelData {
+  const meta = dbCh.metadata || {};
+  return {
+    id: dbCh.id,
+    name: dbCh.name,
+    genre: dbCh.genre || 'General',
+    frequency: dbCh.frequency || '432 Hz',
+    streamUrl: dbCh.streamUrl,
+    icon: meta.icon || CHANNEL_ICONS[dbCh.name] || '📻',
+    color: CHANNEL_COLORS[dbCh.name] || 'from-gray-600 to-gray-700',
+    description: meta.description || dbCh.name,
+    category: meta.category || 'Music',
+    listeners: dbCh.currentListeners || Math.floor(Math.random() * 150) + 20,
+    nowPlaying: NOW_PLAYING[dbCh.name] || `Now Playing on ${dbCh.name}`,
+    isArtistStation: dbCh.name === 'C.J. Battle Radio',
+    coverImage: undefined,
+  };
+}
 
 export const RRBRadioIntegration: React.FC = () => {
   const [, navigate] = useLocation();
   const { openRestream } = useRestreamUrl();
-  const { radio, play: globalPlay, pause: globalPause, resume: globalResume, setVolume: globalSetVolume, toggleMute: globalToggleMute, audioRef } = useRadio();
-  const [selectedChannel, setSelectedChannel] = useState(() => {
-    // If radio context already has a channel playing, use that
-    if (radio.channel) {
-      const found = channels.find(c => c.id === radio.channel!.id);
-      if (found) return found;
-    }
-    return channels[0];
+  const { radio, play: globalPlay, pause: globalPause, setVolume: globalSetVolume, toggleMute: globalToggleMute } = useRadio();
+
+  // Load channels from database API
+  const { data: dbChannels, isLoading } = trpc.ecosystemIntegration.getAllChannels.useQuery(undefined, {
+    staleTime: 60_000,
+    refetchInterval: 120_000,
   });
-  // Derive state from global radio context
+
+  // Map database channels to local format
+  const channels: ChannelData[] = useMemo(() => {
+    if (!dbChannels || dbChannels.length === 0) return [];
+    return dbChannels.map(mapDbChannelToLocal);
+  }, [dbChannels]);
+
+  const [selectedChannel, setSelectedChannel] = useState<ChannelData | null>(null);
   const isPlaying = radio.isPlaying;
   const volume = radio.volume;
   const isMuted = radio.isMuted;
   const audioError = radio.errorMessage || null;
-  const streamStatus: 'connected' | 'reconnecting' | 'failover' = 
-    radio.status === 'reconnecting' ? 'reconnecting' : 
-    radio.status === 'error' ? 'failover' : 'connected';
   const [totalListeners, setTotalListeners] = useState(3847);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [showAllFilters, setShowAllFilters] = useState(false);
+
+  // Set initial channel once data loads
+  useEffect(() => {
+    if (channels.length > 0 && !selectedChannel) {
+      if (radio.channel) {
+        const found = channels.find(c => c.id === radio.channel!.id);
+        if (found) { setSelectedChannel(found); return; }
+      }
+      setSelectedChannel(channels[0]);
+    }
+  }, [channels, selectedChannel, radio.channel]);
+
+  // Sync selected channel from global context
+  useEffect(() => {
+    if (radio.channel && channels.length > 0) {
+      const found = channels.find(c => c.id === radio.channel!.id);
+      if (found && found.id !== selectedChannel?.id) {
+        setSelectedChannel(found);
+      }
+    }
+  }, [radio.channel, channels]);
 
   // Filtered channels
   const filteredChannels = useMemo(() => {
@@ -133,17 +185,7 @@ export const RRBRadioIntegration: React.FC = () => {
         ch.description.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesFilter && matchesSearch;
     });
-  }, [activeFilter, searchQuery]);
-
-  // Sync selected channel from global context when returning to radio page
-  useEffect(() => {
-    if (radio.channel) {
-      const found = channels.find(c => c.id === radio.channel!.id);
-      if (found && found.id !== selectedChannel.id) {
-        setSelectedChannel(found);
-      }
-    }
-  }, [radio.channel]);
+  }, [channels, activeFilter, searchQuery]);
 
   // Listener count simulation
   useEffect(() => {
@@ -153,15 +195,15 @@ export const RRBRadioIntegration: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleChannelSelect = useCallback((channel: typeof channels[0]) => {
+  const handleChannelSelect = useCallback((channel: ChannelData) => {
     setSelectedChannel(channel);
     if (isPlaying) {
-      // Switch channel while playing — use global context
       globalPlay(channel);
     }
   }, [isPlaying, globalPlay]);
 
   const handlePlayPause = useCallback(() => {
+    if (!selectedChannel) return;
     if (isPlaying) {
       globalPause();
     } else {
@@ -170,10 +212,24 @@ export const RRBRadioIntegration: React.FC = () => {
   }, [isPlaying, selectedChannel, globalPlay, globalPause]);
 
   const handleNextChannel = useCallback(() => {
+    if (!selectedChannel || channels.length === 0) return;
     const currentIndex = channels.findIndex(c => c.id === selectedChannel.id);
     const nextChannel = channels[(currentIndex + 1) % channels.length];
     handleChannelSelect(nextChannel);
-  }, [selectedChannel, handleChannelSelect]);
+  }, [selectedChannel, channels, handleChannelSelect]);
+
+  if (isLoading || !selectedChannel) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] text-[#E8E0D0] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#D4A843] animate-spin mx-auto mb-4" />
+          <p className="text-[#E8E0D0]/60">Loading RRB Radio channels...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isArtistStation = selectedChannel.name === 'C.J. Battle Radio';
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#E8E0D0]">
@@ -187,7 +243,7 @@ export const RRBRadioIntegration: React.FC = () => {
             </div>
             <div>
               <h1 className="text-4xl font-black text-[#D4A843]">RRB Radio</h1>
-              <p className="text-[#E8E0D0]/60">Rockin' Rockin' Boogie • Payten Music (BMI) • Canryn Production</p>
+              <p className="text-[#E8E0D0]/60">Rockin' Rockin' Boogie &bull; Payten Music (BMI) &bull; Canryn Production</p>
               <div className="mt-1"><RRBSongBadge variant="inline" /></div>
             </div>
           </div>
@@ -225,11 +281,7 @@ export const RRBRadioIntegration: React.FC = () => {
               </button>
               <div>
                 <div className="flex items-center gap-2">
-                  {(selectedChannel as any).coverImage ? (
-                    <img src={(selectedChannel as any).coverImage} alt={selectedChannel.name} className="w-8 h-8 rounded object-cover" />
-                  ) : (
-                    <span className="text-2xl">{selectedChannel.icon}</span>
-                  )}
+                  <span className="text-2xl">{selectedChannel.icon}</span>
                   <h2 className="text-xl font-bold text-[#E8E0D0]">{selectedChannel.name}</h2>
                   {isPlaying && (
                     <Badge className="bg-red-500/20 text-red-400 border-red-500/30 animate-pulse text-xs">
@@ -238,46 +290,32 @@ export const RRBRadioIntegration: React.FC = () => {
                   )}
                 </div>
                 <p className="text-sm text-[#E8E0D0]/50">
-                  {selectedChannel.genre} • {selectedChannel.frequency} • {selectedChannel.nowPlaying}
+                  {selectedChannel.genre} &bull; {selectedChannel.frequency} &bull; {selectedChannel.nowPlaying}
                 </p>
                 {audioError && <p className="text-xs text-amber-400 mt-1">{audioError}</p>}
-                {(selectedChannel as any).isArtistStation && (
+                {isArtistStation && (
                   <div className="flex flex-wrap items-center gap-2 mt-3">
-                    {(selectedChannel as any).appleMusicUrl && (
-                      <a href={(selectedChannel as any).appleMusicUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-red-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
-                        <Music className="w-3.5 h-3.5" /> Apple Music
-                      </a>
-                    )}
-                    {(selectedChannel as any).spotifyUrl && (
-                      <a href={(selectedChannel as any).spotifyUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
-                        <Headphones className="w-3.5 h-3.5" /> Spotify
-                      </a>
-                    )}
-                    {(selectedChannel as any).soundcloudUrl && (
-                      <a href={(selectedChannel as any).soundcloudUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
-                        <Wifi className="w-3.5 h-3.5" /> SoundCloud
-                      </a>
-                    )}
-                    {(selectedChannel as any).tidalUrl && (
-                      <a href={(selectedChannel as any).tidalUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-slate-700 to-slate-800 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
-                        <Music className="w-3.5 h-3.5" /> TIDAL
-                      </a>
-                    )}
-                    {(selectedChannel as any).deezerUrl && (
-                      <a href={(selectedChannel as any).deezerUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-purple-500 to-violet-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
-                        <Music className="w-3.5 h-3.5" /> Deezer
-                      </a>
-                    )}
-                    {(selectedChannel as any).youtubeUrl && (
-                      <a href={(selectedChannel as any).youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-red-600 to-red-700 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
-                        <Play className="w-3.5 h-3.5" /> YouTube
-                      </a>
-                    )}
-                    {(selectedChannel as any).instagramUrl && (
-                      <a href={(selectedChannel as any).instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-fuchsia-500 to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
-                        <Heart className="w-3.5 h-3.5" /> Instagram
-                      </a>
-                    )}
+                    <a href={CJ_BATTLE_LINKS.appleMusicUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-red-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Music className="w-3.5 h-3.5" /> Apple Music
+                    </a>
+                    <a href={CJ_BATTLE_LINKS.spotifyUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Headphones className="w-3.5 h-3.5" /> Spotify
+                    </a>
+                    <a href={CJ_BATTLE_LINKS.soundcloudUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Wifi className="w-3.5 h-3.5" /> SoundCloud
+                    </a>
+                    <a href={CJ_BATTLE_LINKS.tidalUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-slate-700 to-slate-800 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Music className="w-3.5 h-3.5" /> TIDAL
+                    </a>
+                    <a href={CJ_BATTLE_LINKS.deezerUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-purple-500 to-violet-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Music className="w-3.5 h-3.5" /> Deezer
+                    </a>
+                    <a href={CJ_BATTLE_LINKS.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-red-600 to-red-700 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Play className="w-3.5 h-3.5" /> YouTube
+                    </a>
+                    <a href={CJ_BATTLE_LINKS.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-r from-fuchsia-500 to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Heart className="w-3.5 h-3.5" /> Instagram
+                    </a>
                   </div>
                 )}
               </div>
@@ -306,18 +344,16 @@ export const RRBRadioIntegration: React.FC = () => {
       {/* Search & Filter Bar */}
       <div className="bg-[#0D0D0D] border-b border-[#D4A843]/10">
         <div className="container mx-auto px-4 py-4">
-          {/* Search */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#E8E0D0]/30" />
             <input
               type="text"
-              placeholder="Search 54 channels by name, genre, or description..."
+              placeholder={`Search ${channels.length} channels by name, genre, or description...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-[#111] border border-[#222] rounded-lg text-[#E8E0D0] placeholder-[#E8E0D0]/30 focus:border-[#D4A843]/50 focus:outline-none"
             />
           </div>
-          {/* Genre Filters */}
           <div className="flex flex-wrap gap-2">
             {(showAllFilters ? GENRE_FILTERS : GENRE_FILTERS.slice(0, 6)).map(filter => (
               <button
@@ -362,13 +398,9 @@ export const RRBRadioIntegration: React.FC = () => {
               }`}
             >
               <div className="flex items-start gap-3">
-                {(channel as any).coverImage ? (
-                  <img src={(channel as any).coverImage} alt={channel.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
-                ) : (
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${channel.color} flex items-center justify-center text-2xl flex-shrink-0`}>
-                    {channel.icon}
-                  </div>
-                )}
+                <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${channel.color} flex items-center justify-center text-2xl flex-shrink-0`}>
+                  {channel.icon}
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-bold text-[#E8E0D0]">{channel.name}</h3>
@@ -380,49 +412,26 @@ export const RRBRadioIntegration: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <p className="text-xs text-[#D4A843]/70 mb-1">{channel.genre} • {channel.frequency}</p>
+                  <p className="text-xs text-[#D4A843]/70 mb-1">{channel.genre} &bull; {channel.frequency}</p>
                   <p className="text-xs text-[#E8E0D0]/40 line-clamp-2">{channel.description}</p>
                   <div className="flex items-center gap-3 mt-2 text-xs text-[#E8E0D0]/30">
                     <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {channel.listeners}</span>
                     <span className="italic truncate">{channel.nowPlaying}</span>
                   </div>
-                  {(channel as any).isArtistStation && (
+                  {channel.isArtistStation && (
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      {(channel as any).appleMusicUrl && (
-                        <a href={(channel as any).appleMusicUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-pink-500 to-red-500 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
-                          <Music className="w-3 h-3" /> Apple
-                        </a>
-                      )}
-                      {(channel as any).spotifyUrl && (
-                        <a href={(channel as any).spotifyUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
-                          <Music className="w-3 h-3" /> Spotify
-                        </a>
-                      )}
-                      {(channel as any).soundcloudUrl && (
-                        <a href={(channel as any).soundcloudUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
-                          SC
-                        </a>
-                      )}
-                      {(channel as any).tidalUrl && (
-                        <a href={(channel as any).tidalUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-slate-700 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
-                          TIDAL
-                        </a>
-                      )}
-                      {(channel as any).deezerUrl && (
-                        <a href={(channel as any).deezerUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
-                          Deezer
-                        </a>
-                      )}
-                      {(channel as any).youtubeUrl && (
-                        <a href={(channel as any).youtubeUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-red-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
-                          YT
-                        </a>
-                      )}
-                      {(channel as any).instagramUrl && (
-                        <a href={(channel as any).instagramUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-fuchsia-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
-                          IG
-                        </a>
-                      )}
+                      <a href={CJ_BATTLE_LINKS.appleMusicUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-pink-500 to-red-500 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
+                        <Music className="w-3 h-3" /> Apple
+                      </a>
+                      <a href={CJ_BATTLE_LINKS.spotifyUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity flex items-center gap-1">
+                        <Music className="w-3 h-3" /> Spotify
+                      </a>
+                      <a href={CJ_BATTLE_LINKS.soundcloudUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
+                        SC
+                      </a>
+                      <a href={CJ_BATTLE_LINKS.tidalUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-xs bg-slate-700 text-white px-2 py-0.5 rounded-full hover:opacity-80 transition-opacity">
+                        TIDAL
+                      </a>
                     </div>
                   )}
                 </div>
@@ -472,7 +481,7 @@ export const RRBRadioIntegration: React.FC = () => {
                 </div>
               </div>
               <p className="text-sm text-[#E8E0D0]/60 mb-4">
-                Valanna guides your experience across the entire Canryn Production ecosystem — from RRB Radio to HybridCast emergency broadcasts. She speaks, she listens, she delivers.
+                Valanna guides your experience across the entire Canryn Production ecosystem — from RRB Radio to HybridCast emergency broadcasts.
               </p>
               <Button className="bg-purple-600 hover:bg-purple-500 text-white w-full" onClick={() => navigate('/flyer')}>
                 <FileText className="w-4 h-4 mr-2" /> Open Interactive Flyer
@@ -487,7 +496,7 @@ export const RRBRadioIntegration: React.FC = () => {
                 </div>
               </div>
               <p className="text-sm text-[#E8E0D0]/60 mb-4">
-                Join the conversation live during broadcasts. Share your story, ask questions, or send a shout-out to the community. Your voice matters.
+                Join the conversation live during broadcasts. Share your story, ask questions, or send a shout-out.
               </p>
               <Button variant="outline" className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10 w-full" onClick={openRestream}>
                 <Wifi className="w-4 h-4 mr-2" /> Join Live Broadcast
@@ -518,7 +527,7 @@ export const RRBRadioIntegration: React.FC = () => {
             </Button>
           </div>
           <p className="text-center text-xs text-[#E8E0D0]/30 mt-6">
-            Payten Music (BMI) • Canryn Production • QUMUS Autonomous Engine • In Honor of Seabrun Candy Hunter
+            Payten Music (BMI) &bull; Canryn Production &bull; QUMUS Autonomous Engine &bull; In Honor of Seabrun Candy Hunter
           </p>
           <p className="text-center text-xs text-[#E8E0D0]/20 mt-2">
             All content is protected under applicable copyright laws. Unauthorized reproduction or distribution is prohibited.

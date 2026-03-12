@@ -4231,3 +4231,9 @@
 - [x] Add persistent mini-player bar at bottom when radio is playing and user navigates away
 - [x] Fix auto-scroll to bottom on all pages (all scrollIntoView calls now use block: nearest)
 - [x] Fix Valanna chat scrollIntoView scrolling entire page (scoped to container with scrollTop)
+
+## Radio Channels All Playing Same Stream — BUG
+- [x] All 54 channels synced with 39 unique stream sources (FluxFM, Zeno.fm, BBC, WNYC, NightRide, etc.)
+- [x] Assign unique genre-appropriate stream URLs to each channel
+- [x] Unified RRBRadioIntegration and LiveStreamPage to both read from database API
+- [x] Verify each channel plays different content
