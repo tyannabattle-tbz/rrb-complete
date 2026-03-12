@@ -451,7 +451,7 @@ export default function SquaddGoals() {
                 qrUrl: 'https://manuweb.sbs/live',
               },
               {
-                name: 'LaShanna',
+                name: 'Luv Russell',
                 role: 'Coalition Member',
                 focus: 'Community Advocacy',
                 email: '',
@@ -549,7 +549,7 @@ export default function SquaddGoals() {
                   { name: 'Karen Jones', role: 'CEO, WHOM IT CONCERNS, INC.', focus: 'Agriculture & Environmental Justice', email: 'whomitconcerns@outlook.com', qrUrl: 'mailto:whomitconcerns@outlook.com' },
                   { name: 'Furlesia "Freedom" Bell', role: 'REALTOR, Our Town Realty', focus: 'Community Development', email: 'furlesiabell@icloud.com', qrUrl: 'mailto:furlesiabell@icloud.com' },
                   { name: 'Sherrette "Lady Freedom" Spicer', role: 'Virtual Broadcast Anchor', focus: 'Media & Communications', email: '', qrUrl: 'https://manuweb.sbs/live' },
-                  { name: 'LaShanna', role: 'Coalition Member', focus: 'Community Advocacy', email: '', qrUrl: 'https://manuweb.sbs/squadd/directory' },
+                  { name: 'Luv Russell', role: 'Coalition Member', focus: 'Community Advocacy', email: '', qrUrl: 'https://manuweb.sbs/squadd/directory' },
                   { name: 'Full Digital Directory', role: 'All SQUADD Members', focus: 'Complete Coalition Roster', email: 'sweetmiraclesattt@gmail.com', qrUrl: 'https://manuweb.sbs/squadd/directory' },
                 ].map((m, i) => (
                   <div key={i} className="print-qr-card" style={{ textAlign: 'center', background: 'white', border: '2px solid #333', padding: '16px', borderRadius: '8px' }}>

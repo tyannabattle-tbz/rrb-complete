@@ -14,7 +14,7 @@ export const COMMERCIAL_AUDIO: Record<string, string> = {
   // Tyanna Battle — Anna's Promotions
   'comm_annas_vision': 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/tyanna_annas_vision_4e2070be.wav',
 
-  // LaShanna Russell — Sweet Miracles / Anna's Promotions
+  // Luv Russell — Sweet Miracles / Anna's Promotions
   'comm_voice_voiceless': 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/lashanna_voice_voiceless_e662ca63.wav',
 
   // Jaelon Hunter — Jaelon Enterprises

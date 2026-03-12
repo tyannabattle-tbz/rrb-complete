@@ -15,7 +15,7 @@
  */
 
 // ============================================================================
-// FAMILY MEMBER REGISTRY — Birth Order: Carlos, Sean, Tyanna, LaShanna, Jaelon
+// FAMILY MEMBER REGISTRY — Birth Order: Carlos, Sean, Tyanna, Luv Russell, Jaelon
 // ============================================================================
 
 export interface FamilyMemberEntry {
@@ -69,9 +69,9 @@ export const FAMILY_MEMBERS: FamilyMemberEntry[] = [
     status: 'active',
   },
   {
-    id: 'lashanna',
-    name: 'LaShanna Russell',
-    route: '/lashanna',
+    id: 'luv-russell',
+    name: 'Luv Russell',
+    route: '/luv-russell',
     subsidiary: "Anna's Promotions",
     role: 'Community Advocate',
     accentColor: 'purple',
@@ -131,7 +131,7 @@ export const SUBSIDIARIES: SubsidiaryEntry[] = [
     id: 'annas_promotions',
     name: "Anna's Promotions",
     description: 'Promotional duties and brand development',
-    directors: ['Tyanna Battle', 'LaShanna Russell'],
+    directors: ['Tyanna Battle', 'Luv Russell'],
     route: '/tyanna',
     status: 'active',
     botCount: 10,
@@ -149,7 +149,7 @@ export const SUBSIDIARIES: SubsidiaryEntry[] = [
     id: 'sweet_miracles',
     name: 'Sweet Miracles',
     description: '501(c)(3) & 508 — A Voice for the Voiceless',
-    directors: ['LaShanna Russell'],
+    directors: ['Luv Russell'],
     route: '/sweet-miracles',
     status: 'active',
     botCount: 3,
@@ -158,7 +158,7 @@ export const SUBSIDIARIES: SubsidiaryEntry[] = [
     id: 'squadd_coalition',
     name: 'SQUADD Coalition',
     description: 'Sisters Questing Unapologetically After Divine Destiny',
-    directors: ['Tyanna Battle', 'LaShanna Russell'],
+    directors: ['Tyanna Battle', 'Luv Russell'],
     route: '/squadd',
     status: 'active',
     botCount: 3,

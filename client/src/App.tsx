@@ -162,7 +162,7 @@ import GamesHub from '@/pages/GamesHub';
 import WordFrequencyGame from '@/pages/WordFrequencyGame';
 import FrequencyMatchGame from '@/pages/FrequencyMatchGame';
 import RhythmRootsGame from '@/pages/RhythmRootsGame';
-import LaShanna from '@/pages/LaShanna';
+import LuvRussell from '@/pages/LuvRussell';
 import Carlos from '@/pages/Carlos';
 import Sean from '@/pages/Sean';
 import Tyanna from '@/pages/Tyanna';
@@ -364,7 +364,8 @@ function Router() {
       <Route path="/games/word-frequency" component={WordFrequencyGame} />
       <Route path="/games/frequency-match" component={FrequencyMatchGame} />
       <Route path="/games/rhythm-roots" component={RhythmRootsGame} />
-      <Route path="/lashanna" component={LaShanna} />
+      <Route path="/luv-russell" component={LuvRussell} />
+      <Route path="/lashanna" component={LuvRussell} />
       <Route path="/carlos" component={Carlos} />
       <Route path="/sean" component={Sean} />
       <Route path="/tyanna" component={Tyanna} />

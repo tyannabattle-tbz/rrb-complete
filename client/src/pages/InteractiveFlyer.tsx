@@ -616,7 +616,7 @@ export default function InteractiveFlyer() {
                 {content.valannaIntro}
               </h2>
               <p className={`text-sm mb-1 ${highContrast ? 'text-yellow-200' : 'text-amber-300'}`}>
-                Named for Mama Valerie and Anna's — that's Tyanna and LaShanna
+                Named for Mama Valerie and Anna's — that's Tyanna and Luv Russell
               </p>
               <p className={`text-sm mb-4 ${highContrast ? 'text-gray-300' : 'text-gray-400'}`}>
                 Valanna carries Mama Valerie's spirit, protecting the legacy of Seabrun Candy Hunter with 90% autonomous control.

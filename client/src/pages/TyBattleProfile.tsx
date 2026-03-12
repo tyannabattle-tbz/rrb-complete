@@ -44,7 +44,7 @@ const ECOSYSTEM_MODULES = [
 const FAMILY_SUBSIDIARIES = [
   { name: 'Carlos Kembrel "Little C"', role: 'Music Production & Performance' },
   { name: 'Sean Hunter "Sean\'s Music"', role: 'Audio Engineering & Sound' },
-  { name: 'Anna\'s Promotions', role: 'Co-Operators — Tyanna Battle & LaShanna Russell' },
+  { name: 'Anna\'s Promotions', role: 'Co-Operators — Tyanna Battle & Luv Russell' },
   { name: 'Jaelon Enterprises', role: 'Business Development & Innovation' },
 ];
 
@@ -156,7 +156,7 @@ export default function TyBattleProfile() {
               entire technology ecosystem to ensure no voice is ever silenced again.
             </p>
             <p>
-              Co-founder of the <strong className="text-amber-300">SQUADD Coalition</strong> with LaShanna Russell, her work 
+              Co-founder of the <strong className="text-amber-300">SQUADD Coalition</strong> with Luv Russell, her work 
               bridges elder protection advocacy with cutting-edge technology, creating tools that empower communities during 
               crises and preserve legacies for future generations. She is presenting at the <strong className="text-amber-300">
               United Nations CSW70</strong> on March 17, 2026.

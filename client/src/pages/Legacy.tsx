@@ -83,7 +83,7 @@ export default function Legacy() {
       company: "Sean's Music",
     },
     {
-      name: 'Tyanna Battle & LaShanna Russell',
+      name: 'Tyanna Battle & Luv Russell',
       role: 'Daughters & Entrepreneurs',
       description: 'Building family business empire',
       company: "Anna's",

@@ -74,7 +74,7 @@ export const ECOSYSTEM_BOTS: Bot[] = [
   {
     id: 'valanna_ai',
     name: 'Valanna AI',
-    description: 'The QUMUS AI Brain — Named for Mama Valerie and Anna\'s (Tyanna & LaShanna). Central intelligence for the entire ecosystem.',
+    description: 'The QUMUS AI Brain — Named for Mama Valerie and Anna\'s (Tyanna & Luv Russell). Central intelligence for the entire ecosystem.',
     category: 'engagement',
     platform: ['web', 'discord', 'twitter'],
     version: '2.47.24',

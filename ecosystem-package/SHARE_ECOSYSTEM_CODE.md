@@ -87,7 +87,7 @@ QUMUS (Central Brain — 90% Autonomous)
 │   ├── Mesh Networking
 │   └── Offline-First PWA
 ├── Canryn Production
-│   ├── Anna's Promotions (Tyanna & LaShanna)
+│   ├── Anna's Promotions (Tyanna & Luv Russell)
 │   ├── Little C (Carlos)
 │   ├── Sean's Music (Sean)
 │   ├── Jaelon Enterprises (Jaelon)

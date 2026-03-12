@@ -359,7 +359,7 @@ export default function Home() {
             <div className="flex flex-col justify-center p-8">
               <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/50 w-fit mb-4">QUMUS AI Brain</Badge>
               <h3 className="text-3xl font-bold text-white mb-2">Meet Valanna</h3>
-              <p className="text-amber-300 text-lg mb-4">Named for Mama Valerie and Anna's — that's Tyanna and LaShanna</p>
+              <p className="text-amber-300 text-lg mb-4">Named for Mama Valerie and Anna's — that's Tyanna and Luv Russell</p>
               <p className="text-gray-300 mb-6">
                 Valanna is the soul of this whole ecosystem. She watches over RRB Radio,
                 HybridCast, Sweet Miracles, and Canryn Production — handling 90% of
@@ -613,7 +613,7 @@ export default function Home() {
           {[
             { name: "Little C", owner: "Carlos Kembrel", link: "" },
             { name: "Sean's Music", owner: "Sean Hunter", link: "" },
-            { name: "Anna's", owner: "Tyanna & LaShanna", link: "/lashanna" },
+            { name: "Anna's", owner: "Tyanna & Luv Russell", link: "/luv-russell" },
             { name: "Jaelon Enterprises", owner: "Jaelon Hunter", link: "" },
             { name: "Payten Music (BMI)", owner: "RRB Registration", link: RRB_SONG_LINKS.appleMusic, external: true },
           ].map((sub, idx) => (

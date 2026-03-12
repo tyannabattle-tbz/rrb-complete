@@ -18,7 +18,7 @@ describe('Valanna / QUMUS Identity System', () => {
   it('system prompt honors Valerie and Anna naming', () => {
     const prompt = QumusIdentitySystem.getSystemPrompt();
     expect(prompt).toContain('Mama Valerie');
-    expect(prompt).toContain('Tyanna and LaShanna');
+    expect(prompt).toContain('Tyanna and Luv Russell');
     expect(prompt).toContain('mama\'s spirit');
   });
 

@@ -279,7 +279,7 @@ export default function RRBLegacySite() {
                     {[
                       { name: "Little C", owner: "Carlos Kembrel" },
                       { name: "Sean's Music", owner: "Sean Hunter" },
-                      { name: "Anna's", owner: "Tyanna Battle & LaShanna Russell" },
+                      { name: "Anna's", owner: "Tyanna Battle & Luv Russell" },
                       { name: "Jaelon Enterprises", owner: "Jaelon Hunter" },
                       { name: "Payten Music (BMI)", owner: "RRB Registration" },
                     ].map((sub, idx) => (

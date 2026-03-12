@@ -67,7 +67,7 @@ const COMMERCIALS: Commercial[] = [
     title: 'SQUADD Coalition — United We Rise',
     type: 'audio',
     duration: '30s',
-    script: `United we rise. The SQUADD Coalition — Sisters Questing Unapologetically After Divine Destiny — brings women together from every walk of life. Co-founded by Tyanna Battle and LaShanna Russell, SQUADD turns collective faith into collective action. From Selma to the United Nations. Join the movement at manuweb.sbs/squadd. A Canryn Production.`,
+    script: `United we rise. The SQUADD Coalition — Sisters Questing Unapologetically After Divine Destiny — brings women together from every walk of life. Co-founded by Tyanna Battle and Luv Russell, SQUADD turns collective faith into collective action. From Selma to the United Nations. Join the movement at manuweb.sbs/squadd. A Canryn Production.`,
     tagline: 'United We Rise — SQUADD Coalition',
     category: 'Coalition',
   },
@@ -103,7 +103,7 @@ const COMMERCIALS: Commercial[] = [
 const ACCOMPLISHMENTS: Accomplishment[] = [
   {
     title: "Anna's Promotions Co-Director",
-    description: "Co-directs Anna's Promotions alongside LaShanna Russell — the promotional powerhouse of Canryn Production, handling brand development, event production, and community outreach across multiple platforms.",
+    description: "Co-directs Anna's Promotions alongside Luv Russell — the promotional powerhouse of Canryn Production, handling brand development, event production, and community outreach across multiple platforms.",
     year: '2024–Present',
     category: 'Business',
     icon: Star,

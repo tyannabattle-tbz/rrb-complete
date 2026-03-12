@@ -208,7 +208,7 @@ export function getDashboardSummary() {
     subsidiaries: [
       { name: "Little C", owner: "Carlos Kembrel", status: "active" },
       { name: "Sean's Music", owner: "Sean Hunter", status: "active" },
-      { name: "Anna's Promotions", owner: "Tyanna & LaShanna", status: "active" },
+      { name: "Anna's Promotions", owner: "Tyanna & Luv Russell", status: "active" },
       { name: "Jaelon Enterprises", owner: "Jaelon Hunter", status: "active" },
       { name: "Payten Music (BMI)", owner: "RRB Registration", status: "active" },
     ],

@@ -4103,3 +4103,6 @@
 - [x] Add Meeting Room + Status links to main navigation
 - [x] Meeting recording auto-archive to S3
 - [x] SQUADD member directory with profiles
+- [x] Rename LaShanna to Luv Russell across entire site
+- [x] Update LaShanna page filename and route to Luv Russell
+- [x] Update database records for LaShanna to Luv Russell
