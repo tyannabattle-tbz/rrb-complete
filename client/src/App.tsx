@@ -260,6 +260,7 @@ function Router() {
       <Route path="/video-production" component={VideoProductionPage} />
       <Route path="/chat" component={QumusChatInterface} />
       <Route path="/qumus-chat" component={QumusChatPage} />
+      <Route path="/radio" component={RRBRadioIntegration} />
       <Route path="/radio-station" component={RadioStation} />
       <Route path="/rrb-radio" component={RRBRadioIntegration} />
       <Route path="/studio-suite" component={StudioSuite} />

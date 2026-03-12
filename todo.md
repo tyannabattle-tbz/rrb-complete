@@ -4079,3 +4079,7 @@
 - [x] Verify crash fix on production site (test mobile)
 - [x] Add channel artwork display to radio player UI (show coverImage when available)
 - [x] Set up stream infrastructure for channels 52-54 (dedicated Shoutcast/Icecast-compatible streams)
+- [ ] FIX: RRB Radio is down — diagnose and restore
+- [x] Implement automatic failover/redirect when radio is down
+- [ ] Add QUMUS auto-detection and self-healing for radio outages
+- [ ] Ensure radio page redirects to backup (HybridCast or local) when streams are down

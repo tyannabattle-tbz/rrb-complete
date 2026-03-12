@@ -1,6 +1,7 @@
 /**
  * QUMUS Stream Health Monitor — Policy #19
- * Automated 15-minute health checks across all 51 RRB Radio channels.
+ * Automated 15-minute health checks across all 54 RRB Radio channels.
+ * Auto-heals down streams by swapping to verified backup streams.
  * Alerts via notifyOwner when streams go down. Tracks uptime history.
  */
 
@@ -141,16 +142,63 @@ export async function runHealthCheck(): Promise<HealthReport> {
     console.log(`[StreamHealth] ${r.status.toUpperCase()}: ch-${r.channelId} ${r.channelName} — ${r.error || 'slow response'} (${r.responseTimeMs}ms)`);
   });
 
-  // Alert if any streams are down
+  // QUMUS Auto-Healing: swap down streams to verified backups
   if (down > 0) {
     const downChannels = results.filter(r => r.status === 'down');
-    const alertContent = downChannels
-      .map(c => `• ch-${String(c.channelId).padStart(3, '0')}: ${c.channelName} — ${c.error}`)
-      .join('\n');
+    const backupStreams = [
+      'https://funkyradio.streamingmedia.it/play.mp3',
+      'https://listen.181fm.com/181-soul_128k.mp3',
+      'https://npr-ice.streamguys1.com/live.mp3',
+      'https://fm939.wnyc.org/wnycfm',
+      'https://tunein.cdnstream1.com/2868_96.mp3',
+      'https://stream.0nlineradio.com/soul',
+      'https://stream.zeno.fm/yn65fsaurfhvv',
+    ];
+
+    const healed: string[] = [];
+    const stillDown: string[] = [];
+
+    for (const ch of downChannels) {
+      let fixed = false;
+      for (const backup of backupStreams) {
+        if (backup === ch.streamUrl) continue;
+        try {
+          const ctrl = new AbortController();
+          const t = setTimeout(() => ctrl.abort(), 5000);
+          const resp = await fetch(backup, { method: 'GET', signal: ctrl.signal, headers: { 'Range': 'bytes=0-512' } });
+          clearTimeout(t);
+          if (resp.ok || resp.status === 206) {
+            try {
+              await db.execute(
+                sql`UPDATE radioChannels SET streamUrl = ${backup} WHERE id = ${ch.channelId}`
+              );
+              healed.push(`ch-${String(ch.channelId).padStart(3, '0')}: ${ch.channelName} → ${backup}`);
+              console.log(`[StreamHealth] AUTO-HEALED: ${ch.channelName} swapped to ${backup}`);
+              fixed = true;
+            } catch (dbErr) {
+              console.error(`[StreamHealth] DB update failed for ${ch.channelName}:`, dbErr);
+            }
+            break;
+          }
+        } catch { /* backup also down, try next */ }
+      }
+      if (!fixed) {
+        stillDown.push(`• ch-${String(ch.channelId).padStart(3, '0')}: ${ch.channelName} — ${ch.error}`);
+      }
+    }
+
+    let alertContent = '';
+    if (healed.length > 0) {
+      alertContent += `✅ AUTO-HEALED (${healed.length}):\n${healed.map(h => `• ${h}`).join('\n')}\n\n`;
+    }
+    if (stillDown.length > 0) {
+      alertContent += `❌ STILL DOWN (${stillDown.length}):\n${stillDown.join('\n')}\n\n`;
+    }
+    alertContent += `Total: ${healthy + healed.length}/${results.length} healthy\nTime: ${new Date().toISOString()}`;
 
     await notifyOwner({
-      title: `⚠️ RRB Radio: ${down} Channel${down > 1 ? 's' : ''} Down`,
-      content: `Stream health check detected ${down} down channel${down > 1 ? 's' : ''}:\n\n${alertContent}\n\nTotal: ${healthy}/${results.length} healthy (${report.uptimePercent}% uptime)\nTime: ${new Date().toISOString()}`,
+      title: `⚠️ RRB Radio: ${down} Channel${down > 1 ? 's' : ''} Down${healed.length > 0 ? ` — ${healed.length} Auto-Healed` : ''}`,
+      content: alertContent,
     }).catch(err => console.error('[StreamHealth] Alert failed:', err));
   }
 

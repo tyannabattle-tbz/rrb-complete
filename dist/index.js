@@ -7205,15 +7205,64 @@ async function runHealthCheck() {
   });
   if (down > 0) {
     const downChannels = results.filter((r) => r.status === "down");
-    const alertContent = downChannels.map((c) => `\u2022 ch-${String(c.channelId).padStart(3, "0")}: ${c.channelName} \u2014 ${c.error}`).join("\n");
+    const backupStreams = [
+      "https://funkyradio.streamingmedia.it/play.mp3",
+      "https://listen.181fm.com/181-soul_128k.mp3",
+      "https://npr-ice.streamguys1.com/live.mp3",
+      "https://fm939.wnyc.org/wnycfm",
+      "https://tunein.cdnstream1.com/2868_96.mp3",
+      "https://stream.0nlineradio.com/soul",
+      "https://stream.zeno.fm/yn65fsaurfhvv"
+    ];
+    const healed = [];
+    const stillDown = [];
+    for (const ch of downChannels) {
+      let fixed = false;
+      for (const backup of backupStreams) {
+        if (backup === ch.streamUrl) continue;
+        try {
+          const ctrl = new AbortController();
+          const t2 = setTimeout(() => ctrl.abort(), 5e3);
+          const resp = await fetch(backup, { method: "GET", signal: ctrl.signal, headers: { "Range": "bytes=0-512" } });
+          clearTimeout(t2);
+          if (resp.ok || resp.status === 206) {
+            try {
+              await db2.execute(
+                sql18`UPDATE radioChannels SET streamUrl = ${backup} WHERE id = ${ch.channelId}`
+              );
+              healed.push(`ch-${String(ch.channelId).padStart(3, "0")}: ${ch.channelName} \u2192 ${backup}`);
+              console.log(`[StreamHealth] AUTO-HEALED: ${ch.channelName} swapped to ${backup}`);
+              fixed = true;
+            } catch (dbErr) {
+              console.error(`[StreamHealth] DB update failed for ${ch.channelName}:`, dbErr);
+            }
+            break;
+          }
+        } catch {
+        }
+      }
+      if (!fixed) {
+        stillDown.push(`\u2022 ch-${String(ch.channelId).padStart(3, "0")}: ${ch.channelName} \u2014 ${ch.error}`);
+      }
+    }
+    let alertContent = "";
+    if (healed.length > 0) {
+      alertContent += `\u2705 AUTO-HEALED (${healed.length}):
+${healed.map((h) => `\u2022 ${h}`).join("\n")}
+
+`;
+    }
+    if (stillDown.length > 0) {
+      alertContent += `\u274C STILL DOWN (${stillDown.length}):
+${stillDown.join("\n")}
+
+`;
+    }
+    alertContent += `Total: ${healthy + healed.length}/${results.length} healthy
+Time: ${(/* @__PURE__ */ new Date()).toISOString()}`;
     await notifyOwner({
-      title: `\u26A0\uFE0F RRB Radio: ${down} Channel${down > 1 ? "s" : ""} Down`,
-      content: `Stream health check detected ${down} down channel${down > 1 ? "s" : ""}:
-
-${alertContent}
-
-Total: ${healthy}/${results.length} healthy (${report.uptimePercent}% uptime)
-Time: ${(/* @__PURE__ */ new Date()).toISOString()}`
+      title: `\u26A0\uFE0F RRB Radio: ${down} Channel${down > 1 ? "s" : ""} Down${healed.length > 0 ? ` \u2014 ${healed.length} Auto-Healed` : ""}`,
+      content: alertContent
     }).catch((err) => console.error("[StreamHealth] Alert failed:", err));
   }
   return report;

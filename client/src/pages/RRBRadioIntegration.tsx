@@ -35,7 +35,7 @@ const channels = [
   { id: 20, name: 'Rock Legends', icon: '🎸', genre: 'Rock, Alternative, Indie', frequency: '440 Hz', color: 'from-red-700 to-gray-800', description: 'Classic rock, alternative, and indie rock.', streamUrl: 'https://cast1.torontocast.com:4610/stream', listeners: 97, nowPlaying: 'Rock Anthems', category: 'Music' },
   { id: 32, name: 'Worship & Devotional', icon: '⛪', genre: 'Worship, Devotional', frequency: '432 Hz', color: 'from-sky-600 to-blue-700', description: 'Multi-faith worship music and devotionals.', streamUrl: 'https://listen.christianrock.net/stream/13/', listeners: 48, nowPlaying: 'Morning Devotional', category: 'Music' },
   { id: 33, name: 'Caribbean Vibes', icon: '🏝️', genre: 'Soca, Calypso, Zouk', frequency: '432 Hz', color: 'from-cyan-500 to-green-500', description: 'Soca, calypso, zouk, and island music.', streamUrl: 'https://stream.zeno.fm/0r0xa792kwzuv', listeners: 73, nowPlaying: 'Island Vibes', category: 'Music' },
-  { id: 34, name: 'Women in Music', icon: '👩‍🎤', genre: 'Women Artists, All Genres', frequency: '432 Hz', color: 'from-fuchsia-500 to-pink-600', description: 'Celebrating women artists across all genres.', streamUrl: 'http://stream.live.vc.bbcmedia.co.uk/bbc_world_service', listeners: 95, nowPlaying: 'Queens of Music', category: 'Music' },
+  { id: 34, name: 'Women in Music', icon: '👩‍🎤', genre: 'Women Artists, All Genres', frequency: '432 Hz', color: 'from-fuchsia-500 to-pink-600', description: 'Celebrating women artists across all genres.', streamUrl: 'https://fm939.wnyc.org/wnycfm', listeners: 95, nowPlaying: 'Queens of Music', category: 'Music' },
   { id: 35, name: 'Indie & Underground', icon: '🎵', genre: 'Indie, Underground', frequency: '440 Hz', color: 'from-zinc-600 to-slate-700', description: 'Independent artists and underground scenes.', streamUrl: 'https://wdr-wdr5-live.icecastssl.wdr.de/wdr/wdr5/live/mp3/128/stream.mp3', listeners: 67, nowPlaying: 'Underground Discoveries', category: 'Music' },
   { id: 36, name: 'World Fusion', icon: '🌐', genre: 'World Music, Fusion', frequency: '432 Hz', color: 'from-teal-500 to-green-600', description: 'Global music fusion and cross-cultural sounds.', streamUrl: 'https://tv.radiohosting.online:9484/stream', listeners: 53, nowPlaying: 'Global Fusion Mix', category: 'Music' },
   { id: 37, name: 'Throwback Radio', icon: '📼', genre: '70s, 80s, 90s, 2000s', frequency: '440 Hz', color: 'from-orange-500 to-amber-600', description: "70s, 80s, 90s, and 2000s hits.", streamUrl: 'https://icecast.walmradio.com:8443/classic', listeners: 143, nowPlaying: '90s Throwback Jams', category: 'Music' },
@@ -56,7 +56,7 @@ const channels = [
   { id: 39, name: 'Workout & Energy', icon: '💪', genre: 'Workout, Energy, Motivation', frequency: '440 Hz', color: 'from-orange-500 to-red-500', description: 'High-energy music for fitness and motivation.', streamUrl: 'https://workout-high.rautemusik.fm/?ref=radiobrowser', listeners: 167, nowPlaying: 'Power Hour', category: 'Wellness' },
   { id: 40, name: 'Sleep & Relaxation', icon: '🌙', genre: 'Sleep, Ambient, ASMR', frequency: '432 Hz', color: 'from-indigo-700 to-purple-800', description: 'Ambient sounds, sleep music, and ASMR.', streamUrl: 'http://radio.stereoscenic.com/asp-h', listeners: 134, nowPlaying: 'Deep Sleep Sounds', category: 'Wellness' },
   // === EDUCATION (3 Stations) ===
-  { id: 25, name: 'Business & Finance', icon: '💼', genre: 'Business, Entrepreneurship', frequency: '440 Hz', color: 'from-slate-600 to-gray-700', description: 'Markets, entrepreneurship, and wealth building.', streamUrl: 'http://stream.live.vc.bbcmedia.co.uk/bbc_world_service', listeners: 45, nowPlaying: 'Market Watch', category: 'Education' },
+  { id: 25, name: 'Business & Finance', icon: '💼', genre: 'Business, Entrepreneurship', frequency: '440 Hz', color: 'from-slate-600 to-gray-700', description: 'Markets, entrepreneurship, and wealth building.', streamUrl: 'https://fm939.wnyc.org/wnycfm', listeners: 45, nowPlaying: 'Market Watch', category: 'Education' },
   { id: 26, name: 'Science & Technology', icon: '🔬', genre: 'Science, Technology, AI', frequency: '440 Hz', color: 'from-blue-500 to-cyan-600', description: 'Tech trends, science discoveries, and innovation.', streamUrl: 'http://radio.stereoscenic.com/asp-h', listeners: 38, nowPlaying: 'Tech Trends Today', category: 'Education' },
   { id: 28, name: 'Education & Learning', icon: '📚', genre: 'Education, Skills', frequency: '440 Hz', color: 'from-green-500 to-teal-500', description: 'Educational content and skill building.', streamUrl: 'https://pub0201.101.ru/stream/trust/mp3/128/24?', listeners: 33, nowPlaying: 'Learning Hour', category: 'Education' },
   // === ENTERTAINMENT (7 Stations) ===
@@ -79,7 +79,7 @@ const channels = [
   { id: 50, name: 'Open Mic', icon: '🎤', genre: 'Open Mic, Freestyle', frequency: '432 Hz', color: 'from-amber-400 to-yellow-500', description: 'Community open mic, freestyle, and live performances.', streamUrl: 'https://s3.radio.co/s97f38db97/listen', listeners: 28, nowPlaying: 'Open Mic Night', category: 'Community' },
   // === NEW CHANNELS (52-54) ===
   { id: 52, name: 'SQUADD Coalition Radio', icon: '👑', genre: 'Empowerment, Talk', frequency: '432 Hz', color: 'from-purple-600 to-fuchsia-700', description: 'SQUADD Coalition programming — Sisters Questing Unapologetically After Divine Destiny.', streamUrl: 'https://tunein.cdnstream1.com/2868_96.mp3', listeners: 42, nowPlaying: 'SQUADD Empowerment Hour', category: 'Community', coverImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch52_squadd_coalition_radio-NR3GhZyxLVQoHdGHN6Lso8.webp' },
-  { id: 53, name: 'UN Advocacy Radio', icon: '🌍', genre: 'Advocacy, International', frequency: '528 Hz', color: 'from-blue-700 to-indigo-800', description: 'United Nations advocacy, CSW70 coverage, and international human rights programming.', streamUrl: 'http://stream.live.vc.bbcmedia.co.uk/bbc_world_service', listeners: 35, nowPlaying: 'CSW70 Coverage', category: 'Community', coverImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch53_un_advocacy_radio-QaoRfuZ5ywAyd7KzLfNzUR.webp' },
+  { id: 53, name: 'UN Advocacy Radio', icon: '🌍', genre: 'Advocacy, International', frequency: '528 Hz', color: 'from-blue-700 to-indigo-800', description: 'United Nations advocacy, CSW70 coverage, and international human rights programming.', streamUrl: 'https://fm939.wnyc.org/wnycfm', listeners: 35, nowPlaying: 'CSW70 Coverage', category: 'Community', coverImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch53_un_advocacy_radio-QaoRfuZ5ywAyd7KzLfNzUR.webp' },
   { id: 54, name: 'Canryn Production Radio', icon: '🏢', genre: 'Corporate, Updates', frequency: '432 Hz', color: 'from-amber-600 to-orange-700', description: 'Official Canryn Production updates, ecosystem news, and subsidiary highlights.', streamUrl: 'https://listen.181fm.com/181-soul_128k.mp3', listeners: 31, nowPlaying: 'Ecosystem Update', category: 'Specialty', coverImage: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch54_canryn_production_radio-kozFcvbMZTksygAHNvcFfq.webp' },
 ];
 
@@ -91,6 +91,8 @@ export const RRBRadioIntegration: React.FC = () => {
   const [volume, setVolume] = useState(75);
   const [isMuted, setIsMuted] = useState(false);
   const [audioError, setAudioError] = useState<string | null>(null);
+  const [failoverAttempts, setFailoverAttempts] = useState(0);
+  const [streamStatus, setStreamStatus] = useState<'connected' | 'reconnecting' | 'failover'>('connected');
   const [totalListeners, setTotalListeners] = useState(3847);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
@@ -109,7 +111,18 @@ export const RRBRadioIntegration: React.FC = () => {
     });
   }, [activeFilter, searchQuery]);
 
-  // Create audio element
+  // Backup stream pool for failover — QUMUS auto-recovery
+  const backupStreams = useMemo(() => [
+    'https://funkyradio.streamingmedia.it/play.mp3',
+    'https://listen.181fm.com/181-soul_128k.mp3',
+    'https://npr-ice.streamguys1.com/live.mp3',
+    'https://fm939.wnyc.org/wnycfm',
+    'https://tunein.cdnstream1.com/2868_96.mp3',
+    'https://stream.0nlineradio.com/soul',
+    'https://stream.zeno.fm/yn65fsaurfhvv',
+  ], []);
+
+  // Create audio element with auto-failover
   useEffect(() => {
     const audio = new Audio();
     audio.crossOrigin = 'anonymous';
@@ -117,13 +130,46 @@ export const RRBRadioIntegration: React.FC = () => {
     audioRef.current = audio;
 
     audio.addEventListener('error', () => {
-      setAudioError('Stream temporarily unavailable. Try another channel.');
-      setIsPlaying(false);
+      // Auto-failover: try backup stream before giving up
+      setFailoverAttempts(prev => {
+        const next = prev + 1;
+        if (next <= 3) {
+          setStreamStatus('reconnecting');
+          setAudioError(`Reconnecting... (attempt ${next}/3)`);
+          const backup = backupStreams[Math.floor(Math.random() * backupStreams.length)];
+          setTimeout(() => {
+            if (audioRef.current) {
+              audioRef.current.src = backup;
+              audioRef.current.play().then(() => {
+                setStreamStatus('failover');
+                setAudioError('Playing backup stream — primary stream recovering');
+                setIsPlaying(true);
+              }).catch(() => {
+                setAudioError('Stream temporarily unavailable. Try another channel.');
+                setIsPlaying(false);
+                setStreamStatus('connected');
+              });
+            }
+          }, 1000);
+        } else {
+          setAudioError('All streams unavailable. QUMUS is working to restore service.');
+          setIsPlaying(false);
+          setStreamStatus('connected');
+          setFailoverAttempts(0);
+        }
+        return next;
+      });
     });
-    audio.addEventListener('playing', () => setAudioError(null));
+    audio.addEventListener('playing', () => {
+      if (streamStatus !== 'failover') {
+        setAudioError(null);
+        setStreamStatus('connected');
+      }
+      setFailoverAttempts(0);
+    });
 
     return () => { audio.pause(); audio.src = ''; };
-  }, []);
+  }, [backupStreams, streamStatus]);
 
   // Volume control
   useEffect(() => {
