@@ -91,7 +91,7 @@ export default function SquaddMeetingRoom() {
     const loadAndCreate = () => {
       if (jitsiApiRef.current) return;
       try {
-        const api = new (window as any).JitsiMeetExternalAPI('meet.ffmuc.net', {
+        const api = new (window as any).JitsiMeetExternalAPI('meet.jit.si', {
           roomName: `rrb-${roomId}`,
           parentNode: jitsiContainerRef.current!,
           width: '100%',
@@ -132,7 +132,7 @@ export default function SquaddMeetingRoom() {
     };
     if (!(window as any).JitsiMeetExternalAPI) {
       const script = document.createElement('script');
-      script.src = 'https://meet.ffmuc.net/external_api.js';
+      script.src = 'https://meet.jit.si/external_api.js';
       script.onload = loadAndCreate;
       document.head.appendChild(script);
     } else {
@@ -307,6 +307,39 @@ export default function SquaddMeetingRoom() {
             <Badge className="bg-blue-900/30 text-blue-400 border-blue-700/30">
               <Video className="w-3 h-3 mr-1" /> Zoom
             </Badge>
+          </div>
+        </div>
+      </div>
+
+      {/* Room Transfer Bar — Always Visible */}
+      <div className="bg-[#0D0D0D] border-b border-[#D4A843]/10">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="w-4 h-4 text-[#D4A843]" />
+            <span className="text-sm font-semibold text-[#D4A843]">Quick Room Transfer</span>
+            <span className="text-xs text-[#E8E0D0]/40 ml-1">— Switch rooms seamlessly</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {ROOMS.map(room => (
+              <button
+                key={room.id}
+                onClick={() => transferToRoom(room.id)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border ${
+                  activeRoom === room.id
+                    ? 'bg-[#D4A843]/20 border-[#D4A843]/50 text-[#D4A843]'
+                    : 'bg-[#111111] border-[#D4A843]/10 text-[#E8E0D0]/70 hover:border-[#D4A843]/30 hover:text-[#E8E0D0]'
+                }`}
+              >
+                <span className="text-lg">{room.icon}</span>
+                <div className="text-left">
+                  <div className="font-medium text-xs leading-tight">{room.name}</div>
+                  <div className="text-[10px] opacity-50">{room.schedule}</div>
+                </div>
+                {activeRoom === room.id && (
+                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse ml-1" />
+                )}
+              </button>
+            ))}
           </div>
         </div>
       </div>

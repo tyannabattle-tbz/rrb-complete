@@ -4106,3 +4106,7 @@
 - [x] Rename LaShanna to Luv Russell across entire site
 - [x] Update LaShanna page filename and route to Luv Russell
 - [x] Update database records for LaShanna to Luv Russell
+- [x] Fix translation feature showing only emoji - add proper text labels
+- [x] Add visible seamless room transfer buttons to meeting room UI
+- [x] Fix Jitsi connection errors on mobile (Reconnect timed out, cookie errors)
+- [x] Switch Jitsi to more reliable server for mobile Safari compatibility

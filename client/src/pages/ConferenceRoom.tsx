@@ -438,7 +438,7 @@ export default function ConferenceRoom() {
     if (jitsiApiRef.current || !jitsiContainerRef.current) return;
 
     try {
-      const api = new window.JitsiMeetExternalAPI('meet.ffmuc.net', {
+      const api = new window.JitsiMeetExternalAPI('meet.jit.si', {
         roomName,
         parentNode: jitsiContainerRef.current,
         width: '100%',
@@ -1030,7 +1030,7 @@ export default function ConferenceRoom() {
                 <Button onClick={() => { setConnectionError(null); jitsiApiRef.current = null; initJitsi(); }} variant="outline" className="border-amber-500 text-amber-400">
                   Retry
                 </Button>
-                <Button onClick={() => { const roomName = conference?.room_code || `rrb-room-${conferenceId}`; window.open(`https://meet.ffmuc.net/${roomName}`, '_blank'); }} className="bg-amber-600 hover:bg-amber-700 text-white">
+                <Button onClick={() => { const roomName = conference?.room_code || `rrb-room-${conferenceId}`; window.open(`https://meet.jit.si/${roomName}`, '_blank'); }} className="bg-amber-600 hover:bg-amber-700 text-white">
                   Open in Jitsi Tab
                 </Button>
               </div>

@@ -518,6 +518,7 @@ export default function InteractiveFlyer() {
               >
                 <Languages className="w-4 h-4 mr-1" />
                 {LANGUAGES.find(l => l.code === lang)?.flag}
+                <span className="text-xs ml-0.5">{LANGUAGES.find(l => l.code === lang)?.label}</span>
                 <ChevronDown className="w-3 h-3 ml-1" />
               </Button>
               {showLangMenu && (
