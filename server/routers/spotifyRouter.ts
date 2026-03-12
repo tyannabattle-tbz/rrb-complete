@@ -35,7 +35,7 @@ const RRB_CHANNELS = [
   { id: 36, name: 'World Fusion', frequency: 432, spotifyPlaylistId: 'playlist_worldfusion', category: 'music' },
   { id: 37, name: 'Throwback Radio', frequency: 440, spotifyPlaylistId: 'playlist_throwback', category: 'music' },
   { id: 38, name: 'Love Songs', frequency: 432, spotifyPlaylistId: 'playlist_lovesongs', category: 'music' },
-  { id: 51, name: 'C.J. Battle Radio', frequency: 432, spotifyPlaylistId: '2kFnLPBd40yxliDHZZpAPy', category: 'music' },
+  { id: 51, name: 'C.J. Battle Radio', frequency: 432, spotifyPlaylistId: '2kFnLPBd40yxliDHZZpAPy', category: 'music', isArtist: true },
   // TALK (3)
   { id: 2, name: 'Podcast Network', frequency: 432, spotifyPlaylistId: 'playlist_podcast', category: 'talk' },
   { id: 8, name: 'Sports Talk', frequency: 440, spotifyPlaylistId: 'playlist_sports', category: 'talk' },
@@ -126,6 +126,56 @@ async function getPlaylistTracks(playlistId: string, accessToken: string) {
   return response.data.items;
 }
 
+async function getArtistTopTracks(artistId: string, accessToken: string) {
+  const response = await axios.get(
+    `${SPOTIFY_API_BASE}/artists/${artistId}/top-tracks`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      params: { market: 'US' },
+    }
+  );
+  let allTracks = response.data.tracks || [];
+  try {
+    const albumsResponse = await axios.get(
+      `${SPOTIFY_API_BASE}/artists/${artistId}/albums`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: { limit: 10, include_groups: 'album,single' },
+      }
+    );
+    for (const album of (albumsResponse.data.items || []).slice(0, 5)) {
+      try {
+        const albumTracks = await axios.get(
+          `${SPOTIFY_API_BASE}/albums/${album.id}/tracks`,
+          { headers: { Authorization: `Bearer ${accessToken}` }, params: { limit: 50 } }
+        );
+        const enrichedTracks = (albumTracks.data.items || []).map((t: any) => ({
+          ...t, album: { images: album.images },
+        }));
+        allTracks = [...allTracks, ...enrichedTracks];
+      } catch (e) { /* skip album */ }
+    }
+  } catch (e) { /* albums fetch failed */ }
+  const seen = new Set<string>();
+  return allTracks.filter((t: any) => {
+    const key = t.name?.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+async function getArtistAlbums(artistId: string, accessToken: string) {
+  const response = await axios.get(
+    `${SPOTIFY_API_BASE}/artists/${artistId}/albums`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      params: { limit: 20, include_groups: 'album,single' },
+    }
+  );
+  return response.data.items || [];
+}
+
 export const spotifyRouter = router({
   // Get all RRB channels with Spotify mapping
   getChannels: publicProcedure.query(async () => {
@@ -147,8 +197,34 @@ export const spotifyRouter = router({
 
       try {
         const accessToken = await getSpotifyAccessToken();
+        const isArtist = (channel as any).isArtist;
+        if (isArtist) {
+          const tracks = await getArtistTopTracks(channel.spotifyPlaylistId, accessToken);
+          const albums = await getArtistAlbums(channel.spotifyPlaylistId, accessToken);
+          return {
+            ...channel,
+            isArtistStation: true,
+            tracks: tracks.map((track: any) => ({
+              id: track.id,
+              name: track.name,
+              artist: track.artists?.[0]?.name || 'C.J. Battle',
+              duration: track.duration_ms,
+              url: track.external_urls?.spotify,
+              imageUrl: track.album?.images?.[0]?.url,
+              previewUrl: track.preview_url,
+            })),
+            albums: albums.map((album: any) => ({
+              id: album.id,
+              name: album.name,
+              imageUrl: album.images?.[0]?.url,
+              releaseDate: album.release_date,
+              totalTracks: album.total_tracks,
+              url: album.external_urls?.spotify,
+            })),
+            trackCount: tracks.length,
+          };
+        }
         const tracks = await getPlaylistTracks(channel.spotifyPlaylistId, accessToken);
-
         return {
           ...channel,
           tracks: tracks.map((item: any) => ({

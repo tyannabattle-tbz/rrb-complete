@@ -1,0 +1,66 @@
+{
+  "query": "SELECT id, name, title, organization, mission_area, slug FROM squadd_members WHERE is_active = 1 ORDER BY display_order",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, name, title, organization, mission_area, slug FROM squadd_members WHERE is_active = 1 ORDER BY display_order",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Tyanna RaaShawn Battle",
+      "title": "Founder & Executive Director",
+      "organization": "Sweet Miracles 501(c)(3) & 508",
+      "mission_area": "Elder Protection & Technology",
+      "slug": "tyanna-battle"
+    },
+    {
+      "id": "2",
+      "name": "Karen Jones",
+      "title": "CEO & Founder",
+      "organization": "WHOM IT CONCERNS, INC.",
+      "mission_area": "Agriculture & Environmental Justice",
+      "slug": "karen-jones"
+    },
+    {
+      "id": "3",
+      "name": "Furlesia \"Freedom\" Bell",
+      "title": "REALTOR & Community Developer",
+      "organization": "Our Town Realty",
+      "mission_area": "Community Development & Housing",
+      "slug": "furlesia-bell"
+    },
+    {
+      "id": "4",
+      "name": "Sherrette \"Lady Freedom\" Spicer",
+      "title": "Virtual Broadcast Anchor & Media Advocate",
+      "organization": "RRB Broadcasting Network",
+      "mission_area": "Media & Communications Justice",
+      "slug": "sherrette-spicer"
+    },
+    {
+      "id": "5",
+      "name": "LaShanna",
+      "title": "Coalition Advocate & Community Organizer",
+      "organization": "SQUADD Goals Coalition",
+      "mission_area": "Disability Rights & Advocacy",
+      "slug": "lashanna"
+    },
+    {
+      "id": "6",
+      "name": "Elder Protection Advocate",
+      "title": "Senior Rights & Legal Protection Specialist",
+      "organization": "Sweet Miracles Elder Protection Division",
+      "mission_area": "Elder Protection & Legal Justice",
+      "slug": "elder-protection"
+    },
+    {
+      "id": "7",
+      "name": "Justice & Technology Advocate",
+      "title": "Digital Justice & Innovation Specialist",
+      "organization": "Canryn Production Technology Division",
+      "mission_area": "Justice & Technology Innovation",
+      "slug": "justice-technology"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\ttitle\torganization\tmission_area\tslug\n1\tTyanna RaaShawn Battle\tFounder & Executive Director\tSweet Miracles 501(c)(3) & 508\tElder Protection & Technology\ttyanna-battle\n2\tKaren Jones\tCEO & Founder\tWHOM IT CONCERNS, INC.\tAgriculture & Environmental Justice\tkaren-jones\n3\tFurlesia \"Freedom\" Bell\tREALTOR & Community Developer\tOur Town Realty\tCommunity Development & Housing\tfurlesia-bell\n4\tSherrette \"Lady Freedom\" Spicer\tVirtual Broadcast Anchor & Media Advocate\tRRB Broadcasting Network\tMedia & Communications Justice\tsherrette-spicer\n5\tLaShanna\tCoalition Advocate & Community Organizer\tSQUADD Goals Coalition\tDisability Rights & Advocacy\tlashanna\n6\tElder Protection Advocate\tSenior Rights & Legal Protection Specialist\tSweet Miracles Elder Protection Division\tElder Protection & Legal Justice\telder-protection\n7\tJustice & Technology Advocate\tDigital Justice & Innovation Specialist\tCanryn Production Technology Division\tJustice & Technology Innovation\tjustice-technology\n",
+  "stderr": "",
+  "execution_time_ms": 91
+}

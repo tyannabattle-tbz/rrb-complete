@@ -26910,7 +26910,7 @@ var RRB_CHANNELS = [
   { id: 36, name: "World Fusion", frequency: 432, spotifyPlaylistId: "playlist_worldfusion", category: "music" },
   { id: 37, name: "Throwback Radio", frequency: 440, spotifyPlaylistId: "playlist_throwback", category: "music" },
   { id: 38, name: "Love Songs", frequency: 432, spotifyPlaylistId: "playlist_lovesongs", category: "music" },
-  { id: 51, name: "C.J. Battle Radio", frequency: 432, spotifyPlaylistId: "2kFnLPBd40yxliDHZZpAPy", category: "music" },
+  { id: 51, name: "C.J. Battle Radio", frequency: 432, spotifyPlaylistId: "2kFnLPBd40yxliDHZZpAPy", category: "music", isArtist: true },
   // TALK (3)
   { id: 2, name: "Podcast Network", frequency: 432, spotifyPlaylistId: "playlist_podcast", category: "talk" },
   { id: 8, name: "Sports Talk", frequency: 440, spotifyPlaylistId: "playlist_sports", category: "talk" },
@@ -26992,6 +26992,57 @@ async function getPlaylistTracks(playlistId, accessToken) {
   );
   return response.data.items;
 }
+async function getArtistTopTracks(artistId, accessToken) {
+  const response = await axios3.get(
+    `${SPOTIFY_API_BASE}/artists/${artistId}/top-tracks`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      params: { market: "US" }
+    }
+  );
+  let allTracks = response.data.tracks || [];
+  try {
+    const albumsResponse = await axios3.get(
+      `${SPOTIFY_API_BASE}/artists/${artistId}/albums`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: { limit: 10, include_groups: "album,single" }
+      }
+    );
+    for (const album of (albumsResponse.data.items || []).slice(0, 5)) {
+      try {
+        const albumTracks = await axios3.get(
+          `${SPOTIFY_API_BASE}/albums/${album.id}/tracks`,
+          { headers: { Authorization: `Bearer ${accessToken}` }, params: { limit: 50 } }
+        );
+        const enrichedTracks = (albumTracks.data.items || []).map((t2) => ({
+          ...t2,
+          album: { images: album.images }
+        }));
+        allTracks = [...allTracks, ...enrichedTracks];
+      } catch (e) {
+      }
+    }
+  } catch (e) {
+  }
+  const seen = /* @__PURE__ */ new Set();
+  return allTracks.filter((t2) => {
+    const key = t2.name?.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+async function getArtistAlbums(artistId, accessToken) {
+  const response = await axios3.get(
+    `${SPOTIFY_API_BASE}/artists/${artistId}/albums`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      params: { limit: 20, include_groups: "album,single" }
+    }
+  );
+  return response.data.items || [];
+}
 var spotifyRouter = router({
   // Get all RRB channels with Spotify mapping
   getChannels: publicProcedure.query(async () => {
@@ -27009,6 +27060,33 @@ var spotifyRouter = router({
     if (!channel) throw new Error("Channel not found");
     try {
       const accessToken = await getSpotifyAccessToken();
+      const isArtist = channel.isArtist;
+      if (isArtist) {
+        const tracks2 = await getArtistTopTracks(channel.spotifyPlaylistId, accessToken);
+        const albums = await getArtistAlbums(channel.spotifyPlaylistId, accessToken);
+        return {
+          ...channel,
+          isArtistStation: true,
+          tracks: tracks2.map((track) => ({
+            id: track.id,
+            name: track.name,
+            artist: track.artists?.[0]?.name || "C.J. Battle",
+            duration: track.duration_ms,
+            url: track.external_urls?.spotify,
+            imageUrl: track.album?.images?.[0]?.url,
+            previewUrl: track.preview_url
+          })),
+          albums: albums.map((album) => ({
+            id: album.id,
+            name: album.name,
+            imageUrl: album.images?.[0]?.url,
+            releaseDate: album.release_date,
+            totalTracks: album.total_tracks,
+            url: album.external_urls?.spotify
+          })),
+          trackCount: tracks2.length
+        };
+      }
       const tracks = await getPlaylistTracks(channel.spotifyPlaylistId, accessToken);
       return {
         ...channel,

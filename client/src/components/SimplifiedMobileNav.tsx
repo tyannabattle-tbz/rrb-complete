@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Earth, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell, Megaphone, Mic } from 'lucide-react';
+import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Earth, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell, Megaphone, Mic, Activity, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 
@@ -71,6 +71,8 @@ export function SimplifiedMobileNav() {
       items: [
         { id: 'nav-canryn', label: 'Canryn Production', icon: Shield, path: '/canryn' },
         { id: 'nav-analytics', label: 'Analytics', icon: BarChart3, path: '/listener-analytics' },
+        { id: 'nav-meeting', label: 'Meeting Room', icon: Video, path: '/meeting' },
+        { id: 'nav-status', label: 'System Status', icon: Activity, path: '/status' },
         { id: 'nav-notifications', label: 'Notifications', icon: Bell, path: '/notifications' },
         { id: 'nav-settings', label: 'Settings', icon: Settings, path: '/settings' },
       ],

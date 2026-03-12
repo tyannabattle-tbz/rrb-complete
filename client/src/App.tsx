@@ -154,6 +154,7 @@ import { MobileNavigationDrawer } from '@/components/MobileNavigationDrawer';
 import SquaddGoals from '@/pages/SquaddGoals';
 import SquaddMemberProfile from '@/pages/SquaddMemberProfile';
 import SquaddMeetingRoom from '@/pages/SquaddMeetingRoom';
+import SquaddDirectory from '@/pages/SquaddDirectory';
 import SelmaEvent from '@/pages/SelmaEvent';
 import LiveStreamPage from '@/pages/LiveStreamPage';
 import InteractiveFlyer from '@/pages/InteractiveFlyer';
@@ -352,6 +353,7 @@ function Router() {
       <Route path="/status" component={SystemStatusPage} />
       <Route path="/squadd/meeting" component={SquaddMeetingRoom} />
       <Route path="/meeting" component={SquaddMeetingRoom} />
+      <Route path="/squadd/directory" component={SquaddDirectory} />
       <Route path="/squadd" component={SquaddGoals} />
       <Route path="/squadd/:slug" component={SquaddMemberProfile} />
       <Route path="/ty-battle" component={TyBattleProfile} />

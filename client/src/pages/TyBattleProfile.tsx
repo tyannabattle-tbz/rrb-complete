@@ -21,7 +21,7 @@ const IDENTITY_MODES = [
 
 // Core Functions
 const CORE_FUNCTIONS = [
-  { name: 'Podcast Host', icon: Podcast, description: 'Host of RRB Radio programming across 52 channels' },
+  { name: 'Podcast Host', icon: Podcast, description: 'Host of RRB Radio programming across 54 channels' },
   { name: 'AI Assistant', icon: Brain, description: 'Director of the AI Trinity — Valanna, Candy, Seraph' },
   { name: 'Research & Analysis', icon: Search, description: 'Deep investigative research and pattern recognition' },
   { name: 'Advocacy & Justice', icon: Scale, description: 'Elder protection, community rights, and legal advocacy' },
@@ -31,7 +31,7 @@ const CORE_FUNCTIONS = [
 // Ecosystem Modules
 const ECOSYSTEM_MODULES = [
   { name: 'QUMUS', description: 'The Brain — 90% autonomous AI, 14 policies, 18 subsystems', icon: Cpu, link: '/agent', color: 'text-purple-400' },
-  { name: 'RRB Radio', description: 'The Voice — 52 channels, 13 categories, 24/7 broadcasting', icon: Radio, link: '/live', color: 'text-amber-400' },
+  { name: 'RRB Radio', description: 'The Voice — 54 channels, 13 categories, 24/7 broadcasting', icon: Radio, link: '/live', color: 'text-amber-400' },
   { name: 'HybridCast', description: 'The Lifeline — 100% offline emergency broadcast PWA', icon: Shield, link: '/hybridcast', color: 'text-red-400' },
   { name: 'Sweet Miracles', description: 'The Heart — 501(c)(3) nonprofit, grants & donations', icon: Heart, link: '/donate', color: 'text-pink-400' },
   { name: 'SQUADD Coalition', description: 'The Movement — 7 women, 7 missions, 1 coalition', icon: Users, link: '/squadd', color: 'text-blue-400' },

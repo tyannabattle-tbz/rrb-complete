@@ -4097,3 +4097,9 @@
 - [x] Seamless room-to-room transfer without disconnection
 - [x] Multi-room navigation panel in meeting room
 - [x] Persistent audio/video connection during room switch
+- [x] FIX: CJ Battle Radio (ch-051) not streaming his music — using generic FluxFM stream
+- [ ] SYNC: All pages showing 52 channels need to show 54 (TyBattleProfile, etc.)
+- [ ] Set up CJ Battle actual music stream from his platforms
+- [x] Add Meeting Room + Status links to main navigation
+- [x] Meeting recording auto-archive to S3
+- [x] SQUADD member directory with profiles
