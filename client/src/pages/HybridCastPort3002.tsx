@@ -8,7 +8,7 @@ import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import {
   AlertTriangle, Wifi, MapPin, Clock, Zap, Radio, Shield,
-  Activity, Globe, Bell, Send, ChevronDown, ChevronUp,
+  Activity, Earth, Bell, Send, ChevronDown, ChevronUp,
   CheckCircle, XCircle, Volume2, Users, Loader2
 } from 'lucide-react';
 
@@ -335,7 +335,7 @@ export default function HybridCastPort3002() {
                 onClick={() => window.open('https://www.hybridcast.sbs', '_blank')}
                 className="w-full bg-gradient-to-r from-red-600 to-yellow-600 hover:from-red-700 hover:to-yellow-700"
               >
-                <Globe className="w-4 h-4 mr-2" /> HybridCast.sbs
+                <Earth className="w-4 h-4 mr-2" /> HybridCast.sbs
               </Button>
             </CardContent>
           </Card>

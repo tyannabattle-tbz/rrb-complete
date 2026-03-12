@@ -4,7 +4,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Globe, Languages, Mic, MicOff, Volume2, VolumeX, Settings, Check } from "lucide-react";
+import { ArrowLeft, Earth, Languages, Mic, MicOff, Volume2, VolumeX, Settings, Check } from "lucide-react";
 
 const SUPPORTED_LANGUAGES = [
   { code: 'en', name: 'English', flag: '\ud83c\uddfa\ud83c\uddf8' },
@@ -161,7 +161,7 @@ export default function ConferenceTranslation() {
         <Card className="bg-white/5 border-white/10 mb-6">
           <CardHeader className="pb-3">
             <CardTitle className="text-white text-lg flex items-center gap-2">
-              <Globe className="w-5 h-5 text-blue-400" />
+              <Earth className="w-5 h-5 text-blue-400" />
               Select Language ({SUPPORTED_LANGUAGES.length} Available)
             </CardTitle>
           </CardHeader>
@@ -302,7 +302,7 @@ export default function ConferenceTranslation() {
         {/* Accessibility Notice */}
         <div className="mt-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
           <div className="flex items-start gap-3">
-            <Globe className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+            <Earth className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
             <div>
               <h3 className="text-blue-400 font-semibold text-sm">Accessibility & Inclusion</h3>
               <p className="text-blue-300/60 text-sm mt-1">

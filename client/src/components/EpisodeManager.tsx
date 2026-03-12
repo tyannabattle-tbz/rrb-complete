@@ -7,7 +7,7 @@ import { useState, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 import {
   Upload, Mic2, Play, Pause, Trash2, Send, Edit2, Clock, Download,
-  CheckCircle, AlertCircle, Loader2, FileAudio, Plus, X, Save, Globe
+  CheckCircle, AlertCircle, Loader2, FileAudio, Plus, X, Save, Earth
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -245,7 +245,7 @@ function EpisodeCard({ episode, onRefresh }: { episode: any; onRefresh: () => vo
   const statusIcons: Record<string, React.ReactNode> = {
     draft: <Edit2 className="w-3 h-3" />,
     ready: <CheckCircle className="w-3 h-3" />,
-    published: <Globe className="w-3 h-3" />,
+    published: <Earth className="w-3 h-3" />,
     scheduled: <Clock className="w-3 h-3" />,
   };
 

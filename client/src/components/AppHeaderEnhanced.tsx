@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon, Map as MapIcon, Shield, Users, Gamepad2, BookOpen, Globe, Headphones, Monitor, Calendar, Megaphone } from 'lucide-react';
+import { Search, Download, Share2, Menu, X, Home, BarChart3, MessageSquare, MapPin, Radio, Settings, Music, Zap, Mic, TrendingUp, Heart, Eye, Truck, Video as VideoIcon, Map as MapIcon, Shield, Users, Gamepad2, BookOpen, Earth, Headphones, Monitor, Calendar, Megaphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -68,7 +68,7 @@ export function AppHeaderEnhanced() {
     { id: 'nav-7', label: 'Broadcast', icon: Zap, path: '/broadcast-hub', action: () => navigate('/broadcast-hub') },
     { id: 'nav-8', label: 'Live Stream', icon: Eye, path: '/live', action: openRestream },
     { id: 'nav-9', label: 'Donate', icon: Heart, path: '/donate', action: () => navigate('/donate') },
-    { id: 'nav-10', label: 'Ecosystem', icon: Globe, path: '/ecosystem', action: () => navigate('/ecosystem') },
+    { id: 'nav-10', label: 'Ecosystem', icon: Earth, path: '/ecosystem', action: () => navigate('/ecosystem') },
     { id: 'nav-11', label: 'Games', icon: Gamepad2, path: '/games', action: () => navigate('/games') },
     { id: 'nav-12', label: 'Legacy', icon: BookOpen, path: '/legacy', action: () => navigate('/legacy') },
     { id: 'nav-13', label: 'GPS Map', icon: MapPin, path: '/gps-radar', action: () => navigate('/gps-radar') },

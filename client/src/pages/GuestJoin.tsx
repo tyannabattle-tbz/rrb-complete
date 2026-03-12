@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import {
   Video, Users, ArrowLeft, Loader2, Share2, Mic, MicOff,
-  VideoOff, Globe, Copy, Link2
+  VideoOff, Earth, Copy, Link2
 } from 'lucide-react';
 
 // Declare Jitsi API

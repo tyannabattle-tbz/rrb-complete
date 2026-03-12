@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { QRCodeSVG } from 'qrcode.react';
 import {
-  Globe, Shield, Radio, Wifi, Heart, Users, ArrowRight,
+  Earth, Shield, Radio, Wifi, Heart, Users, ArrowRight,
   Zap, MapPin, Calendar, Mail, ExternalLink, ChevronRight,
   Leaf, Home, Accessibility, Scale, Cpu
 } from 'lucide-react';
@@ -142,7 +142,7 @@ export default function SquaddGoals() {
       event: 'UN NGO CSW70 Parallel Event',
       date: 'March 17, 2026',
       description: 'Connecting the African diaspora through technology and advocacy. Building a global blueprint for elder protection and justice.',
-      icon: <Globe className="w-6 h-6" />,
+      icon: <Earth className="w-6 h-6" />,
       status: 'Active',
     },
     {
@@ -386,7 +386,7 @@ export default function SquaddGoals() {
                 title: 'Spread the Word',
                 description: 'Share our mission. Amplify the voices of the voiceless. Use your platform to demand justice.',
                 action: 'Share the Mission',
-                icon: <Globe className="w-6 h-6" />,
+                icon: <Earth className="w-6 h-6" />,
               },
             ].map((item, idx) => (
               <Card key={idx} className="bg-[#111111] border-[#D4A843]/20 hover:border-[#D4A843]/40 transition-all">

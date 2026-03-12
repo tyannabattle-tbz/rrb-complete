@@ -23,7 +23,7 @@ import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
 import {
   LayoutDashboard, LogOut, PanelLeft, Users, Monitor, MessageSquare, Music, Radio,
-  Headphones, Calendar, Zap, Eye, Heart, Globe, Gamepad2, BookOpen, MapPin, Settings,
+  Headphones, Calendar, Zap, Eye, Heart, Earth, Gamepad2, BookOpen, MapPin, Settings,
   Shield, BarChart3, FileText, Bell, Search, ChevronDown, ChevronRight, Video, Mic,
   Newspaper, GitBranch, Webhook, Megaphone, Play, Target, AlertTriangle, Cpu, Wrench,
   Home as HomeIcon, X, Terminal, Phone
@@ -55,7 +55,7 @@ const navSections: NavSection[] = [
       { icon: Monitor, label: "QUMUS Control", path: "/qumus" },
       { icon: Terminal, label: "Command Console", path: "/command-console" },
       { icon: MessageSquare, label: "AI Chat", path: "/qumus-chat" },
-      { icon: Globe, label: "Ecosystem Dashboard", path: "/ecosystem-dashboard" },
+      { icon: Earth, label: "Ecosystem Dashboard", path: "/ecosystem-dashboard" },
       { icon: Cpu, label: "System Health", path: "/health" },
     ],
   },
@@ -87,7 +87,7 @@ const navSections: NavSection[] = [
     items: [
       { icon: Calendar, label: "Convention Hub", path: "/convention-hub" },
       { icon: MapPin, label: "Selma Jubilee", path: "/selma" },
-      { icon: Globe, label: "SQUADD Goals", path: "/squadd" },
+      { icon: Earth, label: "SQUADD Goals", path: "/squadd" },
       { icon: Users, label: "Community", path: "/community" },
       { icon: Users, label: "Community Forums", path: "/community-forums" },
     ],

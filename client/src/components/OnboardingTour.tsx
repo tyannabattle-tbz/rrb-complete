@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import {
-  Monitor, MessageSquare, Radio, Headphones, Calendar, Globe, Heart, Gamepad2,
+  Monitor, MessageSquare, Radio, Headphones, Calendar, Earth, Heart, Gamepad2,
   ChevronRight, ChevronLeft, X, Sparkles, Zap, Play, CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -72,7 +72,7 @@ const tourSteps: TourStep[] = [
     id: 'ecosystem',
     title: 'Ecosystem Dashboard',
     description: 'Bird\'s-eye view of the entire RRB ecosystem: broadcasting status, listener metrics, donation tracking, content scheduling, and subsystem health — all in one place.',
-    icon: Globe,
+    icon: Earth,
     iconColor: 'text-cyan-400',
     iconBg: 'bg-cyan-500/20',
     path: '/ecosystem-dashboard',

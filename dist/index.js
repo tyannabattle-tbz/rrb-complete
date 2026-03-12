@@ -26841,7 +26841,11 @@ var RRB_CHANNELS = [
   // COMMUNITY (3)
   { id: 6, name: "Community Voice", frequency: 432, spotifyPlaylistId: "playlist_community", category: "community" },
   { id: 45, name: "Sweet Miracles", frequency: 528, spotifyPlaylistId: "playlist_sweetmiracles", category: "community" },
-  { id: 50, name: "Open Mic", frequency: 432, spotifyPlaylistId: "playlist_openmic", category: "community" }
+  { id: 50, name: "Open Mic", frequency: 432, spotifyPlaylistId: "playlist_openmic", category: "community" },
+  // NEW CHANNELS (52-54)
+  { id: 52, name: "SQUADD Coalition Radio", frequency: 432, spotifyPlaylistId: "playlist_squadd", category: "community" },
+  { id: 53, name: "UN Advocacy Radio", frequency: 528, spotifyPlaylistId: "playlist_unadvocacy", category: "community" },
+  { id: 54, name: "Canryn Production Radio", frequency: 432, spotifyPlaylistId: "playlist_canrynradio", category: "specialty" }
 ];
 var tokenCache = null;
 async function getSpotifyAccessToken() {
@@ -31234,7 +31238,7 @@ var UN_CAMPAIGN_COMMERCIALS = [
     title: "The Ecosystem \u2014 Technology Meets Purpose",
     category: "promo",
     djVoice: "seraph",
-    script: `Fifty radio channels. Emergency broadcast mesh networks. Autonomous AI orchestration. Real-time donation tracking. Listener analytics across the globe. This is not Silicon Valley. This is Canryn Production \u2014 built by Ty Battle, also known as Ty Bat Zan \u2014 a Black, women-owned technology company from Alabama. On March 17th, we present this ecosystem at the United Nations NGO CSW70. QUMUS runs the brain. HybridCast protects communities. Sweet Miracles heals them. And RRB Radio gives them a voice. The TBZ Operating System \u2014 the future is already here. manuweb.sbs.`,
+    script: `Fifty radio channels. Emergency broadcast mesh networks. Autonomous AI orchestration. Real-time donation tracking. Listener analytics across the world. This is not Silicon Valley. This is Canryn Production \u2014 built by Ty Battle, also known as Ty Bat Zan \u2014 a Black, women-owned technology company from Alabama. On March 17th, we present this ecosystem at the United Nations NGO CSW70. QUMUS runs the brain. HybridCast protects communities. Sweet Miracles heals them. And RRB Radio gives them a voice. The TBZ Operating System \u2014 the future is already here. manuweb.sbs.`,
     duration: 30,
     priority: 7,
     targetChannelGenres: ["Electronic", "Lo-Fi", "Hip-Hop", "Jazz", "Talk", "Community"],

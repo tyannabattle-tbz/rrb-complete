@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import {
   ArrowLeft, PhoneOff, Users, Clock, Copy, Mic, MicOff,
-  Video as VideoIcon, VideoOff, Globe, Shield, UserCircle, Circle,
+  Video as VideoIcon, VideoOff, Earth, Shield, UserCircle, Circle,
   Radio, Tv, ExternalLink, MoreHorizontal, X, Loader2,
   Share2, Link2, QrCode, Camera, Settings, Volume2
 } from 'lucide-react';
@@ -719,7 +719,7 @@ export default function ConferenceRoom() {
             )}
 
             <button onClick={() => setShowInterpreter(!showInterpreter)} className={`h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex ${showInterpreter ? 'text-cyan-400 bg-cyan-500/20' : 'text-cyan-400/70 hover:text-cyan-400'}`} title="Live Interpreter">
-              <Globe className="w-3.5 h-3.5" />
+              <Earth className="w-3.5 h-3.5" />
             </button>
             <button onClick={() => navigate(`/conference/checkin/${conferenceId}`)} className="text-green-400/70 hover:text-green-400 h-7 w-7 items-center justify-center rounded hover:bg-white/5 hidden sm:flex" title="Check-In">
               <Shield className="w-3.5 h-3.5" />
@@ -750,7 +750,7 @@ export default function ConferenceRoom() {
                     <Share2 className="w-4 h-4" /> Share Room Link
                   </button>
                   <button onClick={() => { setShowInterpreter(true); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
-                    <Globe className="w-4 h-4" /> Live Interpreter
+                    <Earth className="w-4 h-4" /> Live Interpreter
                   </button>
                   <button onClick={() => { navigate(`/conference/checkin/${conferenceId}`); setShowMoreTools(false); }} className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/70 hover:bg-gray-800">
                     <Shield className="w-4 h-4" /> Check-In

@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings, Bell, Palette, Globe, LayoutGrid } from "lucide-react";
+import { Settings, Bell, Palette, Earth, LayoutGrid } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { toast } from "sonner";
 
@@ -115,7 +115,7 @@ export default function UserPreferencesPanel() {
           {/* Language Settings */}
           <Card className="p-6 border-0 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-4">
-              <Globe className="w-5 h-5 text-primary" />
+              <Earth className="w-5 h-5 text-primary" />
               <h2 className="text-xl font-semibold text-slate-900">Language</h2>
             </div>
             <div>

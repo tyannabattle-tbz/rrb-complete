@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Globe, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell, Megaphone, Mic } from 'lucide-react';
+import { Menu, X, Home, BarChart3, MessageSquare, Settings, Search, Music, Radio, Zap, MapPin, Earth, Heart, Video, Gamepad2, Share2, Monitor, Headphones, Calendar, Eye, BookOpen, Shield, Bell, Megaphone, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 
@@ -25,7 +25,7 @@ export function SimplifiedMobileNav() {
         { id: 'nav-home', label: 'Home', icon: Home, path: '/' },
         { id: 'nav-qumus', label: 'QUMUS Control', icon: Monitor, path: '/qumus' },
         { id: 'nav-chat', label: 'AI Chat', icon: MessageSquare, path: '/qumus-chat' },
-        { id: 'nav-ecosystem', label: 'Ecosystem', icon: Globe, path: '/ecosystem' },
+        { id: 'nav-ecosystem', label: 'Ecosystem', icon: Earth, path: '/ecosystem' },
       ],
     },
     {
@@ -43,7 +43,7 @@ export function SimplifiedMobileNav() {
       items: [
         { id: 'nav-conventions', label: 'Convention Hub', icon: Calendar, path: '/convention-hub' },
         { id: 'nav-selma', label: 'Selma Jubilee', icon: MapPin, path: '/selma' },
-        { id: 'nav-squadd', label: 'SQUADD Goals', icon: Globe, path: '/squadd' },
+        { id: 'nav-squadd', label: 'SQUADD Goals', icon: Earth, path: '/squadd' },
         { id: 'nav-donate', label: 'Sweet Miracles', icon: Heart, path: '/donate' },
         { id: 'nav-media-blast', label: 'Media Blast', icon: Megaphone, path: '/media-blast' },
       ],

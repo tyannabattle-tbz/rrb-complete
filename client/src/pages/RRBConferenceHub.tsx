@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import {
-  Video, Phone, Users, Globe, Calendar, Clock, Mic,
+  Video, Phone, Users, Earth, Calendar, Clock, Mic,
   Camera, Monitor, MessageSquare, Settings,
   Zap, Radio, Play, Plus, ExternalLink, Copy,
   Shield, Headphones, ArrowRight, Trash2, Eye,
@@ -21,7 +21,7 @@ import { Link } from 'wouter';
 const MEETING_TYPES = [
   { id: 'huddle', label: 'Quick Huddle', icon: Zap, color: 'text-yellow-400', duration: 15, desc: '15-min standup' },
   { id: 'meeting', label: 'Meeting', icon: Users, color: 'text-blue-400', duration: 60, desc: 'Standard meeting' },
-  { id: 'conference', label: 'Conference', icon: Globe, color: 'text-purple-400', duration: 120, desc: 'Large conference' },
+  { id: 'conference', label: 'Conference', icon: Earth, color: 'text-purple-400', duration: 120, desc: 'Large conference' },
   { id: 'webinar', label: 'Webinar', icon: Monitor, color: 'text-green-400', duration: 90, desc: 'Presentation mode' },
   { id: 'broadcast', label: 'Broadcast', icon: Radio, color: 'text-red-400', duration: 60, desc: 'Live broadcast' },
   { id: 'workshop', label: 'Workshop', icon: Settings, color: 'text-orange-400', duration: 180, desc: 'Interactive workshop' },
@@ -313,7 +313,7 @@ export default function RRBConferenceHub() {
               </Link>
               <Link href="/conference/translation/0">
                 <button className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 text-[11px] sm:text-xs font-medium transition-colors whitespace-nowrap">
-                  <Globe className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Translation
+                  <Earth className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Translation
                 </button>
               </Link>
             </div>
@@ -497,7 +497,7 @@ export default function RRBConferenceHub() {
                               <Shield className="w-3 h-3 mr-0.5" /> Check-In
                             </Button>
                             <Button size="sm" variant="outline" onClick={() => navigate(`/conference/translation/${conf.id}`)} className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
-                              <Globe className="w-3 h-3 mr-0.5" /> Translate
+                              <Earth className="w-3 h-3 mr-0.5" /> Translate
                             </Button>
                             <Button size="sm" variant="outline" onClick={openRestream} className="border-purple-500 text-purple-400 hover:bg-purple-500/20 text-[10px] sm:text-xs h-7 sm:h-8 px-2 sm:px-3">
                               <Tv className="w-3 h-3 mr-0.5" /> Stream
@@ -751,7 +751,7 @@ export default function RRBConferenceHub() {
                             <Eye className="w-3 h-3" />
                           </Button>
                           <Button size="sm" variant="outline" onClick={() => navigate(`/conference/translation/${conf.id}`)} className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10" title="Translation overlay">
-                            <Globe className="w-3 h-3" />
+                            <Earth className="w-3 h-3" />
                           </Button>
                           <Button size="sm" onClick={() => navigate(`/conference/room/${conf.id}`)} className="bg-amber-500 hover:bg-amber-600 text-black">
                             <Play className="w-4 h-4 mr-1" /> Start

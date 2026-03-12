@@ -8,7 +8,7 @@ import { trpc } from '@/lib/trpc';
 import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { toast } from 'sonner';
 import {
-  Volume2, VolumeX, Globe, Maximize2, Minimize2, Printer,
+  Volume2, VolumeX, Earth, Maximize2, Minimize2, Printer,
   Share2, Radio, Shield, Heart, Music, Users, Zap, MapPin,
   ExternalLink, Eye, Ear, Languages, Sun, Moon, ChevronDown,
   Play, Pause, SkipForward, RotateCcw, Mail, X, Send,
@@ -772,7 +772,7 @@ export default function InteractiveFlyer() {
             className={highContrast ? 'bg-yellow-500 text-black hover:bg-yellow-400' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'}
             size="sm"
           >
-            <Globe className="w-4 h-4 mr-2" />
+            <Earth className="w-4 h-4 mr-2" />
             View SQUADD Goals
           </Button>
         </div>

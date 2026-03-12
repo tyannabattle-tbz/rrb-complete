@@ -4059,3 +4059,13 @@
 - [x] Update adRotationRouter.ts (1 occurrence)
 - [x] Update captions.srt (2 occurrences)
 - [x] Verify zero remaining 51-channel references
+
+## SYSTEM UPDATE: Remove all globe references — replace with world/map
+- [ ] Audit all globe text references across codebase
+- [ ] Replace globe icon imports with Map/Earth/World alternatives
+- [ ] Replace "globe" text with "world" or "map" in all content
+- [ ] Remove any globe projection imagery references
+- [x] Add 3 new channels (52, 53, 54) to RRBRadioIntegration
+- [x] Add 3 new channels to spotifyRouter
+- [ ] Re-record QUMUS narration with fifty-four
+- [ ] Verify zero remaining globe references

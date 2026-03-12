@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Radio, Music, Heart, Globe, BookOpen, Users, Shield, FileText, Mic, Headphones } from 'lucide-react';
+import { Radio, Music, Heart, Earth, BookOpen, Users, Shield, FileText, Mic, Headphones } from 'lucide-react';
 import { RRBHeaderEnhanced } from '@/components/RRBHeaderEnhanced';
 import { BreadcrumbNavigation } from '@/components/BreadcrumbNavigation';
 
@@ -36,7 +36,7 @@ export default function RRBLegacySite() {
       {/* UN Banner */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 px-4 text-center">
         <div className="flex items-center justify-center gap-2">
-          <Globe className="w-5 h-5" />
+          <Earth className="w-5 h-5" />
           <p className="text-sm font-semibold">United Nations Sustainable Development Goals</p>
         </div>
       </div>

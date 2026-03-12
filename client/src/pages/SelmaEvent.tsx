@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { Calendar, MapPin, Clock, Users, ArrowRight, Mic2, Globe, Shield, Leaf, Scale, Heart, Radio, Wifi, Gift, ChevronRight, Share2 } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, ArrowRight, Mic2, Earth, Shield, Leaf, Scale, Heart, Radio, Wifi, Gift, ChevronRight, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function SelmaEvent() {
@@ -28,7 +28,7 @@ export default function SelmaEvent() {
     { icon: Heart, label: 'Elder Protection', desc: 'Confronting elder abuse' },
     { icon: Shield, label: 'Disability Rights', desc: 'Accessibility and inclusion' },
     { icon: Users, label: 'Murder Victims\' Families', desc: 'Truth and accountability' },
-    { icon: Globe, label: 'Environmental Justice', desc: 'Water, soil, legacy protection' },
+    { icon: Earth, label: 'Environmental Justice', desc: 'Water, soil, legacy protection' },
   ];
 
   return (
@@ -211,7 +211,7 @@ export default function SelmaEvent() {
       {/* Global Connection */}
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-3xl mx-auto text-center">
-          <Globe className="w-12 h-12 text-[#D4A843] mx-auto mb-6" />
+          <Earth className="w-12 h-12 text-[#D4A843] mx-auto mb-6" />
           <h2 className="text-3xl font-bold text-[#D4A843] mb-4">From Selma to the United Nations</h2>
           <p className="text-lg text-[#E8E0D0]/60 mb-6">
             This workshop prepares us for our UN virtual parallel event on <strong className="text-[#D4A843]">March 17, 2026</strong>, 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { Calendar, MapPin, Globe, ArrowRight, X, Clock } from 'lucide-react';
+import { Calendar, MapPin, Earth, ArrowRight, X, Clock } from 'lucide-react';
 
 interface EventBannerProps {
   onClose?: (id: string) => void;
@@ -138,7 +138,7 @@ export function EventBanners({ onClose }: EventBannerProps) {
                   {event.id.includes('selma') ? (
                     <MapPin className="w-3.5 h-3.5 text-[#D4A843]" />
                   ) : (
-                    <Globe className="w-3.5 h-3.5 text-[#D4A843]" />
+                    <Earth className="w-3.5 h-3.5 text-[#D4A843]" />
                   )}
                   <span className="text-xs font-bold text-[#D4A843] tracking-wider uppercase whitespace-nowrap">
                     {event.id.includes('selma') ? 'LIVE EVENT' : 'UN EVENT'}

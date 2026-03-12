@@ -10,7 +10,7 @@ import {
   Settings, Users, Radio, Heart, AlertTriangle,
   CheckCircle, Power, RotateCcw, Download, Upload,
   Wifi, WifiOff, Activity, ExternalLink, Key, Save,
-  RefreshCw, Tv, Shield, Database, Globe, Zap,
+  RefreshCw, Tv, Shield, Database, Earth, Zap,
   Play, Pause, Eye, Pencil, Trash2, Plus, Copy,
 } from 'lucide-react';
 
@@ -672,7 +672,7 @@ export default function AdminControlPanel() {
               {[
                 { name: 'QUMUS Core', icon: <Zap className="w-5 h-5 text-cyan-400" />, status: true, desc: 'Autonomous orchestration engine — 19 policies active' },
                 { name: 'RRB Radio', icon: <Radio className="w-5 h-5 text-pink-400" />, status: true, desc: '54 channels broadcasting 24/7' },
-                { name: 'HybridCast', icon: <Globe className="w-5 h-5 text-orange-400" />, status: true, desc: 'Emergency broadcast PWA — offline-first' },
+                { name: 'HybridCast', icon: <Earth className="w-5 h-5 text-orange-400" />, status: true, desc: 'Emergency broadcast PWA — offline-first' },
                 { name: 'Sweet Miracles', icon: <Heart className="w-5 h-5 text-green-400" />, status: true, desc: '501(c)(3) donation processing via Stripe' },
                 { name: 'Stream Health Monitor', icon: <Shield className="w-5 h-5 text-blue-400" />, status: !!monitorRunning, desc: '15-min automated health checks on all 54 channels' },
                 { name: 'Restream Integration', icon: <Tv className="w-5 h-5 text-purple-400" />, status: !!restreamUrl.data?.isConfigured, desc: 'Dynamic studio URL — all buttons wired' },

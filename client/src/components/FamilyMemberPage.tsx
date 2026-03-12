@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, Star, Award, Heart, Users, Megaphone, Bot, 
   Play, Pause, Volume2, ExternalLink, Sparkles,
-  Globe, Music, Shield, BookOpen, Zap, Radio, MessageCircle,
+  Earth, Music, Shield, BookOpen, Zap, Radio, MessageCircle,
   type LucideIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -295,7 +295,7 @@ export default function FamilyMemberPage({ data }: { data: FamilyMemberData }) {
               { label: 'Active Bots', value: data.bots.filter(b => b.status === 'active').length.toString(), icon: Bot, color: 'text-green-400' },
               { label: 'Accomplishments', value: data.accomplishments.length.toString(), icon: Award, color: 'text-amber-400' },
               { label: 'Commercials', value: data.commercials.length.toString(), icon: Megaphone, color: c.text },
-              { label: 'Platforms', value: data.platformCount, icon: Globe, color: 'text-blue-400' },
+              { label: 'Platforms', value: data.platformCount, icon: Earth, color: 'text-blue-400' },
             ].map((stat, i) => (
               <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                 <stat.icon className={`w-6 h-6 ${stat.color} mx-auto mb-2`} />
@@ -578,4 +578,4 @@ export default function FamilyMemberPage({ data }: { data: FamilyMemberData }) {
 // ============================================================================
 // RE-EXPORT ICON REFERENCES for data files
 // ============================================================================
-export { Star, Award, Heart, Users, Megaphone, Bot, Globe, Music, Shield, BookOpen, Zap, Radio, MessageCircle, Sparkles };
+export { Star, Award, Heart, Users, Megaphone, Bot, Earth, Music, Shield, BookOpen, Zap, Radio, MessageCircle, Sparkles };

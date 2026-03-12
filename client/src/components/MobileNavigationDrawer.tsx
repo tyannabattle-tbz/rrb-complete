@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { X, Home, Radio, Music, Zap, Heart, BarChart3, MessageSquare, MapPin, Globe, Mic, Settings, Monitor, Headphones, Calendar, Eye, Gamepad2, BookOpen, Shield, Bell, FileText } from 'lucide-react';
+import { X, Home, Radio, Music, Zap, Heart, BarChart3, MessageSquare, MapPin, Earth, Mic, Settings, Monitor, Headphones, Calendar, Eye, Gamepad2, BookOpen, Shield, Bell, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
@@ -30,7 +30,7 @@ export function MobileNavigationDrawer() {
     { label: 'Broadcast Hub', icon: Zap, path: '/broadcast-hub', section: 'qumus' },
     { label: 'Live Stream', icon: Eye, path: '/live', section: 'qumus' },
     { label: 'Sweet Miracles', icon: Heart, path: '/donate', section: 'qumus' },
-    { label: 'Ecosystem', icon: Globe, path: '/ecosystem', section: 'qumus' },
+    { label: 'Ecosystem', icon: Earth, path: '/ecosystem', section: 'qumus' },
     { label: 'Analytics', icon: BarChart3, path: '/listener-analytics', section: 'qumus' },
     { label: 'Games', icon: Gamepad2, path: '/games', section: 'qumus' },
     { label: 'Legacy', icon: BookOpen, path: '/legacy', section: 'qumus' },

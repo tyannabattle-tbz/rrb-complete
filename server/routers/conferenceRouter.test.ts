@@ -1067,7 +1067,7 @@ describe('Conference Router', () => {
 
     it('should have translation, check-in, and speaker quick links', () => {
       const quickLinks = [
-        { path: '/conference/translation/', icon: 'Globe' },
+        { path: '/conference/translation/', icon: 'Earth' },
         { path: '/conference/checkin/', icon: 'Shield' },
         { path: '/conference/speaker/', icon: 'UserCircle' },
       ];

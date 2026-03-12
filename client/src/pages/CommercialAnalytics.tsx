@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   BarChart3, TrendingUp, Eye, MousePointerClick, Volume2,
-  CheckCircle, Radio, Mic, Calendar, Globe, ArrowRight,
+  CheckCircle, Radio, Mic, Calendar, Earth, ArrowRight,
   Loader2, RefreshCw
 } from 'lucide-react';
 
@@ -285,7 +285,7 @@ export default function CommercialAnalytics() {
         <div className="p-4 bg-gradient-to-r from-[#8B1A1A]/10 via-[#D4A843]/10 to-[#1A3A5C]/10 rounded-lg border border-[#D4A843]/10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-xs text-[#E8E0D0]/40">
-              <span className="flex items-center gap-1"><Globe className="w-3 h-3" /> UN NGO CSW70</span>
+              <span className="flex items-center gap-1"><Earth className="w-3 h-3" /> UN NGO CSW70</span>
               <span>In Partnership with Ghana</span>
               <span>Powered by QUMUS AI</span>
               <span>Advertising: Canryn Production</span>

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Calendar, Check, Download, Globe, MapPin, Shield, Star, Users, Accessibility } from "lucide-react";
+import { ArrowLeft, Calendar, Check, Download, Earth, MapPin, Shield, Star, Users, Accessibility } from "lucide-react";
 
 export default function ConferenceRegister() {
   const params = useParams<{ id: string }>();
@@ -76,7 +76,7 @@ export default function ConferenceRegister() {
   const ticketTiers = [
     { id: "general" as const, label: "General Admission", price: "Free", icon: Users, color: "border-green-500", perks: ["Join conference", "Chat access", "Recording access"] },
     { id: "vip" as const, label: "VIP Access", price: "$49.99", icon: Star, color: "border-yellow-500", perks: ["Priority join", "Speaker Q&A", "Exclusive recordings", "VIP badge"] },
-    { id: "speaker" as const, label: "Speaker Pass", price: "$99.99", icon: Globe, color: "border-blue-500", perks: ["Present & share screen", "Extended time", "Speaker profile", "All VIP perks"] },
+    { id: "speaker" as const, label: "Speaker Pass", price: "$99.99", icon: Earth, color: "border-blue-500", perks: ["Present & share screen", "Extended time", "Speaker profile", "All VIP perks"] },
     { id: "delegate" as const, label: "UN Delegate Pass", price: "$149.99", icon: Shield, color: "border-purple-500", perks: ["Delegate credentials", "All sessions access", "Networking priority", "All Speaker perks"] },
   ];
 

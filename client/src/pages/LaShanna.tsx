@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, Star, Award, Heart, Users, Megaphone, Bot, 
   Play, Pause, Volume2, VolumeX, ExternalLink, Sparkles,
-  Globe, Music, Shield, BookOpen, Zap, Radio, MessageCircle
+  Earth, Music, Shield, BookOpen, Zap, Radio, MessageCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -104,7 +104,7 @@ const COMMERCIALS: Commercial[] = [
     title: 'SQUADD Coalition — Stronger Together',
     type: 'audio',
     duration: '30s',
-    script: `Sisters Questing Unapologetically After Divine Destiny. The SQUADD Coalition brings women together from across the globe to create lasting change. Led by visionary advocates like LaShanna Russell, SQUADD is turning faith into action. Join the movement at manuweb.sbs/squadd. A Canryn Production.`,
+    script: `Sisters Questing Unapologetically After Divine Destiny. The SQUADD Coalition brings women together from across the world to create lasting change. Led by visionary advocates like LaShanna Russell, SQUADD is turning faith into action. Join the movement at manuweb.sbs/squadd. A Canryn Production.`,
     tagline: 'SQUADD — Sisters Questing Unapologetically After Divine Destiny',
     category: 'Coalition Building',
   },
@@ -162,7 +162,7 @@ const ACCOMPLISHMENTS: Accomplishment[] = [
     description: 'Selected to represent the SQUADD Coalition at the United Nations NGO Commission on the Status of Women (CSW70) in partnership with Ghana, advocating for women\'s rights on the global stage.',
     year: '2026',
     category: 'International',
-    icon: Globe,
+    icon: Earth,
   },
   {
     title: 'Grits & Greens — Selma Jubilee 2026 Organizer',
@@ -325,7 +325,7 @@ export default function LaShanna() {
               { label: 'Active Bots', value: LASHANNA_BOTS.filter(b => b.status === 'active').length.toString(), icon: Bot, color: 'text-green-400' },
               { label: 'Accomplishments', value: ACCOMPLISHMENTS.length.toString(), icon: Award, color: 'text-amber-400' },
               { label: 'Commercials', value: COMMERCIALS.length.toString(), icon: Megaphone, color: 'text-purple-400' },
-              { label: 'Platforms', value: '5+', icon: Globe, color: 'text-blue-400' },
+              { label: 'Platforms', value: '5+', icon: Earth, color: 'text-blue-400' },
             ].map((stat, i) => (
               <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                 <stat.icon className={`w-6 h-6 ${stat.color} mx-auto mb-2`} />

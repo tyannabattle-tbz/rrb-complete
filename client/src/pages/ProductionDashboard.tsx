@@ -7,7 +7,7 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import {
   Activity, Zap, Shield, RefreshCw, Clock, Radio,
-  Target, Bell, Globe, Users, Heart, AlertCircle,
+  Target, Bell, Earth, Users, Heart, AlertCircle,
   CheckCircle, XCircle, MinusCircle
 } from 'lucide-react';
 
@@ -148,7 +148,7 @@ export default function ProductionDashboard() {
           <Card className="bg-slate-800/50 border-blue-500/20">
             <CardHeader className="pb-3">
               <CardTitle className="text-white flex items-center gap-2">
-                <Globe className="w-5 h-5 text-blue-400" />
+                <Earth className="w-5 h-5 text-blue-400" />
                 Database Metrics
               </CardTitle>
             </CardHeader>

@@ -3,7 +3,7 @@ import { RRBSongBadge } from '@/components/RRBSongBadge';
 import { useLocation } from 'wouter';
 import {
   Play, Pause, SkipForward, Volume2, VolumeX, Radio, Heart,
-  Share2, Users, Music, Headphones, Wifi, Globe, ArrowRight,
+  Share2, Users, Music, Headphones, Wifi, Earth, ArrowRight,
   Calendar, MapPin, Phone, FileText, Search, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -77,6 +77,10 @@ const channels = [
   { id: 6, name: 'Community Voice', icon: '📞', genre: 'Community, Call-In', frequency: '432 Hz', color: 'from-blue-600 to-indigo-700', description: 'Listener stories and call-ins.', streamUrl: 'https://tunein.cdnstream1.com/2868_96.mp3', listeners: 38, nowPlaying: 'Listener Stories', category: 'Community' },
   { id: 45, name: 'Sweet Miracles', icon: '🍬', genre: 'Nonprofit, Charity', frequency: '528 Hz', color: 'from-pink-500 to-fuchsia-600', description: 'Nonprofit awareness, fundraising, and community impact (501c/508).', streamUrl: 'https://streams.fluxfm.de/hiphop/mp3-320/audio/', listeners: 38, nowPlaying: 'Elder Advocacy Hour', category: 'Community' },
   { id: 50, name: 'Open Mic', icon: '🎤', genre: 'Open Mic, Freestyle', frequency: '432 Hz', color: 'from-amber-400 to-yellow-500', description: 'Community open mic, freestyle, and live performances.', streamUrl: 'https://s3.radio.co/s97f38db97/listen', listeners: 28, nowPlaying: 'Open Mic Night', category: 'Community' },
+  // === NEW CHANNELS (52-54) ===
+  { id: 52, name: 'SQUADD Coalition Radio', icon: '👑', genre: 'Empowerment, Talk', frequency: '432 Hz', color: 'from-purple-600 to-fuchsia-700', description: 'SQUADD Coalition programming — Sisters Questing Unapologetically After Divine Destiny.', streamUrl: 'https://tunein.cdnstream1.com/2868_96.mp3', listeners: 42, nowPlaying: 'SQUADD Empowerment Hour', category: 'Community' },
+  { id: 53, name: 'UN Advocacy Radio', icon: '🌍', genre: 'Advocacy, International', frequency: '528 Hz', color: 'from-blue-700 to-indigo-800', description: 'United Nations advocacy, CSW70 coverage, and international human rights programming.', streamUrl: 'https://streams.fluxfm.de/hiphop/mp3-320/audio/', listeners: 35, nowPlaying: 'CSW70 Coverage', category: 'Community' },
+  { id: 54, name: 'Canryn Production Radio', icon: '🏢', genre: 'Corporate, Updates', frequency: '432 Hz', color: 'from-amber-600 to-orange-700', description: 'Official Canryn Production updates, ecosystem news, and subsidiary highlights.', streamUrl: 'https://s3.radio.co/s97f38db97/listen', listeners: 31, nowPlaying: 'Ecosystem Update', category: 'Specialty' },
 ];
 
 export const RRBRadioIntegration: React.FC = () => {
@@ -501,7 +505,7 @@ export const RRBRadioIntegration: React.FC = () => {
               <MapPin className="w-4 h-4 mr-2" /> Selma Event
             </Button>
             <Button variant="outline" className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10" onClick={() => navigate('/squadd')}>
-              <Globe className="w-4 h-4 mr-2" /> SQUADD Goals
+              <Earth className="w-4 h-4 mr-2" /> SQUADD Goals
             </Button>
             <Button variant="outline" className="border-[#E8E0D0]/20 text-[#E8E0D0]/60 hover:bg-[#E8E0D0]/10" onClick={() => navigate('/')}>
               <ArrowRight className="w-4 h-4 mr-2" /> Ecosystem Home

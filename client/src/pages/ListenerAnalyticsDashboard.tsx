@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { trpc } from '@/lib/trpc';
 import {
-  Users, TrendingUp, Radio, Clock, Globe, Heart,
+  Users, TrendingUp, Radio, Clock, Earth, Heart,
   RefreshCw, Headphones, BarChart3, Activity, Zap, Target
 } from 'lucide-react';
 
@@ -221,7 +221,7 @@ export default function ListenerAnalyticsDashboard() {
         <Card className="bg-slate-800/50 border-green-500/20">
           <CardHeader className="pb-3">
             <CardTitle className="text-white flex items-center gap-2">
-              <Globe className="w-5 h-5 text-green-400" />
+              <Earth className="w-5 h-5 text-green-400" />
               Channel Activity Heatmap
             </CardTitle>
           </CardHeader>

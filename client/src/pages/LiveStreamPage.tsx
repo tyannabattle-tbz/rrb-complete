@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import {
   Play, Pause, Volume2, VolumeX, Maximize, Minimize,
   Radio, Wifi, Users, MessageCircle, Heart, Send,
-  Music, Mic, Video, SkipForward, SkipBack, Globe,
+  Music, Mic, Video, SkipForward, SkipBack, Earth,
   ArrowRight, Calendar, MapPin, Headphones, Settings,
   Loader2, Clock, Sparkles, Bot, Tv
 } from 'lucide-react';
@@ -321,7 +321,7 @@ export default function LiveStreamPage() {
                 { id: 'video' as const, icon: <Video className="w-4 h-4" />, label: 'Video' },
                 { id: 'radio' as const, icon: <Radio className="w-4 h-4" />, label: 'Radio' },
                 { id: 'podcast' as const, icon: <Mic className="w-4 h-4" />, label: 'Podcast' },
-                { id: 'conference' as const, icon: <Globe className="w-4 h-4" />, label: 'Conference' },
+                { id: 'conference' as const, icon: <Earth className="w-4 h-4" />, label: 'Conference' },
               ].map(tab => (
                 <button
                   key={tab.id}
@@ -725,7 +725,7 @@ export default function LiveStreamPage() {
                       navigator.clipboard.writeText(window.location.href);
                     }}
                   >
-                    <Globe className="w-3.5 h-3.5 mr-1" /> Share
+                    <Earth className="w-3.5 h-3.5 mr-1" /> Share
                   </Button>
                 </div>
               </div>
@@ -743,7 +743,7 @@ export default function LiveStreamPage() {
             {/* Quick Links */}
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
               {[
-                { label: 'SQUADD Goals', path: '/squadd', icon: Globe },
+                { label: 'SQUADD Goals', path: '/squadd', icon: Earth },
                 { label: 'Conference Hub', path: '/conference', icon: Video },
                 { label: 'Restream Studio', path: restreamUrl || 'https://studio.restream.io', icon: Tv },
                 { label: 'Meditation Hub', path: '/meditation', icon: Music },

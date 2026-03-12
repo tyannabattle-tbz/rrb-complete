@@ -8,7 +8,7 @@ import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { 
   Radio, Heart, Zap, Users, TrendingUp, Activity, 
   Settings, RefreshCw, AlertCircle, Wifi, Volume2,
-  BarChart3, Bell, Shield, Globe, Clock, Headphones,
+  BarChart3, Bell, Shield, Earth, Clock, Headphones,
   Megaphone, Target, Layers, ChevronRight, Tv
 } from 'lucide-react';
 
@@ -95,7 +95,7 @@ export default function EcosystemMasterDashboard() {
             { label: 'Ad Impressions', value: ads?.dailyImpressions ?? 0, icon: Target, color: 'text-amber-400', bg: 'bg-amber-500/10' },
             { label: 'Active Ads', value: ads?.activeAds ?? 0, icon: Megaphone, color: 'text-orange-400', bg: 'bg-orange-500/10' },
             { label: 'Updates', value: delivery?.totalUpdates ?? 0, icon: Bell, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-            { label: 'Webhooks', value: ps?.databaseMetrics?.activeWebhooks ?? 0, icon: Globe, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
+            { label: 'Webhooks', value: ps?.databaseMetrics?.activeWebhooks ?? 0, icon: Earth, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
           ].map((m, i) => (
             <Card key={i} className={`${m.bg} border-slate-700/50`}>
               <CardContent className="p-3 text-center">
@@ -379,13 +379,13 @@ export default function EcosystemMasterDashboard() {
                 { label: 'Content Scheduler', path: '/rrb-radio', icon: Clock, color: 'bg-indigo-600 hover:bg-indigo-700' },
                 { label: 'Listener Analytics', path: '/listener-analytics', icon: BarChart3, color: 'bg-blue-600 hover:bg-blue-700' },
                 { label: 'Ad Rotation', path: '/rrb/broadcast', icon: Target, color: 'bg-amber-600 hover:bg-amber-700' },
-                { label: 'Webhook Manager', path: '/webhook-manager', icon: Globe, color: 'bg-teal-600 hover:bg-teal-700' },
+                { label: 'Webhook Manager', path: '/webhook-manager', icon: Earth, color: 'bg-teal-600 hover:bg-teal-700' },
                 { label: 'Team Updates', path: '/rrb-team-updates', icon: Bell, color: 'bg-cyan-600 hover:bg-cyan-700' },
                 { label: 'Emergency Broadcast', path: '/hybridcast', icon: AlertCircle, color: 'bg-red-600 hover:bg-red-700' },
                 { label: 'Sweet Miracles', path: '/sweet-miracles', icon: Heart, color: 'bg-green-600 hover:bg-green-700' },
                 { label: 'QUMUS Chat', path: '/qumus-chat', icon: Users, color: 'bg-violet-600 hover:bg-violet-700' },
                 { label: 'Production Status', path: '/production', icon: Activity, color: 'bg-slate-600 hover:bg-slate-700' },
-                { label: 'Conference Hub', path: '/conference', icon: Globe, color: 'bg-amber-600 hover:bg-amber-700' },
+                { label: 'Conference Hub', path: '/conference', icon: Earth, color: 'bg-amber-600 hover:bg-amber-700' },
                 { label: 'Restream Studio', path: restreamUrl || 'https://studio.restream.io', icon: Tv, color: 'bg-purple-600 hover:bg-purple-700' },
                 { label: 'Convention Hub', path: '/convention-hub', icon: Users, color: 'bg-indigo-600 hover:bg-indigo-700' },
                 { label: 'SQUADD Goals', path: '/squadd', icon: Shield, color: 'bg-yellow-600 hover:bg-yellow-700' },

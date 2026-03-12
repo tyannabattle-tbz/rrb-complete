@@ -29,7 +29,7 @@ import {
   TrendingUp,
   Play,
   Clock,
-  Globe,
+  Earth,
   BarChart3,
   Settings,
   Share2,
@@ -235,7 +235,7 @@ export default function RRBDashboard() {
                   className="w-full"
                   onClick={() => alert('Content management coming soon!')}
                 >
-                  <Globe size={16} className="mr-2" />
+                  <Earth size={16} className="mr-2" />
                   Content
                 </FuturisticButton>
                 <FuturisticButton 

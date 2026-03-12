@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Heart, Shield, Users, Globe, Repeat, Target, TrendingUp, Calendar } from 'lucide-react';
+import { Check, Heart, Shield, Users, Earth, Repeat, Target, TrendingUp, Calendar } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
 interface DonationTier {
@@ -240,7 +240,7 @@ export function DonationCheckout() {
         {/* Impact Dashboard */}
         <Card className="bg-gray-900/60 border-amber-500/20 p-6 mb-10">
           <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <Globe className="w-5 h-5 text-amber-400" />
+            <Earth className="w-5 h-5 text-amber-400" />
             Community Impact
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

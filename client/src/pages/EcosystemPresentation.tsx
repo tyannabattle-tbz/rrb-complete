@@ -53,7 +53,7 @@ const SECTIONS: Section[] = [
     startTime: 43.65,
     endTime: 70.2,
     image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/scene3_sweet_miracles_v3_b7418a8c.png',
-    description: 'Sweet Miracles at the Table is the heart of this movement — a nonprofit dedicated to being a voice for the voiceless. From the halls of the United Nations to communities across the globe, Sweet Miracles advocates for women, children, and families.',
+    description: 'Sweet Miracles at the Table is the heart of this movement — a nonprofit dedicated to being a voice for the voiceless. From the halls of the United Nations to communities across the world, Sweet Miracles advocates for women, children, and families.',
     links: [
       { label: 'Sweet Miracles Mission', href: '/sweet-miracles' },
       { label: 'UN CSW70 Campaign', href: '/media-blast' },

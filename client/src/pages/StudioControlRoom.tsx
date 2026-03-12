@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Video, Mic, MicOff, Monitor, Users, Play, Square, Radio,
   Plus, Copy, UserPlus, Settings, Eye, Clock, Film,
-  Tv, Globe, Headphones, PhoneCall, ScreenShare
+  Tv, Earth, Headphones, PhoneCall, ScreenShare
 } from "lucide-react";
 
 type SessionType = "podcast" | "live_show" | "interview" | "panel" | "workshop" | "convention_panel" | "recording";
@@ -104,7 +104,7 @@ export default function StudioControlRoom() {
   };
 
   const platformIcons: Record<string, React.ReactNode> = {
-    internal: <Globe className="w-4 h-4" />, youtube: <Tv className="w-4 h-4 text-red-500" />,
+    internal: <Earth className="w-4 h-4" />, youtube: <Tv className="w-4 h-4 text-red-500" />,
     twitch: <Monitor className="w-4 h-4 text-purple-500" />, zoom: <Video className="w-4 h-4 text-blue-500" />,
     discord: <Headphones className="w-4 h-4 text-indigo-500" />, twitter_spaces: <Radio className="w-4 h-4 text-sky-500" />,
     custom: <PhoneCall className="w-4 h-4" />,

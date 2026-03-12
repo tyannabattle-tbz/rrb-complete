@@ -3,7 +3,7 @@ import FlatWorldMap from '@/components/FlatWorldMap';
 import HybridCastBroadcaster from '@/components/HybridCastBroadcaster';
 import { HybridCastBroadcastEnhanced } from '@/components/HybridCastBroadcastEnhanced';
 import { languages, translate, type Language } from '@/lib/translator';
-import { Globe } from 'lucide-react';
+import { Earth } from 'lucide-react';
 
 export function GPSRadarMapPage() {
   const [language, setLanguage] = useState<Language>('en');
@@ -27,7 +27,7 @@ export function GPSRadarMapPage() {
           
           {/* Language Selector */}
           <div className="flex items-center gap-3">
-            <Globe className="w-5 h-5 text-cyan-400" />
+            <Earth className="w-5 h-5 text-cyan-400" />
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value as Language)}

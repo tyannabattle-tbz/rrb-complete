@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Radio, Volume2, VolumeX, Users, Music, Play, Pause, Zap, Activity, Clock, SkipForward, SkipBack, Mic2, Headphones, Calendar, BarChart3, Shield, Search, Filter, Heart, Waves, AlertTriangle, Globe, BookOpen, Sparkles, Sun, Moon, Coffee, Flame, TreePine, Baby, Laugh, Podcast, Tv, Star, ChevronDown, ChevronUp, MessageCircle, Send, Phone, PhoneOff, Bot, Loader2 } from 'lucide-react';
+import { Radio, Volume2, VolumeX, Users, Music, Play, Pause, Zap, Activity, Clock, SkipForward, SkipBack, Mic2, Headphones, Calendar, BarChart3, Shield, Search, Filter, Heart, Waves, AlertTriangle, Earth, BookOpen, Sparkles, Sun, Moon, Coffee, Flame, TreePine, Baby, Laugh, Podcast, Tv, Star, ChevronDown, ChevronUp, MessageCircle, Send, Phone, PhoneOff, Bot, Loader2 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 

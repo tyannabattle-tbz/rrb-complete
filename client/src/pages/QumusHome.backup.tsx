@@ -64,7 +64,7 @@ import {
   TrendingUp,
   Activity,
   BarChart3,
-  Globe,
+  Earth,
   Mic,
   Heart,
 } from "lucide-react";
@@ -841,7 +841,7 @@ export default function QumusHome() {
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Globe size={18} className="text-cyan-400" />
+              <Earth size={18} className="text-cyan-400" />
               Admin Control Center
             </CardTitle>
           </CardHeader>
@@ -850,7 +850,7 @@ export default function QumusHome() {
               onClick={() => setShowAdminLinks(!showAdminLinks)}
               className={showAdminLinks ? "w-full bg-cyan-600 hover:bg-cyan-700" : "w-full bg-slate-700 hover:bg-slate-600 border border-slate-600"}
             >
-              <Globe size={16} className="mr-2" />
+              <Earth size={16} className="mr-2" />
               {showAdminLinks ? "Hide" : "Show"} Quick Links
             </Button>
           </CardContent>

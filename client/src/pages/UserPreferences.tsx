@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import {
   ArrowLeft,
   Bell,
-  Globe,
+  Earth,
   Volume2,
   Eye,
   Save,
@@ -186,7 +186,7 @@ export default function UserPreferences() {
           {/* Delivery Channels */}
           <Card className="p-6 bg-slate-800 border-slate-700">
             <div className="flex items-center gap-3 mb-6">
-              <Globe className="w-6 h-6 text-cyan-400" />
+              <Earth className="w-6 h-6 text-cyan-400" />
               <h2 className="text-xl font-semibold text-white">Delivery Channels</h2>
             </div>
 
@@ -340,7 +340,7 @@ export default function UserPreferences() {
           {/* Language & Digest */}
           <Card className="p-6 bg-slate-800 border-slate-700">
             <div className="flex items-center gap-3 mb-6">
-              <Globe className="w-6 h-6 text-cyan-400" />
+              <Earth className="w-6 h-6 text-cyan-400" />
               <h2 className="text-xl font-semibold text-white">Language & Email Digest</h2>
             </div>
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Search, Download, Share2, Menu, X, Home, Radio, Music, Heart, Globe, Zap, Eye, TrendingUp, Mic } from 'lucide-react';
+import { Search, Download, Share2, Menu, X, Home, Radio, Music, Heart, Earth, Zap, Eye, TrendingUp, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -59,7 +59,7 @@ export function RRBHeaderEnhanced() {
     { id: 'nav-4', label: 'Studio', icon: Zap, path: '/studio', action: () => navigate('/studio') },
     { id: 'nav-5', label: 'Podcast', icon: Heart, path: '/podcast', action: () => navigate('/podcast') },
     { id: 'nav-6', label: 'Gallery', icon: TrendingUp, path: '/gallery', action: () => navigate('/gallery') },
-    { id: 'nav-7', label: 'Games', icon: Globe, path: '/solbones', action: () => navigate('/solbones') },
+    { id: 'nav-7', label: 'Games', icon: Earth, path: '/solbones', action: () => navigate('/solbones') },
   ];
 
   return (

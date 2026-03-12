@@ -67,7 +67,7 @@ import {
   TrendingUp,
   Activity,
   BarChart3,
-  Globe,
+  Earth,
   Mic,
   Heart,
   Gauge,
@@ -288,7 +288,7 @@ export default function QumusHome() {
               <span className="hidden md:inline">History</span>
             </TabsTrigger>
             <TabsTrigger value="ecosystem" className="text-xs md:text-sm">
-              <Globe size={16} className="mr-1 md:mr-2" />
+              <Earth size={16} className="mr-1 md:mr-2" />
               <span className="hidden md:inline">Ecosystem</span>
             </TabsTrigger>
             <TabsTrigger value="analytics" className="text-xs md:text-sm">
@@ -613,7 +613,7 @@ export default function QumusHome() {
               variant="secondary"
               className="w-full"
             >
-              <Globe size={16} className="mr-2" />
+              <Earth size={16} className="mr-2" />
               TBZ-OS
             </FuturisticButton>
           </div>

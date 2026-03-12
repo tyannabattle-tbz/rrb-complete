@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import {
   Terminal, Zap, Send, Clock, CheckCircle, XCircle, AlertTriangle,
-  Radio, Globe, Shield, Activity, ChevronDown, ChevronUp, Loader2,
+  Radio, Earth, Shield, Activity, ChevronDown, ChevronUp, Loader2,
   RotateCcw, Trash2, Copy, ArrowRight, Bot, Sparkles
 } from 'lucide-react';
 
@@ -576,7 +576,7 @@ Note: External platform stats (Spotify, Apple Music) available at /stream-analyt
             <Zap className="w-3 h-3 mr-1" /> QUMUS Dashboard
           </Button>
           <Button onClick={() => setLocation('/ecosystem-dashboard')} variant="outline" className="h-10 border-green-500/20 text-green-300 hover:bg-green-500/10 font-mono text-xs">
-            <Globe className="w-3 h-3 mr-1" /> Ecosystem
+            <Earth className="w-3 h-3 mr-1" /> Ecosystem
           </Button>
           <Button onClick={() => setLocation('/rrb-radio')} variant="outline" className="h-10 border-amber-500/20 text-amber-300 hover:bg-amber-500/10 font-mono text-xs">
             <Radio className="w-3 h-3 mr-1" /> RRB Radio

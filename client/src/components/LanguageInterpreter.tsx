@@ -14,7 +14,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import {
-  Globe, Languages, Mic, MicOff, Volume2, VolumeX,
+  Earth, Languages, Mic, MicOff, Volume2, VolumeX,
   ChevronDown, ChevronUp, Settings, ArrowRight, Pause,
   Play, Trash2, Download, X, Minimize2, Maximize2, Hand, Scan
 } from 'lucide-react';
@@ -655,7 +655,7 @@ export default function LanguageInterpreter({
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 min-h-0" role="region" aria-label="Translation history">
         {transcript.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <Globe className="w-10 h-10 text-cyan-400/20 mb-3" />
+            <Earth className="w-10 h-10 text-cyan-400/20 mb-3" />
             <p className="text-white/40 text-sm">Ready to interpret</p>
             <p className="text-white/20 text-xs mt-1">
               Select languages above and click "Start Interpreter"

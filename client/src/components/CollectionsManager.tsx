@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2, Lock, Globe, Play } from "lucide-react";
+import { Plus, Trash2, Lock, Earth, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -171,7 +171,7 @@ export default function CollectionsManager({
                 {/* Privacy Badge */}
                 <div className="absolute top-2 left-2">
                   {collection.isPublic ? (
-                    <Globe className="w-4 h-4 text-white" />
+                    <Earth className="w-4 h-4 text-white" />
                   ) : (
                     <Lock className="w-4 h-4 text-white" />
                   )}

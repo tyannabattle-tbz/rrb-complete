@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, Play, CheckCircle, XCircle, Loader, Globe } from "lucide-react";
+import { AlertCircle, Play, CheckCircle, XCircle, Loader, Earth } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 
 interface SimulationResult {
@@ -144,7 +144,7 @@ export function FailoverSimulationTesting() {
               <div key={region.id} className={`p-4 border-2 rounded-lg ${getHealthColor(region.healthStatus)}`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <Globe className="w-5 h-5" />
+                    <Earth className="w-5 h-5" />
                     <div>
                       <h4 className="font-medium">{region.name}</h4>
                       <p className="text-xs text-muted-foreground">{region.location}</p>

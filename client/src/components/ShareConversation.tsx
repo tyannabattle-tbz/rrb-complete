@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Copy, Share2, Lock, Globe } from "lucide-react";
+import { Copy, Share2, Lock, Earth } from "lucide-react";
 import { toast } from "sonner";
 
 interface ShareConversationProps {
@@ -58,7 +58,7 @@ export default function ShareConversation({
           onClick={() => setIsPublic(true)}
           className="flex-1"
         >
-          <Globe size={16} className="mr-1" />
+          <Earth size={16} className="mr-1" />
           Public
         </Button>
         <Button

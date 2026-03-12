@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Share2, Download, Copy, Calendar, Twitter, Instagram, MessageCircle, Globe, Radio, Megaphone, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Share2, Download, Copy, Calendar, Twitter, Instagram, MessageCircle, Earth, Radio, Megaphone, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const CAMPAIGN_GRAPHICS = [
   {
@@ -178,7 +178,7 @@ Gospel Hour | Jazz Lounge | Soul Kitchen | Hip-Hop Classics | Healing Frequencie
 
 Every genre. Every mood. Every moment covered.
 
-Rockin' Rockin' Boogie Radio Network — broadcasting the UN CSW70 campaign launch across the globe.
+Rockin' Rockin' Boogie Radio Network — broadcasting the UN CSW70 campaign launch across the world.
 
 Your DJs: Valanna (6AM-2PM) | Seraph (2PM-6PM) | Candy (6PM-12AM)
 
@@ -249,9 +249,9 @@ const PLATFORM_ICONS: Record<string, React.ReactNode> = {
   twitter: <Twitter className="h-4 w-4" />,
   instagram: <Instagram className="h-4 w-4" />,
   discord: <MessageCircle className="h-4 w-4" />,
-  facebook: <Globe className="h-4 w-4" />,
+  facebook: <Earth className="h-4 w-4" />,
   tiktok: <Radio className="h-4 w-4" />,
-  youtube: <Globe className="h-4 w-4" />,
+  youtube: <Earth className="h-4 w-4" />,
 };
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -324,7 +324,7 @@ function ScheduledPostsDashboard() {
             <CardContent className="p-3">
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded ${PLATFORM_COLORS[post.platform] || 'bg-gray-700/30 text-gray-400'}`}>
-                  {PLATFORM_ICONS[post.platform] || <Globe className="h-4 w-4" />}
+                  {PLATFORM_ICONS[post.platform] || <Earth className="h-4 w-4" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
@@ -353,7 +353,7 @@ function ScheduledPostsDashboard() {
               <CardContent className="p-3">
                 <div className="flex items-start gap-3">
                   <div className={`p-2 rounded ${PLATFORM_COLORS[post.platform] || 'bg-gray-700/30 text-gray-400'}`}>
-                    {PLATFORM_ICONS[post.platform] || <Globe className="h-4 w-4" />}
+                    {PLATFORM_ICONS[post.platform] || <Earth className="h-4 w-4" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
@@ -623,7 +623,7 @@ export default function SocialMediaKit() {
           </Card>
           <Card className="bg-gradient-to-br from-blue-900/30 to-gray-900 border-blue-500/20">
             <CardContent className="p-6 text-center">
-              <Globe className="h-8 w-8 text-blue-400 mx-auto mb-3" />
+              <Earth className="h-8 w-8 text-blue-400 mx-auto mb-3" />
               <h3 className="font-bold text-white mb-2">Campaign Page</h3>
               <p className="text-sm text-gray-400 mb-3">Full Selma to UN campaign story</p>
               <Button size="sm" variant="outline" className="border-blue-500/50 text-blue-400" onClick={() => window.location.href = '/selma-jubilee'}>
@@ -639,7 +639,7 @@ export default function SocialMediaKit() {
         {/* Campaign Video */}
         <section>
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <Globe className="h-5 w-5 text-amber-400" />
+            <Earth className="h-5 w-5 text-amber-400" />
             Campaign Video
           </h2>
           <p className="text-gray-400 mb-4">Official promotional videos for the UN CSW70 campaign launch. Narrated by AI DJs Valanna & Candy. Share across all platforms.</p>

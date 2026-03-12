@@ -1,6 +1,6 @@
 import FamilyMemberPage, { 
   type FamilyMemberData, type ActiveBot, type Commercial, type Accomplishment,
-  Star, Award, Heart, Users, Megaphone, Globe, Music, BookOpen, Zap, Radio
+  Star, Award, Heart, Users, Megaphone, Earth, Music, BookOpen, Zap, Radio
 } from '@/components/FamilyMemberPage';
 
 const BOTS: ActiveBot[] = [
@@ -118,7 +118,7 @@ const ACCOMPLISHMENTS: Accomplishment[] = [
     description: 'Architecting the integration of all Canryn Production subsidiaries into a cohesive ecosystem — ensuring seamless communication, shared resources, and unified growth across all entities.',
     year: '2025–Present',
     category: 'Technology',
-    icon: Globe,
+    icon: Earth,
   },
   {
     title: 'Youth Entrepreneurship Mentor',

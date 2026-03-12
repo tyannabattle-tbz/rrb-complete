@@ -72,6 +72,10 @@ const RRB_CHANNELS = [
   { id: 6, name: 'Community Voice', frequency: 432, spotifyPlaylistId: 'playlist_community', category: 'community' },
   { id: 45, name: 'Sweet Miracles', frequency: 528, spotifyPlaylistId: 'playlist_sweetmiracles', category: 'community' },
   { id: 50, name: 'Open Mic', frequency: 432, spotifyPlaylistId: 'playlist_openmic', category: 'community' },
+  // NEW CHANNELS (52-54)
+  { id: 52, name: 'SQUADD Coalition Radio', frequency: 432, spotifyPlaylistId: 'playlist_squadd', category: 'community' },
+  { id: 53, name: 'UN Advocacy Radio', frequency: 528, spotifyPlaylistId: 'playlist_unadvocacy', category: 'community' },
+  { id: 54, name: 'Canryn Production Radio', frequency: 432, spotifyPlaylistId: 'playlist_canrynradio', category: 'specialty' },
 ];
 
 // Spotify token cache

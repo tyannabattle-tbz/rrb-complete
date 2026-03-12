@@ -4,7 +4,7 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { LogIn, LogOut, Globe, Zap, Video, Users, ArrowRight } from 'lucide-react';
+import { LogIn, LogOut, Earth, Zap, Video, Users, ArrowRight } from 'lucide-react';
 import { getLoginUrl } from '@/const';
 import { trpc } from '@/lib/trpc';
 import { Link } from 'wouter';
@@ -144,9 +144,9 @@ function CountdownTimer() {
   return (
     <div className="mb-16 bg-gradient-to-r from-amber-900/30 via-orange-900/20 to-amber-900/30 rounded-2xl border border-amber-500/30 p-8 text-center">
       <div className="flex items-center justify-center gap-2 mb-2">
-        <Globe className="h-5 w-5 text-amber-400" />
+        <Earth className="h-5 w-5 text-amber-400" />
         <span className="text-amber-400 text-sm font-semibold uppercase tracking-widest">UN CSW70 Launch Countdown</span>
-        <Globe className="h-5 w-5 text-amber-400" />
+        <Earth className="h-5 w-5 text-amber-400" />
       </div>
       <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
         Sweet Miracles & Rockin' Rockin' Boogie

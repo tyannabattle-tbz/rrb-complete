@@ -1,6 +1,6 @@
 import FamilyMemberPage, { 
   type FamilyMemberData, type ActiveBot, type Commercial, type Accomplishment,
-  Star, Award, Heart, Users, Megaphone, Globe, Music, BookOpen, Zap, Radio, MessageCircle
+  Star, Award, Heart, Users, Megaphone, Earth, Music, BookOpen, Zap, Radio, MessageCircle
 } from '@/components/FamilyMemberPage';
 
 const BOTS: ActiveBot[] = [

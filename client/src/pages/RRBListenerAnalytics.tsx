@@ -25,7 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Users,
   TrendingUp,
-  Globe,
+  Earth,
   Clock,
   Activity,
   BarChart3,

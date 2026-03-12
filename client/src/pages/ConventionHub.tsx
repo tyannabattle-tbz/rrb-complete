@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Globe, Calendar, Users, Plus, MapPin, Ticket, Clock,
+  Earth, Calendar, Users, Plus, MapPin, Ticket, Clock,
   Video, Mic, MessageSquare, Star, ChevronRight, Search,
   Layout, Layers, UserPlus, CheckCircle, Tv, Radio, Languages
 } from "lucide-react";
@@ -121,7 +121,7 @@ export default function ConventionHub() {
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-              <Globe className="w-5 h-5" />
+              <Earth className="w-5 h-5" />
             </div>
             <div>
               <h1 className="text-xl font-bold">Convention Hub</h1>
@@ -180,7 +180,7 @@ export default function ConventionHub() {
                         {convention.status?.replace("_", " ")}
                       </Badge>
                       <div className="flex items-center gap-1 text-xs text-gray-400">
-                        {convention.isVirtual && <Globe className="w-3 h-3" />}
+                        {convention.isVirtual && <Earth className="w-3 h-3" />}
                         {convention.isHybrid && <MapPin className="w-3 h-3" />}
                       </div>
                     </div>
@@ -209,7 +209,7 @@ export default function ConventionHub() {
 
             {(!conventionsQuery.data || conventionsQuery.data.length === 0) && (
               <div className="text-center py-16 text-gray-500">
-                <Globe className="w-16 h-16 mx-auto mb-4 opacity-20" />
+                <Earth className="w-16 h-16 mx-auto mb-4 opacity-20" />
                 <h3 className="text-lg font-medium text-gray-300">No Conventions Yet</h3>
                 <p className="text-sm mt-2">Create your first global virtual convention</p>
                 <Button onClick={() => setActiveTab("create")} className="mt-4 bg-indigo-600 hover:bg-indigo-700">
@@ -225,7 +225,7 @@ export default function ConventionHub() {
           <Card className="bg-gray-900/50 border-white/10 max-w-2xl mx-auto">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-indigo-500" /> Create New Convention
+                <Earth className="w-5 h-5 text-indigo-500" /> Create New Convention
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -633,7 +633,7 @@ export default function ConventionHub() {
         </a>
         <a href="/squadd" className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4 hover:border-blue-500/40 transition-colors block">
           <div className="flex items-center gap-2 mb-2">
-            <Globe className="w-5 h-5 text-blue-400" />
+            <Earth className="w-5 h-5 text-blue-400" />
             <span className="font-bold text-white">SQUADD Goals</span>
           </div>
           <p className="text-xs text-white/50">UN CSW70 partnership with Ghana. Sisters Questing Unapologetically After Divine Destiny.</p>

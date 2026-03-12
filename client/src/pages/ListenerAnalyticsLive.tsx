@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  BarChart3, Users, Radio, Globe, Clock, TrendingUp,
+  BarChart3, Users, Radio, Earth, Clock, TrendingUp,
   ArrowLeft, Activity, Headphones, MapPin, Wifi
 } from "lucide-react";
 import { Link } from "wouter";
@@ -227,7 +227,7 @@ export default function ListenerAnalyticsLive() {
           <Card className="bg-gray-900/60 border-purple-500/20">
             <CardHeader>
               <CardTitle className="text-emerald-400 flex items-center gap-2 text-lg">
-                <Globe className="w-5 h-5" /> Geographic Distribution
+                <Earth className="w-5 h-5" /> Geographic Distribution
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">

@@ -1,6 +1,6 @@
 import FamilyMemberPage, { 
   type FamilyMemberData, type ActiveBot, type Commercial, type Accomplishment,
-  Star, Award, Heart, Users, Megaphone, Globe, Music, BookOpen, Zap, Radio
+  Star, Award, Heart, Users, Megaphone, Earth, Music, BookOpen, Zap, Radio
 } from '@/components/FamilyMemberPage';
 
 const BOTS: ActiveBot[] = [
@@ -148,7 +148,7 @@ const ACCOMPLISHMENTS: Accomplishment[] = [
     description: 'Active advocate for Sweet Miracles 501(c)(3) & 508 — "A Voice for the Voiceless" — supporting community crisis response and resource distribution through promotional campaigns.',
     year: '2024–Present',
     category: 'Nonprofit',
-    icon: Globe,
+    icon: Earth,
   },
 ];
 

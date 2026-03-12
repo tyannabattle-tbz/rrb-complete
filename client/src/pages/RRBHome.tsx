@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Radio, Users, Gamepad2, Shield, Globe, Play, ChevronRight, Zap } from 'lucide-react';
+import { Radio, Users, Gamepad2, Shield, Earth, Play, ChevronRight, Zap } from 'lucide-react';
 
 export default function RRBHome() {
   const [, setLocation] = useLocation();
@@ -30,7 +30,7 @@ export default function RRBHome() {
     },
     {
       id: 'legacy',
-      icon: Globe,
+      icon: Earth,
       title: '📖 Legacy Biography',
       description: 'Complete timeline and family history (1971–2025)',
       features: ['7 Eras', 'Family Tree', 'Achievements', 'Verified Records'],

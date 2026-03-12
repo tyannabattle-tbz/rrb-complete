@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Heart, Globe, Users, TrendingUp } from 'lucide-react';
+import { Heart, Earth, Users, TrendingUp } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
 export default function SweetMiraclesDonation() {
@@ -111,7 +111,7 @@ export default function SweetMiraclesDonation() {
 
           <Card className="bg-slate-800/50 border-green-500/20 hover:border-green-500/50 transition-all">
             <CardContent className="pt-6">
-              <Globe className="w-12 h-12 text-orange-400 mb-4" />
+              <Earth className="w-12 h-12 text-orange-400 mb-4" />
               <h3 className="text-lg font-bold text-white mb-2">Policy Change</h3>
               <p className="text-sm text-gray-300">
                 Advocating for policies that improve quality of life for vulnerable populations

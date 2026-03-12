@@ -17,7 +17,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Zap, Radio, AlertTriangle, RefreshCw, CheckCircle, Clock, BarChart3, Shield, FileText, List, Search, Globe, Heart, Cpu, Wifi, Send, Terminal, Mail } from 'lucide-react';
+import { Activity, Zap, Radio, AlertTriangle, RefreshCw, CheckCircle, Clock, BarChart3, Shield, FileText, List, Search, Earth, Heart, Cpu, Wifi, Send, Terminal, Mail } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useToast } from '@/hooks/use-toast';
 
@@ -456,7 +456,7 @@ export default function QumusPort3000() {
                 Audit Trail
               </Button>
               <Button onClick={() => setLocation('/conference')} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
-                <Globe className="w-4 h-4 mr-2" />
+                <Earth className="w-4 h-4 mr-2" />
                 Conference Hub
               </Button>
             </CardContent>
@@ -561,7 +561,7 @@ export default function QumusPort3000() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-green-400" />
+                  <Earth className="w-5 h-5 text-green-400" />
                   Canryn Production
                 </CardTitle>
                 <Badge className="bg-green-500/20 text-green-400">{systemStatus.canryn.status}</Badge>
@@ -644,7 +644,7 @@ export default function QumusPort3000() {
             <Cpu className="w-4 h-4 mr-2" /> Studio Suite
           </Button>
           <Button onClick={() => setLocation('/convention-hub')} variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10">
-            <Globe className="w-4 h-4 mr-2" /> Convention Hub
+            <Earth className="w-4 h-4 mr-2" /> Convention Hub
           </Button>
           <Button onClick={() => setLocation('/chat')} variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10">
             <Zap className="w-4 h-4 mr-2" /> AI Chat

@@ -10,7 +10,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import {
   Mic2, Play, Pause, Clock, Users, Headphones, Radio, Podcast,
   ChevronRight, Calendar, Download, ExternalLink, Sparkles, Gamepad2,
-  Globe, Heart, Upload, BarChart3, TrendingUp, Eye
+  Earth, Heart, Upload, BarChart3, TrendingUp, Eye
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,7 +60,7 @@ const SHOW_CONFIGS: Record<string, {
     route: "/podcast/around-the-qumunity",
     color: "text-purple-400",
     gradient: "from-purple-900/60 to-purple-700/30",
-    icon: <Globe className="w-6 h-6" />,
+    icon: <Earth className="w-6 h-6" />,
     hostName: "Valanna",
     hostVoice: "Nova (Warm Female)",
     tagline: "Community voices, QUMUS updates, and ecosystem deep-dives",

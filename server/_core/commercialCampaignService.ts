@@ -162,7 +162,7 @@ export const UN_CAMPAIGN_COMMERCIALS: CampaignCommercial[] = [
     title: 'The Ecosystem — Technology Meets Purpose',
     category: 'promo',
     djVoice: 'seraph',
-    script: `Fifty radio channels. Emergency broadcast mesh networks. Autonomous AI orchestration. Real-time donation tracking. Listener analytics across the globe. This is not Silicon Valley. This is Canryn Production — built by Ty Battle, also known as Ty Bat Zan — a Black, women-owned technology company from Alabama. On March 17th, we present this ecosystem at the United Nations NGO CSW70. QUMUS runs the brain. HybridCast protects communities. Sweet Miracles heals them. And RRB Radio gives them a voice. The TBZ Operating System — the future is already here. manuweb.sbs.`,
+    script: `Fifty radio channels. Emergency broadcast mesh networks. Autonomous AI orchestration. Real-time donation tracking. Listener analytics across the world. This is not Silicon Valley. This is Canryn Production — built by Ty Battle, also known as Ty Bat Zan — a Black, women-owned technology company from Alabama. On March 17th, we present this ecosystem at the United Nations NGO CSW70. QUMUS runs the brain. HybridCast protects communities. Sweet Miracles heals them. And RRB Radio gives them a voice. The TBZ Operating System — the future is already here. manuweb.sbs.`,
     duration: 30,
     priority: 7,
     targetChannelGenres: ['Electronic', 'Lo-Fi', 'Hip-Hop', 'Jazz', 'Talk', 'Community'],

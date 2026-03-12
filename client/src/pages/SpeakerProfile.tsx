@@ -3,7 +3,7 @@ import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Calendar, Globe, Linkedin, MapPin, Mic, Twitter, User, ExternalLink } from "lucide-react";
+import { ArrowLeft, Calendar, Earth, Linkedin, MapPin, Mic, Twitter, User, ExternalLink } from "lucide-react";
 
 export default function SpeakerProfile() {
   const params = useParams<{ id: string }>();
@@ -96,7 +96,7 @@ export default function SpeakerProfile() {
               {speaker.social_website && (
                 <a href={speaker.social_website.startsWith('http') ? speaker.social_website : `https://${speaker.social_website}`} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 text-sm">
-                  <Globe className="w-4 h-4" /> Website
+                  <Earth className="w-4 h-4" /> Website
                 </a>
               )}
             </div>
@@ -170,7 +170,7 @@ export default function SpeakerProfile() {
         {/* UN CSW70 Badge */}
         <div className="mt-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30">
-            <Globe className="w-4 h-4 text-blue-400" />
+            <Earth className="w-4 h-4 text-blue-400" />
             <span className="text-sm text-blue-300">UN CSW70 Conference Speaker</span>
           </div>
           <p className="text-white/30 text-xs mt-3">

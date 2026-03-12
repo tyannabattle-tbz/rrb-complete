@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import {
   Bell, CheckCircle, Clock, AlertTriangle, Shield, Zap,
-  Send, Globe, ChevronDown, ChevronUp, Rocket, Users,
+  Send, Earth, ChevronDown, ChevronUp, Rocket, Users,
   FileText, Radio, Settings, ArrowLeft
 } from "lucide-react";
 import { Link } from "wouter";
@@ -280,7 +280,7 @@ export default function RRBTeamUpdates() {
                 {/* Webhook Dispatch */}
                 <div className="border-t border-gray-700 pt-4 mt-4">
                   <h4 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-                    <Globe className="w-4 h-4" /> External Webhook Dispatch
+                    <Earth className="w-4 h-4" /> External Webhook Dispatch
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <select
@@ -414,7 +414,7 @@ export default function RRBTeamUpdates() {
                                       });
                                     }}
                                   >
-                                    <Globe className="w-3 h-3 mr-1" /> Send to {webhookService}
+                                    <Earth className="w-3 h-3 mr-1" /> Send to {webhookService}
                                   </Button>
                                 )}
                               </>

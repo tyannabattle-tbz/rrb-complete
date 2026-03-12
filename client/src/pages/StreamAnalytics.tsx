@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  BarChart3, Radio, Users, TrendingUp, Music, Globe, RefreshCw, 
+  BarChart3, Radio, Users, TrendingUp, Music, Earth, RefreshCw, 
   ArrowLeft, Headphones, Activity, Wifi, Volume2, Zap, Clock
 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
@@ -241,7 +241,7 @@ export default function StreamAnalytics() {
               <Card className="bg-slate-800/50 border-purple-500/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Globe className="w-5 h-5 text-blue-400" />
+                    <Earth className="w-5 h-5 text-blue-400" />
                     Platform Breakdown
                   </CardTitle>
                 </CardHeader>
