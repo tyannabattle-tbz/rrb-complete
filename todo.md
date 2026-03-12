@@ -4260,3 +4260,12 @@
 - [x] Full ecosystem verification — 33/33 routes pass, 54/54 channels have fallbacks
 - [x] Create final updated zip with all systems operational
 - [x] 9/9 vitest tests pass for self-audit engine
+
+## Channel Sweep — March 12, 2026
+- [x] Test all 54 radio channel streams for connectivity
+- [x] Identify dead/misaligned streams (14 duplicate URL groups across 28 channels)
+- [x] Replace all duplicates with unique, genre-matched streams from 181.FM and SomaFM
+- [x] Verify 54/54 channels alive with 54 unique URLs, zero duplicates
+- [x] Fixed Blues Highway genre mismatch (was Anime/Gaming, now Blues)
+- [x] Added fallback URLs to all fixed channels
+- [x] Save checkpoint and deliver updated zip
