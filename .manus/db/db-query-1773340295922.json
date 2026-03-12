@@ -1,0 +1,166 @@
+{
+  "query": "SELECT streamUrl, COUNT(*) as cnt FROM radio_channels WHERE status = 'active' GROUP BY streamUrl ORDER BY cnt DESC",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT streamUrl, COUNT(*) as cnt FROM radio_channels WHERE status = 'active' GROUP BY streamUrl ORDER BY cnt DESC",
+  "rows": [
+    {
+      "streamUrl": "https://streams.fluxfm.de/hiphop/mp3-320/audio/",
+      "cnt": "3"
+    },
+    {
+      "streamUrl": "https://tunein.cdnstream1.com/2868_96.mp3",
+      "cnt": "3"
+    },
+    {
+      "streamUrl": "http://radio.stereoscenic.com/asp-h",
+      "cnt": "3"
+    },
+    {
+      "streamUrl": "http://jking.cdnstream1.com/b22139_128mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://pub0201.101.ru/stream/trust/mp3/128/24?",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://s3.radio.co/s97f38db97/listen",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://premium.shoutcastsolutions.com/radio/8050/256.mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://icecast.walmradio.com:8443/otr",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://listen.181fm.com/181-soul_128k.mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://stream.zeno.fm/0r0xa792kwzuv",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://stream.nightride.fm/nightride.mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "http://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://listen.christianrock.net/stream/13/",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://tv.radiohosting.online:9484/stream",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "http://bookradio.hostingradio.ru:8069/fm",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "http://jazzblues.ice.infomaniak.ch/jazzblues-high.mp3",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "http://ice-the.musicradio.com/ClassicFMMP3",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "http://novazz.ice.infomaniak.ch/novazz-128.mp3",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://icecast.multhielemedia.de/listen/kontrafunk/radio.mp3",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://stream.zeno.fm/6ypnfbm3p8uuv",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://funkyradio.streamingmedia.it/play.mp3",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "http://stream01.zogl.net:8906/stream",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://stream.drugradio.ru:8020/stream128",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://stream.zeno.fm/7y2e5bm3p8uuv",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://maggie.torontocast.com:2020/stream/rdmixlovesongs",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://workout-high.rautemusik.fm/?ref=radiobrowser",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "http://s1.voscast.com:8652/stream",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://stream.zeno.fm/4p7t2ewfr08uv",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "http://playerservices.streamtheworld.com/api/livestream-redirect/CADENASER.mp3",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "http://26343.live.streamtheworld.com/977_COUNTRY_SC",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://stream.zeno.fm/qpn8mkt8c4duv",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://broadcastify.cdnstream1.com/8705",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "http://streaming5.elitecomunicacion.es:8082/live.mp3",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://cast1.torontocast.com:4610/stream",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://listen.reyfm.de/gaming_192kbps.mp3",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://wdr-wdr5-live.icecastssl.wdr.de/wdr/wdr5/live/mp3/128/stream.mp3",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://icecast.walmradio.com:8443/classic",
+      "cnt": "1"
+    },
+    {
+      "streamUrl": "https://radio.gotright.net/radio/8000/radio.mp3",
+      "cnt": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "streamUrl\tcnt\nhttps://streams.fluxfm.de/hiphop/mp3-320/audio/\t3\nhttps://tunein.cdnstream1.com/2868_96.mp3\t3\nhttp://radio.stereoscenic.com/asp-h\t3\nhttp://jking.cdnstream1.com/b22139_128mp3\t2\nhttps://pub0201.101.ru/stream/trust/mp3/128/24?\t2\nhttps://s3.radio.co/s97f38db97/listen\t2\nhttps://premium.shoutcastsolutions.com/radio/8050/256.mp3\t2\nhttps://icecast.walmradio.com:8443/otr\t2\nhttps://listen.181fm.com/181-soul_128k.mp3\t2\nhttps://stream.zeno.fm/0r0xa792kwzuv\t2\nhttps://stream.nightride.fm/nightride.mp3\t2\nhttp://stream.live.vc.bbcmedia.co.uk/bbc_world_service\t2\nhttps://listen.christianrock.net/stream/13/\t1\nhttps://tv.radiohosting.online:9484/stream\t1\nhttp://bookradio.hostingradio.ru:8069/fm\t1\nhttp://jazzblues.ice.infomaniak.ch/jazzblues-high.mp3\t1\nhttp://ice-the.musicradio.com/ClassicFMMP3\t1\nhttp://novazz.ice.infomaniak.ch/novazz-128.mp3\t1\nhttps://icecast.multhielemedia.de/listen/kontrafunk/radio.mp3\t1\nhttps://stream.zeno.fm/6ypnfbm3p8uuv\t1\nhttps://funkyradio.streamingmedia.it/play.mp3\t1\nhttp://stream01.zogl.net:8906/stream\t1\nhttps://stream.drugradio.ru:8020/stream128\t1\nhttps://stream.zeno.fm/7y2e5bm3p8uuv\t1\nhttps://maggie.torontocast.com:2020/stream/rdmixlovesongs\t1\nhttps://workout-high.rautemusik.fm/?ref=radiobrowser\t1\nhttp://s1.voscast.com:8652/stream\t1\nhttps://stream.zeno.fm/4p7t2ewfr08uv\t1\nhttp://playerservices.streamtheworld.com/api/livestream-redirect/CADENASER.mp3\t1\nhttp://26343.live.streamtheworld.com/977_COUNTRY_SC\t1\nhttps://stream.zeno.fm/qpn8mkt8c4duv\t1\nhttps://broadcastify.cdnstream1.com/8705\t1\nhttp://streaming5.elitecomunicacion.es:8082/live.mp3\t1\nhttps://cast1.torontocast.com:4610/stream\t1\nhttps://stream.live.vc.bbcmedia.co.uk/bbc_world_service\t1\nhttps://listen.reyfm.de/gaming_192kbps.mp3\t1\nhttps://wdr-wdr5-live.icecastssl.wdr.de/wdr/wdr5/live/mp3/128/stream.mp3\t1\nhttps://icecast.walmradio.com:8443/classic\t1\nhttps://radio.gotright.net/radio/8000/radio.mp3\t1\n",
+  "stderr": "",
+  "execution_time_ms": 51
+}

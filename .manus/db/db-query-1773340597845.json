@@ -1,0 +1,46 @@
+{
+  "query": "SELECT streamUrl, COUNT(*) as cnt FROM radio_channels WHERE status = 'active' GROUP BY streamUrl HAVING cnt > 1 ORDER BY cnt DESC",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT streamUrl, COUNT(*) as cnt FROM radio_channels WHERE status = 'active' GROUP BY streamUrl HAVING cnt > 1 ORDER BY cnt DESC",
+  "rows": [
+    {
+      "streamUrl": "https://listen.181fm.com/181-smoothac_128k.mp3",
+      "cnt": "3"
+    },
+    {
+      "streamUrl": "https://listen.181fm.com/181-office_128k.mp3",
+      "cnt": "3"
+    },
+    {
+      "streamUrl": "https://listen.181fm.com/181-vocals_128k.mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://listen.181fm.com/181-buzz_128k.mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://listen.181fm.com/181-energy98_128k.mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://listen.181fm.com/181-80srnb_128k.mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://listen.181fm.com/181-breeze_128k.mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://listen.181fm.com/181-chilled_128k.mp3",
+      "cnt": "2"
+    },
+    {
+      "streamUrl": "https://listen.181fm.com/181-beat_128k.mp3",
+      "cnt": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "streamUrl\tcnt\nhttps://listen.181fm.com/181-smoothac_128k.mp3\t3\nhttps://listen.181fm.com/181-office_128k.mp3\t3\nhttps://listen.181fm.com/181-vocals_128k.mp3\t2\nhttps://listen.181fm.com/181-buzz_128k.mp3\t2\nhttps://listen.181fm.com/181-energy98_128k.mp3\t2\nhttps://listen.181fm.com/181-80srnb_128k.mp3\t2\nhttps://listen.181fm.com/181-breeze_128k.mp3\t2\nhttps://listen.181fm.com/181-chilled_128k.mp3\t2\nhttps://listen.181fm.com/181-beat_128k.mp3\t2\n",
+  "stderr": "",
+  "execution_time_ms": 50
+}

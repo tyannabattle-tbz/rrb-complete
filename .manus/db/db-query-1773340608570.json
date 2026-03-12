@@ -1,0 +1,110 @@
+{
+  "query": "SELECT rc.id, rc.name, rc.streamUrl FROM radio_channels rc INNER JOIN (SELECT streamUrl FROM radio_channels WHERE status = 'active' GROUP BY streamUrl HAVING COUNT(*) > 1) dup ON rc.streamUrl = dup.streamUrl WHERE rc.status = 'active' ORDER BY rc.streamUrl, rc.id",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT rc.id, rc.name, rc.streamUrl FROM radio_channels rc INNER JOIN (SELECT streamUrl FROM radio_channels WHERE status = 'active' GROUP BY streamUrl HAVING COUNT(*) > 1) dup ON rc.streamUrl = dup.streamUrl WHERE rc.status = 'active' ORDER BY rc.streamUrl, rc.id",
+  "rows": [
+    {
+      "id": "32",
+      "name": "Worship & Devotional",
+      "streamUrl": "https://listen.181fm.com/181-80srnb_128k.mp3"
+    },
+    {
+      "id": "50",
+      "name": "Open Mic",
+      "streamUrl": "https://listen.181fm.com/181-80srnb_128k.mp3"
+    },
+    {
+      "id": "11",
+      "name": "Hip-Hop Classics",
+      "streamUrl": "https://listen.181fm.com/181-beat_128k.mp3"
+    },
+    {
+      "id": "900018",
+      "name": "SQUADD Coalition Radio",
+      "streamUrl": "https://listen.181fm.com/181-beat_128k.mp3"
+    },
+    {
+      "id": "3",
+      "name": "Audiobook Stream",
+      "streamUrl": "https://listen.181fm.com/181-breeze_128k.mp3"
+    },
+    {
+      "id": "27",
+      "name": "Health & Wellness",
+      "streamUrl": "https://listen.181fm.com/181-breeze_128k.mp3"
+    },
+    {
+      "id": "5",
+      "name": "Music Discovery",
+      "streamUrl": "https://listen.181fm.com/181-buzz_128k.mp3"
+    },
+    {
+      "id": "35",
+      "name": "Indie & Underground",
+      "streamUrl": "https://listen.181fm.com/181-buzz_128k.mp3"
+    },
+    {
+      "id": "7",
+      "name": "Drop Radio 432Hz",
+      "streamUrl": "https://listen.181fm.com/181-chilled_128k.mp3"
+    },
+    {
+      "id": "23",
+      "name": "Meditation & Mindfulness",
+      "streamUrl": "https://listen.181fm.com/181-chilled_128k.mp3"
+    },
+    {
+      "id": "19",
+      "name": "Electronic Pulse",
+      "streamUrl": "https://listen.181fm.com/181-energy98_128k.mp3"
+    },
+    {
+      "id": "39",
+      "name": "Workout & Energy",
+      "streamUrl": "https://listen.181fm.com/181-energy98_128k.mp3"
+    },
+    {
+      "id": "4",
+      "name": "HybridCast Emergency",
+      "streamUrl": "https://listen.181fm.com/181-office_128k.mp3"
+    },
+    {
+      "id": "24",
+      "name": "News & Current Affairs",
+      "streamUrl": "https://listen.181fm.com/181-office_128k.mp3"
+    },
+    {
+      "id": "900019",
+      "name": "UN Advocacy Radio",
+      "streamUrl": "https://listen.181fm.com/181-office_128k.mp3"
+    },
+    {
+      "id": "6",
+      "name": "Community Voice",
+      "streamUrl": "https://listen.181fm.com/181-smoothac_128k.mp3"
+    },
+    {
+      "id": "25",
+      "name": "Business & Finance",
+      "streamUrl": "https://listen.181fm.com/181-smoothac_128k.mp3"
+    },
+    {
+      "id": "900020",
+      "name": "Canryn Production Radio",
+      "streamUrl": "https://listen.181fm.com/181-smoothac_128k.mp3"
+    },
+    {
+      "id": "2",
+      "name": "Podcast Network",
+      "streamUrl": "https://listen.181fm.com/181-vocals_128k.mp3"
+    },
+    {
+      "id": "43",
+      "name": "Valanna AI Radio",
+      "streamUrl": "https://listen.181fm.com/181-vocals_128k.mp3"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tstreamUrl\n32\tWorship & Devotional\thttps://listen.181fm.com/181-80srnb_128k.mp3\n50\tOpen Mic\thttps://listen.181fm.com/181-80srnb_128k.mp3\n11\tHip-Hop Classics\thttps://listen.181fm.com/181-beat_128k.mp3\n900018\tSQUADD Coalition Radio\thttps://listen.181fm.com/181-beat_128k.mp3\n3\tAudiobook Stream\thttps://listen.181fm.com/181-breeze_128k.mp3\n27\tHealth & Wellness\thttps://listen.181fm.com/181-breeze_128k.mp3\n5\tMusic Discovery\thttps://listen.181fm.com/181-buzz_128k.mp3\n35\tIndie & Underground\thttps://listen.181fm.com/181-buzz_128k.mp3\n7\tDrop Radio 432Hz\thttps://listen.181fm.com/181-chilled_128k.mp3\n23\tMeditation & Mindfulness\thttps://listen.181fm.com/181-chilled_128k.mp3\n19\tElectronic Pulse\thttps://listen.181fm.com/181-energy98_128k.mp3\n39\tWorkout & Energy\thttps://listen.181fm.com/181-energy98_128k.mp3\n4\tHybridCast Emergency\thttps://listen.181fm.com/181-office_128k.mp3\n24\tNews & Current Affairs\thttps://listen.181fm.com/181-office_128k.mp3\n900019\tUN Advocacy Radio\thttps://listen.181fm.com/181-office_128k.mp3\n6\tCommunity Voice\thttps://listen.181fm.com/181-smoothac_128k.mp3\n25\tBusiness & Finance\thttps://listen.181fm.com/181-smoothac_128k.mp3\n900020\tCanryn Production Radio\thttps://listen.181fm.com/181-smoothac_128k.mp3\n2\tPodcast Network\thttps://listen.181fm.com/181-vocals_128k.mp3\n43\tValanna AI Radio\thttps://listen.181fm.com/181-vocals_128k.mp3\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

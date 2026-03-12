@@ -7187,7 +7187,33 @@ var init_ecosystemController = __esm({
 
 // server/services/streamHealthMonitor.ts
 import { sql as sql18 } from "drizzle-orm";
-async function checkStream(channelId, channelName, streamUrl) {
+function findGenreBackups(channelName, genre) {
+  if (genre) {
+    for (const [key, urls] of Object.entries(GENRE_BACKUP_STREAMS)) {
+      if (genre.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(genre.toLowerCase())) {
+        return urls;
+      }
+    }
+  }
+  const name = channelName.toLowerCase();
+  for (const [key, urls] of Object.entries(GENRE_BACKUP_STREAMS)) {
+    if (name.includes(key.toLowerCase())) {
+      return urls;
+    }
+  }
+  if (name.includes("hip-hop") || name.includes("hip hop")) return GENRE_BACKUP_STREAMS["Hip-Hop"] || [];
+  if (name.includes("r&b") || name.includes("rnb")) return GENRE_BACKUP_STREAMS["R&B"] || [];
+  if (name.includes("neo-soul") || name.includes("neo soul")) return GENRE_BACKUP_STREAMS["Neo-Soul"] || [];
+  if (name.includes("valanna") || name.includes("candy") || name.includes("seraph") || name.includes("ai radio")) return GENRE_BACKUP_STREAMS["R&B"] || [];
+  if (name.includes("battle") || name.includes("ty")) return GENRE_BACKUP_STREAMS["Hip-Hop"] || [];
+  if (name.includes("sweet miracles") || name.includes("canryn") || name.includes("squadd")) return GENRE_BACKUP_STREAMS["R&B"] || [];
+  if (name.includes("dragon") || name.includes("healing") || name.includes("frequenc")) return GENRE_BACKUP_STREAMS["Relaxation"] || [];
+  if (name.includes("legacy") || name.includes("archive")) return GENRE_BACKUP_STREAMS["Soul"] || [];
+  if (name.includes("open mic")) return GENRE_BACKUP_STREAMS["R&B"] || [];
+  if (name.includes("un advocacy")) return GENRE_BACKUP_STREAMS["World"] || [];
+  return [];
+}
+async function checkStream(channelId, channelName, streamUrl, genre) {
   const start = Date.now();
   try {
     const controller = new AbortController();
@@ -7203,17 +7229,18 @@ async function checkStream(channelId, channelName, streamUrl) {
     const isAudio = contentType.includes("audio") || contentType.includes("mpeg") || contentType.includes("ogg") || contentType.includes("aac");
     const isOk = response.ok || response.status === 206;
     if (isOk && isAudio) {
-      return { channelId, channelName, streamUrl, status: "healthy", responseTimeMs: elapsed, contentType, checkedAt: Date.now() };
+      return { channelId, channelName, streamUrl, genre, status: "healthy", responseTimeMs: elapsed, contentType, checkedAt: Date.now() };
     } else if (isOk) {
-      return { channelId, channelName, streamUrl, status: "degraded", responseTimeMs: elapsed, contentType, checkedAt: Date.now(), error: `Non-audio content: ${contentType}` };
+      return { channelId, channelName, streamUrl, genre, status: "degraded", responseTimeMs: elapsed, contentType, checkedAt: Date.now(), error: `Non-audio content: ${contentType}` };
     } else {
-      return { channelId, channelName, streamUrl, status: "down", responseTimeMs: elapsed, contentType, checkedAt: Date.now(), error: `HTTP ${response.status}` };
+      return { channelId, channelName, streamUrl, genre, status: "down", responseTimeMs: elapsed, contentType, checkedAt: Date.now(), error: `HTTP ${response.status}` };
     }
   } catch (err) {
     return {
       channelId,
       channelName,
       streamUrl,
+      genre,
       status: err.name === "AbortError" ? "degraded" : "down",
       responseTimeMs: Date.now() - start,
       contentType: "",
@@ -7227,10 +7254,10 @@ async function runHealthCheck() {
   const db2 = await getDb();
   if (!db2) {
     console.warn("[StreamHealth] Database not available");
-    return { timestamp: Date.now(), totalChannels: 0, healthy: 0, degraded: 0, down: 0, unknown: 0, uptimePercent: 0, results: [] };
+    return { timestamp: Date.now(), totalChannels: 0, healthy: 0, degraded: 0, down: 0, unknown: 0, uptimePercent: 0, results: [], healedCount: 0, stillDownCount: 0 };
   }
   const channels = await db2.execute(
-    sql18`SELECT id, name, streamUrl FROM radio_channels WHERE status = 'active' ORDER BY id`
+    sql18`SELECT id, name, streamUrl, genre FROM radio_channels WHERE status = 'active' ORDER BY id`
   );
   const results = [];
   let rows = [];
@@ -7245,7 +7272,7 @@ async function runHealthCheck() {
   for (let i = 0; i < rows.length; i += 10) {
     const batch = rows.slice(i, i + 10);
     const batchResults = await Promise.all(
-      batch.map((ch) => checkStream(ch.id, ch.name, ch.streamUrl || ""))
+      batch.map((ch) => checkStream(ch.id, ch.name, ch.streamUrl || "", ch.genre || ""))
     );
     results.push(...batchResults);
   }
@@ -7253,40 +7280,72 @@ async function runHealthCheck() {
   const degraded = results.filter((r) => r.status === "degraded").length;
   const down = results.filter((r) => r.status === "down").length;
   const unknown = results.filter((r) => r.status === "unknown").length;
-  const report = {
-    timestamp: Date.now(),
-    totalChannels: results.length,
-    healthy,
-    degraded,
-    down,
-    unknown,
-    uptimePercent: results.length > 0 ? Math.round(healthy / results.length * 100) : 0,
-    results
-  };
-  healthHistory.push(report);
-  if (healthHistory.length > MAX_HISTORY) healthHistory.shift();
-  lastReport = report;
-  console.log(`[StreamHealth] Check complete: ${healthy}/${results.length} healthy (${report.uptimePercent}% uptime)`);
+  let healedCount = 0;
+  let stillDownCount = 0;
   results.filter((r) => r.status !== "healthy").forEach((r) => {
     console.log(`[StreamHealth] ${r.status.toUpperCase()}: ch-${r.channelId} ${r.channelName} \u2014 ${r.error || "slow response"} (${r.responseTimeMs}ms)`);
   });
+  const downPercent = results.length > 0 ? down / results.length : 0;
+  let rootCause = "unknown";
+  let rootCauseDetails = "";
   if (down > 0) {
     const downChannels = results.filter((r) => r.status === "down");
-    const backupStreams = [
-      "https://funkyradio.streamingmedia.it/play.mp3",
-      "https://listen.181fm.com/181-soul_128k.mp3",
-      "https://npr-ice.streamguys1.com/live.mp3",
-      "https://fm939.wnyc.org/wnycfm",
-      "https://tunein.cdnstream1.com/2868_96.mp3",
-      "https://stream.0nlineradio.com/soul",
-      "https://stream.zeno.fm/yn65fsaurfhvv"
-    ];
-    const healed = [];
-    const stillDown = [];
+    const errorTypes = /* @__PURE__ */ new Map();
+    downChannels.forEach((ch) => {
+      const errKey = ch.error?.includes("abort") || ch.error?.includes("timeout") ? "timeout" : ch.error?.includes("ENOTFOUND") || ch.error?.includes("DNS") ? "dns" : ch.error?.includes("ECONNREFUSED") ? "refused" : ch.error?.includes("fetch failed") ? "fetch_failed" : "other";
+      errorTypes.set(errKey, (errorTypes.get(errKey) || 0) + 1);
+    });
+    if (downPercent >= CIRCUIT_BREAKER_THRESHOLD) {
+      const dominantError = [...errorTypes.entries()].sort((a, b) => b[1] - a[1])[0];
+      if (dominantError[0] === "timeout" || dominantError[0] === "fetch_failed") {
+        rootCause = "provider_outage";
+        rootCauseDetails = `${down}/${results.length} channels (${Math.round(downPercent * 100)}%) failed simultaneously with ${dominantError[0]} errors. Likely upstream provider outage \u2014 auto-healing PAUSED to prevent mass URL overwrites.`;
+      } else if (dominantError[0] === "dns") {
+        rootCause = "network_issue";
+        rootCauseDetails = `DNS resolution failures across ${down} channels. Possible DNS outage or network connectivity issue.`;
+      } else {
+        rootCause = "provider_outage";
+        rootCauseDetails = `Mass failure: ${down}/${results.length} channels down. Dominant error: ${dominantError[0]} (${dominantError[1]} occurrences).`;
+      }
+      circuitBreakerTripped = true;
+      lastCircuitBreakerTrip = Date.now();
+      console.log(`[StreamHealth] \u26A1 CIRCUIT BREAKER TRIPPED: ${rootCauseDetails}`);
+    } else if (down <= 3) {
+      rootCause = "individual_failure";
+      rootCauseDetails = `${down} individual channel(s) down \u2014 normal auto-healing applies.`;
+    } else {
+      rootCause = "unknown";
+      rootCauseDetails = `${down} channels down (${Math.round(downPercent * 100)}%). Mixed error types.`;
+      if (circuitBreakerTripped && Date.now() - lastCircuitBreakerTrip > 30 * 60 * 1e3) {
+        circuitBreakerTripped = false;
+        console.log("[StreamHealth] Circuit breaker reset after 30-minute cooldown");
+      }
+    }
+    outageHistory.push({
+      timestamp: Date.now(),
+      channelsAffected: down,
+      totalChannels: results.length,
+      rootCause,
+      details: rootCauseDetails,
+      resolved: false
+    });
+    if (outageHistory.length > MAX_OUTAGE_HISTORY) outageHistory.shift();
+  } else {
+    if (circuitBreakerTripped) {
+      circuitBreakerTripped = false;
+      console.log("[StreamHealth] \u2705 All channels healthy \u2014 circuit breaker reset");
+    }
+  }
+  if (down > 0 && !circuitBreakerTripped) {
+    const downChannels = results.filter((r) => r.status === "down");
+    const digestHealed = [];
+    const digestStillDown = [];
     for (const ch of downChannels) {
       let fixed = false;
-      for (const backup of backupStreams) {
-        if (backup === ch.streamUrl) continue;
+      const genreBackups = findGenreBackups(ch.channelName, ch.genre);
+      const allBackups = [...genreBackups, ...UNIVERSAL_FALLBACKS];
+      const uniqueBackups = [...new Set(allBackups)].filter((url) => url !== ch.streamUrl);
+      for (const backup of uniqueBackups) {
         try {
           const ctrl = new AbortController();
           const t2 = setTimeout(() => ctrl.abort(), 5e3);
@@ -7295,11 +7354,13 @@ async function runHealthCheck() {
           if (resp.ok || resp.status === 206) {
             try {
               await db2.execute(
-                sql18`UPDATE radioChannels SET streamUrl = ${backup} WHERE id = ${ch.channelId}`
+                sql18`UPDATE radio_channels SET streamUrl = ${backup} WHERE id = ${ch.channelId}`
               );
-              healed.push(`ch-${String(ch.channelId).padStart(3, "0")}: ${ch.channelName} \u2192 ${backup}`);
-              console.log(`[StreamHealth] AUTO-HEALED: ${ch.channelName} swapped to ${backup}`);
+              const isGenreMatch = genreBackups.includes(backup);
+              digestHealed.push(`ch-${String(ch.channelId).padStart(3, "0")}: ${ch.channelName} \u2192 ${isGenreMatch ? "\u{1F3B5}" : "\u{1F4FB}"} ${backup}`);
+              console.log(`[StreamHealth] AUTO-HEALED: ${ch.channelName} \u2192 ${backup} (${isGenreMatch ? "genre-match" : "universal"})`);
               fixed = true;
+              healedCount++;
             } catch (dbErr) {
               console.error(`[StreamHealth] DB update failed for ${ch.channelName}:`, dbErr);
             }
@@ -7309,28 +7370,113 @@ async function runHealthCheck() {
         }
       }
       if (!fixed) {
-        stillDown.push(`\u2022 ch-${String(ch.channelId).padStart(3, "0")}: ${ch.channelName} \u2014 ${ch.error}`);
+        digestStillDown.push(`ch-${String(ch.channelId).padStart(3, "0")}: ${ch.channelName} \u2014 ${ch.error}`);
+        stillDownCount++;
       }
     }
-    let alertContent = "";
-    if (healed.length > 0) {
-      alertContent += `\u2705 AUTO-HEALED (${healed.length}):
-${healed.map((h) => `\u2022 ${h}`).join("\n")}
+    const now = Date.now();
+    const timeSinceLastNotification = now - lastNotificationTime;
+    if (timeSinceLastNotification >= NOTIFICATION_COOLDOWN_MS) {
+      let digestContent = `\u{1F4CA} RRB Radio Health Digest
+`;
+      digestContent += `\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+`;
+      digestContent += `Total: ${healthy + healedCount}/${results.length} channels operational
+`;
+      digestContent += `Uptime: ${results.length > 0 ? Math.round((healthy + healedCount) / results.length * 100) : 0}%
+`;
+      digestContent += `Root Cause: ${rootCauseDetails}
 
 `;
-    }
-    if (stillDown.length > 0) {
-      alertContent += `\u274C STILL DOWN (${stillDown.length}):
-${stillDown.join("\n")}
-
+      if (digestHealed.length > 0) {
+        digestContent += `\u2705 Auto-Healed (${digestHealed.length}):
 `;
-    }
-    alertContent += `Total: ${healthy + healed.length}/${results.length} healthy
+        const shown = digestHealed.slice(0, 5);
+        shown.forEach((h) => {
+          digestContent += `  ${h}
+`;
+        });
+        if (digestHealed.length > 5) {
+          digestContent += `  ... and ${digestHealed.length - 5} more channels restored
+`;
+        }
+        digestContent += `
+`;
+      }
+      if (digestStillDown.length > 0) {
+        digestContent += `\u274C Needs Attention (${digestStillDown.length}):
+`;
+        digestStillDown.forEach((d) => {
+          digestContent += `  ${d}
+`;
+        });
+        digestContent += `
+`;
+      }
+      if (pendingDigestItems.length > 0) {
+        digestContent += `\u{1F4CB} Previous Cycle Notes:
+`;
+        pendingDigestItems.forEach((item) => {
+          digestContent += `  ${item}
+`;
+        });
+        pendingDigestItems = [];
+      }
+      digestContent += `
 Time: ${(/* @__PURE__ */ new Date()).toISOString()}`;
-    await notifyOwner({
-      title: `\u26A0\uFE0F RRB Radio: ${down} Channel${down > 1 ? "s" : ""} Down${healed.length > 0 ? ` \u2014 ${healed.length} Auto-Healed` : ""}`,
-      content: alertContent
-    }).catch((err) => console.error("[StreamHealth] Alert failed:", err));
+      digestContent += `
+Circuit Breaker: ${circuitBreakerTripped ? "\u26A1 ACTIVE (auto-heal paused)" : "\u2705 Normal"}`;
+      digestContent += `
+Next check in 15 minutes`;
+      const severity = digestStillDown.length > 0 ? "\u{1F534}" : digestHealed.length > 10 ? "\u{1F7E1}" : "\u{1F7E2}";
+      await notifyOwner({
+        title: `${severity} RRB Radio Digest: ${healthy + healedCount}/${results.length} Operational`,
+        content: digestContent
+      }).catch((err) => console.error("[StreamHealth] Digest notification failed:", err));
+      lastNotificationTime = now;
+    } else {
+      if (digestHealed.length > 0) {
+        pendingDigestItems.push(`${digestHealed.length} channels auto-healed`);
+      }
+      if (digestStillDown.length > 0) {
+        pendingDigestItems.push(`${digestStillDown.length} channels still down`);
+      }
+      console.log(`[StreamHealth] Notification throttled \u2014 ${Math.round((NOTIFICATION_COOLDOWN_MS - timeSinceLastNotification) / 1e3)}s until next digest`);
+    }
+  }
+  const report = {
+    timestamp: Date.now(),
+    totalChannels: results.length,
+    healthy,
+    degraded,
+    down,
+    unknown,
+    uptimePercent: results.length > 0 ? Math.round((healthy + healedCount) / results.length * 100) : 0,
+    results,
+    healedCount,
+    stillDownCount
+  };
+  healthHistory.push(report);
+  if (healthHistory.length > MAX_HISTORY) healthHistory.shift();
+  lastReport = report;
+  console.log(`[StreamHealth] Check complete: ${healthy + healedCount}/${results.length} healthy (${report.uptimePercent}% uptime) | Healed: ${healedCount} | Still down: ${stillDownCount} | Root cause: ${rootCause || "none"}`);
+  if (circuitBreakerTripped && down > 0) {
+    const now = Date.now();
+    if (now - lastNotificationTime >= NOTIFICATION_COOLDOWN_MS) {
+      await notifyOwner({
+        title: `\u26A1 CIRCUIT BREAKER: ${down}/${results.length} Channels Down \u2014 Auto-Heal Paused`,
+        content: `${rootCauseDetails}
+
+Auto-healing is paused to prevent mass URL overwrites. The system will retry when fewer than ${Math.round(CIRCUIT_BREAKER_THRESHOLD * 100)}% of channels are affected.
+
+Channels affected:
+${results.filter((r) => r.status === "down").slice(0, 10).map((r) => `  ch-${r.channelId}: ${r.channelName}`).join("\n")}${down > 10 ? `
+  ... and ${down - 10} more` : ""}
+
+Time: ${(/* @__PURE__ */ new Date()).toISOString()}`
+      }).catch((err) => console.error("[StreamHealth] Circuit breaker notification failed:", err));
+      lastNotificationTime = now;
+    }
   }
   return report;
 }
@@ -7340,7 +7486,7 @@ function startStreamHealthMonitor() {
     return;
   }
   isRunning = true;
-  console.log("[StreamHealth] Starting automated 15-minute health monitor");
+  console.log("[StreamHealth] Starting automated 15-minute health monitor with genre-matched healing");
   setTimeout(() => {
     runHealthCheck().catch((err) => console.error("[StreamHealth] Initial check failed:", err));
   }, 3e4);
@@ -7370,18 +7516,189 @@ function getMonitorStatus() {
     currentUptime: lastReport?.uptimePercent || null,
     healthyChannels: lastReport?.healthy || 0,
     totalChannels: lastReport?.totalChannels || 0,
+    healedThisCycle: lastReport?.healedCount || 0,
+    stillDownThisCycle: lastReport?.stillDownCount || 0,
+    circuitBreaker: {
+      tripped: circuitBreakerTripped,
+      lastTrippedAt: lastCircuitBreakerTrip || null,
+      threshold: `${Math.round(CIRCUIT_BREAKER_THRESHOLD * 100)}%`
+    },
     downChannels: lastReport?.results.filter((r) => r.status === "down").map((r) => ({
       id: r.channelId,
       name: r.channelName,
+      genre: r.genre,
       error: r.error
-    })) || []
+    })) || [],
+    recentOutages: outageHistory.slice(-10).map((o) => ({
+      timestamp: o.timestamp,
+      channelsAffected: o.channelsAffected,
+      totalChannels: o.totalChannels,
+      rootCause: o.rootCause,
+      details: o.details,
+      resolved: o.resolved
+    })),
+    uptimeHistory: healthHistory.slice(-12).map((h) => ({
+      timestamp: h.timestamp,
+      uptimePercent: h.uptimePercent,
+      healthy: h.healthy,
+      total: h.totalChannels,
+      healed: h.healedCount
+    }))
   };
 }
-var healthHistory, MAX_HISTORY, monitorInterval, isRunning, lastReport;
+var GENRE_BACKUP_STREAMS, UNIVERSAL_FALLBACKS, lastNotificationTime, NOTIFICATION_COOLDOWN_MS, pendingDigestItems, CIRCUIT_BREAKER_THRESHOLD, circuitBreakerTripped, lastCircuitBreakerTrip, outageHistory, MAX_OUTAGE_HISTORY, healthHistory, MAX_HISTORY, monitorInterval, isRunning, lastReport;
 var init_streamHealthMonitor = __esm({
   "server/services/streamHealthMonitor.ts"() {
     init_notification();
     init_db();
+    GENRE_BACKUP_STREAMS = {
+      // R&B / Soul / Hip-Hop
+      "R&B": [
+        "https://listen.181fm.com/181-rnb_128k.mp3",
+        "https://stream.zeno.fm/yn65fsaurfhvv",
+        "https://stream.0nlineradio.com/soul"
+      ],
+      "Hip-Hop": [
+        "https://listen.181fm.com/181-hiphoptop40_128k.mp3",
+        "https://stream.zeno.fm/yn65fsaurfhvv",
+        "https://stream.0nlineradio.com/hiphop"
+      ],
+      "Neo-Soul": [
+        "https://listen.181fm.com/181-soul_128k.mp3",
+        "https://stream.0nlineradio.com/soul",
+        "https://stream.zeno.fm/yn65fsaurfhvv"
+      ],
+      "Soul": [
+        "https://listen.181fm.com/181-soul_128k.mp3",
+        "https://stream.0nlineradio.com/soul"
+      ],
+      // Jazz / Blues
+      "Jazz": [
+        "https://listen.181fm.com/181-bebop_128k.mp3",
+        "https://stream.0nlineradio.com/jazz"
+      ],
+      "Blues": [
+        "https://listen.181fm.com/181-blues_128k.mp3",
+        "https://stream.0nlineradio.com/blues"
+      ],
+      // Reggae / Caribbean / Latin
+      "Reggae": [
+        "https://listen.181fm.com/181-reggae_128k.mp3",
+        "https://stream.0nlineradio.com/reggae"
+      ],
+      "Caribbean": [
+        "https://listen.181fm.com/181-reggae_128k.mp3",
+        "https://stream.0nlineradio.com/reggae"
+      ],
+      "Latin": [
+        "https://listen.181fm.com/181-latin_128k.mp3",
+        "https://stream.0nlineradio.com/salsa"
+      ],
+      // Rock / Indie / Alternative
+      "Rock": [
+        "https://listen.181fm.com/181-rock40_128k.mp3",
+        "https://stream.0nlineradio.com/rock"
+      ],
+      "Indie": [
+        "https://listen.181fm.com/181-indie_128k.mp3",
+        "https://stream.0nlineradio.com/indie"
+      ],
+      // Electronic / Dance
+      "Electronic": [
+        "https://listen.181fm.com/181-energy98_128k.mp3",
+        "https://stream.0nlineradio.com/electronic"
+      ],
+      "Dance": [
+        "https://listen.181fm.com/181-energy98_128k.mp3",
+        "https://stream.0nlineradio.com/dance"
+      ],
+      // Country
+      "Country": [
+        "https://listen.181fm.com/181-kickincountry_128k.mp3",
+        "https://stream.0nlineradio.com/country"
+      ],
+      // Classical / Relaxation
+      "Classical": [
+        "https://listen.181fm.com/181-classical_128k.mp3",
+        "https://stream.0nlineradio.com/classical"
+      ],
+      "Relaxation": [
+        "https://listen.181fm.com/181-chillout_128k.mp3",
+        "https://stream.0nlineradio.com/chillout"
+      ],
+      "Sleep": [
+        "https://listen.181fm.com/181-chillout_128k.mp3",
+        "https://stream.0nlineradio.com/chillout"
+      ],
+      // Gospel / Worship
+      "Gospel": [
+        "https://listen.181fm.com/181-gospel_128k.mp3",
+        "https://stream.0nlineradio.com/gospel"
+      ],
+      "Worship": [
+        "https://listen.181fm.com/181-gospel_128k.mp3",
+        "https://stream.0nlineradio.com/gospel"
+      ],
+      // Afrobeats / World
+      "Afrobeats": [
+        "https://stream.zeno.fm/yn65fsaurfhvv",
+        "https://stream.0nlineradio.com/afrobeats"
+      ],
+      "World": [
+        "https://stream.zeno.fm/yn65fsaurfhvv",
+        "https://stream.0nlineradio.com/world"
+      ],
+      // Pop / Top 40
+      "Pop": [
+        "https://listen.181fm.com/181-star_128k.mp3",
+        "https://stream.0nlineradio.com/pop"
+      ],
+      // Anime / Gaming
+      "Anime": [
+        "https://listen.181fm.com/181-anime_128k.mp3",
+        "https://stream.0nlineradio.com/jpop"
+      ],
+      "Gaming": [
+        "https://listen.181fm.com/181-energy98_128k.mp3",
+        "https://stream.0nlineradio.com/electronic"
+      ],
+      // Love / Throwback
+      "Love": [
+        "https://listen.181fm.com/181-lovesongsplus_128k.mp3",
+        "https://listen.181fm.com/181-soul_128k.mp3"
+      ],
+      "Throwback": [
+        "https://listen.181fm.com/181-oldschool_128k.mp3",
+        "https://listen.181fm.com/181-soul_128k.mp3"
+      ],
+      // Workout / Energy
+      "Workout": [
+        "https://listen.181fm.com/181-energy98_128k.mp3",
+        "https://listen.181fm.com/181-hiphoptop40_128k.mp3"
+      ],
+      // Women in Music
+      "Women": [
+        "https://listen.181fm.com/181-star_128k.mp3",
+        "https://listen.181fm.com/181-rnb_128k.mp3"
+      ]
+    };
+    UNIVERSAL_FALLBACKS = [
+      "https://funkyradio.streamingmedia.it/play.mp3",
+      "https://listen.181fm.com/181-soul_128k.mp3",
+      "https://npr-ice.streamguys1.com/live.mp3",
+      "https://fm939.wnyc.org/wnycfm",
+      "https://tunein.cdnstream1.com/2868_96.mp3",
+      "https://stream.0nlineradio.com/soul",
+      "https://stream.zeno.fm/yn65fsaurfhvv"
+    ];
+    lastNotificationTime = 0;
+    NOTIFICATION_COOLDOWN_MS = 14 * 60 * 1e3;
+    pendingDigestItems = [];
+    CIRCUIT_BREAKER_THRESHOLD = 0.5;
+    circuitBreakerTripped = false;
+    lastCircuitBreakerTrip = 0;
+    outageHistory = [];
+    MAX_OUTAGE_HISTORY = 50;
     healthHistory = [];
     MAX_HISTORY = 96;
     monitorInterval = null;

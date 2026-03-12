@@ -4132,3 +4132,9 @@
 - [x] Include install-execute readme for all platforms
 - [x] Include recovery/backup clone files in zip
 - [x] Include QUMUS future tasks and next steps in zip documentation
+- [x] Batch channel health notifications into daily digest instead of per-channel alerts
+- [x] Implement notification throttling to prevent alert spam (14-min cooldown)
+- [x] Set up unique stream URLs per channel replacing generic funkyradio fallback (54 unique 181.fm URLs)
+- [x] Create channel-specific fallback hierarchy (primary → genre backup → universal)
+- [x] Investigate and fix simultaneous 33-channel drop root cause (circuit breaker added)
+- [x] Add channel health monitoring dashboard with historical uptime data (outage history + root cause tracking)
