@@ -23,6 +23,10 @@ export interface QumusConfig {
     hybridcast: boolean;
     canryn: boolean;
     sweetMiracles: boolean;
+    presentationBuilder?: boolean;
+    musicStudio?: boolean;
+    valanna?: boolean;
+    seraph?: boolean;
   };
 }
 
@@ -44,6 +48,10 @@ export class QumusActivation {
         hybridcast: true,
         canryn: true,
         sweetMiracles: true,
+        presentationBuilder: true,
+        musicStudio: true,
+        valanna: true,
+        seraph: true,
       },
       ...config,
     };
@@ -215,7 +223,23 @@ export class QumusActivation {
       console.log("[QUMUS] Sweet Miracles integration: ENABLED");
     }
 
-    console.log("[QUMUS] Ecosystem integration ready");
+    if (this.config.ecosystemIntegration.presentationBuilder) {
+      console.log("[QUMUS] Presentation Builder integration: ENABLED");
+    }
+
+    if (this.config.ecosystemIntegration.musicStudio) {
+      console.log("[QUMUS] Music Studio (DAW) integration: ENABLED");
+    }
+
+    if (this.config.ecosystemIntegration.valanna) {
+      console.log("[QUMUS] Valanna Voice AI integration: ENABLED");
+    }
+
+    if (this.config.ecosystemIntegration.seraph) {
+      console.log("[QUMUS] Seraph Content AI integration: ENABLED");
+    }
+
+    console.log("[QUMUS] Ecosystem integration ready — all systems activated");
   }
 
   /**

@@ -9,7 +9,7 @@ import {
   Radio, Heart, Zap, Users, TrendingUp, Activity, 
   Settings, RefreshCw, AlertCircle, Wifi, Volume2,
   BarChart3, Bell, Shield, Earth, Clock, Headphones,
-  Megaphone, Target, Layers, ChevronRight, Tv
+  Megaphone, Target, Layers, ChevronRight, Tv, Presentation, AudioLines, Mic
 } from 'lucide-react';
 
 export default function EcosystemMasterDashboard() {
@@ -390,6 +390,10 @@ export default function EcosystemMasterDashboard() {
                 { label: 'Convention Hub', path: '/convention-hub', icon: Users, color: 'bg-indigo-600 hover:bg-indigo-700' },
                 { label: 'SQUADD Goals', path: '/squadd', icon: Shield, color: 'bg-yellow-600 hover:bg-yellow-700' },
                 { label: 'Admin Panel', path: '/admin', icon: Settings, color: 'bg-gray-600 hover:bg-gray-700' },
+                { label: 'Presentation Builder', path: '/presentation-builder', icon: Presentation, color: 'bg-orange-600 hover:bg-orange-700' },
+                { label: 'Music Studio', path: '/music-studio', icon: AudioLines, color: 'bg-rose-600 hover:bg-rose-700' },
+                { label: 'Stream Health', path: '/stream-health', icon: Activity, color: 'bg-emerald-600 hover:bg-emerald-700' },
+                { label: 'System Status', path: '/system-status', icon: Wifi, color: 'bg-sky-600 hover:bg-sky-700' },
               ].map((item, i) => (
                 <Button
                   key={i}

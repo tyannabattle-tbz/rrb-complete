@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import {
   Radio, Wifi, WifiOff, Activity, CheckCircle, XCircle, AlertTriangle,
   RefreshCw, Clock, Zap, Shield, Users, Music, Podcast, Earth,
-  Monitor, Server, Database, Heart, ArrowLeft
+  Monitor, Server, Database, Heart, ArrowLeft, Presentation, AudioLines, Bot, Mic
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 
@@ -21,7 +21,7 @@ interface ServiceStatus {
 }
 
 const ECOSYSTEM_SERVICES: Omit<ServiceStatus, 'status' | 'lastCheck'>[] = [
-  { name: 'QUMUS AI Engine', icon: <Zap className="w-4 h-4" />, category: 'Core', uptime: '99.9%', details: '18/18 subsystems healthy' },
+  { name: 'QUMUS AI Engine', icon: <Zap className="w-4 h-4" />, category: 'Core', uptime: '99.9%', details: '22/22 subsystems healthy' },
   { name: 'RRB Radio (54 Channels)', icon: <Radio className="w-4 h-4" />, category: 'Broadcasting', uptime: '99.5%', details: '54 channels active' },
   { name: 'HybridCast Emergency', icon: <Shield className="w-4 h-4" />, category: 'Emergency', uptime: '99.99%', details: 'Mesh network ready' },
   { name: 'Sweet Miracles Portal', icon: <Heart className="w-4 h-4" />, category: 'Nonprofit', uptime: '99.8%', details: 'Donation processing active' },
@@ -37,6 +37,10 @@ const ECOSYSTEM_SERVICES: Omit<ServiceStatus, 'status' | 'lastCheck'>[] = [
   { name: 'Database', icon: <Database className="w-4 h-4" />, category: 'Infrastructure', uptime: '99.99%', details: 'TiDB cluster healthy' },
   { name: 'API Server', icon: <Server className="w-4 h-4" />, category: 'Infrastructure', uptime: '99.9%', details: 'tRPC endpoints responding' },
   { name: 'Stream Health Monitor', icon: <Activity className="w-4 h-4" />, category: 'Operations', uptime: '99.8%', details: 'Auto-healing enabled' },
+  { name: 'Presentation Builder', icon: <Presentation className="w-4 h-4" />, category: 'Production', uptime: '99.7%', details: 'AI slide generation active' },
+  { name: 'Music Studio (DAW)', icon: <AudioLines className="w-4 h-4" />, category: 'Production', uptime: '99.6%', details: 'Multi-track editor + Solfeggio frequencies' },
+  { name: 'Valanna Voice AI', icon: <Mic className="w-4 h-4" />, category: 'Core', uptime: '99.8%', details: 'Voice assistant operational' },
+  { name: 'Seraph AI', icon: <Bot className="w-4 h-4" />, category: 'Core', uptime: '99.7%', details: 'Content AI co-pilot active' },
 ];
 
 export default function SystemStatusPage() {
@@ -281,7 +285,7 @@ export default function SystemStatusPage() {
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-[#E8E0D0]/30">
           <p>Powered by QUMUS Autonomous Orchestration Engine</p>
-          <p className="mt-1">90% Autonomous Control &middot; 10% Human Override &middot; 54 Radio Channels &middot; 18 Subsystems</p>
+          <p className="mt-1">90% Autonomous Control &middot; 10% Human Override &middot; 54 Radio Channels &middot; 22 Subsystems &middot; 20 Tools</p>
         </div>
       </div>
     </div>

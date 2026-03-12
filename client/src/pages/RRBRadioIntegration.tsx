@@ -91,13 +91,14 @@ export const RRBRadioIntegration: React.FC = () => {
   const [volume, setVolume] = useState(75);
   const [isMuted, setIsMuted] = useState(false);
   const [audioError, setAudioError] = useState<string | null>(null);
-  const [failoverAttempts, setFailoverAttempts] = useState(0);
   const [streamStatus, setStreamStatus] = useState<'connected' | 'reconnecting' | 'failover'>('connected');
   const [totalListeners, setTotalListeners] = useState(3847);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [showAllFilters, setShowAllFilters] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const failoverAttemptsRef = useRef(0);
+  const isRetryingRef = useRef(false);
 
   // Filtered channels
   const filteredChannels = useMemo(() => {
@@ -122,7 +123,7 @@ export const RRBRadioIntegration: React.FC = () => {
     'https://stream.zeno.fm/yn65fsaurfhvv',
   ], []);
 
-  // Create audio element with auto-failover
+  // Create audio element with auto-failover — stable ref, no re-creation
   useEffect(() => {
     const audio = new Audio();
     audio.crossOrigin = 'anonymous';
@@ -130,46 +131,61 @@ export const RRBRadioIntegration: React.FC = () => {
     audioRef.current = audio;
 
     audio.addEventListener('error', () => {
-      // Auto-failover: try backup stream before giving up
-      setFailoverAttempts(prev => {
-        const next = prev + 1;
-        if (next <= 3) {
-          setStreamStatus('reconnecting');
-          setAudioError(`Reconnecting... (attempt ${next}/3)`);
-          const backup = backupStreams[Math.floor(Math.random() * backupStreams.length)];
-          setTimeout(() => {
-            if (audioRef.current) {
-              audioRef.current.src = backup;
-              audioRef.current.play().then(() => {
-                setStreamStatus('failover');
-                setAudioError('Playing backup stream — primary stream recovering');
-                setIsPlaying(true);
-              }).catch(() => {
+      // Guard against concurrent retries
+      if (isRetryingRef.current) return;
+      
+      failoverAttemptsRef.current += 1;
+      const attempt = failoverAttemptsRef.current;
+      
+      if (attempt <= 3) {
+        isRetryingRef.current = true;
+        setStreamStatus('reconnecting');
+        setAudioError(`Reconnecting... (attempt ${attempt}/3)`);
+        const backup = backupStreams[Math.floor(Math.random() * backupStreams.length)];
+        setTimeout(() => {
+          if (audioRef.current) {
+            audioRef.current.src = backup;
+            audioRef.current.play().then(() => {
+              setStreamStatus('failover');
+              setAudioError('Playing backup stream — primary stream recovering');
+              setIsPlaying(true);
+              isRetryingRef.current = false;
+            }).catch(() => {
+              isRetryingRef.current = false;
+              // Don't trigger error handler again — we already counted this attempt
+              if (failoverAttemptsRef.current >= 3) {
                 setAudioError('Stream temporarily unavailable. Try another channel.');
                 setIsPlaying(false);
                 setStreamStatus('connected');
-              });
-            }
-          }, 1000);
-        } else {
-          setAudioError('All streams unavailable. QUMUS is working to restore service.');
-          setIsPlaying(false);
-          setStreamStatus('connected');
-          setFailoverAttempts(0);
-        }
-        return next;
-      });
-    });
-    audio.addEventListener('playing', () => {
-      if (streamStatus !== 'failover') {
-        setAudioError(null);
+                failoverAttemptsRef.current = 0;
+              }
+            });
+          } else {
+            isRetryingRef.current = false;
+          }
+        }, 1500 * attempt); // Exponential backoff: 1.5s, 3s, 4.5s
+      } else {
+        setAudioError('All streams unavailable. QUMUS is working to restore service.');
+        setIsPlaying(false);
         setStreamStatus('connected');
+        failoverAttemptsRef.current = 0;
       }
-      setFailoverAttempts(0);
+    });
+    
+    audio.addEventListener('playing', () => {
+      setAudioError(null);
+      setStreamStatus(failoverAttemptsRef.current > 0 ? 'failover' : 'connected');
+      failoverAttemptsRef.current = 0;
+      isRetryingRef.current = false;
+    });
+    
+    audio.addEventListener('canplay', () => {
+      // Stream is ready to play — clear any reconnection state
+      isRetryingRef.current = false;
     });
 
     return () => { audio.pause(); audio.src = ''; };
-  }, [backupStreams, streamStatus]);
+  }, [backupStreams]); // Removed streamStatus dependency to prevent audio element recreation
 
   // Volume control
   useEffect(() => {
@@ -188,11 +204,16 @@ export const RRBRadioIntegration: React.FC = () => {
 
   const handleChannelSelect = (channel: typeof channels[0]) => {
     const wasPlaying = isPlaying;
+    // Reset retry state on channel switch
+    failoverAttemptsRef.current = 0;
+    isRetryingRef.current = false;
     if (audioRef.current) {
       audioRef.current.pause();
+      audioRef.current.src = ''; // Clear source to prevent stale error events
     }
     setSelectedChannel(channel);
     setAudioError(null);
+    setStreamStatus('connected');
     if (wasPlaying && audioRef.current) {
       audioRef.current.src = channel.streamUrl;
       audioRef.current.play().catch(() => {
@@ -208,7 +229,11 @@ export const RRBRadioIntegration: React.FC = () => {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
+      // Reset retry state on fresh play
+      failoverAttemptsRef.current = 0;
+      isRetryingRef.current = false;
       setAudioError(null);
+      setStreamStatus('connected');
       audioRef.current.src = selectedChannel.streamUrl;
       audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {
         setAudioError('Unable to connect. Please try again.');

@@ -62,6 +62,10 @@ async function startServer() {
         hybridcast: true,
         canryn: true,
         sweetMiracles: true,
+        presentationBuilder: true,
+        musicStudio: true,
+        valanna: true,
+        seraph: true,
       },
     });
   } catch (error) {

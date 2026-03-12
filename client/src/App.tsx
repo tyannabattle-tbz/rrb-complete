@@ -214,6 +214,8 @@ import SolbonesPodcast from '@/pages/SolbonesPodcast';
 import AroundTheQumUnityPodcast from '@/pages/AroundTheQumUnityPodcast';
 import EcosystemPresentation from '@/pages/EcosystemPresentation';
 import SystemStatusPage from '@/pages/SystemStatusPage';
+import PresentationBuilder from '@/pages/PresentationBuilder';
+import MusicStudio from '@/pages/MusicStudio';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -355,6 +357,7 @@ function Router() {
       <Route path="/commands" component={CommandCenterPage} />
       <Route path="/health" component={SystemHealthPage} />
       <Route path="/status" component={SystemStatusPage} />
+      <Route path="/system-status" component={SystemStatusPage} />
       <Route path="/squadd/meeting" component={SquaddMeetingRoom} />
       <Route path="/meeting" component={SquaddMeetingRoom} />
       <Route path="/squadd/directory" component={SquaddDirectory} />
@@ -415,6 +418,8 @@ function Router() {
       <Route path="/podcast/around-the-qumunity" component={AroundTheQumUnityPodcast} />
       <Route path="/ecosystem" component={EcosystemPresentation} />
       <Route path="/presentation" component={EcosystemPresentation} />
+      <Route path="/presentation-builder" component={PresentationBuilder} />
+      <Route path="/music-studio" component={MusicStudio} />
       <Route component={NotFound} />
     </Switch>
     </>

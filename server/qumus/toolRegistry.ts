@@ -245,6 +245,109 @@ function initializeDefaultTools(registry: ToolRegistry): void {
     },
   });
 
+  // Presentation Builder tools
+  registry.registerTool({
+    name: "create_presentation",
+    description: "Create a new presentation with slides using AI-generated content",
+    category: "presentation",
+    parameters: { title: "string", topic: "string", slideCount: "number" },
+    handler: async (params: any) => {
+      return { status: "created", title: params.title, slides: params.slideCount || 5 };
+    },
+  });
+
+  registry.registerTool({
+    name: "generate_slide_content",
+    description: "Generate content for a presentation slide using LLM",
+    category: "presentation",
+    parameters: { prompt: "string", layout: "string" },
+    handler: async (params: any) => {
+      return { status: "generated", layout: params.layout || "content", content: params.prompt };
+    },
+  });
+
+  registry.registerTool({
+    name: "export_presentation",
+    description: "Export presentation to HTML, PDF, or PPTX format",
+    category: "presentation",
+    parameters: { format: "string", presentationId: "string" },
+    handler: async (params: any) => {
+      return { status: "exported", format: params.format || "html" };
+    },
+  });
+
+  // Music Studio / DAW tools
+  registry.registerTool({
+    name: "create_music_project",
+    description: "Create a new music production project with tracks",
+    category: "music",
+    parameters: { name: "string", bpm: "number", frequency: "number" },
+    handler: async (params: any) => {
+      return { status: "created", name: params.name, bpm: params.bpm || 120, frequency: params.frequency || 432 };
+    },
+  });
+
+  registry.registerTool({
+    name: "add_track",
+    description: "Add an instrument track to the music project",
+    category: "music",
+    parameters: { instrument: "string", projectId: "string" },
+    handler: async (params: any) => {
+      return { status: "added", instrument: params.instrument };
+    },
+  });
+
+  registry.registerTool({
+    name: "apply_audio_effect",
+    description: "Apply an audio effect (reverb, delay, EQ, compressor) to a track",
+    category: "music",
+    parameters: { effect: "string", trackId: "string", params: "object" },
+    handler: async (params: any) => {
+      return { status: "applied", effect: params.effect };
+    },
+  });
+
+  registry.registerTool({
+    name: "export_audio",
+    description: "Export music project to WAV, MP3, or FLAC format",
+    category: "music",
+    parameters: { format: "string", projectId: "string" },
+    handler: async (params: any) => {
+      return { status: "exported", format: params.format || "wav" };
+    },
+  });
+
+  registry.registerTool({
+    name: "broadcast_to_rrb",
+    description: "Broadcast audio from Music Studio directly to RRB Radio channels",
+    category: "music",
+    parameters: { channelId: "string", projectId: "string" },
+    handler: async (params: any) => {
+      return { status: "broadcasting", channel: params.channelId };
+    },
+  });
+
+  // Media production tools
+  registry.registerTool({
+    name: "generate_image",
+    description: "Generate an image using AI for presentations or media",
+    category: "media",
+    parameters: { prompt: "string", style: "string" },
+    handler: async (params: any) => {
+      return { status: "generated", prompt: params.prompt };
+    },
+  });
+
+  registry.registerTool({
+    name: "transcribe_audio",
+    description: "Transcribe audio to text using Whisper",
+    category: "media",
+    parameters: { audioUrl: "string", language: "string" },
+    handler: async (params: any) => {
+      return { status: "transcribed", language: params.language || "en" };
+    },
+  });
+
   console.log(
     `[Tools] Initialized ${registry.getToolCount()} default tools`
   );

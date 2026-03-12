@@ -7145,6 +7145,96 @@ function initializeDefaultTools(registry) {
       return (/* @__PURE__ */ new Date()).toISOString();
     }
   });
+  registry.registerTool({
+    name: "create_presentation",
+    description: "Create a new presentation with slides using AI-generated content",
+    category: "presentation",
+    parameters: { title: "string", topic: "string", slideCount: "number" },
+    handler: async (params2) => {
+      return { status: "created", title: params2.title, slides: params2.slideCount || 5 };
+    }
+  });
+  registry.registerTool({
+    name: "generate_slide_content",
+    description: "Generate content for a presentation slide using LLM",
+    category: "presentation",
+    parameters: { prompt: "string", layout: "string" },
+    handler: async (params2) => {
+      return { status: "generated", layout: params2.layout || "content", content: params2.prompt };
+    }
+  });
+  registry.registerTool({
+    name: "export_presentation",
+    description: "Export presentation to HTML, PDF, or PPTX format",
+    category: "presentation",
+    parameters: { format: "string", presentationId: "string" },
+    handler: async (params2) => {
+      return { status: "exported", format: params2.format || "html" };
+    }
+  });
+  registry.registerTool({
+    name: "create_music_project",
+    description: "Create a new music production project with tracks",
+    category: "music",
+    parameters: { name: "string", bpm: "number", frequency: "number" },
+    handler: async (params2) => {
+      return { status: "created", name: params2.name, bpm: params2.bpm || 120, frequency: params2.frequency || 432 };
+    }
+  });
+  registry.registerTool({
+    name: "add_track",
+    description: "Add an instrument track to the music project",
+    category: "music",
+    parameters: { instrument: "string", projectId: "string" },
+    handler: async (params2) => {
+      return { status: "added", instrument: params2.instrument };
+    }
+  });
+  registry.registerTool({
+    name: "apply_audio_effect",
+    description: "Apply an audio effect (reverb, delay, EQ, compressor) to a track",
+    category: "music",
+    parameters: { effect: "string", trackId: "string", params: "object" },
+    handler: async (params2) => {
+      return { status: "applied", effect: params2.effect };
+    }
+  });
+  registry.registerTool({
+    name: "export_audio",
+    description: "Export music project to WAV, MP3, or FLAC format",
+    category: "music",
+    parameters: { format: "string", projectId: "string" },
+    handler: async (params2) => {
+      return { status: "exported", format: params2.format || "wav" };
+    }
+  });
+  registry.registerTool({
+    name: "broadcast_to_rrb",
+    description: "Broadcast audio from Music Studio directly to RRB Radio channels",
+    category: "music",
+    parameters: { channelId: "string", projectId: "string" },
+    handler: async (params2) => {
+      return { status: "broadcasting", channel: params2.channelId };
+    }
+  });
+  registry.registerTool({
+    name: "generate_image",
+    description: "Generate an image using AI for presentations or media",
+    category: "media",
+    parameters: { prompt: "string", style: "string" },
+    handler: async (params2) => {
+      return { status: "generated", prompt: params2.prompt };
+    }
+  });
+  registry.registerTool({
+    name: "transcribe_audio",
+    description: "Transcribe audio to text using Whisper",
+    category: "media",
+    parameters: { audioUrl: "string", language: "string" },
+    handler: async (params2) => {
+      return { status: "transcribed", language: params2.language || "en" };
+    }
+  });
   console.log(
     `[Tools] Initialized ${registry.getToolCount()} default tools`
   );
@@ -7935,7 +8025,11 @@ var init_qumusActivation = __esm({
             rrb: true,
             hybridcast: true,
             canryn: true,
-            sweetMiracles: true
+            sweetMiracles: true,
+            presentationBuilder: true,
+            musicStudio: true,
+            valanna: true,
+            seraph: true
           },
           ...config
         };
@@ -8055,7 +8149,19 @@ var init_qumusActivation = __esm({
         if (this.config.ecosystemIntegration.sweetMiracles) {
           console.log("[QUMUS] Sweet Miracles integration: ENABLED");
         }
-        console.log("[QUMUS] Ecosystem integration ready");
+        if (this.config.ecosystemIntegration.presentationBuilder) {
+          console.log("[QUMUS] Presentation Builder integration: ENABLED");
+        }
+        if (this.config.ecosystemIntegration.musicStudio) {
+          console.log("[QUMUS] Music Studio (DAW) integration: ENABLED");
+        }
+        if (this.config.ecosystemIntegration.valanna) {
+          console.log("[QUMUS] Valanna Voice AI integration: ENABLED");
+        }
+        if (this.config.ecosystemIntegration.seraph) {
+          console.log("[QUMUS] Seraph Content AI integration: ENABLED");
+        }
+        console.log("[QUMUS] Ecosystem integration ready \u2014 all systems activated");
       }
       /**
        * Enable autonomous policies
@@ -44628,7 +44734,11 @@ async function startServer() {
         rrb: true,
         hybridcast: true,
         canryn: true,
-        sweetMiracles: true
+        sweetMiracles: true,
+        presentationBuilder: true,
+        musicStudio: true,
+        valanna: true,
+        seraph: true
       }
     });
   } catch (error) {

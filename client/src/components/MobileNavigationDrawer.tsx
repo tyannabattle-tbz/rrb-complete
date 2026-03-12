@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { X, Home, Radio, Music, Zap, Heart, BarChart3, MessageSquare, MapPin, Earth, Mic, Settings, Monitor, Headphones, Calendar, Eye, Gamepad2, BookOpen, Shield, Bell, FileText } from 'lucide-react';
+import { X, Home, Radio, Music, Zap, Heart, BarChart3, MessageSquare, MapPin, Earth, Mic, Settings, Monitor, Headphones, Calendar, Eye, Gamepad2, BookOpen, Shield, Bell, FileText, Presentation, AudioLines } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
@@ -36,6 +36,8 @@ export function MobileNavigationDrawer() {
     { label: 'Legacy', icon: BookOpen, path: '/legacy', section: 'qumus' },
     { label: 'Canryn Production', icon: Shield, path: '/canryn', section: 'qumus' },
     { label: 'GPS Radar', icon: MapPin, path: '/gps-radar', section: 'qumus' },
+    { label: 'Presentation Builder', icon: Presentation, path: '/presentation-builder', section: 'qumus' },
+    { label: 'Music Studio', icon: AudioLines, path: '/music-studio', section: 'qumus' },
   ];
 
   const rrbNavItems: NavItem[] = [
@@ -50,6 +52,8 @@ export function MobileNavigationDrawer() {
     { label: 'Sweet Miracles', icon: Heart, path: '/donate', section: 'rrb' },
     { label: 'Legacy', icon: BookOpen, path: '/legacy', section: 'rrb' },
     { label: 'AI Chat', icon: MessageSquare, path: '/qumus-chat', section: 'rrb' },
+    { label: 'Presentation Builder', icon: Presentation, path: '/presentation-builder', section: 'rrb' },
+    { label: 'Music Studio', icon: AudioLines, path: '/music-studio', section: 'rrb' },
   ];
 
   const sharedNavItems: NavItem[] = [
