@@ -79,7 +79,7 @@ async function checkStream(channelId: number, channelName: string, streamUrl: st
 }
 
 /**
- * Run a full health check across all 51 channels
+ * Run a full health check across all 54 channels
  */
 export async function runHealthCheck(): Promise<HealthReport> {
   console.log('[StreamHealth] Starting health check across all channels...');

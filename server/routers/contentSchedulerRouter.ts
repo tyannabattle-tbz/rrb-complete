@@ -6,7 +6,7 @@ import { contentSchedule, adInventory, socialMediaPosts } from "../../drizzle/sc
 import { eq, and, desc, asc, sql } from "drizzle-orm";
 
 // ─── Default 24/7 Schedule Template ─────────────────────
-// QUMUS auto-populates all 51 channels with rotating content
+// QUMUS auto-populates all 54 channels with rotating content
 const DEFAULT_SCHEDULE_TEMPLATE = [
   // ── RRB Main (Channel 1) ──
   { channelId: 1, channelName: 'RRB Main', showName: 'Morning Motivation Mix', showType: 'music' as const, dayOfWeek: 'daily' as const, startTime: '06:00', endTime: '09:00', description: 'Wake up with positive energy — curated soul, R&B, and uplifting tracks', host: 'Valanna AI' },

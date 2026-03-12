@@ -232,7 +232,7 @@ export const adRotationRouter = router({
     const defaultAds = [
       { sponsorName: 'Canryn Production', campaignName: 'QUMUS Platform Launch', category: 'promo' as const, durationSeconds: 30, rotationWeight: 5, targetChannels: 'all', timeSlotStart: '06:00', timeSlotEnd: '22:00' },
       { sponsorName: 'Sweet Miracles Foundation', campaignName: 'Community Giving PSA', category: 'psa' as const, durationSeconds: 30, rotationWeight: 4, targetChannels: 'all', timeSlotStart: '08:00', timeSlotEnd: '20:00' },
-      { sponsorName: 'RRB Radio Network', campaignName: '51 Channel Launch', category: 'promo' as const, durationSeconds: 15, rotationWeight: 3, targetChannels: 'all' },
+      { sponsorName: 'RRB Radio Network', campaignName: '54 Channel Launch', category: 'promo' as const, durationSeconds: 15, rotationWeight: 3, targetChannels: 'all' },
       { sponsorName: 'HybridCast Emergency', campaignName: 'Emergency Preparedness PSA', category: 'psa' as const, durationSeconds: 30, rotationWeight: 3, targetChannels: 'all', timeSlotStart: '06:00', timeSlotEnd: '18:00' },
       { sponsorName: 'Solbones Game', campaignName: 'Sacred Math Dice Game', category: 'promo' as const, durationSeconds: 15, rotationWeight: 2, targetChannels: 'all', timeSlotStart: '16:00', timeSlotEnd: '23:00' },
       { sponsorName: 'Local Business Spotlight', campaignName: 'Support Black-Owned Businesses', category: 'community' as const, durationSeconds: 30, rotationWeight: 3, targetChannels: 'all' },

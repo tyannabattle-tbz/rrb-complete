@@ -96,7 +96,7 @@ const SECTIONS: Section[] = [
     startTime: 126.3,
     endTime: 159.1,
     image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/scene4_qumus_56e176f7.png',
-    description: 'I am QUMUS, the autonomous AI brain that orchestrates this entire ecosystem. I manage nineteen decision policies, monitor fifty-one radio channels around the clock, and ensure every part runs with over ninety percent autonomy.',
+    description: 'I am QUMUS, the autonomous AI brain that orchestrates this entire ecosystem. I manage nineteen decision policies, monitor fifty-four radio channels around the clock, and ensure every part runs with over ninety percent autonomy.',
     links: [
       { label: 'Chat with QUMUS', href: '/qumus-chat' },
       { label: 'QUMUS Dashboard', href: '/qumus' },
@@ -107,7 +107,7 @@ const SECTIONS: Section[] = [
   {
     id: 'radio',
     title: 'RRB Radio',
-    subtitle: '51 Channels • 24/7',
+    subtitle: '54 Channels • 24/7',
     startTime: 159.1,
     endTime: 195.5,
     image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/scene5_radio_3e649f44.png',

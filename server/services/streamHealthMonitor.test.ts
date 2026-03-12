@@ -146,15 +146,15 @@ describe('Restream Room Creation', () => {
   });
 });
 
-describe('51-Channel Consistency', () => {
-  it('should have exactly 51 channels in the frontend', async () => {
+describe('54-Channel Consistency', () => {
+  it('should have exactly 54 channels in the frontend', async () => {
     const fs = await import('fs');
     const content = fs.readFileSync('/home/ubuntu/manus-agent-web/client/src/pages/RRBRadioIntegration.tsx', 'utf-8');
     const channelMatches = content.match(/\{ id: \d+/g);
-    expect(channelMatches?.length).toBe(51);
+    expect(channelMatches?.length).toBe(54);
   });
 
-  it('should reference 51 channels in text', async () => {
+  it('should reference 54 channels in text', async () => {
     const fs = await import('fs');
     const content = fs.readFileSync('/home/ubuntu/manus-agent-web/client/src/pages/RRBRadioIntegration.tsx', 'utf-8');
     expect(content).toContain('51');

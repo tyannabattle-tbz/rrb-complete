@@ -479,7 +479,7 @@ export default function RRBPort3001() {
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-white">Rockin' Rockin' Boogie</h1>
                 <p className="text-sm text-purple-300 flex items-center gap-2">
-                  <span>51 Channels • 24/7 Radio Station</span>
+                  <span>54 Channels • 24/7 Radio Station</span>
                   <span className="text-purple-500">•</span>
                   <span className="text-amber-400">Powered by QUMUS</span>
                 </p>
@@ -538,7 +538,7 @@ export default function RRBPort3001() {
               <Badge className="ml-auto bg-green-500/20 text-green-400 text-xs">ACTIVE</Badge>
             </div>
             <p className="text-xs text-slate-300">
-              90% autonomous orchestration of all 51 channels. Decision tracking, emergency broadcast, system monitoring. She never sleeps.
+              90% autonomous orchestration of all 54 channels. Decision tracking, emergency broadcast, system monitoring. She never sleeps.
             </p>
           </div>
           <div className="bg-gradient-to-br from-blue-900/20 to-slate-800/60 border border-blue-500/20 rounded-lg p-4">
@@ -760,7 +760,7 @@ export default function RRBPort3001() {
                 <Calendar className="w-5 h-5 text-amber-400" />
                 QUMUS-Managed Schedule — Today
               </CardTitle>
-              <CardDescription>All programming autonomously scheduled by QUMUS across 51 channels</CardDescription>
+              <CardDescription>All programming autonomously scheduled by QUMUS across 54 channels</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -1043,7 +1043,7 @@ export default function RRBPort3001() {
                   Saturday, March 7, 2026 • Wallace Community College, Room 112 • 10:00 AM – 12:00 PM CST
                 </p>
                 <p className="text-xs text-amber-400/70 mt-2">
-                  Valanna is promoting this event across all 51 channels • SQUADD Goals presented on the world stage
+                  Valanna is promoting this event across all 54 channels • SQUADD Goals presented on the world stage
                 </p>
               </div>
               <Button onClick={() => setLocation('/selma')} className="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700">

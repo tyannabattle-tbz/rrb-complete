@@ -1,6 +1,6 @@
 /**
  * Real Spotify Integration Router
- * Connects to actual Spotify API for 51-channel RRB radio
+ * Connects to actual Spotify API for 54-channel RRB radio
  * Syncs listener data with audioStreamingService for unified metrics
  */
 
@@ -11,7 +11,7 @@ import { audioStreamingService } from '../_core/audioStreamingService';
 
 const SPOTIFY_API_BASE = 'https://api.spotify.com/v1';
 
-// RRB 51 Channels — Official Station List | Canryn Production | QUMUS Orchestrated
+// RRB 54 Channels — Official Station List | Canryn Production | QUMUS Orchestrated
 const RRB_CHANNELS = [
   // MUSIC (22)
   { id: 1, name: 'RRB Main Radio', frequency: 432, spotifyPlaylistId: 'playlist_soul_funk_rnb', category: 'music' },

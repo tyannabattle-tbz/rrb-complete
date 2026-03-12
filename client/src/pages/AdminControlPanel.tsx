@@ -165,7 +165,7 @@ export default function AdminControlPanel() {
                     <Badge className="bg-green-500/20 text-green-400">Live</Badge>
                   </div>
                   <p className="text-sm text-gray-400">RRB Radio</p>
-                  <p className="text-lg font-bold text-white">51 Channels</p>
+                  <p className="text-lg font-bold text-white">54 Channels</p>
                 </CardContent>
               </Card>
 
@@ -396,7 +396,7 @@ export default function AdminControlPanel() {
                   Stream Health Monitor
                 </CardTitle>
                 <CardDescription>
-                  Automated checks every 15 minutes on all 51 channels. Owner gets notified when streams go down.
+                  Automated checks every 15 minutes on all 54 channels. Owner gets notified when streams go down.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -671,10 +671,10 @@ export default function AdminControlPanel() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 { name: 'QUMUS Core', icon: <Zap className="w-5 h-5 text-cyan-400" />, status: true, desc: 'Autonomous orchestration engine — 19 policies active' },
-                { name: 'RRB Radio', icon: <Radio className="w-5 h-5 text-pink-400" />, status: true, desc: '51 channels broadcasting 24/7' },
+                { name: 'RRB Radio', icon: <Radio className="w-5 h-5 text-pink-400" />, status: true, desc: '54 channels broadcasting 24/7' },
                 { name: 'HybridCast', icon: <Globe className="w-5 h-5 text-orange-400" />, status: true, desc: 'Emergency broadcast PWA — offline-first' },
                 { name: 'Sweet Miracles', icon: <Heart className="w-5 h-5 text-green-400" />, status: true, desc: '501(c)(3) donation processing via Stripe' },
-                { name: 'Stream Health Monitor', icon: <Shield className="w-5 h-5 text-blue-400" />, status: !!monitorRunning, desc: '15-min automated health checks on all 51 channels' },
+                { name: 'Stream Health Monitor', icon: <Shield className="w-5 h-5 text-blue-400" />, status: !!monitorRunning, desc: '15-min automated health checks on all 54 channels' },
                 { name: 'Restream Integration', icon: <Tv className="w-5 h-5 text-purple-400" />, status: !!restreamUrl.data?.isConfigured, desc: 'Dynamic studio URL — all buttons wired' },
               ].map((system, idx) => (
                 <Card key={idx} className="bg-slate-800/50 border-slate-700">

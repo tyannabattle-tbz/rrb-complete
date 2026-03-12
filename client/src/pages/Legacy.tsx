@@ -252,7 +252,7 @@ export default function Legacy() {
                 <p>✓ 24/7 radio broadcasting</p>
                 <p>✓ 5+ years of continuous airplay</p>
                 <p>✓ Solfeggio frequency innovation</p>
-                <p>✓ 51-channel streaming platform</p>
+                <p>✓ 54-channel streaming platform</p>
               </CardContent>
             </Card>
 
