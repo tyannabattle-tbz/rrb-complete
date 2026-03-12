@@ -1,0 +1,66 @@
+{
+  "query": "SELECT * FROM radio_channels WHERE name LIKE '%SQUADD%' OR name LIKE '%Canryn%' OR name LIKE '%Advocacy%' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT * FROM radio_channels WHERE name LIKE '%SQUADD%' OR name LIKE '%Canryn%' OR name LIKE '%Advocacy%' LIMIT 5;",
+  "rows": [
+    {
+      "id": "46",
+      "stationId": "870003",
+      "name": "Canryn Production",
+      "frequency": "432 Hz",
+      "genre": "Production, Studio",
+      "status": "active",
+      "currentListeners": "75",
+      "totalListeners": "750",
+      "streamUrl": "https://listen.181fm.com/181-soul_128k.mp3",
+      "metadata": "{}",
+      "createdAt": "2026-03-11 19:10:21",
+      "updatedAt": "2026-03-11 20:22:09"
+    },
+    {
+      "id": "900018",
+      "stationId": "870003",
+      "name": "SQUADD Coalition Radio",
+      "frequency": "432",
+      "genre": "Empowerment & Talk",
+      "status": "active",
+      "currentListeners": "0",
+      "totalListeners": "0",
+      "streamUrl": "https://stream.zeno.fm/6ypnfbm3p8uuv",
+      "metadata": "{\"category\": \"community\", \"channelId\": \"ch-052\", \"coverImage\": \"https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch52_squadd_coalition_radio-NR3GhZyxLVQoHdGHN6Lso8.webp\", \"description\": \"SQUADD Coalition programming — Sisters Questing Unapologetically After Divine Destiny.\", \"icon\": \"Shield\"}",
+      "createdAt": "2026-03-12 08:44:32",
+      "updatedAt": "2026-03-12 09:28:45"
+    },
+    {
+      "id": "900019",
+      "stationId": "870003",
+      "name": "UN Advocacy Radio",
+      "frequency": "528",
+      "genre": "Advocacy & International",
+      "status": "active",
+      "currentListeners": "0",
+      "totalListeners": "0",
+      "streamUrl": "https://stream.zeno.fm/4p7t2ewfr08uv",
+      "metadata": "{\"category\": \"community\", \"channelId\": \"ch-053\", \"coverImage\": \"https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch53_un_advocacy_radio-QaoRfuZ5ywAyd7KzLfNzUR.webp\", \"description\": \"United Nations advocacy, CSW70 coverage, and international human rights programming.\", \"icon\": \"Earth\"}",
+      "createdAt": "2026-03-12 08:44:32",
+      "updatedAt": "2026-03-12 09:28:45"
+    },
+    {
+      "id": "900020",
+      "stationId": "870003",
+      "name": "Canryn Production Radio",
+      "frequency": "432",
+      "genre": "Corporate & Updates",
+      "status": "active",
+      "currentListeners": "0",
+      "totalListeners": "0",
+      "streamUrl": "https://stream.zeno.fm/7y2e5bm3p8uuv",
+      "metadata": "{\"category\": \"specialty\", \"channelId\": \"ch-054\", \"coverImage\": \"https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch54_canryn_production_radio-kozFcvbMZTksygAHNvcFfq.webp\", \"description\": \"Official Canryn Production updates, ecosystem news, and subsidiary highlights.\", \"icon\": \"Crown\"}",
+      "createdAt": "2026-03-12 08:44:32",
+      "updatedAt": "2026-03-12 09:28:45"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tstationId\tname\tfrequency\tgenre\tstatus\tcurrentListeners\ttotalListeners\tstreamUrl\tmetadata\tcreatedAt\tupdatedAt\n46\t870003\tCanryn Production\t432 Hz\tProduction, Studio\tactive\t75\t750\thttps://listen.181fm.com/181-soul_128k.mp3\t{}\t2026-03-11 19:10:21\t2026-03-11 20:22:09\n900018\t870003\tSQUADD Coalition Radio\t432\tEmpowerment & Talk\tactive\t0\t0\thttps://stream.zeno.fm/6ypnfbm3p8uuv\t{\"category\": \"community\", \"channelId\": \"ch-052\", \"coverImage\": \"https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch52_squadd_coalition_radio-NR3GhZyxLVQoHdGHN6Lso8.webp\", \"description\": \"SQUADD Coalition programming — Sisters Questing Unapologetically After Divine Destiny.\", \"icon\": \"Shield\"}\t2026-03-12 08:44:32\t2026-03-12 09:28:45\n900019\t870003\tUN Advocacy Radio\t528\tAdvocacy & International\tactive\t0\t0\thttps://stream.zeno.fm/4p7t2ewfr08uv\t{\"category\": \"community\", \"channelId\": \"ch-053\", \"coverImage\": \"https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch53_un_advocacy_radio-QaoRfuZ5ywAyd7KzLfNzUR.webp\", \"description\": \"United Nations advocacy, CSW70 coverage, and international human rights programming.\", \"icon\": \"Earth\"}\t2026-03-12 08:44:32\t2026-03-12 09:28:45\n900020\t870003\tCanryn Production Radio\t432\tCorporate & Updates\tactive\t0\t0\thttps://stream.zeno.fm/7y2e5bm3p8uuv\t{\"category\": \"specialty\", \"channelId\": \"ch-054\", \"coverImage\": \"https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/ch54_canryn_production_radio-kozFcvbMZTksygAHNvcFfq.webp\", \"description\": \"Official Canryn Production updates, ecosystem news, and subsidiary highlights.\", \"icon\": \"Crown\"}\t2026-03-12 08:44:32\t2026-03-12 09:28:45\n",
+  "stderr": "",
+  "execution_time_ms": 60
+}

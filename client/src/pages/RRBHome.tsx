@@ -217,7 +217,7 @@ export default function RRBHome() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
           <Card className="bg-slate-800/50 border-pink-500/20">
             <CardContent className="pt-6 text-center">
-              <div className="text-3xl font-bold text-pink-400">41</div>
+              <div className="text-3xl font-bold text-pink-400">54</div>
               <p className="text-sm text-slate-400 mt-2">Radio Channels</p>
             </CardContent>
           </Card>

@@ -82,7 +82,7 @@ export default function AdManager() {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-purple-400 bg-clip-text text-transparent">
                 Ad Rotation Manager
               </h1>
-              <p className="text-sm text-gray-400">QUMUS-managed commercial rotation across 50 RRB channels</p>
+              <p className="text-sm text-gray-400">QUMUS-managed commercial rotation across 54 RRB channels</p>
             </div>
           </div>
         </div>
@@ -300,7 +300,7 @@ export default function AdManager() {
             Canryn Production — QUMUS Autonomous Ad Rotation Engine
           </p>
           <p className="text-xs text-gray-600 mt-1">
-            Ads are automatically rotated across all 50 RRB channels based on weight, time-slot, and channel targeting.
+            Ads are automatically rotated across all 54 RRB channels based on weight, time-slot, and channel targeting.
           </p>
         </div>
       </div>

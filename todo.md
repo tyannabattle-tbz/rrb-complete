@@ -4076,3 +4076,6 @@
 - [x] Create 9:16 vertical cut from 60-second video for Instagram/TikTok
 - [x] Generate channel branding artwork for channels 52-54
 - [x] Connect new channels 52-54 to content feeds
+- [x] Verify crash fix on production site (test mobile)
+- [x] Add channel artwork display to radio player UI (show coverImage when available)
+- [x] Set up stream infrastructure for channels 52-54 (dedicated Shoutcast/Icecast-compatible streams)

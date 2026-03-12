@@ -7,7 +7,7 @@ import { eq, desc, and, sql, count } from "drizzle-orm";
 /**
  * Commercial/Ad Rotation System
  * 
- * QUMUS-managed ad rotation across all 50 RRB channels:
+ * QUMUS-managed ad rotation across all 54 RRB channels:
  * - Sponsor inventory management (CRUD)
  * - Weighted rotation algorithm (higher weight = more plays)
  * - Time-slot targeting (morning drive, afternoon, evening, overnight)

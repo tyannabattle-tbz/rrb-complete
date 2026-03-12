@@ -90,7 +90,7 @@ From the Gold Coast to the Big Apple — this is what SQUADD Goals looks like.
 
 From Selma, Alabama to the United Nations in New York City.
 
-50 radio channels going LIVE for the UN CSW70 campaign launch.
+54 radio channels going LIVE for the UN CSW70 campaign launch.
 
 Your AI DJs Valanna, Seraph & Candy are ready. Are you?
 
@@ -146,7 +146,7 @@ A — Accountability
 D — Diversity
 D — Diplomacy
 
-50 radio channels broadcasting LIVE. AI DJs Valanna, Seraph & Candy hosting around the clock.
+54 radio channels broadcasting LIVE. AI DJs Valanna, Seraph & Candy hosting around the clock.
 
 This is what happens when Selma's legacy meets global diplomacy.
 
@@ -182,7 +182,7 @@ Rockin' Rockin' Boogie Radio Network — broadcasting the UN CSW70 campaign laun
 
 Your DJs: Valanna (6AM-2PM) | Seraph (2PM-6PM) | Candy (6PM-12AM)
 
-#50ChannelsLive #RRBRadio #CSW70 #AIRadio #LiveBroadcast`,
+#54ChannelsLive #RRBRadio #CSW70 #AIRadio #LiveBroadcast`,
       timing: 'March 15 — 2 days before',
       graphic: 'radio',
     },
@@ -198,7 +198,7 @@ Your DJs: Valanna (6AM-2PM) | Seraph (2PM-6PM) | Candy (6PM-12AM)
 Rockin' Rockin' Boogie is launching our SQUADD Goals campaign at UN CSW70 in New York City.
 
 **What's happening:**
-- 50 radio channels going LIVE with 24/7 coverage
+- 54 radio channels going LIVE with 24/7 coverage
 - AI DJs Valanna, Seraph & Candy hosting all day
 - Commercial breaks featuring the full campaign story
 - Live listener analytics and engagement tracking
