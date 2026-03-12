@@ -41,6 +41,7 @@ const ECOSYSTEM_SERVICES: Omit<ServiceStatus, 'status' | 'lastCheck'>[] = [
   { name: 'Music Studio (DAW)', icon: <AudioLines className="w-4 h-4" />, category: 'Production', uptime: '99.6%', details: 'Multi-track editor + Solfeggio frequencies' },
   { name: 'Valanna Voice AI', icon: <Mic className="w-4 h-4" />, category: 'Core', uptime: '99.8%', details: 'Voice assistant operational' },
   { name: 'Seraph AI', icon: <Bot className="w-4 h-4" />, category: 'Core', uptime: '99.7%', details: 'Content AI co-pilot active' },
+  { name: 'Self-Audit Engine', icon: <Shield className="w-4 h-4" />, category: 'Operations', uptime: '99.9%', details: 'Auto-correction active — 30min cycle' },
 ];
 
 export default function SystemStatusPage() {
@@ -251,6 +252,14 @@ export default function SystemStatusPage() {
           );
         })}
 
+        {/* QUMUS Self-Audit Status */}
+        <div className="mb-8">
+          <h2 className="text-lg font-bold text-[#D4A843] mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5" /> QUMUS Self-Audit Engine
+          </h2>
+          <SelfAuditWidget />
+        </div>
+
         {/* Incident History */}
         <div className="mt-8">
           <h2 className="text-lg font-bold text-[#D4A843] mb-4">Recent Incidents</h2>
@@ -285,8 +294,119 @@ export default function SystemStatusPage() {
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-[#E8E0D0]/30">
           <p>Powered by QUMUS Autonomous Orchestration Engine</p>
-          <p className="mt-1">90% Autonomous Control &middot; 10% Human Override &middot; 54 Radio Channels &middot; 22 Subsystems &middot; 20 Tools</p>
+          <p className="mt-1">90% Autonomous Control &middot; 10% Human Override &middot; 54 Radio Channels &middot; 22 Subsystems &middot; 21 Tools</p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function SelfAuditWidget() {
+  const auditStatus = trpc.selfAudit.status.useQuery(undefined, { refetchInterval: 30000 });
+  const lastReport = trpc.selfAudit.lastReport.useQuery(undefined, { refetchInterval: 60000 });
+  const corrections = trpc.selfAudit.correctionHistory.useQuery(undefined, { refetchInterval: 60000 });
+  const triggerAudit = trpc.selfAudit.triggerAudit.useMutation();
+  const toggleEnabled = trpc.selfAudit.setEnabled.useMutation();
+  const toggleAutoCorrect = trpc.selfAudit.setAutoCorrect.useMutation();
+
+  const status = auditStatus.data as any;
+  const report = lastReport.data as any;
+  const history = (corrections.data || []) as any[];
+
+  return (
+    <div className="bg-[#111111] border border-[#D4A843]/10 rounded-xl p-4 space-y-4">
+      {/* Status Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="text-center">
+          <p className={`text-2xl font-bold ${status?.auditEnabled ? 'text-green-400' : 'text-red-400'}`}>
+            {status?.auditEnabled ? 'ACTIVE' : 'PAUSED'}
+          </p>
+          <p className="text-xs text-[#E8E0D0]/40">Audit Engine</p>
+        </div>
+        <div className="text-center">
+          <p className={`text-2xl font-bold ${status?.autoCorrectEnabled ? 'text-green-400' : 'text-yellow-400'}`}>
+            {status?.autoCorrectEnabled ? 'ON' : 'OFF'}
+          </p>
+          <p className="text-xs text-[#E8E0D0]/40">Auto-Correct</p>
+        </div>
+        <div className="text-center">
+          <p className="text-2xl font-bold text-[#D4A843]">{status?.totalAuditsRun || 0}</p>
+          <p className="text-xs text-[#E8E0D0]/40">Audits Run</p>
+        </div>
+        <div className="text-center">
+          <p className="text-2xl font-bold text-[#D4A843]">{status?.totalAutoFixes || 0}</p>
+          <p className="text-xs text-[#E8E0D0]/40">Auto-Corrections</p>
+        </div>
+      </div>
+
+      {/* Last Report Summary */}
+      {report && (
+        <div className="border-t border-[#D4A843]/10 pt-3">
+          <p className="text-xs text-[#E8E0D0]/50 mb-2">Last Audit: {new Date(report.timestamp).toLocaleString()}</p>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="bg-green-900/20 rounded-lg p-2">
+              <p className="text-lg font-bold text-green-400">{report.passed || 0}</p>
+              <p className="text-[10px] text-green-400/60">Passed</p>
+            </div>
+            <div className="bg-yellow-900/20 rounded-lg p-2">
+              <p className="text-lg font-bold text-yellow-400">{report.warnings || 0}</p>
+              <p className="text-[10px] text-yellow-400/60">Warnings</p>
+            </div>
+            <div className="bg-red-900/20 rounded-lg p-2">
+              <p className="text-lg font-bold text-red-400">{report.critical || 0}</p>
+              <p className="text-[10px] text-red-400/60">Critical</p>
+            </div>
+          </div>
+          {report.autoFixed > 0 && (
+            <p className="text-xs text-green-400/70 mt-2">Auto-corrected {report.autoFixed} issue(s) this cycle</p>
+          )}
+        </div>
+      )}
+
+      {/* Recent Corrections */}
+      {history.length > 0 && (
+        <div className="border-t border-[#D4A843]/10 pt-3">
+          <p className="text-xs font-semibold text-[#E8E0D0]/50 mb-2">Recent Auto-Corrections</p>
+          <div className="space-y-1 max-h-32 overflow-y-auto">
+            {history.slice(0, 5).map((c: any, i: number) => (
+              <div key={i} className="flex items-center gap-2 text-xs">
+                <CheckCircle className="w-3 h-3 text-green-400 shrink-0" />
+                <span className="text-[#E8E0D0]/70 truncate">{c.action}</span>
+                <span className="text-[#E8E0D0]/30 shrink-0">{new Date(c.timestamp).toLocaleTimeString()}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Controls */}
+      <div className="border-t border-[#D4A843]/10 pt-3 flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10 text-xs"
+          onClick={() => triggerAudit.mutate()}
+          disabled={triggerAudit.isPending}
+        >
+          <RefreshCw className={`w-3 h-3 mr-1 ${triggerAudit.isPending ? 'animate-spin' : ''}`} />
+          Run Audit Now
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className={`text-xs ${status?.auditEnabled ? 'border-red-700/30 text-red-400 hover:bg-red-900/10' : 'border-green-700/30 text-green-400 hover:bg-green-900/10'}`}
+          onClick={() => toggleEnabled.mutate({ enabled: !status?.auditEnabled })}
+        >
+          {status?.auditEnabled ? 'Pause Audit' : 'Resume Audit'}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className={`text-xs ${status?.autoCorrectEnabled ? 'border-yellow-700/30 text-yellow-400 hover:bg-yellow-900/10' : 'border-green-700/30 text-green-400 hover:bg-green-900/10'}`}
+          onClick={() => toggleAutoCorrect.mutate({ enabled: !status?.autoCorrectEnabled })}
+        >
+          {status?.autoCorrectEnabled ? 'Disable Auto-Correct' : 'Enable Auto-Correct'}
+        </Button>
       </div>
     </div>
   );

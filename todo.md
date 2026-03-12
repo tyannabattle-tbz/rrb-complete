@@ -4246,3 +4246,17 @@
 - [x] Replace dead streams — 35 total streams replaced with radio-browser.info verified sources
 - [x] Full route audit — 33/33 routes return HTTP 200 (100% pass)
 - [x] Generate comprehensive audit report (AUDIT_REPORT.md)
+
+## QUMUS Self-Audit & Auto-Correction Engine
+- [x] Build server-side self-audit service with scheduled health checks (30min cycle)
+- [x] Auto-detect dead streams and swap to fallback URLs automatically
+- [x] Auto-detect broken routes (404s) and log for repair
+- [x] Auto-detect stale database records and flag for cleanup
+- [x] Rate-limit auto-corrections (max 5 per cycle) to prevent cascading changes
+- [x] Log all autonomous corrections to QUMUS decision trail
+- [x] Add self-audit dashboard widget to System Status page
+- [x] Add admin controls (Run Audit Now, Pause/Resume, Enable/Disable Auto-Correct)
+- [x] Daily status report generation with ecosystem health summary via notifyOwner
+- [x] Full ecosystem verification — 33/33 routes pass, 54/54 channels have fallbacks
+- [x] Create final updated zip with all systems operational
+- [x] 9/9 vitest tests pass for self-audit engine

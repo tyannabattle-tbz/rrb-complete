@@ -8590,7 +8590,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z98 } from "zod";
+import { z as z99 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -42772,21 +42772,593 @@ var streamHealthRouter = router({
   })
 });
 
-// server/routers/videoManagementRouter.ts
+// server/routers/selfAuditRouter.ts
 import { z as z97 } from "zod";
+
+// server/services/qumusSelfAudit.ts
+init_notification();
+var isRunning2 = false;
+var auditInterval = null;
+var lastReport2 = null;
+var correctionHistory = [];
+var totalAuditsRun = 0;
+var totalAutoFixes = 0;
+var auditEnabled = true;
+var autoCorrectEnabled = true;
+var MAX_CORRECTIONS_PER_CYCLE = 10;
+var AUDIT_INTERVAL_MS = 30 * 60 * 1e3;
+var lastDailyReportDate = "";
+async function auditStreams() {
+  const findings = [];
+  try {
+    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+    const db2 = await getDb5();
+    if (!db2) return findings;
+    const { sql: sql20 } = await import("drizzle-orm");
+    const rawChannels = await db2.execute(sql20`SELECT id, name, streamUrl, genre, metadata FROM radio_channels`);
+    const channels = Array.isArray(rawChannels) && Array.isArray(rawChannels[0]) ? rawChannels[0] : rawChannels;
+    if (!Array.isArray(channels)) return findings;
+    const urlMap = /* @__PURE__ */ new Map();
+    for (const ch of channels) {
+      const url = ch.streamUrl || "";
+      if (!urlMap.has(url)) urlMap.set(url, []);
+      urlMap.get(url).push(ch.name);
+    }
+    for (const [url, names] of urlMap) {
+      if (names.length > 2) {
+        findings.push({
+          id: `stream-dup-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          category: "stream",
+          severity: "warning",
+          title: `Duplicate stream URL shared by ${names.length} channels`,
+          description: `URL "${url.substring(0, 60)}..." is used by: ${names.join(", ")}`,
+          autoFixable: false,
+          autoFixed: false,
+          timestamp: Date.now()
+        });
+      }
+    }
+    for (const ch of channels) {
+      if (!ch.streamUrl || ch.streamUrl.trim() === "") {
+        findings.push({
+          id: `stream-empty-${ch.id}`,
+          category: "stream",
+          severity: "critical",
+          title: `Channel "${ch.name}" has no stream URL`,
+          description: `Channel ID ${ch.id} has an empty or null stream URL`,
+          autoFixable: true,
+          autoFixed: false,
+          timestamp: Date.now()
+        });
+      }
+    }
+    for (const ch of channels) {
+      const meta = typeof ch.metadata === "string" ? JSON.parse(ch.metadata || "{}") : ch.metadata || {};
+      if (!meta.fallbackUrl) {
+        findings.push({
+          id: `stream-nofallback-${ch.id}`,
+          category: "stream",
+          severity: "warning",
+          title: `Channel "${ch.name}" has no fallback stream`,
+          description: `Channel ID ${ch.id} lacks a fallback URL in metadata`,
+          autoFixable: false,
+          autoFixed: false,
+          timestamp: Date.now()
+        });
+      }
+    }
+    const sampleSize = Math.min(5, channels.length);
+    const shuffled = [...channels].sort(() => Math.random() - 0.5);
+    const sample = shuffled.slice(0, sampleSize);
+    for (const ch of sample) {
+      if (!ch.streamUrl) continue;
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5e3);
+        const resp = await fetch(ch.streamUrl, {
+          method: "HEAD",
+          signal: controller.signal,
+          redirect: "follow"
+        });
+        clearTimeout(timeout);
+        if (resp.status >= 400) {
+          findings.push({
+            id: `stream-dead-${ch.id}`,
+            category: "stream",
+            severity: "critical",
+            title: `Channel "${ch.name}" stream is dead (HTTP ${resp.status})`,
+            description: `Stream URL returned ${resp.status}. Auto-swap to fallback if available.`,
+            autoFixable: true,
+            autoFixed: false,
+            timestamp: Date.now()
+          });
+        }
+      } catch (err) {
+        if (err.name === "AbortError") {
+          findings.push({
+            id: `stream-timeout-${ch.id}`,
+            category: "stream",
+            severity: "warning",
+            title: `Channel "${ch.name}" stream timed out`,
+            description: `Stream URL did not respond within 5 seconds`,
+            autoFixable: true,
+            autoFixed: false,
+            timestamp: Date.now()
+          });
+        }
+      }
+    }
+  } catch (err) {
+    console.error("[SelfAudit] Stream audit error:", err);
+  }
+  return findings;
+}
+async function auditDatabase() {
+  const findings = [];
+  try {
+    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+    const db2 = await getDb5();
+    if (!db2) {
+      findings.push({
+        id: `db-noconn-${Date.now()}`,
+        category: "database",
+        severity: "critical",
+        title: "Database connection unavailable",
+        description: "Cannot connect to the database",
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+      return findings;
+    }
+    const { sql: sql20 } = await import("drizzle-orm");
+    const rawCC = await db2.execute(sql20`SELECT COUNT(*) as cnt FROM radio_channels`);
+    const ccRows = Array.isArray(rawCC) && Array.isArray(rawCC[0]) ? rawCC[0] : rawCC;
+    const cnt = ccRows?.[0]?.cnt || 0;
+    if (cnt < 54) {
+      findings.push({
+        id: `db-channels-missing-${Date.now()}`,
+        category: "database",
+        severity: "warning",
+        title: `Only ${cnt}/54 radio channels in database`,
+        description: `Expected 54 channels, found ${cnt}. Some channels may be missing.`,
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+    try {
+      const rawSC = await db2.execute(sql20`SELECT COUNT(*) as cnt FROM broadcast_schedules`);
+      const scRows = Array.isArray(rawSC) && Array.isArray(rawSC[0]) ? rawSC[0] : rawSC;
+      const sCnt = scRows?.[0]?.cnt || 0;
+      if (sCnt === 0) {
+        findings.push({
+          id: `db-sched-empty-${Date.now()}`,
+          category: "database",
+          severity: "warning",
+          title: "Broadcast schedule is empty",
+          description: "No broadcast schedule entries found. Channels have no programming.",
+          autoFixable: false,
+          autoFixed: false,
+          timestamp: Date.now()
+        });
+      }
+    } catch {
+    }
+    try {
+      const rawOC = await db2.execute(
+        sql20`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'offline'`
+      );
+      const ocRows = Array.isArray(rawOC) && Array.isArray(rawOC[0]) ? rawOC[0] : rawOC;
+      const offCnt = ocRows?.[0]?.cnt || 0;
+      if (offCnt > 10) {
+        findings.push({
+          id: `db-offline-many-${Date.now()}`,
+          category: "database",
+          severity: "warning",
+          title: `${offCnt} channels marked as offline`,
+          description: `More than 10 channels are offline. Consider reactivating.`,
+          autoFixable: true,
+          autoFixed: false,
+          timestamp: Date.now()
+        });
+      }
+    } catch {
+    }
+  } catch (err) {
+    console.error("[SelfAudit] Database audit error:", err);
+  }
+  return findings;
+}
+async function auditPolicies() {
+  const findings = [];
+  try {
+    const { getQumusActivation: getQumusActivation2 } = await Promise.resolve().then(() => (init_qumusActivation(), qumusActivation_exports));
+    const qumus = getQumusActivation2();
+    const status = qumus.getStatus();
+    if (!status.isActive) {
+      findings.push({
+        id: `policy-inactive-${Date.now()}`,
+        category: "policy",
+        severity: "critical",
+        title: "QUMUS engine is not active",
+        description: "The QUMUS orchestration engine is not running. Autonomous operations are halted.",
+        autoFixable: true,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+    const subsystemCount = status.subsystems?.split("/")?.[0] || "0";
+    if (parseInt(subsystemCount) < 15) {
+      findings.push({
+        id: `policy-subsystems-${Date.now()}`,
+        category: "policy",
+        severity: "warning",
+        title: `Only ${subsystemCount} subsystems healthy (expected 18+)`,
+        description: "Some QUMUS subsystems may be degraded or offline.",
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+    if (status.errors > 0) {
+      findings.push({
+        id: `policy-errors-${Date.now()}`,
+        category: "policy",
+        severity: status.errors > 5 ? "critical" : "warning",
+        title: `QUMUS has ${status.errors} errors`,
+        description: `The QUMUS engine has accumulated ${status.errors} errors since last restart.`,
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+  } catch (err) {
+    findings.push({
+      id: `policy-unavailable-${Date.now()}`,
+      category: "policy",
+      severity: "critical",
+      title: "QUMUS engine unavailable",
+      description: `Cannot reach QUMUS activation: ${String(err)}`,
+      autoFixable: false,
+      autoFixed: false,
+      timestamp: Date.now()
+    });
+  }
+  return findings;
+}
+async function auditSystem() {
+  const findings = [];
+  const memUsage = process.memoryUsage();
+  const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
+  const heapTotalMB = Math.round(memUsage.heapTotal / 1024 / 1024);
+  if (heapUsedMB > 400) {
+    findings.push({
+      id: `sys-memory-${Date.now()}`,
+      category: "system",
+      severity: heapUsedMB > 600 ? "critical" : "warning",
+      title: `High memory usage: ${heapUsedMB}MB / ${heapTotalMB}MB`,
+      description: "Server memory usage is elevated. Consider restarting if it continues to grow.",
+      autoFixable: false,
+      autoFixed: false,
+      timestamp: Date.now()
+    });
+  }
+  const uptimeHours = Math.round(process.uptime() / 3600);
+  if (uptimeHours > 168) {
+    findings.push({
+      id: `sys-uptime-${Date.now()}`,
+      category: "system",
+      severity: "info",
+      title: `Server uptime: ${uptimeHours} hours`,
+      description: "Server has been running for over 7 days. Consider a scheduled restart.",
+      autoFixable: false,
+      autoFixed: false,
+      timestamp: Date.now()
+    });
+  }
+  return findings;
+}
+async function autoCorrect(findings) {
+  if (!autoCorrectEnabled) return 0;
+  let fixCount = 0;
+  const fixable = findings.filter((f) => f.autoFixable && !f.autoFixed);
+  for (const finding of fixable) {
+    if (fixCount >= MAX_CORRECTIONS_PER_CYCLE) break;
+    try {
+      let fixed = false;
+      let fixDesc = "";
+      switch (finding.id.split("-")[0] + "-" + finding.id.split("-")[1]) {
+        case "stream-dead":
+        case "stream-timeout": {
+          const channelId = parseInt(finding.id.split("-")[2]);
+          if (!isNaN(channelId)) {
+            const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+            const db2 = await getDb5();
+            if (db2) {
+              const { sql: sql20 } = await import("drizzle-orm");
+              const rawRows = await db2.execute(
+                sql20`SELECT metadata, streamUrl FROM radio_channels WHERE id = ${channelId}`
+              );
+              const rowArr = Array.isArray(rawRows) && Array.isArray(rawRows[0]) ? rawRows[0] : rawRows;
+              const ch = rowArr?.[0];
+              if (ch) {
+                const meta = typeof ch.metadata === "string" ? JSON.parse(ch.metadata || "{}") : ch.metadata || {};
+                if (meta.fallbackUrl && meta.fallbackUrl !== ch.streamUrl) {
+                  const oldUrl = ch.streamUrl;
+                  await db2.execute(
+                    sql20`UPDATE radio_channels SET streamUrl = ${meta.fallbackUrl} WHERE id = ${channelId}`
+                  );
+                  meta.fallbackUrl = oldUrl;
+                  meta.lastAutoSwap = Date.now();
+                  meta.autoSwapReason = finding.title;
+                  await db2.execute(
+                    sql20`UPDATE radio_channels SET metadata = ${JSON.stringify(meta)} WHERE id = ${channelId}`
+                  );
+                  fixed = true;
+                  fixDesc = `Swapped stream to fallback URL for channel ${channelId}`;
+                }
+              }
+            }
+          }
+          break;
+        }
+        case "stream-empty": {
+          const channelId = parseInt(finding.id.split("-")[2]);
+          if (!isNaN(channelId)) {
+            const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+            const db2 = await getDb5();
+            if (db2) {
+              const { sql: sql20 } = await import("drizzle-orm");
+              const defaultStream = "https://listen.181fm.com/181-rnb_128k.mp3";
+              await db2.execute(
+                sql20`UPDATE radio_channels SET streamUrl = ${defaultStream} WHERE id = ${channelId} AND (streamUrl IS NULL OR streamUrl = '')`
+              );
+              fixed = true;
+              fixDesc = `Assigned default R&B stream to channel ${channelId}`;
+            }
+          }
+          break;
+        }
+        case "db-offline": {
+          const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+          const db2 = await getDb5();
+          if (db2) {
+            const { sql: sql20 } = await import("drizzle-orm");
+            await db2.execute(
+              sql20`UPDATE radio_channels SET status = 'active' WHERE status = 'offline'`
+            );
+            fixed = true;
+            fixDesc = "Reactivated all offline channels to active status";
+          }
+          break;
+        }
+        case "policy-inactive": {
+          try {
+            const { activateQumus: activateQumus2 } = await Promise.resolve().then(() => (init_qumusActivation(), qumusActivation_exports));
+            await activateQumus2({
+              maxConcurrentTasks: 20,
+              enableAutoScheduling: true,
+              enableSelfImprovement: true,
+              enableMultiAgentCoordination: true,
+              enablePredictiveAnalytics: true,
+              ecosystemIntegration: {
+                rrb: true,
+                hybridcast: true,
+                canryn: true,
+                sweetMiracles: true,
+                presentationBuilder: true,
+                musicStudio: true,
+                valanna: true,
+                seraph: true
+              }
+            });
+            fixed = true;
+            fixDesc = "Reactivated QUMUS orchestration engine";
+          } catch {
+          }
+          break;
+        }
+      }
+      if (fixed) {
+        finding.autoFixed = true;
+        finding.fixDescription = fixDesc;
+        fixCount++;
+        correctionHistory.push({
+          id: `fix-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          findingId: finding.id,
+          action: fixDesc,
+          before: finding.description,
+          after: "Auto-corrected",
+          success: true,
+          timestamp: Date.now()
+        });
+        console.log(`[SelfAudit] Auto-fixed: ${fixDesc}`);
+      }
+    } catch (err) {
+      console.error(`[SelfAudit] Auto-fix failed for ${finding.id}:`, err);
+      correctionHistory.push({
+        id: `fix-fail-${Date.now()}`,
+        findingId: finding.id,
+        action: "Attempted auto-fix",
+        before: finding.description,
+        after: `Failed: ${String(err)}`,
+        success: false,
+        timestamp: Date.now()
+      });
+    }
+  }
+  return fixCount;
+}
+async function sendDailyReport(report) {
+  const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+  if (lastDailyReportDate === today) return;
+  const hour = (/* @__PURE__ */ new Date()).getHours();
+  if (hour < 18) return;
+  lastDailyReportDate = today;
+  const healthEmoji = report.systemHealth >= 90 ? "\u{1F7E2}" : report.systemHealth >= 70 ? "\u{1F7E1}" : "\u{1F534}";
+  const content = [
+    `${healthEmoji} QUMUS Daily Ecosystem Report \u2014 ${today}`,
+    ``,
+    `System Health: ${report.systemHealth}%`,
+    `Total Checks: ${report.totalChecks}`,
+    `Passed: ${report.passed} | Warnings: ${report.warnings} | Critical: ${report.critical}`,
+    `Auto-Fixed: ${report.autoFixed}`,
+    `Total Audits Today: ${totalAuditsRun}`,
+    `Total Auto-Fixes: ${totalAutoFixes}`,
+    ``,
+    report.findings.length > 0 ? `Top Findings:
+${report.findings.slice(0, 5).map((f) => `  \u2022 [${f.severity.toUpperCase()}] ${f.title}${f.autoFixed ? " \u2705 Fixed" : ""}`).join("\n")}` : "No issues found \u2014 all systems nominal.",
+    ``,
+    `Next audit: ${new Date(report.nextScheduledAudit).toLocaleTimeString()}`
+  ].join("\n");
+  try {
+    await notifyOwner({
+      title: `QUMUS Daily Report \u2014 ${report.systemHealth}% Health`,
+      content
+    });
+    console.log("[SelfAudit] Daily report sent");
+  } catch (err) {
+    console.error("[SelfAudit] Failed to send daily report:", err);
+  }
+}
+async function runFullAudit() {
+  const startTime = Date.now();
+  console.log("[SelfAudit] Starting full ecosystem audit...");
+  const [streamFindings, dbFindings, policyFindings, systemFindings] = await Promise.all([
+    auditStreams(),
+    auditDatabase(),
+    auditPolicies(),
+    auditSystem()
+  ]);
+  const allFindings = [...streamFindings, ...dbFindings, ...policyFindings, ...systemFindings];
+  const fixCount = await autoCorrect(allFindings);
+  totalAutoFixes += fixCount;
+  totalAuditsRun++;
+  const criticalCount = allFindings.filter((f) => f.severity === "critical" && !f.autoFixed).length;
+  const warningCount = allFindings.filter((f) => f.severity === "warning" && !f.autoFixed).length;
+  const healthScore = Math.max(0, Math.min(
+    100,
+    100 - criticalCount * 15 - warningCount * 5
+  ));
+  const report = {
+    reportId: `audit-${Date.now()}`,
+    timestamp: startTime,
+    duration: Date.now() - startTime,
+    totalChecks: allFindings.length + (54 - allFindings.filter((f) => f.category === "stream").length),
+    passed: allFindings.length === 0 ? 54 : 54 - allFindings.length,
+    warnings: warningCount,
+    critical: criticalCount,
+    autoFixed: fixCount,
+    findings: allFindings,
+    systemHealth: healthScore,
+    nextScheduledAudit: Date.now() + AUDIT_INTERVAL_MS
+  };
+  lastReport2 = report;
+  console.log(`[SelfAudit] Audit complete: Health=${healthScore}%, Findings=${allFindings.length}, AutoFixed=${fixCount}, Duration=${report.duration}ms`);
+  await sendDailyReport(report);
+  if (healthScore < 50) {
+    try {
+      await notifyOwner({
+        title: `\u26A0\uFE0F QUMUS CRITICAL: Ecosystem health at ${healthScore}%`,
+        content: `${criticalCount} critical issues detected. ${fixCount} auto-fixed. Manual intervention may be required.
+
+Top issues:
+${allFindings.filter((f) => f.severity === "critical").slice(0, 3).map((f) => `\u2022 ${f.title}`).join("\n")}`
+      });
+    } catch {
+    }
+  }
+  return report;
+}
+function startSelfAudit() {
+  if (isRunning2) return;
+  isRunning2 = true;
+  console.log("[SelfAudit] QUMUS Self-Audit Engine activated \u2014 30min cycle");
+  setTimeout(() => {
+    runFullAudit().catch((err) => console.error("[SelfAudit] Initial audit failed:", err));
+  }, 6e4);
+  auditInterval = setInterval(() => {
+    runFullAudit().catch((err) => console.error("[SelfAudit] Scheduled audit failed:", err));
+  }, AUDIT_INTERVAL_MS);
+}
+function getLastReport() {
+  return lastReport2;
+}
+function getCorrectionHistory() {
+  return correctionHistory.slice(-50);
+}
+function getAuditStatus() {
+  return {
+    isRunning: isRunning2,
+    auditEnabled,
+    autoCorrectEnabled,
+    totalAuditsRun,
+    totalAutoFixes,
+    lastAuditTime: lastReport2?.timestamp || null,
+    lastHealthScore: lastReport2?.systemHealth || null,
+    nextAuditTime: lastReport2?.nextScheduledAudit || null,
+    correctionCount: correctionHistory.length
+  };
+}
+function setAuditEnabled(enabled) {
+  auditEnabled = enabled;
+  console.log(`[SelfAudit] Audit ${enabled ? "enabled" : "disabled"}`);
+}
+function setAutoCorrectEnabled(enabled) {
+  autoCorrectEnabled = enabled;
+  console.log(`[SelfAudit] Auto-correct ${enabled ? "enabled" : "disabled"}`);
+}
+async function triggerManualAudit() {
+  return runFullAudit();
+}
+
+// server/routers/selfAuditRouter.ts
+var selfAuditRouter = router({
+  // Get current audit status
+  status: publicProcedure.query(() => {
+    return getAuditStatus();
+  }),
+  // Get the last audit report
+  lastReport: publicProcedure.query(() => {
+    return getLastReport();
+  }),
+  // Get auto-correction history
+  correctionHistory: publicProcedure.query(() => {
+    return getCorrectionHistory();
+  }),
+  // Trigger a manual audit (admin only)
+  triggerAudit: protectedProcedure.mutation(async () => {
+    const report = await triggerManualAudit();
+    return report;
+  }),
+  // Toggle audit enabled/disabled (admin only)
+  setEnabled: protectedProcedure.input(z97.object({ enabled: z97.boolean() })).mutation(({ input }) => {
+    setAuditEnabled(input.enabled);
+    return { success: true, enabled: input.enabled };
+  }),
+  // Toggle auto-correct enabled/disabled (admin only)
+  setAutoCorrect: protectedProcedure.input(z97.object({ enabled: z97.boolean() })).mutation(({ input }) => {
+    setAutoCorrectEnabled(input.enabled);
+    return { success: true, enabled: input.enabled };
+  })
+});
+
+// server/routers/videoManagementRouter.ts
+import { z as z98 } from "zod";
 init_storage();
 init_db();
 init_schema();
 import { eq as eq31, desc as desc17, and as and21 } from "drizzle-orm";
-var captionEntrySchema = z97.object({
-  start: z97.number(),
-  end: z97.number(),
-  text: z97.string()
+var captionEntrySchema = z98.object({
+  start: z98.number(),
+  end: z98.number(),
+  text: z98.string()
 });
 var videoManagementRouter = router({
   // ─── CAPTIONS ──────────────────────────────────────────
   // Get captions for a video
-  getCaptions: publicProcedure.input(z97.object({ videoId: z97.string() })).query(async ({ input }) => {
+  getCaptions: publicProcedure.input(z98.object({ videoId: z98.string() })).query(async ({ input }) => {
     try {
       const db2 = await getDb();
       const captions = await db2.select().from(videoCaptions).where(eq31(videoCaptions.videoId, input.videoId)).orderBy(desc17(videoCaptions.isDefault));
@@ -42796,12 +43368,12 @@ var videoManagementRouter = router({
     }
   }),
   // Save/update captions for a video
-  saveCaptions: protectedProcedure.input(z97.object({
-    videoId: z97.string(),
-    language: z97.string().default("en"),
-    label: z97.string().default("English"),
-    captions: z97.array(captionEntrySchema),
-    isDefault: z97.boolean().default(true)
+  saveCaptions: protectedProcedure.input(z98.object({
+    videoId: z98.string(),
+    language: z98.string().default("en"),
+    label: z98.string().default("English"),
+    captions: z98.array(captionEntrySchema),
+    isDefault: z98.boolean().default(true)
   })).mutation(async ({ input, ctx }) => {
     const now = Date.now();
     const db2 = await getDb();
@@ -42832,25 +43404,25 @@ var videoManagementRouter = router({
     }
   }),
   // Delete captions
-  deleteCaptions: protectedProcedure.input(z97.object({ id: z97.number() })).mutation(async ({ input }) => {
+  deleteCaptions: protectedProcedure.input(z98.object({ id: z98.number() })).mutation(async ({ input }) => {
     const db2 = await getDb();
     await db2.delete(videoCaptions).where(eq31(videoCaptions.id, input.id));
     return { success: true };
   }),
   // Parse SRT/VTT file content into caption entries
-  parseCaptionFile: protectedProcedure.input(z97.object({
-    content: z97.string(),
-    format: z97.enum(["srt", "vtt"])
+  parseCaptionFile: protectedProcedure.input(z98.object({
+    content: z98.string(),
+    format: z98.enum(["srt", "vtt"])
   })).mutation(async ({ input }) => {
     const captions = parseCaptionContent(input.content, input.format);
     return { captions };
   }),
   // ─── VIDEO LIBRARY ─────────────────────────────────────
   // List all videos
-  listVideos: publicProcedure.input(z97.object({
-    type: z97.string().optional(),
-    status: z97.string().optional(),
-    limit: z97.number().default(50)
+  listVideos: publicProcedure.input(z98.object({
+    type: z98.string().optional(),
+    status: z98.string().optional(),
+    limit: z98.number().default(50)
   }).optional()).query(async ({ input }) => {
     try {
       const db2 = await getDb();
@@ -42867,18 +43439,18 @@ var videoManagementRouter = router({
     }
   }),
   // Upload a video (metadata + S3)
-  uploadVideo: protectedProcedure.input(z97.object({
-    title: z97.string(),
-    description: z97.string().optional(),
-    type: z97.enum(["narrated", "instrumental", "social", "vertical", "presentation", "recording", "upload"]).default("upload"),
-    aspectRatio: z97.string().default("16:9"),
-    narratedBy: z97.string().optional(),
-    tags: z97.array(z97.string()).optional(),
-    duration: z97.string().optional(),
-    fileBase64: z97.string(),
-    fileName: z97.string(),
-    contentType: z97.string().default("video/mp4"),
-    posterBase64: z97.string().optional()
+  uploadVideo: protectedProcedure.input(z98.object({
+    title: z98.string(),
+    description: z98.string().optional(),
+    type: z98.enum(["narrated", "instrumental", "social", "vertical", "presentation", "recording", "upload"]).default("upload"),
+    aspectRatio: z98.string().default("16:9"),
+    narratedBy: z98.string().optional(),
+    tags: z98.array(z98.string()).optional(),
+    duration: z98.string().optional(),
+    fileBase64: z98.string(),
+    fileName: z98.string(),
+    contentType: z98.string().default("video/mp4"),
+    posterBase64: z98.string().optional()
   })).mutation(async ({ input, ctx }) => {
     const now = Date.now();
     const db2 = await getDb();
@@ -42915,13 +43487,13 @@ var videoManagementRouter = router({
     return { success: true, videoId, videoUrl, posterUrl, id: Number(result2[0].insertId) };
   }),
   // Delete a video
-  deleteVideo: protectedProcedure.input(z97.object({ id: z97.number() })).mutation(async ({ input }) => {
+  deleteVideo: protectedProcedure.input(z98.object({ id: z98.number() })).mutation(async ({ input }) => {
     const db2 = await getDb();
     await db2.delete(videoLibrary).where(eq31(videoLibrary.id, input.id));
     return { success: true };
   }),
   // Increment view count
-  incrementView: publicProcedure.input(z97.object({ videoId: z97.string() })).mutation(async ({ input }) => {
+  incrementView: publicProcedure.input(z98.object({ videoId: z98.string() })).mutation(async ({ input }) => {
     try {
       const db2 = await getDb();
       const existing = await db2.select().from(videoLibrary).where(eq31(videoLibrary.videoId, input.videoId));
@@ -42935,10 +43507,10 @@ var videoManagementRouter = router({
   }),
   // ─── MEETING RECORDINGS ────────────────────────────────
   // Start a recording
-  startRecording: protectedProcedure.input(z97.object({
-    roomId: z97.string(),
-    roomName: z97.string(),
-    participants: z97.array(z97.string()).optional()
+  startRecording: protectedProcedure.input(z98.object({
+    roomId: z98.string(),
+    roomName: z98.string(),
+    participants: z98.array(z98.string()).optional()
   })).mutation(async ({ input, ctx }) => {
     const now = Date.now();
     const db2 = await getDb();
@@ -42955,12 +43527,12 @@ var videoManagementRouter = router({
     return { success: true, recordingId: Number(result2[0].insertId), startedAt: now };
   }),
   // Stop a recording and upload
-  stopRecording: protectedProcedure.input(z97.object({
-    recordingId: z97.number(),
-    fileBase64: z97.string(),
-    fileName: z97.string(),
-    duration: z97.number().optional(),
-    fileSizeMb: z97.number().optional()
+  stopRecording: protectedProcedure.input(z98.object({
+    recordingId: z98.number(),
+    fileBase64: z98.string(),
+    fileName: z98.string(),
+    duration: z98.number().optional(),
+    fileSizeMb: z98.number().optional()
   })).mutation(async ({ input }) => {
     const now = Date.now();
     const db2 = await getDb();
@@ -42979,9 +43551,9 @@ var videoManagementRouter = router({
     return { success: true, recordingUrl };
   }),
   // List recordings
-  listRecordings: protectedProcedure.input(z97.object({
-    roomId: z97.string().optional(),
-    limit: z97.number().default(20)
+  listRecordings: protectedProcedure.input(z98.object({
+    roomId: z98.string().optional(),
+    limit: z98.number().default(20)
   }).optional()).query(async ({ input }) => {
     try {
       const db2 = await getDb();
@@ -42995,7 +43567,7 @@ var videoManagementRouter = router({
     }
   }),
   // Delete a recording
-  deleteRecording: protectedProcedure.input(z97.object({ id: z97.number() })).mutation(async ({ input }) => {
+  deleteRecording: protectedProcedure.input(z98.object({ id: z98.number() })).mutation(async ({ input }) => {
     const db2 = await getDb();
     await db2.delete(meetingRecordings).where(eq31(meetingRecordings.id, input.id));
     return { success: true };
@@ -43064,6 +43636,8 @@ var appRouter = router({
   restreamConfig: restreamConfigRouter,
   // Stream Health Monitor (QUMUS Policy #19 — 15-min automated checks)
   streamHealth: streamHealthRouter,
+  // QUMUS Self-Audit & Auto-Correction Engine
+  selfAudit: selfAuditRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -43079,11 +43653,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z98.object({
-        goal: z98.string().min(1, "Goal is required"),
-        priority: z98.number().int().min(1).max(10).optional().default(5),
-        steps: z98.array(z98.string()).optional(),
-        constraints: z98.array(z98.string()).optional()
+      z99.object({
+        goal: z99.string().min(1, "Goal is required"),
+        priority: z99.number().int().min(1).max(10).optional().default(5),
+        steps: z99.array(z99.string()).optional(),
+        constraints: z99.array(z99.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -43095,7 +43669,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z98.object({ taskId: z98.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z99.object({ taskId: z99.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -43105,11 +43679,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z98.object({
-        target: z98.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z98.string().min(1, "Action is required"),
-        params: z98.record(z98.any()).optional().default({}),
-        priority: z98.number().int().min(1).max(10).optional().default(5)
+      z99.object({
+        target: z99.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z99.string().min(1, "Action is required"),
+        params: z99.record(z99.any()).optional().default({}),
+        priority: z99.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -43121,10 +43695,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z98.object({ commandId: z98.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z99.object({ commandId: z99.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z98.object({ target: z98.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z99.object({ target: z99.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -43219,12 +43793,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z98.object({
-      sessionName: z98.string().min(1),
-      systemPrompt: z98.string().optional(),
-      temperature: z98.number().min(0).max(100).optional(),
-      model: z98.string().optional(),
-      maxSteps: z98.number().min(1).optional()
+    createSession: protectedProcedure.input(z99.object({
+      sessionName: z99.string().min(1),
+      systemPrompt: z99.string().optional(),
+      temperature: z99.number().min(0).max(100).optional(),
+      model: z99.string().optional(),
+      maxSteps: z99.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -43245,7 +43819,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z98.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z99.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -43254,7 +43828,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z98.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z99.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -43298,9 +43872,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z98.object({
-      dateRange: z98.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z98.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z99.object({
+      dateRange: z99.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z99.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -43311,24 +43885,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z98.object({
-      dateRange: z98.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z99.object({
+      dateRange: z99.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z98.object({
-      dateRange: z98.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z99.object({
+      dateRange: z99.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z98.object({
-      email: z98.string().email(),
-      name: z98.string().optional(),
-      source: z98.string().optional(),
-      language: z98.string().optional()
+    subscribe: publicProcedure.input(z99.object({
+      email: z99.string().email(),
+      name: z99.string().optional(),
+      source: z99.string().optional(),
+      language: z99.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
@@ -44746,6 +45320,12 @@ async function startServer() {
   }
   initializeWebSocket(server);
   console.log("[WebSocket] Manager initialized");
+  try {
+    startSelfAudit();
+    console.log("[QUMUS] Self-Audit Engine activated \u2014 autonomous monitoring enabled");
+  } catch (error) {
+    console.error("[QUMUS] Self-Audit Engine failed to start:", error);
+  }
   try {
     const productionEngine = startProductionIntegration();
     console.log("[QUMUS-PROD] Production Integration Engine activated");

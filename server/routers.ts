@@ -89,6 +89,7 @@ import { mediaBlastRouter } from "./routers/mediaBlastRouter";
 import { podcastManagementRouter } from "./routers/podcastManagementRouter";
 import { restreamConfigRouter } from "./routers/restreamConfigRouter";
 import { streamHealthRouter } from "./routers/streamHealthRouter";
+import { selfAuditRouter } from "./routers/selfAuditRouter";
 import { videoManagementRouter } from "./routers/videoManagementRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
@@ -110,6 +111,9 @@ export const appRouter = router({
 
   // Stream Health Monitor (QUMUS Policy #19 — 15-min automated checks)
   streamHealth: streamHealthRouter,
+
+  // QUMUS Self-Audit & Auto-Correction Engine
+  selfAudit: selfAuditRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,

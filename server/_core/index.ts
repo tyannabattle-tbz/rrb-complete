@@ -13,6 +13,7 @@ import { activateQumus } from "../qumus/qumusActivation";
 import { registerAudioStreamProxy } from "../audioStreamProxy";
 import { registerPodcastRssRoutes } from "../routes/podcastRssFeed";
 import { startProductionIntegration } from "../services/qumusProductionIntegration";
+import { startSelfAudit } from "../services/qumusSelfAudit";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -75,6 +76,14 @@ async function startServer() {
   // Initialize WebSocket manager
   initializeWebSocket(server);
   console.log("[WebSocket] Manager initialized");
+
+  // Start QUMUS Self-Audit & Auto-Correction Engine
+  try {
+    startSelfAudit();
+    console.log("[QUMUS] Self-Audit Engine activated — autonomous monitoring enabled");
+  } catch (error) {
+    console.error("[QUMUS] Self-Audit Engine failed to start:", error);
+  }
 
   // Start QUMUS Production Integration Engine
   try {
