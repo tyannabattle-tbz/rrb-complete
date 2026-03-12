@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE radio_channels SET streamUrl = 'https://stream.zeno.fm/6ypnfbm3p8uuv' WHERE metadata LIKE '%ch-052%';\nUPDATE radio_channels SET streamUrl = 'https://stream.zeno.fm/4p7t2ewfr08uv' WHERE metadata LIKE '%ch-053%';\nUPDATE radio_channels SET streamUrl = 'https://stream.zeno.fm/7y2e5bm3p8uuv' WHERE metadata LIKE '%ch-054%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute UPDATE radio_channels SET streamUrl = 'https://stream.zeno.fm/6ypnfbm3p8uuv' WHERE metadata LIKE '%ch-052%';\nUPDATE radio_channels SET streamUrl = 'https://stream.zeno.fm/4p7t2ewfr08uv' WHERE metadata LIKE '%ch-053%';\nUPDATE radio_channels SET streamUrl = 'https://stream.zeno.fm/7y2e5bm3p8uuv' WHERE metadata LIKE '%ch-054%';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 77
+}

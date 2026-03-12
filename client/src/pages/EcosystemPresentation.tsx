@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'wouter';
 
-const VIDEO_URL = 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/rrb_ecosystem_presentation_c159e8cc.mp4';
+const VIDEO_URL = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/HPWKWjcKyPinNDUP.mp4';
 
 interface Section {
   id: string;
