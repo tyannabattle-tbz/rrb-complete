@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rockin' Rockin' Boogie — Port 3002</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0A0A0A; color: #E8E0D0; min-height: 100vh; }
+    .header { background: linear-gradient(135deg, #1a1208 0%, #0A0A0A 100%); border-bottom: 2px solid #D4A843; padding: 24px 32px; }
+    .header h1 { font-size: 28px; color: #D4A843; display: flex; align-items: center; gap: 12px; }
+    .header p { color: #E8E0D0aa; margin-top: 8px; font-size: 14px; }
+    .status-bar { display: flex; gap: 16px; padding: 12px 32px; background: #111; border-bottom: 1px solid #D4A84330; font-size: 13px; flex-wrap: wrap; }
+    .status-item { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .card { background: #111; border: 1px solid #D4A84320; border-radius: 12px; padding: 24px; }
+    .card h2 { color: #D4A843; font-size: 18px; margin-bottom: 12px; }
+    .channel-list { list-style: none; }
+    .channel-list li { padding: 8px 12px; margin: 4px 0; background: #0a0a0a; border-radius: 6px; border-left: 3px solid #D4A843; display: flex; justify-content: space-between; font-size: 13px; }
+    .channel-count { color: #D4A843; font-weight: 600; }
+    .services li { padding: 10px 12px; margin: 6px 0; background: #0a0a0a; border-radius: 8px; border-left: 3px solid #D4A843; display: flex; justify-content: space-between; align-items: center; list-style: none; }
+    .services li a { color: #D4A843; text-decoration: none; font-weight: 500; }
+    .port-badge { background: #D4A84320; color: #D4A843; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+    .freq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 6px; }
+    .freq { background: #1a1208; padding: 8px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 600; color: #D4A843; border: 1px solid #D4A84330; }
+    .freq small { display: block; font-size: 10px; color: #E8E0D080; font-weight: 400; margin-top: 2px; }
+    .footer { text-align: center; padding: 24px; color: #E8E0D040; font-size: 12px; border-top: 1px solid #D4A84315; margin-top: 32px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎵 Rockin' Rockin' Boogie</h1>
+    <p>Entertainment Hub — Port 3002 — 54 Channels | 7-Channel 24/7 Broadcasting | AI DJs</p>
+  </div>
+  <div class="status-bar">
+    <div class="status-item"><div class="dot"></div> Broadcasting Live</div>
+    <div class="status-item"><div class="dot"></div> 54 Channels Active</div>
+    <div class="status-item"><div class="dot"></div> QUMUS Connected</div>
+    <div class="status-item"><div class="dot"></div> AI DJs: Valanna, Candy</div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h2>🌐 Ecosystem Services</h2>
+      <ul class="services">
+        <li><a href="http://localhost:3001">QUMUS Control Center</a><span class="port-badge">:3001</span></li>
+        <li><a href="http://localhost:3002">Rockin' Rockin' Boogie</a><span class="port-badge">:3002</span></li>
+        <li><a href="http://localhost:3003">HybridCast Emergency</a><span class="port-badge">:3003</span></li>
+        <li><a href="http://localhost:3004">Ty OS</a><span class="port-badge">:3004</span></li>
+        <li><a href="http://localhost:3000">Main Application</a><span class="port-badge">:3000</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>📻 Channel Categories</h2>
+      <ul class="channel-list">
+        <li><span>Music</span><span class="channel-count">12 channels</span></li>
+        <li><span>Talk Radio</span><span class="channel-count">8 channels</span></li>
+        <li><span>Healing Frequencies</span><span class="channel-count">7 channels</span></li>
+        <li><span>Podcast</span><span class="channel-count">10 channels</span></li>
+        <li><span>Live Events</span><span class="channel-count">5 channels</span></li>
+        <li><span>Education</span><span class="channel-count">6 channels</span></li>
+        <li><span>Entertainment</span><span class="channel-count">6 channels</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>🎶 Solfeggio Healing Frequencies</h2>
+      <div class="freq-grid">
+        <div class="freq">396<small>Liberation</small></div>
+        <div class="freq">417<small>Change</small></div>
+        <div class="freq">528<small>Love</small></div>
+        <div class="freq">639<small>Connection</small></div>
+        <div class="freq">741<small>Expression</small></div>
+        <div class="freq">852<small>Intuition</small></div>
+        <div class="freq">963<small>Oneness</small></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>🎙️ Featured Shows</h2>
+      <ul class="channel-list">
+        <li><span>GRITS & GREENS Podcast</span><span class="channel-count">Live</span></li>
+        <li><span>Building the Bridge</span><span class="channel-count">Weekly</span></li>
+        <li><span>Morning Motivation</span><span class="channel-count">Daily</span></li>
+        <li><span>Community Voice</span><span class="channel-count">Daily</span></li>
+        <li><span>Solbones Dice Game</span><span class="channel-count">Interactive</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer">
+    <p>&copy; 2025-2026 Canryn Production and its subsidiaries. All rights reserved.</p>
+    <p style="margin-top:4px">Rockin' Rockin' Boogie Entertainment Hub v2.0.0</p>
+  </div>
+</body>
+</html>

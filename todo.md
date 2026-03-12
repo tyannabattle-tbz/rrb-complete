@@ -4125,3 +4125,10 @@
 - [x] Add video metadata form (title, description, type, tags)
 - [x] Store uploaded videos in S3 with database tracking
 - [x] Display uploaded videos in Video Gallery alongside produced videos
+- [x] Create 4-port service architecture: QUMUS (3001), RRB (3002), HybridCast (3003), Ty OS (3004)
+- [x] Create standalone service launchers for each port
+- [x] Create Mac mini deployment scripts (install, setup, run)
+- [x] Create comprehensive zip with all code, documents, and deployment files
+- [x] Include install-execute readme for all platforms
+- [x] Include recovery/backup clone files in zip
+- [x] Include QUMUS future tasks and next steps in zip documentation

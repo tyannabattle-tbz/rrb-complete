@@ -1,0 +1,16 @@
+{
+  "name": "canryn-production-services",
+  "version": "2.0.0",
+  "description": "Canryn Production Ecosystem — Multi-Service Architecture",
+  "type": "module",
+  "scripts": {
+    "start:all": "node start-all.mjs",
+    "start:qumus": "node qumus-3001/server.mjs",
+    "start:rrb": "node rrb-3002/server.mjs",
+    "start:hybridcast": "node hybridcast-3003/server.mjs",
+    "start:tyos": "node ty-os-3004/server.mjs"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

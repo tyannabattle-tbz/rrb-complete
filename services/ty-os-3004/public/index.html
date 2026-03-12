@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ty OS — Port 3004</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #050510; color: #e0e0e0; min-height: 100vh; }
+    .header { background: linear-gradient(135deg, #0a1628 0%, #050510 100%); border-bottom: 2px solid #3b82f6; padding: 24px 32px; }
+    .header h1 { font-size: 28px; color: #60a5fa; display: flex; align-items: center; gap: 12px; }
+    .header .subtitle { color: #e0e0e0aa; margin-top: 4px; font-size: 14px; }
+    .header .user-info { color: #60a5fa; margin-top: 8px; font-size: 16px; font-weight: 600; }
+    .status-bar { display: flex; gap: 16px; padding: 12px 32px; background: #0a0a15; border-bottom: 1px solid #3b82f640; font-size: 13px; flex-wrap: wrap; }
+    .status-item { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot.green { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .dot.blue { background: #3b82f6; box-shadow: 0 0 6px #3b82f6; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .card { background: #0a0a18; border: 1px solid #3b82f620; border-radius: 12px; padding: 24px; }
+    .card h2 { color: #60a5fa; font-size: 18px; margin-bottom: 12px; }
+    .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .action-btn { background: #0f1a2e; border: 1px solid #3b82f630; border-radius: 10px; padding: 16px; text-align: center; cursor: pointer; text-decoration: none; color: #e0e0e0; transition: all 0.2s; }
+    .action-btn:hover { background: #1a2a4e; border-color: #3b82f6; transform: translateY(-2px); }
+    .action-btn .icon { font-size: 28px; display: block; margin-bottom: 6px; }
+    .action-btn .label { font-size: 13px; font-weight: 600; }
+    .action-btn .port { font-size: 11px; color: #60a5fa; font-family: monospace; }
+    .services li { padding: 10px 12px; margin: 6px 0; background: #0a0a15; border-radius: 8px; border-left: 3px solid #3b82f6; display: flex; justify-content: space-between; align-items: center; list-style: none; }
+    .services li a { color: #60a5fa; text-decoration: none; font-weight: 500; }
+    .port-badge { background: #3b82f620; color: #60a5fa; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+    .metric { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e1e2e; }
+    .metric:last-child { border: none; }
+    .metric-label { color: #9ca3af; font-size: 13px; }
+    .metric-value { font-weight: 600; font-size: 13px; color: #60a5fa; }
+    .activity-list { list-style: none; }
+    .activity-list li { padding: 8px 0; border-bottom: 1px solid #1e1e2e; font-size: 13px; }
+    .activity-list li:last-child { border: none; }
+    .activity-time { color: #9ca3af; font-size: 11px; }
+    .activity-status { color: #22c55e; font-size: 11px; font-weight: 600; }
+    .cmd-input { width: 100%; background: #050510; border: 1px solid #3b82f630; border-radius: 8px; padding: 10px 14px; color: #e0e0e0; font-family: monospace; font-size: 13px; outline: none; }
+    .cmd-input:focus { border-color: #3b82f6; }
+    .cmd-input::placeholder { color: #4b5563; }
+    .cmd-output { background: #050510; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; color: #9ca3af; max-height: 150px; overflow-y: auto; margin-top: 8px; white-space: pre-wrap; }
+    .footer { text-align: center; padding: 24px; color: #e0e0e040; font-size: 12px; border-top: 1px solid #3b82f615; margin-top: 32px; }
+    .ecosystem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .eco-status { background: #050510; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+    .eco-status .name { font-weight: 600; }
+    .eco-status .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+    .badge.online { background: #22c55e20; color: #22c55e; }
+    .badge.checking { background: #eab30820; color: #eab308; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🖥️ Ty OS</h1>
+    <div class="subtitle">Personal Operating System — Port 3004 — Command Center</div>
+    <div class="user-info">Welcome, Ty Bat Zan — Ecosystem Commander</div>
+  </div>
+  <div class="status-bar">
+    <div class="status-item"><div class="dot green"></div> System Online</div>
+    <div class="status-item"><div class="dot blue"></div> 4 Services Connected</div>
+    <div class="status-item"><div class="dot green"></div> QUMUS Linked</div>
+    <div class="status-item"><div class="dot green"></div> All Systems Nominal</div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h2>⚡ Quick Actions</h2>
+      <div class="quick-actions">
+        <a href="http://localhost:3001" class="action-btn" target="_blank">
+          <span class="icon">⚡</span>
+          <span class="label">QUMUS Control</span>
+          <span class="port">:3001</span>
+        </a>
+        <a href="http://localhost:3002" class="action-btn" target="_blank">
+          <span class="icon">🎵</span>
+          <span class="label">RRB Studio</span>
+          <span class="port">:3002</span>
+        </a>
+        <a href="http://localhost:3003" class="action-btn" target="_blank">
+          <span class="icon">🚨</span>
+          <span class="label">HybridCast</span>
+          <span class="port">:3003</span>
+        </a>
+        <a href="http://localhost:3000" class="action-btn" target="_blank">
+          <span class="icon">🌐</span>
+          <span class="label">Main App</span>
+          <span class="port">:3000</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Ecosystem Metrics</h2>
+      <div class="metric"><span class="metric-label">Services Online</span><span class="metric-value" id="svc-count">Checking...</span></div>
+      <div class="metric"><span class="metric-label">Total Channels</span><span class="metric-value">54</span></div>
+      <div class="metric"><span class="metric-label">Active Policies</span><span class="metric-value">14</span></div>
+      <div class="metric"><span class="metric-label">Autonomy Level</span><span class="metric-value">90%</span></div>
+      <div class="metric"><span class="metric-label">Subsystems</span><span class="metric-value">18/18 Healthy</span></div>
+      <div class="metric"><span class="metric-label">Ty OS Uptime</span><span class="metric-value" id="uptime">Loading...</span></div>
+    </div>
+
+    <div class="card">
+      <h2>🌐 Service Status</h2>
+      <div class="ecosystem-grid" id="eco-grid">
+        <div class="eco-status"><span class="name">QUMUS :3001</span><span class="badge checking">Checking</span></div>
+        <div class="eco-status"><span class="name">RRB :3002</span><span class="badge checking">Checking</span></div>
+        <div class="eco-status"><span class="name">HybridCast :3003</span><span class="badge checking">Checking</span></div>
+        <div class="eco-status"><span class="name">Ty OS :3004</span><span class="badge online">Online</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💻 Command Console</h2>
+      <input type="text" class="cmd-input" id="cmd-input" placeholder="Type a command... (e.g., status, health, broadcast)" />
+      <div class="cmd-output" id="cmd-output">Ty OS v1.0.0 — Ready for commands.\nType 'help' for available commands.</div>
+    </div>
+  </div>
+  <div class="footer">
+    <p>&copy; 2025-2026 Canryn Production and its subsidiaries. All rights reserved.</p>
+    <p style="margin-top:4px">Ty OS v1.0.0 — Personal Operating System for Ty Bat Zan</p>
+  </div>
+
+  <script>
+    // Health check
+    async function checkHealth() {
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        document.getElementById('uptime').textContent = Math.floor(data.uptime) + 's';
+      } catch(e) {}
+    }
+    checkHealth();
+    setInterval(checkHealth, 10000);
+
+    // Ecosystem health
+    async function checkEcosystem() {
+      try {
+        const res = await fetch('/api/tyos/ecosystem-health');
+        const data = await res.json();
+        document.getElementById('svc-count').textContent = data.summary.online + '/' + data.summary.total;
+        const grid = document.getElementById('eco-grid');
+        grid.innerHTML = data.services.map(s =>
+          `<div class="eco-status"><span class="name">${s.name} :${s.port}</span><span class="badge ${s.status === 'online' ? 'online' : 'checking'}">${s.status === 'online' ? 'Online' : 'Offline'}</span></div>`
+        ).join('');
+      } catch(e) {}
+    }
+    checkEcosystem();
+    setInterval(checkEcosystem, 15000);
+
+    // Command console
+    const cmdInput = document.getElementById('cmd-input');
+    const cmdOutput = document.getElementById('cmd-output');
+    cmdInput.addEventListener('keydown', async (e) => {
+      if (e.key !== 'Enter') return;
+      const cmd = cmdInput.value.trim();
+      if (!cmd) return;
+      cmdInput.value = '';
+      cmdOutput.textContent += '\n> ' + cmd;
+      if (cmd === 'help') {
+        cmdOutput.textContent += '\nAvailable commands: status, health, services, broadcast, clear';
+      } else if (cmd === 'status') {
+        cmdOutput.textContent += '\nTy OS: OPERATIONAL | Services: 4 | QUMUS: Connected';
+      } else if (cmd === 'services') {
+        cmdOutput.textContent += '\n  :3001 QUMUS Control Center\n  :3002 Rockin\' Rockin\' Boogie\n  :3003 HybridCast Emergency\n  :3004 Ty OS (this)';
+      } else if (cmd === 'clear') {
+        cmdOutput.textContent = 'Ty OS v1.0.0 — Ready for commands.';
+      } else {
+        try {
+          const res = await fetch('/api/tyos/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ command: cmd }),
+          });
+          const data = await res.json();
+          cmdOutput.textContent += '\n' + data.result;
+        } catch(err) {
+          cmdOutput.textContent += '\nError: ' + err.message;
+        }
+      }
+      cmdOutput.scrollTop = cmdOutput.scrollHeight;
+    });
+  </script>
+</body>
+</html>

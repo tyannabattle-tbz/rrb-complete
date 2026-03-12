@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUMUS Control Center — Port 3001</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+    .header { background: linear-gradient(135deg, #1a0a2e 0%, #0d0d1a 100%); border-bottom: 2px solid #7c3aed; padding: 24px 32px; }
+    .header h1 { font-size: 28px; color: #a78bfa; display: flex; align-items: center; gap: 12px; }
+    .header h1 span { font-size: 32px; }
+    .header p { color: #9ca3af; margin-top: 8px; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .card { background: #111118; border: 1px solid #2d2d3d; border-radius: 12px; padding: 24px; }
+    .card h2 { color: #a78bfa; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .card h2 span { font-size: 20px; }
+    .stat { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1e1e2e; }
+    .stat:last-child { border: none; }
+    .stat-label { color: #9ca3af; font-size: 13px; }
+    .stat-value { color: #e0e0e0; font-weight: 600; font-size: 13px; }
+    .stat-value.green { color: #22c55e; }
+    .stat-value.purple { color: #a78bfa; }
+    .stat-value.yellow { color: #eab308; }
+    .services { list-style: none; }
+    .services li { padding: 10px 12px; margin: 6px 0; background: #0d0d15; border-radius: 8px; border-left: 3px solid #7c3aed; display: flex; justify-content: space-between; align-items: center; }
+    .services li a { color: #a78bfa; text-decoration: none; font-weight: 500; }
+    .services li a:hover { text-decoration: underline; }
+    .port-badge { background: #7c3aed20; color: #a78bfa; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+    .policy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .policy { background: #0d0d15; padding: 6px 10px; border-radius: 6px; font-size: 12px; color: #9ca3af; border-left: 2px solid #22c55e; }
+    .status-bar { display: flex; gap: 16px; padding: 12px 32px; background: #0d0d15; border-bottom: 1px solid #1e1e2e; font-size: 13px; }
+    .status-item { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot.green { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .dot.purple { background: #7c3aed; box-shadow: 0 0 6px #7c3aed; }
+    .footer { text-align: center; padding: 24px; color: #4b5563; font-size: 12px; border-top: 1px solid #1e1e2e; margin-top: 32px; }
+    #health-data { font-family: monospace; font-size: 12px; color: #9ca3af; background: #0d0d15; padding: 12px; border-radius: 8px; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><span>⚡</span> QUMUS Control Center</h1>
+    <p>Autonomous Orchestration Engine — Port 3001 — Canryn Production Ecosystem</p>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-item"><div class="dot green"></div> Engine Running</div>
+    <div class="status-item"><div class="dot green"></div> 18/18 Subsystems</div>
+    <div class="status-item"><div class="dot purple"></div> 14 Active Policies</div>
+    <div class="status-item"><div class="dot green"></div> 90% Autonomous</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2><span>🌐</span> Ecosystem Services</h2>
+      <ul class="services">
+        <li>
+          <a href="http://localhost:3001">QUMUS Control Center</a>
+          <span class="port-badge">:3001</span>
+        </li>
+        <li>
+          <a href="http://localhost:3002">Rockin' Rockin' Boogie</a>
+          <span class="port-badge">:3002</span>
+        </li>
+        <li>
+          <a href="http://localhost:3003">HybridCast Emergency</a>
+          <span class="port-badge">:3003</span>
+        </li>
+        <li>
+          <a href="http://localhost:3004">Ty OS</a>
+          <span class="port-badge">:3004</span>
+        </li>
+        <li>
+          <a href="http://localhost:3000">Main Application</a>
+          <span class="port-badge">:3000</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2><span>📊</span> System Status</h2>
+      <div class="stat"><span class="stat-label">Engine Status</span><span class="stat-value green">OPERATIONAL</span></div>
+      <div class="stat"><span class="stat-label">Autonomy Level</span><span class="stat-value purple">90%</span></div>
+      <div class="stat"><span class="stat-label">Human Override</span><span class="stat-value yellow">10%</span></div>
+      <div class="stat"><span class="stat-label">Active Policies</span><span class="stat-value">14</span></div>
+      <div class="stat"><span class="stat-label">Subsystems</span><span class="stat-value green">18/18 Healthy</span></div>
+      <div class="stat"><span class="stat-label">Uptime</span><span class="stat-value" id="uptime">Loading...</span></div>
+    </div>
+
+    <div class="card">
+      <h2><span>🧠</span> Active Policies</h2>
+      <div class="policy-grid">
+        <div class="policy">Content Scheduling</div>
+        <div class="policy">Broadcast Mgmt</div>
+        <div class="policy">Emergency Response</div>
+        <div class="policy">Audience Analytics</div>
+        <div class="policy">Revenue Optimization</div>
+        <div class="policy">Quality Assurance</div>
+        <div class="policy">Social Distribution</div>
+        <div class="policy">Podcast Mgmt</div>
+        <div class="policy">Healing Frequencies</div>
+        <div class="policy">Donation Processing</div>
+        <div class="policy">Merch Fulfillment</div>
+        <div class="policy">Security Monitoring</div>
+        <div class="policy">Performance Opt</div>
+        <div class="policy">Code Maintenance</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span>🔧</span> API Health</h2>
+      <div id="health-data">Fetching health data...</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025-2026 Canryn Production and its subsidiaries. All rights reserved.</p>
+    <p style="margin-top:4px">QUMUS Autonomous Orchestration Engine v2.0.0</p>
+  </div>
+
+  <script>
+    async function fetchHealth() {
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        document.getElementById('health-data').textContent = JSON.stringify(data, null, 2);
+        document.getElementById('uptime').textContent = Math.floor(data.uptime) + 's';
+      } catch (e) {
+        document.getElementById('health-data').textContent = 'Error fetching health data: ' + e.message;
+      }
+    }
+    fetchHealth();
+    setInterval(fetchHealth, 10000);
+  </script>
+</body>
+</html>

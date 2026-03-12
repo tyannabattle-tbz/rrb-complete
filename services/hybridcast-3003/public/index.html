@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HybridCast Emergency Broadcast — Port 3003</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
+    .header { background: linear-gradient(135deg, #1a0808 0%, #0a0a0a 100%); border-bottom: 2px solid #dc2626; padding: 24px 32px; }
+    .header h1 { font-size: 28px; color: #ef4444; display: flex; align-items: center; gap: 12px; }
+    .header p { color: #e0e0e0aa; margin-top: 8px; font-size: 14px; }
+    .alert-bar { display: flex; gap: 16px; padding: 12px 32px; background: #0f1a0f; border-bottom: 1px solid #22c55e40; font-size: 13px; flex-wrap: wrap; }
+    .alert-item { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot.green { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .dot.red { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+    .dot.yellow { background: #eab308; box-shadow: 0 0 6px #eab308; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 32px; max-width: 1400px; margin: 0 auto; }
+    .card { background: #111; border: 1px solid #dc262620; border-radius: 12px; padding: 24px; }
+    .card h2 { color: #ef4444; font-size: 18px; margin-bottom: 12px; }
+    .cap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .cap { background: #0a0a0a; padding: 8px 10px; border-radius: 6px; font-size: 12px; color: #9ca3af; border-left: 2px solid #ef4444; }
+    .services li { padding: 10px 12px; margin: 6px 0; background: #0a0a0a; border-radius: 8px; border-left: 3px solid #ef4444; display: flex; justify-content: space-between; align-items: center; list-style: none; }
+    .services li a { color: #ef4444; text-decoration: none; font-weight: 500; }
+    .port-badge { background: #ef444420; color: #ef4444; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+    .mode-list { list-style: none; }
+    .mode-list li { padding: 8px 12px; margin: 4px 0; background: #0a0a0a; border-radius: 6px; display: flex; justify-content: space-between; font-size: 13px; }
+    .mode-badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .mode-badge.ready { background: #22c55e20; color: #22c55e; }
+    .mode-badge.standby { background: #eab30820; color: #eab308; }
+    .footer { text-align: center; padding: 24px; color: #e0e0e040; font-size: 12px; border-top: 1px solid #dc262615; margin-top: 32px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🚨 HybridCast Emergency Broadcast</h1>
+    <p>Emergency Broadcast PWA — Port 3003 — Offline-First | Mesh Networking | 116 Feature Tabs</p>
+  </div>
+  <div class="alert-bar">
+    <div class="alert-item"><div class="dot green"></div> Alert Level: GREEN</div>
+    <div class="alert-item"><div class="dot green"></div> System: Standby</div>
+    <div class="alert-item"><div class="dot green"></div> Mesh: Ready</div>
+    <div class="alert-item"><div class="dot green"></div> Offline Cache: Active</div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h2>🌐 Ecosystem Services</h2>
+      <ul class="services">
+        <li><a href="http://localhost:3001">QUMUS Control Center</a><span class="port-badge">:3001</span></li>
+        <li><a href="http://localhost:3002">Rockin' Rockin' Boogie</a><span class="port-badge">:3002</span></li>
+        <li><a href="http://localhost:3003">HybridCast Emergency</a><span class="port-badge">:3003</span></li>
+        <li><a href="http://localhost:3004">Ty OS</a><span class="port-badge">:3004</span></li>
+        <li><a href="http://localhost:3000">Main Application</a><span class="port-badge">:3000</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>🛡️ Capabilities (116 Tabs)</h2>
+      <div class="cap-grid">
+        <div class="cap">Emergency Alert (EAS)</div>
+        <div class="cap">Mesh Networking</div>
+        <div class="cap">MGRS Mapping</div>
+        <div class="cap">Multi-Operator</div>
+        <div class="cap">Offline-First PWA</div>
+        <div class="cap">WebUSB/Serial</div>
+        <div class="cap">LiDAR AR Overlay</div>
+        <div class="cap">Signal Relay</div>
+        <div class="cap">Incident Reports</div>
+        <div class="cap">SOC Dashboard</div>
+        <div class="cap">Robotics Fleet</div>
+        <div class="cap">AI/VR Glasses</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📡 Broadcast Modes</h2>
+      <ul class="mode-list">
+        <li><span>Standard Broadcast</span><span class="mode-badge ready">READY</span></li>
+        <li><span>Emergency Alert</span><span class="mode-badge standby">STANDBY</span></li>
+        <li><span>Mesh Relay</span><span class="mode-badge ready">READY</span></li>
+        <li><span>WiFi Bridge</span><span class="mode-badge ready">READY</span></li>
+        <li><span>LoRa/Meshtastic</span><span class="mode-badge standby">STANDBY</span></li>
+        <li><span>Satellite Uplink</span><span class="mode-badge standby">STANDBY</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>🔧 System Health</h2>
+      <div id="health-data" style="font-family:monospace;font-size:12px;color:#9ca3af;background:#0a0a0a;padding:12px;border-radius:8px;white-space:pre-wrap;max-height:200px;overflow-y:auto;">Fetching...</div>
+    </div>
+  </div>
+  <div class="footer">
+    <p>&copy; 2025-2026 Canryn Production and its subsidiaries. All rights reserved.</p>
+    <p style="margin-top:4px">HybridCast Emergency Broadcast PWA v3.0.0</p>
+  </div>
+  <script>
+    async function fetchHealth() {
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        document.getElementById('health-data').textContent = JSON.stringify(data, null, 2);
+      } catch(e) {
+        document.getElementById('health-data').textContent = 'Error: ' + e.message;
+      }
+    }
+    fetchHealth();
+    setInterval(fetchHealth, 10000);
+  </script>
+</body>
+</html>

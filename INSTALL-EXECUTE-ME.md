@@ -475,14 +475,77 @@ pnpm build
 
 ---
 
+## 🖥️ Multi-Port Service Architecture (Mac mini)
+
+### Port Assignments
+
+| Port | Service | Description | URL |
+|------|---------|-------------|-----|
+| 3000 | Main Application | Full web app with all features | http://localhost:3000 |
+| 3001 | QUMUS Control Center | Autonomous orchestration engine, 14 policies | http://localhost:3001 |
+| 3002 | Rockin' Rockin' Boogie | Entertainment hub, 54 channels, AI DJs | http://localhost:3002 |
+| 3003 | HybridCast Emergency | Emergency broadcast PWA, 116 feature tabs | http://localhost:3003 |
+| 3004 | Ty OS | Personal operating system for Ty Bat Zan | http://localhost:3004 |
+
+### Quick Start — All Services
+
+```bash
+# Extract and enter project
+unzip canryn-production-complete.zip -d ~/canryn-production
+cd ~/canryn-production
+
+# Run the Mac mini deployment script
+chmod +x mac-mini-deploy.sh
+./mac-mini-deploy.sh
+
+# Start all 4 micro-services (ports 3001-3004)
+cd services && node start-all.mjs
+
+# In a new terminal, start main app (port 3000)
+cd ~/canryn-production && pnpm dev
+```
+
+### Start Individual Services
+
+```bash
+node services/qumus-3001/server.mjs      # QUMUS on :3001
+node services/rrb-3002/server.mjs        # RRB on :3002
+node services/hybridcast-3003/server.mjs # HybridCast on :3003
+node services/ty-os-3004/server.mjs      # Ty OS on :3004
+```
+
+### Auto-Start on Mac mini Login
+
+```bash
+# Enable auto-start
+launchctl load ~/Library/LaunchAgents/com.canryn.main.plist
+launchctl load ~/Library/LaunchAgents/com.canryn.services.plist
+
+# Disable auto-start
+launchctl unload ~/Library/LaunchAgents/com.canryn.main.plist
+launchctl unload ~/Library/LaunchAgents/com.canryn.services.plist
+```
+
+### Service Health Checks
+
+```bash
+curl http://localhost:3001/api/health  # QUMUS
+curl http://localhost:3002/api/health  # RRB
+curl http://localhost:3003/api/health  # HybridCast
+curl http://localhost:3004/api/health  # Ty OS
+curl http://localhost:3004/api/tyos/ecosystem-health  # All services
+```
+
+---
+
 ## 🎯 Next Steps
 
-1. **Choose Deployment Option** (see `RRB-DEPLOYMENT-OPTIONS.md`)
-2. **Configure Environment** (set all required variables)
-3. **Deploy Application** (follow chosen platform guide)
+1. **Deploy to Mac mini** (run `mac-mini-deploy.sh`)
+2. **Configure Environment** (set all required variables in `.env`)
+3. **Start All Services** (`node services/start-all.mjs`)
 4. **Configure Domain** (update DNS records)
 5. **Test Features** (verify all systems working)
-6. **Monitor & Optimize** (track performance)
+6. **Monitor & Optimize** (track performance via Ty OS dashboard)
 7. **Notify Users** (announce launch)
 
 ---
