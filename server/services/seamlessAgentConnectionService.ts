@@ -65,7 +65,8 @@ export class SeamlessAgentConnectionService {
     minTrustScore = 50
   ): Promise<AgentProfile[]> {
     try {
-      const database = getDb();
+      const database = await getDb();
+      if (!database) return;
       const agents_list = await database.query.agents.findMany({
         where: and(
           or(
@@ -92,7 +93,8 @@ export class SeamlessAgentConnectionService {
    */
   async getAgentProfile(agentId: string): Promise<AgentProfile | null> {
     try {
-      const database = getDb();
+      const database = await getDb();
+      if (!database) return;
       const agent = await database.query.agents.findFirst({
         where: eq(agents.id, agentId),
       });
@@ -275,7 +277,8 @@ export class SeamlessAgentConnectionService {
    */
   async getActiveChannels(agentId: string): Promise<SecureChannel[]> {
     try {
-      const database = getDb();
+      const database = await getDb();
+      if (!database) return;
       const channels = await database.query.agentConnections.findMany({
         where: or(
           eq(agentConnections.sourceAgentId, agentId),
@@ -343,7 +346,8 @@ export class SeamlessAgentConnectionService {
     connectionHealth: number;
   }> {
     try {
-      const database = getDb();
+      const database = await getDb();
+      if (!database) return;
       const connections = await database.query.agentConnections.findMany({
         limit: 1000,
       });

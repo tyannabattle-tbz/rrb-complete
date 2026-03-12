@@ -20,7 +20,8 @@ export interface RestreamRoom {
  * Get the current Restream studio URL from system config
  */
 export async function getRestreamUrl(): Promise<string> {
-  const db = getDb();
+  const db = await getDb();
+  if (!db) return '';
   const rows = await db
     .select()
     .from(systemConfig)
@@ -32,7 +33,8 @@ export async function getRestreamUrl(): Promise<string> {
  * Set/update the Restream studio URL in system config
  */
 export async function setRestreamUrl(url: string, updatedBy: string = 'system'): Promise<void> {
-  const db = getDb();
+  const db = await getDb();
+  if (!db) return;
   const existing = await db
     .select()
     .from(systemConfig)
@@ -71,7 +73,8 @@ export async function createRestreamRoom(options: {
   const { title = 'RRB Live Broadcast', description = 'Rockin\' Rockin\' Boogie Live', createdBy = 'QUMUS' } = options;
 
   // Check if we have a Restream API key configured
-  const db = getDb();
+  const db = await getDb();
+  if (!db) return { url: 'https://studio.restream.io', name: title, createdAt: Date.now(), status: 'pending' as const };
   const apiKeyRow = await db
     .select()
     .from(systemConfig)
@@ -157,7 +160,8 @@ export async function createRestreamRoom(options: {
  * Get all stored Restream room records
  */
 export async function getRestreamRooms(): Promise<RestreamRoom[]> {
-  const db = getDb();
+  const db = await getDb();
+  if (!db) return [];
   const rows = await db
     .select()
     .from(systemConfig)

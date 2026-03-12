@@ -28914,7 +28914,8 @@ var SeamlessAgentConnectionService = class {
    */
   async discoverAgents(capabilities, platforms, minTrustScore = 50) {
     try {
-      const database2 = getDb();
+      const database2 = await getDb();
+      if (!database2) return;
       const agents_list = await database2.query.agents.findMany({
         where: and16(
           or(
@@ -28941,7 +28942,8 @@ var SeamlessAgentConnectionService = class {
    */
   async getAgentProfile(agentId) {
     try {
-      const database2 = getDb();
+      const database2 = await getDb();
+      if (!database2) return;
       const agent = await database2.query.agents.findFirst({
         where: eq22(agents.id, agentId)
       });
@@ -29091,7 +29093,8 @@ var SeamlessAgentConnectionService = class {
    */
   async getActiveChannels(agentId) {
     try {
-      const database2 = getDb();
+      const database2 = await getDb();
+      if (!database2) return;
       const channels = await database2.query.agentConnections.findMany({
         where: or(
           eq22(agentConnections.sourceAgentId, agentId),
@@ -29143,7 +29146,8 @@ var SeamlessAgentConnectionService = class {
    */
   async getConnectionStats() {
     try {
-      const database2 = getDb();
+      const database2 = await getDb();
+      if (!database2) return;
       const connections = await database2.query.agentConnections.findMany({
         limit: 1e3
       });
@@ -41565,12 +41569,14 @@ init_schema();
 init_notification();
 import { eq as eq29 } from "drizzle-orm";
 async function getRestreamUrl() {
-  const db2 = getDb();
+  const db2 = await getDb();
+  if (!db2) return "";
   const rows = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
   return rows[0]?.configValue || "";
 }
 async function setRestreamUrl(url, updatedBy = "system") {
-  const db2 = getDb();
+  const db2 = await getDb();
+  if (!db2) return;
   const existing = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
   if (existing.length > 0) {
     await db2.update(systemConfig).set({
@@ -41590,7 +41596,8 @@ async function setRestreamUrl(url, updatedBy = "system") {
 }
 async function createRestreamRoom(options) {
   const { title = "RRB Live Broadcast", description = "Rockin' Rockin' Boogie Live", createdBy = "QUMUS" } = options;
-  const db2 = getDb();
+  const db2 = await getDb();
+  if (!db2) return { url: "https://studio.restream.io", name: title, createdAt: Date.now(), status: "pending" };
   const apiKeyRow = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_api_key"));
   const apiKey = apiKeyRow[0]?.configValue;
   if (apiKey) {
@@ -41672,7 +41679,8 @@ To enable auto-creation, add your Restream API key in Admin Settings.`
   return room;
 }
 async function getRestreamRooms() {
-  const db2 = getDb();
+  const db2 = await getDb();
+  if (!db2) return [];
   const rows = await db2.select().from(systemConfig).where(eq29(systemConfig.configKey, "restream_studio_url"));
   const roomRows = await db2.execute(
     { sql: "SELECT configValue FROM system_config WHERE config_key LIKE 'restream_room_%' ORDER BY updated_at DESC LIMIT 10", params: [] }
@@ -41693,7 +41701,8 @@ async function getRestreamRooms() {
 var restreamConfigRouter = router({
   // Get the Restream studio URL (public — any component can read it)
   getRestreamUrl: publicProcedure.query(async () => {
-    const db2 = getDb();
+    const db2 = await getDb();
+    if (!db2) return { url: "", isConfigured: false };
     const rows = await db2.select().from(systemConfig).where(eq30(systemConfig.configKey, "restream_studio_url"));
     return {
       url: rows[0]?.configValue || "",
@@ -41702,7 +41711,8 @@ var restreamConfigRouter = router({
   }),
   // Get any system config by key (public)
   getConfig: publicProcedure.input(z96.object({ key: z96.string() })).query(async ({ input }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
+    if (!db2) return { key: input.key, value: "", description: "" };
     const rows = await db2.select().from(systemConfig).where(eq30(systemConfig.configKey, input.key));
     return {
       key: input.key,
@@ -41712,7 +41722,8 @@ var restreamConfigRouter = router({
   }),
   // Get all system configs (admin only)
   getAllConfigs: protectedProcedure.query(async () => {
-    const db2 = getDb();
+    const db2 = await getDb();
+    if (!db2) return [];
     const rows = await db2.select().from(systemConfig);
     return rows.map((r) => ({
       id: r.id,
@@ -41730,7 +41741,8 @@ var restreamConfigRouter = router({
       value: z96.string()
     })
   ).mutation(async ({ input, ctx }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database not available");
     const existing = await db2.select().from(systemConfig).where(eq30(systemConfig.configKey, input.key));
     if (existing.length > 0) {
       await db2.update(systemConfig).set({
@@ -41766,7 +41778,8 @@ var restreamConfigRouter = router({
   }),
   // Set Restream URL specifically (admin only)
   setRestreamUrl: protectedProcedure.input(z96.object({ url: z96.string() })).mutation(async ({ input, ctx }) => {
-    const db2 = getDb();
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database not available");
     const existing = await db2.select().from(systemConfig).where(eq30(systemConfig.configKey, "restream_studio_url"));
     if (existing.length > 0) {
       await db2.update(systemConfig).set({

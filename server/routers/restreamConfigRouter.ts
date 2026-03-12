@@ -9,7 +9,8 @@ import { createRestreamRoom, getRestreamRooms } from "../services/restreamServic
 export const restreamConfigRouter = router({
   // Get the Restream studio URL (public — any component can read it)
   getRestreamUrl: publicProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) return { url: "", isConfigured: false };
     const rows = await db
       .select()
       .from(systemConfig)
@@ -24,7 +25,8 @@ export const restreamConfigRouter = router({
   getConfig: publicProcedure
     .input(z.object({ key: z.string() }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) return { key: input.key, value: "", description: "" };
       const rows = await db
         .select()
         .from(systemConfig)
@@ -38,7 +40,8 @@ export const restreamConfigRouter = router({
 
   // Get all system configs (admin only)
   getAllConfigs: protectedProcedure.query(async () => {
-    const db = getDb();
+    const db = await getDb();
+    if (!db) return [];
     const rows = await db.select().from(systemConfig);
     return rows.map((r) => ({
       id: r.id,
@@ -59,7 +62,8 @@ export const restreamConfigRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       const existing = await db
         .select()
         .from(systemConfig)
@@ -110,7 +114,8 @@ export const restreamConfigRouter = router({
   setRestreamUrl: protectedProcedure
     .input(z.object({ url: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       const existing = await db
         .select()
         .from(systemConfig)
