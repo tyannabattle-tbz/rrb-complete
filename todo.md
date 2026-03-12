@@ -4110,3 +4110,8 @@
 - [x] Add visible seamless room transfer buttons to meeting room UI
 - [x] Fix Jitsi connection errors on mobile (Reconnect timed out, cookie errors)
 - [x] Switch Jitsi to more reliable server for mobile Safari compatibility
+- [x] Add participant count badges to Quick Room Transfer bar
+- [x] Add "Currently in Room" indicator showing which SQUADD members are in each room
+- [x] Ensure all videos that were made are accessible and linked on the site
+- [x] Verify video gallery/page has all produced videos
+- [x] Add closed captions (CC) support to video players across the site

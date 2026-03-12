@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AccessibleVideoPlayer from '@/components/AccessibleVideoPlayer';
 import { useToast } from '@/hooks/use-toast';
 import { Share2, Download, Copy, Calendar, Twitter, Instagram, MessageCircle, Earth, Radio, Megaphone, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 
@@ -647,11 +647,11 @@ export default function SocialMediaKit() {
           {/* Narrated Version - Valanna & Candy */}
           <Card className="bg-gray-900/80 border-amber-500/20 overflow-hidden mb-4">
             <CardContent className="p-0">
-              <video
-                controls
-                className="w-full aspect-video"
-                poster="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/frame3-bridge-theme-v2-MD2HJ9zFDZMH44DK8wTL28.webp"
+              <AccessibleVideoPlayer
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-Campaign-Narrated-Valanna-Candy_2630011e.mp4"
+                poster="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/frame3-bridge-theme-v2-MD2HJ9zFDZMH44DK8wTL28.webp"
+                title="Sweet Miracles & RRB — Building the Bridge Across the World (Narrated)"
+                narratedBy="Valanna & Candy"
               />
               <div className="p-4">
                 <div className="flex items-center gap-2 mb-1">
@@ -683,11 +683,10 @@ export default function SocialMediaKit() {
           {/* Instrumental Version */}
           <Card className="bg-gray-900/60 border-gray-700/30 overflow-hidden">
             <CardContent className="p-0">
-              <video
-                controls
-                className="w-full aspect-video"
-                poster="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/frame3-bridge-theme-v2-MD2HJ9zFDZMH44DK8wTL28.webp"
+              <AccessibleVideoPlayer
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/RRB-UN-Campaign-Building-The-Bridge-Across-The-World_697e578a.mp4"
+                poster="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/frame3-bridge-theme-v2-MD2HJ9zFDZMH44DK8wTL28.webp"
+                title="Campaign Video — Instrumental Version"
               />
               <div className="p-4">
                 <div className="flex items-center gap-2 mb-1">

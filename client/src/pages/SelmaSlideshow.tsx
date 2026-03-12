@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import AccessibleVideoPlayer from '@/components/AccessibleVideoPlayer';
 
 const slides = [
   { id: 1, name: 'title', alt: 'GRITS & GREENS Title', url: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/GdtWgcrpXgKGOiHR.webp' },
@@ -85,14 +86,14 @@ export default function SelmaSlideshow() {
           <p style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#f5e6c8', fontSize: 'clamp(12px, 1.2vw, 20px)', fontStyle: 'italic', marginBottom: '1em' }}>
             Valanna &amp; Candy Walk Us Through the Ecosystem
           </p>
-          <video
-            controls
-            preload="metadata"
-            poster={POSTER_URL}
-            style={{ width: '75%', maxHeight: '65vh', borderRadius: 8, border: '2px solid rgba(201,168,76,0.4)', boxShadow: '0 0 40px rgba(201,168,76,0.25)' }}
-          >
-            <source src={VIDEO_URL} type="video/mp4" />
-          </video>
+          <div style={{ width: '75%', maxHeight: '65vh', borderRadius: 8, border: '2px solid rgba(201,168,76,0.4)', boxShadow: '0 0 40px rgba(201,168,76,0.25)', overflow: 'hidden' }}>
+            <AccessibleVideoPlayer
+              src={VIDEO_URL}
+              poster={POSTER_URL}
+              title="GRITS & GREENS — AI Ecosystem Demo"
+              narratedBy="Valanna & Candy"
+            />
+          </div>
           <p style={{ color: '#E63946', fontFamily: "'Playfair Display', Georgia, serif", fontSize: 'clamp(10px, 1.1vw, 18px)', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginTop: '0.5em' }}>
             &#9654; Press Play — 2:40 Demonstration
           </p>

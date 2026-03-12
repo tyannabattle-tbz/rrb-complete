@@ -1,0 +1,22 @@
+{
+  "query": "SELECT table_name, column_name FROM information_schema.columns WHERE column_name LIKE '%video%' AND table_schema = DATABASE() ORDER BY table_name;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT table_name, column_name FROM information_schema.columns WHERE column_name LIKE '%video%' AND table_schema = DATABASE() ORDER BY table_name;",
+  "rows": [
+    {
+      "table_name": "podcast_episodes",
+      "column_name": "video_url"
+    },
+    {
+      "table_name": "podcast_episodes",
+      "column_name": "youtube_video_id"
+    },
+    {
+      "table_name": "studio_guests",
+      "column_name": "is_video_on"
+    }
+  ],
+  "messages": [],
+  "stdout": "table_name\tcolumn_name\npodcast_episodes\tvideo_url\npodcast_episodes\tyoutube_video_id\nstudio_guests\tis_video_on\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}

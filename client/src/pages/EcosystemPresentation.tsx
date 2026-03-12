@@ -1,5 +1,26 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'wouter';
+import { Subtitles } from 'lucide-react';
+
+// Closed captions for the ecosystem video
+const ECOSYSTEM_CAPTIONS = [
+  { start: 0, end: 5, text: 'Welcome to the Rockin\' Rockin\' Boogie ecosystem.' },
+  { start: 5, end: 12, text: 'What if one family\'s legacy could change the world?' },
+  { start: 12, end: 15.6, text: 'This is the story of Rockin\' Rockin\' Boogie — a movement born from love.' },
+  { start: 15.6, end: 25, text: 'Candy Hunter — a father, a musician, a visionary.' },
+  { start: 25, end: 35, text: 'His song wasn\'t just music. It was a declaration.' },
+  { start: 35, end: 43.65, text: 'Every channel, every broadcast carries his name forward.' },
+  { start: 43.65, end: 55, text: 'Sweet Miracles at the Table — voice for the voiceless.' },
+  { start: 55, end: 70.2, text: 'From the halls of the United Nations to communities across the world.' },
+  { start: 70.2, end: 85, text: 'QUMUS orchestrates 54 radio channels, 18 subsystems, 14 active policies.' },
+  { start: 85, end: 100.8, text: '90% autonomous control with human override capabilities.' },
+  { start: 100.8, end: 115, text: 'HybridCast Emergency Broadcast — resilient communication when it matters most.' },
+  { start: 115, end: 131.4, text: 'SQUADD Coalition — Strategy, Quality, Unity, Accountability, Dedication, Determination.' },
+  { start: 131.4, end: 155, text: 'Canryn Production — the parent company overseeing the entire ecosystem.' },
+  { start: 155, end: 175.5, text: 'From Selma, Alabama to the United Nations — building the bridge across the world.' },
+  { start: 175.5, end: 200, text: 'Powered by love. Driven by purpose. A Canryn Production.' },
+  { start: 200, end: 222, text: '© Canryn Production. All rights reserved.' },
+];
 
 const VIDEO_URL = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663286151344/HPWKWjcKyPinNDUP.mp4';
 
@@ -144,6 +165,15 @@ export default function EcosystemPresentation() {
   const [showVideo, setShowVideo] = useState(false);
   const [videoTime, setVideoTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [ccEnabled, setCcEnabled] = useState(true);
+  const [currentCaption, setCurrentCaption] = useState('');
+
+  // Update current caption based on time
+  useEffect(() => {
+    if (!ccEnabled) { setCurrentCaption(''); return; }
+    const cue = ECOSYSTEM_CAPTIONS.find(c => videoTime >= c.start && videoTime < c.end);
+    setCurrentCaption(cue?.text || '');
+  }, [videoTime, ccEnabled]);
 
   const jumpToSection = useCallback((index: number) => {
     setCurrentSection(index);
@@ -266,6 +296,24 @@ export default function EcosystemPresentation() {
                 playsInline
                 preload="auto"
               />
+              {/* Closed Captions Overlay */}
+              {ccEnabled && currentCaption && (
+                <div className="absolute bottom-20 left-0 right-0 flex justify-center px-4 pointer-events-none z-10">
+                  <div className="bg-black/85 text-white text-sm sm:text-base px-4 py-2 rounded-lg max-w-[90%] text-center font-medium shadow-lg">
+                    {currentCaption}
+                  </div>
+                </div>
+              )}
+              {/* CC Badge */}
+              <div className="absolute top-2 right-2 z-10">
+                <button
+                  onClick={() => setCcEnabled(!ccEnabled)}
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded transition-colors ${ccEnabled ? 'bg-[#D4AF37] text-black' : 'bg-black/50 text-white/50 hover:text-white'}`}
+                  aria-label={ccEnabled ? 'Disable closed captions' : 'Enable closed captions'}
+                >
+                  CC
+                </button>
+              </div>
               {/* Video Controls Overlay */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4">
                 {/* Progress Bar */}

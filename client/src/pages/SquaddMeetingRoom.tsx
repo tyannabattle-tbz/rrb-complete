@@ -56,6 +56,15 @@ export default function SquaddMeetingRoom() {
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
 
+  // Participant tracking per room
+  const [roomParticipants, setRoomParticipants] = useState<Record<string, { count: number; members: string[] }>>({
+    'squadd-main': { count: 0, members: [] },
+    'hybridcast-ops': { count: 0, members: [] },
+    'rrb-studio': { count: 0, members: [] },
+    'sweet-miracles': { count: 0, members: [] },
+    'canryn-boardroom': { count: 0, members: [] },
+  });
+
   // Seamless room transfer — switch Jitsi room without full page reload
   const transferToRoom = useCallback((roomId: string) => {
     const room = ROOMS.find(r => r.id === roomId);
@@ -122,7 +131,29 @@ export default function SquaddMeetingRoom() {
         });
         api.addEventListener('videoConferenceLeft', () => {
           setJitsiRoom(null);
+          setRoomParticipants(prev => ({ ...prev, [roomId]: { count: 0, members: [] } }));
         });
+        // Track participant count
+        api.addEventListener('participantJoined', (p: any) => {
+          setRoomParticipants(prev => {
+            const current = prev[roomId] || { count: 0, members: [] };
+            const name = p?.displayName || 'Guest';
+            return { ...prev, [roomId]: { count: current.count + 1, members: [...current.members, name] } };
+          });
+        });
+        api.addEventListener('participantLeft', () => {
+          setRoomParticipants(prev => {
+            const current = prev[roomId] || { count: 0, members: [] };
+            return { ...prev, [roomId]: { count: Math.max(0, current.count - 1), members: current.members.slice(0, -1) } };
+          });
+        });
+        // Get initial participant count
+        setTimeout(() => {
+          try {
+            const count = api.getNumberOfParticipants?.() || 0;
+            setRoomParticipants(prev => ({ ...prev, [roomId]: { ...prev[roomId], count } }));
+          } catch {}
+        }, 2000);
         jitsiApiRef.current = api;
       } catch (err) {
         console.error('Failed to init Jitsi:', err);
@@ -320,26 +351,43 @@ export default function SquaddMeetingRoom() {
             <span className="text-xs text-[#E8E0D0]/40 ml-1">— Switch rooms seamlessly</span>
           </div>
           <div className="flex flex-wrap gap-2">
-            {ROOMS.map(room => (
-              <button
-                key={room.id}
-                onClick={() => transferToRoom(room.id)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border ${
-                  activeRoom === room.id
-                    ? 'bg-[#D4A843]/20 border-[#D4A843]/50 text-[#D4A843]'
-                    : 'bg-[#111111] border-[#D4A843]/10 text-[#E8E0D0]/70 hover:border-[#D4A843]/30 hover:text-[#E8E0D0]'
-                }`}
-              >
-                <span className="text-lg">{room.icon}</span>
-                <div className="text-left">
-                  <div className="font-medium text-xs leading-tight">{room.name}</div>
-                  <div className="text-[10px] opacity-50">{room.schedule}</div>
-                </div>
-                {activeRoom === room.id && (
-                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse ml-1" />
-                )}
-              </button>
-            ))}
+            {ROOMS.map(room => {
+              const rp = roomParticipants[room.id] || { count: 0, members: [] };
+              return (
+                <button
+                  key={room.id}
+                  onClick={() => transferToRoom(room.id)}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all border ${
+                    activeRoom === room.id
+                      ? 'bg-[#D4A843]/20 border-[#D4A843]/50 text-[#D4A843]'
+                      : 'bg-[#111111] border-[#D4A843]/10 text-[#E8E0D0]/70 hover:border-[#D4A843]/30 hover:text-[#E8E0D0]'
+                  }`}
+                  title={rp.members.length > 0 ? `In room: ${rp.members.join(', ')}` : room.description}
+                >
+                  <span className="text-lg">{room.icon}</span>
+                  <div className="text-left">
+                    <div className="font-medium text-xs leading-tight flex items-center gap-1">
+                      {room.name}
+                      {rp.count > 0 && (
+                        <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-green-500 text-white text-[10px] font-bold">
+                          {rp.count}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] opacity-50">
+                      {rp.count > 0 ? (
+                        <span className="text-green-400">
+                          {rp.members.slice(0, 2).join(', ')}{rp.members.length > 2 ? ` +${rp.members.length - 2}` : ''}
+                        </span>
+                      ) : room.schedule}
+                    </div>
+                  </div>
+                  {activeRoom === room.id && (
+                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse ml-1" />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
