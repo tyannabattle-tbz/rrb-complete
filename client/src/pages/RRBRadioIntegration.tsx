@@ -10,6 +10,20 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 
+/**
+ * Returns a proxied URL for HTTP streams when running on HTTPS.
+ * HTTPS streams pass through directly. HTTP streams are routed through
+ * our server-side proxy at /api/stream-proxy to avoid mixed-content blocking.
+ */
+function getProxiedStreamUrl(streamUrl: string): string {
+  if (!streamUrl) return streamUrl;
+  if (streamUrl.startsWith('https://')) return streamUrl;
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+    return `/api/stream-proxy?url=${encodeURIComponent(streamUrl)}`;
+  }
+  return streamUrl;
+}
+
 // Genre categories for filtering
 const GENRE_FILTERS = [
   'All', 'Music', 'Talk', 'AI-Curated', 'Wellness',
@@ -144,10 +158,10 @@ export const RRBRadioIntegration: React.FC = () => {
         const backup = backupStreams[Math.floor(Math.random() * backupStreams.length)];
         setTimeout(() => {
           if (audioRef.current) {
-            audioRef.current.src = backup;
+            audioRef.current.src = getProxiedStreamUrl(backup);
             audioRef.current.play().then(() => {
               setStreamStatus('failover');
-              setAudioError('Playing backup stream — primary stream recovering');
+              setAudioError('Playing backup stream \u2014 primary stream recovering');
               setIsPlaying(true);
               isRetryingRef.current = false;
             }).catch(() => {
@@ -215,7 +229,7 @@ export const RRBRadioIntegration: React.FC = () => {
     setAudioError(null);
     setStreamStatus('connected');
     if (wasPlaying && audioRef.current) {
-      audioRef.current.src = channel.streamUrl;
+      audioRef.current.src = getProxiedStreamUrl(channel.streamUrl);
       audioRef.current.play().catch(() => {
         setAudioError('Tap play to start streaming');
         setIsPlaying(false);
@@ -234,7 +248,7 @@ export const RRBRadioIntegration: React.FC = () => {
       isRetryingRef.current = false;
       setAudioError(null);
       setStreamStatus('connected');
-      audioRef.current.src = selectedChannel.streamUrl;
+      audioRef.current.src = getProxiedStreamUrl(selectedChannel.streamUrl);
       audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {
         setAudioError('Unable to connect. Please try again.');
         setIsPlaying(false);

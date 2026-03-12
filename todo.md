@@ -4202,7 +4202,7 @@
 - [ ] Verify all notification channels are operational
 
 ## Radio Page Bugs — User Reported
-- [ ] Fix auto-scroll to bottom on radio page (inconvenient, prevents browsing)
-- [ ] Fix no music streaming from radio channels (undefinedkbps, no audio playing)
-- [ ] Fix channel cards showing "kbps" with no bitrate values
-- [ ] Fix source showing "undefinedkbps undefined" in now-playing area
+- [x] Fix auto-scroll to bottom on radio page (scoped chat scroll to container only)
+- [x] Fix no music streaming from radio channels (added HTTP-to-HTTPS stream proxy)
+- [x] Fix channel cards showing "kbps" with no bitrate values (null checks added)
+- [x] Fix source showing "undefinedkbps undefined" in now-playing area (null checks added)

@@ -88,6 +88,7 @@ export default function LiveStreamPage() {
   const videoRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // Fetch real channels from database
   const { data: channels, isLoading: channelsLoading } = trpc.ecosystemIntegration.getAllChannels.useQuery(undefined, {
@@ -240,9 +241,11 @@ export default function LiveStreamPage() {
     onSuccess: () => refetchChat(),
   });
 
-  // Auto-scroll chat
+  // Auto-scroll chat — scoped to chat container only, not the whole page
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [chatMessages]);
 
   const handlePlayPause = () => {
@@ -420,9 +423,15 @@ export default function LiveStreamPage() {
                         </div>
                         <h2 className="text-3xl font-bold text-[#D4A843] mb-2">{activeChannel.name}</h2>
                         <p className="text-[#E8E0D0]/60 text-sm mb-1">{activeChannel.genre} &bull; {activeChannel.frequency}</p>
-                        {activeChannel.metadata && (
+                        {activeChannel.metadata && typeof activeChannel.metadata === 'object' && (
+                          (activeChannel.metadata as any).source || (activeChannel.metadata as any).bitrate || (activeChannel.metadata as any).codec
+                        ) && (
                           <p className="text-[#E8E0D0]/40 text-xs mb-1">
-                            Source: {typeof activeChannel.metadata === 'object' ? (activeChannel.metadata as any).source : ''} &bull; {typeof activeChannel.metadata === 'object' ? `${(activeChannel.metadata as any).bitrate}kbps ${(activeChannel.metadata as any).codec}` : ''}
+                            {(activeChannel.metadata as any).source ? `Source: ${(activeChannel.metadata as any).source}` : ''}
+                            {(activeChannel.metadata as any).source && ((activeChannel.metadata as any).bitrate || (activeChannel.metadata as any).codec) ? ' \u2022 ' : ''}
+                            {(activeChannel.metadata as any).bitrate ? `${(activeChannel.metadata as any).bitrate}kbps` : ''}
+                            {(activeChannel.metadata as any).bitrate && (activeChannel.metadata as any).codec ? ' ' : ''}
+                            {(activeChannel.metadata as any).codec || ''}
                           </p>
                         )}
                         <p className="text-[#E8E0D0]/30 text-xs">Registered through Payten Music in BMI</p>
@@ -557,9 +566,9 @@ export default function LiveStreamPage() {
                         <span className="text-sm font-medium text-[#E8E0D0] truncate">{channel.name}</span>
                       </div>
                       <div className="text-xs text-[#E8E0D0]/50">{channel.genre} &bull; {channel.frequency}</div>
-                      {channel.metadata && typeof channel.metadata === 'object' && (
+                      {channel.metadata && typeof channel.metadata === 'object' && ((channel.metadata as any).bitrate || (channel.metadata as any).codec) && (
                         <div className="text-xs text-[#E8E0D0]/30 mt-1">
-                          {(channel.metadata as any).bitrate}kbps {(channel.metadata as any).codec}
+                          {(channel.metadata as any).bitrate ? `${(channel.metadata as any).bitrate}kbps` : ''}{(channel.metadata as any).bitrate && (channel.metadata as any).codec ? ' ' : ''}{(channel.metadata as any).codec || ''}
                         </div>
                       )}
                     </button>
@@ -777,7 +786,7 @@ export default function LiveStreamPage() {
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-3 space-y-3 max-h-[400px] lg:max-h-[500px]">
+                <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-3 space-y-3 max-h-[400px] lg:max-h-[500px]">
                   {(chatMessages || []).map((msg: any) => {
                     const style = djStyles[msg.messageType] || djStyles.user;
                     const timeAgo = msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
