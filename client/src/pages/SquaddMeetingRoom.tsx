@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Video, Upload, FileText, Trash2, Download, ExternalLink,
   Users, Calendar, Lock, Copy, Phone, Shield, Presentation,
-  Eye, X
+  Eye, X, Circle, Square, Clock, Mic
 } from 'lucide-react';
 
 // Available rooms for seamless transfer
@@ -55,6 +55,15 @@ export default function SquaddMeetingRoom() {
   const [jitsiRoom, setJitsiRoom] = useState<string | null>(null);
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
+
+  // Recording state
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingId, setRecordingId] = useState<number | null>(null);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const [recordingStartTime, setRecordingStartTime] = useState<number | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval>>();
 
   // Participant tracking per room
   const [roomParticipants, setRoomParticipants] = useState<Record<string, { count: number; members: string[] }>>({
@@ -180,6 +189,99 @@ export default function SquaddMeetingRoom() {
       }
     };
   }, []);
+
+  // Recording mutations
+  const startRecordingMutation = trpc.videoManagement.startRecording.useMutation();
+  const stopRecordingMutation = trpc.videoManagement.stopRecording.useMutation();
+  const { data: recordings, refetch: refetchRecordings } = trpc.videoManagement.listRecordings.useQuery({ roomId: activeRoom, limit: 5 });
+
+  const startRecording = useCallback(async () => {
+    try {
+      // Request screen/tab capture for recording
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true,
+      });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+      recordedChunksRef.current = [];
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunksRef.current.push(e.data);
+      };
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        // Upload the recording
+        if (recordingId && recordedChunksRef.current.length > 0) {
+          const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
+          const reader = new FileReader();
+          reader.onload = async () => {
+            const base64 = (reader.result as string).split(',')[1];
+            try {
+              await stopRecordingMutation.mutateAsync({
+                recordingId: recordingId!,
+                fileBase64: base64,
+                fileName: `meeting-${activeRoom}-${Date.now()}.webm`,
+                duration: Math.floor((Date.now() - (recordingStartTime || Date.now())) / 1000),
+                fileSizeMb: parseFloat((blob.size / (1024 * 1024)).toFixed(2)),
+              });
+              toast({ title: 'Recording saved', description: 'Meeting recording uploaded to cloud storage.' });
+              refetchRecordings();
+            } catch {
+              toast({ title: 'Upload failed', description: 'Could not save recording.', variant: 'destructive' });
+            }
+          };
+          reader.readAsDataURL(blob);
+        }
+        setIsRecording(false);
+        setRecordingId(null);
+        setRecordingDuration(0);
+        setRecordingStartTime(null);
+        if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+      };
+      // Start recording
+      mediaRecorder.start(1000);
+      mediaRecorderRef.current = mediaRecorder;
+      const room = ROOMS.find(r => r.id === activeRoom);
+      const result = await startRecordingMutation.mutateAsync({
+        roomId: activeRoom,
+        roomName: room?.name || activeRoom,
+        participants: roomParticipants[activeRoom]?.members || [],
+      });
+      setRecordingId(result.recordingId);
+      setIsRecording(true);
+      setRecordingStartTime(Date.now());
+      setRecordingDuration(0);
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingDuration(prev => prev + 1);
+      }, 1000);
+      toast({ title: 'Recording started', description: `Recording ${room?.name || 'meeting'}...` });
+    } catch (err: any) {
+      if (err?.name !== 'NotAllowedError') {
+        toast({ title: 'Recording failed', description: 'Could not start screen capture.', variant: 'destructive' });
+      }
+    }
+  }, [activeRoom, roomParticipants, startRecordingMutation, stopRecordingMutation, toast, recordingId, recordingStartTime, refetchRecordings]);
+
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+  }, []);
+
+  // Cleanup recording on unmount
+  useEffect(() => {
+    return () => {
+      if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
+    };
+  }, []);
+
+  const formatRecordingTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
 
   const { data: presentations, refetch } = trpc.conference.listPresentations.useQuery({ roomCode: 'squadd-main' });
   const uploadMutation = trpc.conference.uploadPresentation.useMutation({
@@ -427,6 +529,26 @@ export default function SquaddMeetingRoom() {
                   >
                     <Calendar className="w-4 h-4 mr-2" /> Add to Calendar
                   </Button>
+                  {/* Record Meeting Button */}
+                  {user && (
+                    isRecording ? (
+                      <Button
+                        variant="outline"
+                        className="border-red-500/50 text-red-400 hover:bg-red-900/20 animate-pulse"
+                        onClick={stopRecording}
+                      >
+                        <Square className="w-4 h-4 mr-2 fill-red-400" /> Stop Recording ({formatRecordingTime(recordingDuration)})
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        className="border-red-500/30 text-red-400 hover:bg-red-900/20"
+                        onClick={startRecording}
+                      >
+                        <Circle className="w-4 h-4 mr-2 fill-red-400" /> Record Meeting
+                      </Button>
+                    )
+                  )}
                 </div>
 
                 {/* Meeting Details - only visible to authenticated users */}
@@ -617,6 +739,44 @@ export default function SquaddMeetingRoom() {
                     <p className="text-[#D4A843] text-xs">{ZOOM_MEETING.hostOrg}</p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Recordings */}
+            <Card className="bg-[#111111] border-[#D4A843]/20">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-bold text-[#D4A843] mb-4 flex items-center gap-2">
+                  <Mic className="w-4 h-4" /> Recent Recordings
+                </h3>
+                {(!recordings || recordings.length === 0) ? (
+                  <div className="text-center py-6 text-[#E8E0D0]/40">
+                    <Mic className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">No recordings yet.</p>
+                    <p className="text-xs mt-1">Use the Record button to capture meetings.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {recordings.map((rec) => (
+                      <div key={rec.id} className="p-3 bg-[#0D0D0D] rounded-lg border border-[#D4A843]/10">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-semibold text-[#E8E0D0] truncate">{rec.roomName}</span>
+                          <Badge className="bg-green-900/30 text-green-400 border-green-700/20 text-[10px]">
+                            {rec.status}
+                          </Badge>
+                        </div>
+                        <div className="text-[10px] text-[#E8E0D0]/40">
+                          {rec.recordedByName} · {rec.duration ? `${Math.floor(rec.duration / 60)}m ${rec.duration % 60}s` : 'In progress'}
+                          {rec.fileSizeMb ? ` · ${rec.fileSizeMb}MB` : ''}
+                        </div>
+                        {rec.fileUrl && (
+                          <a href={rec.fileUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#D4A843] hover:underline mt-1 inline-flex items-center gap-1">
+                            <Download className="w-3 h-3" /> Download
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 

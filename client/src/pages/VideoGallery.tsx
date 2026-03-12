@@ -1,11 +1,14 @@
-import { useState } from "react";
-import { Download, Share2, Play, Film, Subtitles, ExternalLink } from "lucide-react";
+import React, { useState, useRef, useCallback } from "react";
+import { Download, Share2, Play, Film, Subtitles, ExternalLink, Upload, Plus, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import AccessibleVideoPlayer from "@/components/AccessibleVideoPlayer";
 import { Link } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 interface ProducedVideo {
   id: string;
@@ -116,8 +119,61 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default function VideoGallery() {
+  const { user } = useAuth();
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [showUploadForm, setShowUploadForm] = useState(false);
+  const [uploadTitle, setUploadTitle] = useState('');
+  const [uploadDescription, setUploadDescription] = useState('');
+  const [uploadType, setUploadType] = useState<string>('presentation');
+  const [isUploading, setIsUploading] = useState(false);
+  const videoFileRef = useRef<HTMLInputElement>(null);
+
+  // Fetch user-uploaded videos from database
+  const { data: uploadedVideos, refetch: refetchUploaded } = trpc.videoManagement.listVideos.useQuery({ status: 'published' });
+  const uploadVideoMutation = trpc.videoManagement.uploadVideo.useMutation({
+    onSuccess: () => {
+      toast.success('Video uploaded successfully!');
+      setShowUploadForm(false);
+      setUploadTitle('');
+      setUploadDescription('');
+      refetchUploaded();
+    },
+    onError: (err) => {
+      toast.error(`Upload failed: ${err.message}`);
+    },
+  });
+
+  const handleVideoUpload = useCallback(async () => {
+    const file = videoFileRef.current?.files?.[0];
+    if (!file) {
+      toast.error('Please select a video file.');
+      return;
+    }
+    if (file.size > 100 * 1024 * 1024) {
+      toast.error('Maximum file size is 100MB.');
+      return;
+    }
+    setIsUploading(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = (reader.result as string).split(',')[1];
+        await uploadVideoMutation.mutateAsync({
+          title: uploadTitle || file.name,
+          description: uploadDescription || '',
+          type: uploadType as any,
+          fileBase64: base64,
+          fileName: file.name,
+          contentType: file.type || 'video/mp4',
+        });
+        setIsUploading(false);
+      };
+      reader.readAsDataURL(file);
+    } catch {
+      setIsUploading(false);
+    }
+  }, [uploadTitle, uploadDescription, uploadType, uploadVideoMutation]);
 
   const filteredVideos = activeFilter
     ? PRODUCED_VIDEOS.filter(v => v.type === activeFilter)
@@ -148,12 +204,97 @@ export default function VideoGallery() {
           <p className="text-[#E8E0D0]/60 max-w-2xl">
             All produced videos for the Rockin' Rockin' Boogie ecosystem — campaign videos, presentations, social cuts, and more. Every video includes closed captions (CC) for accessibility.
           </p>
-          <div className="flex items-center gap-2 mt-3">
-            <Subtitles className="w-4 h-4 text-[#D4A843]" />
-            <span className="text-sm text-[#D4A843]">All videos include closed captions</span>
+          <div className="flex items-center gap-3 mt-3">
+            <div className="flex items-center gap-2">
+              <Subtitles className="w-4 h-4 text-[#D4A843]" />
+              <span className="text-sm text-[#D4A843]">All videos include closed captions</span>
+            </div>
+            {user && (
+              <Button
+                size="sm"
+                className="bg-[#D4A843] hover:bg-[#B8922E] text-black font-bold h-8"
+                onClick={() => setShowUploadForm(!showUploadForm)}
+              >
+                {showUploadForm ? <X className="w-3 h-3 mr-1" /> : <Plus className="w-3 h-3 mr-1" />}
+                {showUploadForm ? 'Cancel' : 'Upload Video'}
+              </Button>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Upload Form */}
+      {showUploadForm && user && (
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <Card className="bg-[#111111] border-[#D4A843]/20">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-bold text-[#D4A843] mb-4 flex items-center gap-2">
+                <Upload className="w-5 h-5" /> Upload New Video
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs text-[#E8E0D0]/60 mb-1 block">Title *</label>
+                    <Input
+                      placeholder="Video title"
+                      value={uploadTitle}
+                      onChange={(e) => setUploadTitle(e.target.value)}
+                      className="bg-[#0D0D0D] border-[#D4A843]/20 text-[#E8E0D0] placeholder:text-[#E8E0D0]/30"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-[#E8E0D0]/60 mb-1 block">Description</label>
+                    <Input
+                      placeholder="Brief description"
+                      value={uploadDescription}
+                      onChange={(e) => setUploadDescription(e.target.value)}
+                      className="bg-[#0D0D0D] border-[#D4A843]/20 text-[#E8E0D0] placeholder:text-[#E8E0D0]/30"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-[#E8E0D0]/60 mb-1 block">Type</label>
+                    <select
+                      value={uploadType}
+                      onChange={(e) => setUploadType(e.target.value)}
+                      className="w-full bg-[#0D0D0D] border border-[#D4A843]/20 text-[#E8E0D0] rounded-md px-3 py-2 text-sm"
+                    >
+                      <option value="narrated">Narrated</option>
+                      <option value="instrumental">Instrumental</option>
+                      <option value="social">Social Cut</option>
+                      <option value="vertical">Vertical (9:16)</option>
+                      <option value="presentation">Presentation</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs text-[#E8E0D0]/60 mb-1 block">Video File * (max 100MB)</label>
+                    <input
+                      ref={videoFileRef}
+                      type="file"
+                      accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
+                      className="block w-full text-sm text-[#E8E0D0]/60 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#D4A843]/10 file:text-[#D4A843] hover:file:bg-[#D4A843]/20"
+                    />
+                  </div>
+                  <p className="text-xs text-[#E8E0D0]/40">Supported formats: MP4, WebM, MOV. Videos will be stored in cloud storage and available to all SQUADD members.</p>
+                  <Button
+                    onClick={handleVideoUpload}
+                    disabled={isUploading || !uploadTitle}
+                    className="bg-[#D4A843] hover:bg-[#B8922E] text-black font-bold w-full"
+                  >
+                    {isUploading ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Uploading...</>
+                    ) : (
+                      <><Upload className="w-4 h-4 mr-2" /> Upload Video</>
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <p className="text-[10px] text-[#E8E0D0]/30 mt-3">&copy; Canryn Production and its subsidiaries. All uploaded content becomes part of the RRB ecosystem.</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Filter Bar */}
       <div className="max-w-7xl mx-auto px-4 py-4">
@@ -280,6 +421,65 @@ export default function VideoGallery() {
             </Card>
           ))}
         </div>
+
+        {/* User-Uploaded Videos */}
+        {uploadedVideos && uploadedVideos.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-xl font-bold text-[#D4A843] mb-4 flex items-center gap-2">
+              <Upload className="w-5 h-5" /> Community Uploads
+            </h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {uploadedVideos.map((video) => (
+                <Card key={video.id} className="bg-[#111111] border-[#D4A843]/15 overflow-hidden">
+                  <CardContent className="p-0">
+                    <AccessibleVideoPlayer
+                      src={video.url}
+                      poster={video.posterUrl || undefined}
+                      title={video.title}
+                    />
+                    <div className="p-4">
+                      <h3 className="font-bold text-[#D4A843] text-base mb-1">{video.title}</h3>
+                      {video.description && <p className="text-sm text-[#E8E0D0]/50 mb-2">{video.description}</p>}
+                      <div className="flex items-center gap-2 text-[10px] text-[#E8E0D0]/40">
+                        <span>Uploaded by {video.uploadedBy || 'SQUADD Member'}</span>
+                        {video.viewCount ? <span>· {video.viewCount} views</span> : null}
+                        <Badge className={`${TYPE_COLORS[video.type] || TYPE_COLORS.presentation} text-[10px]`}>
+                          {TYPE_LABELS[video.type] || video.type.toUpperCase()}
+                        </Badge>
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10 h-8 text-xs"
+                          onClick={() => {
+                            const a = document.createElement('a');
+                            a.href = video.url;
+                            a.download = video.title + '.mp4';
+                            a.click();
+                          }}
+                        >
+                          <Download className="w-3 h-3 mr-1" /> Download
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10 h-8 text-xs"
+                          onClick={() => {
+                            navigator.clipboard.writeText(video.url);
+                            toast.success('Link copied!');
+                          }}
+                        >
+                          <Share2 className="w-3 h-3 mr-1" /> Copy Link
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Legal Footer */}
         <div className="text-center text-xs text-[#E8E0D0]/30 py-8 border-t border-[#D4A843]/10 mt-8">

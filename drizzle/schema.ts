@@ -2965,3 +2965,57 @@ export const systemConfig = mysqlTable("system_config", {
   updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
   updatedBy: varchar("updated_by", { length: 255 }),
 });
+
+// ─── Video Captions (CC/Subtitles) ───────────────────────
+export const videoCaptions = mysqlTable("video_captions", {
+  id: int().autoincrement().notNull(),
+  videoId: varchar("video_id", { length: 100 }).notNull(),
+  language: varchar({ length: 10 }).default('en').notNull(),
+  label: varchar({ length: 100 }).default('English').notNull(),
+  captions: json().notNull(), // Array of { start: number, end: number, text: string }
+  uploadedBy: int("uploaded_by"),
+  isDefault: tinyint("is_default").default(1),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+});
+
+// ─── Video Library (All produced & uploaded videos) ──────
+export const videoLibrary = mysqlTable("video_library", {
+  id: int().autoincrement().notNull(),
+  videoId: varchar("video_id", { length: 100 }).notNull(),
+  title: varchar({ length: 500 }).notNull(),
+  description: text(),
+  videoUrl: text("video_url").notNull(),
+  videoKey: varchar("video_key", { length: 500 }),
+  posterUrl: text("poster_url"),
+  duration: varchar({ length: 20 }),
+  type: mysqlEnum("type", ['narrated', 'instrumental', 'social', 'vertical', 'presentation', 'recording', 'upload']).default('upload').notNull(),
+  aspectRatio: varchar("aspect_ratio", { length: 10 }).default('16:9'),
+  narratedBy: varchar("narrated_by", { length: 255 }),
+  tags: json(),
+  uploadedBy: int("uploaded_by"),
+  uploadedByName: varchar("uploaded_by_name", { length: 255 }),
+  status: mysqlEnum("status", ['draft', 'processing', 'published', 'archived']).default('published').notNull(),
+  viewCount: int("view_count").default(0),
+  downloadCount: int("download_count").default(0),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+});
+
+// ─── Meeting Recordings ──────────────────────────────────
+export const meetingRecordings = mysqlTable("meeting_recordings", {
+  id: int().autoincrement().notNull(),
+  roomId: varchar("room_id", { length: 100 }).notNull(),
+  roomName: varchar("room_name", { length: 255 }).notNull(),
+  recordingUrl: text("recording_url"),
+  recordingKey: varchar("recording_key", { length: 500 }),
+  duration: int(),
+  fileSizeMb: decimal("file_size_mb", { precision: 10, scale: 2 }),
+  recordedBy: int("recorded_by"),
+  recordedByName: varchar("recorded_by_name", { length: 255 }),
+  participants: json(),
+  status: mysqlEnum("status", ['recording', 'uploading', 'processing', 'ready', 'failed']).default('recording').notNull(),
+  startedAt: bigint("started_at", { mode: "number" }).notNull(),
+  endedAt: bigint("ended_at", { mode: "number" }),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+});

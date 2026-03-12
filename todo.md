@@ -4115,3 +4115,13 @@
 - [x] Ensure all videos that were made are accessible and linked on the site
 - [x] Verify video gallery/page has all produced videos
 - [x] Add closed captions (CC) support to video players across the site
+- [x] Build caption/subtitle upload system for accurate CC on videos
+- [x] Add caption editing UI for admin to adjust timing and text
+- [x] Store captions in database linked to video IDs
+- [x] Add meeting recording button (start/stop) to meeting room UI
+- [x] Integrate meeting recording with S3 upload for storage
+- [x] Auto-save recordings with room name, date, and participants metadata
+- [x] Build video upload capability for SQUADD members via admin panel
+- [x] Add video metadata form (title, description, type, tags)
+- [x] Store uploaded videos in S3 with database tracking
+- [x] Display uploaded videos in Video Gallery alongside produced videos

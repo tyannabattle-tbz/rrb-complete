@@ -89,11 +89,15 @@ import { mediaBlastRouter } from "./routers/mediaBlastRouter";
 import { podcastManagementRouter } from "./routers/podcastManagementRouter";
 import { restreamConfigRouter } from "./routers/restreamConfigRouter";
 import { streamHealthRouter } from "./routers/streamHealthRouter";
+import { videoManagementRouter } from "./routers/videoManagementRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
   // System router
   system: systemRouter,
+
+  // Video Management (captions, library, recordings)
+  videoManagement: videoManagementRouter,
 
   // Audio router
   audio: audioRouter,

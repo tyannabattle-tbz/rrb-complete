@@ -15,11 +15,11 @@ var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc18) => {
+var __copyProps = (to, from, except, desc19) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc18 = __getOwnPropDesc(from, key)) || desc18.enumerable });
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc19 = __getOwnPropDesc(from, key)) || desc19.enumerable });
   }
   return to;
 };
@@ -144,6 +144,7 @@ __export(schema_exports, {
   mediaDistribution: () => mediaDistribution,
   mediaProjects: () => mediaProjects,
   meetingPresentations: () => meetingPresentations,
+  meetingRecordings: () => meetingRecordings,
   memoryStore: () => memoryStore,
   messages: () => messages,
   modelComparisons: () => modelComparisons,
@@ -238,6 +239,8 @@ __export(schema_exports, {
   userSubscriptions: () => userSubscriptions,
   users: () => users,
   usersWithStripe: () => usersWithStripe,
+  videoCaptions: () => videoCaptions,
+  videoLibrary: () => videoLibrary,
   viewerMetrics: () => viewerMetrics,
   webhookEndpoints: () => webhookEndpoints,
   webhookInstallations: () => webhookInstallations,
@@ -247,7 +250,7 @@ __export(schema_exports, {
   wellnessCheckins: () => wellnessCheckins
 });
 import { mysqlTable, int, varchar, mysqlEnum, timestamp, decimal, text, json, bigint, index, tinyint, date } from "drizzle-orm/mysql-core";
-var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, meetingPresentations, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing, systemConfig;
+var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, meetingPresentations, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing, systemConfig, videoCaptions, videoLibrary, meetingRecordings;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
     accountingInvoices = mysqlTable("accounting_invoices", {
@@ -3027,6 +3030,55 @@ var init_schema = __esm({
       updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
       updatedBy: varchar("updated_by", { length: 255 })
     });
+    videoCaptions = mysqlTable("video_captions", {
+      id: int().autoincrement().notNull(),
+      videoId: varchar("video_id", { length: 100 }).notNull(),
+      language: varchar({ length: 10 }).default("en").notNull(),
+      label: varchar({ length: 100 }).default("English").notNull(),
+      captions: json().notNull(),
+      // Array of { start: number, end: number, text: string }
+      uploadedBy: int("uploaded_by"),
+      isDefault: tinyint("is_default").default(1),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
+    videoLibrary = mysqlTable("video_library", {
+      id: int().autoincrement().notNull(),
+      videoId: varchar("video_id", { length: 100 }).notNull(),
+      title: varchar({ length: 500 }).notNull(),
+      description: text(),
+      videoUrl: text("video_url").notNull(),
+      videoKey: varchar("video_key", { length: 500 }),
+      posterUrl: text("poster_url"),
+      duration: varchar({ length: 20 }),
+      type: mysqlEnum("type", ["narrated", "instrumental", "social", "vertical", "presentation", "recording", "upload"]).default("upload").notNull(),
+      aspectRatio: varchar("aspect_ratio", { length: 10 }).default("16:9"),
+      narratedBy: varchar("narrated_by", { length: 255 }),
+      tags: json(),
+      uploadedBy: int("uploaded_by"),
+      uploadedByName: varchar("uploaded_by_name", { length: 255 }),
+      status: mysqlEnum("status", ["draft", "processing", "published", "archived"]).default("published").notNull(),
+      viewCount: int("view_count").default(0),
+      downloadCount: int("download_count").default(0),
+      createdAt: bigint("created_at", { mode: "number" }).notNull(),
+      updatedAt: bigint("updated_at", { mode: "number" }).notNull()
+    });
+    meetingRecordings = mysqlTable("meeting_recordings", {
+      id: int().autoincrement().notNull(),
+      roomId: varchar("room_id", { length: 100 }).notNull(),
+      roomName: varchar("room_name", { length: 255 }).notNull(),
+      recordingUrl: text("recording_url"),
+      recordingKey: varchar("recording_key", { length: 500 }),
+      duration: int(),
+      fileSizeMb: decimal("file_size_mb", { precision: 10, scale: 2 }),
+      recordedBy: int("recorded_by"),
+      recordedByName: varchar("recorded_by_name", { length: 255 }),
+      participants: json(),
+      status: mysqlEnum("status", ["recording", "uploading", "processing", "ready", "failed"]).default("recording").notNull(),
+      startedAt: bigint("started_at", { mode: "number" }).notNull(),
+      endedAt: bigint("ended_at", { mode: "number" }),
+      createdAt: bigint("created_at", { mode: "number" }).notNull()
+    });
   }
 });
 
@@ -4960,12 +5012,12 @@ async function checkAndPublishScheduledPosts() {
   try {
     const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
     const { socialMediaPosts: socialMediaPosts2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
-    const { eq: eq33, and: and22, lte: lte4 } = await import("drizzle-orm");
+    const { eq: eq34, and: and23, lte: lte4 } = await import("drizzle-orm");
     const db2 = await getDb5();
     const now = Date.now();
     const duePosts = await db2.select().from(socialMediaPosts2).where(
-      and22(
-        eq33(socialMediaPosts2.status, "scheduled"),
+      and23(
+        eq34(socialMediaPosts2.status, "scheduled"),
         lte4(socialMediaPosts2.scheduledAt, now)
       )
     );
@@ -5000,7 +5052,7 @@ async function checkAndPublishScheduledPosts() {
         status: newStatus,
         publishedAt: result2.success ? Date.now() : void 0,
         updatedAt: Date.now()
-      }).where(eq33(socialMediaPosts2.id, post.id));
+      }).where(eq34(socialMediaPosts2.id, post.id));
       results.push({
         postId: post.id,
         platform: post.platform,
@@ -7933,7 +7985,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z97 } from "zod";
+import { z as z98 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -20295,10 +20347,10 @@ Room: ${conf.room_code}
     const [rows] = await db2.execute(sql11`SELECT id, title, description, recording_url, recording_status FROM conferences WHERE id = ${input.conferenceId}`);
     const conf = rows[0];
     if (!conf) return null;
-    const desc18 = conf.description || "";
+    const desc19 = conf.description || "";
     const transcriptMarker = "--- TRANSCRIPT ---";
-    const transcriptIdx = desc18.indexOf(transcriptMarker);
-    const transcript = transcriptIdx >= 0 ? desc18.substring(transcriptIdx + transcriptMarker.length).trim() : null;
+    const transcriptIdx = desc19.indexOf(transcriptMarker);
+    const transcript = transcriptIdx >= 0 ? desc19.substring(transcriptIdx + transcriptMarker.length).trim() : null;
     return {
       conferenceId: conf.id,
       title: conf.title,
@@ -29648,7 +29700,7 @@ var videoProductionWorkflowRouter = router({
   registerGeneratedVideo: protectedProcedure.input(videoProductionSchema).mutation(async ({ ctx, input }) => {
     try {
       const videoRecord = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq33 }) => eq33(videos2.id, input.videoId)
+        where: (videos2, { eq: eq34 }) => eq34(videos2.id, input.videoId)
       });
       if (!videoRecord) {
         await (void 0)(void 0).values({
@@ -29679,7 +29731,7 @@ var videoProductionWorkflowRouter = router({
   getVideoStatus: protectedProcedure.input(z73.object({ videoId: z73.string() })).query(async ({ input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq33 }) => eq33(videos2.id, input.videoId)
+        where: (videos2, { eq: eq34 }) => eq34(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29701,7 +29753,7 @@ var videoProductionWorkflowRouter = router({
   scheduleForRRBRadio: protectedProcedure.input(broadcastScheduleSchema).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq33 }) => eq33(videos2.id, input.videoId)
+        where: (videos2, { eq: eq34 }) => eq34(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29737,10 +29789,10 @@ var videoProductionWorkflowRouter = router({
   getScheduledBroadcasts: protectedProcedure.input(z73.object({ stationId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcastSchedules.findMany({
-        where: (schedules, { eq: eq33, and: and22 }) => input.stationId ? and22(
-          eq33(schedules.createdBy, String(ctx.user.id)),
-          eq33(schedules.stationId, input.stationId)
-        ) : eq33(schedules.createdBy, String(ctx.user.id))
+        where: (schedules, { eq: eq34, and: and23 }) => input.stationId ? and23(
+          eq34(schedules.createdBy, String(ctx.user.id)),
+          eq34(schedules.stationId, input.stationId)
+        ) : eq34(schedules.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         scheduleId: broadcast.id,
@@ -29765,7 +29817,7 @@ var videoProductionWorkflowRouter = router({
   ).mutation(async ({ ctx, input }) => {
     try {
       const video = await (void 0).videos.findFirst({
-        where: (videos2, { eq: eq33 }) => eq33(videos2.id, input.videoId)
+        where: (videos2, { eq: eq34 }) => eq34(videos2.id, input.videoId)
       });
       if (!video) {
         throw new Error("Video not found");
@@ -29797,10 +29849,10 @@ var videoProductionWorkflowRouter = router({
   getBroadcastHistory: protectedProcedure.input(z73.object({ videoId: z73.string().optional() })).query(async ({ ctx, input }) => {
     try {
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq33, and: and22 }) => input.videoId ? and22(
-          eq33(broadcasts5.createdBy, String(ctx.user.id)),
-          eq33(broadcasts5.videoId, input.videoId)
-        ) : eq33(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq34, and: and23 }) => input.videoId ? and23(
+          eq34(broadcasts5.createdBy, String(ctx.user.id)),
+          eq34(broadcasts5.videoId, input.videoId)
+        ) : eq34(broadcasts5.createdBy, String(ctx.user.id))
       });
       return broadcasts4.map((broadcast) => ({
         broadcastId: broadcast.id,
@@ -29820,10 +29872,10 @@ var videoProductionWorkflowRouter = router({
   getWorkflowStats: protectedProcedure.query(async ({ ctx }) => {
     try {
       const videos2 = await (void 0).videos.findMany({
-        where: (videos3, { eq: eq33 }) => eq33(videos3.userId, String(ctx.user.id))
+        where: (videos3, { eq: eq34 }) => eq34(videos3.userId, String(ctx.user.id))
       });
       const broadcasts4 = await (void 0).broadcasts.findMany({
-        where: (broadcasts5, { eq: eq33 }) => eq33(broadcasts5.createdBy, String(ctx.user.id))
+        where: (broadcasts5, { eq: eq34 }) => eq34(broadcasts5.createdBy, String(ctx.user.id))
       });
       const statusCounts = {
         generated: videos2.filter((v) => v.status === "generated").length,
@@ -42046,10 +42098,290 @@ var streamHealthRouter = router({
   })
 });
 
+// server/routers/videoManagementRouter.ts
+import { z as z97 } from "zod";
+init_storage();
+init_db();
+init_schema();
+import { eq as eq31, desc as desc17, and as and21 } from "drizzle-orm";
+var captionEntrySchema = z97.object({
+  start: z97.number(),
+  end: z97.number(),
+  text: z97.string()
+});
+var videoManagementRouter = router({
+  // ─── CAPTIONS ──────────────────────────────────────────
+  // Get captions for a video
+  getCaptions: publicProcedure.input(z97.object({ videoId: z97.string() })).query(async ({ input }) => {
+    try {
+      const db2 = await getDb();
+      const captions = await db2.select().from(videoCaptions).where(eq31(videoCaptions.videoId, input.videoId)).orderBy(desc17(videoCaptions.isDefault));
+      return captions;
+    } catch {
+      return [];
+    }
+  }),
+  // Save/update captions for a video
+  saveCaptions: protectedProcedure.input(z97.object({
+    videoId: z97.string(),
+    language: z97.string().default("en"),
+    label: z97.string().default("English"),
+    captions: z97.array(captionEntrySchema),
+    isDefault: z97.boolean().default(true)
+  })).mutation(async ({ input, ctx }) => {
+    const now = Date.now();
+    const db2 = await getDb();
+    const existing = await db2.select().from(videoCaptions).where(and21(
+      eq31(videoCaptions.videoId, input.videoId),
+      eq31(videoCaptions.language, input.language)
+    ));
+    if (existing.length > 0) {
+      await db2.update(videoCaptions).set({
+        captions: input.captions,
+        label: input.label,
+        isDefault: input.isDefault ? 1 : 0,
+        updatedAt: now
+      }).where(eq31(videoCaptions.id, existing[0].id));
+      return { success: true, id: existing[0].id, updated: true };
+    } else {
+      const result2 = await db2.insert(videoCaptions).values({
+        videoId: input.videoId,
+        language: input.language,
+        label: input.label,
+        captions: input.captions,
+        uploadedBy: ctx.user.id,
+        isDefault: input.isDefault ? 1 : 0,
+        createdAt: now,
+        updatedAt: now
+      });
+      return { success: true, id: Number(result2[0].insertId), updated: false };
+    }
+  }),
+  // Delete captions
+  deleteCaptions: protectedProcedure.input(z97.object({ id: z97.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.delete(videoCaptions).where(eq31(videoCaptions.id, input.id));
+    return { success: true };
+  }),
+  // Parse SRT/VTT file content into caption entries
+  parseCaptionFile: protectedProcedure.input(z97.object({
+    content: z97.string(),
+    format: z97.enum(["srt", "vtt"])
+  })).mutation(async ({ input }) => {
+    const captions = parseCaptionContent(input.content, input.format);
+    return { captions };
+  }),
+  // ─── VIDEO LIBRARY ─────────────────────────────────────
+  // List all videos
+  listVideos: publicProcedure.input(z97.object({
+    type: z97.string().optional(),
+    status: z97.string().optional(),
+    limit: z97.number().default(50)
+  }).optional()).query(async ({ input }) => {
+    try {
+      const db2 = await getDb();
+      const conditions = [];
+      if (input?.type) conditions.push(eq31(videoLibrary.type, input.type));
+      if (input?.status) conditions.push(eq31(videoLibrary.status, input.status));
+      let query2 = db2.select().from(videoLibrary).orderBy(desc17(videoLibrary.createdAt)).limit(input?.limit ?? 50);
+      if (conditions.length > 0) {
+        query2 = query2.where(and21(...conditions));
+      }
+      return await query2;
+    } catch {
+      return [];
+    }
+  }),
+  // Upload a video (metadata + S3)
+  uploadVideo: protectedProcedure.input(z97.object({
+    title: z97.string(),
+    description: z97.string().optional(),
+    type: z97.enum(["narrated", "instrumental", "social", "vertical", "presentation", "recording", "upload"]).default("upload"),
+    aspectRatio: z97.string().default("16:9"),
+    narratedBy: z97.string().optional(),
+    tags: z97.array(z97.string()).optional(),
+    duration: z97.string().optional(),
+    fileBase64: z97.string(),
+    fileName: z97.string(),
+    contentType: z97.string().default("video/mp4"),
+    posterBase64: z97.string().optional()
+  })).mutation(async ({ input, ctx }) => {
+    const now = Date.now();
+    const db2 = await getDb();
+    const videoId = `vid-${now}-${Math.random().toString(36).slice(2, 8)}`;
+    const suffix = Math.random().toString(36).slice(2, 10);
+    const videoBuffer = Buffer.from(input.fileBase64, "base64");
+    const videoKey = `videos/${videoId}-${suffix}.${input.fileName.split(".").pop() || "mp4"}`;
+    const { url: videoUrl } = await storagePut(videoKey, videoBuffer, input.contentType);
+    let posterUrl;
+    if (input.posterBase64) {
+      const posterBuffer = Buffer.from(input.posterBase64, "base64");
+      const posterKey = `videos/posters/${videoId}-${suffix}.jpg`;
+      const result3 = await storagePut(posterKey, posterBuffer, "image/jpeg");
+      posterUrl = result3.url;
+    }
+    const result2 = await db2.insert(videoLibrary).values({
+      videoId,
+      title: input.title,
+      description: input.description,
+      videoUrl,
+      videoKey,
+      posterUrl,
+      duration: input.duration,
+      type: input.type,
+      aspectRatio: input.aspectRatio,
+      narratedBy: input.narratedBy,
+      tags: input.tags,
+      uploadedBy: ctx.user.id,
+      uploadedByName: ctx.user.name || "SQUADD Member",
+      status: "published",
+      createdAt: now,
+      updatedAt: now
+    });
+    return { success: true, videoId, videoUrl, posterUrl, id: Number(result2[0].insertId) };
+  }),
+  // Delete a video
+  deleteVideo: protectedProcedure.input(z97.object({ id: z97.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.delete(videoLibrary).where(eq31(videoLibrary.id, input.id));
+    return { success: true };
+  }),
+  // Increment view count
+  incrementView: publicProcedure.input(z97.object({ videoId: z97.string() })).mutation(async ({ input }) => {
+    try {
+      const db2 = await getDb();
+      const existing = await db2.select().from(videoLibrary).where(eq31(videoLibrary.videoId, input.videoId));
+      if (existing.length > 0) {
+        await db2.update(videoLibrary).set({ viewCount: (existing[0].viewCount || 0) + 1 }).where(eq31(videoLibrary.id, existing[0].id));
+      }
+      return { success: true };
+    } catch {
+      return { success: false };
+    }
+  }),
+  // ─── MEETING RECORDINGS ────────────────────────────────
+  // Start a recording
+  startRecording: protectedProcedure.input(z97.object({
+    roomId: z97.string(),
+    roomName: z97.string(),
+    participants: z97.array(z97.string()).optional()
+  })).mutation(async ({ input, ctx }) => {
+    const now = Date.now();
+    const db2 = await getDb();
+    const result2 = await db2.insert(meetingRecordings).values({
+      roomId: input.roomId,
+      roomName: input.roomName,
+      recordedBy: ctx.user.id,
+      recordedByName: ctx.user.name || "SQUADD Member",
+      participants: input.participants || [],
+      status: "recording",
+      startedAt: now,
+      createdAt: now
+    });
+    return { success: true, recordingId: Number(result2[0].insertId), startedAt: now };
+  }),
+  // Stop a recording and upload
+  stopRecording: protectedProcedure.input(z97.object({
+    recordingId: z97.number(),
+    fileBase64: z97.string(),
+    fileName: z97.string(),
+    duration: z97.number().optional(),
+    fileSizeMb: z97.number().optional()
+  })).mutation(async ({ input }) => {
+    const now = Date.now();
+    const db2 = await getDb();
+    const suffix = Math.random().toString(36).slice(2, 10);
+    const recordingBuffer = Buffer.from(input.fileBase64, "base64");
+    const recordingKey = `recordings/meeting-${input.recordingId}-${suffix}.webm`;
+    const { url: recordingUrl } = await storagePut(recordingKey, recordingBuffer, "video/webm");
+    await db2.update(meetingRecordings).set({
+      recordingUrl,
+      recordingKey,
+      duration: input.duration,
+      fileSizeMb: input.fileSizeMb?.toString(),
+      status: "ready",
+      endedAt: now
+    }).where(eq31(meetingRecordings.id, input.recordingId));
+    return { success: true, recordingUrl };
+  }),
+  // List recordings
+  listRecordings: protectedProcedure.input(z97.object({
+    roomId: z97.string().optional(),
+    limit: z97.number().default(20)
+  }).optional()).query(async ({ input }) => {
+    try {
+      const db2 = await getDb();
+      let query2 = db2.select().from(meetingRecordings).orderBy(desc17(meetingRecordings.createdAt)).limit(input?.limit ?? 20);
+      if (input?.roomId) {
+        query2 = query2.where(eq31(meetingRecordings.roomId, input.roomId));
+      }
+      return await query2;
+    } catch {
+      return [];
+    }
+  }),
+  // Delete a recording
+  deleteRecording: protectedProcedure.input(z97.object({ id: z97.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.delete(meetingRecordings).where(eq31(meetingRecordings.id, input.id));
+    return { success: true };
+  })
+});
+function parseCaptionContent(content, format) {
+  const captions = [];
+  const lines = content.trim().split("\n");
+  let i = 0;
+  if (format === "vtt" && lines[0]?.includes("WEBVTT")) {
+    i = 1;
+    while (i < lines.length && lines[i].trim() !== "") i++;
+    i++;
+  }
+  while (i < lines.length) {
+    while (i < lines.length && (lines[i].trim() === "" || /^\d+$/.test(lines[i].trim()))) i++;
+    if (i >= lines.length) break;
+    const timestampLine = lines[i];
+    const separator = format === "srt" ? "-->" : "-->";
+    if (timestampLine.includes(separator)) {
+      const [startStr, endStr] = timestampLine.split(separator).map((s) => s.trim());
+      const start = parseTimestamp(startStr);
+      const end = parseTimestamp(endStr);
+      i++;
+      const textLines = [];
+      while (i < lines.length && lines[i].trim() !== "") {
+        textLines.push(lines[i].trim());
+        i++;
+      }
+      if (textLines.length > 0) {
+        captions.push({ start, end, text: textLines.join(" ") });
+      }
+    } else {
+      i++;
+    }
+  }
+  return captions;
+}
+function parseTimestamp(ts) {
+  const cleaned = ts.replace(",", ".").trim();
+  const parts = cleaned.split(":");
+  if (parts.length === 3) {
+    const hours = parseFloat(parts[0]);
+    const minutes = parseFloat(parts[1]);
+    const seconds = parseFloat(parts[2]);
+    return hours * 3600 + minutes * 60 + seconds;
+  } else if (parts.length === 2) {
+    const minutes = parseFloat(parts[0]);
+    const seconds = parseFloat(parts[1]);
+    return minutes * 60 + seconds;
+  }
+  return parseFloat(cleaned) || 0;
+}
+
 // server/routers.ts
 var appRouter = router({
   // System router
   system: systemRouter,
+  // Video Management (captions, library, recordings)
+  videoManagement: videoManagementRouter,
   // Audio router
   audio: audioRouter,
   // Studio Audio (S3 upload, recording, project persistence)
@@ -42073,11 +42405,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z97.object({
-        goal: z97.string().min(1, "Goal is required"),
-        priority: z97.number().int().min(1).max(10).optional().default(5),
-        steps: z97.array(z97.string()).optional(),
-        constraints: z97.array(z97.string()).optional()
+      z98.object({
+        goal: z98.string().min(1, "Goal is required"),
+        priority: z98.number().int().min(1).max(10).optional().default(5),
+        steps: z98.array(z98.string()).optional(),
+        constraints: z98.array(z98.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -42089,7 +42421,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z97.object({ taskId: z97.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z98.object({ taskId: z98.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -42099,11 +42431,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z97.object({
-        target: z97.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z97.string().min(1, "Action is required"),
-        params: z97.record(z97.any()).optional().default({}),
-        priority: z97.number().int().min(1).max(10).optional().default(5)
+      z98.object({
+        target: z98.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z98.string().min(1, "Action is required"),
+        params: z98.record(z98.any()).optional().default({}),
+        priority: z98.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -42115,10 +42447,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z97.object({ commandId: z97.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z98.object({ commandId: z98.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z97.object({ target: z97.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z98.object({ target: z98.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -42213,12 +42545,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z97.object({
-      sessionName: z97.string().min(1),
-      systemPrompt: z97.string().optional(),
-      temperature: z97.number().min(0).max(100).optional(),
-      model: z97.string().optional(),
-      maxSteps: z97.number().min(1).optional()
+    createSession: protectedProcedure.input(z98.object({
+      sessionName: z98.string().min(1),
+      systemPrompt: z98.string().optional(),
+      temperature: z98.number().min(0).max(100).optional(),
+      model: z98.string().optional(),
+      maxSteps: z98.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -42239,7 +42571,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z97.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z98.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -42248,7 +42580,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z97.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z98.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -42292,9 +42624,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z97.object({
-      dateRange: z97.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z97.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z98.object({
+      dateRange: z98.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z98.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -42305,24 +42637,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z97.object({
-      dateRange: z97.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z98.object({
+      dateRange: z98.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z97.object({
-      dateRange: z97.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z98.object({
+      dateRange: z98.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z97.object({
-      email: z97.string().email(),
-      name: z97.string().optional(),
-      source: z97.string().optional(),
-      language: z97.string().optional()
+    subscribe: publicProcedure.input(z98.object({
+      email: z98.string().email(),
+      name: z98.string().optional(),
+      source: z98.string().optional(),
+      language: z98.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
@@ -42940,7 +43272,7 @@ init_db();
 init_schema();
 init_notification();
 import Stripe2 from "stripe";
-import { eq as eq31 } from "drizzle-orm";
+import { eq as eq32 } from "drizzle-orm";
 
 // server/services/notificationService.ts
 init_db();
@@ -43263,7 +43595,7 @@ async function handlePaymentSucceeded(paymentIntent) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const user = await db2.select().from(users).where(eq31(users.id, parseInt(clientRefId))).limit(1);
+    const user = await db2.select().from(users).where(eq32(users.id, parseInt(clientRefId))).limit(1);
     if (user.length > 0) {
       await db2.insert(payments).values({
         userId: user[0].id,
@@ -43311,12 +43643,12 @@ async function handleSubscriptionUpdated(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq31(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq32(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq31(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq32(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       if (subscription.items.data.length > 0) {
@@ -43351,12 +43683,12 @@ async function handleSubscriptionCancelled(subscription) {
       return;
     }
     const latestInvoiceId = subscription.latest_invoice;
-    const paymentRecords = await db2.select().from(payments).where(eq31(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq32(payments.stripePaymentIntentId, latestInvoiceId)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for subscription ${subscriptionId}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq31(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq32(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Cancelled subscription for user ${user.id}`);
@@ -43379,12 +43711,12 @@ async function handleInvoicePaid(invoice) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq31(payments.stripePaymentIntentId, invoice.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq32(payments.stripePaymentIntentId, invoice.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for invoice ${invoice.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq31(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq32(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       await db2.insert(donations).values({
@@ -43414,12 +43746,12 @@ async function handleChargeRefunded(charge) {
       console.warn("[Stripe Webhook] Database not available");
       return;
     }
-    const paymentRecords = await db2.select().from(payments).where(eq31(payments.stripePaymentIntentId, charge.id)).limit(1);
+    const paymentRecords = await db2.select().from(payments).where(eq32(payments.stripePaymentIntentId, charge.id)).limit(1);
     if (paymentRecords.length === 0) {
       console.warn(`[Stripe Webhook] No payment found for charge ${charge.id}`);
       return;
     }
-    const userRecords = await db2.select().from(users).where(eq31(users.id, paymentRecords[0].userId)).limit(1);
+    const userRecords = await db2.select().from(users).where(eq32(users.id, paymentRecords[0].userId)).limit(1);
     if (userRecords.length > 0) {
       const user = userRecords[0];
       console.log(`[Stripe Webhook] \u2713 Recorded refund: $${amount} for user ${user.id}`);
@@ -43497,7 +43829,7 @@ function registerAudioStreamProxy(app) {
 // server/routes/podcastRssFeed.ts
 init_db();
 init_schema();
-import { eq as eq32, desc as desc17, and as and21 } from "drizzle-orm";
+import { eq as eq33, desc as desc18, and as and22 } from "drizzle-orm";
 function escapeXml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
 }
@@ -43550,12 +43882,12 @@ var showMetadata = {
 async function generateRssFeed(slug, baseUrl) {
   const db2 = await getDb();
   if (!db2) return null;
-  const [show] = await db2.select().from(podcastShows).where(eq32(podcastShows.slug, slug)).limit(1);
+  const [show] = await db2.select().from(podcastShows).where(eq33(podcastShows.slug, slug)).limit(1);
   if (!show) return null;
-  const episodes = await db2.select().from(podcastEpisodes).where(and21(
-    eq32(podcastEpisodes.showId, show.id),
-    eq32(podcastEpisodes.status, "published")
-  )).orderBy(desc17(podcastEpisodes.publishedAt)).limit(100);
+  const episodes = await db2.select().from(podcastEpisodes).where(and22(
+    eq33(podcastEpisodes.showId, show.id),
+    eq33(podcastEpisodes.status, "published")
+  )).orderBy(desc18(podcastEpisodes.publishedAt)).limit(100);
   const meta = showMetadata[slug] || showMetadata["candys-corner"];
   const feedUrl = `${baseUrl}/api/podcasts/${slug}/feed.xml`;
   const siteUrl = `${baseUrl}/podcasts`;
@@ -43656,7 +43988,7 @@ function registerPodcastRssRoutes(app) {
       const protocol = req.protocol;
       const host = req.get("host") || "localhost:3000";
       const baseUrl = `${protocol}://${host}`;
-      const shows = await db2.select().from(podcastShows).where(eq32(podcastShows.isActive, 1));
+      const shows = await db2.select().from(podcastShows).where(eq33(podcastShows.isActive, 1));
       let opml = `<?xml version="1.0" encoding="UTF-8"?>
 <opml version="2.0">
   <head>
