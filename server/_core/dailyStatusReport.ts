@@ -9,6 +9,7 @@
 import { stateOfStudio } from './stateOfStudio';
 import { audioStreamingService } from './audioStreamingService';
 import { notifyOwner } from './notification';
+import { getMonitorStatus, getLatestReport, getOutageHistory } from '../services/streamHealthMonitor';
 
 class DailyStatusReportService {
   private reportScheduled = false;
@@ -129,39 +130,67 @@ class DailyStatusReportService {
       recommendations.push('All systems operating within normal parameters.');
     }
 
-    return `=== DAILY STATUS REPORT === Date: ${dateStr}
+    // Stream Health Data
+    const streamStatus = getMonitorStatus();
+    const latestHealth = getLatestReport();
+    const outages = getOutageHistory();
+    const todayOutages = outages.filter(o => o.timestamp > Date.now() - 24 * 60 * 60 * 1000);
+
+    let streamHealthSection = `\nSTREAM HEALTH (Policy #19):\n`;
+    streamHealthSection += `\u2022 Monitor: ${streamStatus.isRunning ? 'RUNNING' : 'STOPPED'}\n`;
+    streamHealthSection += `\u2022 Channels: ${streamStatus.healthyChannels}/${streamStatus.totalChannels} healthy`;
+    if (streamStatus.currentUptime) {
+      streamHealthSection += ` (${streamStatus.currentUptime.toFixed(1)}% uptime)`;
+    }
+    streamHealthSection += `\n`;
+    streamHealthSection += `\u2022 Circuit Breaker: ${streamStatus.circuitBreaker.tripped ? 'TRIPPED' : 'Normal'}\n`;
+    streamHealthSection += `\u2022 Auto-Restoration: ${streamStatus.autoRestoration?.pendingRestorations || 0} pending, ${streamStatus.autoRestoration?.totalRestored || 0} restored\n`;
+    streamHealthSection += `\u2022 Total Checks Today: ${streamStatus.totalChecks}\n`;
+    if (todayOutages.length > 0) {
+      streamHealthSection += `\u2022 Outages Today: ${todayOutages.length}\n`;
+      todayOutages.slice(-3).forEach(o => {
+        streamHealthSection += `  - ${new Date(o.timestamp).toLocaleTimeString()}: ${o.channelsAffected} channels (${o.rootCause}) ${o.resolved ? '[Resolved]' : '[Active]'}\n`;
+      });
+    } else {
+      streamHealthSection += `\u2022 Outages Today: 0 (clean day!)\n`;
+    }
+    if (streamStatus.downChannels.length > 0) {
+      streamHealthSection += `\u2022 Currently Down: ${streamStatus.downChannels.map(c => c.name).join(', ')}\n`;
+    }
+
+    return `=== DAILY SUNSET STATUS REPORT === Date: ${dateStr}
 Time: ${timeStr}
 
 SYSTEM STATUS:
-• QUMUS: ACTIVE (${autonomyLevel}% autonomous)
-• RRB Radio: ACTIVE (${totalListeners.toLocaleString()} listeners across ${activeChannels} channels)
-• HybridCast: ACTIVE (${qualityReport.overallQuality} quality)
-• Canryn: ACTIVE (Health: ${ecosystemHealth}%)
-• Sweet Miracles: ACTIVE (${activePolicies} policies)
+\u2022 QUMUS: ACTIVE (${autonomyLevel}% autonomous)
+\u2022 RRB Radio: ACTIVE (${totalListeners.toLocaleString()} listeners across ${activeChannels} channels)
+\u2022 HybridCast: ACTIVE (${qualityReport.overallQuality} quality)
+\u2022 Canryn: ACTIVE (Health: ${ecosystemHealth}%)
+\u2022 Sweet Miracles: ACTIVE (${activePolicies} policies)
 
 ECOSYSTEM HEALTH: ${ecosystemHealth}%
 
 AUTONOMY METRICS:
-• Autonomous Control: ${autonomyLevel}%
-• Human Oversight: ${100 - autonomyLevel}%
-• Autonomous Decisions: ${autonomousDecisions.toLocaleString()}
-• Human Interventions: ${humanInterventions.toLocaleString()}
-• Total Actions: ${totalActions.toLocaleString()}
-• Success Rate: ${successRate}%
-• Commands Executed: ${commandsExecuted.toLocaleString()}
-• Active Policies: ${activePolicies}
-• System Uptime: ${uptime}
+\u2022 Autonomous Control: ${autonomyLevel}%
+\u2022 Human Oversight: ${100 - autonomyLevel}%
+\u2022 Autonomous Decisions: ${autonomousDecisions.toLocaleString()}
+\u2022 Human Interventions: ${humanInterventions.toLocaleString()}
+\u2022 Total Actions: ${totalActions.toLocaleString()}
+\u2022 Success Rate: ${successRate}%
+\u2022 Commands Executed: ${commandsExecuted.toLocaleString()}
+\u2022 Active Policies: ${activePolicies}
+\u2022 System Uptime: ${uptime}
 
 BROADCAST METRICS:
-• Active Channels: ${activeChannels}
-• Total Listeners: ${totalListeners.toLocaleString()}
-• Stream Quality: ${qualityReport.overallQuality}
-• Average Bitrate: ${qualityReport.averageBitrate}kbps
-
+\u2022 Active Channels: ${activeChannels}
+\u2022 Total Listeners: ${totalListeners.toLocaleString()}
+\u2022 Stream Quality: ${qualityReport.overallQuality}
+\u2022 Average Bitrate: ${qualityReport.averageBitrate}kbps
+${streamHealthSection}
 RECOMMENDATIONS:
-${recommendations.map(r => `• ${r}`).join('\n')}
+${recommendations.map(r => `\u2022 ${r}`).join('\n')}
 
-=== END REPORT ===`;
+=== END SUNSET REPORT ===`;
   }
 
   /**

@@ -180,6 +180,12 @@ const UNIVERSAL_FALLBACKS = [
   'https://stream.zeno.fm/yn65fsaurfhvv',
 ];
 
+// ─── Original URL Tracking for Auto-Restoration ─────────────────────────────
+// When a channel is healed to a backup, we remember its original URL.
+// On subsequent checks, if the original URL comes back online, we restore it.
+const originalUrls: Map<number, { url: string; failedAt: number; genre?: string }> = new Map();
+let restoredCount = 0;
+
 // ─── Notification Throttling ──────────────────────────────────────────────────
 // Track last notification time to prevent spam
 let lastNotificationTime = 0;
@@ -405,6 +411,38 @@ export async function runHealthCheck(): Promise<HealthReport> {
     }
   }
 
+  // ─── Auto-Restoration: Try restoring original URLs ─────────────────────────
+  if (originalUrls.size > 0) {
+    const restoredThisCycle: string[] = [];
+    for (const [channelId, orig] of originalUrls.entries()) {
+      try {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 5000);
+        const resp = await fetch(orig.url, { method: 'GET', signal: ctrl.signal, headers: { 'Range': 'bytes=0-512' } });
+        clearTimeout(t);
+        if (resp.ok || resp.status === 206) {
+          // Original URL is back! Restore it
+          try {
+            await db.execute(
+              sql`UPDATE radio_channels SET streamUrl = ${orig.url} WHERE id = ${channelId}`
+            );
+            const ch = results.find(r => r.channelId === channelId);
+            const name = ch?.channelName || `Channel ${channelId}`;
+            restoredThisCycle.push(`ch-${String(channelId).padStart(3, '0')}: ${name} → restored to original`);
+            console.log(`[StreamHealth] RESTORED: ${name} → ${orig.url} (original URL back online)`);
+            originalUrls.delete(channelId);
+            restoredCount++;
+          } catch (dbErr) {
+            console.error(`[StreamHealth] DB restore failed for channel ${channelId}:`, dbErr);
+          }
+        }
+      } catch { /* original still down */ }
+    }
+    if (restoredThisCycle.length > 0) {
+      pendingDigestItems.push(`🔄 RESTORED (${restoredThisCycle.length}): ${restoredThisCycle.join(', ')}`);
+    }
+  }
+
   // ─── QUMUS Auto-Healing with Genre-Matched Backups ────────────────────────
   if (down > 0 && !circuitBreakerTripped) {
     const downChannels = results.filter(r => r.status === 'down');
@@ -428,6 +466,10 @@ export async function runHealthCheck(): Promise<HealthReport> {
           clearTimeout(t);
           if (resp.ok || resp.status === 206) {
             try {
+              // Save original URL before overwriting
+              if (!originalUrls.has(ch.channelId)) {
+                originalUrls.set(ch.channelId, { url: ch.streamUrl, failedAt: Date.now(), genre: ch.genre });
+              }
               await db.execute(
                 sql`UPDATE radio_channels SET streamUrl = ${backup} WHERE id = ${ch.channelId}`
               );
@@ -609,6 +651,16 @@ export function getMonitorStatus() {
       tripped: circuitBreakerTripped,
       lastTrippedAt: lastCircuitBreakerTrip || null,
       threshold: `${Math.round(CIRCUIT_BREAKER_THRESHOLD * 100)}%`,
+    },
+    autoRestoration: {
+      pendingRestorations: originalUrls.size,
+      totalRestored: restoredCount,
+      pendingChannels: Array.from(originalUrls.entries()).map(([id, o]) => ({
+        channelId: id,
+        originalUrl: o.url,
+        failedAt: o.failedAt,
+        genre: o.genre,
+      })),
     },
     downChannels: lastReport?.results.filter(r => r.status === 'down').map(r => ({
       id: r.channelId,

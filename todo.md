@@ -4138,3 +4138,14 @@
 - [x] Create channel-specific fallback hierarchy (primary → genre backup → universal)
 - [x] Investigate and fix simultaneous 33-channel drop root cause (circuit breaker added)
 - [x] Add channel health monitoring dashboard with historical uptime data (outage history + root cause tracking)
+- [x] Build Stream Health Dashboard page with visual uptime timeline
+- [x] Show circuit breaker status and outage root cause classifications on dashboard
+- [x] Add historical uptime charts with 24-hour view
+- [x] Add automatic stream URL restoration when provider outages resolve
+- [x] Store original primary URLs before auto-heal overwrites them
+- [x] Auto-revert channels to primary URLs once they come back online
+- [x] Configure daily sunset email digest consolidating all channel health events
+- [x] Include uptime stats, healed channels, and outage summaries in email digest
+- [x] FIX: Meeting room disconnects when navigating to other pages
+- [x] Persist Jitsi meeting in background overlay when user browses other pages
+- [x] Add floating mini meeting indicator/PiP when away from meeting page

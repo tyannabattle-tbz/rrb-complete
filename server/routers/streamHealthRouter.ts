@@ -9,6 +9,7 @@ import {
   getLatestReport,
   getHealthHistory,
   getMonitorStatus,
+  getOutageHistory,
   startStreamHealthMonitor,
   stopStreamHealthMonitor,
 } from "../services/streamHealthMonitor";
@@ -67,6 +68,18 @@ export const streamHealthRouter = router({
         .filter(r => r.status === 'down')
         .map(r => ({ id: r.channelId, name: r.channelName, error: r.error })),
     };
+  }),
+
+  // Get outage history for root cause analysis
+  getOutages: publicProcedure.query(async () => {
+    return getOutageHistory().map(o => ({
+      timestamp: o.timestamp,
+      channelsAffected: o.channelsAffected,
+      totalChannels: o.totalChannels,
+      rootCause: o.rootCause,
+      details: o.details,
+      resolved: o.resolved,
+    }));
   }),
 
   // Start the automated monitor (admin only)

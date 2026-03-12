@@ -188,10 +188,14 @@ import WebhookManager from '@/pages/WebhookManager';
 import StudioControlRoom from '@/pages/StudioControlRoom';
 import ConventionHub from '@/pages/ConventionHub';
 import { OnboardingTour } from '@/components/OnboardingTour';
+import { MeetingProvider } from '@/contexts/MeetingContext';
+import { FloatingMeetingPiP } from '@/components/FloatingMeetingPiP';
+import { PersistentMeetingContainer } from '@/components/PersistentMeetingContainer';
 import RRBConferenceHub from '@/pages/RRBConferenceHub';
 import ConferenceRoom from '@/pages/ConferenceRoom';
 import QumusCommandConsole from '@/pages/QumusCommandConsole';
 import StreamAnalytics from '@/pages/StreamAnalytics';
+import StreamHealthDashboard from '@/pages/StreamHealthDashboard';
 import CommercialAnalytics from '@/pages/CommercialAnalytics';
 import SocialMediaKit from '@/pages/SocialMediaKit';
 import MediaBlastCampaign from '@/pages/MediaBlastCampaign';
@@ -402,6 +406,7 @@ function Router() {
       <Route path="/conference" component={RRBConferenceHub} />
       <Route path="/command-console" component={QumusCommandConsole} />
       <Route path="/stream-analytics" component={StreamAnalytics} />
+      <Route path="/stream-health" component={StreamHealthDashboard} />
       <Route path="/commercial-analytics" component={CommercialAnalytics} />
       <Route path="/social-media-kit" component={SocialMediaKit} />
       <Route path="/media-blast" component={MediaBlastCampaign} />
@@ -452,6 +457,7 @@ function App() {
         switchable
       >
         <PresetProvider>
+          <MeetingProvider>
           <TooltipProvider>
             <Toaster />
             <KeyboardShortcutsGuide />
@@ -479,12 +485,19 @@ function App() {
             {/* Mobile Bottom Navigation */}
             <MobileBottomNav />
             
+            {/* Persistent Meeting Container - stays alive across navigation */}
+            <PersistentMeetingContainer />
+            
+            {/* Floating PiP when in meeting but on another page */}
+            <FloatingMeetingPiP />
+            
             {/* Valanna - QUMUS AI Brain Voice Assistant */}
             <ValannaVoiceAssistant />
             
             {/* Getting Started Onboarding Tour */}
             <OnboardingTour />
           </TooltipProvider>
+          </MeetingProvider>
         </PresetProvider>
       </ThemeProvider>
     </ErrorBoundary>

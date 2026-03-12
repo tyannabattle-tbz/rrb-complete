@@ -11,6 +11,7 @@ import {
   Users, Calendar, Lock, Copy, Phone, Shield, Presentation,
   Eye, X, Circle, Square, Clock, Mic
 } from 'lucide-react';
+import { useMeeting } from '@/contexts/MeetingContext';
 
 // Available rooms for seamless transfer
 const ROOMS = [
@@ -53,8 +54,11 @@ export default function SquaddMeetingRoom() {
   const [activeRoom, setActiveRoom] = useState('squadd-main');
   const [showRoomPanel, setShowRoomPanel] = useState(false);
   const [jitsiRoom, setJitsiRoom] = useState<string | null>(null);
-  const jitsiContainerRef = useRef<HTMLDivElement>(null);
+  const localJitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
+  
+  // Persistent meeting context — keeps Jitsi alive across page navigation
+  const { meeting: persistentMeeting, joinMeeting, leaveMeeting: leavePersistentMeeting, switchRoom: switchPersistentRoom, jitsiContainerRef: persistentContainerRef } = useMeeting();
 
   // Recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -105,13 +109,13 @@ export default function SquaddMeetingRoom() {
   }, [user?.name, toast]);
 
   const initJitsiRoom = useCallback((roomId: string, displayName: string) => {
-    if (!jitsiContainerRef.current) return;
+    if (!localJitsiContainerRef.current) return;
     const loadAndCreate = () => {
       if (jitsiApiRef.current) return;
       try {
         const api = new (window as any).JitsiMeetExternalAPI('meet.jit.si', {
           roomName: `rrb-${roomId}`,
-          parentNode: jitsiContainerRef.current!,
+          parentNode: localJitsiContainerRef.current!,
           width: '100%',
           height: '100%',
           userInfo: { displayName },
@@ -180,15 +184,28 @@ export default function SquaddMeetingRoom() {
     }
   }, [toast]);
 
-  // Cleanup Jitsi on unmount
+  // NOTE: We no longer destroy Jitsi on unmount — the MeetingContext keeps it alive.
+  // Only clean up the local (non-persistent) Jitsi instance if it exists.
   React.useEffect(() => {
     return () => {
-      if (jitsiApiRef.current) {
+      // Don't destroy persistent meeting on page navigation
+      // Only clean up local refs
+      if (jitsiApiRef.current && !persistentMeeting.isInMeeting) {
         try { jitsiApiRef.current.dispose(); } catch {}
         jitsiApiRef.current = null;
       }
     };
-  }, []);
+  }, [persistentMeeting.isInMeeting]);
+
+  // Sync: when user joins a Jitsi room locally, also register it in persistent context
+  React.useEffect(() => {
+    if (jitsiRoom && !persistentMeeting.isInMeeting) {
+      const room = ROOMS.find(r => r.id === jitsiRoom);
+      if (room) {
+        joinMeeting(`rrb-${jitsiRoom}`, room.name);
+      }
+    }
+  }, [jitsiRoom]);
 
   // Recording mutations
   const startRecordingMutation = trpc.videoManagement.startRecording.useMutation();
@@ -408,13 +425,14 @@ export default function SquaddMeetingRoom() {
                   }
                   setJitsiRoom(null);
                   setActiveRoom('squadd-main');
+                  leavePersistentMeeting();
                 }}
               >
                 <X className="w-3 h-3 mr-1" /> Leave Room
               </Button>
             </div>
           </div>
-          <div ref={jitsiContainerRef} className="flex-1" />
+          <div ref={localJitsiContainerRef} className="flex-1" />
         </div>
       )}
 
