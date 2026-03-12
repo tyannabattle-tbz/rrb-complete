@@ -98,6 +98,8 @@ interface ChannelData {
   genre: string;
   frequency: string;
   streamUrl: string;
+  fallbackUrl?: string;
+  metadata?: Record<string, any>;
   icon: string;
   color: string;
   description: string;
@@ -116,6 +118,8 @@ function mapDbChannelToLocal(dbCh: any): ChannelData {
     genre: dbCh.genre || 'General',
     frequency: dbCh.frequency || '432 Hz',
     streamUrl: dbCh.streamUrl,
+    fallbackUrl: meta.fallbackUrl || undefined,
+    metadata: meta,
     icon: meta.icon || CHANNEL_ICONS[dbCh.name] || '📻',
     color: CHANNEL_COLORS[dbCh.name] || 'from-gray-600 to-gray-700',
     description: meta.description || dbCh.name,

@@ -27,10 +27,12 @@ interface RadioChannel {
   genre?: string;
   frequency?: string;
   streamUrl: string;
+  fallbackUrl?: string;
   nowPlaying?: string;
   description?: string;
   listeners?: number;
   category?: string;
+  metadata?: Record<string, any>;
 }
 
 interface RadioState {
@@ -67,6 +69,7 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const retryCountRef = useRef(0);
+  const triedFallbackRef = useRef(false);
   const maxRetries = 3;
 
   const [radio, setRadio] = useState<RadioState>({
@@ -129,7 +132,6 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
       retryCountRef.current += 1;
       if (retryCountRef.current <= maxRetries) {
         setRadio(prev => ({ ...prev, status: 'reconnecting', errorMessage: `Reconnecting (${retryCountRef.current}/${maxRetries})...` }));
-        // Retry after a short delay
         setTimeout(() => {
           if (audioRef.current && audioRef.current.src) {
             const currentSrc = audioRef.current.src;
@@ -138,6 +140,24 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
             audioRef.current.play().catch(() => {});
           }
         }, 2000 * retryCountRef.current);
+      } else if (!triedFallbackRef.current) {
+        // Try fallback stream URL from channel metadata
+        setRadio(prev => {
+          const fallback = prev.channel?.fallbackUrl || prev.channel?.metadata?.fallbackUrl;
+          if (fallback) {
+            triedFallbackRef.current = true;
+            retryCountRef.current = 0;
+            console.log(`[Radio] Primary stream failed, switching to fallback: ${fallback}`);
+            setTimeout(() => {
+              if (audioRef.current) {
+                audioRef.current.src = getProxiedStreamUrl(fallback);
+                audioRef.current.play().catch(() => {});
+              }
+            }, 500);
+            return { ...prev, status: 'reconnecting', errorMessage: 'Switching to backup stream...' };
+          }
+          return { ...prev, isPlaying: false, status: 'error', errorMessage: 'Stream unavailable. Try another channel.' };
+        });
       } else {
         setRadio(prev => ({ ...prev, isPlaying: false, status: 'error', errorMessage: 'Stream unavailable. Try another channel.' }));
       }
@@ -161,6 +181,7 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
     if (!audio) return;
 
     retryCountRef.current = 0;
+    triedFallbackRef.current = false;
     setRadio(prev => ({ ...prev, channel, status: 'loading', errorMessage: undefined }));
 
     audio.pause();
