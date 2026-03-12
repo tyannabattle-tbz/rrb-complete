@@ -1684,6 +1684,51 @@ export const conferenceRouter = router({
     return { reminded, started, checkedAt: now.toISOString() };
   }),
 
+  // === MEETING PRESENTATIONS ===
+  uploadPresentation: protectedProcedure
+    .input(z.object({
+      roomCode: z.string().default('squadd-main'),
+      title: z.string(),
+      filename: z.string(),
+      fileBase64: z.string(),
+      mimeType: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const db = await getDb();
+      const { storagePut } = await import('../storage');
+      const buffer = Buffer.from(input.fileBase64, 'base64');
+      const suffix = Math.random().toString(36).substring(2, 10);
+      const fileKey = `meeting-presentations/${input.roomCode}/${suffix}-${input.filename}`;
+      const { url } = await storagePut(fileKey, buffer, input.mimeType);
+      await db.execute(sql`INSERT INTO meeting_presentations (room_code, title, filename, file_url, file_key, file_size, mime_type, uploaded_by, uploaded_by_name) VALUES (${input.roomCode}, ${input.title}, ${input.filename}, ${url}, ${fileKey}, ${buffer.length}, ${input.mimeType}, ${ctx.user.id}, ${ctx.user.name})`);
+      return { success: true, url, filename: input.filename };
+    }),
+
+  listPresentations: publicProcedure
+    .input(z.object({ roomCode: z.string().default('squadd-main') }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      const [rows] = await db.execute(sql`SELECT id, title, filename, file_url, file_size, mime_type, uploaded_by_name, created_at FROM meeting_presentations WHERE room_code = ${input.roomCode} ORDER BY created_at DESC`);
+      return (rows as any[]).map(r => ({
+        id: r.id,
+        title: r.title,
+        filename: r.filename,
+        fileUrl: r.file_url,
+        fileSize: r.file_size,
+        mimeType: r.mime_type,
+        uploadedBy: r.uploaded_by_name,
+        createdAt: r.created_at,
+      }));
+    }),
+
+  deletePresentation: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      await db.execute(sql`DELETE FROM meeting_presentations WHERE id = ${input.id}`);
+      return { success: true };
+    }),
+
   getRestreamAnalytics: protectedProcedure.query(async () => {
     const db = await getDb();
     const [totalStreams] = await db.execute(sql`SELECT COUNT(*) as count FROM conferences WHERE restream_active = 1 OR restream_ended_at IS NOT NULL`);

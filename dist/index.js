@@ -143,6 +143,7 @@ __export(schema_exports, {
   listeners: () => listeners,
   mediaDistribution: () => mediaDistribution,
   mediaProjects: () => mediaProjects,
+  meetingPresentations: () => meetingPresentations,
   memoryStore: () => memoryStore,
   messages: () => messages,
   modelComparisons: () => modelComparisons,
@@ -246,7 +247,7 @@ __export(schema_exports, {
   wellnessCheckins: () => wellnessCheckins
 });
 import { mysqlTable, int, varchar, mysqlEnum, timestamp, decimal, text, json, bigint, index, tinyint, date } from "drizzle-orm/mysql-core";
-var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing, systemConfig;
+var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, meetingPresentations, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing, systemConfig;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
     accountingInvoices = mysqlTable("accounting_invoices", {
@@ -901,6 +902,20 @@ var init_schema = __esm({
       restreamStartedAt: timestamp("restream_started_at", { mode: "string" }),
       restreamEndedAt: timestamp("restream_ended_at", { mode: "string" }),
       restreamPlatforms: text("restream_platforms")
+    });
+    meetingPresentations = mysqlTable("meeting_presentations", {
+      id: int().autoincrement().notNull(),
+      conferenceId: int("conference_id").references(() => conferences.id, { onDelete: "cascade" }),
+      roomCode: varchar("room_code", { length: 100 }),
+      title: varchar({ length: 500 }).notNull(),
+      filename: varchar({ length: 500 }).notNull(),
+      fileUrl: text("file_url").notNull(),
+      fileKey: text("file_key").notNull(),
+      fileSize: int("file_size"),
+      mimeType: varchar("mime_type", { length: 100 }),
+      uploadedBy: int("uploaded_by").references(() => users.id, { onDelete: "set null" }),
+      uploadedByName: varchar("uploaded_by_name", { length: 255 }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
     });
     contentListenerHistory = mysqlTable("content_listener_history", {
       id: int().autoincrement().notNull(),
@@ -20979,6 +20994,42 @@ A Voice for the Voiceless`
       started++;
     }
     return { reminded, started, checkedAt: now.toISOString() };
+  }),
+  // === MEETING PRESENTATIONS ===
+  uploadPresentation: protectedProcedure.input(z44.object({
+    roomCode: z44.string().default("squadd-main"),
+    title: z44.string(),
+    filename: z44.string(),
+    fileBase64: z44.string(),
+    mimeType: z44.string()
+  })).mutation(async ({ ctx, input }) => {
+    const db2 = await getDb();
+    const { storagePut: storagePut2 } = await Promise.resolve().then(() => (init_storage(), storage_exports));
+    const buffer = Buffer.from(input.fileBase64, "base64");
+    const suffix = Math.random().toString(36).substring(2, 10);
+    const fileKey = `meeting-presentations/${input.roomCode}/${suffix}-${input.filename}`;
+    const { url } = await storagePut2(fileKey, buffer, input.mimeType);
+    await db2.execute(sql11`INSERT INTO meeting_presentations (room_code, title, filename, file_url, file_key, file_size, mime_type, uploaded_by, uploaded_by_name) VALUES (${input.roomCode}, ${input.title}, ${input.filename}, ${url}, ${fileKey}, ${buffer.length}, ${input.mimeType}, ${ctx.user.id}, ${ctx.user.name})`);
+    return { success: true, url, filename: input.filename };
+  }),
+  listPresentations: publicProcedure.input(z44.object({ roomCode: z44.string().default("squadd-main") })).query(async ({ input }) => {
+    const db2 = await getDb();
+    const [rows] = await db2.execute(sql11`SELECT id, title, filename, file_url, file_size, mime_type, uploaded_by_name, created_at FROM meeting_presentations WHERE room_code = ${input.roomCode} ORDER BY created_at DESC`);
+    return rows.map((r) => ({
+      id: r.id,
+      title: r.title,
+      filename: r.filename,
+      fileUrl: r.file_url,
+      fileSize: r.file_size,
+      mimeType: r.mime_type,
+      uploadedBy: r.uploaded_by_name,
+      createdAt: r.created_at
+    }));
+  }),
+  deletePresentation: protectedProcedure.input(z44.object({ id: z44.number() })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    await db2.execute(sql11`DELETE FROM meeting_presentations WHERE id = ${input.id}`);
+    return { success: true };
   }),
   getRestreamAnalytics: protectedProcedure.query(async () => {
     const db2 = await getDb();

@@ -689,6 +689,21 @@ export const conferences = mysqlTable("conferences", {
 	restreamPlatforms: text("restream_platforms"),
 });
 
+export const meetingPresentations = mysqlTable("meeting_presentations", {
+	id: int().autoincrement().notNull(),
+	conferenceId: int("conference_id").references(() => conferences.id, { onDelete: "cascade" }),
+	roomCode: varchar("room_code", { length: 100 }),
+	title: varchar({ length: 500 }).notNull(),
+	filename: varchar({ length: 500 }).notNull(),
+	fileUrl: text("file_url").notNull(),
+	fileKey: text("file_key").notNull(),
+	fileSize: int("file_size"),
+	mimeType: varchar("mime_type", { length: 100 }),
+	uploadedBy: int("uploaded_by").references(() => users.id, { onDelete: "set null" }),
+	uploadedByName: varchar("uploaded_by_name", { length: 255 }),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
 export const contentListenerHistory = mysqlTable("content_listener_history", {
 	id: int().autoincrement().notNull(),
 	contentId: int().notNull().references(() => rockinBoogieContent.id, { onDelete: "cascade" } ),

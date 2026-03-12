@@ -4083,3 +4083,17 @@
 - [x] Implement automatic failover/redirect when radio is down
 - [ ] Add QUMUS auto-detection and self-healing for radio outages
 - [ ] Ensure radio page redirects to backup (HybridCast or local) when streams are down
+- [ ] Set up SQUADD Zoom as permanent meeting room in ecosystem
+- [ ] Store Zoom meeting details (ID: 82026499318, Passcode: 597456, URL, phone dial-ins)
+- [ ] Add SQUADD Meeting Room page/section with one-click join
+- [ ] Update VITE_ZOOM_URL env with the permanent Zoom link
+- [x] Build /status real-time health page for 54 channels + services
+- [ ] Verify Discord webhook admin UI is functional
+- [ ] Confirm Twitter token guidance is clear
+- [ ] Add presentation upload capability to SQUADD meeting room
+- [ ] Server-side tRPC procedures for file upload to S3
+- [ ] Presentation viewer/gallery in meeting room
+- [ ] Zoom passcode only visible to authenticated/panel members (not public)
+- [x] Seamless room-to-room transfer without disconnection
+- [x] Multi-room navigation panel in meeting room
+- [x] Persistent audio/video connection during room switch

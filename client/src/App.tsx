@@ -153,6 +153,7 @@ import { BreadcrumbNavigation } from '@/components/BreadcrumbNavigation';
 import { MobileNavigationDrawer } from '@/components/MobileNavigationDrawer';
 import SquaddGoals from '@/pages/SquaddGoals';
 import SquaddMemberProfile from '@/pages/SquaddMemberProfile';
+import SquaddMeetingRoom from '@/pages/SquaddMeetingRoom';
 import SelmaEvent from '@/pages/SelmaEvent';
 import LiveStreamPage from '@/pages/LiveStreamPage';
 import InteractiveFlyer from '@/pages/InteractiveFlyer';
@@ -207,6 +208,7 @@ import CandysCornerPodcast from '@/pages/CandysCornerPodcast';
 import SolbonesPodcast from '@/pages/SolbonesPodcast';
 import AroundTheQumUnityPodcast from '@/pages/AroundTheQumUnityPodcast';
 import EcosystemPresentation from '@/pages/EcosystemPresentation';
+import SystemStatusPage from '@/pages/SystemStatusPage';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -347,6 +349,9 @@ function Router() {
       <Route path="/audit" component={AuditTrailPage} />
       <Route path="/commands" component={CommandCenterPage} />
       <Route path="/health" component={SystemHealthPage} />
+      <Route path="/status" component={SystemStatusPage} />
+      <Route path="/squadd/meeting" component={SquaddMeetingRoom} />
+      <Route path="/meeting" component={SquaddMeetingRoom} />
       <Route path="/squadd" component={SquaddGoals} />
       <Route path="/squadd/:slug" component={SquaddMemberProfile} />
       <Route path="/ty-battle" component={TyBattleProfile} />
