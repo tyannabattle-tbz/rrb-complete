@@ -38,12 +38,12 @@ const PLATFORMS = [
 
 // ─── Quick Start Templates ─────────────────────
 const QUICK_TEMPLATES = [
-  { title: 'SQUADD Strategy Session', type: 'meeting' as const, platform: 'rrb_builtin' as const, desc: 'SQUADD Goals planning', duration: 60 },
-  { title: 'RRB Production Meeting', type: 'meeting' as const, platform: 'rrb_builtin' as const, desc: 'Canryn Production team sync', duration: 45 },
-  { title: 'Sweet Miracles Fundraiser', type: 'webinar' as const, platform: 'rrb_builtin' as const, desc: 'Donation drive webinar', duration: 90 },
-  { title: 'HybridCast Emergency Drill', type: 'broadcast' as const, platform: 'rrb_builtin' as const, desc: 'Emergency broadcast test', duration: 30 },
-  { title: 'UN CSW70 Prep Call', type: 'conference' as const, platform: 'rrb_builtin' as const, desc: 'Pre-conference planning', duration: 120 },
-  { title: 'DJ Workshop', type: 'workshop' as const, platform: 'rrb_builtin' as const, desc: 'AI DJ training session', duration: 180 },
+  { title: 'SQUADD Strategy Session', type: 'meeting' as const, platform: 'zoom' as const, desc: 'SQUADD Goals planning', duration: 60, conferenceId: 30001 },
+  { title: 'RRB Production Meeting', type: 'meeting' as const, platform: 'zoom' as const, desc: 'Canryn Production team sync', duration: 45, conferenceId: 3 },
+  { title: 'Sweet Miracles Fundraiser', type: 'webinar' as const, platform: 'zoom' as const, desc: 'Donation drive webinar', duration: 90, conferenceId: 3 },
+  { title: 'HybridCast Emergency Drill', type: 'broadcast' as const, platform: 'zoom' as const, desc: 'Emergency broadcast test', duration: 30, conferenceId: 3 },
+  { title: 'UN CSW70 Prep Call', type: 'conference' as const, platform: 'zoom' as const, desc: 'Pre-conference planning', duration: 120, conferenceId: 4 },
+  { title: 'DJ Workshop', type: 'workshop' as const, platform: 'zoom' as const, desc: 'AI DJ training session', duration: 180, conferenceId: 3 },
 ];
 
 type TabType = 'dashboard' | 'create' | 'scheduled' | 'csw70';
@@ -120,12 +120,8 @@ export default function RRBConferenceHub() {
       toast.success('Conference created!');
       utils.conference.getConferences.invalidate();
       utils.conference.getStats.invalidate();
-      if (data.platform === 'rrb_builtin') {
-        navigate(`/conference/room/${data.id}`);
-      } else if (data.externalUrl) {
-        window.open(data.externalUrl, '_blank');
-        setActiveTab('dashboard');
-      }
+      // Always navigate to the conference room page — it handles Zoom redirect
+      navigate(`/conference/room/${data.id}`);
       resetForm();
     },
     onError: (err: any) => toast.error(err.message),
@@ -214,17 +210,23 @@ export default function RRBConferenceHub() {
   };
 
   const handleQuickStart = (template: typeof QUICK_TEMPLATES[0]) => {
-    if (!user) { toast.error('Please log in to create a conference'); return; }
-    createMutation.mutate({
-      title: template.title,
-      description: template.desc,
-      meetingType: template.type,
-      platform: template.platform,
-      durationMinutes: template.duration,
-      maxAttendees: 100,
-      closedCaptions: true,
-      recording: true,
-    });
+    // Navigate directly to the conference room (no login required)
+    if (template.conferenceId) {
+      navigate(`/conference/room/${template.conferenceId}`);
+    } else if (user) {
+      createMutation.mutate({
+        title: template.title,
+        description: template.desc,
+        meetingType: template.type,
+        platform: template.platform,
+        durationMinutes: template.duration,
+        maxAttendees: 100,
+        closedCaptions: true,
+        recording: true,
+      });
+    } else {
+      toast.error('Please log in to create a conference');
+    }
   };
 
   const handleQuickJoin = () => {
@@ -377,27 +379,9 @@ export default function RRBConferenceHub() {
                       <Copy className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> <span className="text-xs sm:text-sm">Copy Code</span>
                     </Button>
                     <Button
+                      type="button"
                       className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-3 sm:px-6"
-                      onClick={async () => {
-                        try {
-                          // Seed/reset the test conference
-                          const result = await fetch('/api/trpc/conference.seedTestConference', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
-                          const data = await result.json();
-                          const confId = data?.result?.data?.id;
-                          if (confId) {
-                            navigate(`/conference/room/${confId}`);
-                          } else {
-                            // Fallback: try to get the test conference
-                            const getResult = await fetch('/api/trpc/conference.getTestConference');
-                            const getData = await getResult.json();
-                            const testId = getData?.result?.data?.id;
-                            if (testId) navigate(`/conference/room/${testId}`);
-                            else toast.error('Could not load test room. Try again.');
-                          }
-                        } catch (err) {
-                          toast.error('Failed to enter test room');
-                        }
-                      }}
+                      onClick={() => navigate('/conference/room/3')}
                     >
                       <Video className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> <span className="text-xs sm:text-sm">Enter Room</span>
                     </Button>
