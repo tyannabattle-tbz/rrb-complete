@@ -20299,7 +20299,7 @@ var conferenceRouter = router({
     title: z44.string().min(1).max(255),
     description: z44.string().optional(),
     meetingType: z44.enum(["huddle", "meeting", "conference", "webinar", "broadcast", "workshop"]).default("meeting"),
-    platform: z44.enum(["rrb_builtin", "zoom", "google_meet", "discord", "skype", "rrb_broadcast"]).default("rrb_builtin"),
+    platform: z44.enum(["rrb_builtin", "zoom", "google_meet", "discord", "skype", "rrb_broadcast"]).default("zoom"),
     scheduledAt: z44.number().optional(),
     durationMinutes: z44.number().min(5).max(480).default(60),
     maxAttendees: z44.number().min(1).max(1e4).default(100),
@@ -20482,7 +20482,7 @@ var conferenceRouter = router({
     title: z44.string().min(1).max(255),
     description: z44.string().optional(),
     meetingType: z44.enum(["huddle", "meeting", "conference", "webinar", "broadcast", "workshop"]).default("meeting"),
-    platform: z44.enum(["rrb_builtin", "zoom", "google_meet", "discord", "skype", "rrb_broadcast"]).default("rrb_builtin"),
+    platform: z44.enum(["rrb_builtin", "zoom", "google_meet", "discord", "skype", "rrb_broadcast"]).default("zoom"),
     durationMinutes: z44.number().min(5).max(480).default(60),
     maxAttendees: z44.number().min(1).max(1e4).default(100),
     recurrencePattern: z44.enum(["daily", "weekly", "biweekly", "monthly"]).default("weekly"),
@@ -20694,7 +20694,7 @@ Room: ${conf.room_code}
     }
     await db2.execute(sql11`
       INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, status, is_recurring, recurrence_pattern, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
-      VALUES ('RRB Conference Test Room', 'Permanent test conference room for the Canryn Production ecosystem. Always available for testing, demos, and walk-throughs. Powered by QUMUS autonomous orchestration.', 'meeting', 'jitsi', 1, 'QUMUS System', 'rrb-TESTROOM001', NULL, NULL, 480, 1000, 'live', false, NULL, true, true, 0, 'none', NOW(), NOW())
+      VALUES ('RRB Conference Test Room', 'Permanent test conference room for the Canryn Production ecosystem. Always available for testing, demos, and walk-throughs. Powered by QUMUS autonomous orchestration.', 'meeting', 'zoom', 1, 'QUMUS System', 'rrb-TESTROOM001', ${process.env.VITE_ZOOM_URL || "https://us06web.zoom.us/j/82026499318?pwd=QlaG26b1nnkvuHTX2dgTDaY583luUm.1"}, NULL, 480, 1000, 'live', false, NULL, true, true, 0, 'none', NOW(), NOW())
     `);
     const [result2] = await db2.execute(sql11`SELECT LAST_INSERT_ID() as id`);
     const conferenceId = result2[0]?.id;

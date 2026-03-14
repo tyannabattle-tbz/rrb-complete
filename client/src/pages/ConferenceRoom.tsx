@@ -550,12 +550,19 @@ export default function ConferenceRoom() {
     }
   };
 
-  // Only init Jitsi after leaving lobby
+  // Only init Jitsi after leaving lobby — or redirect to Zoom
   useEffect(() => {
     if (conference && !inLobby) {
       // Register join in backend
       if (user) {
         joinMutation.mutate({ conferenceId });
+      }
+      // If platform is Zoom, open Zoom directly instead of Jitsi
+      if (conference.platform === 'zoom' && conference.external_url) {
+        window.open(conference.external_url, '_blank');
+        toast.success('Opening Zoom meeting — you can close this tab or stay for conference tools.');
+        setJitsiReady(true); // Show the room UI with tools
+        return;
       }
       initJitsi();
     }
@@ -640,8 +647,41 @@ export default function ConferenceRoom() {
     );
   }
 
-  // ─── Pre-Join Lobby ───
+  // ─── Pre-Join Lobby (skip for Zoom — go directly) ───
   if (inLobby) {
+    // For Zoom conferences, skip the lobby and open Zoom immediately
+    if (conference?.platform === 'zoom' && conference?.external_url) {
+      return (
+        <div className="min-h-screen bg-gradient-to-b from-gray-950 to-black flex items-center justify-center p-4">
+          <div className="w-full max-w-md text-center space-y-6">
+            <div className="w-20 h-20 rounded-full bg-amber-600/20 flex items-center justify-center mx-auto">
+              <ExternalLink className="w-10 h-10 text-amber-400" />
+            </div>
+            <h1 className="text-2xl font-bold text-white">{conference.title}</h1>
+            <p className="text-white/60">This conference is hosted on Zoom. Click below to join.</p>
+            <Button
+              onClick={() => {
+                if (user) joinMutation.mutate({ conferenceId });
+                window.open(conference.external_url, '_blank');
+                toast.success('Opening Zoom meeting...');
+                setInLobby(false);
+              }}
+              className="w-full h-14 bg-amber-600 hover:bg-amber-700 text-white text-lg font-semibold"
+            >
+              Join Zoom Meeting
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/conference')}
+              className="w-full border-gray-700 text-white/60 hover:text-white"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" /> Back to Conference Hub
+            </Button>
+            <p className="text-white/30 text-xs">Meeting ID: {conference.room_code}</p>
+          </div>
+        </div>
+      );
+    }
     return (
       <PreJoinLobby
         conference={conference}
@@ -1030,7 +1070,7 @@ export default function ConferenceRoom() {
                 <Button onClick={() => { setConnectionError(null); jitsiApiRef.current = null; initJitsi(); }} variant="outline" className="border-amber-500 text-amber-400">
                   Retry
                 </Button>
-                <Button onClick={() => { window.open('https://us06web.zoom.us/j/82026499318?pwd=QlaG26b1nnkvuHTX2dgTDaY583luUm.1', '_blank'); }} className="bg-amber-600 hover:bg-amber-700 text-white">
+                <Button onClick={() => { window.open(conference?.external_url || 'https://us06web.zoom.us/j/82026499318?pwd=QlaG26b1nnkvuHTX2dgTDaY583luUm.1', '_blank'); }} className="bg-amber-600 hover:bg-amber-700 text-white">
                   Open in Zoom
                 </Button>
               </div>

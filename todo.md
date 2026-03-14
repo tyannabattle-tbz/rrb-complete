@@ -4316,3 +4316,12 @@
 - [x] All 54 channels unique, zero duplicates
 - [x] Meeting rooms all point to Zoom — no more Jitsi login wall
 - [x] Restream confirmed operational (not add-on)
+
+## Conference Room Fix — March 14, 2026
+- [ ] Fix conference room entry process — login + join not working
+- [ ] Verify room join flow works end-to-end
+- [x] Fix conference room entry - all 6 conferences now use Zoom platform with direct URL
+- [x] ConferenceRoom component shows "Join Zoom Meeting" page instead of Jitsi login wall
+- [x] New conferences default to Zoom platform
+- [x] seedTestConference creates with Zoom platform and URL
+- [x] SquaddMeetingRoom all 5 rooms confirmed type: zoom
