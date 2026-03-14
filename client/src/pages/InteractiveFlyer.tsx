@@ -719,11 +719,11 @@ export default function InteractiveFlyer() {
               className={`cursor-pointer transition-all hover:scale-[1.02] hover:shadow-xl group ${highContrast ? 'bg-gray-900 border-yellow-400 hover:border-yellow-300' : 'bg-slate-800/60 border-purple-500/20 hover:border-purple-500/50 hover:shadow-purple-500/10'}`}
               onClick={() => {
                 if (link.external) window.open(link.path, '_blank');
-                else window.location.href = link.path;
+                else setLocation(link.path);
               }}
               role="listitem"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.location.href = link.path; } }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (link.external) window.open(link.path, '_blank'); else setLocation(link.path); } }}
               aria-label={`${link.title} — ${link.description}`}
             >
               <CardContent className="p-4">

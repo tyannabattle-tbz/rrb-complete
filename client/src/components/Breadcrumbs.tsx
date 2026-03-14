@@ -8,7 +8,7 @@ interface BreadcrumbItem {
 }
 
 export function Breadcrumbs() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
 
   // Map routes to breadcrumb labels
   const routeBreadcrumbs: Record<string, BreadcrumbItem[]> = {
@@ -73,7 +73,7 @@ export function Breadcrumbs() {
               variant="ghost"
               size="sm"
               className="h-auto p-0 text-muted-foreground hover:text-foreground"
-              onClick={() => (window.location.href = item.path)}
+              onClick={() => navigate(item.path)}
             >
               {item.label}
             </Button>

@@ -3,6 +3,7 @@ import { useFeatureAccess, useSubscription } from '@/hooks/useSubscription';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lock } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 interface FeatureGateProps {
   feature: 'voiceCommands' | 'arVisualization' | 'customBranding' | 'advancedAnalytics' | 'apiAccess' | 'prioritySupport' | 'unlimitedBroadcasts' | 'meshNetworking' | 'slaGuarantee';
@@ -13,6 +14,7 @@ interface FeatureGateProps {
 
 export function FeatureGate({ feature, children, fallback, showUpgradePrompt = true }: FeatureGateProps) {
   const hasAccess = useFeatureAccess(feature);
+  const [, navigate] = useLocation();
   const { tier } = useSubscription();
 
   if (hasAccess) {
@@ -54,13 +56,13 @@ export function FeatureGate({ feature, children, fallback, showUpgradePrompt = t
           </div>
           <div className="flex gap-2 justify-center">
             <Button
-              onClick={() => window.location.href = '/pricing/qumus'}
+              onClick={() => navigate('/pricing/qumus')}
               className="bg-cyan-600 hover:bg-cyan-700 text-white"
             >
               View Pricing
             </Button>
             <Button
-              onClick={() => window.location.href = '/pricing/hybridcast'}
+              onClick={() => navigate('/pricing/hybridcast')}
               variant="outline"
               className="border-slate-600 text-slate-300"
             >

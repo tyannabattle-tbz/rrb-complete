@@ -152,7 +152,7 @@ export function MobileNavigationDrawer() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  window.location.href = '/';
+                  navigate('/');
                   setOpen(false);
                 }}
                 className="w-full justify-start gap-3 text-sm"
@@ -165,7 +165,7 @@ export function MobileNavigationDrawer() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  window.location.href = '/';
+                  navigate('/');
                   setOpen(false);
                 }}
                 className="w-full justify-start gap-3 text-sm"

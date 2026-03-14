@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AccessibleVideoPlayer from '@/components/AccessibleVideoPlayer';
 import { useToast } from '@/hooks/use-toast';
 import { Share2, Download, Copy, Calendar, Twitter, Instagram, MessageCircle, Earth, Radio, Megaphone, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 const CAMPAIGN_GRAPHICS = [
   {
@@ -377,6 +378,7 @@ function ScheduledPostsDashboard() {
 
 export default function SocialMediaKit() {
   const { toast } = useToast();
+  const [, navigate] = useLocation();
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const copyToClipboard = (text: string, id: string) => {
@@ -606,7 +608,7 @@ export default function SocialMediaKit() {
               <Radio className="h-8 w-8 text-purple-400 mx-auto mb-3" />
               <h3 className="font-bold text-white mb-2">Live Radio</h3>
               <p className="text-sm text-gray-400 mb-3">54 channels broadcasting 24/7</p>
-              <Button size="sm" variant="outline" className="border-purple-500/50 text-purple-400" onClick={() => window.location.href = '/live'}>
+              <Button size="sm" variant="outline" className="border-purple-500/50 text-purple-400" onClick={() => navigate('/live')}>
                 Go to /live
               </Button>
             </CardContent>
@@ -616,7 +618,7 @@ export default function SocialMediaKit() {
               <Megaphone className="h-8 w-8 text-amber-400 mx-auto mb-3" />
               <h3 className="font-bold text-white mb-2">Commercial Analytics</h3>
               <p className="text-sm text-gray-400 mb-3">Track campaign impressions and CTR</p>
-              <Button size="sm" variant="outline" className="border-amber-500/50 text-amber-400" onClick={() => window.location.href = '/commercial-analytics'}>
+              <Button size="sm" variant="outline" className="border-amber-500/50 text-amber-400" onClick={() => navigate('/commercial-analytics')}>
                 View Analytics
               </Button>
             </CardContent>
@@ -626,7 +628,7 @@ export default function SocialMediaKit() {
               <Earth className="h-8 w-8 text-blue-400 mx-auto mb-3" />
               <h3 className="font-bold text-white mb-2">Campaign Page</h3>
               <p className="text-sm text-gray-400 mb-3">Full Selma to UN campaign story</p>
-              <Button size="sm" variant="outline" className="border-blue-500/50 text-blue-400" onClick={() => window.location.href = '/selma-jubilee'}>
+              <Button size="sm" variant="outline" className="border-blue-500/50 text-blue-400" onClick={() => navigate('/selma')}>
                 View Campaign
               </Button>
             </CardContent>

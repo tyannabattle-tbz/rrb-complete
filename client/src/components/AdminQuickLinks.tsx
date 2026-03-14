@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Radio, Heart, Zap, Settings, ExternalLink } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 interface QuickLink {
   id: string;
@@ -13,6 +14,7 @@ interface QuickLink {
 }
 
 export function AdminQuickLinks() {
+  const [, navigate] = useLocation();
   const quickLinks: QuickLink[] = [
     {
       id: 'hybridcast',
@@ -90,7 +92,7 @@ export function AdminQuickLinks() {
             </CardHeader>
             <CardContent>
               <Button
-                onClick={() => window.location.href = link.url}
+                onClick={() => navigate(link.url)}
                 className="w-full bg-slate-700 hover:bg-slate-600 text-white border border-slate-600"
               >
                 Open

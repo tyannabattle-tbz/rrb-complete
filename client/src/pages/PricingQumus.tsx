@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { FeatureGate } from '@/components/FeatureGate';
 import { useAuth } from '@/lib/auth';
+import { useLocation } from 'wouter';
 
 const tiers = [
   {
@@ -92,12 +93,13 @@ const featureLabels = {
 
 export default function PricingQumus() {
   const { user } = useAuth();
+  const [, navigate] = useLocation();
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
   const handleCheckout = (tier: string) => {
     if (tier === 'Free') {
       // Redirect to signup or dashboard
-      window.location.href = '/';
+      navigate('/');
     } else {
       // Trigger Stripe checkout
       setSelectedTier(tier);

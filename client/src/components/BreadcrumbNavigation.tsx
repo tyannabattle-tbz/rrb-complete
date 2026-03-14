@@ -9,7 +9,7 @@ interface BreadcrumbItem {
 }
 
 export function BreadcrumbNavigation() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
 
   // Generate breadcrumbs from current path
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
@@ -50,7 +50,7 @@ export function BreadcrumbNavigation() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => window.location.href = crumb.path}
+                onClick={() => navigate(crumb.path)}
                 className="gap-1 text-xs h-7 px-2"
               >
                 <Home className="w-3 h-3" />
@@ -67,7 +67,7 @@ export function BreadcrumbNavigation() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => window.location.href = crumb.path}
+                    onClick={() => navigate(crumb.path)}
                     className="text-xs h-7 px-2"
                   >
                     {crumb.label}

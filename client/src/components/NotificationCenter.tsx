@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Bell, X, Check, Trash2 } from "lucide-react";
+import { useLocation } from 'wouter';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -81,13 +82,15 @@ export default function NotificationCenter({
     toast.success("All notifications marked as read");
   };
 
+  const [, navigate] = useLocation();
+
   const handleNotificationClick = (notification: Notification) => {
     handleMarkAsRead(notification.id);
     if (onNotificationClick) {
       onNotificationClick(notification);
     }
     if (notification.actionUrl) {
-      window.location.href = notification.actionUrl;
+      navigate(notification.actionUrl);
     }
   };
 

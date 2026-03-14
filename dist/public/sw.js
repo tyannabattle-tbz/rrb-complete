@@ -1,35 +1,34 @@
-// Use daily date-based cache name to force updates on each build
-const CACHE_VERSION = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+// Force cache bust on every deployment
+const CACHE_VERSION = 'v2-' + new Date().toISOString().split('T')[0];
 const CACHE_NAME = `qumus-${CACHE_VERSION}`;
-const RUNTIME_CACHE = `qumus-runtime-${CACHE_VERSION}`;
 
 const ASSETS_TO_CACHE = [
   '/',
-  '/index.html',
   '/manifest.json',
 ];
 
-// Install event - cache assets
+// Install event - cache essential assets only
 self.addEventListener('install', (event) => {
   console.log('[QUMUS SW] Installing with cache:', CACHE_NAME);
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[QUMUS SW] Caching assets');
+      console.log('[QUMUS SW] Caching essential assets');
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
+  // Force immediate activation
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up ALL old caches immediately
 self.addEventListener('activate', (event) => {
   console.log('[QUMUS SW] Activating with cache:', CACHE_NAME);
   event.waitUntil(
     caches.keys().then((cacheNames) => {
-      console.log('[QUMUS SW] Found caches:', cacheNames);
+      console.log('[QUMUS SW] Cleaning up old caches:', cacheNames);
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE && (cacheName.startsWith('rrb-') || cacheName.startsWith('qumus-') || cacheName.startsWith('hybridcast-'))) {
+          if (cacheName !== CACHE_NAME) {
             console.log('[QUMUS SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
@@ -37,10 +36,11 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  // Take control of all pages immediately
   self.clients.claim();
 });
 
-// Fetch event - network first, fallback to cache
+// Fetch event - NETWORK FIRST for everything
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
@@ -54,51 +54,38 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network first strategy for API calls
+  // Skip API calls entirely - always go to network, no caching
   if (request.url.includes('/api/')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cache successful responses
-          if (response.ok) {
-            const cache = caches.open(RUNTIME_CACHE);
-            cache.then((c) => c.put(request, response.clone()));
-          }
-          return response;
-        })
-        .catch(() => {
-          // Fallback to cache if offline
-          return caches.match(request).then((cached) => {
-            if (cached) {
-              console.log('[SW] Serving from cache:', request.url);
-              return cached;
-            }
-            return new Response('Offline', { status: 503 });
-          });
-        })
-    );
     return;
   }
 
-  // Cache first strategy for static assets
+  // NETWORK FIRST for all resources (HTML, JS, CSS, images)
   event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) {
-        return cached;
-      }
-
-      return fetch(request).then((response) => {
-        if (!response.ok) {
-          return response;
+    fetch(request)
+      .then((response) => {
+        if (response && response.ok) {
+          // Cache the fresh response for offline fallback
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, responseToCache);
+          });
         }
-
-        // Cache successful responses
-        const cache = caches.open(RUNTIME_CACHE);
-        cache.then((c) => c.put(request, response.clone()));
-
         return response;
-      });
-    })
+      })
+      .catch(() => {
+        // Network failed - serve from cache (offline mode)
+        return caches.match(request).then((cached) => {
+          if (cached) {
+            console.log('[SW] Serving from cache (offline):', request.url);
+            return cached;
+          }
+          // For navigation requests, return cached index page
+          if (request.mode === 'navigate') {
+            return caches.match('/');
+          }
+          return new Response('Offline', { status: 503 });
+        });
+      })
   );
 });
 
@@ -166,10 +153,9 @@ self.addEventListener('notificationclick', (event) => {
     return;
   }
 
-  // Default click — open the target URL
+  // Default click - open the target URL
   event.waitUntil(
     clients.matchAll({ type: 'window' }).then((clientList) => {
-      // Try to focus an existing window
       for (let i = 0; i < clientList.length; i++) {
         const client = clientList[i];
         if ('focus' in client) {
@@ -184,4 +170,4 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
 
-console.log('[SW] Service Worker loaded');
+console.log('[SW] Service Worker loaded - Network First Strategy');

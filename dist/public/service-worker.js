@@ -1,7 +1,6 @@
-const CACHE_NAME = 'qumus-v1.0.0';
+const CACHE_NAME = 'qumus-v2.0.0';
 const URLS_TO_CACHE = [
   '/',
-  '/index.html',
   '/manifest.json',
   '/favicon.ico',
 ];
@@ -13,26 +12,29 @@ self.addEventListener('install', (event) => {
       return cache.addAll(URLS_TO_CACHE);
     })
   );
+  // Force immediate activation - don't wait for old SW to finish
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up ALL old caches immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
+            console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     })
   );
+  // Take control of all pages immediately
   self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - NETWORK FIRST for app code, cache fallback for offline only
 self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') {
@@ -44,35 +46,37 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip API calls - always go to network
+  if (event.request.url.includes('/api/')) {
+    return;
+  }
+
+  // NETWORK FIRST strategy for all app resources (HTML, JS, CSS)
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Return cached response if available
-      if (response) {
-        return response;
-      }
-
-      return fetch(event.request).then((response) => {
-        // Don't cache non-successful responses
-        if (!response || response.status !== 200 || response.type === 'error') {
-          return response;
-        }
-
-        // Clone the response
-        const responseToCache = response.clone();
-
-        // Cache successful responses for certain types
-        if (event.request.url.includes('/api/') || event.request.url.includes('/static/')) {
+    fetch(event.request)
+      .then((response) => {
+        // Got a good network response - cache it for offline use
+        if (response && response.status === 200) {
+          const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
         }
-
         return response;
-      }).catch(() => {
-        // Return offline page if available
-        return caches.match('/');
-      });
-    })
+      })
+      .catch(() => {
+        // Network failed - try cache as fallback (offline mode)
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // For navigation requests, return the cached index page
+          if (event.request.mode === 'navigate') {
+            return caches.match('/');
+          }
+          return new Response('Offline', { status: 503 });
+        });
+      })
   );
 });
 
@@ -80,7 +84,6 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-offline-actions') {
     event.waitUntil(
-      // Sync pending actions when connection is restored
       (async () => {
         try {
           const db = await openDB();

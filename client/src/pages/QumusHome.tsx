@@ -84,6 +84,7 @@ import { useLocation } from "wouter";
 
 export default function QumusHome() {
   const { openRestream } = useRestreamUrl();
+  const [, navigate] = useLocation();
   const [taskGoal, setTaskGoal] = useState("");
   const [taskPriority, setTaskPriority] = useState("5");
   const [selectedTarget, setSelectedTarget] = useState("rrb");
@@ -577,7 +578,7 @@ export default function QumusHome() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-3">
             <FuturisticButton 
-              onClick={() => window.location.href = '/conference'}
+              onClick={() => navigate('/conference')}
               variant="secondary"
               className="w-full"
             >
@@ -593,7 +594,7 @@ export default function QumusHome() {
               Restream
             </FuturisticButton>
             <FuturisticButton 
-              onClick={() => window.location.href = '/live'}
+              onClick={() => navigate('/live')}
               variant="secondary"
               className="w-full"
             >
@@ -601,7 +602,7 @@ export default function QumusHome() {
               RRB Radio
             </FuturisticButton>
             <FuturisticButton 
-              onClick={() => window.location.href = '/hybridcast'}
+              onClick={() => navigate('/hybridcast')}
               variant="secondary"
               className="w-full"
             >
@@ -609,7 +610,7 @@ export default function QumusHome() {
               HybridCast
             </FuturisticButton>
             <FuturisticButton 
-              onClick={() => window.location.href = '/ty-bat-zan'}
+              onClick={() => navigate('/ty-bat-zan')}
               variant="secondary"
               className="w-full"
             >
