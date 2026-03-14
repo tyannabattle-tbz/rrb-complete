@@ -214,6 +214,7 @@ import GuestJoin from '@/pages/GuestJoin';
 import CandysCornerPodcast from '@/pages/CandysCornerPodcast';
 import SolbonesPodcast from '@/pages/SolbonesPodcast';
 import AroundTheQumUnityPodcast from '@/pages/AroundTheQumUnityPodcast';
+import PodcastTemplate from '@/pages/PodcastTemplate';
 import EcosystemPresentation from '@/pages/EcosystemPresentation';
 import SystemStatusPage from '@/pages/SystemStatusPage';
 import PresentationBuilder from '@/pages/PresentationBuilder';
@@ -418,6 +419,7 @@ function Router() {
       <Route path="/podcast/candys-corner" component={CandysCornerPodcast} />
       <Route path="/podcast/solbones" component={SolbonesPodcast} />
       <Route path="/podcast/around-the-qumunity" component={AroundTheQumUnityPodcast} />
+      <Route path="/podcast/new-show" component={PodcastTemplate} />
       <Route path="/ecosystem" component={EcosystemPresentation} />
       <Route path="/presentation" component={EcosystemPresentation} />
       <Route path="/presentation-builder" component={PresentationBuilder} />

@@ -423,44 +423,51 @@ export default function SquaddGoals() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[
               {
-                name: 'Tyanna RaaShawn Battle',
-                role: 'Founder, Sweet Miracles',
-                focus: 'Elder Protection & Technology',
-                email: 'sweetmiraclesattt@gmail.com',
-                qrUrl: 'https://manuweb.sbs/squadd/directory',
-              },
-              {
                 name: 'Karen Jones',
-                role: 'CEO/Founder, WHOM IT CONCERNS, INC.',
-                focus: 'Agriculture & Environmental Justice',
+                role: 'Activist, Advocate, Author | CEO, Whom It Concerns, Inc.',
+                focus: 'Civic Engagement, Agricultural Sovereignty & Economic Justice',
                 email: 'whomitconcerns@outlook.com',
                 qrUrl: 'mailto:whomitconcerns@outlook.com',
               },
               {
-                name: 'Furlesia "Freedom" Bell',
-                role: 'REALTOR, Our Town Realty',
-                focus: 'Community Development',
-                email: 'furlesiabell@icloud.com',
-                qrUrl: 'mailto:furlesiabell@icloud.com',
-              },
-              {
-                name: 'Sherrette "Lady Freedom" Spicer',
-                role: 'Virtual Broadcast Anchor',
-                focus: 'Media & Communications',
-                email: '',
-                qrUrl: 'https://manuweb.sbs/live',
-              },
-              {
                 name: 'Luv Russell',
-                role: 'Coalition Member',
-                focus: 'Community Advocacy',
+                role: 'Systems Architect & CEO, The L.A.W.S. Collective',
+                focus: 'Economic Sovereignty & Land Reconnection',
                 email: '',
                 qrUrl: 'https://manuweb.sbs/squadd/directory',
               },
               {
-                name: 'Full Digital Directory',
-                role: 'All SQUADD Members',
-                focus: 'Complete Coalition Roster',
+                name: 'Jessica Fortune Barker',
+                role: 'Visionary Business Strategist',
+                focus: 'Strategic Development & Business Architecture',
+                email: '',
+                qrUrl: 'https://manuweb.sbs/squadd/directory',
+              },
+              {
+                name: 'Jaffe Silcott, Esquire',
+                role: 'Attorney & Civil Rights Advocate',
+                focus: 'Law, Civil Rights & Systemic Reform',
+                email: '',
+                qrUrl: 'https://manuweb.sbs/squadd/directory',
+              },
+              {
+                name: 'Furlesia Bell',
+                role: 'Founder, Triple J Initiative & Realtor/Mediator',
+                focus: 'Community Mediation, Restorative Outreach & Real Estate',
+                email: 'furlesiabell@icloud.com',
+                qrUrl: 'mailto:furlesiabell@icloud.com',
+              },
+              {
+                name: 'Rev. Karen R. Shuford',
+                role: 'Pastor & Reentry Advocate, Julia\'s Closet',
+                focus: 'Faith-Based Advocacy & Prison Reentry',
+                email: '',
+                qrUrl: 'https://manuweb.sbs/squadd/directory',
+              },
+              {
+                name: 'Tyanna (Ty) Battle',
+                role: 'Founder, Sweet Miracles & Civil Rights Advocate',
+                focus: 'Truth Documentation, Tech Accessibility & Legacy',
                 email: 'sweetmiraclesattt@gmail.com',
                 qrUrl: 'https://manuweb.sbs/squadd/directory',
               },
@@ -545,12 +552,13 @@ export default function SquaddGoals() {
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
                 {[
-                  { name: 'Tyanna RaaShawn Battle', role: 'Founder, Sweet Miracles', focus: 'Elder Protection & Technology', email: 'sweetmiraclesattt@gmail.com', qrUrl: 'https://manuweb.sbs/squadd/directory' },
-                  { name: 'Karen Jones', role: 'CEO, WHOM IT CONCERNS, INC.', focus: 'Agriculture & Environmental Justice', email: 'whomitconcerns@outlook.com', qrUrl: 'mailto:whomitconcerns@outlook.com' },
-                  { name: 'Furlesia "Freedom" Bell', role: 'REALTOR, Our Town Realty', focus: 'Community Development', email: 'furlesiabell@icloud.com', qrUrl: 'mailto:furlesiabell@icloud.com' },
-                  { name: 'Sherrette "Lady Freedom" Spicer', role: 'Virtual Broadcast Anchor', focus: 'Media & Communications', email: '', qrUrl: 'https://manuweb.sbs/live' },
-                  { name: 'Luv Russell', role: 'Coalition Member', focus: 'Community Advocacy', email: '', qrUrl: 'https://manuweb.sbs/squadd/directory' },
-                  { name: 'Full Digital Directory', role: 'All SQUADD Members', focus: 'Complete Coalition Roster', email: 'sweetmiraclesattt@gmail.com', qrUrl: 'https://manuweb.sbs/squadd/directory' },
+                  { name: 'Karen Jones', role: 'CEO, Whom It Concerns, Inc.', focus: 'Civic Engagement, Agricultural Sovereignty & Economic Justice', email: 'whomitconcerns@outlook.com', qrUrl: 'mailto:whomitconcerns@outlook.com' },
+                  { name: 'Luv Russell', role: 'CEO, The L.A.W.S. Collective', focus: 'Economic Sovereignty & Land Reconnection', email: '', qrUrl: 'https://manuweb.sbs/squadd/directory' },
+                  { name: 'Jessica Fortune Barker', role: 'Visionary Business Strategist', focus: 'Strategic Development & Business Architecture', email: '', qrUrl: 'https://manuweb.sbs/squadd/directory' },
+                  { name: 'Jaffe Silcott, Esquire', role: 'Attorney & Civil Rights Advocate', focus: 'Law, Civil Rights & Systemic Reform', email: '', qrUrl: 'https://manuweb.sbs/squadd/directory' },
+                  { name: 'Furlesia Bell', role: 'Founder, Triple J Initiative', focus: 'Community Mediation & Restorative Outreach', email: 'furlesiabell@icloud.com', qrUrl: 'mailto:furlesiabell@icloud.com' },
+                  { name: 'Rev. Karen R. Shuford', role: 'Pastor, Julia\'s Closet', focus: 'Faith-Based Advocacy & Prison Reentry', email: '', qrUrl: 'https://manuweb.sbs/squadd/directory' },
+                  { name: 'Tyanna (Ty) Battle', role: 'Founder, Sweet Miracles', focus: 'Truth Documentation, Tech Accessibility & Legacy', email: 'sweetmiraclesattt@gmail.com', qrUrl: 'https://manuweb.sbs/squadd/directory' },
                 ].map((m, i) => (
                   <div key={i} className="print-qr-card" style={{ textAlign: 'center', background: 'white', border: '2px solid #333', padding: '16px', borderRadius: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>

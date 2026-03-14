@@ -1,0 +1,43 @@
+{
+  "query": "SELECT id, slug, title, host_name, host_persona, is_live, is_active, schedule_day, schedule_time FROM podcast_shows ORDER BY id",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, slug, title, host_name, host_persona, is_live, is_active, schedule_day, schedule_time FROM podcast_shows ORDER BY id",
+  "rows": [
+    {
+      "id": "1",
+      "slug": "candys-corner",
+      "title": "Candy's Corner",
+      "host_name": "Candy AI",
+      "host_persona": "candy",
+      "is_live": "0",
+      "is_active": "1",
+      "schedule_day": "Tue/Thu",
+      "schedule_time": "7:00 PM"
+    },
+    {
+      "id": "2",
+      "slug": "solbones",
+      "title": "Solbones Podcast",
+      "host_name": "Seraph AI",
+      "host_persona": "seraph",
+      "is_live": "0",
+      "is_active": "1",
+      "schedule_day": "Wed/Sat",
+      "schedule_time": "8:00 PM"
+    },
+    {
+      "id": "3",
+      "slug": "around-the-qumunity",
+      "title": "Around the QumUnity",
+      "host_name": "Valanna",
+      "host_persona": "valanna",
+      "is_live": "0",
+      "is_active": "1",
+      "schedule_day": "Mon/Fri",
+      "schedule_time": "6:00 PM"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tslug\ttitle\thost_name\thost_persona\tis_live\tis_active\tschedule_day\tschedule_time\n1\tcandys-corner\tCandy's Corner\tCandy AI\tcandy\t0\t1\tTue/Thu\t7:00 PM\n2\tsolbones\tSolbones Podcast\tSeraph AI\tseraph\t0\t1\tWed/Sat\t8:00 PM\n3\taround-the-qumunity\tAround the QumUnity\tValanna\tvalanna\t0\t1\tMon/Fri\t6:00 PM\n",
+  "stderr": "",
+  "execution_time_ms": 110
+}

@@ -4287,3 +4287,32 @@
 - [x] Fixed metadata descriptions to match actual stream content for all replaced channels
 - [x] Restream verified operational: studio.restream.io URL in system_config, all buttons wired
 - [x] Restream confirmed as core operational feature (not add-on)
+
+## Operational Push — March 13, 2026
+- [ ] Set up Solbone Podcast room with streaming capability
+- [ ] Set up Around the QumUnity Podcast room
+- [ ] Create podcast room template for others
+- [ ] Fix Sports Talk channel to play actual sports content
+- [ ] Fix Comedy Central channel to play actual comedy content
+- [ ] Fix Talk channels to play actual talk content
+- [ ] Sync ecosystem components (Ty OS, QUMUS, RRB, HybridCast)
+- [ ] Ensure user-friendly navigation across all features
+- [ ] Create ecosystem explainer video
+- [ ] Add SQUADD video to site
+- [ ] Verify fully functioning communication system
+- [ ] CRITICAL: Fix radio station timing out during active listening
+- [ ] Fix SQUADD Coalition page - wrong names
+
+## Completed — March 14, 2026 (Session 4)
+- [x] Fix SQUADD Coalition page — correct 7 members from Master Playbook
+- [x] Change La Shanna to Luv Russell everywhere
+- [x] Generate 6-shot ecosystem explainer video (48 seconds)
+- [x] Upload video to S3 CDN
+- [x] Integrate video into Home page with player
+- [x] Radio stream timeout fix — auto-reconnect, visibility handler, watchdog
+- [x] Podcast rooms — Solbones, QumUnity, Candy's Corner all have Zoom + Restream
+- [x] Podcast template page created for new shows
+- [x] Genre-mismatched channels fixed — Sports, Comedy, Drama, Kids, Health, Education, News
+- [x] All 54 channels unique, zero duplicates
+- [x] Meeting rooms all point to Zoom — no more Jitsi login wall
+- [x] Restream confirmed operational (not add-on)

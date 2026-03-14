@@ -77,6 +77,10 @@ export interface PodcastShowConfig {
     spotify?: string;
     apple?: string;
   };
+  /** Direct Zoom room URL for this podcast's streaming room */
+  zoomRoomUrl?: string;
+  /** Custom streaming URL (overrides global Restream) */
+  streamingUrl?: string;
 }
 
 interface PodcastRoomProps {
@@ -225,9 +229,17 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
   const handleGoLive = () => {
     setIsLive(true);
     setIsRecording(true);
-    // Open Restream studio in new tab for multi-platform broadcasting
-    openRestream();
-    toast.success(`${config.title} is now LIVE!`, { description: restreamReady ? 'Restream studio opened — broadcasting to all platforms' : 'Broadcasting to all platforms via QUMUS' });
+    // Open the podcast's dedicated streaming room
+    if (config.zoomRoomUrl) {
+      window.open(config.zoomRoomUrl, '_blank');
+      toast.success(`${config.title} is now LIVE!`, { description: 'Zoom streaming room opened — broadcasting to all platforms' });
+    } else if (config.streamingUrl) {
+      window.open(config.streamingUrl, '_blank');
+      toast.success(`${config.title} is now LIVE!`, { description: 'Streaming studio opened' });
+    } else {
+      openRestream();
+      toast.success(`${config.title} is now LIVE!`, { description: restreamReady ? 'Restream studio opened — broadcasting to all platforms' : 'Broadcasting to all platforms via QUMUS' });
+    }
   };
 
   const handleEndShow = () => {

@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE radioChannels SET streamUrl = 'https://ice5.somafm.com/specials-128-mp3', description = 'Educational programming, documentary content, and learning-focused audio' WHERE id = 28;\nUPDATE radioChannels SET streamUrl = 'https://fm939.wnyc.org/wnycfm', description = 'Breaking news, current affairs, investigative journalism, and expert commentary' WHERE id = 24;\nUPDATE radioChannels SET streamUrl = 'https://npr-ice.streamguys1.com/live.mp3', description = 'NPR live — news, interviews, and in-depth reporting on current events' WHERE id = 4;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute UPDATE radioChannels SET streamUrl = 'https://ice5.somafm.com/specials-128-mp3', description = 'Educational programming, documentary content, and learning-focused audio' WHERE id = 28;\nUPDATE radioChannels SET streamUrl = 'https://fm939.wnyc.org/wnycfm', description = 'Breaking news, current affairs, investigative journalism, and expert commentary' WHERE id = 24;\nUPDATE radioChannels SET streamUrl = 'https://npr-ice.streamguys1.com/live.mp3', description = 'NPR live — news, interviews, and in-depth reporting on current events' WHERE id = 4;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 69
+}

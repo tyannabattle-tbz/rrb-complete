@@ -1,0 +1,49 @@
+{
+  "query": "SELECT id, slug, title, host_name, host_persona, schedule_day, schedule_time, is_live, is_active, spotify_url, youtube_url FROM podcast_shows",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, slug, title, host_name, host_persona, schedule_day, schedule_time, is_live, is_active, spotify_url, youtube_url FROM podcast_shows",
+  "rows": [
+    {
+      "id": "1",
+      "slug": "candys-corner",
+      "title": "Candy's Corner",
+      "host_name": "Candy AI",
+      "host_persona": "candy",
+      "schedule_day": "Tue/Thu",
+      "schedule_time": "7:00 PM",
+      "is_live": "0",
+      "is_active": "1",
+      "spotify_url": "NULL",
+      "youtube_url": "NULL"
+    },
+    {
+      "id": "2",
+      "slug": "solbones",
+      "title": "Solbones Podcast",
+      "host_name": "Seraph AI",
+      "host_persona": "seraph",
+      "schedule_day": "Wed/Sat",
+      "schedule_time": "8:00 PM",
+      "is_live": "0",
+      "is_active": "1",
+      "spotify_url": "NULL",
+      "youtube_url": "NULL"
+    },
+    {
+      "id": "3",
+      "slug": "around-the-qumunity",
+      "title": "Around the QumUnity",
+      "host_name": "Valanna",
+      "host_persona": "valanna",
+      "schedule_day": "Mon/Fri",
+      "schedule_time": "6:00 PM",
+      "is_live": "0",
+      "is_active": "1",
+      "spotify_url": "NULL",
+      "youtube_url": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tslug\ttitle\thost_name\thost_persona\tschedule_day\tschedule_time\tis_live\tis_active\tspotify_url\tyoutube_url\n1\tcandys-corner\tCandy's Corner\tCandy AI\tcandy\tTue/Thu\t7:00 PM\t0\t1\tNULL\tNULL\n2\tsolbones\tSolbones Podcast\tSeraph AI\tseraph\tWed/Sat\t8:00 PM\t0\t1\tNULL\tNULL\n3\taround-the-qumunity\tAround the QumUnity\tValanna\tvalanna\tMon/Fri\t6:00 PM\t0\t1\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 72
+}

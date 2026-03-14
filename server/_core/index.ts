@@ -42,6 +42,14 @@ async function startServer() {
   app.set("trust proxy", true);
   const server = createServer(app);
   
+  // Disable default Node.js server timeouts that kill long-running audio streams
+  // Node.js defaults: requestTimeout=300000 (5min), headersTimeout=60000, timeout=0
+  // We set timeout=0 (no timeout) so audio proxy streams can run indefinitely
+  server.timeout = 0;
+  server.keepAliveTimeout = 65000; // Slightly above typical proxy (60s) to prevent premature close
+  server.headersTimeout = 70000; // Must be > keepAliveTimeout
+  server.requestTimeout = 0; // No request timeout — streaming endpoints need this
+  
   // Stripe webhook endpoint - must be BEFORE body parser to get raw body
   app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req, res) => {
     handleStripeWebhook(req as any, res).catch(err => {

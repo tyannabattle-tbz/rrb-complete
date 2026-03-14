@@ -46,6 +46,8 @@ const CANDYS_CORNER_CONFIG: PodcastShowConfig = {
   socialLinks: {
     youtube: 'https://youtube.com/@rockinrockinboogie',
   },
+  zoomRoomUrl: import.meta.env.VITE_ZOOM_URL || undefined,
+  streamingUrl: 'https://studio.restream.io/enk-osex-pju',
 };
 
 export default function CandysCornerPodcast() {

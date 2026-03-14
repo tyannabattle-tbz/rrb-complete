@@ -45018,6 +45018,14 @@ init_qumusActivation();
 
 // server/audioStreamProxy.ts
 import http from "http";
+var proxyAgent = new http.Agent({
+  keepAlive: true,
+  keepAliveMsecs: 3e4,
+  maxSockets: 50,
+  maxFreeSockets: 10,
+  timeout: 0
+  // No socket timeout for streaming
+});
 function registerAudioStreamProxy(app) {
   app.get("/api/stream-proxy", async (req, res) => {
     const streamUrl = req.query.url;
@@ -45027,41 +45035,74 @@ function registerAudioStreamProxy(app) {
     if (!streamUrl.startsWith("http://")) {
       return res.status(400).json({ error: "Only HTTP streams can be proxied" });
     }
+    let parsedUrl;
     try {
-      const url = new URL(streamUrl);
-      console.log(`[Stream Proxy] Proxying: ${url.hostname}${url.pathname}`);
+      parsedUrl = new URL(streamUrl);
+      console.log(`[Stream Proxy] Proxying: ${parsedUrl.hostname}${parsedUrl.pathname}`);
     } catch {
       return res.status(400).json({ error: "Invalid URL" });
     }
+    req.setTimeout(0);
+    res.setTimeout(0);
     try {
       const proxyReq = http.get(streamUrl, {
+        agent: proxyAgent,
         headers: {
-          "User-Agent": "RRB-Radio/1.0",
+          "User-Agent": "RRB-Radio/2.0 (Canryn Production)",
           "Accept": "*/*",
-          "Icy-MetaData": "0"
+          "Icy-MetaData": "0",
+          "Connection": "keep-alive"
         },
-        timeout: 1e4
+        // Connection timeout: only for initial TCP handshake + first response byte
+        timeout: 15e3
       }, (proxyRes) => {
+        proxyReq.setTimeout(0);
         const contentType = proxyRes.headers["content-type"] || "audio/mpeg";
         res.setHeader("Content-Type", contentType);
-        res.setHeader("Cache-Control", "no-cache, no-store");
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Transfer-Encoding", "chunked");
+        res.setHeader("X-Content-Type-Options", "nosniff");
+        res.setHeader("X-Accel-Buffering", "no");
+        if (proxyRes.socket) {
+          proxyRes.socket.setKeepAlive(true, 3e4);
+          proxyRes.socket.setTimeout(0);
+        }
         proxyRes.pipe(res);
+        proxyRes.on("end", () => {
+          console.log(`[Stream Proxy] Upstream ended: ${parsedUrl.hostname}`);
+          if (!res.writableEnded) {
+            res.end();
+          }
+        });
+        proxyRes.on("error", (err) => {
+          console.error(`[Stream Proxy] Upstream error: ${err.message}`);
+          if (!res.writableEnded) {
+            res.end();
+          }
+        });
         req.on("close", () => {
+          proxyRes.destroy();
+        });
+        res.on("close", () => {
           proxyRes.destroy();
         });
       });
       proxyReq.on("error", (err) => {
-        console.error(`[Stream Proxy] Error: ${err.message}`);
+        console.error(`[Stream Proxy] Connection error: ${err.message}`);
         if (!res.headersSent) {
           res.status(502).json({ error: "Stream unavailable" });
+        } else if (!res.writableEnded) {
+          res.end();
         }
       });
       proxyReq.on("timeout", () => {
+        console.error(`[Stream Proxy] Connection timeout: ${parsedUrl.hostname}`);
         proxyReq.destroy();
         if (!res.headersSent) {
-          res.status(504).json({ error: "Stream timeout" });
+          res.status(504).json({ error: "Stream connection timeout" });
         }
       });
     } catch (error) {
@@ -45071,7 +45112,7 @@ function registerAudioStreamProxy(app) {
       }
     }
   });
-  console.log("[Stream Proxy] Audio stream proxy registered at /api/stream-proxy");
+  console.log("[Stream Proxy] Audio stream proxy registered at /api/stream-proxy (v2 \u2014 persistent)");
 }
 
 // server/routes/podcastRssFeed.ts
@@ -45291,6 +45332,10 @@ async function startServer() {
   const app = express2();
   app.set("trust proxy", true);
   const server = createServer(app);
+  server.timeout = 0;
+  server.keepAliveTimeout = 65e3;
+  server.headersTimeout = 7e4;
+  server.requestTimeout = 0;
   app.post("/api/stripe/webhook", express2.raw({ type: "application/json" }), (req, res) => {
     handleStripeWebhook(req, res).catch((err) => {
       console.error("[Stripe Webhook] Unhandled error:", err);
