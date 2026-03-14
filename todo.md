@@ -4269,3 +4269,21 @@
 - [x] Fixed Blues Highway genre mismatch (was Anime/Gaming, now Blues)
 - [x] Added fallback URLs to all fixed channels
 - [x] Save checkpoint and deliver updated zip
+
+## Operational Fixes — March 13, 2026
+- [ ] Fix streams playing too many commercials — replace commercial-heavy public streams with cleaner alternatives
+- [ ] Fix stations playing random content instead of matching channel genre descriptions
+- [ ] Fix meeting rooms requiring login — should point directly to Zoom link, no login wall
+- [ ] Verify restream integration is properly hooked up as operational feature (not add-on)
+- [ ] Ensure all features are operational core features, not add-ons
+
+## Completed — March 13, 2026 Operational Fixes
+- [x] Meeting rooms: All 5 rooms now type=zoom, open Zoom link directly (no Jitsi login)
+- [x] ConferenceRoom fallback button opens Zoom instead of Jitsi
+- [x] VITE_ZOOM_URL set to actual SQUADD Zoom link
+- [x] Stream sweep: Replaced 31 commercial-heavy/mismatched streams with ad-free alternatives
+- [x] Primary sources: SomaFM (26 channels), Radio Paradise (4), WQXR (1), WNYC (2), LISTEN.moe (1)
+- [x] All 54 channels verified: 54 unique URLs, zero duplicates
+- [x] Fixed metadata descriptions to match actual stream content for all replaced channels
+- [x] Restream verified operational: studio.restream.io URL in system_config, all buttons wired
+- [x] Restream confirmed as core operational feature (not add-on)

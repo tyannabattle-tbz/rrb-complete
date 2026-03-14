@@ -1,0 +1,46 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'radio_channels' ORDER BY ORDINAL_POSITION",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'radio_channels' ORDER BY ORDINAL_POSITION",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "stationId"
+    },
+    {
+      "COLUMN_NAME": "name"
+    },
+    {
+      "COLUMN_NAME": "frequency"
+    },
+    {
+      "COLUMN_NAME": "genre"
+    },
+    {
+      "COLUMN_NAME": "status"
+    },
+    {
+      "COLUMN_NAME": "currentListeners"
+    },
+    {
+      "COLUMN_NAME": "totalListeners"
+    },
+    {
+      "COLUMN_NAME": "streamUrl"
+    },
+    {
+      "COLUMN_NAME": "metadata"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "COLUMN_NAME": "updatedAt"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nstationId\nname\nfrequency\ngenre\nstatus\ncurrentListeners\ntotalListeners\nstreamUrl\nmetadata\ncreatedAt\nupdatedAt\n",
+  "stderr": "",
+  "execution_time_ms": 60
+}

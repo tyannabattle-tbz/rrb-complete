@@ -16,10 +16,10 @@ import { useMeeting } from '@/contexts/MeetingContext';
 // Available rooms for seamless transfer
 const ROOMS = [
   { id: 'squadd-main', name: 'SQUADD Main', type: 'zoom' as const, icon: '🏛️', description: 'Daily Coalition Meeting', schedule: '7:00 PM CT' },
-  { id: 'hybridcast-ops', name: 'HybridCast Ops', type: 'jitsi' as const, icon: '📡', description: 'Emergency Broadcast Operations', schedule: 'Always Open' },
-  { id: 'rrb-studio', name: 'RRB Studio', type: 'jitsi' as const, icon: '🎵', description: 'Music & Production Studio', schedule: 'Always Open' },
-  { id: 'sweet-miracles', name: 'Sweet Miracles', type: 'jitsi' as const, icon: '💛', description: 'Advocacy & Planning', schedule: 'Always Open' },
-  { id: 'canryn-boardroom', name: 'Canryn Boardroom', type: 'jitsi' as const, icon: '🏢', description: 'Executive Sessions', schedule: 'By Appointment' },
+  { id: 'hybridcast-ops', name: 'HybridCast Ops', type: 'zoom' as const, icon: '📡', description: 'Emergency Broadcast Operations', schedule: 'Always Open' },
+  { id: 'rrb-studio', name: 'RRB Studio', type: 'zoom' as const, icon: '🎵', description: 'Music & Production Studio', schedule: 'Always Open' },
+  { id: 'sweet-miracles', name: 'Sweet Miracles', type: 'zoom' as const, icon: '💛', description: 'Advocacy & Planning', schedule: 'Always Open' },
+  { id: 'canryn-boardroom', name: 'Canryn Boardroom', type: 'zoom' as const, icon: '🏢', description: 'Executive Sessions', schedule: 'By Appointment' },
 ];
 
 const ZOOM_MEETING = {
@@ -92,7 +92,9 @@ export default function SquaddMeetingRoom() {
         try { jitsiApiRef.current.dispose(); } catch {} 
         jitsiApiRef.current = null;
       }
-      toast({ title: `Switched to ${room.name}`, description: 'Click Join to enter the Zoom meeting.' });
+      // All rooms now open Zoom directly
+      window.open(ZOOM_MEETING.url, '_blank');
+      toast({ title: `Opening ${room.name}`, description: 'Joining Zoom meeting...' });
     } else {
       // For Jitsi rooms — seamless transfer
       if (jitsiApiRef.current) {

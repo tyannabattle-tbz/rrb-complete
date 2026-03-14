@@ -1030,8 +1030,8 @@ export default function ConferenceRoom() {
                 <Button onClick={() => { setConnectionError(null); jitsiApiRef.current = null; initJitsi(); }} variant="outline" className="border-amber-500 text-amber-400">
                   Retry
                 </Button>
-                <Button onClick={() => { const roomName = conference?.room_code || `rrb-room-${conferenceId}`; window.open(`https://meet.jit.si/${roomName}`, '_blank'); }} className="bg-amber-600 hover:bg-amber-700 text-white">
-                  Open in Jitsi Tab
+                <Button onClick={() => { window.open('https://us06web.zoom.us/j/82026499318?pwd=QlaG26b1nnkvuHTX2dgTDaY583luUm.1', '_blank'); }} className="bg-amber-600 hover:bg-amber-700 text-white">
+                  Open in Zoom
                 </Button>
               </div>
             </div>
