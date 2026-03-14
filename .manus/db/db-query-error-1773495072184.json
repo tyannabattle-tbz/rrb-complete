@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO podcast_shows (title, slug, description, host_name, host_bio, schedule_day, schedule_time, schedule_timezone, is_active, created_at, updated_at) VALUES ('SQUADD Podcast', 'squadd-podcast', 'The official voice of the SQUADD Coalition — seven women united in the fight for elder justice, civil rights, economic sovereignty, and community healing. Each episode brings real conversations about systemic reform, legacy preservation, and the power of collective action.', 'Tyanna (Ty) Battle', 'Founder of Sweet Miracles & Civil Rights Advocate. Truth Documentation, Tech Accessibility & Legacy Preservation.', 'Monday & Thursday', '7:00 PM', 'CT', 1, NOW(), NOW());",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute INSERT INTO podcast_shows (title, slug, description, host_name, host_bio, schedule_day, schedule_time, schedule_timezone, is_active, created_at, updated_at) VALUES ('SQUADD Podcast', 'squadd-podcast', 'The official voice of the SQUADD Coalition — seven women united in the fight for elder justice, civil rights, economic sovereignty, and community healing. Each episode brings real conversations about systemic reform, legacy preservation, and the power of collective action.', 'Tyanna (Ty) Battle', 'Founder of Sweet Miracles & Civil Rights Advocate. Truth Documentation, Tech Accessibility & Legacy Preservation.', 'Monday & Thursday', '7:00 PM', 'CT', 1, NOW(), NOW());",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'host_bio' in 'field list'"
+  ]
+}

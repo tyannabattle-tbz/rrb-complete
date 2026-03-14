@@ -4325,3 +4325,15 @@
 - [x] New conferences default to Zoom platform
 - [x] seedTestConference creates with Zoom platform and URL
 - [x] SquaddMeetingRoom all 5 rooms confirmed type: zoom
+
+## Podcast Room Connectivity Audit — March 14, 2026
+- [ ] Audit Solbones Podcast room for connectivity issues
+- [ ] Audit Around the QumUnity Podcast room for connectivity issues
+- [ ] Audit Candy's Corner Podcast room for connectivity issues
+- [ ] Fix any issues found
+
+## SQUADD Podcast Room — March 14, 2026
+- [x] Create SquaddPodcast.tsx page with coalition branding
+- [x] Add podcast_shows DB entry for SQUADD Podcast
+- [x] Wire route in App.tsx
+- [x] Test connectivity — HTTP 200, DB connected, Restream configured

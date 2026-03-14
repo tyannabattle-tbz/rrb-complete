@@ -67,6 +67,18 @@ const SHOW_CONFIGS: Record<string, {
     features: ["Community spotlight", "QUMUS updates", "Ecosystem news", "Live Q&A"],
     schedule: "Mon & Fri @ 6:00 PM CT",
   },
+  "squadd-podcast": {
+    slug: "squadd-podcast",
+    route: "/podcast/squadd",
+    color: "text-violet-400",
+    gradient: "from-violet-900/60 to-violet-700/30",
+    icon: <Users className="w-6 h-6" />,
+    hostName: "Tyanna (Ty) Battle",
+    hostVoice: "Valanna (Warm Female)",
+    tagline: "Sisters Questing Unapologetically After Divine Destiny",
+    features: ["Coalition roundtable", "Elder advocacy", "Civil rights", "Live call-in"],
+    schedule: "Mon & Thu @ 7:00 PM CT",
+  },
 };
 
 // ─── Stats Banner ─────────────────────────────────────────
@@ -284,11 +296,16 @@ export default function PodcastsHub() {
     { showId: showsBySlug["around-the-qumunity"]?.id ?? 0, limit: 5 },
     { enabled: !!showsBySlug["around-the-qumunity"]?.id }
   );
+  const { data: squaddEpisodes } = trpc.podcastManagement.getEpisodes.useQuery(
+    { showId: showsBySlug["squadd-podcast"]?.id ?? 0, limit: 5 },
+    { enabled: !!showsBySlug["squadd-podcast"]?.id }
+  );
 
   const episodesBySlug: Record<string, any[]> = {
     "candys-corner": candysEpisodes?.episodes ?? [],
     "solbones": solbonesEpisodes?.episodes ?? [],
     "around-the-qumunity": qumunityEpisodes?.episodes ?? [],
+    "squadd-podcast": squaddEpisodes?.episodes ?? [],
   };
 
   return (
@@ -304,7 +321,7 @@ export default function PodcastsHub() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold">Canryn Podcasts</h1>
-                <p className="text-zinc-400 text-sm">3 shows, live video, call-in, AI hosts, and QUMUS automation</p>
+                <p className="text-zinc-400 text-sm">4 shows, live video, call-in, AI hosts, and QUMUS automation</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
