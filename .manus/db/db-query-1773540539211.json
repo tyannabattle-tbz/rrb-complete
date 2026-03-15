@@ -1,0 +1,14 @@
+{
+  "query": "SELECT id, name FROM radio_stations WHERE name LIKE '%RRB%' OR name LIKE '%Rockin%' OR id = 1 LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, name FROM radio_stations WHERE name LIKE '%RRB%' OR name LIKE '%Rockin%' OR id = 1 LIMIT 5;",
+  "rows": [
+    {
+      "id": "870003",
+      "name": "Rockin Rockin Boogie Radio"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\n870003\tRockin Rockin Boogie Radio\n",
+  "stderr": "",
+  "execution_time_ms": 63
+}

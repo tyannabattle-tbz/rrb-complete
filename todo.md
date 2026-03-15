@@ -4421,3 +4421,21 @@
 - [x] Fix crazy streaming - replaced all SoundHelix/YouTube placeholders with real SomaFM streams
 - [x] Verify AI Agent Fleet and Social Bots display on QUMUS dashboard (QumusPort3000)
 - [x] End-to-end verification - /rrb, /live, /radio all show 54 synced channels
+
+## Stream Stability Fix - Remove Duplicates, Fix Genres, Stable Sources (March 14, 2026)
+- [ ] Deep audit all 54 DB channels - dump full data
+- [ ] Identify and remove duplicate channels
+- [ ] Fix genre/category mismatches across all channels
+- [ ] Test every stream URL for connectivity and stability
+- [ ] Replace broken/unreliable streams with stable working sources
+- [ ] Verify all channels play correctly on /rrb, /live, /radio pages
+- [ ] Ensure default frequency is 432 Hz with user option to change
+
+## Radio Channel Restoration - CSW70 Launch Prep (COMPLETED)
+- [x] Restore deleted channel ID 31 (Anime & Gaming) with unique stream URL
+- [x] Restore deleted channel ID 51 (C.J. Battle Radio) with unique stream URL
+- [x] Restore deleted channel ID 900020 (Canryn Production Radio) with unique stream URL
+- [x] Fix duplicate URL (Seraph AI Radio shared URL with Education & Learning)
+- [x] Fix 4 broken streams (Sports Talk, Afrobeats Global, Anime & Gaming, World Fusion)
+- [x] Verify all 54 channels have unique URLs - confirmed zero duplicates
+- [x] Verify all 54 streams responding - confirmed 54/54 working

@@ -1,0 +1,25 @@
+{
+  "query": "SELECT rc.stationId, rs.id as station_table_id, rs.name as station_name FROM radio_channels rc LEFT JOIN radio_stations rs ON rc.stationId = rs.id LIMIT 3;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT rc.stationId, rs.id as station_table_id, rs.name as station_name FROM radio_channels rc LEFT JOIN radio_stations rs ON rc.stationId = rs.id LIMIT 3;",
+  "rows": [
+    {
+      "stationId": "870003",
+      "station_table_id": "870003",
+      "station_name": "Rockin Rockin Boogie Radio"
+    },
+    {
+      "stationId": "870003",
+      "station_table_id": "870003",
+      "station_name": "Rockin Rockin Boogie Radio"
+    },
+    {
+      "stationId": "870003",
+      "station_table_id": "870003",
+      "station_name": "Rockin Rockin Boogie Radio"
+    }
+  ],
+  "messages": [],
+  "stdout": "stationId\tstation_table_id\tstation_name\n870003\t870003\tRockin Rockin Boogie Radio\n870003\t870003\tRockin Rockin Boogie Radio\n870003\t870003\tRockin Rockin Boogie Radio\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

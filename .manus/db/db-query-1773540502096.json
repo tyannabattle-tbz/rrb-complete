@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, name FROM radio_stations;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, name FROM radio_stations;",
+  "rows": [
+    {
+      "id": "870003",
+      "name": "Rockin Rockin Boogie Radio"
+    },
+    {
+      "id": "870004",
+      "name": "Test Station"
+    },
+    {
+      "id": "870005",
+      "name": "Test Station"
+    },
+    {
+      "id": "870006",
+      "name": "Test Station"
+    },
+    {
+      "id": "870007",
+      "name": "Test Station"
+    },
+    {
+      "id": "900001",
+      "name": "Test Station"
+    },
+    {
+      "id": "900002",
+      "name": "Test Station"
+    },
+    {
+      "id": "900003",
+      "name": "Test Station"
+    },
+    {
+      "id": "900004",
+      "name": "Test Station"
+    },
+    {
+      "id": "900005",
+      "name": "Test Station"
+    },
+    {
+      "id": "900006",
+      "name": "Test Station"
+    },
+    {
+      "id": "900007",
+      "name": "Test Station"
+    },
+    {
+      "id": "900008",
+      "name": "Test Station"
+    },
+    {
+      "id": "930001",
+      "name": "Test Station"
+    },
+    {
+      "id": "930002",
+      "name": "Test Station"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\n870003\tRockin Rockin Boogie Radio\n870004\tTest Station\n870005\tTest Station\n870006\tTest Station\n870007\tTest Station\n900001\tTest Station\n900002\tTest Station\n900003\tTest Station\n900004\tTest Station\n900005\tTest Station\n900006\tTest Station\n900007\tTest Station\n900008\tTest Station\n930001\tTest Station\n930002\tTest Station\n",
+  "stderr": "",
+  "execution_time_ms": 67
+}

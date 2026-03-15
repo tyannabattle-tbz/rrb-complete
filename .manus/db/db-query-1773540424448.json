@@ -1,0 +1,24 @@
+{
+  "query": "SELECT * FROM radio_channels WHERE id = 1 LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT * FROM radio_channels WHERE id = 1 LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "stationId": "870003",
+      "name": "RRB Main Radio",
+      "frequency": "432 Hz",
+      "genre": "R&B, Soul, Funk",
+      "status": "active",
+      "currentListeners": "158",
+      "totalListeners": "1580",
+      "streamUrl": "http://listen.181fm.com/181-rnb_128k.mp3",
+      "metadata": "{\"autoSwapReason\": \"Channel \\\"RRB Main Radio\\\" stream timed out\", \"bitrate\": \"128\", \"category\": \"Music\", \"codec\": \"MP3\", \"description\": \"Soul, funk, R&B, and legacy music — the heartbeat of Canryn Production.\", \"djAssigned\": \"rotation\", \"fallbackUrl\": \"https://funkyradio.streamingmedia.it/play.mp3\", \"hasFallback\": true, \"icon\": \"📻\", \"lastAutoSwap\": 1773537364766, \"lastVerified\": \"2026-03-12T21:50:45.733Z\", \"peakHours\": \"08:00-22:00\", \"source\": \"181.FM\", \"targetAudience\": \"Soul, Funk, R&B fans\"}",
+      "createdAt": "2026-03-11 19:10:20",
+      "updatedAt": "2026-03-15 01:16:05"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tstationId\tname\tfrequency\tgenre\tstatus\tcurrentListeners\ttotalListeners\tstreamUrl\tmetadata\tcreatedAt\tupdatedAt\n1\t870003\tRRB Main Radio\t432 Hz\tR&B, Soul, Funk\tactive\t158\t1580\thttp://listen.181fm.com/181-rnb_128k.mp3\t{\"autoSwapReason\": \"Channel \\\"RRB Main Radio\\\" stream timed out\", \"bitrate\": \"128\", \"category\": \"Music\", \"codec\": \"MP3\", \"description\": \"Soul, funk, R&B, and legacy music — the heartbeat of Canryn Production.\", \"djAssigned\": \"rotation\", \"fallbackUrl\": \"https://funkyradio.streamingmedia.it/play.mp3\", \"hasFallback\": true, \"icon\": \"📻\", \"lastAutoSwap\": 1773537364766, \"lastVerified\": \"2026-03-12T21:50:45.733Z\", \"peakHours\": \"08:00-22:00\", \"source\": \"181.FM\", \"targetAudience\": \"Soul, Funk, R&B fans\"}\t2026-03-11 19:10:20\t2026-03-15 01:16:05\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
