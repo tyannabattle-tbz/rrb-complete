@@ -94,6 +94,7 @@ import { videoManagementRouter } from "./routers/videoManagementRouter";
 import { liveBroadcastRouter } from "./routers/liveBroadcastRouter";
 import { ecosystemSyncRouter } from "./routers/ecosystemSyncRouter";
 import { globalBroadcastRouter } from "./routers/globalBroadcastRouter";
+import { qumusAgentEngine } from "./routers/qumusAgentEngine";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -111,6 +112,9 @@ export const appRouter = router({
 
   // Live Broadcast (real Jitsi-based streaming + production studio)
   liveBroadcast: liveBroadcastRouter,
+
+  // QUMUS Agent Engine (full autonomous capabilities — content creation, task execution, Mac mini sync)
+  qumusAgent: qumusAgentEngine,
 
   // Restream config (dynamic URL for all live/studio buttons)
   restreamConfig: restreamConfigRouter,

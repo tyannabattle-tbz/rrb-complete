@@ -1,13 +1,15 @@
 import { router, protectedProcedure, publicProcedure } from '../_core/trpc';
 import { QumusIdentitySystem } from '../_core/qumusIdentity';
 import { z } from 'zod';
-import { db } from '../db';
+import { getDb } from '../db';
 import { decisions, decisionLogs } from '../../drizzle/schema';
 import { eq, desc } from 'drizzle-orm';
 
 export const qumusRouter = router({
   // Get all pending decisions
   getPendingDecisions: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) return [];
     const pending = await db
       .select()
       .from(decisions)
@@ -31,6 +33,8 @@ export const qumusRouter = router({
   getDecisionHistory: protectedProcedure
     .input(z.object({ limit: z.number().default(50) }))
     .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
       const history = await db
         .select()
         .from(decisions)
@@ -54,6 +58,8 @@ export const qumusRouter = router({
   approveDecision: protectedProcedure
     .input(z.object({ decisionId: z.string() }))
     .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database unavailable');
       // Update decision status
       await db
         .update(decisions)
@@ -76,6 +82,8 @@ export const qumusRouter = router({
   vetoDecision: protectedProcedure
     .input(z.object({ decisionId: z.string(), reason: z.string().optional() }))
     .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database unavailable');
       // Update decision status
       await db
         .update(decisions)
@@ -98,6 +106,8 @@ export const qumusRouter = router({
   getDecisionLogs: protectedProcedure
     .input(z.object({ decisionId: z.string() }))
     .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
       const logs = await db
         .select()
         .from(decisionLogs)
@@ -120,6 +130,8 @@ export const qumusRouter = router({
       })
     )
     .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database unavailable');
       const [decision] = await db
         .insert(decisions)
         .values({
@@ -139,6 +151,8 @@ export const qumusRouter = router({
 
   // Get real-time decision metrics
   getDecisionMetrics: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return { totalDecisions: 0, pending: 0, approved: 0, vetoed: 0, avgAutonomy: 0, highImpactPending: 0, approvalRate: 0 };
     const allDecisions = await db.select().from(decisions);
     
     const pending = allDecisions.filter(d => d.status === 'pending').length;
@@ -170,7 +184,7 @@ export const qumusRouter = router({
     return agents.map(a => ({
       ...a,
       lastHeartbeat: Date.now(),
-      tasksCompleted: Math.floor(Math.random() * 500) + 100,
+      tasksCompleted: 0,
       uptime: '99.9%',
     }));
   }),
@@ -180,9 +194,9 @@ export const qumusRouter = router({
     const bots = QumusIdentitySystem.getSocialBots();
     return bots.map(b => ({
       ...b,
-      postsToday: Math.floor(Math.random() * 20) + 5,
-      engagementRate: (Math.random() * 5 + 2).toFixed(1) + '%',
-      lastPost: new Date(Date.now() - Math.floor(Math.random() * 3600000)).toISOString(),
+      postsToday: 0,
+      engagementRate: '0%',
+      lastPost: new Date().toISOString(),
     }));
   }),
 

@@ -222,6 +222,7 @@ import EcosystemPresentation from '@/pages/EcosystemPresentation';
 import SystemStatusPage from '@/pages/SystemStatusPage';
 import PresentationBuilder from '@/pages/PresentationBuilder';
 import MusicStudio from '@/pages/MusicStudio';
+import CSW70Campaign from '@/pages/CSW70Campaign';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -346,6 +347,8 @@ function Router() {
       <Route path="/legacy" component={RRBLegacySite} />
       <Route path="/ecosystem-dashboard" component={EcosystemMasterDashboard} />
       <Route path="/ecosystem-sync" component={EcosystemSyncDashboard} />
+      <Route path="/csw70" component={CSW70Campaign} />
+      <Route path="/un-campaign" component={CSW70Campaign} />
       <Route path="/admin" component={AdminControlPanel} />
       <Route path="/emergency" component={HybridCastPort3002} />
       <Route path="/rrb/broadcast" component={RRBDashboard} />
