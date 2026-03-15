@@ -306,7 +306,7 @@ export class RRBEcosystemIntegration {
 export async function initializeRRBEcosystem() {
   const config: RRBStreamConfig = {
     stationName: 'Rockin Rockin Boogie Radio',
-    streamUrl: process.env.RRB_STREAM_URL || 'https://stream.rockinrockinboogie.com/live',
+    streamUrl: process.env.RRB_STREAM_URL || 'http://listen.181fm.com/181-rnb_128k.mp3',
     bitrate: 320,
     format: 'mp3',
     frequency: 432, // Healing frequency

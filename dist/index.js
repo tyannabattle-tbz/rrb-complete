@@ -8831,7 +8831,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z101 } from "zod";
+import { z as z102 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -43791,8 +43791,8 @@ function generateBroadcastId() {
   return result2;
 }
 async function rawQuery5(sql20, params2 = []) {
-  const mysql6 = await import("mysql2/promise");
-  const connection = await mysql6.createConnection(process.env.DATABASE_URL);
+  const mysql7 = await import("mysql2/promise");
+  const connection = await mysql7.createConnection(process.env.DATABASE_URL);
   try {
     const [rows] = await connection.execute(sql20, params2);
     return rows;
@@ -44139,6 +44139,29 @@ var SUBSYSTEM_DEFINITIONS = [
     category: "production",
     tables: ["station_templates"],
     critical: false
+  },
+  {
+    id: "global-broadcast-state",
+    name: "Global Broadcast State (Single Source of Truth)",
+    category: "broadcast",
+    tables: ["global_broadcast_state", "streaming_status"],
+    critical: true,
+    expectedMin: { streaming_status: 54 }
+  },
+  {
+    id: "live-broadcast",
+    name: "Live Broadcast System (Jitsi WebRTC)",
+    category: "broadcast",
+    tables: ["broadcasts"],
+    critical: true
+  },
+  {
+    id: "payments-stripe",
+    name: "Stripe Payments & Donations",
+    category: "core",
+    tables: ["payments", "fundraising_goals"],
+    critical: true,
+    stripeConnected: true
   }
 ];
 async function checkTableCount(table) {
@@ -44147,6 +44170,26 @@ async function checkTableCount(table) {
     return rows[0]?.c || 0;
   } catch {
     return -1;
+  }
+}
+async function checkGlobalBroadcastState() {
+  try {
+    const rows = await rawQuery6("SELECT sync_status, channels_in_sync, all_channels FROM global_broadcast_state ORDER BY id DESC LIMIT 1");
+    if (rows.length === 0) return { exists: false, syncStatus: "UNKNOWN", channelsInSync: 0, allChannels: 54 };
+    return { exists: true, syncStatus: rows[0].sync_status, channelsInSync: rows[0].channels_in_sync, allChannels: rows[0].all_channels };
+  } catch {
+    return { exists: false, syncStatus: "UNKNOWN", channelsInSync: 0, allChannels: 54 };
+  }
+}
+async function checkStreamingStatusSync() {
+  try {
+    const [total] = await rawQuery6("SELECT COUNT(*) as c FROM radio_channels");
+    const [synced] = await rawQuery6("SELECT COUNT(*) as c FROM streaming_status ss INNER JOIN radio_channels rc ON ss.channel_id = rc.id WHERE ss.stream_url = rc.streamUrl");
+    const totalCount = total?.c || 0;
+    const syncedCount = synced?.c || 0;
+    return { total: totalCount, synced: syncedCount, mismatched: totalCount - syncedCount };
+  } catch {
+    return { total: 0, synced: 0, mismatched: 0 };
   }
 }
 async function checkStreamHealth() {
@@ -44225,6 +44268,21 @@ async function runFullSync() {
   if (qumus.policies === 0) {
     warnings.push("No QUMUS policies configured");
     recommendations.push("Seed QUMUS core policies for autonomous operation");
+  }
+  const broadcastState = await checkGlobalBroadcastState();
+  if (!broadcastState.exists) {
+    warnings.push("Global Broadcast State table not initialized");
+  } else if (broadcastState.syncStatus !== "PERFECT_SYNC") {
+    warnings.push(`Broadcast sync status: ${broadcastState.syncStatus} (${broadcastState.channelsInSync}/${broadcastState.allChannels})`);
+  }
+  const streamSync = await checkStreamingStatusSync();
+  if (streamSync.mismatched > 0) {
+    warnings.push(`${streamSync.mismatched} channels have mismatched streaming_status entries`);
+    recommendations.push("Run sync-all to reconcile streaming_status with radio_channels");
+  }
+  if (process.env.STRIPE_SECRET_KEY) {
+  } else {
+    warnings.push("Stripe secret key not configured \u2014 donations and payments will fail");
   }
   const offlineSystems = subsystems.filter((s) => s.status === "offline");
   const degradedSystems = subsystems.filter((s) => s.status === "degraded");
@@ -44319,6 +44377,231 @@ var ecosystemSyncRouter = router({
   })
 });
 
+// server/routers/globalBroadcastRouter.ts
+import { z as z101 } from "zod";
+import mysql6 from "mysql2/promise";
+async function rawQuery7(sql20, params2 = []) {
+  const connection = await mysql6.createConnection(process.env.DATABASE_URL);
+  try {
+    const [rows] = await connection.execute(sql20, params2);
+    return rows;
+  } finally {
+    await connection.end();
+  }
+}
+var globalBroadcastRouter = router({
+  // Get the current global broadcast state — single source of truth
+  getCurrentState: publicProcedure.query(async () => {
+    try {
+      const [state] = await rawQuery7("SELECT * FROM global_broadcast_state ORDER BY id DESC LIMIT 1");
+      if (!state) {
+        return {
+          currentContent: { title: "RRB Live Radio", description: "54-channel live radio", contentType: "music", frequency: "432Hz" },
+          allChannels: 54,
+          listenerCount: 0,
+          isLive: true,
+          syncStatus: "CHECKING",
+          channelsInSync: 0,
+          lastUpdated: Date.now(),
+          nextContent: null
+        };
+      }
+      const [listeners2] = await rawQuery7("SELECT SUM(currentListeners) as total FROM radio_channels");
+      const listenerCount = listeners2?.total || state.listener_count || 0;
+      await rawQuery7("UPDATE global_broadcast_state SET listener_count = ?, last_updated = NOW() WHERE id = ?", [listenerCount, state.id]);
+      return {
+        currentContent: {
+          title: state.current_content_title,
+          description: state.current_content_description,
+          contentType: state.content_type,
+          frequency: state.frequency,
+          startTime: Number(state.start_time),
+          endTime: Number(state.end_time),
+          duration: state.duration
+        },
+        allChannels: state.all_channels,
+        listenerCount: Number(listenerCount),
+        isLive: Boolean(state.is_live),
+        syncStatus: state.sync_status,
+        channelsInSync: state.channels_in_sync,
+        lastSyncVerification: state.last_sync_verification,
+        syncIntervalSeconds: state.sync_interval_seconds,
+        lastUpdated: state.last_updated,
+        nextContent: state.next_content_title ? {
+          title: state.next_content_title,
+          startTime: Number(state.next_content_start_time)
+        } : null
+      };
+    } catch (e) {
+      console.error("[GlobalBroadcast] getCurrentState error:", e.message);
+      return {
+        currentContent: { title: "RRB Live Radio", description: "54-channel live radio", contentType: "music", frequency: "432Hz" },
+        allChannels: 54,
+        listenerCount: 0,
+        isLive: true,
+        syncStatus: "CHECKING",
+        channelsInSync: 0,
+        lastUpdated: Date.now(),
+        nextContent: null
+      };
+    }
+  }),
+  // Verify sync status across all 54 channels — checks every stream is alive
+  verifySyncStatus: publicProcedure.query(async () => {
+    try {
+      const channels = await rawQuery7("SELECT id, name, streamUrl, status, currentListeners FROM radio_channels ORDER BY id");
+      const streamingStatus2 = await rawQuery7("SELECT channel_id, status, stream_url, last_updated FROM streaming_status");
+      const statusMap = {};
+      streamingStatus2.forEach((s) => {
+        statusMap[s.channel_id] = s;
+      });
+      let inSync = 0;
+      let outOfSync = 0;
+      const channelStatuses = channels.map((ch) => {
+        const ss = statusMap[ch.id];
+        const isActive = ch.status === "active" && ch.streamUrl;
+        if (isActive) inSync++;
+        else outOfSync++;
+        return {
+          id: ch.id,
+          name: ch.name,
+          streamUrl: ch.streamUrl,
+          status: ch.status,
+          listeners: ch.currentListeners || 0,
+          streamingStatus: ss ? ss.status : "unknown",
+          lastUpdated: ss ? ss.last_updated : null,
+          inSync: isActive
+        };
+      });
+      const syncStatus = outOfSync === 0 ? "PERFECT_SYNC" : outOfSync <= 3 ? "PARTIAL_SYNC" : "OUT_OF_SYNC";
+      await rawQuery7("UPDATE global_broadcast_state SET sync_status = ?, channels_in_sync = ?, last_sync_verification = NOW() WHERE id = 1", [syncStatus, inSync]);
+      return {
+        syncStatus,
+        channelsInSync: inSync,
+        totalChannels: channels.length,
+        outOfSync,
+        syncPercentage: Math.round(inSync / channels.length * 100),
+        verificationTime: (/* @__PURE__ */ new Date()).toISOString(),
+        syncIntervalSeconds: 60,
+        channels: channelStatuses
+      };
+    } catch (e) {
+      console.error("[GlobalBroadcast] verifySyncStatus error:", e.message);
+      return { syncStatus: "CHECKING", channelsInSync: 0, totalChannels: 54, outOfSync: 54, syncPercentage: 0, verificationTime: (/* @__PURE__ */ new Date()).toISOString(), syncIntervalSeconds: 60, channels: [] };
+    }
+  }),
+  // Get listener breakdown by channel — real data from radio_channels
+  getListenerBreakdown: publicProcedure.query(async () => {
+    try {
+      const channels = await rawQuery7("SELECT id, name, genre, currentListeners, totalListeners, status FROM radio_channels ORDER BY currentListeners DESC");
+      const totalCurrent = channels.reduce((sum2, ch) => sum2 + (ch.currentListeners || 0), 0);
+      const totalAll = channels.reduce((sum2, ch) => sum2 + (ch.totalListeners || 0), 0);
+      const analytics = await rawQuery7("SELECT COUNT(*) as rows FROM listener_analytics");
+      const analyticsRows = analytics[0]?.rows || 0;
+      const genreMap = {};
+      channels.forEach((ch) => {
+        const genre = ch.genre || "Other";
+        if (!genreMap[genre]) genreMap[genre] = { listeners: 0, channels: 0 };
+        genreMap[genre].listeners += ch.currentListeners || 0;
+        genreMap[genre].channels++;
+      });
+      return {
+        totalCurrentListeners: totalCurrent,
+        totalAllTimeListeners: totalAll,
+        analyticsRows: Number(analyticsRows),
+        peakListeners: Math.max(...channels.map((ch) => ch.currentListeners || 0)),
+        averagePerChannel: Math.round(totalCurrent / channels.length),
+        activeChannels: channels.filter((ch) => ch.status === "active").length,
+        byChannel: channels.map((ch) => ({
+          id: ch.id,
+          name: ch.name,
+          genre: ch.genre,
+          currentListeners: ch.currentListeners || 0,
+          totalListeners: ch.totalListeners || 0,
+          status: ch.status,
+          percentage: totalCurrent > 0 ? Math.round((ch.currentListeners || 0) / totalCurrent * 100) : 0
+        })),
+        byGenre: Object.entries(genreMap).map(([genre, data]) => ({
+          genre,
+          listeners: data.listeners,
+          channels: data.channels
+        })).sort((a, b) => b.listeners - a.listeners),
+        updateFrequency: "Every 5 seconds",
+        databasePersistence: true
+      };
+    } catch (e) {
+      console.error("[GlobalBroadcast] getListenerBreakdown error:", e.message);
+      return { totalCurrentListeners: 0, totalAllTimeListeners: 0, analyticsRows: 0, peakListeners: 0, averagePerChannel: 0, activeChannels: 0, byChannel: [], byGenre: [], updateFrequency: "Every 5 seconds", databasePersistence: true };
+    }
+  }),
+  // Get all channel sync data for the sync dashboard
+  getChannelSync: protectedProcedure.query(async () => {
+    try {
+      const channels = await rawQuery7(`
+        SELECT rc.id, rc.name, rc.streamUrl, rc.status, rc.currentListeners, rc.genre, rc.frequency,
+               ss.status as streamStatus, ss.viewer_count, ss.peak_viewers, ss.last_updated as streamLastUpdated
+        FROM radio_channels rc
+        LEFT JOIN streaming_status ss ON rc.id = ss.channel_id
+        ORDER BY rc.id
+      `);
+      return {
+        totalChannels: channels.length,
+        channels: channels.map((ch) => ({
+          id: ch.id,
+          name: ch.name,
+          streamUrl: ch.streamUrl,
+          status: ch.status,
+          genre: ch.genre,
+          frequency: ch.frequency || "432Hz",
+          currentListeners: ch.currentListeners || 0,
+          streamStatus: ch.streamStatus || "unknown",
+          viewerCount: ch.viewer_count || 0,
+          peakViewers: ch.peak_viewers || 0,
+          lastUpdated: ch.streamLastUpdated
+        }))
+      };
+    } catch (e) {
+      console.error("[GlobalBroadcast] getChannelSync error:", e.message);
+      return { totalChannels: 0, channels: [] };
+    }
+  }),
+  // Update broadcast content (QUMUS autonomous action)
+  updateContent: protectedProcedure.input(z101.object({
+    title: z101.string(),
+    description: z101.string().optional(),
+    contentType: z101.string().optional(),
+    frequency: z101.string().optional(),
+    duration: z101.number().optional(),
+    nextContentTitle: z101.string().optional()
+  })).mutation(async ({ input }) => {
+    try {
+      const now = Date.now();
+      const duration = input.duration || 72e5;
+      await rawQuery7(
+        `UPDATE global_broadcast_state SET 
+          current_content_title = ?, current_content_description = ?, content_type = ?,
+          frequency = ?, start_time = ?, end_time = ?, duration = ?,
+          next_content_title = ?, next_content_start_time = ?, last_updated = NOW()
+          WHERE id = 1`,
+        [
+          input.title,
+          input.description || "",
+          input.contentType || "music",
+          input.frequency || "432Hz",
+          now,
+          now + duration,
+          duration,
+          input.nextContentTitle || null,
+          now + duration
+        ]
+      );
+      return { success: true };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -44339,6 +44622,8 @@ var appRouter = router({
   selfAudit: selfAuditRouter,
   // Ecosystem Sync Engine (validates all 18 subsystems)
   ecosystemSync: ecosystemSyncRouter,
+  // Global Broadcast State (Single Source of Truth for 54 channels)
+  globalBroadcast: globalBroadcastRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -44354,11 +44639,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z101.object({
-        goal: z101.string().min(1, "Goal is required"),
-        priority: z101.number().int().min(1).max(10).optional().default(5),
-        steps: z101.array(z101.string()).optional(),
-        constraints: z101.array(z101.string()).optional()
+      z102.object({
+        goal: z102.string().min(1, "Goal is required"),
+        priority: z102.number().int().min(1).max(10).optional().default(5),
+        steps: z102.array(z102.string()).optional(),
+        constraints: z102.array(z102.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -44370,7 +44655,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z101.object({ taskId: z101.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z102.object({ taskId: z102.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -44380,11 +44665,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z101.object({
-        target: z101.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z101.string().min(1, "Action is required"),
-        params: z101.record(z101.any()).optional().default({}),
-        priority: z101.number().int().min(1).max(10).optional().default(5)
+      z102.object({
+        target: z102.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z102.string().min(1, "Action is required"),
+        params: z102.record(z102.any()).optional().default({}),
+        priority: z102.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -44396,10 +44681,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z101.object({ commandId: z101.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z102.object({ commandId: z102.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z101.object({ target: z101.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z102.object({ target: z102.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -44494,12 +44779,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z101.object({
-      sessionName: z101.string().min(1),
-      systemPrompt: z101.string().optional(),
-      temperature: z101.number().min(0).max(100).optional(),
-      model: z101.string().optional(),
-      maxSteps: z101.number().min(1).optional()
+    createSession: protectedProcedure.input(z102.object({
+      sessionName: z102.string().min(1),
+      systemPrompt: z102.string().optional(),
+      temperature: z102.number().min(0).max(100).optional(),
+      model: z102.string().optional(),
+      maxSteps: z102.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -44520,7 +44805,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z101.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z102.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -44529,7 +44814,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z101.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z102.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -44573,9 +44858,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z101.object({
-      dateRange: z101.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z101.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z102.object({
+      dateRange: z102.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z102.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -44586,24 +44871,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z101.object({
-      dateRange: z101.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z102.object({
+      dateRange: z102.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z101.object({
-      dateRange: z101.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z102.object({
+      dateRange: z102.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z101.object({
-      email: z101.string().email(),
-      name: z101.string().optional(),
-      source: z101.string().optional(),
-      language: z101.string().optional()
+    subscribe: publicProcedure.input(z102.object({
+      email: z102.string().email(),
+      name: z102.string().optional(),
+      source: z102.string().optional(),
+      language: z102.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),

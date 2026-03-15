@@ -93,6 +93,7 @@ import { selfAuditRouter } from "./routers/selfAuditRouter";
 import { videoManagementRouter } from "./routers/videoManagementRouter";
 import { liveBroadcastRouter } from "./routers/liveBroadcastRouter";
 import { ecosystemSyncRouter } from "./routers/ecosystemSyncRouter";
+import { globalBroadcastRouter } from "./routers/globalBroadcastRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -122,6 +123,9 @@ export const appRouter = router({
 
   // Ecosystem Sync Engine (validates all 18 subsystems)
   ecosystemSync: ecosystemSyncRouter,
+
+  // Global Broadcast State (Single Source of Truth for 54 channels)
+  globalBroadcast: globalBroadcastRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,

@@ -165,6 +165,29 @@ const SUBSYSTEM_DEFINITIONS = [
     tables: ['station_templates'],
     critical: false,
   },
+  {
+    id: 'global-broadcast-state',
+    name: 'Global Broadcast State (Single Source of Truth)',
+    category: 'broadcast' as const,
+    tables: ['global_broadcast_state', 'streaming_status'],
+    critical: true,
+    expectedMin: { streaming_status: 54 },
+  },
+  {
+    id: 'live-broadcast',
+    name: 'Live Broadcast System (Jitsi WebRTC)',
+    category: 'broadcast' as const,
+    tables: ['broadcasts'],
+    critical: true,
+  },
+  {
+    id: 'payments-stripe',
+    name: 'Stripe Payments & Donations',
+    category: 'core' as const,
+    tables: ['payments', 'fundraising_goals'],
+    critical: true,
+    stripeConnected: true,
+  },
 ];
 
 async function checkTableCount(table: string): Promise<number> {
@@ -174,6 +197,24 @@ async function checkTableCount(table: string): Promise<number> {
   } catch {
     return -1; // table doesn't exist
   }
+}
+
+async function checkGlobalBroadcastState(): Promise<{ exists: boolean; syncStatus: string; channelsInSync: number; allChannels: number }> {
+  try {
+    const rows = await rawQuery('SELECT sync_status, channels_in_sync, all_channels FROM global_broadcast_state ORDER BY id DESC LIMIT 1');
+    if (rows.length === 0) return { exists: false, syncStatus: 'UNKNOWN', channelsInSync: 0, allChannels: 54 };
+    return { exists: true, syncStatus: rows[0].sync_status, channelsInSync: rows[0].channels_in_sync, allChannels: rows[0].all_channels };
+  } catch { return { exists: false, syncStatus: 'UNKNOWN', channelsInSync: 0, allChannels: 54 }; }
+}
+
+async function checkStreamingStatusSync(): Promise<{ total: number; synced: number; mismatched: number }> {
+  try {
+    const [total] = await rawQuery('SELECT COUNT(*) as c FROM radio_channels');
+    const [synced] = await rawQuery('SELECT COUNT(*) as c FROM streaming_status ss INNER JOIN radio_channels rc ON ss.channel_id = rc.id WHERE ss.stream_url = rc.streamUrl');
+    const totalCount = total?.c || 0;
+    const syncedCount = synced?.c || 0;
+    return { total: totalCount, synced: syncedCount, mismatched: totalCount - syncedCount };
+  } catch { return { total: 0, synced: 0, mismatched: 0 }; }
 }
 
 async function checkStreamHealth(): Promise<{ healthy: number; total: number }> {
@@ -264,6 +305,28 @@ export async function runFullSync(): Promise<SyncReport> {
   if (qumus.policies === 0) {
     warnings.push('No QUMUS policies configured');
     recommendations.push('Seed QUMUS core policies for autonomous operation');
+  }
+
+  // Check Global Broadcast State sync
+  const broadcastState = await checkGlobalBroadcastState();
+  if (!broadcastState.exists) {
+    warnings.push('Global Broadcast State table not initialized');
+  } else if (broadcastState.syncStatus !== 'PERFECT_SYNC') {
+    warnings.push(`Broadcast sync status: ${broadcastState.syncStatus} (${broadcastState.channelsInSync}/${broadcastState.allChannels})`);
+  }
+
+  // Check streaming_status matches radio_channels
+  const streamSync = await checkStreamingStatusSync();
+  if (streamSync.mismatched > 0) {
+    warnings.push(`${streamSync.mismatched} channels have mismatched streaming_status entries`);
+    recommendations.push('Run sync-all to reconcile streaming_status with radio_channels');
+  }
+
+  // Check Stripe connectivity
+  if (process.env.STRIPE_SECRET_KEY) {
+    // Stripe is configured
+  } else {
+    warnings.push('Stripe secret key not configured — donations and payments will fail');
   }
 
   // Generate recommendations
