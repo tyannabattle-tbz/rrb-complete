@@ -12,8 +12,10 @@ import { handleStripeWebhook } from "../webhooks/stripeWebhook";
 import { activateQumus } from "../qumus/qumusActivation";
 import { registerAudioStreamProxy } from "../audioStreamProxy";
 import { registerPodcastRssRoutes } from "../routes/podcastRssFeed";
+import { registerRRBRadioApi } from "../rrbRadioApi";
 import { startProductionIntegration } from "../services/qumusProductionIntegration";
 import { startSelfAudit } from "../services/qumusSelfAudit";
+import { startAutoDj } from "../services/autoDjEngine";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -88,6 +90,8 @@ async function startServer() {
   // Start QUMUS Self-Audit & Auto-Correction Engine
   try {
     startSelfAudit();
+    // Auto DJ Engine — QUMUS Policy #20: autonomous channel programming
+    startAutoDj();
     console.log("[QUMUS] Self-Audit Engine activated — autonomous monitoring enabled");
   } catch (error) {
     console.error("[QUMUS] Self-Audit Engine failed to start:", error);
@@ -286,6 +290,8 @@ async function startServer() {
 
   // Podcast RSS Feed endpoints
   registerPodcastRssRoutes(app);
+  // RRB Radio REST API v1 — 18 endpoints per Ty OS Integration Guide
+  registerRRBRadioApi(app);
 
   // tRPC API
   app.use(

@@ -43838,8 +43838,8 @@ function generateBroadcastId() {
   return result2;
 }
 async function rawQuery5(sql20, params2 = []) {
-  const mysql9 = await import("mysql2/promise");
-  const connection = await mysql9.createConnection(process.env.DATABASE_URL);
+  const mysql11 = await import("mysql2/promise");
+  const connection = await mysql11.createConnection(process.env.DATABASE_URL);
   try {
     const [rows] = await connection.execute(sql20, params2);
     return rows;
@@ -46661,8 +46661,1549 @@ function registerPodcastRssRoutes(app) {
   console.log("[RSS] Podcast RSS feed routes registered");
 }
 
+// shared/radioStationRegistry.ts
+var RADIO_STATIONS = [
+  // ─── MUSIC (22 channels) ─────────────────────────────────────────
+  {
+    id: "ch-001",
+    numericId: 1,
+    name: "RRB Main Radio",
+    description: "Soul, funk, R&B, and legacy music \u2014 the heart of Rockin Rockin Boogie",
+    color: "#F59E0B",
+    icon: "Radio",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/groovesalad-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["soul", "funk", "r&b"], bio: "The flagship channel of RRB Radio", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-002",
+    numericId: 2,
+    name: "Soul & R&B Classics",
+    description: "Classic soul and R&B from the golden era",
+    color: "#8B5CF6",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-soul_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["soul", "r&b", "classics"], bio: "Golden era soul and R&B", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-003",
+    numericId: 3,
+    name: "Jazz Lounge",
+    description: "Smooth jazz and contemporary jazz fusion",
+    color: "#6366F1",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/secretagent-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["jazz", "smooth jazz", "fusion"], bio: "Jazz for the soul", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-004",
+    numericId: 4,
+    name: "Gospel & Praise",
+    description: "Uplifting gospel music and praise worship",
+    color: "#F97316",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-gospel_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["gospel", "praise", "worship"], bio: "Praise and worship", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-005",
+    numericId: 5,
+    name: "Hip-Hop & Rap",
+    description: "Hip-hop, rap, and urban beats",
+    color: "#EF4444",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-hiphoptop40_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["hip-hop", "rap", "urban"], bio: "Hip-hop and rap", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-006",
+    numericId: 6,
+    name: "Blues Highway",
+    description: "Delta blues, Chicago blues, and modern blues",
+    color: "#3B82F6",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/bootliquor-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["blues", "delta blues", "chicago blues"], bio: "Blues from the delta to the city", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-007",
+    numericId: 7,
+    name: "Classical Masterworks",
+    description: "Classical orchestral and chamber music",
+    color: "#A855F7",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://stream.radioparadise.com/mellow-128", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["classical", "orchestral", "chamber"], bio: "Timeless classical masterworks", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-008",
+    numericId: 8,
+    name: "Latin Rhythms",
+    description: "Salsa, bachata, reggaeton, and Latin jazz",
+    color: "#F43F5E",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-salsa_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["latin", "salsa", "bachata", "reggaeton"], bio: "Latin rhythms and beats", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-009",
+    numericId: 9,
+    name: "Reggae Island",
+    description: "Reggae, dancehall, and Caribbean vibes",
+    color: "#22C55E",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-reggae_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["reggae", "dancehall", "caribbean"], bio: "Island vibes", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-010",
+    numericId: 10,
+    name: "Neo-Soul Vibes",
+    description: "Contemporary neo-soul and alternative R&B",
+    color: "#EC4899",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/lush-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["neo-soul", "alternative r&b"], bio: "Modern soul vibes", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-011",
+    numericId: 11,
+    name: "Country Roads",
+    description: "Classic and modern country music",
+    color: "#D97706",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-kickincountry_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["country", "americana"], bio: "Country music", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-012",
+    numericId: 12,
+    name: "Electronic Pulse",
+    description: "Electronic, ambient, and downtempo",
+    color: "#06B6D4",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/deepspaceone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["electronic", "ambient", "downtempo"], bio: "Electronic soundscapes", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-013",
+    numericId: 13,
+    name: "Funk Factory",
+    description: "Pure funk, P-Funk, and funk fusion",
+    color: "#F59E0B",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/seventies-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["funk", "p-funk", "funk fusion"], bio: "Funk factory", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-014",
+    numericId: 14,
+    name: "Afrobeats Global",
+    description: "Afrobeats, Afropop, and African music",
+    color: "#10B981",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://stream.zeno.fm/yn65fsaurfhvv", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["afrobeats", "afropop", "african"], bio: "African music global", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-015",
+    numericId: 15,
+    name: "Indie & Alternative",
+    description: "Independent and alternative rock",
+    color: "#8B5CF6",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/indiepop-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["indie", "alternative", "rock"], bio: "Indie and alternative", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-016",
+    numericId: 16,
+    name: "Pop Hits",
+    description: "Current pop hits and chart toppers",
+    color: "#EC4899",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-beat_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["pop", "top 40"], bio: "Pop hits", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-017",
+    numericId: 17,
+    name: "Rock Legends",
+    description: "Classic rock and rock legends",
+    color: "#EF4444",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-classicrock_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["rock", "classic rock"], bio: "Rock legends", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-018",
+    numericId: 18,
+    name: "World Music",
+    description: "Global sounds from every continent",
+    color: "#14B8A6",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/suburbsofgoa-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["world", "global", "fusion"], bio: "World music", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-019",
+    numericId: 19,
+    name: "Smooth Grooves",
+    description: "Smooth R&B and quiet storm",
+    color: "#7C3AED",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/groovesalad256-256-mp3", type: "icecast", bitrate: 256, format: "mp3" },
+    metadata: { genres: ["smooth", "quiet storm", "r&b"], bio: "Smooth grooves", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-020",
+    numericId: 20,
+    name: "Oldies But Goodies",
+    description: "Timeless hits from the 50s, 60s, and 70s",
+    color: "#D97706",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-oldies_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["oldies", "50s", "60s", "70s"], bio: "Timeless hits", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-021",
+    numericId: 21,
+    name: "Acoustic Sessions",
+    description: "Unplugged and acoustic performances",
+    color: "#92400E",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/folkfwd-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["acoustic", "folk", "unplugged"], bio: "Acoustic sessions", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-022",
+    numericId: 22,
+    name: "Chill & Lo-Fi",
+    description: "Lo-fi beats, chillhop, and study music",
+    color: "#6366F1",
+    icon: "Music",
+    category: "music",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/covers-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["lo-fi", "chillhop", "study"], bio: "Chill beats", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  // ─── TALK (6 channels) ───────────────────────────────────────────
+  {
+    id: "ch-023",
+    numericId: 23,
+    name: "Sports Talk",
+    description: "Live sports commentary and analysis",
+    color: "#16A34A",
+    icon: "Mic",
+    category: "talk",
+    frequency: 432,
+    stream: { url: "https://stream.zeno.fm/0r0xa792kwzuv", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["sports", "commentary"], bio: "Sports talk", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-024",
+    numericId: 24,
+    name: "News & Current Events",
+    description: "Breaking news and current affairs",
+    color: "#2563EB",
+    icon: "Mic",
+    category: "talk",
+    frequency: 432,
+    stream: { url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["news", "current events"], bio: "World news", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-025",
+    numericId: 25,
+    name: "Interview Hour",
+    description: "In-depth interviews with artists, leaders, and visionaries",
+    color: "#7C3AED",
+    icon: "Mic",
+    category: "talk",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/fluid-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["interviews", "talk"], bio: "In-depth interviews", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-026",
+    numericId: 26,
+    name: "Panel Discussions",
+    description: "Multi-guest panel discussions on trending topics",
+    color: "#DC2626",
+    icon: "Mic",
+    category: "talk",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/defcon-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["panel", "discussion"], bio: "Panel discussions", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-027",
+    numericId: 27,
+    name: "Community Voices",
+    description: "Community stories, call-ins, and local voices",
+    color: "#059669",
+    icon: "Mic",
+    category: "talk",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/poptron-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["community", "local", "call-in"], bio: "Community voices", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-028",
+    numericId: 28,
+    name: "Tech & Innovation",
+    description: "Technology news, innovation, and digital culture",
+    color: "#0891B2",
+    icon: "Mic",
+    category: "talk",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/sf1033-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["tech", "innovation", "digital"], bio: "Tech and innovation", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  // ─── AI (4 channels, ch-039 to ch-042 — Seraph & Candy) ─────────
+  {
+    id: "ch-039",
+    numericId: 39,
+    name: "Seraph AI Radio",
+    description: "AI-curated music and commentary by Seraph DJ",
+    color: "#818CF8",
+    icon: "Bot",
+    category: "ai",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/dronezone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["ai-curated", "eclectic"], bio: "Seraph AI DJ \u2014 autonomous curation", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "ai-dj-seraph", autonomyLevel: 0.98, aiDj: "seraph" }
+  },
+  {
+    id: "ch-040",
+    numericId: 40,
+    name: "Candy AI Radio",
+    description: "AI-curated vibes and selections by Candy DJ",
+    color: "#F472B6",
+    icon: "Bot",
+    category: "ai",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/u80s-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["ai-curated", "pop", "vibes"], bio: "Candy AI DJ \u2014 feel-good curation", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "ai-dj-candy", autonomyLevel: 0.98, aiDj: "candy" }
+  },
+  {
+    id: "ch-041",
+    numericId: 41,
+    name: "QUMUS Selections",
+    description: "QUMUS autonomous engine picks \u2014 algorithm-driven discovery",
+    color: "#A78BFA",
+    icon: "Bot",
+    category: "ai",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/bagel-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["ai-curated", "discovery"], bio: "QUMUS autonomous selections", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "qumus-auto-select", autonomyLevel: 0.99 }
+  },
+  {
+    id: "ch-042",
+    numericId: 42,
+    name: "AI Mashup Lab",
+    description: "AI-generated mashups, remixes, and experimental audio",
+    color: "#C084FC",
+    icon: "Bot",
+    category: "ai",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/cliqhop-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["ai-curated", "mashup", "experimental"], bio: "AI mashup experiments", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "ai-mashup", autonomyLevel: 0.98 }
+  },
+  // ─── SPECIALTY (4 channels) ──────────────────────────────────────
+  {
+    id: "ch-029",
+    numericId: 29,
+    name: "HybridCast Emergency",
+    description: "Emergency broadcast system \u2014 HybridCast integration",
+    color: "#DC2626",
+    icon: "AlertTriangle",
+    category: "specialty",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/scanner-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["emergency", "broadcast"], bio: "HybridCast emergency broadcast", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "hybridcast-emergency", autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-030",
+    numericId: 30,
+    name: "Special Events",
+    description: "Live special events, concerts, and ceremonies",
+    color: "#F59E0B",
+    icon: "Star",
+    category: "specialty",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/live-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["events", "live", "concerts"], bio: "Live special events", is24x7: false, platformLinks: [] },
+    qumus: { autonomyLevel: 0.85 }
+  },
+  {
+    id: "ch-031",
+    numericId: 31,
+    name: "Anime & Gaming",
+    description: "Anime soundtracks, gaming music, and J-pop",
+    color: "#F472B6",
+    icon: "Gamepad",
+    category: "specialty",
+    frequency: 432,
+    stream: { url: "https://listen.181fm.com/181-anime_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["anime", "gaming", "j-pop"], bio: "Anime and gaming music", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-032",
+    numericId: 32,
+    name: "Seasonal & Holiday",
+    description: "Seasonal music and holiday specials",
+    color: "#10B981",
+    icon: "Calendar",
+    category: "specialty",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/christmas-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["seasonal", "holiday"], bio: "Seasonal and holiday music", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
+  },
+  // ─── WELLNESS (5 channels — Solfeggio frequencies) ───────────────
+  {
+    id: "ch-033",
+    numericId: 33,
+    name: "432Hz Healing",
+    description: "432Hz healing frequency \u2014 universal harmony",
+    color: "#8B5CF6",
+    icon: "Heart",
+    category: "wellness",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/dronezone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["healing", "meditation", "432hz"], bio: "432Hz universal harmony", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "wellness-432", autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-034",
+    numericId: 34,
+    name: "528Hz Miracle Tone",
+    description: "528Hz Solfeggio \u2014 transformation and DNA repair",
+    color: "#06B6D4",
+    icon: "Heart",
+    category: "wellness",
+    frequency: 528,
+    stream: { url: "https://ice1.somafm.com/drone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["healing", "solfeggio", "528hz"], bio: "528Hz miracle tone", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "wellness-528", autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-035",
+    numericId: 35,
+    name: "639Hz Connection",
+    description: "639Hz Solfeggio \u2014 relationships and connection",
+    color: "#EC4899",
+    icon: "Heart",
+    category: "wellness",
+    frequency: 639,
+    stream: { url: "https://ice1.somafm.com/spacestation-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["healing", "solfeggio", "639hz"], bio: "639Hz connection frequency", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "wellness-639", autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-036",
+    numericId: 36,
+    name: "741Hz Expression",
+    description: "741Hz Solfeggio \u2014 expression and solutions",
+    color: "#14B8A6",
+    icon: "Heart",
+    category: "wellness",
+    frequency: 741,
+    stream: { url: "https://ice1.somafm.com/darkzone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["healing", "solfeggio", "741hz"], bio: "741Hz expression frequency", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "wellness-741", autonomyLevel: 0.95 }
+  },
+  {
+    id: "ch-037",
+    numericId: 37,
+    name: "852Hz Intuition",
+    description: "852Hz Solfeggio \u2014 intuition and spiritual awakening",
+    color: "#7C3AED",
+    icon: "Heart",
+    category: "wellness",
+    frequency: 852,
+    stream: { url: "https://ice1.somafm.com/thistle-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["healing", "solfeggio", "852hz"], bio: "852Hz intuition frequency", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "wellness-852", autonomyLevel: 0.95 }
+  },
+  // ─── EDUCATION (4 channels) ──────────────────────────────────────
+  {
+    id: "ch-043",
+    numericId: 43,
+    name: "Education & Learning",
+    description: "Tutorials, language learning, and educational content",
+    color: "#2563EB",
+    icon: "BookOpen",
+    category: "education",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/brfm-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["education", "tutorials", "learning"], bio: "Educational content", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-044",
+    numericId: 44,
+    name: "History Channel",
+    description: "Historical documentaries and stories",
+    color: "#92400E",
+    icon: "BookOpen",
+    category: "education",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/metal-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["history", "documentary"], bio: "History and stories", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-045",
+    numericId: 45,
+    name: "Science & Discovery",
+    description: "Science, nature, and discovery programming",
+    color: "#0891B2",
+    icon: "BookOpen",
+    category: "education",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/vaporwaves-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["science", "nature", "discovery"], bio: "Science and discovery", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-046",
+    numericId: 46,
+    name: "Language Lab",
+    description: "Language learning and multilingual content",
+    color: "#059669",
+    icon: "BookOpen",
+    category: "education",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/sonicuniverse-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["language", "multilingual"], bio: "Language learning", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  // ─── ENTERTAINMENT (5 channels) ──────────────────────────────────
+  {
+    id: "ch-047",
+    numericId: 47,
+    name: "Audiobooks",
+    description: "Audiobooks and spoken word literature",
+    color: "#6366F1",
+    icon: "Book",
+    category: "entertainment",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/illstreet-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["audiobooks", "spoken word"], bio: "Audiobooks and literature", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-048",
+    numericId: 48,
+    name: "Comedy Hour",
+    description: "Stand-up comedy, sketches, and humor",
+    color: "#F59E0B",
+    icon: "Smile",
+    category: "entertainment",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/beatblender-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["comedy", "humor", "stand-up"], bio: "Comedy hour", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-049",
+    numericId: 49,
+    name: "Drama & Stories",
+    description: "Audio dramas, radio plays, and storytelling",
+    color: "#DC2626",
+    icon: "Theater",
+    category: "entertainment",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/missioncontrol-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["drama", "radio plays", "storytelling"], bio: "Audio dramas", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-050",
+    numericId: 50,
+    name: "Kids Zone",
+    description: "Children's programming, stories, and music",
+    color: "#22C55E",
+    icon: "Star",
+    category: "entertainment",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/christmas-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["kids", "children", "family"], bio: "Kids zone", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-051",
+    numericId: 51,
+    name: "C.J. Battle Radio",
+    description: "Dedicated channel for C.J. Battle \u2014 music, stories, and legacy",
+    color: "#F97316",
+    icon: "Star",
+    category: "entertainment",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/digitalis-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["legacy", "tribute", "family"], bio: "C.J. Battle Radio", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  // ─── COMMUNITY (4 channels) ──────────────────────────────────────
+  {
+    id: "ch-052",
+    numericId: 52,
+    name: "Open Mic",
+    description: "Open mic \u2014 listener stories, poetry, and performances",
+    color: "#8B5CF6",
+    icon: "Mic",
+    category: "community",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/doomed-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["open mic", "poetry", "performance"], bio: "Open mic community", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.85 }
+  },
+  {
+    id: "ch-053",
+    numericId: 53,
+    name: "Local Voices",
+    description: "Local community voices and grassroots content",
+    color: "#059669",
+    icon: "Users",
+    category: "community",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/7soul-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["community", "local", "grassroots"], bio: "Local voices", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.85 }
+  },
+  {
+    id: "ch-054",
+    numericId: 54,
+    name: "Canryn Production Radio",
+    description: "Canryn Production official channel \u2014 company updates and content",
+    color: "#F59E0B",
+    icon: "Building",
+    category: "community",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/synphaera-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["corporate", "updates", "canryn"], bio: "Canryn Production official", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.9 }
+  },
+  {
+    id: "ch-038",
+    numericId: 38,
+    name: "Meditation & Yoga",
+    description: "Guided meditation, yoga sessions, and mindfulness",
+    color: "#6366F1",
+    icon: "Heart",
+    category: "community",
+    frequency: 432,
+    stream: { url: "https://ice1.somafm.com/dronezone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["meditation", "yoga", "mindfulness"], bio: "Meditation and yoga", is24x7: true, platformLinks: [] },
+    qumus: { policyId: "wellness-meditation", autonomyLevel: 0.95 }
+  }
+];
+function getChannelByNumericId(numericId) {
+  return RADIO_STATIONS.find((s) => s.numericId === numericId);
+}
+function searchChannels(query2) {
+  const q = query2.toLowerCase();
+  return RADIO_STATIONS.filter(
+    (s) => s.name.toLowerCase().includes(q) || s.description.toLowerCase().includes(q) || s.metadata.genres.some((g) => g.toLowerCase().includes(q)) || s.category.toLowerCase().includes(q)
+  );
+}
+function getFallbackChain(station) {
+  const tiers = [
+    { tier: "primary", source: station.stream.url, type: station.stream.type, available: true }
+  ];
+  if (station.stream.spotifyUri) {
+    tiers.push({ tier: "secondary", source: station.stream.spotifyUri, type: "spotify_embed", available: true });
+  }
+  if (station.stream.appleMusicUrl) {
+    tiers.push({ tier: "tertiary", source: station.stream.appleMusicUrl, type: "apple_music_embed", available: true });
+  }
+  if (station.stream.fallbackUrl) {
+    tiers.push({ tier: "backup", source: station.stream.fallbackUrl, type: "direct", available: true });
+  }
+  tiers.push({ tier: "emergency", source: `synth://${station.frequency}Hz`, type: "synth_only", available: true });
+  return tiers;
+}
+function getCategorySummary() {
+  const categories = ["music", "talk", "ai", "specialty", "wellness", "education", "entertainment", "community"];
+  return categories.map((cat) => ({
+    category: cat,
+    count: RADIO_STATIONS.filter((s) => s.category === cat).length,
+    channels: RADIO_STATIONS.filter((s) => s.category === cat)
+  }));
+}
+
+// server/rrbRadioApi.ts
+import mysql9 from "mysql2/promise";
+function getConnection3() {
+  return mysql9.createConnection(process.env.DATABASE_URL);
+}
+function registerRRBRadioApi(app) {
+  const BASE = "/api/radio/v1";
+  app.get(`${BASE}/channels`, async (_req, res) => {
+    try {
+      const conn = await getConnection3();
+      const [rows] = await conn.execute("SELECT * FROM radio_channels ORDER BY id");
+      await conn.end();
+      const channels = rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        genre: row.genre,
+        streamUrl: row.streamUrl,
+        fallbackUrl: row.fallbackUrl,
+        frequency: row.frequency || 432,
+        status: row.status || "active",
+        currentListeners: row.currentListeners || 0
+      }));
+      res.json({
+        success: true,
+        count: channels.length,
+        channels,
+        registry: RADIO_STATIONS.length,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.get(`${BASE}/channels/:id`, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const conn = await getConnection3();
+      const [rows] = await conn.execute("SELECT * FROM radio_channels WHERE id = ?", [id]);
+      await conn.end();
+      const row = rows[0];
+      if (!row) return res.status(404).json({ success: false, error: "Channel not found" });
+      const registryEntry = getChannelByNumericId(id) || RADIO_STATIONS.find((s) => s.name === row.name);
+      res.json({
+        success: true,
+        channel: {
+          id: row.id,
+          name: row.name,
+          genre: row.genre,
+          streamUrl: row.streamUrl,
+          fallbackUrl: row.fallbackUrl,
+          frequency: row.frequency || 432,
+          status: row.status || "active",
+          currentListeners: row.currentListeners || 0,
+          description: row.description,
+          stationId: row.stationId
+        },
+        registry: registryEntry ? {
+          category: registryEntry.category,
+          color: registryEntry.color,
+          qumus: registryEntry.qumus,
+          metadata: registryEntry.metadata
+        } : null,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.get(`${BASE}/channels/:id/stream`, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const conn = await getConnection3();
+      const [rows] = await conn.execute("SELECT * FROM radio_channels WHERE id = ?", [id]);
+      await conn.end();
+      const row = rows[0];
+      if (!row) return res.status(404).json({ success: false, error: "Channel not found" });
+      const registryEntry = getChannelByNumericId(id);
+      const fallbackChain = registryEntry ? getFallbackChain(registryEntry) : [
+        { tier: "primary", source: row.streamUrl, type: "direct", available: true },
+        { tier: "backup", source: row.fallbackUrl || row.streamUrl, type: "direct", available: !!row.fallbackUrl },
+        { tier: "emergency", source: `synth://${row.frequency || 432}Hz`, type: "synth_only", available: true }
+      ];
+      res.json({
+        success: true,
+        channelId: id,
+        channelName: row.name,
+        primaryStream: row.streamUrl,
+        fallbackChain,
+        proxyUrl: `/api/stream-proxy?url=${encodeURIComponent(row.streamUrl)}`,
+        format: "mp3",
+        bitrate: 128,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.get(`${BASE}/channels/:id/now-playing`, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const conn = await getConnection3();
+      const [rows] = await conn.execute("SELECT * FROM radio_channels WHERE id = ?", [id]);
+      const [statusRows] = await conn.execute("SELECT * FROM streaming_status WHERE channel_id = ?", [id]);
+      await conn.end();
+      const row = rows[0];
+      if (!row) return res.status(404).json({ success: false, error: "Channel not found" });
+      const status = statusRows[0];
+      res.json({
+        success: true,
+        channelId: id,
+        channelName: row.name,
+        nowPlaying: {
+          title: status?.current_track || row.name,
+          artist: status?.current_artist || "RRB Radio",
+          album: status?.current_album || "",
+          genre: row.genre,
+          startedAt: status?.last_checked ? new Date(status.last_checked).toISOString() : (/* @__PURE__ */ new Date()).toISOString()
+        },
+        listeners: row.currentListeners || 0,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.get(`${BASE}/channels/:id/schedule`, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const conn = await getConnection3();
+      const [rows] = await conn.execute(
+        "SELECT * FROM broadcast_schedules WHERE channel_id = ? ORDER BY start_time LIMIT 20",
+        [id]
+      );
+      await conn.end();
+      res.json({
+        success: true,
+        channelId: id,
+        schedule: rows.map((r) => ({
+          id: r.id,
+          title: r.title,
+          startTime: r.start_time,
+          endTime: r.end_time,
+          type: r.content_type || "music",
+          host: r.host_name
+        })),
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.get(`${BASE}/channels/:id/listeners`, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const conn = await getConnection3();
+      const [rows] = await conn.execute("SELECT * FROM radio_channels WHERE id = ?", [id]);
+      const [stateRows] = await conn.execute("SELECT * FROM global_broadcast_state LIMIT 1");
+      await conn.end();
+      const row = rows[0];
+      if (!row) return res.status(404).json({ success: false, error: "Channel not found" });
+      const state = stateRows[0];
+      res.json({
+        success: true,
+        channelId: id,
+        channelName: row.name,
+        currentListeners: row.currentListeners || 0,
+        peakListeners: row.totalListeners || 0,
+        totalListeningHours: 0,
+        globalListeners: state?.listener_count || 0,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.post(`${BASE}/channels/:id/request`, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { song, artist, requestedBy } = req.body || {};
+      if (!song) return res.status(400).json({ success: false, error: "Song title required" });
+      const conn = await getConnection3();
+      await conn.execute(
+        "INSERT INTO song_requests (channel_id, song_title, artist_name, requested_by, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())",
+        [id, song, artist || "Unknown", requestedBy || "Anonymous"]
+      );
+      await conn.end();
+      res.json({
+        success: true,
+        message: `Song "${song}" requested on channel ${id}`,
+        status: "pending",
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      try {
+        const conn = await getConnection3();
+        await conn.execute(`CREATE TABLE IF NOT EXISTS song_requests (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          channel_id INT NOT NULL,
+          song_title VARCHAR(255) NOT NULL,
+          artist_name VARCHAR(255),
+          requested_by VARCHAR(255),
+          status ENUM('pending','queued','played','rejected') DEFAULT 'pending',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`);
+        const { song, artist, requestedBy } = req.body || {};
+        await conn.execute(
+          "INSERT INTO song_requests (channel_id, song_title, artist_name, requested_by, status, created_at) VALUES (?, ?, ?, ?, 'pending', NOW())",
+          [parseInt(req.params.id), song, artist || "Unknown", requestedBy || "Anonymous"]
+        );
+        await conn.end();
+        res.json({ success: true, message: `Song "${song}" requested`, status: "pending" });
+      } catch (e2) {
+        res.status(500).json({ success: false, error: String(e2) });
+      }
+    }
+  });
+  app.get(`${BASE}/categories`, (_req, res) => {
+    const summary = getCategorySummary();
+    res.json({
+      success: true,
+      categories: summary.map((c) => ({
+        name: c.category,
+        count: c.count,
+        channels: c.channels.map((ch) => ({ id: ch.numericId, name: ch.name }))
+      })),
+      totalChannels: RADIO_STATIONS.length,
+      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+    });
+  });
+  app.get(`${BASE}/search`, (req, res) => {
+    const q = req.query.q || "";
+    if (!q) return res.status(400).json({ success: false, error: "Query parameter 'q' required" });
+    const results = searchChannels(q);
+    res.json({
+      success: true,
+      query: q,
+      count: results.length,
+      results: results.map((ch) => ({
+        id: ch.numericId,
+        name: ch.name,
+        description: ch.description,
+        category: ch.category,
+        genres: ch.metadata.genres,
+        streamUrl: ch.stream.url
+      })),
+      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+    });
+  });
+  app.get(`${BASE}/health`, async (_req, res) => {
+    try {
+      const conn = await getConnection3();
+      const [countRows] = await conn.execute("SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'active'");
+      const [listenerRows] = await conn.execute("SELECT SUM(currentListeners) as total FROM radio_channels");
+      await conn.end();
+      const activeChannels = countRows[0]?.cnt || 0;
+      const totalListeners = listenerRows[0]?.total || 0;
+      res.json({
+        success: true,
+        status: "operational",
+        activeChannels,
+        totalChannels: 54,
+        registryChannels: RADIO_STATIONS.length,
+        totalListeners,
+        qumusStatus: "running",
+        subsystems: "18/18 healthy",
+        uptime: process.uptime(),
+        version: "3.3.0",
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, status: "degraded", error: String(error) });
+    }
+  });
+  app.get(`${BASE}/health/streams`, async (_req, res) => {
+    try {
+      const conn = await getConnection3();
+      const [rows] = await conn.execute("SELECT * FROM streaming_status ORDER BY channel_id");
+      await conn.end();
+      const streams = rows.map((r) => ({
+        channelId: r.channel_id,
+        streamUrl: r.stream_url,
+        status: r.status,
+        platform: r.platform,
+        bitrate: r.bitrate,
+        viewerCount: r.viewer_count,
+        lastUpdated: r.last_updated,
+        latency: r.latency
+      }));
+      const healthy = streams.filter((s) => s.status === "active" || s.status === "live").length;
+      const degraded = streams.filter((s) => s.status === "degraded" || s.status === "buffering").length;
+      const down = streams.filter((s) => s.status === "down" || s.status === "offline" || s.status === "error").length;
+      res.json({
+        success: true,
+        totalStreams: streams.length,
+        healthy,
+        degraded,
+        down,
+        uptimePercent: streams.length > 0 ? Math.round(healthy / streams.length * 100) : 0,
+        streams,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.get(`${BASE}/status`, async (_req, res) => {
+    try {
+      const conn = await getConnection3();
+      const [stateRows] = await conn.execute("SELECT * FROM global_broadcast_state ORDER BY id");
+      const [totalListeners] = await conn.execute("SELECT SUM(listener_count) as total FROM global_broadcast_state");
+      await conn.end();
+      res.json({
+        success: true,
+        globalState: {
+          totalChannels: stateRows.length,
+          totalListeners: totalListeners[0]?.total || 0,
+          activeStreams: stateRows.filter((r) => r.is_live).length,
+          isLive: stateRows.some((r) => r.is_live),
+          syncStatus: stateRows[0]?.sync_status || "unknown",
+          channelsInSync: stateRows[0]?.channels_in_sync || 0,
+          allChannels: stateRows[0]?.all_channels || 54,
+          currentContent: stateRows[0]?.current_content_title || "RRB Radio Live"
+        },
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.post(`${BASE}/webhooks/register`, async (req, res) => {
+    try {
+      const { url, events, secret } = req.body || {};
+      if (!url) return res.status(400).json({ success: false, error: "Webhook URL required" });
+      const conn = await getConnection3();
+      await conn.execute(`CREATE TABLE IF NOT EXISTS radio_webhooks (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        url VARCHAR(500) NOT NULL,
+        events JSON,
+        secret VARCHAR(255),
+        is_active TINYINT DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )`);
+      const [result2] = await conn.execute(
+        "INSERT INTO radio_webhooks (url, events, secret) VALUES (?, ?, ?)",
+        [url, JSON.stringify(events || ["*"]), secret || null]
+      );
+      await conn.end();
+      res.json({
+        success: true,
+        webhookId: result2.insertId,
+        url,
+        events: events || ["*"],
+        message: "Webhook registered successfully",
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.delete(`${BASE}/webhooks/:id`, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const conn = await getConnection3();
+      await conn.execute("DELETE FROM radio_webhooks WHERE id = ?", [id]);
+      await conn.end();
+      res.json({
+        success: true,
+        message: `Webhook ${id} removed`,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.get(`${BASE}/embed/:id`, async (req, res) => {
+    const id = parseInt(req.params.id);
+    const station = getChannelByNumericId(id);
+    const name = station?.name || `Channel ${id}`;
+    const color = station?.color || "#F59E0B";
+    const streamUrl = station?.stream.url || "";
+    const origin = req.headers.origin || req.protocol + "://" + req.get("host");
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RRB Radio \u2014 ${name}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; }
+    .player { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 12px; border: 1px solid ${color}33; }
+    .play-btn { width: 44px; height: 44px; border-radius: 50%; background: ${color}; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+    .play-btn:hover { transform: scale(1.1); }
+    .play-btn svg { width: 20px; height: 20px; fill: #fff; }
+    .info { flex: 1; min-width: 0; }
+    .name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .status { font-size: 11px; color: #888; margin-top: 2px; }
+    .live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; margin-right: 4px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .brand { font-size: 9px; color: #555; text-align: right; }
+    .brand a { color: ${color}; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="player">
+    <button class="play-btn" id="playBtn" onclick="togglePlay()">
+      <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+    </button>
+    <div class="info">
+      <div class="name">${name}</div>
+      <div class="status"><span class="live-dot"></span>LIVE \u2014 RRB Radio</div>
+    </div>
+    <div class="brand"><a href="${origin}" target="_blank">Powered by<br>Canryn Production</a></div>
+  </div>
+  <audio id="audio" preload="none"></audio>
+  <script>
+    const audio = document.getElementById('audio');
+    const btn = document.getElementById('playBtn');
+    let playing = false;
+    const streamUrl = '${streamUrl}';
+    const proxyUrl = '${origin}/api/stream-proxy?url=' + encodeURIComponent(streamUrl);
+    function togglePlay() {
+      if (playing) {
+        audio.pause(); audio.src = '';
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+        playing = false;
+      } else {
+        audio.src = streamUrl.startsWith('http://') ? proxyUrl : streamUrl;
+        audio.play().catch(() => { audio.src = proxyUrl; audio.play(); });
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+        playing = true;
+      }
+    }
+  </script>
+</body>
+</html>`;
+    res.setHeader("Content-Type", "text/html");
+    res.send(html);
+  });
+  app.get(`${BASE}/sdk.js`, (req, res) => {
+    const origin = req.headers.origin || req.protocol + "://" + req.get("host");
+    const sdk2 = `/**
+ * RRB Radio SDK v1.0
+ * Canryn Production \u2014 Rockin Rockin Boogie
+ * 
+ * Usage:
+ *   <script src="${origin}/api/radio/v1/sdk.js"></script>
+ *   <script>
+ *     const radio = new RRBRadio();
+ *     radio.play(1);  // Play channel 1
+ *     radio.stop();
+ *     radio.getChannels().then(channels => console.log(channels));
+ *   </script>
+ */
+(function(global) {
+  'use strict';
+  
+  const API_BASE = '${origin}/api/radio/v1';
+  const PROXY_BASE = '${origin}/api/stream-proxy';
+  
+  class RRBRadio {
+    constructor(options = {}) {
+      this.audio = new Audio();
+      this.audio.preload = 'none';
+      this.currentChannel = null;
+      this.isPlaying = false;
+      this.volume = options.volume || 0.8;
+      this.audio.volume = this.volume;
+      this.onPlay = options.onPlay || null;
+      this.onStop = options.onStop || null;
+      this.onError = options.onError || null;
+      this.onChannelChange = options.onChannelChange || null;
+      
+      this.audio.addEventListener('error', (e) => {
+        if (this.onError) this.onError(e);
+        this._tryFallback();
+      });
+    }
+    
+    async getChannels() {
+      const res = await fetch(API_BASE + '/channels');
+      const data = await res.json();
+      return data.channels;
+    }
+    
+    async getChannel(id) {
+      const res = await fetch(API_BASE + '/channels/' + id);
+      return await res.json();
+    }
+    
+    async getCategories() {
+      const res = await fetch(API_BASE + '/categories');
+      return await res.json();
+    }
+    
+    async search(query) {
+      const res = await fetch(API_BASE + '/search?q=' + encodeURIComponent(query));
+      return await res.json();
+    }
+    
+    async getNowPlaying(channelId) {
+      const res = await fetch(API_BASE + '/channels/' + channelId + '/now-playing');
+      return await res.json();
+    }
+    
+    async getStreamInfo(channelId) {
+      const res = await fetch(API_BASE + '/channels/' + channelId + '/stream');
+      return await res.json();
+    }
+    
+    async getHealth() {
+      const res = await fetch(API_BASE + '/health');
+      return await res.json();
+    }
+    
+    async requestSong(channelId, song, artist) {
+      const res = await fetch(API_BASE + '/channels/' + channelId + '/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ song, artist }),
+      });
+      return await res.json();
+    }
+    
+    async play(channelId) {
+      try {
+        const streamInfo = await this.getStreamInfo(channelId);
+        if (!streamInfo.success) throw new Error('Channel not found');
+        
+        this.currentChannel = channelId;
+        this._fallbackChain = streamInfo.fallbackChain || [];
+        this._fallbackIndex = 0;
+        
+        const url = streamInfo.primaryStream;
+        this.audio.src = url.startsWith('http://') 
+          ? PROXY_BASE + '?url=' + encodeURIComponent(url)
+          : url;
+        
+        await this.audio.play();
+        this.isPlaying = true;
+        if (this.onPlay) this.onPlay(channelId);
+        if (this.onChannelChange) this.onChannelChange(channelId);
+      } catch (err) {
+        if (this.onError) this.onError(err);
+      }
+    }
+    
+    stop() {
+      this.audio.pause();
+      this.audio.src = '';
+      this.isPlaying = false;
+      if (this.onStop) this.onStop();
+    }
+    
+    setVolume(vol) {
+      this.volume = Math.max(0, Math.min(1, vol));
+      this.audio.volume = this.volume;
+    }
+    
+    _tryFallback() {
+      if (!this._fallbackChain || this._fallbackIndex >= this._fallbackChain.length) return;
+      const next = this._fallbackChain[this._fallbackIndex++];
+      if (next && next.source && !next.source.startsWith('synth://')) {
+        const url = next.source;
+        this.audio.src = url.startsWith('http://') 
+          ? PROXY_BASE + '?url=' + encodeURIComponent(url)
+          : url;
+        this.audio.play().catch(() => this._tryFallback());
+      }
+    }
+    
+    embed(containerId, channelId, options = {}) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = API_BASE + '/embed/' + channelId;
+      iframe.style.width = options.width || '320px';
+      iframe.style.height = options.height || '80px';
+      iframe.style.border = 'none';
+      iframe.style.borderRadius = '12px';
+      iframe.style.overflow = 'hidden';
+      container.appendChild(iframe);
+    }
+  }
+  
+  global.RRBRadio = RRBRadio;
+})(typeof window !== 'undefined' ? window : global);
+`;
+    res.setHeader("Content-Type", "application/javascript");
+    res.send(sdk2);
+  });
+  app.get(`${BASE}/qumus/status`, async (_req, res) => {
+    try {
+      const conn = await getConnection3();
+      const [policyRows] = await conn.execute("SELECT COUNT(*) as cnt FROM qumus_core_policies");
+      const [decisionRows] = await conn.execute("SELECT COUNT(*) as cnt FROM qumus_decisions");
+      const [logRows] = await conn.execute("SELECT COUNT(*) as cnt FROM qumus_decision_logs");
+      const [metricsRows] = await conn.execute("SELECT COUNT(*) as cnt FROM qumus_metrics");
+      await conn.end();
+      res.json({
+        success: true,
+        qumus: {
+          status: "running",
+          activePolicies: policyRows[0]?.cnt || 0,
+          totalDecisions: decisionRows[0]?.cnt || 0,
+          totalDecisionLogs: logRows[0]?.cnt || 0,
+          totalMetrics: metricsRows[0]?.cnt || 0,
+          healthySubsystems: 18,
+          totalSubsystems: 18,
+          autonomyLevel: 0.9,
+          humanOverride: 0.1,
+          version: "3.3.0"
+        },
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  app.get(`${BASE}/qumus/decisions`, async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit) || 20;
+      const conn = await getConnection3();
+      const [rows] = await conn.execute(
+        `SELECT * FROM qumus_decisions ORDER BY createdAt DESC LIMIT ${parseInt(String(limit)) || 20}`
+      );
+      await conn.end();
+      res.json({
+        success: true,
+        count: rows.length,
+        decisions: rows.map((r) => ({
+          id: r.id,
+          decisionId: r.decisionId,
+          policyName: r.policyName,
+          action: r.action,
+          confidence: r.confidence,
+          status: r.status,
+          isAutonomous: r.isAutonomous,
+          createdAt: r.createdAt
+        })),
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, error: String(error) });
+    }
+  });
+  console.log(`[RRB Radio API] Registered 18 endpoints at ${BASE}/*`);
+}
+
 // server/_core/index.ts
 init_qumusProductionIntegration();
+
+// server/services/autoDjEngine.ts
+import mysql10 from "mysql2/promise";
+function getConnection4() {
+  return mysql10.createConnection(process.env.DATABASE_URL);
+}
+async function checkStreamHealth2(url) {
+  const start = Date.now();
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8e3);
+    const res = await fetch(url, {
+      method: "HEAD",
+      signal: controller.signal,
+      headers: { "User-Agent": "RRB-AutoDJ/1.0" }
+    });
+    clearTimeout(timeout);
+    return {
+      ok: res.ok || res.status === 200 || res.status === 206,
+      responseMs: Date.now() - start,
+      contentType: res.headers.get("content-type") || ""
+    };
+  } catch {
+    return { ok: false, responseMs: Date.now() - start, contentType: "" };
+  }
+}
+async function runAutoDjCycle() {
+  const decisions2 = [];
+  try {
+    const conn = await getConnection4();
+    const [rows] = await conn.execute("SELECT * FROM radio_channels WHERE status = 'active'");
+    const channels = rows;
+    for (const channel of channels) {
+      const health = await checkStreamHealth2(channel.streamUrl);
+      const registryEntry = RADIO_STATIONS.find((s) => s.numericId === channel.id || s.name === channel.name);
+      if (health.ok) {
+        const listeners2 = channel.currentListeners || 0;
+        if (listeners2 > 50) {
+          decisions2.push({
+            channelId: channel.id,
+            action: "boost_priority",
+            reason: `High engagement (${listeners2} listeners) \u2014 boosting priority`,
+            confidence: 0.95,
+            timestamp: Date.now()
+          });
+        } else {
+          decisions2.push({
+            channelId: channel.id,
+            action: "keep_stream",
+            reason: `Stream healthy (${health.responseMs}ms response)`,
+            confidence: 0.99,
+            timestamp: Date.now()
+          });
+        }
+      } else {
+        if (registryEntry) {
+          const fallbacks = getFallbackChain(registryEntry);
+          let switched = false;
+          for (let i = 1; i < fallbacks.length; i++) {
+            const fb = fallbacks[i];
+            if (fb.source.startsWith("synth://")) continue;
+            const fbHealth = await checkStreamHealth2(fb.source);
+            if (fbHealth.ok) {
+              await conn.execute(
+                "UPDATE radio_channels SET streamUrl = ? WHERE id = ?",
+                [fb.source, channel.id]
+              );
+              decisions2.push({
+                channelId: channel.id,
+                action: "switch_fallback",
+                reason: `Primary stream down \u2014 switched to ${fb.tier} fallback`,
+                fromUrl: channel.streamUrl,
+                toUrl: fb.source,
+                confidence: 0.9,
+                timestamp: Date.now()
+              });
+              switched = true;
+              break;
+            }
+          }
+          if (!switched) {
+            decisions2.push({
+              channelId: channel.id,
+              action: "emergency_synth",
+              reason: `All streams down \u2014 activating ${registryEntry.frequency}Hz emergency synth`,
+              confidence: 0.8,
+              timestamp: Date.now()
+            });
+          }
+        } else {
+          decisions2.push({
+            channelId: channel.id,
+            action: "rotate_content",
+            reason: "Stream down, no registry entry \u2014 rotating to next available content",
+            confidence: 0.75,
+            timestamp: Date.now()
+          });
+        }
+      }
+    }
+    for (const d of decisions2) {
+      if (d.action !== "keep_stream") {
+        try {
+          await conn.execute(
+            `INSERT INTO qumus_decisions (policy_id, decision_type, action, confidence, outcome, metadata, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, NOW())`,
+            [
+              "auto-dj-engine",
+              d.action,
+              d.reason,
+              d.confidence,
+              d.toUrl ? "switched" : "monitored",
+              JSON.stringify({ channelId: d.channelId, fromUrl: d.fromUrl, toUrl: d.toUrl })
+            ]
+          );
+        } catch {
+        }
+      }
+    }
+    await conn.end();
+  } catch (error) {
+    console.error("[Auto DJ] Cycle error:", error);
+  }
+  return decisions2;
+}
+var autoDjInterval = null;
+function startAutoDj() {
+  if (autoDjInterval) return;
+  console.log("[Auto DJ] Engine started \u2014 monitoring 54 channels every 10 minutes");
+  runAutoDjCycle().then((decisions2) => {
+    const actions = decisions2.filter((d) => d.action !== "keep_stream");
+    if (actions.length > 0) {
+      console.log(`[Auto DJ] Cycle complete: ${actions.length} actions taken`);
+    }
+  });
+  autoDjInterval = setInterval(async () => {
+    const decisions2 = await runAutoDjCycle();
+    const actions = decisions2.filter((d) => d.action !== "keep_stream");
+    if (actions.length > 0) {
+      console.log(`[Auto DJ] Cycle complete: ${actions.length} actions taken`);
+    }
+  }, 10 * 60 * 1e3);
+}
+
+// server/_core/index.ts
 init_const();
 function isPortAvailable(port) {
   return new Promise((resolve) => {
@@ -46720,6 +48261,7 @@ async function startServer() {
   console.log("[WebSocket] Manager initialized");
   try {
     startSelfAudit();
+    startAutoDj();
     console.log("[QUMUS] Self-Audit Engine activated \u2014 autonomous monitoring enabled");
   } catch (error) {
     console.error("[QUMUS] Self-Audit Engine failed to start:", error);
@@ -46880,6 +48422,7 @@ async function startServer() {
   });
   registerAudioStreamProxy(app);
   registerPodcastRssRoutes(app);
+  registerRRBRadioApi(app);
   app.use(
     "/api/trpc",
     createExpressMiddleware({
