@@ -91,6 +91,7 @@ import { restreamConfigRouter } from "./routers/restreamConfigRouter";
 import { streamHealthRouter } from "./routers/streamHealthRouter";
 import { selfAuditRouter } from "./routers/selfAuditRouter";
 import { videoManagementRouter } from "./routers/videoManagementRouter";
+import { liveBroadcastRouter } from "./routers/liveBroadcastRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -105,6 +106,9 @@ export const appRouter = router({
 
   // Studio Audio (S3 upload, recording, project persistence)
   studioAudio: studioAudioRouter,
+
+  // Live Broadcast (real Jitsi-based streaming + production studio)
+  liveBroadcast: liveBroadcastRouter,
 
   // Restream config (dynamic URL for all live/studio buttons)
   restreamConfig: restreamConfigRouter,

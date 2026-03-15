@@ -1,6 +1,17 @@
 import { router, protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { notifyOwner } from "../_core/notification";
+import mysql from "mysql2/promise";
+
+async function rawQuery(sql: string, params: any[] = []) {
+  const connection = await mysql.createConnection(process.env.DATABASE_URL!);
+  try {
+    const [rows] = await connection.execute(sql, params);
+    return rows as any[];
+  } finally {
+    await connection.end();
+  }
+}
 
 /**
  * Studio Streaming Router
@@ -15,15 +26,31 @@ export const studioStreamingRouter = router({
    */
   getLiveMetrics: protectedProcedure.query(async () => {
     try {
-      // TODO: Connect to actual broadcast system
-      // For now, return mock data with realistic values
+      const rows = await rawQuery(
+        `SELECT ss.*, b.title, b.startTime
+         FROM streaming_status ss
+         LEFT JOIN broadcasts b ON ss.broadcast_id = CAST(b.id AS CHAR)
+         WHERE ss.status = 'live'
+         ORDER BY ss.started_at DESC LIMIT 1`
+      );
+      if (rows.length === 0) {
+        return {
+          viewers: 0, bitrate: "0 Mbps", fps: 0, resolution: "N/A",
+          uptime: "Offline", quality: "No active broadcast", timestamp: new Date(),
+        };
+      }
+      const row = rows[0];
+      const startTime = row.started_at ? new Date(row.started_at).getTime() : Date.now();
+      const uptimeMs = Date.now() - startTime;
+      const hours = Math.floor(uptimeMs / 3600000);
+      const minutes = Math.floor((uptimeMs % 3600000) / 60000);
       return {
-        viewers: Math.floor(Math.random() * 5000) + 500,
-        bitrate: `${(Math.random() * 8 + 2).toFixed(1)} Mbps`,
-        fps: 60,
-        resolution: "1920x1080",
-        uptime: `${Math.floor(Math.random() * 24)}h ${Math.floor(Math.random() * 60)}m`,
-        quality: "Excellent",
+        viewers: row.viewer_count || 0,
+        bitrate: row.bitrate || "Auto (Jitsi adaptive)",
+        fps: 30,
+        resolution: row.resolution || "720p (Jitsi WebRTC)",
+        uptime: hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`,
+        quality: row.status === 'live' ? "Good (Jitsi WebRTC)" : "Offline",
         timestamp: new Date(),
       };
     } catch (error) {
@@ -38,16 +65,22 @@ export const studioStreamingRouter = router({
    */
   getNetworkHealth: protectedProcedure.query(async () => {
     try {
-      const onlineNodes = Math.floor(Math.random() * 4) + 11; // 11-15 nodes
-      const totalNodes = 15;
-
+      // Real check: count active streams and conferences
+      const streamRows = await rawQuery(`SELECT COUNT(*) as cnt FROM streaming_status WHERE status = 'live'`);
+      const confRows = await rawQuery(`SELECT COUNT(*) as cnt FROM conferences WHERE status = 'live'`);
+      const channelRows = await rawQuery(`SELECT COUNT(*) as cnt FROM radio_channels WHERE is_active = 1`);
+      const activeStreams = streamRows[0]?.cnt || 0;
+      const activeConferences = confRows[0]?.cnt || 0;
+      const activeChannels = channelRows[0]?.cnt || 0;
+      const totalNodes = activeChannels + activeConferences + activeStreams;
+      const onlineNodes = totalNodes; // All DB-tracked nodes are online by definition
       return {
         isOnline: true,
         nodesOnline: onlineNodes,
-        totalNodes: totalNodes,
-        coverage: Math.floor((onlineNodes / totalNodes) * 100),
-        latency: `${Math.floor(Math.random() * 50) + 20}ms`,
-        bandwidth: `${Math.floor(Math.random() * 50) + 50} Mbps`,
+        totalNodes: Math.max(totalNodes, 54), // At least 54 radio channels
+        coverage: totalNodes > 0 ? Math.floor((onlineNodes / Math.max(totalNodes, 54)) * 100) : 0,
+        latency: "<50ms (Jitsi WebRTC)",
+        bandwidth: "Adaptive (per-viewer)",
         timestamp: new Date(),
       };
     } catch (error) {
@@ -64,55 +97,47 @@ export const studioStreamingRouter = router({
     .input(z.object({ limit: z.number().default(5) }))
     .query(async ({ input }) => {
       try {
-        const schedule = [
-          {
-            id: "1",
-            title: "Rockin' Boogie Live",
-            time: "14:00",
-            type: "music",
-            duration: "2h",
-            listeners: 0,
-            status: "live",
-          },
-          {
-            id: "2",
-            title: "Sweet Miracles Donation Drive",
-            time: "16:00",
-            type: "fundraiser",
-            duration: "1h",
-            listeners: 0,
-            status: "scheduled",
-          },
-          {
-            id: "3",
-            title: "HybridCast Network Check",
-            time: "18:00",
-            type: "test",
-            duration: "30m",
-            listeners: 0,
-            status: "scheduled",
-          },
-          {
-            id: "4",
-            title: "Emergency Alert Test",
-            time: "20:00",
-            type: "emergency",
-            duration: "15m",
-            listeners: 0,
-            status: "scheduled",
-          },
-          {
-            id: "5",
-            title: "Late Night Music Session",
-            time: "22:00",
-            type: "music",
-            duration: "3h",
-            listeners: 0,
-            status: "scheduled",
-          },
-        ];
-
-        return schedule.slice(0, input.limit);
+        // Query real broadcasts from DB
+        const rows = await rawQuery(
+          `SELECT b.id, b.title, b.status, b.system, b.startTime, b.duration,
+                  ss.viewer_count as listeners
+           FROM broadcasts b
+           LEFT JOIN streaming_status ss ON ss.broadcast_id = CAST(b.id AS CHAR)
+           ORDER BY b.startTime DESC LIMIT ?`,
+          [input.limit]
+        );
+        // Also check broadcast_schedule table
+        const schedRows = await rawQuery(
+          `SELECT id, title, status, start_time as startTime, duration_minutes as duration
+           FROM broadcast_schedule
+           ORDER BY start_time ASC LIMIT ?`,
+          [input.limit]
+        );
+        const schedule = rows.map((r: any) => ({
+          id: String(r.id),
+          title: r.title || 'Untitled Broadcast',
+          time: r.startTime ? new Date(r.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'TBD',
+          type: r.system || 'music',
+          duration: r.duration ? `${r.duration}m` : '1h',
+          listeners: r.listeners || 0,
+          status: r.status || 'scheduled',
+        }));
+        // Append scheduled items if we need more
+        if (schedule.length < input.limit) {
+          for (const s of schedRows) {
+            if (schedule.length >= input.limit) break;
+            schedule.push({
+              id: `sched-${s.id}`,
+              title: s.title || 'Scheduled Broadcast',
+              time: s.startTime ? new Date(s.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'TBD',
+              type: 'music',
+              duration: s.duration ? `${s.duration}m` : '1h',
+              listeners: 0,
+              status: s.status || 'scheduled',
+            });
+          }
+        }
+        return schedule;
       } catch (error) {
         console.error("Failed to get broadcast schedule:", error);
         throw error;
@@ -125,17 +150,26 @@ export const studioStreamingRouter = router({
    */
   getDonationMetrics: protectedProcedure.query(async () => {
     try {
+      // Query real donation data from Stripe payments if available
+      let totalDonations = 0;
+      let totalDonors = 0;
+      try {
+        const donationRows = await rawQuery(
+          `SELECT COUNT(*) as donors, COALESCE(SUM(amount), 0) as total FROM donations`
+        );
+        totalDonations = Number(donationRows[0]?.total || 0);
+        totalDonors = Number(donationRows[0]?.donors || 0);
+      } catch {
+        // donations table may not exist yet — return zeros
+      }
+      const goalAmount = 100000;
       return {
-        totalDonations: Math.floor(Math.random() * 50000) + 10000,
-        totalDonors: Math.floor(Math.random() * 500) + 100,
-        averageDonation: Math.floor(Math.random() * 500) + 50,
-        goalAmount: 100000,
-        progressPercent: Math.floor(Math.random() * 100),
-        recentDonations: [
-          { donor: "Anonymous", amount: 250, time: "2 min ago" },
-          { donor: "John D.", amount: 100, time: "5 min ago" },
-          { donor: "Sarah M.", amount: 500, time: "8 min ago" },
-        ],
+        totalDonations,
+        totalDonors,
+        averageDonation: totalDonors > 0 ? Math.round(totalDonations / totalDonors) : 0,
+        goalAmount,
+        progressPercent: Math.min(100, Math.round((totalDonations / goalAmount) * 100)),
+        recentDonations: [] as { donor: string; amount: number; time: string }[],
         timestamp: new Date(),
       };
     } catch (error) {

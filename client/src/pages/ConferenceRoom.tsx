@@ -550,20 +550,34 @@ export default function ConferenceRoom() {
     }
   };
 
-  // Only init Jitsi after leaving lobby — or redirect to Zoom
+  // Only init Jitsi after leaving lobby — or redirect to external platform
   useEffect(() => {
     if (conference && !inLobby) {
       // Register join in backend
       if (user) {
         joinMutation.mutate({ conferenceId });
       }
-      // If platform is Zoom, open Zoom directly instead of Jitsi
-      if (conference.platform === 'zoom' && conference.external_url) {
+      // External platforms: open in new tab, show conference tools here
+      const externalPlatforms = ['zoom', 'meet', 'discord', 'skype'];
+      if (externalPlatforms.includes(conference.platform) && conference.external_url) {
+        const platformNames: Record<string, string> = {
+          zoom: 'Zoom',
+          meet: 'Google Meet',
+          discord: 'Discord',
+          skype: 'Skype',
+        };
         window.open(conference.external_url, '_blank');
-        toast.success('Opening Zoom meeting — you can close this tab or stay for conference tools.');
+        toast.success(`Opening ${platformNames[conference.platform] || conference.platform} — you can close this tab or stay for conference tools.`);
         setJitsiReady(true); // Show the room UI with tools
         return;
       }
+      // RRB-live broadcasts: redirect to live stream page
+      if (conference.platform === 'rrb-live') {
+        toast.success('Connecting to RRB Live Broadcast...');
+        setJitsiReady(true);
+        return;
+      }
+      // Default: Jitsi (built-in, free, no account needed)
       initJitsi();
     }
     return () => {
@@ -647,10 +661,16 @@ export default function ConferenceRoom() {
     );
   }
 
-  // ─── Pre-Join Lobby (skip for Zoom — go directly) ───
+  // ─── Pre-Join Lobby (skip for external platforms — go directly) ───
   if (inLobby) {
-    // For Zoom conferences, skip the lobby and open Zoom immediately
-    if (conference?.platform === 'zoom' && conference?.external_url) {
+    const externalPlatformInfo: Record<string, { name: string; color: string; buttonText: string }> = {
+      zoom: { name: 'Zoom', color: 'bg-blue-600 hover:bg-blue-700', buttonText: 'Join Zoom Meeting' },
+      meet: { name: 'Google Meet', color: 'bg-green-600 hover:bg-green-700', buttonText: 'Join Google Meet' },
+      discord: { name: 'Discord', color: 'bg-indigo-600 hover:bg-indigo-700', buttonText: 'Join Discord Channel' },
+      skype: { name: 'Skype', color: 'bg-sky-600 hover:bg-sky-700', buttonText: 'Join Skype Call' },
+    };
+    const extInfo = conference?.platform ? externalPlatformInfo[conference.platform] : null;
+    if (extInfo && conference?.external_url) {
       return (
         <div className="min-h-screen bg-gradient-to-b from-gray-950 to-black flex items-center justify-center p-4">
           <div className="w-full max-w-md text-center space-y-6">
@@ -658,17 +678,17 @@ export default function ConferenceRoom() {
               <ExternalLink className="w-10 h-10 text-amber-400" />
             </div>
             <h1 className="text-2xl font-bold text-white">{conference.title}</h1>
-            <p className="text-white/60">This conference is hosted on Zoom. Click below to join.</p>
+            <p className="text-white/60">This conference is hosted on {extInfo.name}. Click below to join.</p>
             <Button
               onClick={() => {
                 if (user) joinMutation.mutate({ conferenceId });
                 window.open(conference.external_url, '_blank');
-                toast.success('Opening Zoom meeting...');
+                toast.success(`Opening ${extInfo.name}...`);
                 setInLobby(false);
               }}
-              className="w-full h-14 bg-amber-600 hover:bg-amber-700 text-white text-lg font-semibold"
+              className={`w-full h-14 ${extInfo.color} text-white text-lg font-semibold`}
             >
-              Join Zoom Meeting
+              {extInfo.buttonText}
             </Button>
             <Button
               variant="outline"
@@ -677,7 +697,7 @@ export default function ConferenceRoom() {
             >
               <ArrowLeft className="w-4 h-4 mr-2" /> Back to Conference Hub
             </Button>
-            <p className="text-white/30 text-xs">Meeting ID: {conference.room_code}</p>
+            <p className="text-white/30 text-xs">Room: {conference.room_code}</p>
           </div>
         </div>
       );

@@ -27,22 +27,8 @@ const genreColors: Record<string, string> = {
   'Rock & Roll': 'from-purple-600 to-blue-500',
 };
 
-// Configurable broadcast stream URL - admin can update via settings
-const DEFAULT_STREAM_URL = 'https://www.youtube.com/embed/jfKfPfyJRdk';
-
-function getStreamUrl(): string {
-  try {
-    const saved = localStorage.getItem('rrb_broadcast_url');
-    if (saved) return saved;
-  } catch (e) {}
-  return DEFAULT_STREAM_URL;
-}
-
-function setStreamUrl(url: string): void {
-  try {
-    localStorage.setItem('rrb_broadcast_url', url);
-  } catch (e) {}
-}
+// Jitsi domain for live broadcasts
+const JITSI_DOMAIN = 'meet.jit.si';
 
 /**
  * Returns a proxied URL for HTTP streams when running on HTTPS.
@@ -87,7 +73,7 @@ export default function LiveStreamPage() {
   const [showChat, setShowChat] = useState(true);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [showStreamSettings, setShowStreamSettings] = useState(false);
-  const [customStreamUrl, setCustomStreamUrl] = useState(getStreamUrl());
+  const [broadcastTitle, setBroadcastTitle] = useState('RRB Live Broadcast');
   const videoRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -107,6 +93,20 @@ export default function LiveStreamPage() {
   const { data: broadcastSchedule } = trpc.ecosystemIntegration.getBroadcastSchedule.useQuery(undefined, {
     staleTime: 300000,
   });
+
+  // Live Broadcast (real Jitsi-based streaming)
+  const { data: currentBroadcast, refetch: refetchBroadcast } = trpc.liveBroadcast.getCurrentBroadcast.useQuery(undefined, {
+    refetchInterval: 10000, // Check every 10s if a broadcast is live
+  });
+  const startBroadcastMutation = trpc.liveBroadcast.startBroadcast.useMutation({
+    onSuccess: () => refetchBroadcast(),
+  });
+  const endBroadcastMutation = trpc.liveBroadcast.endBroadcast.useMutation({
+    onSuccess: () => refetchBroadcast(),
+  });
+  const createStudioMutation = trpc.liveBroadcast.createStudioSession.useMutation();
+  const [activeBroadcast, setActiveBroadcast] = useState<{ jitsiRoom: string; broadcastId: number } | null>(null);
+  const [studioSession, setStudioSession] = useState<{ jitsiRoom: string; guestUrl: string; title: string } | null>(null);
 
   // AI DJ intro generation
   const djIntroMutation = trpc.ecosystemIntegration.getDjIntro.useMutation();
@@ -348,14 +348,51 @@ export default function LiveStreamPage() {
                 {activeTab === 'video' ? (
                   <div className="w-full h-full relative">
                     <div className="absolute inset-0 flex items-center justify-center">
-                      {isPlaying ? (
+                      {/* Real Jitsi broadcast viewer or Go Live controls */}
+                      {currentBroadcast?.isLive && currentBroadcast.jitsiRoom ? (
                         <iframe
-                          src={`${getStreamUrl()}?autoplay=1&mute=0`}
+                          src={`https://${JITSI_DOMAIN}/${currentBroadcast.jitsiRoom}#config.prejoinPageEnabled=false&config.startWithAudioMuted=true&config.startWithVideoMuted=true&config.disableDeepLinking=true&config.toolbarButtons=[]&interfaceConfig.filmStripOnly=true`}
                           className="w-full h-full"
-                          allow="autoplay; encrypted-media"
+                          allow="camera; microphone; display-capture; autoplay; encrypted-media"
                           allowFullScreen
-                          title="RRB Live Stream"
+                          title="RRB Live Broadcast"
+                          style={{ border: 'none' }}
                         />
+                      ) : activeBroadcast ? (
+                        <iframe
+                          src={`https://${JITSI_DOMAIN}/${activeBroadcast.jitsiRoom}#config.prejoinPageEnabled=false&config.startWithAudioMuted=false&config.startWithVideoMuted=false`}
+                          className="w-full h-full"
+                          allow="camera; microphone; display-capture; autoplay; encrypted-media"
+                          allowFullScreen
+                          title="RRB Live Broadcast - Host View"
+                          style={{ border: 'none' }}
+                        />
+                      ) : studioSession ? (
+                        <div className="w-full h-full flex flex-col">
+                          <div className="bg-red-600/20 border-b border-red-500/30 px-3 py-1.5 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                              <span className="text-white text-xs font-medium">Production Studio: {studioSession.title}</span>
+                            </div>
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(studioSession.guestUrl);
+                                import('sonner').then(m => m.toast.success('Guest link copied!'));
+                              }}
+                              className="text-xs text-amber-400 hover:text-amber-300 px-2 py-0.5 bg-white/5 rounded"
+                            >
+                              Copy Guest Link
+                            </button>
+                          </div>
+                          <iframe
+                            src={`https://${JITSI_DOMAIN}/${studioSession.jitsiRoom}#config.prejoinPageEnabled=false`}
+                            className="flex-1 w-full"
+                            allow="camera; microphone; display-capture; autoplay; encrypted-media"
+                            allowFullScreen
+                            title="RRB Production Studio"
+                            style={{ border: 'none' }}
+                          />
+                        </div>
                       ) : (
                         <div className="text-center">
                           <div className="relative w-32 h-32 mx-auto mb-6">
@@ -368,7 +405,53 @@ export default function LiveStreamPage() {
                           <h2 className="text-2xl font-bold text-[#D4A843] mb-2">RRB Live Broadcast</h2>
                           <p className="text-[#E8E0D0]/60 text-sm mb-1">Canryn Production Broadcasting</p>
                           <p className="text-[#E8E0D0]/40 text-xs mb-4">A Voice for the Voiceless</p>
-                          <p className="text-[#E8E0D0]/30 text-xs">Press play to connect to live stream</p>
+                          {!currentBroadcast?.isLive && (
+                            <p className="text-[#E8E0D0]/30 text-xs mb-4">No broadcast is currently live</p>
+                          )}
+                          {user && (
+                            <div className="flex flex-col items-center gap-2 mt-4">
+                              <button
+                                onClick={() => {
+                                  startBroadcastMutation.mutate(
+                                    { title: broadcastTitle, system: 'rrb' },
+                                    {
+                                      onSuccess: (data) => {
+                                        setActiveBroadcast({ jitsiRoom: data.jitsiRoom, broadcastId: data.broadcastId });
+                                        import('sonner').then(m => m.toast.success('You are LIVE! Broadcasting now.'));
+                                      },
+                                    }
+                                  );
+                                }}
+                                disabled={startBroadcastMutation.isPending}
+                                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+                              >
+                                {startBroadcastMutation.isPending ? (
+                                  <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                  <Radio className="w-5 h-5" />
+                                )}
+                                GO LIVE
+                              </button>
+                              <button
+                                onClick={() => {
+                                  createStudioMutation.mutate(
+                                    { title: 'RRB Production Studio', maxGuests: 4 },
+                                    {
+                                      onSuccess: (data) => {
+                                        setStudioSession({ jitsiRoom: data.jitsiRoom, guestUrl: data.guestUrl, title: data.title });
+                                        import('sonner').then(m => m.toast.success('Production Studio opened! Share the guest link to invite panelists.'));
+                                      },
+                                    }
+                                  );
+                                }}
+                                disabled={createStudioMutation.isPending}
+                                className="px-4 py-2 bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 text-sm rounded-lg flex items-center gap-2 transition-colors border border-amber-600/30"
+                              >
+                                <Users className="w-4 h-4" />
+                                Open Production Studio
+                              </button>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -826,51 +909,55 @@ export default function LiveStreamPage() {
         </div>
       </div>
 
-      {/* Admin Stream URL Settings Modal */}
+      {/* Broadcast Settings Modal */}
       {showStreamSettings && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setShowStreamSettings(false)}>
           <div className="bg-[#111] border border-[#D4A843]/30 rounded-xl p-6 max-w-lg w-full" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-[#D4A843] mb-4">Broadcast Stream Settings</h3>
-            <p className="text-xs text-[#E8E0D0]/50 mb-4">Set the live stream embed URL for broadcasts. Supports YouTube, Facebook Live, Zoom, or any embeddable video URL.</p>
+            <h3 className="text-lg font-bold text-[#D4A843] mb-4">Broadcast Settings</h3>
+            <p className="text-xs text-[#E8E0D0]/50 mb-4">Configure your live broadcast. Powered by Jitsi Meet (free, no account needed).</p>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-[#E8E0D0]/60 mb-1 block">Stream Embed URL</label>
+                <label className="text-xs text-[#E8E0D0]/60 mb-1 block">Broadcast Title</label>
                 <input
                   type="text"
-                  value={customStreamUrl}
-                  onChange={(e) => setCustomStreamUrl(e.target.value)}
-                  placeholder="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+                  value={broadcastTitle}
+                  onChange={(e) => setBroadcastTitle(e.target.value)}
+                  placeholder="RRB Live Broadcast"
                   className="w-full bg-[#0A0A0A] border border-[#333] rounded-lg px-3 py-2 text-sm text-[#E8E0D0] placeholder-[#E8E0D0]/30 focus:outline-none focus:border-[#D4A843]/50"
                 />
               </div>
               <div className="text-xs text-[#E8E0D0]/40 space-y-1">
-                <p>Quick formats:</p>
-                <p>YouTube: https://www.youtube.com/embed/VIDEO_ID</p>
-                <p>Facebook: https://www.facebook.com/plugins/video.php?href=URL</p>
-                <p>Zoom: Your Zoom webinar embed link</p>
+                <p className="font-medium text-[#E8E0D0]/60">How it works:</p>
+                <p>1. Click "GO LIVE" to start broadcasting via Jitsi WebRTC</p>
+                <p>2. Your camera/mic streams directly to viewers in real-time</p>
+                <p>3. Use "Production Studio" for multi-guest panels</p>
+                <p>4. Viewers see the stream embedded on the /live page</p>
               </div>
-              <div className="flex gap-2 pt-2">
-                <Button
-                  onClick={() => {
-                    setStreamUrl(customStreamUrl);
-                    setShowStreamSettings(false);
-                    window.location.reload();
-                  }}
-                  className="flex-1 bg-[#D4A843] text-[#0A0A0A] hover:bg-[#E8C860]"
-                >
-                  Save & Apply
-                </Button>
-                <Button
-                  onClick={() => {
-                    setCustomStreamUrl(DEFAULT_STREAM_URL);
-                    setStreamUrl(DEFAULT_STREAM_URL);
-                  }}
-                  variant="outline"
-                  className="border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10"
-                >
-                  Reset Default
-                </Button>
-              </div>
+              {activeBroadcast && (
+                <div className="bg-red-600/10 border border-red-500/30 rounded-lg p-3">
+                  <p className="text-red-400 text-xs font-medium flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /> Currently Broadcasting
+                  </p>
+                  <p className="text-[#E8E0D0]/40 text-xs mt-1">Room: {activeBroadcast.jitsiRoom}</p>
+                  <Button
+                    onClick={() => {
+                      endBroadcastMutation.mutate({ broadcastId: activeBroadcast.broadcastId });
+                      setActiveBroadcast(null);
+                      setShowStreamSettings(false);
+                    }}
+                    className="mt-2 bg-red-600 hover:bg-red-700 text-white text-xs"
+                    size="sm"
+                  >
+                    End Broadcast
+                  </Button>
+                </div>
+              )}
+              <Button
+                onClick={() => setShowStreamSettings(false)}
+                className="w-full bg-[#D4A843] text-[#0A0A0A] hover:bg-[#E8C860]"
+              >
+                Close
+              </Button>
             </div>
           </div>
         </div>

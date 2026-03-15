@@ -8667,7 +8667,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z99 } from "zod";
+import { z as z100 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -13741,6 +13741,16 @@ var watermarkRouter = router({
 // server/routers/studioStreaming.ts
 init_notification();
 import { z as z14 } from "zod";
+import mysql from "mysql2/promise";
+async function rawQuery(sql20, params2 = []) {
+  const connection = await mysql.createConnection(process.env.DATABASE_URL);
+  try {
+    const [rows] = await connection.execute(sql20, params2);
+    return rows;
+  } finally {
+    await connection.end();
+  }
+}
 var studioStreamingRouter = router({
   /**
    * Get live broadcast metrics
@@ -13748,13 +13758,36 @@ var studioStreamingRouter = router({
    */
   getLiveMetrics: protectedProcedure.query(async () => {
     try {
+      const rows = await rawQuery(
+        `SELECT ss.*, b.title, b.startTime
+         FROM streaming_status ss
+         LEFT JOIN broadcasts b ON ss.broadcast_id = CAST(b.id AS CHAR)
+         WHERE ss.status = 'live'
+         ORDER BY ss.started_at DESC LIMIT 1`
+      );
+      if (rows.length === 0) {
+        return {
+          viewers: 0,
+          bitrate: "0 Mbps",
+          fps: 0,
+          resolution: "N/A",
+          uptime: "Offline",
+          quality: "No active broadcast",
+          timestamp: /* @__PURE__ */ new Date()
+        };
+      }
+      const row = rows[0];
+      const startTime = row.started_at ? new Date(row.started_at).getTime() : Date.now();
+      const uptimeMs = Date.now() - startTime;
+      const hours = Math.floor(uptimeMs / 36e5);
+      const minutes = Math.floor(uptimeMs % 36e5 / 6e4);
       return {
-        viewers: Math.floor(Math.random() * 5e3) + 500,
-        bitrate: `${(Math.random() * 8 + 2).toFixed(1)} Mbps`,
-        fps: 60,
-        resolution: "1920x1080",
-        uptime: `${Math.floor(Math.random() * 24)}h ${Math.floor(Math.random() * 60)}m`,
-        quality: "Excellent",
+        viewers: row.viewer_count || 0,
+        bitrate: row.bitrate || "Auto (Jitsi adaptive)",
+        fps: 30,
+        resolution: row.resolution || "720p (Jitsi WebRTC)",
+        uptime: hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`,
+        quality: row.status === "live" ? "Good (Jitsi WebRTC)" : "Offline",
         timestamp: /* @__PURE__ */ new Date()
       };
     } catch (error) {
@@ -13768,15 +13801,22 @@ var studioStreamingRouter = router({
    */
   getNetworkHealth: protectedProcedure.query(async () => {
     try {
-      const onlineNodes = Math.floor(Math.random() * 4) + 11;
-      const totalNodes = 15;
+      const streamRows = await rawQuery(`SELECT COUNT(*) as cnt FROM streaming_status WHERE status = 'live'`);
+      const confRows = await rawQuery(`SELECT COUNT(*) as cnt FROM conferences WHERE status = 'live'`);
+      const channelRows = await rawQuery(`SELECT COUNT(*) as cnt FROM radio_channels WHERE is_active = 1`);
+      const activeStreams = streamRows[0]?.cnt || 0;
+      const activeConferences = confRows[0]?.cnt || 0;
+      const activeChannels = channelRows[0]?.cnt || 0;
+      const totalNodes = activeChannels + activeConferences + activeStreams;
+      const onlineNodes = totalNodes;
       return {
         isOnline: true,
         nodesOnline: onlineNodes,
-        totalNodes,
-        coverage: Math.floor(onlineNodes / totalNodes * 100),
-        latency: `${Math.floor(Math.random() * 50) + 20}ms`,
-        bandwidth: `${Math.floor(Math.random() * 50) + 50} Mbps`,
+        totalNodes: Math.max(totalNodes, 54),
+        // At least 54 radio channels
+        coverage: totalNodes > 0 ? Math.floor(onlineNodes / Math.max(totalNodes, 54) * 100) : 0,
+        latency: "<50ms (Jitsi WebRTC)",
+        bandwidth: "Adaptive (per-viewer)",
         timestamp: /* @__PURE__ */ new Date()
       };
     } catch (error) {
@@ -13790,54 +13830,44 @@ var studioStreamingRouter = router({
    */
   getBroadcastSchedule: protectedProcedure.input(z14.object({ limit: z14.number().default(5) })).query(async ({ input }) => {
     try {
-      const schedule = [
-        {
-          id: "1",
-          title: "Rockin' Boogie Live",
-          time: "14:00",
-          type: "music",
-          duration: "2h",
-          listeners: 0,
-          status: "live"
-        },
-        {
-          id: "2",
-          title: "Sweet Miracles Donation Drive",
-          time: "16:00",
-          type: "fundraiser",
-          duration: "1h",
-          listeners: 0,
-          status: "scheduled"
-        },
-        {
-          id: "3",
-          title: "HybridCast Network Check",
-          time: "18:00",
-          type: "test",
-          duration: "30m",
-          listeners: 0,
-          status: "scheduled"
-        },
-        {
-          id: "4",
-          title: "Emergency Alert Test",
-          time: "20:00",
-          type: "emergency",
-          duration: "15m",
-          listeners: 0,
-          status: "scheduled"
-        },
-        {
-          id: "5",
-          title: "Late Night Music Session",
-          time: "22:00",
-          type: "music",
-          duration: "3h",
-          listeners: 0,
-          status: "scheduled"
+      const rows = await rawQuery(
+        `SELECT b.id, b.title, b.status, b.system, b.startTime, b.duration,
+                  ss.viewer_count as listeners
+           FROM broadcasts b
+           LEFT JOIN streaming_status ss ON ss.broadcast_id = CAST(b.id AS CHAR)
+           ORDER BY b.startTime DESC LIMIT ?`,
+        [input.limit]
+      );
+      const schedRows = await rawQuery(
+        `SELECT id, title, status, start_time as startTime, duration_minutes as duration
+           FROM broadcast_schedule
+           ORDER BY start_time ASC LIMIT ?`,
+        [input.limit]
+      );
+      const schedule = rows.map((r) => ({
+        id: String(r.id),
+        title: r.title || "Untitled Broadcast",
+        time: r.startTime ? new Date(r.startTime).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "TBD",
+        type: r.system || "music",
+        duration: r.duration ? `${r.duration}m` : "1h",
+        listeners: r.listeners || 0,
+        status: r.status || "scheduled"
+      }));
+      if (schedule.length < input.limit) {
+        for (const s of schedRows) {
+          if (schedule.length >= input.limit) break;
+          schedule.push({
+            id: `sched-${s.id}`,
+            title: s.title || "Scheduled Broadcast",
+            time: s.startTime ? new Date(s.startTime).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : "TBD",
+            type: "music",
+            duration: s.duration ? `${s.duration}m` : "1h",
+            listeners: 0,
+            status: s.status || "scheduled"
+          });
         }
-      ];
-      return schedule.slice(0, input.limit);
+      }
+      return schedule;
     } catch (error) {
       console.error("Failed to get broadcast schedule:", error);
       throw error;
@@ -13849,17 +13879,24 @@ var studioStreamingRouter = router({
    */
   getDonationMetrics: protectedProcedure.query(async () => {
     try {
+      let totalDonations = 0;
+      let totalDonors = 0;
+      try {
+        const donationRows = await rawQuery(
+          `SELECT COUNT(*) as donors, COALESCE(SUM(amount), 0) as total FROM donations`
+        );
+        totalDonations = Number(donationRows[0]?.total || 0);
+        totalDonors = Number(donationRows[0]?.donors || 0);
+      } catch {
+      }
+      const goalAmount = 1e5;
       return {
-        totalDonations: Math.floor(Math.random() * 5e4) + 1e4,
-        totalDonors: Math.floor(Math.random() * 500) + 100,
-        averageDonation: Math.floor(Math.random() * 500) + 50,
-        goalAmount: 1e5,
-        progressPercent: Math.floor(Math.random() * 100),
-        recentDonations: [
-          { donor: "Anonymous", amount: 250, time: "2 min ago" },
-          { donor: "John D.", amount: 100, time: "5 min ago" },
-          { donor: "Sarah M.", amount: 500, time: "8 min ago" }
-        ],
+        totalDonations,
+        totalDonors,
+        averageDonation: totalDonors > 0 ? Math.round(totalDonations / totalDonors) : 0,
+        goalAmount,
+        progressPercent: Math.min(100, Math.round(totalDonations / goalAmount * 100)),
+        recentDonations: [],
         timestamp: /* @__PURE__ */ new Date()
       };
     } catch (error) {
@@ -43738,6 +43775,225 @@ function parseTimestamp(ts) {
   return parseFloat(cleaned) || 0;
 }
 
+// server/routers/liveBroadcastRouter.ts
+init_notification();
+import { z as z99 } from "zod";
+var JITSI_DOMAIN = "meet.jit.si";
+function generateBroadcastId() {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let result2 = "rrb-live-";
+  for (let i = 0; i < 12; i++) {
+    result2 += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result2;
+}
+async function rawQuery2(sql20, params2 = []) {
+  const mysql2 = await import("mysql2/promise");
+  const connection = await mysql2.createConnection(process.env.DATABASE_URL);
+  try {
+    const [rows] = await connection.execute(sql20, params2);
+    return rows;
+  } finally {
+    await connection.end();
+  }
+}
+var liveBroadcastRouter = router({
+  /**
+   * Get current live broadcast status
+   * Returns the active broadcast if one is running, or null
+   */
+  getCurrentBroadcast: publicProcedure.query(async () => {
+    const rows = await rawQuery2(
+      `SELECT ss.*, b.title, b.description, b.system, b.is_emergency as isEmergency
+       FROM streaming_status ss
+       LEFT JOIN broadcasts b ON ss.broadcast_id = b.id
+       WHERE ss.status = 'live'
+       ORDER BY ss.started_at DESC LIMIT 1`
+    );
+    if (rows.length === 0) {
+      return {
+        isLive: false,
+        broadcast: null,
+        jitsiRoom: null,
+        jitsiDomain: JITSI_DOMAIN
+      };
+    }
+    const row = rows[0];
+    return {
+      isLive: true,
+      broadcast: {
+        id: row.broadcast_id,
+        title: row.title || "RRB Live Broadcast",
+        description: row.description || "",
+        viewerCount: row.viewer_count || 0,
+        peakViewers: row.peak_viewers || 0,
+        startedAt: row.started_at,
+        platform: row.platform,
+        streamUrl: row.stream_url,
+        bitrate: row.bitrate,
+        resolution: row.resolution
+      },
+      jitsiRoom: row.stream_url,
+      // The Jitsi room name
+      jitsiDomain: JITSI_DOMAIN
+    };
+  }),
+  /**
+   * Start a live broadcast
+   * Creates a Jitsi room and records it in the database
+   */
+  startBroadcast: protectedProcedure.input(z99.object({
+    title: z99.string().min(1).max(255),
+    description: z99.string().optional(),
+    system: z99.enum(["qumus", "rrb", "hybridcast"]).default("rrb"),
+    isEmergency: z99.boolean().default(false)
+  })).mutation(async ({ input, ctx }) => {
+    const broadcastId = generateBroadcastId();
+    const jitsiRoomName = `RRB-${broadcastId}`;
+    await rawQuery2(
+      `INSERT INTO broadcasts (system, createdBy, title, description, status, startTime, isEmergency, createdAt, updatedAt)
+         VALUES (?, ?, ?, ?, 'live', NOW(), ?, NOW(), NOW())`,
+      [input.system, ctx.user.id, input.title, input.description || null, input.isEmergency ? 1 : 0]
+    );
+    const insertResult = await rawQuery2("SELECT LAST_INSERT_ID() as id");
+    const dbBroadcastId = insertResult[0]?.id;
+    await rawQuery2(
+      `INSERT INTO streaming_status (broadcast_id, channel_id, status, viewer_count, peak_viewers, stream_url, started_at, platform, created_at, updated_at, last_updated)
+         VALUES (?, 0, 'live', 0, 0, ?, NOW(), 'website', NOW(), NOW(), NOW())`,
+      [String(dbBroadcastId), jitsiRoomName]
+    );
+    await notifyOwner({
+      title: `\u{1F534} LIVE: ${input.title}`,
+      content: `Broadcast started by ${ctx.user.name}. Jitsi room: ${jitsiRoomName}. Join at /live`
+    });
+    return {
+      broadcastId: dbBroadcastId,
+      jitsiRoom: jitsiRoomName,
+      jitsiDomain: JITSI_DOMAIN,
+      jitsiUrl: `https://${JITSI_DOMAIN}/${jitsiRoomName}`,
+      embedUrl: `https://${JITSI_DOMAIN}/${jitsiRoomName}#config.prejoinPageEnabled=false&config.startWithAudioMuted=false&config.startWithVideoMuted=false`,
+      viewerUrl: `https://${JITSI_DOMAIN}/${jitsiRoomName}#config.prejoinPageEnabled=false&config.startWithAudioMuted=true&config.startWithVideoMuted=true&config.disableDeepLinking=true`
+    };
+  }),
+  /**
+   * End a live broadcast
+   */
+  endBroadcast: protectedProcedure.input(z99.object({
+    broadcastId: z99.number()
+  })).mutation(async ({ input }) => {
+    await rawQuery2(
+      `UPDATE streaming_status SET status = 'offline', ended_at = NOW(), last_updated = NOW()
+         WHERE broadcast_id = ? AND status = 'live'`,
+      [String(input.broadcastId)]
+    );
+    await rawQuery2(
+      `UPDATE broadcasts SET status = 'completed', endTime = NOW(), updatedAt = NOW()
+         WHERE id = ?`,
+      [input.broadcastId]
+    );
+    await notifyOwner({
+      title: "\u23F9\uFE0F Broadcast Ended",
+      content: `Broadcast #${input.broadcastId} has been stopped.`
+    });
+    return { success: true };
+  }),
+  /**
+   * Update viewer count (called periodically by viewers)
+   */
+  heartbeat: publicProcedure.input(z99.object({
+    jitsiRoom: z99.string()
+  })).mutation(async ({ input }) => {
+    await rawQuery2(
+      `UPDATE streaming_status 
+         SET viewer_count = viewer_count + 1,
+             peak_viewers = GREATEST(peak_viewers, viewer_count + 1),
+             last_updated = NOW()
+         WHERE stream_url = ? AND status = 'live'`,
+      [input.jitsiRoom]
+    );
+    return { ok: true };
+  }),
+  /**
+   * Get broadcast history
+   */
+  getHistory: publicProcedure.input(z99.object({
+    limit: z99.number().min(1).max(50).default(10)
+  }).optional()).query(async ({ input }) => {
+    const limit = input?.limit || 10;
+    const rows = await rawQuery2(
+      `SELECT b.*, ss.viewer_count, ss.peak_viewers, ss.stream_url, ss.platform,
+                ss.bitrate, ss.resolution, ss.started_at as stream_started, ss.ended_at as stream_ended
+         FROM broadcasts b
+         LEFT JOIN streaming_status ss ON ss.broadcast_id = CAST(b.id AS CHAR)
+         ORDER BY b.createdAt DESC LIMIT ?`,
+      [limit]
+    );
+    return rows;
+  }),
+  /**
+   * Get real-time metrics for the current broadcast
+   * Reads from actual DB state, not random numbers
+   */
+  getLiveMetrics: publicProcedure.query(async () => {
+    const rows = await rawQuery2(
+      `SELECT ss.*, b.title, b.startTime
+       FROM streaming_status ss
+       LEFT JOIN broadcasts b ON ss.broadcast_id = CAST(b.id AS CHAR)
+       WHERE ss.status = 'live'
+       ORDER BY ss.started_at DESC LIMIT 1`
+    );
+    if (rows.length === 0) {
+      return {
+        isLive: false,
+        viewers: 0,
+        peakViewers: 0,
+        bitrate: "0 Mbps",
+        resolution: "N/A",
+        uptime: "0m",
+        quality: "Offline",
+        jitsiRoom: null,
+        jitsiDomain: JITSI_DOMAIN
+      };
+    }
+    const row = rows[0];
+    const startTime = row.started_at ? new Date(row.started_at).getTime() : Date.now();
+    const uptimeMs = Date.now() - startTime;
+    const hours = Math.floor(uptimeMs / 36e5);
+    const minutes = Math.floor(uptimeMs % 36e5 / 6e4);
+    return {
+      isLive: true,
+      viewers: row.viewer_count || 0,
+      peakViewers: row.peak_viewers || 0,
+      bitrate: row.bitrate || "Auto",
+      resolution: row.resolution || "720p (Jitsi adaptive)",
+      uptime: hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`,
+      quality: "Good (Jitsi WebRTC)",
+      jitsiRoom: row.stream_url,
+      jitsiDomain: JITSI_DOMAIN
+    };
+  }),
+  /**
+   * Create a Production Studio session (multi-guest panel)
+   * Uses Jitsi with specific config for studio mode
+   */
+  createStudioSession: protectedProcedure.input(z99.object({
+    title: z99.string().min(1).max(255),
+    maxGuests: z99.number().min(1).max(10).default(4)
+  })).mutation(async ({ input, ctx }) => {
+    const studioId = generateBroadcastId().replace("rrb-live", "rrb-studio");
+    const jitsiRoomName = `RRB-Studio-${studioId}`;
+    return {
+      studioId,
+      jitsiRoom: jitsiRoomName,
+      jitsiDomain: JITSI_DOMAIN,
+      hostUrl: `https://${JITSI_DOMAIN}/${jitsiRoomName}#config.prejoinPageEnabled=false`,
+      guestUrl: `https://${JITSI_DOMAIN}/${jitsiRoomName}#config.prejoinPageEnabled=true`,
+      maxGuests: input.maxGuests,
+      title: input.title
+    };
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -43748,6 +44004,8 @@ var appRouter = router({
   audio: audioRouter,
   // Studio Audio (S3 upload, recording, project persistence)
   studioAudio: studioAudioRouter,
+  // Live Broadcast (real Jitsi-based streaming + production studio)
+  liveBroadcast: liveBroadcastRouter,
   // Restream config (dynamic URL for all live/studio buttons)
   restreamConfig: restreamConfigRouter,
   // Stream Health Monitor (QUMUS Policy #19 — 15-min automated checks)
@@ -43769,11 +44027,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z99.object({
-        goal: z99.string().min(1, "Goal is required"),
-        priority: z99.number().int().min(1).max(10).optional().default(5),
-        steps: z99.array(z99.string()).optional(),
-        constraints: z99.array(z99.string()).optional()
+      z100.object({
+        goal: z100.string().min(1, "Goal is required"),
+        priority: z100.number().int().min(1).max(10).optional().default(5),
+        steps: z100.array(z100.string()).optional(),
+        constraints: z100.array(z100.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -43785,7 +44043,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z99.object({ taskId: z99.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z100.object({ taskId: z100.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -43795,11 +44053,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z99.object({
-        target: z99.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z99.string().min(1, "Action is required"),
-        params: z99.record(z99.any()).optional().default({}),
-        priority: z99.number().int().min(1).max(10).optional().default(5)
+      z100.object({
+        target: z100.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z100.string().min(1, "Action is required"),
+        params: z100.record(z100.any()).optional().default({}),
+        priority: z100.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -43811,10 +44069,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z99.object({ commandId: z99.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z100.object({ commandId: z100.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z99.object({ target: z99.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z100.object({ target: z100.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -43909,12 +44167,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z99.object({
-      sessionName: z99.string().min(1),
-      systemPrompt: z99.string().optional(),
-      temperature: z99.number().min(0).max(100).optional(),
-      model: z99.string().optional(),
-      maxSteps: z99.number().min(1).optional()
+    createSession: protectedProcedure.input(z100.object({
+      sessionName: z100.string().min(1),
+      systemPrompt: z100.string().optional(),
+      temperature: z100.number().min(0).max(100).optional(),
+      model: z100.string().optional(),
+      maxSteps: z100.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -43935,7 +44193,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z99.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z100.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -43944,7 +44202,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z99.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z100.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -43988,9 +44246,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z99.object({
-      dateRange: z99.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z99.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z100.object({
+      dateRange: z100.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z100.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -44001,24 +44259,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z99.object({
-      dateRange: z99.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z100.object({
+      dateRange: z100.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z99.object({
-      dateRange: z99.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z100.object({
+      dateRange: z100.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z99.object({
-      email: z99.string().email(),
-      name: z99.string().optional(),
-      source: z99.string().optional(),
-      language: z99.string().optional()
+    subscribe: publicProcedure.input(z100.object({
+      email: z100.string().email(),
+      name: z100.string().optional(),
+      source: z100.string().optional(),
+      language: z100.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),

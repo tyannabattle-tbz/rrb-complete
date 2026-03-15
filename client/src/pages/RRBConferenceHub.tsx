@@ -28,12 +28,12 @@ const MEETING_TYPES = [
 ] as const;
 
 const PLATFORMS = [
-  { id: 'rrb_builtin', label: 'RRB Built-in (Jitsi)', icon: Video, color: 'bg-amber-500', desc: 'Free, no account needed' },
-  { id: 'zoom', label: 'Zoom', icon: Video, color: 'bg-blue-500', desc: 'External Zoom meeting' },
-  { id: 'google_meet', label: 'Google Meet', icon: Video, color: 'bg-green-500', desc: 'External Google Meet' },
-  { id: 'discord', label: 'Discord', icon: Headphones, color: 'bg-indigo-500', desc: 'Discord voice/video' },
-  { id: 'skype', label: 'Skype', icon: Phone, color: 'bg-sky-500', desc: 'External Skype call' },
-  { id: 'rrb_broadcast', label: 'RRB Live Broadcast', icon: Radio, color: 'bg-red-500', desc: 'RRB Radio broadcast' },
+  { id: 'rrb_builtin', label: 'RRB Built-in (Jitsi)', icon: Video, color: 'bg-amber-500', desc: 'Embedded video — free, no account needed' },
+  { id: 'zoom', label: 'Zoom', icon: Video, color: 'bg-blue-500', desc: 'Opens real Zoom meeting link' },
+  { id: 'google_meet', label: 'Google Meet', icon: Video, color: 'bg-green-500', desc: 'Opens real Google Meet room' },
+  { id: 'discord', label: 'Discord', icon: Headphones, color: 'bg-indigo-500', desc: 'Opens real Discord voice channel' },
+  { id: 'skype', label: 'Skype', icon: Phone, color: 'bg-sky-500', desc: 'Opens real Skype group call' },
+  { id: 'rrb_broadcast', label: 'RRB Live Broadcast', icon: Radio, color: 'bg-red-500', desc: 'Jitsi WebRTC live broadcast' },
 ] as const;
 
 // ─── Quick Start Templates ─────────────────────
