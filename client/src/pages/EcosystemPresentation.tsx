@@ -12,7 +12,7 @@ const ECOSYSTEM_CAPTIONS = [
   { start: 35, end: 43.65, text: 'Every channel, every broadcast carries his name forward.' },
   { start: 43.65, end: 55, text: 'Sweet Miracles at the Table — voice for the voiceless.' },
   { start: 55, end: 70.2, text: 'From the halls of the United Nations to communities across the world.' },
-  { start: 70.2, end: 85, text: 'QUMUS orchestrates 54 radio channels, 18 subsystems, 14 active policies.' },
+  { start: 70.2, end: 85, text: 'QUMUS orchestrates 54 radio channels, 18 subsystems, 20 active policies.' },
   { start: 85, end: 100.8, text: '90% autonomous control with human override capabilities.' },
   { start: 100.8, end: 115, text: 'HybridCast Emergency Broadcast — resilient communication when it matters most.' },
   { start: 115, end: 131.4, text: 'SQUADD Coalition — Strategy, Quality, Unity, Accountability, Dedication, Determination.' },

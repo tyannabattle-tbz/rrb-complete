@@ -73,6 +73,11 @@ import {
   Gauge,
   Cpu,
   Wifi,
+  Bot,
+  Users,
+  Shield,
+  Swords,
+  Crown,
 } from "lucide-react";
 import { TaskHistory } from "@/components/TaskHistory";
 import { EcosystemStatusDashboard } from "@/components/EcosystemStatusDashboard";
@@ -617,6 +622,61 @@ export default function QumusHome() {
               <Earth size={16} className="mr-2" />
               TBZ-OS
             </FuturisticButton>
+          </div>
+        </FuturisticSection>
+
+        {/* AI Agent Fleet */}
+        <FuturisticSection title="AI Agent Fleet" icon={<Bot size={20} />}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { name: 'Valanna', role: 'Lead AI Commander', icon: <Crown size={16} className="text-amber-400" />, color: 'from-amber-500/20 to-amber-600/10', badge: 'HELM', badgeColor: 'bg-amber-500/20 text-amber-400' },
+              { name: 'Seraph', role: 'Stats Analyst & Tech Ops', icon: <Activity size={16} className="text-cyan-400" />, color: 'from-cyan-500/20 to-cyan-600/10', badge: 'ACTIVE', badgeColor: 'bg-cyan-500/20 text-cyan-400' },
+              { name: 'Candy AI', role: 'Community Host', icon: <Heart size={16} className="text-pink-400" />, color: 'from-pink-500/20 to-pink-600/10', badge: 'ACTIVE', badgeColor: 'bg-pink-500/20 text-pink-400' },
+              { name: 'TBZ-OS', role: 'Tournament Director', icon: <Swords size={16} className="text-purple-400" />, color: 'from-purple-500/20 to-purple-600/10', badge: 'ACTIVE', badgeColor: 'bg-purple-500/20 text-purple-400' },
+            ].map(agent => (
+              <div key={agent.name} className={`p-3 rounded-lg bg-gradient-to-r ${agent.color} border border-white/10`}>
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    {agent.icon}
+                    <span className="font-semibold text-sm text-white">{agent.name}</span>
+                  </div>
+                  <Badge className={`text-[9px] ${agent.badgeColor}`}>{agent.badge}</Badge>
+                </div>
+                <p className="text-[10px] text-gray-400">{agent.role}</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                  <span className="text-[9px] text-green-400">Online • 99.9% uptime</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </FuturisticSection>
+
+        {/* Social Media Bots */}
+        <FuturisticSection title="Social Media Bots" icon={<Users size={20} />}>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {[
+              { platform: 'Twitter/X', color: 'text-blue-400', bg: 'bg-blue-500/10' },
+              { platform: 'YouTube', color: 'text-red-400', bg: 'bg-red-500/10' },
+              { platform: 'Instagram', color: 'text-pink-400', bg: 'bg-pink-500/10' },
+              { platform: 'Discord', color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
+              { platform: 'TikTok', color: 'text-green-400', bg: 'bg-green-500/10' },
+            ].map(bot => (
+              <div key={bot.platform} className={`p-2 rounded-lg ${bot.bg} border border-white/5 text-center`}>
+                <Bot size={16} className={`mx-auto mb-1 ${bot.color}`} />
+                <p className={`text-xs font-semibold ${bot.color}`}>{bot.platform}</p>
+                <div className="flex items-center justify-center gap-1 mt-1">
+                  <div className="w-1 h-1 rounded-full bg-green-400" />
+                  <span className="text-[8px] text-green-400">ACTIVE</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 p-2 rounded bg-black/30 border border-white/5">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-gray-400">All bots engaged • 20 policies active • Valanna at the helm</span>
+              <Badge className="bg-green-500/20 text-green-400 text-[8px]"><Shield size={10} className="mr-1" /> FULL AUTONOMOUS MODE</Badge>
+            </div>
           </div>
         </FuturisticSection>
 

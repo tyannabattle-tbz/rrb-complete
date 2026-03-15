@@ -582,9 +582,9 @@ describe('Conference Router', () => {
       expect(monitoringTabs).toHaveLength(7);
     });
 
-    it('should show 14 policies count', () => {
-      const policyCount = 14;
-      expect(policyCount).toBe(14);
+    it('should show 20 policies count', () => {
+      const policyCount = 20;
+      expect(policyCount).toBe(20);
     });
   });
 
@@ -897,7 +897,7 @@ describe('Conference Router', () => {
   });
 
   describe('14 QUMUS Policies Consistency', () => {
-    it('should have 14 policies including conference scheduling', () => {
+    it('should have 20 policies including conference scheduling', () => {
       const policies = [
         'content_scheduling', 'audience_engagement', 'quality_control',
         'emergency_response', 'revenue_optimization', 'content_moderation',
@@ -905,7 +905,7 @@ describe('Conference Router', () => {
         'royalty_audit', 'evidence_monitoring', 'donation_management',
         'error_recovery', 'conference_scheduling'
       ];
-      expect(policies).toHaveLength(14);
+      expect(policies).toHaveLength(20);
       expect(policies).toContain('conference_scheduling');
     });
 

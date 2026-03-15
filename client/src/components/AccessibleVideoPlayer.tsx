@@ -46,7 +46,7 @@ const KNOWN_CAPTIONS: Record<string, CaptionCue[]> = {
     { start: 40, end: 50, text: 'His song wasn\'t just music. It was a declaration.' },
     { start: 50, end: 60, text: 'Sweet Miracles at the Table — voice for the voiceless.' },
     { start: 60, end: 75, text: 'From the halls of the United Nations to communities across the world.' },
-    { start: 75, end: 90, text: 'QUMUS orchestrates 54 radio channels, 18 subsystems, 14 active policies.' },
+    { start: 75, end: 90, text: 'QUMUS orchestrates 54 radio channels, 18 subsystems, 20 active policies.' },
     { start: 90, end: 110, text: '90% autonomous control with human override capabilities.' },
     { start: 110, end: 130, text: 'HybridCast Emergency Broadcast — resilient communication when it matters most.' },
     { start: 130, end: 150, text: 'SQUADD Coalition — Strategy, Quality, Unity, Accountability, Dedication, Determination.' },

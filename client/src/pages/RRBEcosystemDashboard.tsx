@@ -40,7 +40,7 @@ export default function RRBEcosystemDashboard() {
       title: 'QUMUS Orchestration',
       description: '90% autonomous decision-making',
       status: 'active',
-      metrics: '14 policies',
+      metrics: '20 policies',
       color: 'from-purple-600 to-pink-600',
     },
     {

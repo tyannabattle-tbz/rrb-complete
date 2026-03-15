@@ -19,7 +19,7 @@ describe('QUMUS Chat Identity System', () => {
   it('should have 8 decision policies', () => {
     const identity = QumusIdentitySystem.getIdentity();
     
-    expect(identity.decisionPolicies).toHaveLength(8);
+    expect(identity.decisionPolicies).toHaveLength(20);
     expect(identity.decisionPolicies).toContain('Content Policy');
     expect(identity.decisionPolicies).toContain('User Policy');
     expect(identity.decisionPolicies).toContain('Payment Policy');
@@ -78,7 +78,7 @@ describe('QUMUS Chat Identity System', () => {
     
     expect(capabilities.autonomousOrchestration).toBeDefined();
     expect(capabilities.autonomousOrchestration.autonomyLevel).toBe(90);
-    expect(capabilities.autonomousOrchestration.decisionPolicies).toBe(8);
+    expect(capabilities.autonomousOrchestration.decisionPolicies).toBe(20);
     expect(capabilities.autonomousOrchestration.realTimeMonitoring).toBe(true);
     
     expect(capabilities.serviceIntegration).toBeDefined();

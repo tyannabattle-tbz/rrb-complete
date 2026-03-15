@@ -58,6 +58,18 @@ export class QumusIdentitySystem {
       'Performance Policy',
       'Engagement Policy',
       'System Policy',
+      'Content Scheduling',
+      'Broadcast Management',
+      'Emergency Response',
+      'Community Engagement',
+      'Code Maintenance',
+      'Conference Scheduling',
+      'Stream Synchronization',
+      'System Auto-Update',
+      'Tournament Orchestration',
+      'AI Agent Coordination',
+      'Social Media Bots',
+      'Daily Status Report',
     ],
     integratedServices: [
       'Stripe (Payment Processing)',
@@ -99,14 +111,40 @@ export class QumusIdentitySystem {
       'Optimizing platform performance',
       'Detecting and responding to anomalies',
       'Managing service health and failover',
+      'Coordinating AI agent fleet (Valanna, Seraph, Candy AI, TBZ-OS)',
+      'Tournament orchestration and Avatar Arena management',
+      'Stream synchronization across all broadcast endpoints',
+      'Social media bot activation and engagement',
+      'Daily status report generation and delivery',
+      'Auto-updating all subsystems without prompt',
     ],
   };
 
+  // AI Agent Fleet Registry
+  private static readonly AI_AGENTS = [
+    { id: 'valanna', name: 'Valanna', role: 'Lead AI Commander & Primary Voice', status: 'active', persona: 'valanna', autonomyLevel: 95, responsibilities: ['Lead commentator', 'Strategic decisions', 'Override authority', 'System helm'] },
+    { id: 'seraph', name: 'Seraph', role: 'Stats Analyst & Technical Operations', status: 'active', persona: 'seraph', autonomyLevel: 88, responsibilities: ['Play-by-play', 'Data analysis', 'Stream monitoring', 'Technical ops'] },
+    { id: 'candy-ai', name: 'Candy AI', role: 'Community Host & Fan Engagement', status: 'active', persona: 'candy', autonomyLevel: 85, responsibilities: ['Community hosting', 'Fan engagement', 'Social media', 'Content curation'] },
+    { id: 'tbz-os', name: 'TBZ-OS', role: 'Tournament Director & Arena Controller', status: 'active', persona: 'valanna', autonomyLevel: 90, responsibilities: ['Tournament management', 'Bracket seeding', 'Match orchestration', 'Champion announcements'] },
+  ];
+
+  // Social Media Bot Registry
+  private static readonly SOCIAL_BOTS = [
+    { id: 'twitter-bot', platform: 'Twitter/X', status: 'active', tasks: ['Auto-post events', 'Engagement replies', 'Tournament updates', 'Live stream alerts'] },
+    { id: 'youtube-bot', platform: 'YouTube', status: 'active', tasks: ['Upload notifications', 'Community posts', 'Live chat moderation', 'Playlist management'] },
+    { id: 'instagram-bot', platform: 'Instagram', status: 'active', tasks: ['Story updates', 'Reel scheduling', 'Event promotion', 'Community engagement'] },
+    { id: 'discord-bot', platform: 'Discord', status: 'active', tasks: ['Server management', 'Event announcements', 'Tournament brackets', 'Voice channel control'] },
+    { id: 'tiktok-bot', platform: 'TikTok', status: 'active', tasks: ['Short-form content', 'Trend engagement', 'Cross-promotion', 'Analytics tracking'] },
+  ];
+
+  static getAiAgents() { return this.AI_AGENTS; }
+  static getSocialBots() { return this.SOCIAL_BOTS; }
+
   private static readonly CAPABILITIES: QumusCapabilities = {
     autonomousOrchestration: {
-      description: 'QUMUS operates at 90%+ autonomy with human oversight, managing all platform operations through intelligent decision-making',
+      description: 'QUMUS operates at 90%+ autonomy with Valanna at the helm, managing all platform operations through 20 intelligent decision policies',
       autonomyLevel: 90,
-      decisionPolicies: 8,
+      decisionPolicies: 20,
       realTimeMonitoring: true,
     },
     serviceIntegration: {

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
-import { ArrowLeft, Gamepad2, Trophy, Star, Music, Brain, Grid3X3, Dice5, Zap } from 'lucide-react';
+import { ArrowLeft, Gamepad2, Trophy, Star, Music, Brain, Grid3X3, Dice5, Zap, Swords, Radio, Mic, Crown, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 // Games Hub — Central portal for all Canryn Production / QUMUS games
 
@@ -164,6 +166,60 @@ export default function GamesHub() {
               </Link>
             );
           })}
+        </div>
+
+        {/* Avatar Arena — Tournament Hub */}
+        <div className="mt-10 p-5 rounded-2xl bg-gradient-to-r from-amber-900/40 via-orange-900/30 to-amber-900/40 border border-amber-500/30">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+              <Swords size={24} className="text-amber-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-amber-300">Avatar Arena</h2>
+              <p className="text-xs text-amber-400/60">Ty OS Tournament System — Compete, Stream, Win</p>
+            </div>
+            <Badge className="ml-auto bg-red-500/20 text-red-400 border-red-500/50 text-[10px] animate-pulse">
+              <Radio size={12} className="mr-1" /> LIVE
+            </Badge>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            <div className="p-3 rounded-lg bg-black/30 border border-amber-500/20">
+              <div className="flex items-center gap-2 mb-1">
+                <Crown size={16} className="text-amber-400" />
+                <span className="text-sm font-semibold text-white">Solbones Championship</span>
+              </div>
+              <p className="text-[10px] text-gray-400">Sacred Math Showdown • 16 players registered</p>
+              <Badge className="mt-2 bg-amber-500/20 text-amber-400 text-[9px]">PRE-SHOW</Badge>
+            </div>
+            <div className="p-3 rounded-lg bg-black/30 border border-amber-500/20">
+              <div className="flex items-center gap-2 mb-1">
+                <Music size={16} className="text-pink-400" />
+                <span className="text-sm font-semibold text-white">Rhythm Roots Battle</span>
+              </div>
+              <p className="text-[10px] text-gray-400">Beat Battle Royale • 8 players registered</p>
+              <Badge className="mt-2 bg-gray-500/20 text-gray-400 text-[9px]">UPCOMING</Badge>
+            </div>
+            <div className="p-3 rounded-lg bg-black/30 border border-amber-500/20">
+              <div className="flex items-center gap-2 mb-1">
+                <Grid3X3 size={16} className="text-purple-400" />
+                <span className="text-sm font-semibold text-white">Frequency Sprint</span>
+              </div>
+              <p className="text-[10px] text-gray-400">Speed Match Challenge • 24 players registered</p>
+              <Badge className="mt-2 bg-gray-500/20 text-gray-400 text-[9px]">UPCOMING</Badge>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Link href="/podcast/avatar-panel">
+              <Button className="bg-amber-600 hover:bg-amber-700 text-sm">
+                <Mic size={16} className="mr-1" /> Avatar Panel Podcast
+              </Button>
+            </Link>
+            <Link href="/conference">
+              <Button variant="outline" className="border-amber-500/50 text-amber-400 text-sm">
+                <Users size={16} className="mr-1" /> Join Conference
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Powered by */}

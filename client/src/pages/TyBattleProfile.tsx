@@ -30,7 +30,7 @@ const CORE_FUNCTIONS = [
 
 // Ecosystem Modules
 const ECOSYSTEM_MODULES = [
-  { name: 'QUMUS', description: 'The Brain — 90% autonomous AI, 14 policies, 18 subsystems', icon: Cpu, link: '/agent', color: 'text-purple-400' },
+  { name: 'QUMUS', description: 'The Brain — 90% autonomous AI, 20 policies, 18 subsystems', icon: Cpu, link: '/agent', color: 'text-purple-400' },
   { name: 'RRB Radio', description: 'The Voice — 54 channels, 13 categories, 24/7 broadcasting', icon: Radio, link: '/live', color: 'text-amber-400' },
   { name: 'HybridCast', description: 'The Lifeline — 100% offline emergency broadcast PWA', icon: Shield, link: '/hybridcast', color: 'text-red-400' },
   { name: 'Sweet Miracles', description: 'The Heart — 501(c)(3) nonprofit, grants & donations', icon: Heart, link: '/donate', color: 'text-pink-400' },

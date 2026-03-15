@@ -10,7 +10,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import {
   Mic2, Play, Pause, Clock, Users, Headphones, Radio, Podcast,
   ChevronRight, Calendar, Download, ExternalLink, Sparkles, Gamepad2,
-  Earth, Heart, Upload, BarChart3, TrendingUp, Eye
+  Earth, Heart, Upload, BarChart3, TrendingUp, Eye, Trophy
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,6 +78,18 @@ const SHOW_CONFIGS: Record<string, {
     tagline: "Sisters Questing Unapologetically After Divine Destiny",
     features: ["Coalition roundtable", "Elder advocacy", "Civil rights", "Live call-in"],
     schedule: "Mon & Thu @ 7:00 PM CT",
+  },
+  "avatar-panel": {
+    slug: "avatar-panel",
+    route: "/podcast/avatar-panel",
+    color: "text-amber-400",
+    gradient: "from-amber-900/60 to-amber-700/30",
+    icon: <Trophy className="w-6 h-6" />,
+    hostName: "TBZ-OS",
+    hostVoice: "Valanna (Warm Female)",
+    tagline: "The Tournament Talk Show — Pre & Post Contest with Avatars",
+    features: ["Avatar Arena", "Tournament brackets", "Call-in", "Game screen", "Radio simulcast"],
+    schedule: "Daily during tournaments",
   },
 };
 
@@ -450,7 +462,7 @@ export default function PodcastsHub() {
                 { day: "Thursday", shows: [{ slug: "candys-corner", time: "7:00 PM CT" }] },
                 { day: "Friday", shows: [{ slug: "around-the-qumunity", time: "6:00 PM CT" }] },
                 { day: "Saturday", shows: [{ slug: "solbones", time: "8:00 PM CT" }] },
-                { day: "Sunday", shows: [] },
+                { day: "Sunday", shows: [{ slug: "avatar-panel", time: "Tournament Schedule" }] },
               ].map((daySchedule) => (
                 <div
                   key={daySchedule.day}

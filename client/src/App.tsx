@@ -216,6 +216,7 @@ import SolbonesPodcast from '@/pages/SolbonesPodcast';
 import AroundTheQumUnityPodcast from '@/pages/AroundTheQumUnityPodcast';
 import PodcastTemplate from '@/pages/PodcastTemplate';
 import SquaddPodcast from '@/pages/SquaddPodcast';
+import AvatarPanelPodcast from '@/pages/AvatarPanelPodcast';
 import EcosystemPresentation from '@/pages/EcosystemPresentation';
 import SystemStatusPage from '@/pages/SystemStatusPage';
 import PresentationBuilder from '@/pages/PresentationBuilder';
@@ -421,6 +422,7 @@ function Router() {
       <Route path="/podcast/solbones" component={SolbonesPodcast} />
       <Route path="/podcast/around-the-qumunity" component={AroundTheQumUnityPodcast} />
       <Route path="/podcast/squadd" component={SquaddPodcast} />
+      <Route path="/podcast/avatar-panel" component={AvatarPanelPodcast} />
       <Route path="/podcast/new-show" component={PodcastTemplate} />
       <Route path="/ecosystem" component={EcosystemPresentation} />
       <Route path="/presentation" component={EcosystemPresentation} />

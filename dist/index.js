@@ -5317,6 +5317,54 @@ var init_qumus_orchestration = __esm({
         confidenceThreshold: 82,
         triggers: ["conference_scheduled", "recurring_conference_due", "attendee_rsvp", "conference_reminder", "un_csw70_session"],
         description: "Auto-schedule recurring conferences, send attendee notifications, manage RSVP tracking, bridge conferences to RRB Radio and HybridCast for UN CSW70 world-stage broadcasting"
+      },
+      policy_stream_sync: {
+        id: "policy_stream_sync",
+        name: "Stream Synchronization",
+        autonomyLevel: 95,
+        confidenceThreshold: 80,
+        triggers: ["stream_desync", "channel_update", "simulcast_start", "podcast_live", "radio_schedule_change"],
+        description: "Keeps all streams in sync across RRB Radio, HybridCast, Podcast rooms, and Avatar Panel. Auto-detects desync, re-aligns simulcasts, and ensures all broadcast endpoints receive the same feed in real-time."
+      },
+      policy_auto_update: {
+        id: "policy_auto_update",
+        name: "System Auto-Update",
+        autonomyLevel: 92,
+        confidenceThreshold: 85,
+        triggers: ["system_health_check", "dependency_update", "config_drift", "schema_change", "subsystem_stale"],
+        description: "Automatically updates all QUMUS subsystems without prompt. Monitors system health, applies configuration patches, syncs database schemas, refreshes caches, and ensures all 18+ subsystems stay current and operational 24/7."
+      },
+      policy_tournament_orchestration: {
+        id: "policy_tournament_orchestration",
+        name: "Tournament Orchestration",
+        autonomyLevel: 88,
+        confidenceThreshold: 82,
+        triggers: ["tournament_created", "player_registered", "match_completed", "bracket_update", "pre_show_start", "post_show_start"],
+        description: "Manages Ty OS tournament lifecycle from registration through bracket seeding, match orchestration, pre/post show podcast triggers, Avatar Arena coordination, and champion announcements. Simulcasts results to RRB Radio."
+      },
+      policy_ai_agent_coordination: {
+        id: "policy_ai_agent_coordination",
+        name: "AI Agent Coordination",
+        autonomyLevel: 90,
+        confidenceThreshold: 80,
+        triggers: ["agent_heartbeat", "agent_task_complete", "agent_error", "workload_rebalance", "new_task_queued"],
+        description: "Coordinates all AI agents (Valanna, Seraph, Candy AI, TBZ-OS) as a unified fleet. Distributes tasks, monitors agent health, handles failover, and ensures Valanna remains at the helm with override authority over all subsystems."
+      },
+      policy_social_media_bots: {
+        id: "policy_social_media_bots",
+        name: "Social Media Bot Activation",
+        autonomyLevel: 85,
+        confidenceThreshold: 80,
+        triggers: ["content_published", "event_announced", "engagement_drop", "scheduled_post", "campaign_launch"],
+        description: "Activates and coordinates all social media bots across platforms. Auto-generates posts for new content, events, and tournaments. Monitors engagement metrics and adjusts posting frequency. Ensures brand consistency across all Canryn Production channels."
+      },
+      policy_daily_status_report: {
+        id: "policy_daily_status_report",
+        name: "Daily Status Report",
+        autonomyLevel: 98,
+        confidenceThreshold: 75,
+        triggers: ["sunset_trigger", "daily_cron", "error_persisting", "manual_report_request"],
+        description: "Sends comprehensive daily status report every evening after sunset. Covers all subsystem health, stream status, AI agent activity, tournament standings, content metrics, and any persisting errors. Delivered to owner email with full ecosystem snapshot."
       }
     };
     decisionHistory = /* @__PURE__ */ new Map();
@@ -21465,7 +21513,7 @@ A Voice for the Voiceless`
     }
     const health = qumusEngine2.getHealthStatus();
     checks.push({ name: "QUMUS Engine", status: health.isRunning ? "pass" : "fail", detail: `${health.subsystems}/16 subsystems`, category: "Orchestration" });
-    checks.push({ name: "QUMUS Policies", status: "pass", detail: "14 active policies", category: "Orchestration" });
+    checks.push({ name: "QUMUS Policies", status: "pass", detail: "20 active policies", category: "Orchestration" });
     checks.push({ name: "Conference Cron", status: "pass", detail: "Auto-notifications every 5 min", category: "Orchestration" });
     checks.push({ name: "Weekly Digest Cron", status: "pass", detail: "Sunday 8pm schedule active", category: "Orchestration" });
     checks.push({ name: "RRB Radio Bridge", status: "pass", detail: "Broadcast integration active", category: "Integration" });
@@ -22123,7 +22171,19 @@ var QumusIdentitySystem = class {
       "Compliance Policy",
       "Performance Policy",
       "Engagement Policy",
-      "System Policy"
+      "System Policy",
+      "Content Scheduling",
+      "Broadcast Management",
+      "Emergency Response",
+      "Community Engagement",
+      "Code Maintenance",
+      "Conference Scheduling",
+      "Stream Synchronization",
+      "System Auto-Update",
+      "Tournament Orchestration",
+      "AI Agent Coordination",
+      "Social Media Bots",
+      "Daily Status Report"
     ],
     integratedServices: [
       "Stripe (Payment Processing)",
@@ -22164,14 +22224,41 @@ var QumusIdentitySystem = class {
       "Making real-time operational decisions",
       "Optimizing platform performance",
       "Detecting and responding to anomalies",
-      "Managing service health and failover"
+      "Managing service health and failover",
+      "Coordinating AI agent fleet (Valanna, Seraph, Candy AI, TBZ-OS)",
+      "Tournament orchestration and Avatar Arena management",
+      "Stream synchronization across all broadcast endpoints",
+      "Social media bot activation and engagement",
+      "Daily status report generation and delivery",
+      "Auto-updating all subsystems without prompt"
     ]
   };
+  // AI Agent Fleet Registry
+  static AI_AGENTS = [
+    { id: "valanna", name: "Valanna", role: "Lead AI Commander & Primary Voice", status: "active", persona: "valanna", autonomyLevel: 95, responsibilities: ["Lead commentator", "Strategic decisions", "Override authority", "System helm"] },
+    { id: "seraph", name: "Seraph", role: "Stats Analyst & Technical Operations", status: "active", persona: "seraph", autonomyLevel: 88, responsibilities: ["Play-by-play", "Data analysis", "Stream monitoring", "Technical ops"] },
+    { id: "candy-ai", name: "Candy AI", role: "Community Host & Fan Engagement", status: "active", persona: "candy", autonomyLevel: 85, responsibilities: ["Community hosting", "Fan engagement", "Social media", "Content curation"] },
+    { id: "tbz-os", name: "TBZ-OS", role: "Tournament Director & Arena Controller", status: "active", persona: "valanna", autonomyLevel: 90, responsibilities: ["Tournament management", "Bracket seeding", "Match orchestration", "Champion announcements"] }
+  ];
+  // Social Media Bot Registry
+  static SOCIAL_BOTS = [
+    { id: "twitter-bot", platform: "Twitter/X", status: "active", tasks: ["Auto-post events", "Engagement replies", "Tournament updates", "Live stream alerts"] },
+    { id: "youtube-bot", platform: "YouTube", status: "active", tasks: ["Upload notifications", "Community posts", "Live chat moderation", "Playlist management"] },
+    { id: "instagram-bot", platform: "Instagram", status: "active", tasks: ["Story updates", "Reel scheduling", "Event promotion", "Community engagement"] },
+    { id: "discord-bot", platform: "Discord", status: "active", tasks: ["Server management", "Event announcements", "Tournament brackets", "Voice channel control"] },
+    { id: "tiktok-bot", platform: "TikTok", status: "active", tasks: ["Short-form content", "Trend engagement", "Cross-promotion", "Analytics tracking"] }
+  ];
+  static getAiAgents() {
+    return this.AI_AGENTS;
+  }
+  static getSocialBots() {
+    return this.SOCIAL_BOTS;
+  }
   static CAPABILITIES = {
     autonomousOrchestration: {
-      description: "QUMUS operates at 90%+ autonomy with human oversight, managing all platform operations through intelligent decision-making",
+      description: "QUMUS operates at 90%+ autonomy with Valanna at the helm, managing all platform operations through 20 intelligent decision policies",
       autonomyLevel: 90,
-      decisionPolicies: 8,
+      decisionPolicies: 20,
       realTimeMonitoring: true
     },
     serviceIntegration: {

@@ -3,9 +3,9 @@ import { qumusEngine } from "./qumus-orchestration";
 
 describe("QUMUS Orchestration Engine — 14 Policies", () => {
   describe("Policy Registry", () => {
-    it("has exactly 14 policies registered", () => {
+    it("has exactly 20 policies registered", () => {
       const policies = qumusEngine.getPolicies();
-      expect(policies.length).toBe(14);
+      expect(policies.length).toBe(20);
     });
 
     it("includes all 8 core policies", () => {

@@ -1475,7 +1475,7 @@ export const conferenceRouter = router({
     // QUMUS checks
     const health = qumusEngine.getHealthStatus();
     checks.push({ name: 'QUMUS Engine', status: health.isRunning ? 'pass' : 'fail', detail: `${health.subsystems}/16 subsystems`, category: 'Orchestration' });
-    checks.push({ name: 'QUMUS Policies', status: 'pass', detail: '14 active policies', category: 'Orchestration' });
+    checks.push({ name: 'QUMUS Policies', status: 'pass', detail: '20 active policies', category: 'Orchestration' });
     checks.push({ name: 'Conference Cron', status: 'pass', detail: 'Auto-notifications every 5 min', category: 'Orchestration' });
     checks.push({ name: 'Weekly Digest Cron', status: 'pass', detail: 'Sunday 8pm schedule active', category: 'Orchestration' });
 

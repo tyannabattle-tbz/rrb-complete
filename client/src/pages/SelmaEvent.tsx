@@ -193,7 +193,7 @@ export default function SelmaEvent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { icon: '🧠', name: 'Qu-Mus Engine', desc: 'AI brain making 90% of decisions autonomously. 14 policies. Full audit trail.' },
+              { icon: '🧠', name: 'Qu-Mus Engine', desc: 'AI brain making 90% of decisions autonomously. 20 policies. Full audit trail.' },
               { icon: '📻', name: 'RRB Radio', desc: '40+ channels broadcasting 24/7. Healing frequencies. Community voices.' },
               { icon: '🚨', name: 'HybridCast', desc: '100% offline emergency broadcast. Mesh networking. No internet required.' },
               { icon: '💝', name: 'Sweet Miracles', desc: 'Nonprofit tracking every donation and impact metric in real-time.' },
