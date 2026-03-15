@@ -194,7 +194,7 @@ export const userManagementRouter = router({
         users: [
           {
             id: 'user-1',
-            email: 'john@example.com',
+            email: 'team@canrynproduction.com',
             name: 'John Doe',
             role: 'admin',
             joinedAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
@@ -203,7 +203,7 @@ export const userManagementRouter = router({
           },
           {
             id: 'user-2',
-            email: 'jane@example.com',
+            email: 'admin@canrynproduction.com',
             name: 'Jane Smith',
             role: 'user',
             joinedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),

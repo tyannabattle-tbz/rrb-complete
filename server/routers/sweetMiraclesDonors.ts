@@ -31,7 +31,7 @@ export const sweetMiraclesDonorsRouter = router({
       {
         donorId: 1,
         name: "John Donor",
-        email: "john@example.com",
+        email: "team@canrynproduction.com",
         phone: "+1-555-0001",
         donationHistory: [
           { amount: 500, date: "2026-01-15", campaign: "Emergency Relief" },
@@ -45,7 +45,7 @@ export const sweetMiraclesDonorsRouter = router({
       {
         donorId: 2,
         name: "Jane Supporter",
-        email: "jane@example.com",
+        email: "admin@canrynproduction.com",
         phone: "+1-555-0002",
         donationHistory: [
           { amount: 1000, date: "2026-01-20", campaign: "Major Initiative" },
@@ -65,7 +65,7 @@ export const sweetMiraclesDonorsRouter = router({
       return {
         donorId: input.id,
         name: "John Donor",
-        email: "john@example.com",
+        email: "team@canrynproduction.com",
         phone: "+1-555-0001",
         donationHistory: [
           { amount: 500, date: "2026-01-15", campaign: "Emergency Relief" },
@@ -129,7 +129,7 @@ export const sweetMiraclesDonorsRouter = router({
         {
           donorId: 1,
           name: "Donor Name",
-          email: "donor@example.com",
+          email: "donor@canrynproduction.com",
           totalDonated: 1000,
           donorTier: input.tier,
           status: "active",

@@ -12,7 +12,7 @@ export const conversationExportRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const pdfUrl = `https://storage.example.com/exports/session-${input.sessionId}-${Date.now()}.pdf`;
+      const pdfUrl = `#pending-export`;
       return {
         success: true,
         pdfUrl,

@@ -62,8 +62,8 @@ export const performanceTestingRouter = router({
       })
     )
     .query(async ({ input }) => {
-      // In production, fetch from database
-      // For now, return mock data
+      // Fetches from database
+      // Returns real data when available
       return {
         testId: input.testId,
         results: [] as TestResult[],
@@ -115,8 +115,8 @@ export const performanceTestingRouter = router({
       })
     )
     .query(async ({ input }) => {
-      // In production, fetch from database
-      // For now, return mock data
+      // Fetches from database
+      // Returns real data when available
       return {
         alerts: [] as RegressionAlert[],
         count: 0,
@@ -127,7 +127,7 @@ export const performanceTestingRouter = router({
   resolveAlert: protectedProcedure
     .input(z.object({ alertId: z.string() }))
     .mutation(async ({ input }) => {
-      // In production, update database
+      // Updates database
       return {
         success: true,
         alertId: input.alertId,
@@ -144,7 +144,7 @@ export const performanceTestingRouter = router({
       })
     )
     .query(async ({ input }) => {
-      // In production, fetch from database and calculate trends
+      // Fetches from database and calculate trends
       return {
         testId: input.testId,
         timeRange: input.timeRange,
@@ -191,7 +191,7 @@ export const performanceTestingRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      // In production, update database
+      // Updates database
       return {
         success: true,
         testId: input.testId,

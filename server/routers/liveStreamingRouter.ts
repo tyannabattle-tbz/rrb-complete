@@ -123,7 +123,7 @@ export const liveStreamingRouter = {
         viewerCount: 234,
         startedAt: new Date(Date.now() - 3600000),
         isLive: true,
-        rtcUrl: "wss://rtc.example.com/stream",
+        rtcUrl: "wss://meet.jit.si/xmpp-websocket",
       };
     }),
 };

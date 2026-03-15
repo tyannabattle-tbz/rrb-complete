@@ -121,7 +121,7 @@ export const emailNotificationRouter = router({
         emails: [
           {
             id: 'email-1',
-            recipient: ctx.user.email || 'user@example.com',
+            recipient: ctx.user.email || '',
             subject: 'Your JSON Export is Ready',
             type: 'export-completion',
             status: 'delivered',
@@ -130,7 +130,7 @@ export const emailNotificationRouter = router({
           },
           {
             id: 'email-2',
-            recipient: ctx.user.email || 'user@example.com',
+            recipient: ctx.user.email || '',
             subject: 'Weekly Analytics Summary',
             type: 'analytics-summary',
             status: 'delivered',
@@ -183,7 +183,7 @@ export const emailNotificationRouter = router({
       userId: ctx.user.id,
       status: 'unsubscribed',
       message: 'You have been unsubscribed from all email notifications',
-      resubscribeUrl: `https://qumus.example.com/resubscribe?token=${ctx.user.id}`,
+      resubscribeUrl: `/settings/notifications`,
     };
   }),
 });

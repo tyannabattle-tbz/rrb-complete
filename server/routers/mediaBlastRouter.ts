@@ -120,10 +120,10 @@ function generateCSW70Posts(): CampaignPost[] {
         scheduledAt: `2026-03-${day.toString().padStart(2, '0')}T12:00:00Z`,
         status: day <= 11 ? 'posted' : 'scheduled',
         engagementMetrics: day <= 11 ? {
-          likes: Math.floor(Math.random() * 500) + 100,
-          shares: Math.floor(Math.random() * 200) + 50,
-          comments: Math.floor(Math.random() * 100) + 20,
-          views: Math.floor(Math.random() * 5000) + 1000,
+          likes: 0,
+          shares: 0,
+          comments: 0,
+          views: 0,
         } : undefined,
         createdAt: new Date().toISOString(),
       });
@@ -140,10 +140,10 @@ function generateCSW70Posts(): CampaignPost[] {
         scheduledAt: `2026-03-${day.toString().padStart(2, '0')}T22:00:00Z`,
         status: day <= 11 ? 'posted' : 'scheduled',
         engagementMetrics: day <= 11 ? {
-          likes: Math.floor(Math.random() * 300) + 80,
-          shares: Math.floor(Math.random() * 150) + 30,
-          comments: Math.floor(Math.random() * 80) + 15,
-          views: Math.floor(Math.random() * 3000) + 800,
+          likes: 0,
+          shares: 0,
+          comments: 0,
+          views: 0,
         } : undefined,
         createdAt: new Date().toISOString(),
       });
@@ -360,10 +360,10 @@ export const mediaBlastRouter = router({
       for (let i = 0; i < batchSize; i++) {
         postsToBlast[i].status = 'posted';
         postsToBlast[i].engagementMetrics = {
-          likes: Math.floor(Math.random() * 200) + 50,
-          shares: Math.floor(Math.random() * 100) + 20,
-          comments: Math.floor(Math.random() * 50) + 10,
-          views: Math.floor(Math.random() * 2000) + 500,
+          likes: 0,
+          shares: 0,
+          comments: 0,
+          views: 0,
         };
       }
       

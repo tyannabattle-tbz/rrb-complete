@@ -27,27 +27,27 @@ export default function SweetMiraclesDonation() {
   const handleDonate = async () => {
     setDonationStatus('loading');
     try {
-      // Create checkout session
-      const response = await fetch('/api/stripe/checkout', {
+      // Create donation checkout session via real Stripe
+      const response = await fetch('/api/donate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: parseFloat(formData.amount) * 100,
           email: formData.email,
-          metadata: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            donateInNameOf: formData.donateInNameOf,
-            organization: 'Sweet Miracles',
-          },
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          donateInNameOf: formData.donateInNameOf,
         }),
       });
-
-      const { sessionId } = await response.json();
-      
-      // Redirect to Stripe checkout
-      window.location.href = `https://checkout.stripe.com/pay/${sessionId}`;
-      setDonationStatus('success');
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Checkout failed');
+      // Redirect to Stripe checkout in new tab
+      if (data.url) {
+        window.open(data.url, '_blank');
+        setDonationStatus('success');
+      } else {
+        throw new Error('No checkout URL returned');
+      }
     } catch (error) {
       console.error('Donation error:', error);
       setDonationStatus('error');

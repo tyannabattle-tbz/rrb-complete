@@ -4450,3 +4450,49 @@
 - [x] Fix ConferenceRoom to properly route Meet/Discord/Skype to external URLs
 - [ ] Connect Restream for multi-platform distribution (needs Restream account)
 - [ ] End-to-end test: go live → stream plays → audience sees it
+
+## Full Ecosystem Fix — Tier 1 (Launch-Critical)
+- [x] Remove all example.com URLs from server routers
+- [x] Remove all placeholder.com URLs from server routers
+- [x] Replace Math.random() fake metrics in mediaBlastRouter with real data or zeros
+- [ ] Fix collectionsRouter placeholder images
+- [ ] Fix notificationsRouter placeholder avatars
+- [ ] Fix conversationExport fake storage URLs
+- [ ] Fix scheduledExportRouter fake storage URLs
+- [ ] Fix featureAnalyticsRouter fake storage URLs
+- [ ] Fix realtimeDashboardRouter fake storage URLs
+- [ ] Fix emailNotificationRouter fake URLs
+- [ ] Fix apiIntegrationRouter fake webhook URLs
+- [ ] Fix liveStreamingRouter fake WebSocket URL
+- [ ] Fix collaborationRouter hardcoded fake users
+- [ ] Fix sessionSharing fake email
+- [x] Connect Sweet Miracles donation pages to real Stripe + DB (wired /api/donate to donationService)
+- [x] Fix video gallery to show real content from DB
+- [ ] Connect MusicStudio/StudioSuite recording save to S3
+- [ ] Fix performanceTesting mock data
+
+## Full Ecosystem Fix — Tier 2 (Data Persistence)
+- [x] Move broadcastRouter BROADCASTS/CHAT_ROOMS/FLAGGED to DB
+- [x] Move meditation sessions to DB (8 real sessions seeded)
+- [x] Move HybridCast broadcast history to DB
+- [ ] Move Solbones tournaments to DB
+- [ ] Move qumusAutonomousEntityRouter decisions to DB
+- [ ] Move qumusAutonomousScalingRouter metrics to DB
+- [ ] Move qumusCommandRouter decisions to DB
+- [ ] Connect SweetMiraclesDashboard to real backend
+- [ ] Connect HybridCastHub to real backend
+- [ ] Connect HybridCastBroadcastManagement to real backend
+- [ ] Connect RockinBoogieManager to real backend
+- [ ] Connect CanrynDashboard to real backend
+- [ ] Connect BusinessDashboard to real backend
+- [ ] Connect TeamManagement to real backend
+- [ ] Connect BackupManagement to real backend
+- [ ] Connect EmergencyBroadcastAdminPanel to real backend
+
+## Full Ecosystem Fix — Tier 3 (Enhancements)
+- [ ] Wire up real push notification delivery
+- [ ] Connect email notification service
+- [ ] Set up Restream for multi-platform distribution
+- [ ] Build video processing pipeline
+- [ ] Implement backup system
+- [ ] Build royalty tracking with Stripe

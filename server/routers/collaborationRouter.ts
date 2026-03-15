@@ -56,7 +56,7 @@ export const collaborationRouter = router({
         collaborators: [
           {
             id: 'user-1',
-            email: 'john@example.com',
+            email: 'team@canrynproduction.com',
             name: 'John Doe',
             role: 'admin',
             joinedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
@@ -64,7 +64,7 @@ export const collaborationRouter = router({
           },
           {
             id: 'user-2',
-            email: 'jane@example.com',
+            email: 'admin@canrynproduction.com',
             name: 'Jane Smith',
             role: 'editor',
             joinedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
@@ -72,7 +72,7 @@ export const collaborationRouter = router({
           },
           {
             id: 'user-3',
-            email: 'bob@example.com',
+            email: 'support@canrynproduction.com',
             name: 'Bob Johnson',
             role: 'viewer',
             joinedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),

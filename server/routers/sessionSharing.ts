@@ -57,7 +57,7 @@ export const sessionSharingRouter = router({
         sessionName: "Shared Session",
         permission: "view",
         messages: [],
-        sharedBy: "user@example.com",
+        sharedBy: "user@canrynproduction.com",
         sharedAt: new Date(),
       };
     }),

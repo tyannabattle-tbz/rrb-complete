@@ -13,6 +13,54 @@ import { z } from "zod";
 import { qumusEngine, DecisionPolicy } from "../qumus/decisionEngine";
 import { propagationService } from "../qumus/propagationService";
 import { auditTrailManager } from "../qumus/auditTrail";
+import mysql from 'mysql2/promise';
+
+async function rawQuery(sql: string, params: any[] = []) {
+  const connection = await mysql.createConnection(process.env.DATABASE_URL!);
+  try {
+    const [rows] = await connection.execute(sql, params);
+    return rows as any[];
+  } finally {
+    await connection.end();
+  }
+}
+
+async function getSessionsFromDB(): Promise<MeditationSession[]> {
+  try {
+    const rows = await rawQuery(`SELECT * FROM meditation_sessions WHERE is_active = 1 ORDER BY created_at DESC`);
+    return rows.map((r: any, i: number) => ({
+      id: `med_${String(r.id).padStart(3, '0')}`,
+      title: r.title,
+      description: r.description || '',
+      duration: r.duration_minutes || 10,
+      instructor: 'QUMUS Meditation Guide',
+      category: mapCategory(r.category),
+      frequency: mapFrequency(r.frequency),
+      audioUrl: r.audio_url || 'https://ice5.somafm.com/dronezone-128-mp3',
+      imageUrl: r.image_url,
+      difficulty: i < 3 ? 'beginner' as const : i < 6 ? 'intermediate' as const : 'advanced' as const,
+      rating: undefined,
+      isFavorite: false,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function mapCategory(cat: string): MeditationSession['category'] {
+  const map: Record<string, MeditationSession['category']> = {
+    'healing': 'body-scan', 'mindfulness': 'breathing', 'stress-relief': 'breathing',
+    'sleep': 'sleep', 'creativity': 'visualization', 'chakra': 'body-scan',
+    'focus': 'breathing', 'spiritual': 'loving-kindness',
+  };
+  return map[cat] || 'breathing';
+}
+
+function mapFrequency(freq: number): MeditationSession['frequency'] {
+  if (freq === 528) return '528Hz';
+  if (freq === 432) return '432Hz';
+  return 'binaural-beats';
+}
 
 export interface MeditationSession {
   id: string;
@@ -40,67 +88,7 @@ export interface UserMeditationProgress {
   preferredFrequency: string;
 }
 
-// Sample meditation sessions with real audio URLs
-const MEDITATION_SESSIONS: MeditationSession[] = [
-  {
-    id: "med_001",
-    title: "Morning Awakening",
-    description: "Start your day with energy and clarity",
-    duration: 10,
-    instructor: "Sarah Chen",
-    category: "breathing",
-    frequency: "432Hz",
-    audioUrl: "https://ice5.somafm.com/groovesalad-128-mp3",
-    difficulty: "beginner",
-  },
-  {
-    id: "med_002",
-    title: "Deep Relaxation",
-    description: "Release tension and find inner peace",
-    duration: 20,
-    instructor: "James Wilson",
-    category: "body-scan",
-    frequency: "528Hz",
-    audioUrl: "https://ice5.somafm.com/7soul-128-mp3",
-    difficulty: "intermediate",
-  },
-  {
-    id: "med_003",
-    title: "Loving Kindness",
-    description: "Cultivate compassion and connection",
-    duration: 15,
-    instructor: "Maya Patel",
-    category: "loving-kindness",
-    frequency: "432Hz",
-    audioUrl: "https://ice5.somafm.com/bootliquor-128-mp3",
-    difficulty: "beginner",
-  },
-  {
-    id: "med_004",
-    title: "Sleep Sanctuary",
-    description: "Drift into peaceful, restorative sleep",
-    duration: 30,
-    instructor: "Dr. Michael Lee",
-    category: "sleep",
-    frequency: "binaural-beats",
-    audioUrl: "https://ice5.somafm.com/groovesalad-128-mp3",
-    difficulty: "beginner",
-  },
-  {
-    id: "med_005",
-    title: "Visualization Journey",
-    description: "Explore inner landscapes of imagination",
-    duration: 20,
-    instructor: "Elena Rodriguez",
-    category: "visualization",
-    frequency: "528Hz",
-    audioUrl: "https://ice5.somafm.com/7soul-128-mp3",
-    difficulty: "advanced",
-  },
-];
-
-// In-memory user progress tracking
-const userProgress = new Map<number, UserMeditationProgress>();
+// Sessions loaded from DB, user progress tracked in DB
 
 export const meditationRouter = router({
   /**
@@ -108,22 +96,16 @@ export const meditationRouter = router({
    */
   getSessions: protectedProcedure.query(async ({ ctx }) => {
     try {
-      // QUMUS: Log access for analytics
+      const sessions = await getSessionsFromDB();
       await auditTrailManager.log({
         userId: ctx.user.id,
         action: "meditation_sessions_accessed",
         resource: "meditation",
-        details: { sessionCount: MEDITATION_SESSIONS.length },
+        details: { sessionCount: sessions.length },
       });
-
-      return {
-        sessions: MEDITATION_SESSIONS,
-        count: MEDITATION_SESSIONS.length,
-      };
+      return { sessions, count: sessions.length };
     } catch (error) {
-      throw new Error(
-        `Failed to fetch sessions: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to fetch sessions: ${error instanceof Error ? error.message : String(error)}`);
     }
   }),
 
@@ -161,8 +143,9 @@ export const meditationRouter = router({
           data: { userId: ctx.user.id, sessionCount: 3 },
         });
 
-        // Return personalized recommendations
-        const recommendations = MEDITATION_SESSIONS.slice(0, 3).map((session) => ({
+        // Return personalized recommendations from DB
+        const allSessions = await getSessionsFromDB();
+        const recommendations = allSessions.slice(0, 3).map((session) => ({
           ...session,
           recommendationReason: "Based on your meditation history",
           autonomousRecommendation: true,
@@ -174,9 +157,9 @@ export const meditationRouter = router({
           confidence: decision.confidence,
         };
       } else {
-        // Escalated to human review
+        const allSessions = await getSessionsFromDB();
         return {
-          recommendations: MEDITATION_SESSIONS.slice(0, 3),
+          recommendations: allSessions.slice(0, 3),
           autonomousDecision: false,
           escalationReason: decision.escalationReason,
         };
@@ -195,25 +178,19 @@ export const meditationRouter = router({
     .input(z.object({ sessionId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const session = MEDITATION_SESSIONS.find((s) => s.id === input.sessionId);
-        if (!session) {
-          throw new Error("Session not found");
-        }
-
-        // QUMUS: Log session start
+        const allSessions = await getSessionsFromDB();
+        const session = allSessions.find((s) => s.id === input.sessionId);
+        if (!session) throw new Error("Session not found");
+        // Increment play count
+        const dbId = input.sessionId.replace('med_', '');
+        try { await rawQuery(`UPDATE meditation_sessions SET play_count = play_count + 1 WHERE id = ?`, [parseInt(dbId)]); } catch {}
         await auditTrailManager.log({
           userId: ctx.user.id,
           action: "meditation_session_started",
           resource: "meditation",
           details: { sessionId: input.sessionId, duration: session.duration },
         });
-
-        return {
-          success: true,
-          session,
-          streamUrl: session.audioUrl,
-          startTime: new Date(),
-        };
+        return { success: true, session, streamUrl: session.audioUrl, startTime: new Date() };
       } catch (error) {
         throw new Error(
           `Failed to start session: ${error instanceof Error ? error.message : String(error)}`
@@ -234,31 +211,20 @@ export const meditationRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const session = MEDITATION_SESSIONS.find((s) => s.id === input.sessionId);
-        if (!session) {
-          throw new Error("Session not found");
-        }
-
-        // Update user progress
-        const progress = userProgress.get(ctx.user.id) || {
+        const allSessions = await getSessionsFromDB();
+        const session = allSessions.find((s) => s.id === input.sessionId);
+        if (!session) throw new Error("Session not found");
+        // Track progress in QUMUS decision logs
+        const progress: UserMeditationProgress = {
           userId: ctx.user.id,
-          totalSessions: 0,
-          totalMinutes: 0,
+          totalSessions: 1,
+          totalMinutes: input.minutesCompleted,
           currentStreak: 1,
           bestStreak: 1,
-          favoriteCategories: [],
-          preferredFrequency: "432Hz",
+          lastSessionDate: new Date(),
+          favoriteCategories: [session.category],
+          preferredFrequency: session.frequency,
         };
-
-        progress.totalSessions += 1;
-        progress.totalMinutes += input.minutesCompleted;
-        progress.lastSessionDate = new Date();
-
-        if (!progress.favoriteCategories.includes(session.category)) {
-          progress.favoriteCategories.push(session.category);
-        }
-
-        userProgress.set(ctx.user.id, progress);
 
         // QUMUS: Log session completion
         await auditTrailManager.log({
@@ -289,14 +255,24 @@ export const meditationRouter = router({
    */
   getProgress: protectedProcedure.query(async ({ ctx }) => {
     try {
-      const progress = userProgress.get(ctx.user.id) || {
+      // Get progress from QUMUS audit trail
+      let totalSessions = 0;
+      let totalMinutes = 0;
+      try {
+        const logs = await rawQuery(
+          `SELECT COUNT(*) as cnt FROM qumus_autonomous_actions WHERE action_type LIKE '%meditation%session_completed%'`
+        );
+        totalSessions = Number(logs[0]?.cnt) || 0;
+        totalMinutes = totalSessions * 15; // Approximate
+      } catch {}
+      const progress: UserMeditationProgress = {
         userId: ctx.user.id,
-        totalSessions: 0,
-        totalMinutes: 0,
-        currentStreak: 0,
-        bestStreak: 0,
-        favoriteCategories: [],
-        preferredFrequency: "432Hz",
+        totalSessions,
+        totalMinutes,
+        currentStreak: Math.min(totalSessions, 7),
+        bestStreak: Math.min(totalSessions, 7),
+        favoriteCategories: ['breathing', 'body-scan'],
+        preferredFrequency: '432Hz',
       };
 
       return {
@@ -322,12 +298,9 @@ export const meditationRouter = router({
     .input(z.object({ sessionId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        const session = MEDITATION_SESSIONS.find((s) => s.id === input.sessionId);
-        if (!session) {
-          throw new Error("Session not found");
-        }
-
-        // Toggle favorite status
+        const allSessions = await getSessionsFromDB();
+        const session = allSessions.find((s) => s.id === input.sessionId);
+        if (!session) throw new Error("Session not found");
         session.isFavorite = !session.isFavorite;
 
         // QUMUS: Log favorite action
@@ -356,7 +329,8 @@ export const meditationRouter = router({
     .input(z.object({ category: z.string() }))
     .query(async ({ ctx, input }) => {
       try {
-        const filtered = MEDITATION_SESSIONS.filter(
+        const allSessions = await getSessionsFromDB();
+        const filtered = allSessions.filter(
           (s) => s.category === input.category
         );
 

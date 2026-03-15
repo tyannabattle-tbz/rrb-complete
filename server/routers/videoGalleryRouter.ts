@@ -1,6 +1,16 @@
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { z } from "zod";
-import * as db from "../db";
+import mysql from "mysql2/promise";
+
+async function rawQuery(sql: string, params: any[] = []) {
+  const connection = await mysql.createConnection(process.env.DATABASE_URL!);
+  try {
+    const [rows] = await connection.execute(sql, params);
+    return rows as any[];
+  } finally {
+    await connection.end();
+  }
+}
 
 export const videoGalleryRouter = router({
   /**
@@ -18,60 +28,38 @@ export const videoGalleryRouter = router({
       })
     )
     .query(async ({ input }) => {
-      // In production, query from database
-      // For now, return mock data
-      const mockVideos = [
-        {
-          videoId: "video-1770028842286-0v6pzrmxd",
-          userId: 1,
-          description: "A beautiful cinematic video",
-          duration: 10,
-          resolution: "1080p",
-          style: "cinematic",
-          fps: 24,
-          aspectRatio: "16:9",
-          url: "/videos/video-1770028842286-0v6pzrmxd.mp4",
-          isPublic: true,
-          createdAt: new Date(Date.now() - 3600000),
-          updatedAt: new Date(),
-        },
-        {
-          videoId: "video-1770027261553-4v2do7gu",
-          userId: 1,
-          description: "Another great video",
-          duration: 10,
-          resolution: "1080p",
-          style: "cinematic",
-          fps: 24,
-          aspectRatio: "16:9",
-          url: "/videos/video-1770027261553-4v2do7gu.mp4",
-          isPublic: true,
-          createdAt: new Date(Date.now() - 7200000),
-          updatedAt: new Date(),
-        },
-      ];
-
-      // Apply filters
-      let filtered = mockVideos;
-      if (input.style) {
-        filtered = filtered.filter((v) => v.style === input.style);
+      try {
+        let sql = `SELECT * FROM video_library WHERE 1=1`;
+        const params: any[] = [];
+        if (input.style) { sql += ` AND style = ?`; params.push(input.style); }
+        if (input.resolution) { sql += ` AND resolution = ?`; params.push(input.resolution); }
+        if (input.search) { sql += ` AND (description LIKE ? OR title LIKE ?)`; params.push(`%${input.search}%`, `%${input.search}%`); }
+        if (input.sortBy === "newest") sql += ` ORDER BY created_at DESC`;
+        else if (input.sortBy === "popular") sql += ` ORDER BY view_count DESC`;
+        sql += ` LIMIT ? OFFSET ?`;
+        params.push(input.limit, input.offset);
+        const rows = await rawQuery(sql, params);
+        return rows.map((r: any) => ({
+          videoId: r.video_id || r.id,
+          userId: r.user_id,
+          title: r.title || r.description || 'Untitled',
+          description: r.description || '',
+          duration: r.duration || 0,
+          resolution: r.resolution || '1080p',
+          style: r.style || 'cinematic',
+          fps: r.fps || 24,
+          aspectRatio: r.aspect_ratio || '16:9',
+          url: r.url || r.file_url || '',
+          thumbnail: r.thumbnail_url || '',
+          isPublic: r.is_public !== false,
+          viewCount: r.view_count || 0,
+          createdAt: r.created_at || new Date(),
+          updatedAt: r.updated_at || new Date(),
+        }));
+      } catch {
+        // Table may not have expected columns — return empty
+        return [];
       }
-      if (input.resolution) {
-        filtered = filtered.filter((v) => v.resolution === input.resolution);
-      }
-      if (input.search) {
-        filtered = filtered.filter((v) =>
-          v.description.toLowerCase().includes(input.search!.toLowerCase())
-        );
-      }
-
-      // Apply sorting
-      if (input.sortBy === "newest") {
-        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      }
-
-      // Apply pagination
-      return filtered.slice(input.offset, input.offset + input.limit);
     }),
 
   /**
@@ -80,25 +68,33 @@ export const videoGalleryRouter = router({
   getVideo: publicProcedure
     .input(z.object({ videoId: z.string() }))
     .query(async ({ input }) => {
-      // In production, query from database
-      const mockVideos = [
-        {
-          videoId: "video-1770028842286-0v6pzrmxd",
-          userId: 1,
-          description: "A beautiful cinematic video",
-          duration: 10,
-          resolution: "1080p",
-          style: "cinematic",
-          fps: 24,
-          aspectRatio: "16:9",
-          url: "/videos/video-1770028842286-0v6pzrmxd.mp4",
-          isPublic: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      ];
-
-      return mockVideos.find((v) => v.videoId === input.videoId) || null;
+      try {
+        const rows = await rawQuery(
+          `SELECT * FROM video_library WHERE video_id = ? OR id = ? LIMIT 1`,
+          [input.videoId, input.videoId]
+        );
+        if (rows.length === 0) return null;
+        const r = rows[0];
+        return {
+          videoId: r.video_id || r.id,
+          userId: r.user_id,
+          title: r.title || r.description || 'Untitled',
+          description: r.description || '',
+          duration: r.duration || 0,
+          resolution: r.resolution || '1080p',
+          style: r.style || 'cinematic',
+          fps: r.fps || 24,
+          aspectRatio: r.aspect_ratio || '16:9',
+          url: r.url || r.file_url || '',
+          thumbnail: r.thumbnail_url || '',
+          isPublic: r.is_public !== false,
+          viewCount: r.view_count || 0,
+          createdAt: r.created_at || new Date(),
+          updatedAt: r.updated_at || new Date(),
+        };
+      } catch {
+        return null;
+      }
     }),
 
   /**
@@ -113,8 +109,15 @@ export const videoGalleryRouter = router({
       })
     )
     .query(async ({ input }) => {
-      // In production, query from database
-      return [];
+      try {
+        const rows = await rawQuery(
+          `SELECT * FROM video_library WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+          [input.userId, input.limit, input.offset]
+        );
+        return rows;
+      } catch {
+        return [];
+      }
     }),
 
   /**
@@ -128,8 +131,15 @@ export const videoGalleryRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      // In production, query from database where userId = ctx.user.id
-      return [];
+      try {
+        const rows = await rawQuery(
+          `SELECT * FROM video_library WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+          [ctx.user.id, input.limit, input.offset]
+        );
+        return rows;
+      } catch {
+        return [];
+      }
     }),
 
   /**
@@ -152,8 +162,15 @@ export const videoGalleryRouter = router({
   deleteVideo: protectedProcedure
     .input(z.object({ videoId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // In production, verify ownership and delete from database
-      return { success: true };
+      try {
+        await rawQuery(
+          `DELETE FROM video_library WHERE (video_id = ? OR id = ?) AND user_id = ?`,
+          [input.videoId, input.videoId, ctx.user.id]
+        );
+        return { success: true };
+      } catch {
+        return { success: false };
+      }
     }),
 
   /**
@@ -168,7 +185,21 @@ export const videoGalleryRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // In production, verify ownership and update in database
-      return { success: true };
+      try {
+        const updates: string[] = [];
+        const params: any[] = [];
+        if (input.description !== undefined) { updates.push('description = ?'); params.push(input.description); }
+        if (input.isPublic !== undefined) { updates.push('is_public = ?'); params.push(input.isPublic ? 1 : 0); }
+        if (updates.length > 0) {
+          params.push(input.videoId, input.videoId, ctx.user.id);
+          await rawQuery(
+            `UPDATE video_library SET ${updates.join(', ')}, updated_at = NOW() WHERE (video_id = ? OR id = ?) AND user_id = ?`,
+            params
+          );
+        }
+        return { success: true };
+      } catch {
+        return { success: false };
+      }
     }),
 });

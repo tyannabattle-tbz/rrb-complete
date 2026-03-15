@@ -229,6 +229,58 @@ async function startServer() {
     }
   });
   
+  // Audio Recording Upload endpoint (saves to S3)
+  app.post("/api/upload-recording", async (req, res) => {
+    try {
+      const { storagePut } = await import("../storage");
+      const chunks: Buffer[] = [];
+      req.on('data', (chunk: Buffer) => chunks.push(chunk));
+      req.on('end', async () => {
+        try {
+          const body = Buffer.concat(chunks);
+          const contentType = req.headers['content-type'] || 'audio/webm';
+          const ext = contentType.includes('wav') ? 'wav' : contentType.includes('mp3') ? 'mp3' : 'webm';
+          const timestamp = Date.now();
+          const randomSuffix = Math.random().toString(36).substring(2, 8);
+          const fileKey = `recordings/studio-${timestamp}-${randomSuffix}.${ext}`;
+          const { url } = await storagePut(fileKey, body, contentType);
+          res.json({ success: true, url, fileKey, size: body.length });
+        } catch (error) {
+          console.error('[Recording Upload] S3 error:', error);
+          res.status(500).json({ error: 'Failed to save recording' });
+        }
+      });
+    } catch (error) {
+      console.error('[Recording Upload] Error:', error);
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
+  // Sweet Miracles Donation endpoint (real Stripe)
+  app.post("/api/donate", async (req, res) => {
+    try {
+      const { createDonationCheckout } = await import("../donationService");
+      const { amount, email, firstName, lastName, donateInNameOf, tierId } = req.body;
+      if (!amount || !email) {
+        return res.status(400).json({ error: "Amount and email are required" });
+      }
+      const origin = `${req.protocol}://${req.get("host")}`;
+      const result = await createDonationCheckout({
+        donorEmail: email,
+        donorName: `${firstName || ''} ${lastName || ''}`.trim() || 'Anonymous',
+        amount: Math.round(Number(amount)),
+        tierId: tierId || 'custom',
+        successUrl: `${origin}/sweet-miracles?success=true`,
+        cancelUrl: `${origin}/sweet-miracles?cancelled=true`,
+        origin,
+      });
+      res.json({ sessionId: result.sessionId, url: result.url });
+    } catch (error) {
+      console.error("[Donation] Error:", error);
+      res.status(500).json({ error: String(error) });
+    }
+  });
+
   // Audio Stream Proxy - proxies HTTP radio streams through HTTPS server
   registerAudioStreamProxy(app);
 

@@ -127,7 +127,7 @@ export const apiIntegrationRouter = router({
         userId: ctx.user.id,
         provider: input.provider,
         webhook: {
-          url: `https://api.example.com/webhooks/${input.provider}`,
+          url: `/api/webhooks/${input.provider}`,
           events: ['video.completed', 'video.failed', 'video.processing'],
           isActive: true,
           lastTriggered: new Date(Date.now() - 1 * 60 * 60 * 1000),
