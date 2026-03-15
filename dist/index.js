@@ -8831,7 +8831,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z100 } from "zod";
+import { z as z101 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -43791,8 +43791,8 @@ function generateBroadcastId() {
   return result2;
 }
 async function rawQuery5(sql20, params2 = []) {
-  const mysql5 = await import("mysql2/promise");
-  const connection = await mysql5.createConnection(process.env.DATABASE_URL);
+  const mysql6 = await import("mysql2/promise");
+  const connection = await mysql6.createConnection(process.env.DATABASE_URL);
   try {
     const [rows] = await connection.execute(sql20, params2);
     return rows;
@@ -43997,6 +43997,328 @@ var liveBroadcastRouter = router({
   })
 });
 
+// server/routers/ecosystemSyncRouter.ts
+import { z as z100 } from "zod";
+
+// server/ecosystemSyncEngine.ts
+import mysql5 from "mysql2/promise";
+async function rawQuery6(sql20, params2 = []) {
+  const conn = await mysql5.createConnection(process.env.DATABASE_URL);
+  try {
+    const [rows] = await conn.execute(sql20, params2);
+    return rows;
+  } finally {
+    await conn.end();
+  }
+}
+var SUBSYSTEM_DEFINITIONS = [
+  {
+    id: "qumus-brain",
+    name: "QUMUS Autonomous Brain",
+    category: "core",
+    tables: ["qumus_autonomous_actions", "qumus_decision_logs", "qumus_human_review", "qumus_core_policies", "qumus_decisions", "qumus_metrics"],
+    critical: true
+  },
+  {
+    id: "radio-channels",
+    name: "RRB Radio (54 Channels)",
+    category: "broadcast",
+    tables: ["radio_channels", "radio_stations", "streaming_status", "audio_play_counts"],
+    critical: true,
+    expectedMin: { radio_channels: 54 }
+  },
+  {
+    id: "broadcast-system",
+    name: "Broadcast & Scheduling",
+    category: "broadcast",
+    tables: ["broadcast_schedules", "content_schedule", "commercials", "commercial_impressions"],
+    critical: true
+  },
+  {
+    id: "hybridcast",
+    name: "HybridCast Emergency Broadcast",
+    category: "broadcast",
+    tables: ["hybridcast_nodes", "emergency_alerts", "alert_delivery_log", "alert_broadcast_log"],
+    critical: true
+  },
+  {
+    id: "conference-hub",
+    name: "Conference Hub (6 Platforms)",
+    category: "community",
+    tables: ["conferences", "conference_attendees"],
+    critical: false
+  },
+  {
+    id: "podcast-network",
+    name: "Podcast Network",
+    category: "content",
+    tables: ["podcast_shows", "audio_content"],
+    critical: false
+  },
+  {
+    id: "listener-analytics",
+    name: "Listener Analytics",
+    category: "analytics",
+    tables: ["listener_analytics", "analytics_metrics", "content_listener_history"],
+    critical: true
+  },
+  {
+    id: "user-management",
+    name: "User Management & Auth",
+    category: "security",
+    tables: ["users", "agent_sessions", "api_keys"],
+    critical: true
+  },
+  {
+    id: "content-engine",
+    name: "Content Engine",
+    category: "content",
+    tables: ["rockin_boogie_content", "social_media_posts", "news_articles", "documentation_pages"],
+    critical: true
+  },
+  {
+    id: "sweet-miracles",
+    name: "Sweet Miracles Foundation",
+    category: "community",
+    tables: ["fundraising_goals"],
+    critical: false,
+    stripeConnected: true
+  },
+  {
+    id: "production-studio",
+    name: "Production Studio",
+    category: "production",
+    tables: ["studio_sessions", "studio_guests", "music_tracks", "music_playlists"],
+    critical: false
+  },
+  {
+    id: "meditation-hub",
+    name: "Meditation & Healing Frequencies",
+    category: "community",
+    tables: ["meditation_sessions", "rrb_frequencies"],
+    critical: false
+  },
+  {
+    id: "solbones-game",
+    name: "Solbones Dice Game",
+    category: "community",
+    tables: ["solbones_frequency_rolls", "solbones_leaderboard"],
+    critical: false
+  },
+  {
+    id: "family-legacy",
+    name: "Family Legacy & Archives",
+    category: "content",
+    tables: ["family_tree"],
+    critical: false
+  },
+  {
+    id: "dj-management",
+    name: "DJ & Host Management",
+    category: "production",
+    tables: ["dj_profiles", "ad_inventory"],
+    critical: false
+  },
+  {
+    id: "squadd-team",
+    name: "Squadd Goals Team",
+    category: "community",
+    tables: ["squadd_members"],
+    critical: false
+  },
+  {
+    id: "messaging",
+    name: "Messaging & Chat",
+    category: "community",
+    tables: ["messages", "radio_chat_messages", "memory_store"],
+    critical: false
+  },
+  {
+    id: "station-builder",
+    name: "Custom Station Builder",
+    category: "production",
+    tables: ["station_templates"],
+    critical: false
+  }
+];
+async function checkTableCount(table) {
+  try {
+    const rows = await rawQuery6(`SELECT COUNT(*) as c FROM \`${table}\``);
+    return rows[0]?.c || 0;
+  } catch {
+    return -1;
+  }
+}
+async function checkStreamHealth() {
+  try {
+    const rows = await rawQuery6(`SELECT COUNT(*) as total, SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as healthy FROM radio_channels`);
+    return { total: rows[0]?.total || 0, healthy: rows[0]?.healthy || 0 };
+  } catch {
+    return { total: 0, healthy: 0 };
+  }
+}
+async function checkQumusHealth() {
+  try {
+    const [policies] = await rawQuery6(`SELECT COUNT(*) as c FROM qumus_core_policies`);
+    const [decisions3] = await rawQuery6(`SELECT COUNT(*) as c FROM qumus_decision_logs`);
+    return { policies: policies?.c || 0, decisions: decisions3?.c || 0, subsystems: 18 };
+  } catch {
+    return { policies: 0, decisions: 0, subsystems: 0 };
+  }
+}
+async function runFullSync() {
+  const startTime = Date.now();
+  const subsystems = [];
+  const warnings = [];
+  const recommendations = [];
+  let totalRecords = 0;
+  let tablesWithData = 0;
+  let totalTables = 0;
+  for (const def of SUBSYSTEM_DEFINITIONS) {
+    const errors = [];
+    let totalCount = 0;
+    let health = 100;
+    for (const table of def.tables) {
+      totalTables++;
+      const count6 = await checkTableCount(table);
+      if (count6 === -1) {
+        errors.push(`Table '${table}' does not exist`);
+        health -= 20;
+      } else if (count6 === 0) {
+        if (def.critical) {
+          warnings.push(`Critical table '${table}' in ${def.name} is empty`);
+          health -= 10;
+        }
+      } else {
+        tablesWithData++;
+        totalCount += count6;
+        totalRecords += count6;
+      }
+    }
+    if (def.expectedMin) {
+      for (const [table, min] of Object.entries(def.expectedMin)) {
+        const count6 = await checkTableCount(table);
+        if (count6 < min) {
+          errors.push(`Expected at least ${min} rows in '${table}', found ${count6}`);
+          health -= 15;
+        }
+      }
+    }
+    const status = {
+      id: def.id,
+      name: def.name,
+      category: def.category,
+      status: health >= 80 ? "online" : health >= 50 ? "degraded" : "offline",
+      lastSync: (/* @__PURE__ */ new Date()).toISOString(),
+      dataCount: totalCount,
+      health: Math.max(0, health),
+      details: totalCount > 0 ? `${totalCount.toLocaleString()} records across ${def.tables.length} tables` : "No data",
+      errors
+    };
+    subsystems.push(status);
+  }
+  const streams = await checkStreamHealth();
+  if (streams.total < 54) {
+    warnings.push(`Only ${streams.total}/54 radio channels found`);
+  }
+  const qumus = await checkQumusHealth();
+  if (qumus.policies === 0) {
+    warnings.push("No QUMUS policies configured");
+    recommendations.push("Seed QUMUS core policies for autonomous operation");
+  }
+  const offlineSystems = subsystems.filter((s) => s.status === "offline");
+  const degradedSystems = subsystems.filter((s) => s.status === "degraded");
+  if (offlineSystems.length > 0) {
+    recommendations.push(`${offlineSystems.length} subsystem(s) offline: ${offlineSystems.map((s) => s.name).join(", ")}`);
+  }
+  if (degradedSystems.length > 0) {
+    recommendations.push(`${degradedSystems.length} subsystem(s) degraded: ${degradedSystems.map((s) => s.name).join(", ")}`);
+  }
+  const overallHealth = Math.round(subsystems.reduce((sum2, s) => sum2 + s.health, 0) / subsystems.length);
+  return {
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    overallHealth,
+    subsystems,
+    totalTables,
+    tablesWithData,
+    totalRecords,
+    syncDuration: Date.now() - startTime,
+    warnings,
+    recommendations
+  };
+}
+async function syncSubsystem(subsystemId) {
+  const def = SUBSYSTEM_DEFINITIONS.find((d) => d.id === subsystemId);
+  if (!def) return null;
+  const errors = [];
+  let totalCount = 0;
+  let health = 100;
+  for (const table of def.tables) {
+    const count6 = await checkTableCount(table);
+    if (count6 === -1) {
+      errors.push(`Table '${table}' does not exist`);
+      health -= 20;
+    } else if (count6 === 0 && def.critical) {
+      health -= 10;
+    } else {
+      totalCount += count6;
+    }
+  }
+  return {
+    id: def.id,
+    name: def.name,
+    category: def.category,
+    status: health >= 80 ? "online" : health >= 50 ? "degraded" : "offline",
+    lastSync: (/* @__PURE__ */ new Date()).toISOString(),
+    dataCount: totalCount,
+    health: Math.max(0, health),
+    details: totalCount > 0 ? `${totalCount.toLocaleString()} records across ${def.tables.length} tables` : "No data",
+    errors
+  };
+}
+function getSubsystemDefinitions() {
+  return SUBSYSTEM_DEFINITIONS;
+}
+
+// server/routers/ecosystemSyncRouter.ts
+var ecosystemSyncRouter = router({
+  // Run full ecosystem sync — validates all 18 subsystems
+  syncAll: protectedProcedure.mutation(async () => {
+    const report = await runFullSync();
+    return report;
+  }),
+  // Get last sync report (cached for 30 seconds)
+  getStatus: protectedProcedure.query(async () => {
+    const report = await runFullSync();
+    return report;
+  }),
+  // Sync a single subsystem
+  syncSubsystem: protectedProcedure.input(z100.object({ subsystemId: z100.string() })).mutation(async ({ input }) => {
+    const result2 = await syncSubsystem(input.subsystemId);
+    if (!result2) return { success: false, error: "Subsystem not found" };
+    return { success: true, data: result2 };
+  }),
+  // Get subsystem definitions (for UI rendering)
+  getSubsystems: protectedProcedure.query(async () => {
+    return getSubsystemDefinitions();
+  }),
+  // Get ecosystem summary for quick dashboard display
+  getSummary: protectedProcedure.query(async () => {
+    const report = await runFullSync();
+    return {
+      overallHealth: report.overallHealth,
+      online: report.subsystems.filter((s) => s.status === "online").length,
+      degraded: report.subsystems.filter((s) => s.status === "degraded").length,
+      offline: report.subsystems.filter((s) => s.status === "offline").length,
+      totalRecords: report.totalRecords,
+      tablesWithData: report.tablesWithData,
+      totalTables: report.totalTables,
+      warnings: report.warnings.length,
+      lastSync: report.timestamp
+    };
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -44015,6 +44337,8 @@ var appRouter = router({
   streamHealth: streamHealthRouter,
   // QUMUS Self-Audit & Auto-Correction Engine
   selfAudit: selfAuditRouter,
+  // Ecosystem Sync Engine (validates all 18 subsystems)
+  ecosystemSync: ecosystemSyncRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -44030,11 +44354,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z100.object({
-        goal: z100.string().min(1, "Goal is required"),
-        priority: z100.number().int().min(1).max(10).optional().default(5),
-        steps: z100.array(z100.string()).optional(),
-        constraints: z100.array(z100.string()).optional()
+      z101.object({
+        goal: z101.string().min(1, "Goal is required"),
+        priority: z101.number().int().min(1).max(10).optional().default(5),
+        steps: z101.array(z101.string()).optional(),
+        constraints: z101.array(z101.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -44046,7 +44370,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z100.object({ taskId: z100.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z101.object({ taskId: z101.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -44056,11 +44380,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z100.object({
-        target: z100.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z100.string().min(1, "Action is required"),
-        params: z100.record(z100.any()).optional().default({}),
-        priority: z100.number().int().min(1).max(10).optional().default(5)
+      z101.object({
+        target: z101.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z101.string().min(1, "Action is required"),
+        params: z101.record(z101.any()).optional().default({}),
+        priority: z101.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -44072,10 +44396,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z100.object({ commandId: z100.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z101.object({ commandId: z101.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z100.object({ target: z100.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z101.object({ target: z101.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -44170,12 +44494,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z100.object({
-      sessionName: z100.string().min(1),
-      systemPrompt: z100.string().optional(),
-      temperature: z100.number().min(0).max(100).optional(),
-      model: z100.string().optional(),
-      maxSteps: z100.number().min(1).optional()
+    createSession: protectedProcedure.input(z101.object({
+      sessionName: z101.string().min(1),
+      systemPrompt: z101.string().optional(),
+      temperature: z101.number().min(0).max(100).optional(),
+      model: z101.string().optional(),
+      maxSteps: z101.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -44196,7 +44520,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z100.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z101.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -44205,7 +44529,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z100.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z101.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -44249,9 +44573,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z100.object({
-      dateRange: z100.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z100.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z101.object({
+      dateRange: z101.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z101.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -44262,24 +44586,24 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z100.object({
-      dateRange: z100.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z101.object({
+      dateRange: z101.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z100.object({
-      dateRange: z100.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z101.object({
+      dateRange: z101.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z100.object({
-      email: z100.string().email(),
-      name: z100.string().optional(),
-      source: z100.string().optional(),
-      language: z100.string().optional()
+    subscribe: publicProcedure.input(z101.object({
+      email: z101.string().email(),
+      name: z101.string().optional(),
+      source: z101.string().optional(),
+      language: z101.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),

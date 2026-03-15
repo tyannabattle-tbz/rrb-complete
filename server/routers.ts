@@ -92,6 +92,7 @@ import { streamHealthRouter } from "./routers/streamHealthRouter";
 import { selfAuditRouter } from "./routers/selfAuditRouter";
 import { videoManagementRouter } from "./routers/videoManagementRouter";
 import { liveBroadcastRouter } from "./routers/liveBroadcastRouter";
+import { ecosystemSyncRouter } from "./routers/ecosystemSyncRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -118,6 +119,9 @@ export const appRouter = router({
 
   // QUMUS Self-Audit & Auto-Correction Engine
   selfAudit: selfAuditRouter,
+
+  // Ecosystem Sync Engine (validates all 18 subsystems)
+  ecosystemSync: ecosystemSyncRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,

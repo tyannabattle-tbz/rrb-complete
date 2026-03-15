@@ -4496,3 +4496,12 @@
 - [ ] Build video processing pipeline
 - [ ] Implement backup system
 - [ ] Build royalty tracking with Stripe
+
+## QUMUS Full Capability Build — Final Push
+- [x] Wire remaining placeholder routers to real DB (collections, notifications, exports, etc.)
+- [x] Build ecosystem sync engine (server-side) that validates all 18 subsystems
+- [x] Create sync-all CLI command for team compilation (pnpm sync:all)
+- [x] Build Sync Dashboard UI at /ecosystem-sync
+- [x] Recording save-to-S3 endpoint already exists (/api/upload-recording + studioAudio router)
+- [x] Create updated project zip with ECOSYSTEM-README.md and install instructions
+- [x] Include todo/next-steps in zip for QUMUS awareness

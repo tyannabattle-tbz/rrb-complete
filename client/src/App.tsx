@@ -138,6 +138,7 @@ import RRBEcosystemDashboard from "@/pages/RRBEcosystemDashboard";
 import SolbonesGame from "@/pages/SolbonesGame";
 import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
 import EcosystemMasterDashboard from "@/pages/EcosystemMasterDashboard";
+import EcosystemSyncDashboard from "@/pages/EcosystemSyncDashboard";
 import AdminControlPanel from "@/pages/AdminControlPanel";
 import GrowthCampaigns from "@/pages/GrowthCampaigns";
 import CommunityForums from "@/pages/CommunityForums";
@@ -344,6 +345,7 @@ function Router() {
       <Route path="/rrb" component={RRBPort3001} />
       <Route path="/legacy" component={RRBLegacySite} />
       <Route path="/ecosystem-dashboard" component={EcosystemMasterDashboard} />
+      <Route path="/ecosystem-sync" component={EcosystemSyncDashboard} />
       <Route path="/admin" component={AdminControlPanel} />
       <Route path="/emergency" component={HybridCastPort3002} />
       <Route path="/rrb/broadcast" component={RRBDashboard} />
