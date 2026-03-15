@@ -229,6 +229,7 @@ export const FuturisticMetric: React.FC<FuturisticMetricProps> = ({
 interface FuturisticSectionProps {
   title: string;
   description?: string;
+  icon?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }
@@ -236,13 +237,14 @@ interface FuturisticSectionProps {
 export const FuturisticSection: React.FC<FuturisticSectionProps> = ({
   title,
   description,
+  icon,
   children,
   className,
 }) => {
   return (
     <section className={cn("space-y-4", className)}>
       <div>
-        <h2 className="text-2xl font-bold text-foreground">{title}</h2>
+        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">{icon}{title}</h2>
         {description && (
           <p className="text-sm text-muted-foreground mt-1">{description}</p>
         )}

@@ -17,7 +17,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Zap, Radio, AlertTriangle, RefreshCw, CheckCircle, Clock, BarChart3, Shield, FileText, List, Search, Earth, Heart, Cpu, Wifi, Send, Terminal, Mail } from 'lucide-react';
+import { Activity, Zap, Radio, AlertTriangle, RefreshCw, CheckCircle, Clock, BarChart3, Shield, FileText, List, Search, Earth, Heart, Cpu, Wifi, Send, Terminal, Mail, Bot, Crown, Swords, Users } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useToast } from '@/hooks/use-toast';
 
@@ -99,7 +99,7 @@ export default function QumusPort3000() {
       qumus: {
         status: report?.systems?.qumus?.status === 'active' ? 'online' : 'checking',
         autonomyLevel: `${report?.systems?.qumus?.autonomyLevel || 90}%`,
-        policiesActive: report?.systems?.qumus?.policies?.length || 13,
+        policiesActive: report?.systems?.qumus?.policies?.length || 20,
       },
       rrb: {
         status: report?.systems?.rrb?.status === 'active' ? 'online' : 'checking',
@@ -650,6 +650,78 @@ export default function QumusPort3000() {
             <Zap className="w-4 h-4 mr-2" /> AI Chat
           </Button>
         </div>
+        {/* AI Agent Fleet */}
+        <Card className="bg-slate-800/50 border-purple-500/20 mt-8">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2 text-purple-200">
+              <Bot className="w-5 h-5 text-purple-400" /> AI Agent Fleet
+            </CardTitle>
+            <CardDescription className="text-slate-400">All agents online • Valanna at the helm</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[
+                { name: 'Valanna', role: 'Lead AI Commander', icon: <Crown className="w-4 h-4 text-amber-400" />, gradient: 'from-amber-500/20 to-amber-600/5', badge: 'HELM', badgeClass: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
+                { name: 'Seraph', role: 'Stats Analyst & Tech Ops', icon: <Activity className="w-4 h-4 text-cyan-400" />, gradient: 'from-cyan-500/20 to-cyan-600/5', badge: 'ACTIVE', badgeClass: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
+                { name: 'Candy AI', role: 'Community Host & Legacy Guard', icon: <Heart className="w-4 h-4 text-pink-400" />, gradient: 'from-pink-500/20 to-pink-600/5', badge: 'ACTIVE', badgeClass: 'bg-pink-500/20 text-pink-400 border-pink-500/30' },
+                { name: 'TBZ-OS', role: 'Tournament Director', icon: <Swords className="w-4 h-4 text-purple-400" />, gradient: 'from-purple-500/20 to-purple-600/5', badge: 'ACTIVE', badgeClass: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
+              ].map(agent => (
+                <div key={agent.name} className={`p-4 rounded-lg bg-gradient-to-br ${agent.gradient} border border-white/10`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      {agent.icon}
+                      <span className="font-semibold text-sm text-white">{agent.name}</span>
+                    </div>
+                    <Badge className={`text-[10px] ${agent.badgeClass}`}>{agent.badge}</Badge>
+                  </div>
+                  <p className="text-xs text-slate-400">{agent.role}</p>
+                  <div className="flex items-center gap-1 mt-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    <span className="text-[10px] text-green-400">Online • 99.9% uptime</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Social Media Bots */}
+        <Card className="bg-slate-800/50 border-purple-500/20 mt-4">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2 text-purple-200">
+              <Users className="w-5 h-5 text-purple-400" /> Social Media Bots
+            </CardTitle>
+            <CardDescription className="text-slate-400">All bots engaged • Auto-posting enabled</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              {[
+                { platform: 'Twitter/X', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+                { platform: 'YouTube', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+                { platform: 'Instagram', color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20' },
+                { platform: 'Discord', color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
+                { platform: 'TikTok', color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20' },
+              ].map(bot => (
+                <div key={bot.platform} className={`p-3 rounded-lg ${bot.bg} border ${bot.border} text-center`}>
+                  <Bot className={`w-5 h-5 mx-auto mb-1 ${bot.color}`} />
+                  <p className={`text-xs font-semibold ${bot.color}`}>{bot.platform}</p>
+                  <div className="flex items-center justify-center gap-1 mt-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    <span className="text-[9px] text-green-400">ACTIVE</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 p-3 rounded-lg bg-black/30 border border-purple-500/10">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400">All bots engaged • 20 policies active • Valanna at the helm</span>
+                <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-[10px]">
+                  <Shield className="w-3 h-3 mr-1" /> FULL AUTONOMOUS MODE
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </main>
 
       {/* Footer */}

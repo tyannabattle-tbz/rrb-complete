@@ -43,10 +43,46 @@ const CATEGORIES: { key: ChannelCategory; label: string; count?: number }[] = [
   { key: 'emergency', label: 'Emergency' },
 ];
 
-// ─── 40+ QUMUS-Synchronized Channels ─────────────────────
-const CHANNELS: Channel[] = [
-  // ── MUSIC (10 channels) — Real SomaFM streams ──
-  { id: 1, name: 'RRB Main', description: "Rockin' Rockin' Boogie — The flagship broadcast", frequency: '432 Hz', status: 'live', listeners: 342, currentShow: 'Top of the Sol Motivation Mix', nextShow: 'Afternoon Groove', nextShowTime: '2:00 PM', qumusManaged: true, category: 'music', icon: '🎵', streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3', streamFallback: 'https://ice3.somafm.com/groovesalad-128-mp3' },
+// ─── Channel mapping from DB to local format ─────────────────────
+function mapDbCategory(genre: string, metadata: any): ChannelCategory {
+  const cat = metadata?.category?.toLowerCase() || '';
+  const g = genre?.toLowerCase() || '';
+  if (cat === 'wellness' || /meditation|sleep|ambient|healing|relaxation/i.test(g)) return 'wellness';
+  if (cat === 'ai-curated') return 'special';
+  if (cat === 'community') return 'community';
+  if (cat === 'education') return 'culture';
+  if (cat === 'entertainment') return 'special';
+  if (cat === 'talk') return 'talk';
+  if (cat === 'specialty') return 'special';
+  if (/gospel|worship|spiritual|church/i.test(g)) return 'gospel';
+  if (/hip.?hop|r&b|soul|jazz|blues|funk|reggae|rock|country|folk|latin|afro|indie|electronic|pop|90s/i.test(g)) return 'music';
+  if (/emergency|news|public safety/i.test(g)) return 'emergency';
+  if (/kids|family|children/i.test(g)) return 'kids';
+  return 'music';
+}
+
+function mapDbChannelToLocal(dbCh: any): Channel {
+  const meta = dbCh.metadata || {};
+  return {
+    id: dbCh.id,
+    name: dbCh.name,
+    description: meta.description || dbCh.description || dbCh.genre || '',
+    frequency: dbCh.frequency || '432 Hz',
+    status: dbCh.status === 'active' ? 'live' : 'scheduled',
+    listeners: dbCh.currentListeners || 0,
+    currentShow: meta.currentShow || `${dbCh.name} Live`,
+    nextShow: meta.nextShow || 'Up Next',
+    nextShowTime: meta.nextShowTime || '',
+    qumusManaged: true,
+    category: mapDbCategory(dbCh.genre, meta),
+    icon: meta.icon || '🎵',
+    streamUrl: dbCh.streamUrl || undefined,
+    streamFallback: meta.fallbackUrl || undefined,
+  };
+}
+
+// Fallback hardcoded channels only used if DB is unavailable
+const FALLBACK_CHANNELS: Channel[] = [
   { id: 2, name: 'Soul & R&B Classics', description: 'Timeless soul, Motown, and classic R&B', frequency: '432 Hz', status: 'live', listeners: 198, currentShow: 'Classic Soul Hour', nextShow: 'Motown Memories', nextShowTime: '3:00 PM', qumusManaged: true, category: 'music', icon: '🎤', streamUrl: 'https://ice5.somafm.com/7soul-128-mp3', streamFallback: 'https://ice3.somafm.com/7soul-128-mp3' },
   { id: 3, name: 'Southern Blues', description: 'Deep South blues, Delta blues, and modern blues', frequency: '432 Hz', status: 'live', listeners: 134, currentShow: 'Delta Blues Session', nextShow: 'Blues After Dark', nextShowTime: '8:00 PM', qumusManaged: true, category: 'music', icon: '🎸', streamUrl: 'https://ice5.somafm.com/bootliquor-128-mp3', streamFallback: 'https://ice3.somafm.com/bootliquor-128-mp3' },
   { id: 4, name: 'Hip-Hop & Spoken Word', description: 'Conscious hip-hop, spoken word, and poetry', frequency: '432 Hz', status: 'live', listeners: 267, currentShow: 'Conscious Beats', nextShow: 'Poetry After Hours', nextShowTime: '9:00 PM', qumusManaged: true, category: 'music', icon: '🎙️', streamUrl: 'https://ice5.somafm.com/bagel-128-mp3', streamFallback: 'https://ice3.somafm.com/bagel-128-mp3' },
@@ -108,16 +144,6 @@ const CHANNELS: Channel[] = [
 
   // ── EMERGENCY (1 channel) ──
   { id: 44, name: 'Emergency Broadcast', description: 'HybridCast integration — always ready', frequency: 'Multi-Band', status: 'standby', listeners: 0, currentShow: 'Standby Mode', nextShow: 'Activated on Alert', nextShowTime: 'On Demand', qumusManaged: true, category: 'emergency', icon: '🚨' },
-
-  // ── OPERATOR CHANNELS (3 channels) — Canryn Production entities ──
-  { id: 45, name: 'Canryn Productions', description: 'Official Canryn Production content — corporate broadcasts', frequency: '432 Hz', status: 'live', listeners: 78, currentShow: 'Canryn Weekly Update', nextShow: 'Production Notes', nextShowTime: '5:00 PM', qumusManaged: true, category: 'community', icon: '🎬' },
-  { id: 46, name: 'Proof Vault Radio', description: 'Evidence and documentation broadcasts — legacy preservation', frequency: '432 Hz', status: 'live', listeners: 56, currentShow: 'Evidence Review', nextShow: 'Archive Deep Dive', nextShowTime: '7:00 PM', qumusManaged: true, category: 'culture', icon: '🔐' },
-  { id: 47, name: 'QMunity Voices', description: 'Community-submitted content and grassroots stories', frequency: '432 Hz', status: 'live', listeners: 134, currentShow: 'QMunity Hour', nextShow: 'Grassroots Stories', nextShowTime: '6:00 PM', qumusManaged: true, category: 'community', icon: '👥' },
-
-  // ── STREAM CHANNELS (3 channels) — Focus, Ambient, Productivity ──
-  { id: 48, name: 'Focus & Productivity', description: 'Concentration-enhancing frequencies and ambient focus music', frequency: '741 Hz', status: 'live', listeners: 189, currentShow: 'Deep Focus Session', nextShow: 'Productivity Flow', nextShowTime: '24/7', qumusManaged: true, category: 'wellness', icon: '🎯', streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3', streamFallback: 'https://ice3.somafm.com/groovesalad-128-mp3' },
-  { id: 49, name: 'Ambient Soundscapes', description: 'Atmospheric ambient textures and sonic landscapes', frequency: '432 Hz', status: 'live', listeners: 145, currentShow: 'Sonic Landscapes', nextShow: 'Atmospheric Drift', nextShowTime: '24/7', qumusManaged: true, category: 'wellness', icon: '🌿', streamUrl: 'https://ice5.somafm.com/dronezone-128-mp3', streamFallback: 'https://ice3.somafm.com/dronezone-128-mp3' },
-  { id: 50, name: 'Conference & Summit', description: 'Live conference coverage, summits, and keynote broadcasts', frequency: 'Standard', status: 'scheduled', listeners: 0, currentShow: 'Off Air', nextShow: 'Next Summit TBA', nextShowTime: 'Coming Soon', qumusManaged: true, category: 'special', icon: '🎓' },
 ];
 
 const SCHEDULE = [
@@ -321,12 +347,23 @@ export default function RRBPort3001() {
   }, []);
 
   // ─── Real-time data from database via tRPC ─────────────────────
+  const { data: dbChannels } = trpc.ecosystemIntegration.getAllChannels.useQuery(undefined, {
+    refetchInterval: 30000,
+  });
   const { data: streamStats } = trpc.ecosystemIntegration.getAudioStreamingStats.useQuery(undefined, {
     refetchInterval: 15000,
   });
   const { data: qumusStatsData } = trpc.ecosystemIntegration.getQumusStats.useQuery(undefined, {
     refetchInterval: 30000,
   });
+
+  // Merge DB channels with fallback — DB is source of truth
+  const CHANNELS: Channel[] = useMemo(() => {
+    if (dbChannels && dbChannels.length > 0) {
+      return dbChannels.map(mapDbChannelToLocal);
+    }
+    return FALLBACK_CHANNELS;
+  }, [dbChannels]);
 
   // Update totalListeners from real database data
   useEffect(() => {

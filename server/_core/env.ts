@@ -9,4 +9,21 @@ export const ENV = {
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   oAuthPortalUrl: process.env.VITE_OAUTH_PORTAL_URL ?? "",
+  // Social Media API Keys
+  twitterApiKey: process.env.TWITTER_API_KEY ?? "",
+  twitterApiSecret: process.env.TWITTER_API_SECRET ?? "",
+  twitterAccessToken: process.env.TWITTER_ACCESS_TOKEN ?? "",
+  twitterAccessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET ?? "",
+  twitterBearerToken: process.env.TWITTER_BEARER_TOKEN ?? "",
+  youtubeApiKey: process.env.YOUTUBE_API_KEY ?? "",
+  spotifyClientId: process.env.SPOTIFY_CLIENT_ID ?? "",
+  spotifyClientSecret: process.env.SPOTIFY_CLIENT_SECRET ?? "",
+  // Owner notifications
+  ownerName: process.env.OWNER_NAME ?? "",
+  qumusOwnerEmail: process.env.QUMUS_OWNER_EMAIL ?? "",
+  dailyReportEmail: process.env.DAILY_REPORT_EMAIL ?? "",
+  dailyReportTime: process.env.DAILY_REPORT_TIME ?? "sunset",
+  // VAPID for push notifications
+  vapidPublicKey: process.env.VAPID_PUBLIC_KEY ?? "",
+  vapidPrivateKey: process.env.VAPID_PRIVATE_KEY ?? "",
 };

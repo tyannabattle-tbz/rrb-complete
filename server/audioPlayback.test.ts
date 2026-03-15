@@ -64,12 +64,12 @@ describe('Audio/Visual Playback System', () => {
         {
           id: 'ep-001',
           title: 'Episode 1',
-          streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+          streamUrl: 'https://ice5.somafm.com/groovesalad-128-mp3',
         },
         {
           id: 'ep-002',
           title: 'Episode 2',
-          streamUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+          streamUrl: 'https://ice5.somafm.com/7soul-128-mp3',
         },
       ];
       

@@ -259,6 +259,16 @@ export class QumusActivation {
       "predictive_analytics",
       "multi_agent_coordination",
       "self_improvement",
+      "content_scheduling",
+      "listener_analytics",
+      "emergency_routing",
+      "conference_scheduling",
+      "stream_sync",
+      "auto_update",
+      "tournament_orchestration",
+      "ai_agent_coordination",
+      "social_media_bots",
+      "daily_status_report",
     ];
 
     for (const policy of policies) {
@@ -379,6 +389,8 @@ All systems are operational and monitoring is active.
       isActive: this.isActive,
       activationTime: this.activationTime,
       config: this.config,
+      activePolicies: 20,
+      autonomyLevel: 90,
     };
   }
 

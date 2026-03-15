@@ -63,7 +63,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     title: 'Morning Awakening',
     description: 'Start your day with energy and clarity',
     duration: 600, // 10 minutes
-    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    audioUrl: 'https://ice5.somafm.com/groovesalad-128-mp3',
     category: 'breathing',
     frequency: '432Hz',
     difficulty: 'beginner',
@@ -75,7 +75,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     title: 'Deep Relaxation',
     description: 'Release tension and find inner peace',
     duration: 1200, // 20 minutes
-    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    audioUrl: 'https://ice5.somafm.com/7soul-128-mp3',
     category: 'body-scan',
     frequency: '528Hz',
     difficulty: 'intermediate',
@@ -87,7 +87,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     title: 'Loving Kindness',
     description: 'Cultivate compassion and connection',
     duration: 900, // 15 minutes
-    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+    audioUrl: 'https://ice5.somafm.com/bootliquor-128-mp3',
     category: 'loving-kindness',
     difficulty: 'beginner',
     imageUrl: 'https://via.placeholder.com/300x300?text=Loving+Kindness',
@@ -98,7 +98,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     title: 'Sleep Meditation',
     description: 'Drift into peaceful, restorative sleep',
     duration: 1800, // 30 minutes
-    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    audioUrl: 'https://ice5.somafm.com/groovesalad-128-mp3',
     category: 'sleep',
     frequency: 'binaural',
     difficulty: 'beginner',
@@ -110,7 +110,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     title: 'Visualization Journey',
     description: 'Explore your inner landscape',
     duration: 1200, // 20 minutes
-    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    audioUrl: 'https://ice5.somafm.com/7soul-128-mp3',
     category: 'visualization',
     frequency: '432Hz',
     difficulty: 'intermediate',

@@ -675,7 +675,7 @@ export default function AdminControlPanel() {
           <TabsContent value="systems" className="space-y-6 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { name: 'QUMUS Core', icon: <Zap className="w-5 h-5 text-cyan-400" />, status: true, desc: 'Autonomous orchestration engine — 19 policies active' },
+                { name: 'QUMUS Core', icon: <Zap className="w-5 h-5 text-cyan-400" />, status: true, desc: 'Autonomous orchestration engine — 20 policies active' },
                 { name: 'RRB Radio', icon: <Radio className="w-5 h-5 text-pink-400" />, status: true, desc: '54 channels broadcasting 24/7' },
                 { name: 'HybridCast', icon: <Earth className="w-5 h-5 text-orange-400" />, status: true, desc: 'Emergency broadcast PWA — offline-first' },
                 { name: 'Sweet Miracles', icon: <Heart className="w-5 h-5 text-green-400" />, status: true, desc: '501(c)(3) donation processing via Stripe' },

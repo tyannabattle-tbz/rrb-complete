@@ -50,7 +50,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     instructor: "Sarah Chen",
     category: "breathing",
     frequency: "432Hz",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    audioUrl: "https://ice5.somafm.com/groovesalad-128-mp3",
     difficulty: "beginner",
   },
   {
@@ -61,7 +61,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     instructor: "James Wilson",
     category: "body-scan",
     frequency: "528Hz",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    audioUrl: "https://ice5.somafm.com/7soul-128-mp3",
     difficulty: "intermediate",
   },
   {
@@ -72,7 +72,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     instructor: "Maya Patel",
     category: "loving-kindness",
     frequency: "432Hz",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+    audioUrl: "https://ice5.somafm.com/bootliquor-128-mp3",
     difficulty: "beginner",
   },
   {
@@ -83,7 +83,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     instructor: "Dr. Michael Lee",
     category: "sleep",
     frequency: "binaural-beats",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    audioUrl: "https://ice5.somafm.com/groovesalad-128-mp3",
     difficulty: "beginner",
   },
   {
@@ -94,7 +94,7 @@ const MEDITATION_SESSIONS: MeditationSession[] = [
     instructor: "Elena Rodriguez",
     category: "visualization",
     frequency: "528Hz",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    audioUrl: "https://ice5.somafm.com/7soul-128-mp3",
     difficulty: "advanced",
   },
 ];

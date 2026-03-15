@@ -3096,7 +3096,24 @@ var init_env = __esm({
       isProduction: process.env.NODE_ENV === "production",
       forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
       forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
-      oAuthPortalUrl: process.env.VITE_OAUTH_PORTAL_URL ?? ""
+      oAuthPortalUrl: process.env.VITE_OAUTH_PORTAL_URL ?? "",
+      // Social Media API Keys
+      twitterApiKey: process.env.TWITTER_API_KEY ?? "",
+      twitterApiSecret: process.env.TWITTER_API_SECRET ?? "",
+      twitterAccessToken: process.env.TWITTER_ACCESS_TOKEN ?? "",
+      twitterAccessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET ?? "",
+      twitterBearerToken: process.env.TWITTER_BEARER_TOKEN ?? "",
+      youtubeApiKey: process.env.YOUTUBE_API_KEY ?? "",
+      spotifyClientId: process.env.SPOTIFY_CLIENT_ID ?? "",
+      spotifyClientSecret: process.env.SPOTIFY_CLIENT_SECRET ?? "",
+      // Owner notifications
+      ownerName: process.env.OWNER_NAME ?? "",
+      qumusOwnerEmail: process.env.QUMUS_OWNER_EMAIL ?? "",
+      dailyReportEmail: process.env.DAILY_REPORT_EMAIL ?? "",
+      dailyReportTime: process.env.DAILY_REPORT_TIME ?? "sunset",
+      // VAPID for push notifications
+      vapidPublicKey: process.env.VAPID_PUBLIC_KEY ?? "",
+      vapidPrivateKey: process.env.VAPID_PRIVATE_KEY ?? ""
     };
   }
 });
@@ -8226,7 +8243,17 @@ var init_qumusActivation = __esm({
           "learning_and_adaptation",
           "predictive_analytics",
           "multi_agent_coordination",
-          "self_improvement"
+          "self_improvement",
+          "content_scheduling",
+          "listener_analytics",
+          "emergency_routing",
+          "conference_scheduling",
+          "stream_sync",
+          "auto_update",
+          "tournament_orchestration",
+          "ai_agent_coordination",
+          "social_media_bots",
+          "daily_status_report"
         ];
         for (const policy of policies) {
           this.agent.registerPolicy(policy, async (context) => {
@@ -8328,7 +8355,9 @@ All systems are operational and monitoring is active.
         return {
           isActive: this.isActive,
           activationTime: this.activationTime,
-          config: this.config
+          config: this.config,
+          activePolicies: 20,
+          autonomyLevel: 90
         };
       }
       /**
@@ -9413,7 +9442,7 @@ var LOCAL_CHANNELS = {
         description: "Classic rock and roll",
         duration: 180,
         // Using direct MP3 URL that works with CORS
-        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        streamUrl: "https://ice5.somafm.com/groovesalad-128-mp3",
         imageUrl: "https://via.placeholder.com/300x300?text=Rockin+Boogie",
         publishedAt: /* @__PURE__ */ new Date(),
         channel: 7
@@ -9424,7 +9453,7 @@ var LOCAL_CHANNELS = {
         artist: "Little Richard",
         description: "Rock and roll anthem",
         duration: 160,
-        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        streamUrl: "https://ice5.somafm.com/7soul-128-mp3",
         imageUrl: "https://via.placeholder.com/300x300?text=Tutti+Frutti",
         publishedAt: /* @__PURE__ */ new Date(),
         channel: 7
@@ -9435,7 +9464,7 @@ var LOCAL_CHANNELS = {
         artist: "Chuck Berry",
         description: "Rock and roll classic",
         duration: 165,
-        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+        streamUrl: "https://ice5.somafm.com/bootliquor-128-mp3",
         imageUrl: "https://via.placeholder.com/300x300?text=Johnny+B",
         publishedAt: /* @__PURE__ */ new Date(),
         channel: 7
@@ -9454,7 +9483,7 @@ var LOCAL_CHANNELS = {
         artist: "Dave Brubeck",
         description: "Jazz classic",
         duration: 300,
-        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+        streamUrl: "https://ice5.somafm.com/dronezone-128-mp3",
         imageUrl: "https://via.placeholder.com/300x300?text=Jazz",
         publishedAt: /* @__PURE__ */ new Date(),
         channel: 13
@@ -9465,7 +9494,7 @@ var LOCAL_CHANNELS = {
         artist: "Bill Evans",
         description: "Jazz standard",
         duration: 280,
-        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        streamUrl: "https://ice5.somafm.com/groovesalad-128-mp3",
         imageUrl: "https://via.placeholder.com/300x300?text=Autumn",
         publishedAt: /* @__PURE__ */ new Date(),
         channel: 13
@@ -9476,7 +9505,7 @@ var LOCAL_CHANNELS = {
         artist: "Miles Davis",
         description: "Modal jazz",
         duration: 350,
-        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        streamUrl: "https://ice5.somafm.com/7soul-128-mp3",
         imageUrl: "https://via.placeholder.com/300x300?text=Blues",
         publishedAt: /* @__PURE__ */ new Date(),
         channel: 13
@@ -9495,7 +9524,7 @@ var LOCAL_CHANNELS = {
         artist: "T-Bone Walker",
         description: "Blues classic",
         duration: 240,
-        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+        streamUrl: "https://ice5.somafm.com/bootliquor-128-mp3",
         imageUrl: "https://via.placeholder.com/300x300?text=Blues",
         publishedAt: /* @__PURE__ */ new Date(),
         channel: 9
@@ -9506,7 +9535,7 @@ var LOCAL_CHANNELS = {
         artist: "B.B. King",
         description: "Blues standard",
         duration: 270,
-        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+        streamUrl: "https://ice5.somafm.com/dronezone-128-mp3",
         imageUrl: "https://via.placeholder.com/300x300?text=Thrill",
         publishedAt: /* @__PURE__ */ new Date(),
         channel: 9
@@ -9517,7 +9546,7 @@ var LOCAL_CHANNELS = {
         artist: "Muddy Waters",
         description: "Electric blues",
         duration: 200,
-        streamUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        streamUrl: "https://ice5.somafm.com/groovesalad-128-mp3",
         imageUrl: "https://via.placeholder.com/300x300?text=Hoochie",
         publishedAt: /* @__PURE__ */ new Date(),
         channel: 9
@@ -24691,7 +24720,7 @@ var MEDITATION_SESSIONS = [
     instructor: "Sarah Chen",
     category: "breathing",
     frequency: "432Hz",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    audioUrl: "https://ice5.somafm.com/groovesalad-128-mp3",
     difficulty: "beginner"
   },
   {
@@ -24702,7 +24731,7 @@ var MEDITATION_SESSIONS = [
     instructor: "James Wilson",
     category: "body-scan",
     frequency: "528Hz",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    audioUrl: "https://ice5.somafm.com/7soul-128-mp3",
     difficulty: "intermediate"
   },
   {
@@ -24713,7 +24742,7 @@ var MEDITATION_SESSIONS = [
     instructor: "Maya Patel",
     category: "loving-kindness",
     frequency: "432Hz",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+    audioUrl: "https://ice5.somafm.com/bootliquor-128-mp3",
     difficulty: "beginner"
   },
   {
@@ -24724,7 +24753,7 @@ var MEDITATION_SESSIONS = [
     instructor: "Dr. Michael Lee",
     category: "sleep",
     frequency: "binaural-beats",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    audioUrl: "https://ice5.somafm.com/groovesalad-128-mp3",
     difficulty: "beginner"
   },
   {
@@ -24735,7 +24764,7 @@ var MEDITATION_SESSIONS = [
     instructor: "Elena Rodriguez",
     category: "visualization",
     frequency: "528Hz",
-    audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    audioUrl: "https://ice5.somafm.com/7soul-128-mp3",
     difficulty: "advanced"
   }
 ];

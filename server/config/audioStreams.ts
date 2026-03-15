@@ -115,7 +115,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'healing-432hz',
     name: '432Hz Healing Frequency',
     description: 'Universal healing frequency - promotes relaxation and balance',
-    url: 'https://www.youtube.com/watch?v=432Hz', // Placeholder - use local generation
+    url: 'https://ice5.somafm.com/dronezone-128-mp3', // SomaFM Drone Zone - ambient healing
     format: 'mp3',
     bitrate: 192,
     frequency: 432,
@@ -126,7 +126,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'solfeggio-174hz',
     name: 'Solfeggio 174Hz',
     description: 'Pain relief and cellular repair frequency',
-    url: 'https://www.youtube.com/watch?v=174Hz', // Placeholder
+    url: 'https://ice5.somafm.com/deepspaceone-128-mp3', // SomaFM Deep Space One
     format: 'mp3',
     bitrate: 192,
     frequency: 174,
@@ -137,7 +137,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'solfeggio-285hz',
     name: 'Solfeggio 285Hz',
     description: 'Tissue and organ repair frequency',
-    url: 'https://www.youtube.com/watch?v=285Hz', // Placeholder
+    url: 'https://ice5.somafm.com/dronezone-128-mp3', // SomaFM Drone Zone
     format: 'mp3',
     bitrate: 192,
     frequency: 285,
@@ -148,7 +148,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'solfeggio-396hz',
     name: 'Solfeggio 396Hz',
     description: 'Liberating guilt and fear frequency',
-    url: 'https://www.youtube.com/watch?v=396Hz', // Placeholder
+    url: 'https://ice5.somafm.com/dronezone-128-mp3', // SomaFM Drone Zone
     format: 'mp3',
     bitrate: 192,
     frequency: 396,
@@ -159,7 +159,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'solfeggio-417hz',
     name: 'Solfeggio 417Hz',
     description: 'Facilitating change and transformation frequency',
-    url: 'https://www.youtube.com/watch?v=417Hz', // Placeholder
+    url: 'https://ice5.somafm.com/deepspaceone-128-mp3', // SomaFM Deep Space One
     format: 'mp3',
     bitrate: 192,
     frequency: 417,
@@ -170,7 +170,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'solfeggio-528hz',
     name: 'Solfeggio 528Hz',
     description: 'Love and DNA repair frequency - "Miracle Tone"',
-    url: 'https://www.youtube.com/watch?v=528Hz', // Placeholder
+    url: 'https://ice5.somafm.com/dronezone-128-mp3', // SomaFM Drone Zone - miracle tone
     format: 'mp3',
     bitrate: 192,
     frequency: 528,
@@ -181,7 +181,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'solfeggio-639hz',
     name: 'Solfeggio 639Hz',
     description: 'Relationship and communication frequency',
-    url: 'https://www.youtube.com/watch?v=639Hz', // Placeholder
+    url: 'https://ice5.somafm.com/deepspaceone-128-mp3', // SomaFM Deep Space One
     format: 'mp3',
     bitrate: 192,
     frequency: 639,
@@ -192,7 +192,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'solfeggio-741hz',
     name: 'Solfeggio 741Hz',
     description: 'Intuition and spiritual awakening frequency',
-    url: 'https://www.youtube.com/watch?v=741Hz', // Placeholder
+    url: 'https://ice5.somafm.com/dronezone-128-mp3', // SomaFM Drone Zone
     format: 'mp3',
     bitrate: 192,
     frequency: 741,
@@ -203,7 +203,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'solfeggio-852hz',
     name: 'Solfeggio 852Hz',
     description: 'Third eye activation and spiritual awareness frequency',
-    url: 'https://www.youtube.com/watch?v=852Hz', // Placeholder
+    url: 'https://ice5.somafm.com/deepspaceone-128-mp3', // SomaFM Deep Space One
     format: 'mp3',
     bitrate: 192,
     frequency: 852,
@@ -214,7 +214,7 @@ export const healingFrequencies: AudioStream[] = [
     id: 'solfeggio-963hz',
     name: 'Solfeggio 963Hz',
     description: 'Crown chakra and divine connection frequency',
-    url: 'https://www.youtube.com/watch?v=963Hz', // Placeholder
+    url: 'https://ice5.somafm.com/dronezone-128-mp3', // SomaFM Drone Zone - divine
     format: 'mp3',
     bitrate: 192,
     frequency: 963,

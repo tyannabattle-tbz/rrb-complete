@@ -84,6 +84,20 @@ export default function GamesHub() {
     return wf + fm + rr;
   })();
 
+  // Tournament data for Avatar Arena
+  const tournaments = [
+    { id: 't1', name: 'Solbones Championship', game: 'Sacred Math Showdown', players: 16, status: 'pre-show' as const, time: 'Today 3:00 PM EST', bracket: 'Round 1 of 4', icon: <Crown size={16} className="text-amber-400" /> },
+    { id: 't2', name: 'Rhythm Roots Battle', game: 'Beat Battle Royale', players: 8, status: 'upcoming' as const, time: 'Today 5:00 PM EST', bracket: 'Seeding', icon: <Music size={16} className="text-pink-400" /> },
+    { id: 't3', name: 'Frequency Sprint', game: 'Speed Match Challenge', players: 24, status: 'upcoming' as const, time: 'Tomorrow 2:00 PM EST', bracket: 'Qualifier', icon: <Grid3X3 size={16} className="text-purple-400" /> },
+  ];
+
+  const bracketMatches = [
+    { p1: 'Avatar_X', p2: 'SacredOne', time: '3:00 PM' },
+    { p1: 'FreqMaster', p2: 'BoneRoller', time: '3:15 PM' },
+    { p1: 'TyPlayer1', p2: 'DivineMath', time: '3:30 PM' },
+    { p1: 'SolChamp', p2: 'RhythmKing', time: '3:45 PM' },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-950 to-gray-900 text-white">
       <div className="max-w-3xl mx-auto p-4 sm:p-6">
@@ -182,33 +196,72 @@ export default function GamesHub() {
               <Radio size={12} className="mr-1" /> LIVE
             </Badge>
           </div>
+
+          {/* Active Tournaments */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-            <div className="p-3 rounded-lg bg-black/30 border border-amber-500/20">
-              <div className="flex items-center gap-2 mb-1">
-                <Crown size={16} className="text-amber-400" />
-                <span className="text-sm font-semibold text-white">Solbones Championship</span>
+            {tournaments.map(t => (
+              <div key={t.id} className={`p-3 rounded-lg bg-black/30 border ${t.status === 'live' ? 'border-red-500/40' : 'border-amber-500/20'}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  {t.icon}
+                  <span className="text-sm font-semibold text-white">{t.name}</span>
+                </div>
+                <p className="text-[10px] text-gray-400">{t.game} • {t.players} players</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge className={`text-[9px] ${t.status === 'live' ? 'bg-red-500/20 text-red-400 animate-pulse' : t.status === 'pre-show' ? 'bg-amber-500/20 text-amber-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                    {t.status.toUpperCase().replace('-', ' ')}
+                  </Badge>
+                  <span className="text-[9px] text-gray-500">{t.time}</span>
+                </div>
+                {t.bracket && (
+                  <div className="mt-2 pt-2 border-t border-white/5">
+                    <p className="text-[9px] text-amber-400/80 font-semibold">Bracket: {t.bracket}</p>
+                  </div>
+                )}
               </div>
-              <p className="text-[10px] text-gray-400">Sacred Math Showdown • 16 players registered</p>
-              <Badge className="mt-2 bg-amber-500/20 text-amber-400 text-[9px]">PRE-SHOW</Badge>
+            ))}
+          </div>
+
+          {/* Tournament Bracket Preview */}
+          <div className="mb-4 p-3 rounded-lg bg-black/40 border border-amber-500/10">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-amber-300 flex items-center gap-2">
+                <Trophy size={14} /> Solbones Championship Bracket
+              </h3>
+              <Badge className="bg-amber-500/20 text-amber-400 text-[8px]">ROUND 1 OF 4</Badge>
             </div>
-            <div className="p-3 rounded-lg bg-black/30 border border-amber-500/20">
-              <div className="flex items-center gap-2 mb-1">
-                <Music size={16} className="text-pink-400" />
-                <span className="text-sm font-semibold text-white">Rhythm Roots Battle</span>
-              </div>
-              <p className="text-[10px] text-gray-400">Beat Battle Royale • 8 players registered</p>
-              <Badge className="mt-2 bg-gray-500/20 text-gray-400 text-[9px]">UPCOMING</Badge>
-            </div>
-            <div className="p-3 rounded-lg bg-black/30 border border-amber-500/20">
-              <div className="flex items-center gap-2 mb-1">
-                <Grid3X3 size={16} className="text-purple-400" />
-                <span className="text-sm font-semibold text-white">Frequency Sprint</span>
-              </div>
-              <p className="text-[10px] text-gray-400">Speed Match Challenge • 24 players registered</p>
-              <Badge className="mt-2 bg-gray-500/20 text-gray-400 text-[9px]">UPCOMING</Badge>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {bracketMatches.map((match, i) => (
+                <div key={i} className="p-2 rounded bg-black/30 border border-white/5">
+                  <p className="text-[9px] text-gray-500 mb-1">Match {i + 1}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-white">{match.p1}</span>
+                    <span className="text-[8px] text-gray-600">vs</span>
+                    <span className="text-[10px] text-white">{match.p2}</span>
+                  </div>
+                  <p className="text-[8px] text-amber-400/60 mt-1 text-center">{match.time}</p>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="flex gap-2">
+
+          {/* Pre/Post Show Flow */}
+          <div className="mb-4 p-3 rounded-lg bg-gradient-to-r from-purple-900/20 to-amber-900/20 border border-purple-500/20">
+            <h3 className="text-sm font-semibold text-purple-300 mb-2 flex items-center gap-2">
+              <Mic size={14} /> Tournament Show Flow
+            </h3>
+            <div className="flex items-center gap-1 overflow-x-auto">
+              {['Pre-Show Podcast', 'Player Intros', 'Round 1', 'Round 2', 'Semi-Finals', 'Finals', 'Post-Show Interview'].map((phase, i) => (
+                <div key={i} className="flex items-center">
+                  <div className={`px-2 py-1 rounded text-[9px] whitespace-nowrap ${i === 0 ? 'bg-purple-500/30 text-purple-300 font-semibold' : 'bg-black/30 text-gray-400'}`}>
+                    {phase}
+                  </div>
+                  {i < 6 && <Zap size={10} className="text-amber-500/40 mx-0.5 flex-shrink-0" />}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
             <Link href="/podcast/avatar-panel">
               <Button className="bg-amber-600 hover:bg-amber-700 text-sm">
                 <Mic size={16} className="mr-1" /> Avatar Panel Podcast
@@ -217,6 +270,11 @@ export default function GamesHub() {
             <Link href="/conference">
               <Button variant="outline" className="border-amber-500/50 text-amber-400 text-sm">
                 <Users size={16} className="mr-1" /> Join Conference
+              </Button>
+            </Link>
+            <Link href="/solbones">
+              <Button variant="outline" className="border-purple-500/50 text-purple-400 text-sm">
+                <Dice5 size={16} className="mr-1" /> Play Solbones
               </Button>
             </Link>
           </div>

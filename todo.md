@@ -4401,3 +4401,23 @@
 - [x] Ensure QUMUS/Valanna at the helm with 90% autonomous control
 - [x] Wire daily status report automation (policy_daily_status_report at 98% autonomy)
 - [x] Full system test and checkpoint (20/20 vitest tests passing)
+
+## Apply All - Final Production Push (March 14, 2026)
+- [x] Wire social media bot integration endpoints with Twitter/YouTube API keys
+- [x] Build test tournament scheduling in Avatar Arena with bracket system
+- [x] Add tournament pre-show/post-show podcast flow automation
+- [x] Verify Avatar Panel Podcast page loads on deployed site
+- [x] Verify AI Agent Fleet section displays on QUMUS Home (fixed - was on wrong component)
+- [x] Verify Social Media Bots section displays on QUMUS Home
+- [x] End-to-end navigation sweep of all major pages on dev server
+- [x] Verify service worker updated to network-first strategy
+- [x] Ensure all conference Join/Enter Room buttons work
+- [x] Final production checkpoint
+
+## Stream Sync - RRB Radio ↔ QUMUS (March 14, 2026)
+- [x] Audit RRB Radio channel configs vs QUMUS stream configs
+- [x] Fix mismatched channels - RRBPort3001 now pulls from database
+- [x] Unify stream source definitions - all pages use database as single source of truth
+- [x] Fix crazy streaming - replaced all SoundHelix/YouTube placeholders with real SomaFM streams
+- [x] Verify AI Agent Fleet and Social Bots display on QUMUS dashboard (QumusPort3000)
+- [x] End-to-end verification - /rrb, /live, /radio all show 54 synced channels
