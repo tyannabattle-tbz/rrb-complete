@@ -26,6 +26,7 @@ interface ProducedVideo {
 }
 
 const PRODUCED_VIDEOS: ProducedVideo[] = [
+  SQUADD_GOALS_VIDEO,
   {
     id: 'narrated-campaign',
     title: 'Sweet Miracles & RRB — Building the Bridge Across the World (Narrated)',
@@ -101,6 +102,20 @@ const PRODUCED_VIDEOS: ProducedVideo[] = [
     pageLinkLabel: 'Full Slideshow',
   },
 ];
+
+const SQUADD_GOALS_VIDEO: ProducedVideo = {
+    id: 'squadd-goals-un',
+    title: 'SQUADD Goals — UN CSW70 Presentation',
+    description: 'Official SQUADD Goals presentation for UN NGO CSW70 parallel event. Sisters Questing Unapologetically After Divine Destiny to Protect Human Rights. Professional narration by African American Lady voice.',
+    url: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/SQUADD_Goals_UN_Final_8d65acb1.mp4',
+    duration: '4:29',
+    type: 'presentation',
+    aspectRatio: '16:9',
+    narratedBy: 'African American Lady',
+    tags: ['SQUADD Goals', 'UN CSW70', 'Narrated', 'Presentation'],
+    pageLink: '/squadd',
+    pageLinkLabel: 'SQUADD Goals',
+  };
 
 const TYPE_COLORS: Record<string, string> = {
   narrated: 'bg-amber-500/20 text-amber-400 border-amber-500/30',

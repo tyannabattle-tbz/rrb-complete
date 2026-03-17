@@ -4577,3 +4577,24 @@
 - [x] All 22 nav routes verified working (21 existing + 1 new /laws)
 - [x] 0 TypeScript errors confirmed
 - [x] QUMUS 18/18 subsystems healthy
+
+## UN CSW70 Go-Live Preparation (March 17, 2026)
+- [x] Analyze SQUADD_Goals_Clean.mp4 - mapped all 12 slides with timestamps
+- [x] Generate corrected narration with Fish Audio (African American Lady voice)
+- [x] Fix pronunciation issues: Tyanna, Seabrun, Canryn, SQUADD, Whom It Concerns
+- [x] Assemble final video: SQUADD_Goals_UN_Final.mp4 (4:29, 1080p, 30fps)
+- [x] Upload corrected video to CDN
+- [x] Replace SQUADD video URL on QUMUS Home page
+- [x] Replace SQUADD video URL on RRB Home page
+- [x] Add SQUADD Goals video to Video Gallery
+- [x] Verify all 11 critical routes returning HTTP 200
+- [x] Verify all 3 domains accessible (manusweb-eshiamkd.manus.space, qumus.manus.space, manuweb.sbs)
+- [x] Verify all 3 video CDN URLs returning HTTP 200
+- [x] Verify Zoom conference link accessible (HTTP 200)
+- [x] Verify 6 conference rooms LIVE status
+- [x] Verify QUMUS 18/18 subsystems healthy
+- [x] Verify 54/54 radio streams healthy (100% uptime)
+- [x] Verify 0 TypeScript errors
+- [x] Verify Stripe webhook and donate page accessible
+- [ ] Twitter/X API credentials returning 401 - needs user to regenerate tokens
+- [x] Save go-live checkpoint

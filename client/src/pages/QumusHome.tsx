@@ -559,7 +559,7 @@ export default function QumusHome() {
                 controls
                 playsInline
                 className="w-full aspect-video bg-black"
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/SQUADD_Goals_Presentation_b7c820da.mp4"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/SQUADD_Goals_UN_Final_8d65acb1.mp4"
               >
                 Your browser does not support the video tag.
               </video>
