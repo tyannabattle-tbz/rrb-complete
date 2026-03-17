@@ -491,24 +491,25 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Ecosystem Explainer Video */}
+      {/* Ecosystem Walkthrough Video */}
       <section className="container mx-auto px-4 py-16 border-t border-purple-500/20">
-        <h3 className="text-3xl font-bold text-white mb-4 text-center">The QUMUS Ecosystem</h3>
+        <h3 className="text-3xl font-bold text-white mb-4 text-center">The Sweet Miracles Ecosystem</h3>
         <p className="text-center text-purple-300 mb-8 max-w-2xl mx-auto">
-          See how QUMUS, RRB Radio, HybridCast, Sweet Miracles, and the SQUADD Coalition work together as one unified communication system.
+          Three generations. One mission. See how QUMUS, RRB Radio, HybridCast, TyOS, Sweet Miracles, and the SQUADD Coalition work together as one unified ecosystem — narrated by Valanna, Candy, Seraph, and Ty Bat Zan.
         </p>
         <div className="max-w-4xl mx-auto">
           <div className="relative rounded-xl overflow-hidden border border-purple-500/30 shadow-2xl shadow-purple-500/10">
             <video
               controls
               playsInline
+              poster=""
               className="w-full aspect-video bg-black"
-              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/QUMUS-Ecosystem-Explainer_15ffa8d3.mp4"
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/Ecosystem_Walkthrough_RealAssets_fa41e4fe.mp4"
             >
               Your browser does not support the video tag.
             </video>
           </div>
-          <p className="text-center text-purple-400/60 text-xs mt-3">QUMUS Ecosystem Explainer &mdash; A Canryn Production</p>
+          <p className="text-center text-purple-400/60 text-xs mt-3">Sweet Miracles Ecosystem Walkthrough &mdash; A Canryn Production &mdash; Featuring Valanna, Candy, Seraph &amp; Ty Bat Zan</p>
         </div>
       </section>
 

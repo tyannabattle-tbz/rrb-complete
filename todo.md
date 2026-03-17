@@ -4540,3 +4540,12 @@
 - [x] Ghana delegation info and CSW70 priority theme
 - [x] Take Action section with 4 CTAs (Donate, Listen, Join Conference, Create Content)
 - [x] Social hashtags: #CSW70 #ForALLWomenAndGirls #AccessToJustice #RockinRockinBoogie
+
+## GO-LIVE SYNC — 3 Hour Countdown (March 17, 2026)
+- [x] Upload ecosystem walkthrough video (real assets) to CDN and place on website homepage
+- [x] Verify all 6 conference rooms are ready and accessible (4 live, 2 completed)
+- [x] Verify Zoom link is functioning across all conference rooms (HTTP 200 confirmed)
+- [x] Ensure CSW70 campaign page is fully launched and functional (4 tabs, Ghana section)
+- [x] Full system sweep — all routes registered, no 404s, no console errors
+- [x] Sync all systems — QUMUS 18/18 healthy, 54 radio channels, 15 stations, Stripe webhook configured
+- [x] Run tests (2389 passed, 268 pre-existing) and save checkpoint for go-live
