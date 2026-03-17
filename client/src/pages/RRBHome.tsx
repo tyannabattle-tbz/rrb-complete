@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Radio, Users, Gamepad2, Shield, Earth, Play, ChevronRight, Zap } from 'lucide-react';
+import { Radio, Users, Gamepad2, Shield, Earth, Play, ChevronRight, Zap, Globe } from 'lucide-react';
 
 export default function RRBHome() {
   const [, setLocation] = useLocation();
@@ -123,6 +123,42 @@ export default function RRBHome() {
             <p className="text-slate-300 leading-relaxed">
               Rockin' Rockin' Boogie is a preservation project dedicated to restoring, documenting, and celebrating Seabrun Candy Hunter's musical legacy. We provide 24/7 Solfeggio frequency broadcasting, community support through SQUADD emergency response, healing frequencies, and complete verified documentation of over 50 years of musical innovation and community service.
             </p>
+          </CardContent>
+        </Card>
+
+        {/* SQUADD Goals Presentation — Campaign Launch */}
+        <Card className="bg-gradient-to-r from-amber-900/20 to-orange-900/20 border-amber-500/30 mb-16">
+          <CardContent className="pt-8">
+            <div className="flex items-center gap-3 mb-4">
+              <Globe className="w-6 h-6 text-amber-400" />
+              <h3 className="text-2xl font-bold text-white">SQUADD Goals — UN CSW70 Campaign</h3>
+              <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/50">LIVE</Badge>
+            </div>
+            <p className="text-slate-300 mb-6">
+              Sisters Questing Unapologetically After Divine Destiny — In partnership with Ghana at the United Nations Commission on the Status of Women (CSW70). March 2026, New York.
+            </p>
+            <div className="relative rounded-xl overflow-hidden border border-amber-500/30 shadow-lg shadow-amber-500/10 max-w-4xl mx-auto">
+              <video
+                controls
+                playsInline
+                className="w-full aspect-video bg-black"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/SQUADD_Goals_Presentation_b7c820da.mp4"
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <p className="text-center text-slate-500 text-xs mt-3">SQUADD Goals Presentation — Sweet Miracles & Rockin' Rockin' Boogie — A Canryn Production</p>
+            <div className="flex gap-3 justify-center mt-4">
+              <Button onClick={() => setLocation('/csw70')} className="bg-amber-600 hover:bg-amber-700 text-white">
+                View CSW70 Campaign
+              </Button>
+              <Button onClick={() => setLocation('/squadd')} variant="outline" className="border-amber-500 text-amber-400 hover:bg-amber-500/10">
+                SQUADD Goals
+              </Button>
+              <Button onClick={() => setLocation('/donate')} variant="outline" className="border-pink-500 text-pink-400 hover:bg-pink-500/10">
+                Support the Mission
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

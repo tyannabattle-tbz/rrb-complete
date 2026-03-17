@@ -78,6 +78,7 @@ import {
   Shield,
   Swords,
   Crown,
+  Globe,
 } from "lucide-react";
 import { TaskHistory } from "@/components/TaskHistory";
 import { EcosystemStatusDashboard } from "@/components/EcosystemStatusDashboard";
@@ -543,6 +544,33 @@ export default function QumusHome() {
             <AnalyticsDashboard />
           </TabsContent>
         </Tabs>
+
+        {/* SQUADD Goals Presentation — Campaign Launch */}
+        <FuturisticDivider animated />
+        <FuturisticSection title="SQUADD Goals — UN CSW70 Campaign" icon={<Globe size={20} />}>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Badge className="bg-amber-500/20 text-amber-400 text-xs">CAMPAIGN LIVE</Badge>
+              <Badge className="bg-green-500/20 text-green-400 text-xs">CSW70 • March 2026</Badge>
+            </div>
+            <p className="text-sm text-gray-300">Sisters Questing Unapologetically After Divine Destiny — In partnership with Ghana at the United Nations Commission on the Status of Women (CSW70).</p>
+            <div className="relative rounded-xl overflow-hidden border border-amber-500/30 shadow-lg shadow-amber-500/10">
+              <video
+                controls
+                playsInline
+                className="w-full aspect-video bg-black"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/SQUADD_Goals_Presentation_b7c820da.mp4"
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <p className="text-center text-gray-500 text-[10px] mt-1">SQUADD Goals Presentation — Sweet Miracles &amp; Rockin' Rockin' Boogie — A Canryn Production</p>
+            <div className="flex gap-2 mt-2">
+              <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-xs" onClick={() => navigate('/csw70')}>View CSW70 Campaign</Button>
+              <Button size="sm" variant="outline" className="border-amber-500/30 text-amber-400 text-xs" onClick={() => navigate('/squadd')}>SQUADD Goals</Button>
+            </div>
+          </div>
+        </FuturisticSection>
 
         {/* Quick Actions */}
         <FuturisticDivider animated />

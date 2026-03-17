@@ -4549,3 +4549,16 @@
 - [x] Full system sweep — all routes registered, no 404s, no console errors
 - [x] Sync all systems — QUMUS 18/18 healthy, 54 radio channels, 15 stations, Stripe webhook configured
 - [x] Run tests (2389 passed, 268 pre-existing) and save checkpoint for go-live
+
+## SQUADD Goals Presentation Video — Campaign Launch
+- [x] Upload SQUADD_Goals_Presentation.mp4 to CDN (https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/SQUADD_Goals_Presentation_b7c820da.mp4)
+- [x] Place video on QUMUS home page (prominent position)
+- [x] Place video on RRB Radio page
+- [x] Post to Twitter/X with campaign hashtags (2 posts: video + thread)
+- [x] Post to Facebook (video post scheduled)
+- [x] Post to YouTube (video post scheduled)
+- [x] Post to LinkedIn (via Facebook proxy)
+- [x] Post to Instagram (video post scheduled)
+- [x] Post to Discord (video post scheduled)
+- [x] Post to TikTok (video post scheduled)
+- [x] All 7 posts inserted into QUMUS auto-publisher queue (campaign: csw70-squadd-launch)
