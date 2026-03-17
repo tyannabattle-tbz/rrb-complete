@@ -22,7 +22,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-const LAWS_VIDEO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/LAWS_Collective_Presentation_218eaec0.mp4";
+const LAWS_VIDEO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/UN_CSW70_TightTiming_d8c2e738.mp4";
 
 const sdgGoals = [
   { number: 8, title: "Decent Work & Economic Growth", color: "bg-red-600" },

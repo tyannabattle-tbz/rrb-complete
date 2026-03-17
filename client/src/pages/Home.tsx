@@ -504,7 +504,7 @@ export default function Home() {
               playsInline
               poster=""
               className="w-full aspect-video bg-black"
-              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/Ecosystem_Walkthrough_RealAssets_fa41e4fe.mp4"
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/Ecosystem_Walkthrough_FemaleVoice_aefc1a03.mp4"
             >
               Your browser does not support the video tag.
             </video>
