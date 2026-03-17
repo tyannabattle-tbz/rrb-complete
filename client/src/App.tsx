@@ -223,6 +223,7 @@ import SystemStatusPage from '@/pages/SystemStatusPage';
 import PresentationBuilder from '@/pages/PresentationBuilder';
 import MusicStudio from '@/pages/MusicStudio';
 import CSW70Campaign from '@/pages/CSW70Campaign';
+import LAWSCollective from '@/pages/LAWSCollective';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -348,6 +349,7 @@ function Router() {
       <Route path="/ecosystem-dashboard" component={EcosystemMasterDashboard} />
       <Route path="/ecosystem-sync" component={EcosystemSyncDashboard} />
       <Route path="/csw70" component={CSW70Campaign} />
+      <Route path="/laws" component={LAWSCollective} />
       <Route path="/un-campaign" component={CSW70Campaign} />
       <Route path="/admin" component={AdminControlPanel} />
       <Route path="/emergency" component={HybridCastPort3002} />
