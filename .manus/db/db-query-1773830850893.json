@@ -1,0 +1,18 @@
+{
+  "query": "SELECT \n  (SELECT COUNT(*) FROM radio_channels WHERE status = 'active') as rc_active,\n  (SELECT COUNT(*) FROM radio_channels WHERE status != 'active') as rc_not_active,\n  (SELECT COUNT(*) FROM streaming_status WHERE status = 'live') as ss_live,\n  (SELECT COUNT(*) FROM streaming_status WHERE status != 'live') as ss_not_live,\n  (SELECT COUNT(*) FROM radio_channels) as total_channels,\n  (SELECT COUNT(*) FROM streaming_status) as total_streaming;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT \n  (SELECT COUNT(*) FROM radio_channels WHERE status = 'active') as rc_active,\n  (SELECT COUNT(*) FROM radio_channels WHERE status != 'active') as rc_not_active,\n  (SELECT COUNT(*) FROM streaming_status WHERE status = 'live') as ss_live,\n  (SELECT COUNT(*) FROM streaming_status WHERE status != 'live') as ss_not_live,\n  (SELECT COUNT(*) FROM radio_channels) as total_channels,\n  (SELECT COUNT(*) FROM streaming_status) as total_streaming;",
+  "rows": [
+    {
+      "rc_active": "54",
+      "rc_not_active": "0",
+      "ss_live": "54",
+      "ss_not_live": "0",
+      "total_channels": "54",
+      "total_streaming": "54"
+    }
+  ],
+  "messages": [],
+  "stdout": "rc_active\trc_not_active\tss_live\tss_not_live\ttotal_channels\ttotal_streaming\n54\t0\t54\t0\t54\t54\n",
+  "stderr": "",
+  "execution_time_ms": 373
+}

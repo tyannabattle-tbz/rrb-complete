@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE streaming_status ss JOIN radio_channels rc ON ss.channel_id = rc.id SET ss.stream_url = rc.streamUrl WHERE ss.stream_url != rc.streamUrl;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute UPDATE streaming_status ss JOIN radio_channels rc ON ss.channel_id = rc.id SET ss.stream_url = rc.streamUrl WHERE ss.stream_url != rc.streamUrl;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 377
+}

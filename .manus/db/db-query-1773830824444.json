@@ -1,0 +1,28 @@
+{
+  "query": "SELECT id, channel_id, status, broadcast_id FROM streaming_status WHERE channel_id >= 900000;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, channel_id, status, broadcast_id FROM streaming_status WHERE channel_id >= 900000;",
+  "rows": [
+    {
+      "id": "60055",
+      "channel_id": "900018",
+      "status": "live",
+      "broadcast_id": ""
+    },
+    {
+      "id": "60056",
+      "channel_id": "900019",
+      "status": "live",
+      "broadcast_id": ""
+    },
+    {
+      "id": "60057",
+      "channel_id": "900020",
+      "status": "live",
+      "broadcast_id": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tchannel_id\tstatus\tbroadcast_id\n60055\t900018\tlive\t\n60056\t900019\tlive\t\n60057\t900020\tlive\t\n",
+  "stderr": "",
+  "execution_time_ms": 372
+}

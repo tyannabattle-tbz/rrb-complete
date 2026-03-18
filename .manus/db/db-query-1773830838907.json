@@ -1,0 +1,58 @@
+{
+  "query": "SELECT id, name, JSON_EXTRACT(metadata, '$.source') as source, JSON_EXTRACT(metadata, '$.icon') as icon FROM radio_channels WHERE id IN (1, 4, 9, 24, 32, 40, 46, 51) ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, name, JSON_EXTRACT(metadata, '$.source') as source, JSON_EXTRACT(metadata, '$.icon') as icon FROM radio_channels WHERE id IN (1, 4, 9, 24, 32, 40, 46, 51) ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "RRB Main Radio",
+      "source": "\"181.FM R&B\"",
+      "icon": "\"📻\""
+    },
+    {
+      "id": "4",
+      "name": "80s Hits",
+      "source": "\"181.FM Awesome 80s\"",
+      "icon": "\"🎸\""
+    },
+    {
+      "id": "9",
+      "name": "Reggae Island",
+      "source": "\"181.FM Reggae\"",
+      "icon": "\"🦁\""
+    },
+    {
+      "id": "24",
+      "name": "News & Current Events",
+      "source": "\"BBC World Service\"",
+      "icon": "\"📰\""
+    },
+    {
+      "id": "32",
+      "name": "90s R&B",
+      "source": "\"181.FM 90s R&B\"",
+      "icon": "\"🎵\""
+    },
+    {
+      "id": "40",
+      "name": "Candy AI Radio",
+      "source": "\"SomaFM Underground 80s\"",
+      "icon": "\"🍬\""
+    },
+    {
+      "id": "46",
+      "name": "R&B Slow Jams",
+      "source": "\"181.FM R&B\"",
+      "icon": "\"❤️\""
+    },
+    {
+      "id": "51",
+      "name": "C.J. Battle Radio",
+      "source": "\"SomaFM Digitalis\"",
+      "icon": "\"⭐\""
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tsource\ticon\n1\tRRB Main Radio\t\"181.FM R&B\"\t\"📻\"\n4\t80s Hits\t\"181.FM Awesome 80s\"\t\"🎸\"\n9\tReggae Island\t\"181.FM Reggae\"\t\"🦁\"\n24\tNews & Current Events\t\"BBC World Service\"\t\"📰\"\n32\t90s R&B\t\"181.FM 90s R&B\"\t\"🎵\"\n40\tCandy AI Radio\t\"SomaFM Underground 80s\"\t\"🍬\"\n46\tR&B Slow Jams\t\"181.FM R&B\"\t\"❤️\"\n51\tC.J. Battle Radio\t\"SomaFM Digitalis\"\t\"⭐\"\n",
+  "stderr": "",
+  "execution_time_ms": 355
+}

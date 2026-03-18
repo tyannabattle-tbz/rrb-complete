@@ -1,0 +1,19 @@
+{
+  "query": "SELECT COUNT(*) as total FROM radio_channels; SELECT id, name FROM radio_channels WHERE name IN ('Open Mic', 'Local Voices', 'Canryn Production Radio');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT COUNT(*) as total FROM radio_channels; SELECT id, name FROM radio_channels WHERE name IN ('Open Mic', 'Local Voices', 'Canryn Production Radio');",
+  "rows": [
+    {
+      "total": "54"
+    },
+    {
+      "total": "id\tname"
+    },
+    {
+      "total": "900020\tCanryn Production Radio"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\n54\nid\tname\n900020\tCanryn Production Radio\n",
+  "stderr": "",
+  "execution_time_ms": 410
+}

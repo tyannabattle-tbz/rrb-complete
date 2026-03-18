@@ -1,0 +1,496 @@
+{
+  "query": "SELECT id, name, genre, streamUrl, JSON_EXTRACT(metadata, '$.source') as meta_source, JSON_EXTRACT(metadata, '$.description') as meta_desc, JSON_EXTRACT(metadata, '$.icon') as meta_icon FROM radio_channels ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user zpoeP3x1cmc7iMR.f2a79e44485f --database eSHiAmKDzW4pqcyH7Ttb7c --execute SELECT id, name, genre, streamUrl, JSON_EXTRACT(metadata, '$.source') as meta_source, JSON_EXTRACT(metadata, '$.description') as meta_desc, JSON_EXTRACT(metadata, '$.icon') as meta_icon FROM radio_channels ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "RRB Main Radio",
+      "genre": "Soul, Funk, R&B",
+      "streamUrl": "http://listen.181fm.com/181-rnb_128k.mp3",
+      "meta_source": "\"181.FM\"",
+      "meta_desc": "\"Soul, funk, R&B, and legacy music — the heartbeat of Canryn Production.\"",
+      "meta_icon": "\"📻\""
+    },
+    {
+      "id": "2",
+      "name": "Soul & R&B Classics",
+      "genre": "Soul, R&B, Classics",
+      "streamUrl": "https://listen.181fm.com/181-soul_128k.mp3",
+      "meta_source": "\"NPR Live\"",
+      "meta_desc": "\"Original podcasts and interviews — In Battle Tyme and more.\"",
+      "meta_icon": "\"🎙️\""
+    },
+    {
+      "id": "3",
+      "name": "Jazz Lounge",
+      "genre": "Jazz, Smooth Jazz, Fusion",
+      "streamUrl": "https://ice1.somafm.com/secretagent-128-mp3",
+      "meta_source": "\"SomaFM Folk Forward\"",
+      "meta_desc": "\"Audiobooks, stories, and scanner dispatches.\"",
+      "meta_icon": "\"📖\""
+    },
+    {
+      "id": "4",
+      "name": "80s Hits",
+      "genre": "80s, Pop, Rock, New Wave",
+      "streamUrl": "https://listen.181fm.com/181-awesome80s_128k.mp3",
+      "meta_source": "\"181.FM Hip-Hop\"",
+      "meta_desc": "\"24/7 standby — emergency alerts and public safety.\"",
+      "meta_icon": "\"🚨\""
+    },
+    {
+      "id": "5",
+      "name": "Hip-Hop & Rap",
+      "genre": "Hip-Hop, Rap, Urban",
+      "streamUrl": "https://ice1.somafm.com/illstreet-128-mp3",
+      "meta_source": "\"181.FM Gospel\"",
+      "meta_desc": "\"New artists and deep cuts from emerging talent.\"",
+      "meta_icon": "\"🔍\""
+    },
+    {
+      "id": "6",
+      "name": "Blues Highway",
+      "genre": "Blues, Delta Blues, Chicago Blues",
+      "streamUrl": "https://ice1.somafm.com/bootliquor-128-mp3",
+      "meta_source": "\"SomaFM Sonic Universe\"",
+      "meta_desc": "\"Community voices and Celtic world music.\"",
+      "meta_icon": "\"📞\""
+    },
+    {
+      "id": "7",
+      "name": "Classical Masterworks",
+      "genre": "Classical, Orchestral, Chamber",
+      "streamUrl": "https://stream.radioparadise.com/mellow-128",
+      "meta_source": "\"Stereoscenic\"",
+      "meta_desc": "\"Solfeggio healing frequencies — Crystal Essentials.\"",
+      "meta_icon": "\"🧘\""
+    },
+    {
+      "id": "8",
+      "name": "Latin Rhythms",
+      "genre": "Salsa, Bachata, Reggaeton",
+      "streamUrl": "https://listen.181fm.com/181-salsa_128k.mp3",
+      "meta_source": "\"SomaFM Deep Space One\"",
+      "meta_desc": "\"Sports energy beats and electronic mixes.\"",
+      "meta_icon": "\"🏈\""
+    },
+    {
+      "id": "9",
+      "name": "Reggae Island",
+      "genre": "Reggae, Dancehall, Caribbean",
+      "streamUrl": "https://ice5.somafm.com/7soul-128-mp3",
+      "meta_source": "\"181.FM Old School\"",
+      "meta_desc": "\"Classic 90s R&B, soul, and smooth jams.\"",
+      "meta_icon": "\"🙏\""
+    },
+    {
+      "id": "10",
+      "name": "Neo-Soul Vibes",
+      "genre": "Neo-Soul, R&B, Alt Soul",
+      "streamUrl": "https://ice1.somafm.com/lush-128-mp3",
+      "meta_source": "\"SomaFM Lush\"",
+      "meta_desc": "\"Smooth jazz lounge and sensuous instrumentals.\"",
+      "meta_icon": "\"🎷\""
+    },
+    {
+      "id": "11",
+      "name": "Country Roads",
+      "genre": "Country, Americana, Folk",
+      "streamUrl": "https://listen.181fm.com/181-kickincountry_128k.mp3",
+      "meta_source": "\"SomaFM Beat Blender\"",
+      "meta_desc": "\"Golden era hip-hop and conscious rap.\"",
+      "meta_icon": "\"🎤\""
+    },
+    {
+      "id": "12",
+      "name": "Electronic Pulse",
+      "genre": "EDM, House, Techno",
+      "streamUrl": "https://ice1.somafm.com/deepspaceone-128-mp3",
+      "meta_source": "\"181.FM Soul\"",
+      "meta_desc": "\"Neo-soul, jazz fusion, and eclectic grooves.\"",
+      "meta_icon": "\"🛋️\""
+    },
+    {
+      "id": "13",
+      "name": "Funk Factory",
+      "genre": "Funk, Disco, Groove",
+      "streamUrl": "https://ice1.somafm.com/seventies-128-mp3",
+      "meta_source": "\"181.FM Reggae\"",
+      "meta_desc": "\"Roots reggae, dancehall, and island vibes — ad-free.\"",
+      "meta_icon": "\"🦁\""
+    },
+    {
+      "id": "14",
+      "name": "Afrobeats Global",
+      "genre": "Afrobeats, Amapiano, Afropop",
+      "streamUrl": "https://ice1.somafm.com/suburbsofgoa-128-mp3",
+      "meta_source": "\"Zeno.fm\"",
+      "meta_desc": "\"Afrobeats, Amapiano, and African pop.\"",
+      "meta_icon": "\"🥁\""
+    },
+    {
+      "id": "15",
+      "name": "Indie & Alternative",
+      "genre": "Indie, Alternative, Underground",
+      "streamUrl": "https://ice1.somafm.com/indiepop-128-mp3",
+      "meta_source": "\"SomaFM Boot Liquor\"",
+      "meta_desc": "\"Blues, Americana, and roots music — ad-free.\"",
+      "meta_icon": "\"🎸\""
+    },
+    {
+      "id": "16",
+      "name": "Pop Hits",
+      "genre": "Pop, Top 40, Hits",
+      "streamUrl": "https://listen.181fm.com/181-beat_128k.mp3",
+      "meta_source": "\"ice-the.musicradio.com\"",
+      "meta_desc": "\"Classical orchestral and chamber music.\"",
+      "meta_icon": "\"🎻\""
+    },
+    {
+      "id": "17",
+      "name": "Rock Legends",
+      "genre": "Rock, Classic Rock, Alternative",
+      "streamUrl": "https://ice5.somafm.com/bossa-128-mp3",
+      "meta_source": "\"SomaFM Bossa Beyond\"",
+      "meta_desc": "\"Bossa nova, Latin jazz, and samba rhythms.\"",
+      "meta_icon": "\"💃\""
+    },
+    {
+      "id": "18",
+      "name": "World Music",
+      "genre": "World, Fusion, Global",
+      "streamUrl": "https://ice1.somafm.com/suburbsofgoa-128-mp3",
+      "meta_source": "\"26343.live.streamtheworld.com\"",
+      "meta_desc": "\"Country, Americana, and folk roots.\"",
+      "meta_icon": "\"🤠\""
+    },
+    {
+      "id": "19",
+      "name": "Smooth Grooves",
+      "genre": "Smooth R&B, Quiet Storm",
+      "streamUrl": "https://ice1.somafm.com/sonicuniverse-128-mp3",
+      "meta_source": "\"SomaFM Cliqhop\"",
+      "meta_desc": "\"EDM, house, techno, and ambient.\"",
+      "meta_icon": "\"⚡\""
+    },
+    {
+      "id": "20",
+      "name": "Oldies But Goodies",
+      "genre": "Oldies, 60s, 70s Classics",
+      "streamUrl": "https://ice1.somafm.com/seventies-128-mp3",
+      "meta_source": "\"181.FM Rock\"",
+      "meta_desc": "\"Classic rock, alternative, and indie rock.\"",
+      "meta_icon": "\"🎸\""
+    },
+    {
+      "id": "21",
+      "name": "Acoustic Sessions",
+      "genre": "Acoustic, Folk, Singer-Songwriter",
+      "streamUrl": "https://funkyradio.streamingmedia.it/play.mp3",
+      "meta_source": "\"SomaFM Covers\"",
+      "meta_desc": "\"Family-friendly covers and pop classics.\"",
+      "meta_icon": "\"👨‍👩‍👧‍👦\""
+    },
+    {
+      "id": "22",
+      "name": "Chill & Lo-Fi",
+      "genre": "Lo-Fi, Chill, Downtempo",
+      "streamUrl": "https://ice1.somafm.com/covers-128-mp3",
+      "meta_source": "\"SomaFM Illinois Street\"",
+      "meta_desc": "\"Spoken word, poetry, and literary readings.\"",
+      "meta_icon": "\"📝\""
+    },
+    {
+      "id": "23",
+      "name": "Sports Talk",
+      "genre": "Sports, Analysis, Commentary",
+      "streamUrl": "https://ice1.somafm.com/sf1033-128-mp3",
+      "meta_source": "\"SomaFM Space Station\"",
+      "meta_desc": "\"Guided meditation and mindfulness sessions.\"",
+      "meta_icon": "\"🕉️\""
+    },
+    {
+      "id": "24",
+      "name": "News & Current Events",
+      "genre": "News, Commentary, Current Affairs",
+      "streamUrl": "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
+      "meta_source": "\"WQXR\"",
+      "meta_desc": "\"Classical and jazz from WQXR New York.\"",
+      "meta_icon": "\"📰\""
+    },
+    {
+      "id": "25",
+      "name": "Interview Hour",
+      "genre": "Interviews, Talk, Conversations",
+      "streamUrl": "https://ice1.somafm.com/fluid-128-mp3",
+      "meta_source": "\"SomaFM n5MD\"",
+      "meta_desc": "\"Business lounge and sophisticated listening.\"",
+      "meta_icon": "\"💼\""
+    },
+    {
+      "id": "26",
+      "name": "Panel Discussions",
+      "genre": "Panel, Debate, Discussion",
+      "streamUrl": "https://ice1.somafm.com/defcon-128-mp3",
+      "meta_source": "\"SomaFM SF 10-33\"",
+      "meta_desc": "\"Tech trends, science discoveries, and innovation.\"",
+      "meta_icon": "\"🔬\""
+    },
+    {
+      "id": "27",
+      "name": "Community Voices",
+      "genre": "Community, Talk, Call-In",
+      "streamUrl": "https://ice1.somafm.com/poptron-128-mp3",
+      "meta_source": "\"SomaFM PopTron\"",
+      "meta_desc": "\"Holistic wellness, nature sounds, and world music.\"",
+      "meta_icon": "\"💚\""
+    },
+    {
+      "id": "28",
+      "name": "Tech & Innovation",
+      "genre": "Technology, Innovation, AI",
+      "streamUrl": "https://ice1.somafm.com/sf1033-128-mp3",
+      "meta_source": "\"SomaFM BRFM\"",
+      "meta_desc": "\"Educational folk and indie learning.\"",
+      "meta_icon": "\"📚\""
+    },
+    {
+      "id": "29",
+      "name": "HybridCast Emergency",
+      "genre": "Emergency, News, Public Safety",
+      "streamUrl": "https://ice1.somafm.com/scanner-128-mp3",
+      "meta_source": "\"SomaFM Illinois Street Lounge\"",
+      "meta_desc": "\"Classic comedy and retro entertainment.\"",
+      "meta_icon": "\"😂\""
+    },
+    {
+      "id": "30",
+      "name": "Special Events",
+      "genre": "Live Events, Concerts",
+      "streamUrl": "https://ice1.somafm.com/live-128-mp3",
+      "meta_source": "\"SomaFM DEF CON\"",
+      "meta_desc": "\"Radio dramas, audio theater, and storytelling.\"",
+      "meta_icon": "\"🎭\""
+    },
+    {
+      "id": "31",
+      "name": "Anime & Gaming",
+      "genre": "Anime, Gaming, J-Pop, Chiptune",
+      "streamUrl": "https://ice1.somafm.com/vaporwaves-128-mp3",
+      "meta_source": "\"SomaFM Vaporwaves\"",
+      "meta_desc": "NULL",
+      "meta_icon": "NULL"
+    },
+    {
+      "id": "32",
+      "name": "90s R&B",
+      "genre": "90s, R&B, New Jack Swing",
+      "streamUrl": "https://listen.181fm.com/181-90srnb_128k.mp3",
+      "meta_source": "\"181.FM 80s\"",
+      "meta_desc": "\"Golden era R&B classics and old school jams.\"",
+      "meta_icon": "\"⛪\""
+    },
+    {
+      "id": "33",
+      "name": "432Hz Healing",
+      "genre": "Healing, 432Hz, Ambient",
+      "streamUrl": "https://ice1.somafm.com/dronezone-128-mp3",
+      "meta_source": "\"SomaFM ThistleRadio\"",
+      "meta_desc": "\"Soca, calypso, zouk, and island music.\"",
+      "meta_icon": "\"🏝️\""
+    },
+    {
+      "id": "34",
+      "name": "528Hz Miracle Tone",
+      "genre": "528Hz, Healing, Meditation",
+      "streamUrl": "https://ice1.somafm.com/dronezone-128-mp3",
+      "meta_source": "\"SomaFM Groove Salad\"",
+      "meta_desc": "\"Women artists across rock and all genres — ad-free.\"",
+      "meta_icon": "\"👩‍🎤\""
+    },
+    {
+      "id": "35",
+      "name": "639Hz Connection",
+      "genre": "639Hz, Harmony, Ambient",
+      "streamUrl": "https://ice1.somafm.com/deepspaceone-128-mp3",
+      "meta_source": "\"TuneIn Indie\"",
+      "meta_desc": "\"Independent artists and underground scenes.\"",
+      "meta_icon": "\"🎵\""
+    },
+    {
+      "id": "36",
+      "name": "741Hz Expression",
+      "genre": "741Hz, Expression, Ambient",
+      "streamUrl": "https://ice1.somafm.com/darkzone-128-mp3",
+      "meta_source": "\"SomaFM Indie Pop\"",
+      "meta_desc": "\"Global music fusion and cross-cultural sounds.\"",
+      "meta_icon": "\"🌐\""
+    },
+    {
+      "id": "37",
+      "name": "852Hz Intuition",
+      "genre": "852Hz, Intuition, Ambient",
+      "streamUrl": "https://ice1.somafm.com/thistle-128-mp3",
+      "meta_source": "\"SomaFM Left Coast 70s\"",
+      "meta_desc": "\"70s, 80s, and throwback hits — ad-free.\"",
+      "meta_icon": "\"📼\""
+    },
+    {
+      "id": "38",
+      "name": "2000s Hits",
+      "genre": "2000s, Pop, R&B, Hip-Hop",
+      "streamUrl": "https://ice1.somafm.com/poptron-128-mp3",
+      "meta_source": "\"Funky Radio Italy\"",
+      "meta_desc": "\"Romantic ballads and love songs across eras.\"",
+      "meta_icon": "\"💕\""
+    },
+    {
+      "id": "39",
+      "name": "Seraph AI Radio",
+      "genre": "AI-Curated, Experimental, Ambient",
+      "streamUrl": "https://ice1.somafm.com/dronezone-128-mp3",
+      "meta_source": "\"SomaFM Metal\"",
+      "meta_desc": "\"High-energy music for fitness and motivation.\"",
+      "meta_icon": "\"💪\""
+    },
+    {
+      "id": "40",
+      "name": "Candy AI Radio",
+      "genre": "AI-Curated, 80s, Vaporwave",
+      "streamUrl": "https://ice1.somafm.com/u80s-128-mp3",
+      "meta_source": "\"SomaFM Scanner\"",
+      "meta_desc": "\"Deep ambient drones for sleep and relaxation.\"",
+      "meta_icon": "\"🌙\""
+    },
+    {
+      "id": "41",
+      "name": "QUMUS Selections",
+      "genre": "AI-Curated, Eclectic, Discovery",
+      "streamUrl": "https://ice1.somafm.com/bagel-128-mp3",
+      "meta_source": "\"SomaFM Fluid\"",
+      "meta_desc": "\"AI-curated space and electronic music.\"",
+      "meta_icon": "\"🤖\""
+    },
+    {
+      "id": "42",
+      "name": "AI Mashup Lab",
+      "genre": "AI-Curated, Electronic, Mashup",
+      "streamUrl": "https://ice1.somafm.com/cliqhop-128-mp3",
+      "meta_source": "\"SomaFM Dubstep\"",
+      "meta_desc": "\"AI-curated playlists by Candy guardian.\"",
+      "meta_icon": "\"🍬\""
+    },
+    {
+      "id": "43",
+      "name": "Education & Learning",
+      "genre": "Education, Learning, Ambient",
+      "streamUrl": "https://ice1.somafm.com/brfm-128-mp3",
+      "meta_source": "\"SomaFM Synphaera\"",
+      "meta_desc": "\"QUMUS brain-curated deep space ambient.\"",
+      "meta_icon": "\"🧠\""
+    },
+    {
+      "id": "44",
+      "name": "Classic Hip-Hop",
+      "genre": "Classic Hip-Hop, 90s Rap, Golden Era",
+      "streamUrl": "https://ice1.somafm.com/7soul-128-mp3",
+      "meta_source": "\"SomaFM Doomed\"",
+      "meta_desc": "\"Hip-hop, electronic, and fluid beats for live events.\"",
+      "meta_icon": "\"🎙️\""
+    },
+    {
+      "id": "45",
+      "name": "Science & Discovery",
+      "genre": "Science, Technology, Discovery",
+      "streamUrl": "https://ice1.somafm.com/vaporwaves-128-mp3",
+      "meta_source": "\"SomaFM Mission Control\"",
+      "meta_desc": "\"Inspirational soul and mellow music for Sweet Miracles.\"",
+      "meta_icon": "\"🍬\""
+    },
+    {
+      "id": "46",
+      "name": "R&B Slow Jams",
+      "genre": "R&B, Slow Jams, Love Songs",
+      "streamUrl": "https://listen.181fm.com/181-rnb_128k.mp3",
+      "meta_source": "\"SomaFM Secret Agent\"",
+      "meta_desc": "\"Behind-the-scenes production and studio sessions.\"",
+      "meta_icon": "\"🎬\""
+    },
+    {
+      "id": "47",
+      "name": "Audiobooks",
+      "genre": "Audiobooks, Stories, Narration",
+      "streamUrl": "https://ice1.somafm.com/illstreet-128-mp3",
+      "meta_source": "\"SomaFM Live\"",
+      "meta_desc": "\"Wisdom's Dragon elemental frequency broadcasts.\"",
+      "meta_icon": "\"🐉\""
+    },
+    {
+      "id": "48",
+      "name": "Comedy Hour",
+      "genre": "Comedy, Stand-Up, Humor",
+      "streamUrl": "https://funkyradio.streamingmedia.it/play.mp3",
+      "meta_source": "\"SomaFM DEF CON\"",
+      "meta_desc": "\"Electronic gaming music and hacker culture.\"",
+      "meta_icon": "\"🕹️\""
+    },
+    {
+      "id": "49",
+      "name": "Drama & Stories",
+      "genre": "Drama, Radio Drama, Stories",
+      "streamUrl": "https://ice1.somafm.com/missioncontrol-128-mp3",
+      "meta_source": "\"SomaFM Underground 80s\"",
+      "meta_desc": "\"Vintage pop, oldies, and archive recordings.\"",
+      "meta_icon": "\"🏛️\""
+    },
+    {
+      "id": "50",
+      "name": "90s Hip-Hop",
+      "genre": "90s Hip-Hop, East Coast, West Coast",
+      "streamUrl": "https://ice1.somafm.com/beatblender-128-mp3",
+      "meta_source": "\"Stereoscenic Ambient\"",
+      "meta_desc": "\"Live performances and eclectic sets.\"",
+      "meta_icon": "\"🎤\""
+    },
+    {
+      "id": "51",
+      "name": "C.J. Battle Radio",
+      "genre": "Hip-Hop, R&B, Live Battles",
+      "streamUrl": "https://ice1.somafm.com/digitalis-128-mp3",
+      "meta_source": "\"SomaFM Specials\"",
+      "meta_desc": "NULL",
+      "meta_icon": "NULL"
+    },
+    {
+      "id": "900018",
+      "name": "SQUADD Coalition Radio",
+      "genre": "Empowerment, Talk, Coalition",
+      "streamUrl": "https://ice1.somafm.com/doomed-128-mp3",
+      "meta_source": "\"SomaFM Holiday\"",
+      "meta_desc": "\"SQUADD Coalition empowerment and global music.\"",
+      "meta_icon": "\"👑\""
+    },
+    {
+      "id": "900019",
+      "name": "UN Advocacy Radio",
+      "genre": "Advocacy, International, News",
+      "streamUrl": "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
+      "meta_source": "\"SomaFM Dark Zone\"",
+      "meta_desc": "\"UN advocacy and international affairs from WNYC.\"",
+      "meta_icon": "\"🌍\""
+    },
+    {
+      "id": "900020",
+      "name": "Canryn Production Radio",
+      "genre": "Corporate, Production, Updates",
+      "streamUrl": "https://ice1.somafm.com/synphaera-128-mp3",
+      "meta_source": "\"SomaFM GS Classic\"",
+      "meta_desc": "NULL",
+      "meta_icon": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tgenre\tstreamUrl\tmeta_source\tmeta_desc\tmeta_icon\n1\tRRB Main Radio\tSoul, Funk, R&B\thttp://listen.181fm.com/181-rnb_128k.mp3\t\"181.FM\"\t\"Soul, funk, R&B, and legacy music — the heartbeat of Canryn Production.\"\t\"📻\"\n2\tSoul & R&B Classics\tSoul, R&B, Classics\thttps://listen.181fm.com/181-soul_128k.mp3\t\"NPR Live\"\t\"Original podcasts and interviews — In Battle Tyme and more.\"\t\"🎙️\"\n3\tJazz Lounge\tJazz, Smooth Jazz, Fusion\thttps://ice1.somafm.com/secretagent-128-mp3\t\"SomaFM Folk Forward\"\t\"Audiobooks, stories, and scanner dispatches.\"\t\"📖\"\n4\t80s Hits\t80s, Pop, Rock, New Wave\thttps://listen.181fm.com/181-awesome80s_128k.mp3\t\"181.FM Hip-Hop\"\t\"24/7 standby — emergency alerts and public safety.\"\t\"🚨\"\n5\tHip-Hop & Rap\tHip-Hop, Rap, Urban\thttps://ice1.somafm.com/illstreet-128-mp3\t\"181.FM Gospel\"\t\"New artists and deep cuts from emerging talent.\"\t\"🔍\"\n6\tBlues Highway\tBlues, Delta Blues, Chicago Blues\thttps://ice1.somafm.com/bootliquor-128-mp3\t\"SomaFM Sonic Universe\"\t\"Community voices and Celtic world music.\"\t\"📞\"\n7\tClassical Masterworks\tClassical, Orchestral, Chamber\thttps://stream.radioparadise.com/mellow-128\t\"Stereoscenic\"\t\"Solfeggio healing frequencies — Crystal Essentials.\"\t\"🧘\"\n8\tLatin Rhythms\tSalsa, Bachata, Reggaeton\thttps://listen.181fm.com/181-salsa_128k.mp3\t\"SomaFM Deep Space One\"\t\"Sports energy beats and electronic mixes.\"\t\"🏈\"\n9\tReggae Island\tReggae, Dancehall, Caribbean\thttps://ice5.somafm.com/7soul-128-mp3\t\"181.FM Old School\"\t\"Classic 90s R&B, soul, and smooth jams.\"\t\"🙏\"\n10\tNeo-Soul Vibes\tNeo-Soul, R&B, Alt Soul\thttps://ice1.somafm.com/lush-128-mp3\t\"SomaFM Lush\"\t\"Smooth jazz lounge and sensuous instrumentals.\"\t\"🎷\"\n11\tCountry Roads\tCountry, Americana, Folk\thttps://listen.181fm.com/181-kickincountry_128k.mp3\t\"SomaFM Beat Blender\"\t\"Golden era hip-hop and conscious rap.\"\t\"🎤\"\n12\tElectronic Pulse\tEDM, House, Techno\thttps://ice1.somafm.com/deepspaceone-128-mp3\t\"181.FM Soul\"\t\"Neo-soul, jazz fusion, and eclectic grooves.\"\t\"🛋️\"\n13\tFunk Factory\tFunk, Disco, Groove\thttps://ice1.somafm.com/seventies-128-mp3\t\"181.FM Reggae\"\t\"Roots reggae, dancehall, and island vibes — ad-free.\"\t\"🦁\"\n14\tAfrobeats Global\tAfrobeats, Amapiano, Afropop\thttps://ice1.somafm.com/suburbsofgoa-128-mp3\t\"Zeno.fm\"\t\"Afrobeats, Amapiano, and African pop.\"\t\"🥁\"\n15\tIndie & Alternative\tIndie, Alternative, Underground\thttps://ice1.somafm.com/indiepop-128-mp3\t\"SomaFM Boot Liquor\"\t\"Blues, Americana, and roots music — ad-free.\"\t\"🎸\"\n16\tPop Hits\tPop, Top 40, Hits\thttps://listen.181fm.com/181-beat_128k.mp3\t\"ice-the.musicradio.com\"\t\"Classical orchestral and chamber music.\"\t\"🎻\"\n17\tRock Legends\tRock, Classic Rock, Alternative\thttps://ice5.somafm.com/bossa-128-mp3\t\"SomaFM Bossa Beyond\"\t\"Bossa nova, Latin jazz, and samba rhythms.\"\t\"💃\"\n18\tWorld Music\tWorld, Fusion, Global\thttps://ice1.somafm.com/suburbsofgoa-128-mp3\t\"26343.live.streamtheworld.com\"\t\"Country, Americana, and folk roots.\"\t\"🤠\"\n19\tSmooth Grooves\tSmooth R&B, Quiet Storm\thttps://ice1.somafm.com/sonicuniverse-128-mp3\t\"SomaFM Cliqhop\"\t\"EDM, house, techno, and ambient.\"\t\"⚡\"\n20\tOldies But Goodies\tOldies, 60s, 70s Classics\thttps://ice1.somafm.com/seventies-128-mp3\t\"181.FM Rock\"\t\"Classic rock, alternative, and indie rock.\"\t\"🎸\"\n21\tAcoustic Sessions\tAcoustic, Folk, Singer-Songwriter\thttps://funkyradio.streamingmedia.it/play.mp3\t\"SomaFM Covers\"\t\"Family-friendly covers and pop classics.\"\t\"👨‍👩‍👧‍👦\"\n22\tChill & Lo-Fi\tLo-Fi, Chill, Downtempo\thttps://ice1.somafm.com/covers-128-mp3\t\"SomaFM Illinois Street\"\t\"Spoken word, poetry, and literary readings.\"\t\"📝\"\n23\tSports Talk\tSports, Analysis, Commentary\thttps://ice1.somafm.com/sf1033-128-mp3\t\"SomaFM Space Station\"\t\"Guided meditation and mindfulness sessions.\"\t\"🕉️\"\n24\tNews & Current Events\tNews, Commentary, Current Affairs\thttps://stream.live.vc.bbcmedia.co.uk/bbc_world_service\t\"WQXR\"\t\"Classical and jazz from WQXR New York.\"\t\"📰\"\n25\tInterview Hour\tInterviews, Talk, Conversations\thttps://ice1.somafm.com/fluid-128-mp3\t\"SomaFM n5MD\"\t\"Business lounge and sophisticated listening.\"\t\"💼\"\n26\tPanel Discussions\tPanel, Debate, Discussion\thttps://ice1.somafm.com/defcon-128-mp3\t\"SomaFM SF 10-33\"\t\"Tech trends, science discoveries, and innovation.\"\t\"🔬\"\n27\tCommunity Voices\tCommunity, Talk, Call-In\thttps://ice1.somafm.com/poptron-128-mp3\t\"SomaFM PopTron\"\t\"Holistic wellness, nature sounds, and world music.\"\t\"💚\"\n28\tTech & Innovation\tTechnology, Innovation, AI\thttps://ice1.somafm.com/sf1033-128-mp3\t\"SomaFM BRFM\"\t\"Educational folk and indie learning.\"\t\"📚\"\n29\tHybridCast Emergency\tEmergency, News, Public Safety\thttps://ice1.somafm.com/scanner-128-mp3\t\"SomaFM Illinois Street Lounge\"\t\"Classic comedy and retro entertainment.\"\t\"😂\"\n30\tSpecial Events\tLive Events, Concerts\thttps://ice1.somafm.com/live-128-mp3\t\"SomaFM DEF CON\"\t\"Radio dramas, audio theater, and storytelling.\"\t\"🎭\"\n31\tAnime & Gaming\tAnime, Gaming, J-Pop, Chiptune\thttps://ice1.somafm.com/vaporwaves-128-mp3\t\"SomaFM Vaporwaves\"\tNULL\tNULL\n32\t90s R&B\t90s, R&B, New Jack Swing\thttps://listen.181fm.com/181-90srnb_128k.mp3\t\"181.FM 80s\"\t\"Golden era R&B classics and old school jams.\"\t\"⛪\"\n33\t432Hz Healing\tHealing, 432Hz, Ambient\thttps://ice1.somafm.com/dronezone-128-mp3\t\"SomaFM ThistleRadio\"\t\"Soca, calypso, zouk, and island music.\"\t\"🏝️\"\n34\t528Hz Miracle Tone\t528Hz, Healing, Meditation\thttps://ice1.somafm.com/dronezone-128-mp3\t\"SomaFM Groove Salad\"\t\"Women artists across rock and all genres — ad-free.\"\t\"👩‍🎤\"\n35\t639Hz Connection\t639Hz, Harmony, Ambient\thttps://ice1.somafm.com/deepspaceone-128-mp3\t\"TuneIn Indie\"\t\"Independent artists and underground scenes.\"\t\"🎵\"\n36\t741Hz Expression\t741Hz, Expression, Ambient\thttps://ice1.somafm.com/darkzone-128-mp3\t\"SomaFM Indie Pop\"\t\"Global music fusion and cross-cultural sounds.\"\t\"🌐\"\n37\t852Hz Intuition\t852Hz, Intuition, Ambient\thttps://ice1.somafm.com/thistle-128-mp3\t\"SomaFM Left Coast 70s\"\t\"70s, 80s, and throwback hits — ad-free.\"\t\"📼\"\n38\t2000s Hits\t2000s, Pop, R&B, Hip-Hop\thttps://ice1.somafm.com/poptron-128-mp3\t\"Funky Radio Italy\"\t\"Romantic ballads and love songs across eras.\"\t\"💕\"\n39\tSeraph AI Radio\tAI-Curated, Experimental, Ambient\thttps://ice1.somafm.com/dronezone-128-mp3\t\"SomaFM Metal\"\t\"High-energy music for fitness and motivation.\"\t\"💪\"\n40\tCandy AI Radio\tAI-Curated, 80s, Vaporwave\thttps://ice1.somafm.com/u80s-128-mp3\t\"SomaFM Scanner\"\t\"Deep ambient drones for sleep and relaxation.\"\t\"🌙\"\n41\tQUMUS Selections\tAI-Curated, Eclectic, Discovery\thttps://ice1.somafm.com/bagel-128-mp3\t\"SomaFM Fluid\"\t\"AI-curated space and electronic music.\"\t\"🤖\"\n42\tAI Mashup Lab\tAI-Curated, Electronic, Mashup\thttps://ice1.somafm.com/cliqhop-128-mp3\t\"SomaFM Dubstep\"\t\"AI-curated playlists by Candy guardian.\"\t\"🍬\"\n43\tEducation & Learning\tEducation, Learning, Ambient\thttps://ice1.somafm.com/brfm-128-mp3\t\"SomaFM Synphaera\"\t\"QUMUS brain-curated deep space ambient.\"\t\"🧠\"\n44\tClassic Hip-Hop\tClassic Hip-Hop, 90s Rap, Golden Era\thttps://ice1.somafm.com/7soul-128-mp3\t\"SomaFM Doomed\"\t\"Hip-hop, electronic, and fluid beats for live events.\"\t\"🎙️\"\n45\tScience & Discovery\tScience, Technology, Discovery\thttps://ice1.somafm.com/vaporwaves-128-mp3\t\"SomaFM Mission Control\"\t\"Inspirational soul and mellow music for Sweet Miracles.\"\t\"🍬\"\n46\tR&B Slow Jams\tR&B, Slow Jams, Love Songs\thttps://listen.181fm.com/181-rnb_128k.mp3\t\"SomaFM Secret Agent\"\t\"Behind-the-scenes production and studio sessions.\"\t\"🎬\"\n47\tAudiobooks\tAudiobooks, Stories, Narration\thttps://ice1.somafm.com/illstreet-128-mp3\t\"SomaFM Live\"\t\"Wisdom's Dragon elemental frequency broadcasts.\"\t\"🐉\"\n48\tComedy Hour\tComedy, Stand-Up, Humor\thttps://funkyradio.streamingmedia.it/play.mp3\t\"SomaFM DEF CON\"\t\"Electronic gaming music and hacker culture.\"\t\"🕹️\"\n49\tDrama & Stories\tDrama, Radio Drama, Stories\thttps://ice1.somafm.com/missioncontrol-128-mp3\t\"SomaFM Underground 80s\"\t\"Vintage pop, oldies, and archive recordings.\"\t\"🏛️\"\n50\t90s Hip-Hop\t90s Hip-Hop, East Coast, West Coast\thttps://ice1.somafm.com/beatblender-128-mp3\t\"Stereoscenic Ambient\"\t\"Live performances and eclectic sets.\"\t\"🎤\"\n51\tC.J. Battle Radio\tHip-Hop, R&B, Live Battles\thttps://ice1.somafm.com/digitalis-128-mp3\t\"SomaFM Specials\"\tNULL\tNULL\n900018\tSQUADD Coalition Radio\tEmpowerment, Talk, Coalition\thttps://ice1.somafm.com/doomed-128-mp3\t\"SomaFM Holiday\"\t\"SQUADD Coalition empowerment and global music.\"\t\"👑\"\n900019\tUN Advocacy Radio\tAdvocacy, International, News\thttps://stream.live.vc.bbcmedia.co.uk/bbc_world_service\t\"SomaFM Dark Zone\"\t\"UN advocacy and international affairs from WNYC.\"\t\"🌍\"\n900020\tCanryn Production Radio\tCorporate, Production, Updates\thttps://ice1.somafm.com/synphaera-128-mp3\t\"SomaFM GS Classic\"\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 373
+}

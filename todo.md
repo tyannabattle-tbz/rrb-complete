@@ -4676,3 +4676,11 @@
   - ecosystemIntegration.getAllChannels (QUMUS): scanner-128-mp3
   - globalBroadcast.verifySyncStatus (TBZ-OS): scanner-128-mp3
   - RRB Radio API /channels/29 (RRB): scanner-128-mp3
+
+## FIX: Unpause All Paused Channels & Fix Stale Metadata (March 18, 2026)
+- [x] Find all paused/inactive channels: all 54/54 already active/live in both tables
+- [x] Unpause all channels: confirmed 54/54 active, 54/54 live
+- [x] Fix stale metadata: rebuilt all 54 channel metadata JSONs from Ty OS registry (source, description, icon corrected)
+- [x] Synced 5 drifted stream URLs back to registry (Reggae Island, Rock Legends, Smooth Grooves, Acoustic Sessions, Comedy Hour)
+- [x] Fixed 3 high-ID channels (900018-900020) metadata
+- [x] Final verification: 0 mismatches between radio_channels and streaming_status, PERFECT SYNC
