@@ -3019,3 +3019,34 @@ export const meetingRecordings = mysqlTable("meeting_recordings", {
   endedAt: bigint("ended_at", { mode: "number" }),
   createdAt: bigint("created_at", { mode: "number" }).notNull(),
 });
+
+
+// ─── Social Streaming Destinations ─────────────────────────
+export const streamDestinations = mysqlTable("stream_destinations", {
+  id: int().autoincrement().primaryKey(),
+  userId: int("user_id").notNull(),
+  platform: mysqlEnum("platform", ['youtube', 'facebook', 'instagram', 'twitter', 'tiktok', 'twitch', 'linkedin', 'custom']).notNull(),
+  label: varchar({ length: 255 }).notNull(),
+  rtmpUrl: text("rtmp_url"),
+  streamKey: text("stream_key"),
+  isEnabled: tinyint("is_enabled").default(1),
+  lastUsedAt: timestamp("last_used_at", { mode: 'string' }),
+  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
+// ─── Stream Sessions (tracks each go-live event) ─────────────────────────
+export const streamSessions = mysqlTable("stream_sessions", {
+  id: int().autoincrement().primaryKey(),
+  conferenceId: int("conference_id").references(() => conferences.id, { onDelete: "set null" }),
+  title: varchar({ length: 500 }).notNull(),
+  startedBy: int("started_by").notNull(),
+  startedAt: timestamp("started_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+  endedAt: timestamp("ended_at", { mode: 'string' }),
+  status: mysqlEnum("status", ['live', 'ended', 'failed']).default('live'),
+  platforms: text(),
+  viewerCount: int("viewer_count").default(0),
+  peakViewers: int("peak_viewers").default(0),
+  notes: text(),
+  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});

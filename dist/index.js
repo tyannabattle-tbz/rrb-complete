@@ -210,6 +210,8 @@ __export(schema_exports, {
   stationPlaybackHistory: () => stationPlaybackHistory,
   stationSharing: () => stationSharing,
   stationTemplates: () => stationTemplates,
+  streamDestinations: () => streamDestinations,
+  streamSessions: () => streamSessions,
   streamingStatus: () => streamingStatus,
   studioGuests: () => studioGuests,
   studioRecordings: () => studioRecordings,
@@ -250,7 +252,7 @@ __export(schema_exports, {
   wellnessCheckins: () => wellnessCheckins
 });
 import { mysqlTable, int, varchar, mysqlEnum, timestamp, decimal, text, json, bigint, index, tinyint, date } from "drizzle-orm/mysql-core";
-var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, meetingPresentations, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing, systemConfig, videoCaptions, videoLibrary, meetingRecordings;
+var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, meetingPresentations, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing, systemConfig, videoCaptions, videoLibrary, meetingRecordings, streamDestinations, streamSessions;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
     accountingInvoices = mysqlTable("accounting_invoices", {
@@ -3079,6 +3081,32 @@ var init_schema = __esm({
       endedAt: bigint("ended_at", { mode: "number" }),
       createdAt: bigint("created_at", { mode: "number" }).notNull()
     });
+    streamDestinations = mysqlTable("stream_destinations", {
+      id: int().autoincrement().primaryKey(),
+      userId: int("user_id").notNull(),
+      platform: mysqlEnum("platform", ["youtube", "facebook", "instagram", "twitter", "tiktok", "twitch", "linkedin", "custom"]).notNull(),
+      label: varchar({ length: 255 }).notNull(),
+      rtmpUrl: text("rtmp_url"),
+      streamKey: text("stream_key"),
+      isEnabled: tinyint("is_enabled").default(1),
+      lastUsedAt: timestamp("last_used_at", { mode: "string" }),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow()
+    });
+    streamSessions = mysqlTable("stream_sessions", {
+      id: int().autoincrement().primaryKey(),
+      conferenceId: int("conference_id").references(() => conferences.id, { onDelete: "set null" }),
+      title: varchar({ length: 500 }).notNull(),
+      startedBy: int("started_by").notNull(),
+      startedAt: timestamp("started_at", { mode: "string" }).default("CURRENT_TIMESTAMP"),
+      endedAt: timestamp("ended_at", { mode: "string" }),
+      status: mysqlEnum("status", ["live", "ended", "failed"]).default("live"),
+      platforms: text(),
+      viewerCount: int("viewer_count").default(0),
+      peakViewers: int("peak_viewers").default(0),
+      notes: text(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP")
+    });
   }
 });
 
@@ -5841,12 +5869,12 @@ var init_qumusProductionIntegration = __esm({
         setInterval(async () => {
           try {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-            const { sql: sql20 } = await import("drizzle-orm");
+            const { sql: sql21 } = await import("drizzle-orm");
             const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
             const db2 = await getDb5();
             const now = /* @__PURE__ */ new Date();
             const fifteenMinLater = new Date(now.getTime() + 15 * 60 * 1e3);
-            const [upcomingRows] = await db2.execute(sql20`
+            const [upcomingRows] = await db2.execute(sql21`
           SELECT id, title, room_code, platform, scheduled_at, host_name
           FROM conferences 
           WHERE status = 'scheduled' 
@@ -5855,7 +5883,7 @@ var init_qumusProductionIntegration = __esm({
             const upcoming = upcomingRows;
             for (const conf of upcoming) {
               const [attendeeRows] = await db2.execute(
-                sql20`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
+                sql21`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
               );
               const attendeeCount = attendeeRows.length;
               if (attendeeCount > 0 || true) {
@@ -5865,7 +5893,7 @@ var init_qumusProductionIntegration = __esm({
                 });
                 console.log(`[QUMUS-CRON] Auto-notified for conference ${conf.id}: ${conf.title} (${attendeeCount} attendees)`);
               }
-              await db2.execute(sql20`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
+              await db2.execute(sql21`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
             }
             if (upcoming.length > 0) {
               console.log(`[QUMUS-CRON] Conference auto-notification: ${upcoming.length} conferences starting within 15 minutes`);
@@ -5880,13 +5908,13 @@ var init_qumusProductionIntegration = __esm({
             const now = /* @__PURE__ */ new Date();
             if (now.getDay() === 0 && now.getHours() === 20 && now.getMinutes() < 60) {
               const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-              const { sql: sql20 } = await import("drizzle-orm");
+              const { sql: sql21 } = await import("drizzle-orm");
               const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
               const db2 = await getDb5();
               const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
-              const [weekSessions] = await db2.execute(sql20`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-              const [weekAttendees] = await db2.execute(sql20`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-              const [completedSessions] = await db2.execute(sql20`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+              const [weekSessions] = await db2.execute(sql21`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [weekAttendees] = await db2.execute(sql21`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [completedSessions] = await db2.execute(sql21`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
               const sessions = weekSessions[0]?.count || 0;
               const attendees = weekAttendees[0]?.total || 0;
               const completed = completedSessions[0]?.count || 0;
@@ -8831,7 +8859,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z103 } from "zod";
+import { z as z104 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -9008,10 +9036,10 @@ var rockinBoogieRouter = router({
 // server/routers/hybridcastRouter.ts
 import { z as z3 } from "zod";
 import mysql from "mysql2/promise";
-async function rawQuery(sql20, params2 = []) {
+async function rawQuery(sql21, params2 = []) {
   const conn = await mysql.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await conn.execute(sql20, params2);
+    const [rows] = await conn.execute(sql21, params2);
     return rows;
   } finally {
     await conn.end();
@@ -13826,10 +13854,10 @@ var watermarkRouter = router({
 init_notification();
 import { z as z14 } from "zod";
 import mysql2 from "mysql2/promise";
-async function rawQuery2(sql20, params2 = []) {
+async function rawQuery2(sql21, params2 = []) {
   const connection = await mysql2.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql20, params2);
+    const [rows] = await connection.execute(sql21, params2);
     return rows;
   } finally {
     await connection.end();
@@ -23771,10 +23799,10 @@ var dashboardRouter = router({
 // server/routers/broadcastRouter.ts
 import { z as z50 } from "zod";
 import mysql3 from "mysql2/promise";
-async function rawQuery3(sql20, params2 = []) {
+async function rawQuery3(sql21, params2 = []) {
   const connection = await mysql3.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql20, params2);
+    const [rows] = await connection.execute(sql21, params2);
     return rows;
   } finally {
     await connection.end();
@@ -24761,10 +24789,10 @@ var reviewRouter = router({
 // server/routers/meditation.ts
 import { z as z55 } from "zod";
 import mysql4 from "mysql2/promise";
-async function rawQuery4(sql20, params2 = []) {
+async function rawQuery4(sql21, params2 = []) {
   const connection = await mysql4.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql20, params2);
+    const [rows] = await connection.execute(sql21, params2);
     return rows;
   } finally {
     await connection.end();
@@ -42997,8 +43025,8 @@ async function auditStreams() {
     const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
     const db2 = await getDb5();
     if (!db2) return findings;
-    const { sql: sql20 } = await import("drizzle-orm");
-    const rawChannels = await db2.execute(sql20`SELECT id, name, streamUrl, genre, metadata FROM radio_channels`);
+    const { sql: sql21 } = await import("drizzle-orm");
+    const rawChannels = await db2.execute(sql21`SELECT id, name, streamUrl, genre, metadata FROM radio_channels`);
     const channels = Array.isArray(rawChannels) && Array.isArray(rawChannels[0]) ? rawChannels[0] : rawChannels;
     if (!Array.isArray(channels)) return findings;
     const urlMap = /* @__PURE__ */ new Map();
@@ -43114,8 +43142,8 @@ async function auditDatabase() {
       });
       return findings;
     }
-    const { sql: sql20 } = await import("drizzle-orm");
-    const rawCC = await db2.execute(sql20`SELECT COUNT(*) as cnt FROM radio_channels`);
+    const { sql: sql21 } = await import("drizzle-orm");
+    const rawCC = await db2.execute(sql21`SELECT COUNT(*) as cnt FROM radio_channels`);
     const ccRows = Array.isArray(rawCC) && Array.isArray(rawCC[0]) ? rawCC[0] : rawCC;
     const cnt = ccRows?.[0]?.cnt || 0;
     if (cnt < 54) {
@@ -43131,7 +43159,7 @@ async function auditDatabase() {
       });
     }
     try {
-      const rawSC = await db2.execute(sql20`SELECT COUNT(*) as cnt FROM broadcast_schedules`);
+      const rawSC = await db2.execute(sql21`SELECT COUNT(*) as cnt FROM broadcast_schedules`);
       const scRows = Array.isArray(rawSC) && Array.isArray(rawSC[0]) ? rawSC[0] : rawSC;
       const sCnt = scRows?.[0]?.cnt || 0;
       if (sCnt === 0) {
@@ -43150,7 +43178,7 @@ async function auditDatabase() {
     }
     try {
       const rawOC = await db2.execute(
-        sql20`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'offline'`
+        sql21`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'offline'`
       );
       const ocRows = Array.isArray(rawOC) && Array.isArray(rawOC[0]) ? rawOC[0] : rawOC;
       const offCnt = ocRows?.[0]?.cnt || 0;
@@ -43279,9 +43307,9 @@ async function autoCorrect(findings) {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
             const db2 = await getDb5();
             if (db2) {
-              const { sql: sql20 } = await import("drizzle-orm");
+              const { sql: sql21 } = await import("drizzle-orm");
               const rawRows = await db2.execute(
-                sql20`SELECT metadata, streamUrl FROM radio_channels WHERE id = ${channelId}`
+                sql21`SELECT metadata, streamUrl FROM radio_channels WHERE id = ${channelId}`
               );
               const rowArr = Array.isArray(rawRows) && Array.isArray(rawRows[0]) ? rawRows[0] : rawRows;
               const ch = rowArr?.[0];
@@ -43290,13 +43318,13 @@ async function autoCorrect(findings) {
                 if (meta.fallbackUrl && meta.fallbackUrl !== ch.streamUrl) {
                   const oldUrl = ch.streamUrl;
                   await db2.execute(
-                    sql20`UPDATE radio_channels SET streamUrl = ${meta.fallbackUrl} WHERE id = ${channelId}`
+                    sql21`UPDATE radio_channels SET streamUrl = ${meta.fallbackUrl} WHERE id = ${channelId}`
                   );
                   meta.fallbackUrl = oldUrl;
                   meta.lastAutoSwap = Date.now();
                   meta.autoSwapReason = finding.title;
                   await db2.execute(
-                    sql20`UPDATE radio_channels SET metadata = ${JSON.stringify(meta)} WHERE id = ${channelId}`
+                    sql21`UPDATE radio_channels SET metadata = ${JSON.stringify(meta)} WHERE id = ${channelId}`
                   );
                   fixed = true;
                   fixDesc = `Swapped stream to fallback URL for channel ${channelId}`;
@@ -43312,10 +43340,10 @@ async function autoCorrect(findings) {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
             const db2 = await getDb5();
             if (db2) {
-              const { sql: sql20 } = await import("drizzle-orm");
+              const { sql: sql21 } = await import("drizzle-orm");
               const defaultStream = "https://listen.181fm.com/181-rnb_128k.mp3";
               await db2.execute(
-                sql20`UPDATE radio_channels SET streamUrl = ${defaultStream} WHERE id = ${channelId} AND (streamUrl IS NULL OR streamUrl = '')`
+                sql21`UPDATE radio_channels SET streamUrl = ${defaultStream} WHERE id = ${channelId} AND (streamUrl IS NULL OR streamUrl = '')`
               );
               fixed = true;
               fixDesc = `Assigned default R&B stream to channel ${channelId}`;
@@ -43327,9 +43355,9 @@ async function autoCorrect(findings) {
           const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
           const db2 = await getDb5();
           if (db2) {
-            const { sql: sql20 } = await import("drizzle-orm");
+            const { sql: sql21 } = await import("drizzle-orm");
             await db2.execute(
-              sql20`UPDATE radio_channels SET status = 'active' WHERE status = 'offline'`
+              sql21`UPDATE radio_channels SET status = 'active' WHERE status = 'offline'`
             );
             fixed = true;
             fixDesc = "Reactivated all offline channels to active status";
@@ -43837,11 +43865,11 @@ function generateBroadcastId() {
   }
   return result2;
 }
-async function rawQuery5(sql20, params2 = []) {
+async function rawQuery5(sql21, params2 = []) {
   const mysql11 = await import("mysql2/promise");
   const connection = await mysql11.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql20, params2);
+    const [rows] = await connection.execute(sql21, params2);
     return rows;
   } finally {
     await connection.end();
@@ -44049,10 +44077,10 @@ import { z as z100 } from "zod";
 
 // server/ecosystemSyncEngine.ts
 import mysql6 from "mysql2/promise";
-async function rawQuery6(sql20, params2 = []) {
+async function rawQuery6(sql21, params2 = []) {
   const conn = await mysql6.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await conn.execute(sql20, params2);
+    const [rows] = await conn.execute(sql21, params2);
     return rows;
   } finally {
     await conn.end();
@@ -44427,10 +44455,10 @@ var ecosystemSyncRouter = router({
 // server/routers/globalBroadcastRouter.ts
 import { z as z101 } from "zod";
 import mysql7 from "mysql2/promise";
-async function rawQuery7(sql20, params2 = []) {
+async function rawQuery7(sql21, params2 = []) {
   const connection = await mysql7.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql20, params2);
+    const [rows] = await connection.execute(sql21, params2);
     return rows;
   } finally {
     await connection.end();
@@ -44649,8 +44677,218 @@ var globalBroadcastRouter = router({
   })
 });
 
-// server/routers/qumusAgentEngine.ts
+// server/routers/socialStreamRouter.ts
 import { z as z102 } from "zod";
+init_db();
+init_qumus_orchestration();
+import { sql as sql20 } from "drizzle-orm";
+var PLATFORM_RTMP_DEFAULTS = {
+  youtube: "rtmp://a.rtmp.youtube.com/live2",
+  facebook: "rtmps://live-api-s.facebook.com:443/rtmp/",
+  instagram: "rtmps://live-upload.instagram.com:443/rtmp/",
+  twitter: "rtmps://prod-ec-us-east-1.video.pscp.tv:443/x/",
+  tiktok: "rtmp://push.tiktok.com/live/",
+  twitch: "rtmp://live.twitch.tv/app/",
+  linkedin: "rtmps://prod-ec-us-east-1.video.pscp.tv:443/x/",
+  custom: ""
+};
+var PLATFORM_INFO = {
+  youtube: { name: "YouTube", icon: "youtube", color: "#FF0000", setupUrl: "https://studio.youtube.com/channel/UC/livestreaming" },
+  facebook: { name: "Facebook", icon: "facebook", color: "#1877F2", setupUrl: "https://www.facebook.com/live/producer" },
+  instagram: { name: "Instagram", icon: "instagram", color: "#E4405F", setupUrl: "https://www.instagram.com/" },
+  twitter: { name: "Twitter/X", icon: "twitter", color: "#1DA1F2", setupUrl: "https://studio.twitter.com/" },
+  tiktok: { name: "TikTok", icon: "tiktok", color: "#000000", setupUrl: "https://www.tiktok.com/studio" },
+  twitch: { name: "Twitch", icon: "twitch", color: "#9146FF", setupUrl: "https://dashboard.twitch.tv/stream-manager" },
+  linkedin: { name: "LinkedIn", icon: "linkedin", color: "#0A66C2", setupUrl: "https://www.linkedin.com/video/golive/" },
+  custom: { name: "Custom RTMP", icon: "settings", color: "#6B7280", setupUrl: "" }
+};
+var socialStreamRouter = router({
+  // ─── Destination Management ───────────────────────
+  getDestinations: protectedProcedure.query(async ({ ctx }) => {
+    const db2 = await getDb();
+    const [rows] = await db2.execute(sql20`
+      SELECT * FROM stream_destinations WHERE user_id = ${ctx.user.id} ORDER BY platform ASC
+    `);
+    return rows.map((d) => ({
+      ...d,
+      platformInfo: PLATFORM_INFO[d.platform] || PLATFORM_INFO.custom,
+      defaultRtmpUrl: PLATFORM_RTMP_DEFAULTS[d.platform] || ""
+    }));
+  }),
+  addDestination: protectedProcedure.input(z102.object({
+    platform: z102.enum(["youtube", "facebook", "instagram", "twitter", "tiktok", "twitch", "linkedin", "custom"]),
+    label: z102.string().min(1).max(255),
+    rtmpUrl: z102.string().optional(),
+    streamKey: z102.string().optional()
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    const rtmpUrl = input.rtmpUrl || PLATFORM_RTMP_DEFAULTS[input.platform] || "";
+    await db2.execute(sql20`
+      INSERT INTO stream_destinations (user_id, platform, label, rtmp_url, stream_key, is_enabled)
+      VALUES (${ctx.user.id}, ${input.platform}, ${input.label}, ${rtmpUrl}, ${input.streamKey || ""}, 1)
+    `);
+    await qumusEngine2.logDecision({
+      policyId: "conference_scheduling",
+      action: "stream_destination_added",
+      confidence: 0.9,
+      reasoning: `Stream destination added: ${input.platform} - ${input.label} by ${ctx.user.name}`,
+      metadata: { platform: input.platform, label: input.label }
+    });
+    return { success: true, platform: input.platform };
+  }),
+  updateDestination: protectedProcedure.input(z102.object({
+    id: z102.number(),
+    label: z102.string().optional(),
+    rtmpUrl: z102.string().optional(),
+    streamKey: z102.string().optional(),
+    isEnabled: z102.boolean().optional()
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    const sets = [];
+    if (input.label !== void 0) sets.push(`label = '${input.label.replace(/'/g, "''")}'`);
+    if (input.rtmpUrl !== void 0) sets.push(`rtmp_url = '${input.rtmpUrl.replace(/'/g, "''")}'`);
+    if (input.streamKey !== void 0) sets.push(`stream_key = '${input.streamKey.replace(/'/g, "''")}'`);
+    if (input.isEnabled !== void 0) sets.push(`is_enabled = ${input.isEnabled ? 1 : 0}`);
+    if (sets.length === 0) return { success: false, message: "No updates provided" };
+    await db2.execute(sql20.raw(`UPDATE stream_destinations SET ${sets.join(", ")} WHERE id = ${input.id} AND user_id = ${ctx.user.id}`));
+    return { success: true };
+  }),
+  removeDestination: protectedProcedure.input(z102.object({
+    id: z102.number()
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    await db2.execute(sql20`DELETE FROM stream_destinations WHERE id = ${input.id} AND user_id = ${ctx.user.id}`);
+    return { success: true };
+  }),
+  // ─── Platform Info ───────────────────────
+  getPlatformInfo: publicProcedure.query(() => {
+    return Object.entries(PLATFORM_INFO).map(([key, info]) => ({
+      id: key,
+      ...info,
+      defaultRtmpUrl: PLATFORM_RTMP_DEFAULTS[key] || ""
+    }));
+  }),
+  // ─── Go Live / Stream Session Management ───────────────────────
+  goLive: protectedProcedure.input(z102.object({
+    conferenceId: z102.number().optional(),
+    title: z102.string().min(1),
+    destinationIds: z102.array(z102.number()).min(1)
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    const [destRows] = await db2.execute(sql20`
+      SELECT * FROM stream_destinations WHERE id IN (${sql20.raw(input.destinationIds.join(","))}) AND user_id = ${ctx.user.id}
+    `);
+    const destinations = destRows;
+    if (destinations.length === 0) throw new Error("No valid destinations selected");
+    const platformNames = destinations.map((d) => d.platform);
+    await db2.execute(sql20`
+      INSERT INTO stream_sessions (conference_id, title, started_by, status, platforms)
+      VALUES (${input.conferenceId || null}, ${input.title}, ${ctx.user.id}, 'live', ${JSON.stringify(platformNames)})
+    `);
+    await db2.execute(sql20`
+      UPDATE stream_destinations SET last_used_at = NOW() WHERE id IN (${sql20.raw(input.destinationIds.join(","))})
+    `);
+    if (input.conferenceId) {
+      const streamKey = `rrb-social-${input.conferenceId}-${Date.now()}`;
+      await db2.execute(sql20`
+        UPDATE conferences SET 
+          restream_active = 1, restream_key = ${streamKey},
+          restream_started_at = NOW(), restream_platforms = ${JSON.stringify(platformNames)}
+        WHERE id = ${input.conferenceId}
+      `);
+    }
+    await qumusEngine2.logDecision({
+      policyId: "conference_scheduling",
+      action: "social_stream_started",
+      confidence: 0.95,
+      reasoning: `Social stream started: "${input.title}" to ${platformNames.join(", ")} by ${ctx.user.name}`,
+      metadata: { conferenceId: input.conferenceId, platforms: platformNames, title: input.title }
+    });
+    return {
+      success: true,
+      platforms: destinations.map((d) => ({
+        platform: d.platform,
+        label: d.label,
+        rtmpUrl: d.rtmp_url,
+        streamKey: d.stream_key,
+        info: PLATFORM_INFO[d.platform] || PLATFORM_INFO.custom
+      })),
+      message: `Now streaming to ${platformNames.length} platform${platformNames.length > 1 ? "s" : ""}: ${platformNames.join(", ")}`,
+      instructions: "Use the RTMP URLs and stream keys shown below in your streaming software (OBS, Streamlabs, etc.) or Restream Studio to broadcast to all platforms simultaneously."
+    };
+  }),
+  stopStream: protectedProcedure.input(z102.object({
+    sessionId: z102.number().optional(),
+    conferenceId: z102.number().optional()
+  })).mutation(async ({ input, ctx }) => {
+    const db2 = await getDb();
+    if (input.sessionId) {
+      await db2.execute(sql20`UPDATE stream_sessions SET status = 'ended', ended_at = NOW() WHERE id = ${input.sessionId} AND started_by = ${ctx.user.id}`);
+    } else {
+      await db2.execute(sql20`UPDATE stream_sessions SET status = 'ended', ended_at = NOW() WHERE started_by = ${ctx.user.id} AND status = 'live' ORDER BY id DESC LIMIT 1`);
+    }
+    if (input.conferenceId) {
+      await db2.execute(sql20`UPDATE conferences SET restream_active = 0, restream_ended_at = NOW() WHERE id = ${input.conferenceId}`);
+    }
+    return { success: true, message: "Stream ended" };
+  }),
+  // ─── Stream History ───────────────────────
+  getStreamHistory: protectedProcedure.input(z102.object({
+    limit: z102.number().min(1).max(50).optional().default(20)
+  }).optional()).query(async ({ ctx, input }) => {
+    const db2 = await getDb();
+    const limit = input?.limit || 20;
+    const [rows] = await db2.execute(sql20`
+      SELECT ss.*, c.title as conference_title, c.room_code
+      FROM stream_sessions ss
+      LEFT JOIN conferences c ON ss.conference_id = c.id
+      WHERE ss.started_by = ${ctx.user.id}
+      ORDER BY ss.started_at DESC LIMIT ${limit}
+    `);
+    return rows.map((s) => ({
+      ...s,
+      platforms: s.platforms ? JSON.parse(s.platforms) : [],
+      duration: s.ended_at ? Math.round((new Date(s.ended_at).getTime() - new Date(s.started_at).getTime()) / 1e3) : null
+    }));
+  }),
+  getActiveStream: protectedProcedure.query(async ({ ctx }) => {
+    const db2 = await getDb();
+    const [rows] = await db2.execute(sql20`
+      SELECT ss.*, c.title as conference_title, c.room_code
+      FROM stream_sessions ss
+      LEFT JOIN conferences c ON ss.conference_id = c.id
+      WHERE ss.started_by = ${ctx.user.id} AND ss.status = 'live'
+      ORDER BY ss.started_at DESC LIMIT 1
+    `);
+    const session = rows[0];
+    if (!session) return null;
+    return {
+      ...session,
+      platforms: session.platforms ? JSON.parse(session.platforms) : [],
+      duration: Math.round((Date.now() - new Date(session.started_at).getTime()) / 1e3)
+    };
+  }),
+  // ─── Streaming Stats ───────────────────────
+  getStreamStats: protectedProcedure.query(async ({ ctx }) => {
+    const db2 = await getDb();
+    const [totalRows] = await db2.execute(sql20`SELECT COUNT(*) as count FROM stream_sessions WHERE started_by = ${ctx.user.id}`);
+    const [liveRows] = await db2.execute(sql20`SELECT COUNT(*) as count FROM stream_sessions WHERE started_by = ${ctx.user.id} AND status = 'live'`);
+    const [destRows] = await db2.execute(sql20`SELECT COUNT(*) as count FROM stream_destinations WHERE user_id = ${ctx.user.id}`);
+    const [totalMinRows] = await db2.execute(sql20`
+      SELECT COALESCE(SUM(TIMESTAMPDIFF(MINUTE, started_at, COALESCE(ended_at, NOW()))), 0) as minutes 
+      FROM stream_sessions WHERE started_by = ${ctx.user.id}
+    `);
+    return {
+      totalStreams: totalRows[0]?.count || 0,
+      liveNow: liveRows[0]?.count || 0,
+      destinations: destRows[0]?.count || 0,
+      totalMinutes: totalMinRows[0]?.minutes || 0
+    };
+  })
+});
+
+// server/routers/qumusAgentEngine.ts
+import { z as z103 } from "zod";
 import { randomUUID as randomUUID3 } from "crypto";
 init_storage();
 import mysql8 from "mysql2/promise";
@@ -44741,11 +44979,11 @@ var qumusAgentEngine = router({
   /**
    * Create content — documents, presentations, social posts, scripts, reports
    */
-  createContent: protectedProcedure.input(z102.object({
-    type: z102.enum(["document", "presentation", "spreadsheet", "social_post", "email", "script", "report", "campaign"]),
-    topic: z102.string(),
-    details: z102.string().default(""),
-    saveToCloud: z102.boolean().default(true)
+  createContent: protectedProcedure.input(z103.object({
+    type: z103.enum(["document", "presentation", "spreadsheet", "social_post", "email", "script", "report", "campaign"]),
+    topic: z103.string(),
+    details: z103.string().default(""),
+    saveToCloud: z103.boolean().default(true)
   })).mutation(async ({ input, ctx }) => {
     const taskId = await createTask2(ctx.user.id, `Create ${input.type}: ${input.topic}`, 5, ["generate", "save"], []);
     await updateTask2(taskId, "executing");
@@ -44775,10 +45013,10 @@ var qumusAgentEngine = router({
   /**
    * Execute autonomous task — QUMUS reasons about the goal and executes steps
    */
-  executeTask: protectedProcedure.input(z102.object({
-    goal: z102.string(),
-    priority: z102.number().min(1).max(10).default(5),
-    constraints: z102.array(z102.string()).default([])
+  executeTask: protectedProcedure.input(z103.object({
+    goal: z103.string(),
+    priority: z103.number().min(1).max(10).default(5),
+    constraints: z103.array(z103.string()).default([])
   })).mutation(async ({ input, ctx }) => {
     const taskId = await createTask2(ctx.user.id, input.goal, input.priority, [], input.constraints);
     await updateTask2(taskId, "executing");
@@ -44847,7 +45085,7 @@ Priority: ${input.priority}/10` }
   /**
    * Get task history from DB
    */
-  getTaskHistory: protectedProcedure.input(z102.object({ limit: z102.number().default(20), status: z102.string().optional() }).optional()).query(async ({ input }) => {
+  getTaskHistory: protectedProcedure.input(z103.object({ limit: z103.number().default(20), status: z103.string().optional() }).optional()).query(async ({ input }) => {
     const limit = input?.limit || 20;
     const statusFilter = input?.status ? `AND status = '${input.status}'` : "";
     const [rows] = await db.execute(
@@ -44859,13 +45097,13 @@ Priority: ${input.priority}/10` }
   /**
    * Schedule content — create a scheduled content generation task
    */
-  scheduleContent: protectedProcedure.input(z102.object({
-    type: z102.enum(["document", "presentation", "social_post", "script", "report"]),
-    topic: z102.string(),
-    scheduledFor: z102.string(),
+  scheduleContent: protectedProcedure.input(z103.object({
+    type: z103.enum(["document", "presentation", "social_post", "script", "report"]),
+    topic: z103.string(),
+    scheduledFor: z103.string(),
     // ISO date string
-    recurring: z102.boolean().default(false),
-    frequency: z102.enum(["daily", "weekly", "monthly"]).optional()
+    recurring: z103.boolean().default(false),
+    frequency: z103.enum(["daily", "weekly", "monthly"]).optional()
   })).mutation(async ({ input, ctx }) => {
     const taskId = await createTask2(
       ctx.user.id,
@@ -44904,9 +45142,9 @@ Priority: ${input.priority}/10` }
   /**
    * Sync with local Mac mini — push/pull ecosystem state
    */
-  syncWithLocal: protectedProcedure.input(z102.object({
-    direction: z102.enum(["push", "pull", "bidirectional"]).default("bidirectional"),
-    subsystems: z102.array(z102.string()).default(["all"])
+  syncWithLocal: protectedProcedure.input(z103.object({
+    direction: z103.enum(["push", "pull", "bidirectional"]).default("bidirectional"),
+    subsystems: z103.array(z103.string()).default(["all"])
   })).mutation(async ({ input }) => {
     const ecosystemStats = await analyzeEcosystem();
     const manifest = {
@@ -44931,9 +45169,9 @@ Priority: ${input.priority}/10` }
   /**
    * AI Chat — direct conversation with QUMUS brain
    */
-  chat: protectedProcedure.input(z102.object({
-    message: z102.string(),
-    context: z102.string().default("general")
+  chat: protectedProcedure.input(z103.object({
+    message: z103.string(),
+    context: z103.string().default("general")
   })).mutation(async ({ input, ctx }) => {
     const ecosystemStats = await analyzeEcosystem();
     const response = await invokeLLM({
@@ -45006,11 +45244,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z103.object({
-        goal: z103.string().min(1, "Goal is required"),
-        priority: z103.number().int().min(1).max(10).optional().default(5),
-        steps: z103.array(z103.string()).optional(),
-        constraints: z103.array(z103.string()).optional()
+      z104.object({
+        goal: z104.string().min(1, "Goal is required"),
+        priority: z104.number().int().min(1).max(10).optional().default(5),
+        steps: z104.array(z104.string()).optional(),
+        constraints: z104.array(z104.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -45022,7 +45260,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z103.object({ taskId: z103.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z104.object({ taskId: z104.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -45032,11 +45270,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z103.object({
-        target: z103.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z103.string().min(1, "Action is required"),
-        params: z103.record(z103.any()).optional().default({}),
-        priority: z103.number().int().min(1).max(10).optional().default(5)
+      z104.object({
+        target: z104.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z104.string().min(1, "Action is required"),
+        params: z104.record(z104.any()).optional().default({}),
+        priority: z104.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -45048,10 +45286,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z103.object({ commandId: z103.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z104.object({ commandId: z104.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z103.object({ target: z103.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z104.object({ target: z104.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -45146,12 +45384,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z103.object({
-      sessionName: z103.string().min(1),
-      systemPrompt: z103.string().optional(),
-      temperature: z103.number().min(0).max(100).optional(),
-      model: z103.string().optional(),
-      maxSteps: z103.number().min(1).optional()
+    createSession: protectedProcedure.input(z104.object({
+      sessionName: z104.string().min(1),
+      systemPrompt: z104.string().optional(),
+      temperature: z104.number().min(0).max(100).optional(),
+      model: z104.string().optional(),
+      maxSteps: z104.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -45172,7 +45410,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z103.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z104.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -45181,7 +45419,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z103.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z104.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -45225,9 +45463,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z103.object({
-      dateRange: z103.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z103.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z104.object({
+      dateRange: z104.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z104.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -45238,24 +45476,26 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z103.object({
-      dateRange: z103.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z104.object({
+      dateRange: z104.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z103.object({
-      dateRange: z103.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z104.object({
+      dateRange: z104.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
+  // Social Streaming (manage destinations, go live to YouTube/FB/IG/X/TikTok)
+  socialStream: socialStreamRouter,
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z103.object({
-      email: z103.string().email(),
-      name: z103.string().optional(),
-      source: z103.string().optional(),
-      language: z103.string().optional()
+    subscribe: publicProcedure.input(z104.object({
+      email: z104.string().email(),
+      name: z104.string().optional(),
+      source: z104.string().optional(),
+      language: z104.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),

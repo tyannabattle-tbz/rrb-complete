@@ -94,6 +94,7 @@ import { videoManagementRouter } from "./routers/videoManagementRouter";
 import { liveBroadcastRouter } from "./routers/liveBroadcastRouter";
 import { ecosystemSyncRouter } from "./routers/ecosystemSyncRouter";
 import { globalBroadcastRouter } from "./routers/globalBroadcastRouter";
+import { socialStreamRouter } from "./routers/socialStreamRouter";
 import { qumusAgentEngine } from "./routers/qumusAgentEngine";
 import { router as trpcRouter } from "./_core/trpc";
 
@@ -482,6 +483,9 @@ export const appRouter = router({
         return [];
       }),
   }),
+
+  // Social Streaming (manage destinations, go live to YouTube/FB/IG/X/TikTok)
+  socialStream: socialStreamRouter,
 
   // Email subscription for flyer and campaign updates
   emailSubscription: router({

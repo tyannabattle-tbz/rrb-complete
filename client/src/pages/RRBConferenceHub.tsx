@@ -414,10 +414,18 @@ export default function RRBConferenceHub() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={openRestream}
+                      onClick={() => navigate('/conference/streaming')}
                       className="border-purple-500/50 text-purple-400 hover:bg-purple-500/20 text-xs"
                     >
-                      <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> <span className="hidden sm:inline">Open </span>Restream Studio
+                      <Tv className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> <span className="hidden sm:inline">Manage </span>Streams
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={openRestream}
+                      className="border-gray-600 text-white/50 hover:bg-gray-800 text-xs"
+                    >
+                      <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> Restream
                     </Button>
                   </div>
                 </div>

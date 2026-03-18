@@ -212,6 +212,7 @@ import SpeakerProfile from '@/pages/SpeakerProfile';
 import ConferenceCheckIn from '@/pages/ConferenceCheckIn';
 import ConferenceTranslation from '@/pages/ConferenceTranslation';
 import GuestJoin from '@/pages/GuestJoin';
+import SocialStreamManager from '@/pages/SocialStreamManager';
 import CandysCornerPodcast from '@/pages/CandysCornerPodcast';
 import SolbonesPodcast from '@/pages/SolbonesPodcast';
 import AroundTheQumUnityPodcast from '@/pages/AroundTheQumUnityPodcast';
@@ -418,6 +419,7 @@ function Router() {
       <Route path="/join/:roomCode" component={GuestJoin} />
       <Route path="/join" component={GuestJoin} />
       <Route path="/conference/speaker/:id" component={SpeakerProfile} />
+      <Route path="/conference/streaming" component={SocialStreamManager} />
       <Route path="/conference" component={RRBConferenceHub} />
       <Route path="/command-console" component={QumusCommandConsole} />
       <Route path="/stream-analytics" component={StreamAnalytics} />

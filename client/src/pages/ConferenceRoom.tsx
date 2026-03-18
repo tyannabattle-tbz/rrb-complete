@@ -765,12 +765,7 @@ export default function ConferenceRoom() {
               </button>
             ) : (
               <button
-                onClick={() => startRestreamMutation.mutate({
-                  conferenceId,
-                  title: conference?.title,
-                  platforms: ['youtube', 'facebook', 'linkedin', 'twitter'],
-                })}
-                disabled={startRestreamMutation.isPending}
+                onClick={() => navigate('/conference/streaming')}
                 className="flex items-center gap-1 px-2 py-1 rounded border border-purple-500/50 text-purple-400 hover:bg-purple-500/20 text-[11px] sm:text-xs h-7 whitespace-nowrap"
               >
                 <Tv className="w-3 h-3" />
