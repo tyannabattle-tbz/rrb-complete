@@ -42850,12 +42850,25 @@ var podcastManagementRouter = router({
   /** Get the call-in queue for a show */
   getCallInQueue: publicProcedure.input(z95.object({ showId: z95.number() })).query(async ({ input }) => {
     const db2 = await getDb();
-    if (!db2) return [];
+    if (!db2) return { queue: [], totalToday: 0 };
     const queue = await db2.select().from(callInQueue).where(and20(
       eq28(callInQueue.showId, input.showId),
       sql19`status IN ('waiting', 'screening', 'ready', 'on_air')`
     )).orderBy(callInQueue.queuePosition);
-    return queue;
+    const mappedQueue = queue.map((q) => ({
+      ...q,
+      status: q.status === "on_air" ? "on-air" : q.status
+    }));
+    const todayStart = /* @__PURE__ */ new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const [countResult] = await db2.select({ count: sql19`COUNT(*)` }).from(callInQueue).where(and20(
+      eq28(callInQueue.showId, input.showId),
+      sql19`created_at >= ${todayStart.getTime()}`
+    ));
+    return {
+      queue: mappedQueue,
+      totalToday: countResult?.count ?? 0
+    };
   }),
   /** Move a caller to on-air (host action) */
   putCallerOnAir: protectedProcedure.input(z95.object({ callInId: z95.number() })).mutation(async ({ input }) => {
@@ -42898,6 +42911,91 @@ var podcastManagementRouter = router({
       notes: input.reason ?? null
     }).where(eq28(callInQueue.id, input.callInId));
     return { success: true };
+  }),
+  // ─── CALL-IN ALIASES (match frontend CallInSystem) ─────────
+  /** Alias for joinCallIn — used by CallerView component */
+  joinCallInQueue: publicProcedure.input(z95.object({
+    showId: z95.number(),
+    callerName: z95.string().min(1),
+    callerEmail: z95.string().email().optional(),
+    topic: z95.string().optional(),
+    peerId: z95.string().optional()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const now = Date.now();
+    const [maxPos] = await db2.select({ maxPos: sql19`COALESCE(MAX(queue_position), 0)` }).from(callInQueue).where(and20(
+      eq28(callInQueue.showId, input.showId),
+      eq28(callInQueue.status, "waiting")
+    ));
+    const position = (maxPos?.maxPos ?? 0) + 1;
+    const [result2] = await db2.insert(callInQueue).values({
+      showId: input.showId,
+      callerName: input.callerName,
+      callerEmail: input.callerEmail ?? null,
+      topic: input.topic ?? null,
+      peerId: input.peerId ?? null,
+      status: "waiting",
+      queuePosition: position,
+      connectionType: "webrtc",
+      isMuted: 1,
+      joinedAt: now,
+      createdAt: now
+    });
+    return { success: true, callInId: result2.insertId, position };
+  }),
+  /** Leave the call-in queue — used by CallerView component */
+  leaveCallInQueue: publicProcedure.input(z95.object({
+    showId: z95.number(),
+    callerName: z95.string()
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    await db2.update(callInQueue).set({
+      status: "rejected",
+      endedAt: Date.now(),
+      notes: "Caller left queue"
+    }).where(and20(
+      eq28(callInQueue.showId, input.showId),
+      eq28(callInQueue.callerName, input.callerName),
+      sql19`status IN ('waiting', 'screening', 'ready')`
+    ));
+    return { success: true };
+  }),
+  /** Unified caller status update — used by HostControls component */
+  updateCallerStatus: protectedProcedure.input(z95.object({
+    showId: z95.number(),
+    callerId: z95.number(),
+    status: z95.enum(["on-air", "on-hold", "disconnected", "waiting"])
+  })).mutation(async ({ input }) => {
+    const db2 = await getDb();
+    if (!db2) throw new Error("Database unavailable");
+    const now = Date.now();
+    const [caller] = await db2.select().from(callInQueue).where(eq28(callInQueue.id, input.callerId)).limit(1);
+    if (!caller) throw new Error("Caller not found");
+    const statusMap = {
+      "on-air": "on_air",
+      "on-hold": "waiting",
+      "disconnected": "completed",
+      "waiting": "waiting"
+    };
+    const dbStatus = statusMap[input.status] || input.status;
+    const updateData = { status: dbStatus };
+    if (input.status === "on-air") {
+      updateData.onAirAt = now;
+      updateData.isMuted = 0;
+    } else if (input.status === "disconnected") {
+      updateData.endedAt = now;
+      const durationOnAir = caller.onAirAt ? Math.round((now - Number(caller.onAirAt)) / 1e3) : 0;
+      updateData.durationOnAir = durationOnAir;
+    }
+    await db2.update(callInQueue).set(updateData).where(eq28(callInQueue.id, input.callerId));
+    return {
+      success: true,
+      status: input.status,
+      callerName: caller.callerName,
+      message: `${caller.callerName} is now ${input.status}`
+    };
   }),
   // ─── WebRTC SIGNALING ──────────────────────────────────────
   /** Get WebRTC signaling info for a caller */

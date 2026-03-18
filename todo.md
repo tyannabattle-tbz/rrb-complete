@@ -4684,3 +4684,12 @@
 - [x] Synced 5 drifted stream URLs back to registry (Reggae Island, Rock Legends, Smooth Grooves, Acoustic Sessions, Comedy Hour)
 - [x] Fixed 3 high-ID channels (900018-900020) metadata
 - [x] Final verification: 0 mismatches between radio_channels and streaming_status, PERFECT SYNC
+
+## Podcast Studio Scrub — State of the Art Audit
+- [x] Fix PodcastTemplate.tsx config to match PodcastShowConfig interface (broken shape)
+- [x] Add full social sharing dialog to PodcastRoom (Twitter/X, Facebook, LinkedIn, WhatsApp, Telegram, Email, QR, Copy Link, Native Share)
+- [x] Add Streaming/Restream entry button to PodcastRoom controls bar (consistent with ConferenceRoom)
+- [x] Fix CallInSystem: added joinCallInQueue, leaveCallInQueue, updateCallerStatus procedures to server router + fixed getCallInQueue to return { queue, totalToday } shape
+- [x] Ensure all 5 podcast rooms have identical sharing + entry services (all use PodcastRoom component)
+- [x] Verify PodcastRoom recording pipeline works end-to-end (PodcastRecorder + EpisodeManager + S3 upload)
+- [x] Add accessibility labels and keyboard navigation to all new controls (aria-label on every button)

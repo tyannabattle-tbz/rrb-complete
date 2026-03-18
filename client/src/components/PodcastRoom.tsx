@@ -14,6 +14,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useLocation } from 'wouter';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { useRestreamUrl } from '@/hooks/useRestreamUrl';
 import { trpc } from '@/lib/trpc';
@@ -25,8 +26,10 @@ import {
   Radio, Users, MessageSquare, Gamepad2, Volume2, VolumeX,
   Circle, Square, Download, Share2, Settings, Send, X,
   Headphones, Tv, Wifi, WifiOff, ChevronDown, Play, Pause,
-  SkipForward, SkipBack, Clock, Eye, Heart, Loader2
+  SkipForward, SkipBack, Clock, Eye, Heart, Loader2,
+  Copy, Link2, QrCode, ExternalLink, Check
 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ConferenceAiChatPanel } from './ConferenceAiChatPanel';
 import { SpeakingAvatar } from './SpeakingAvatar';
 import { useAiVoice } from '@/hooks/useAiVoice';
@@ -186,6 +189,8 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [viewerCount, setViewerCount] = useState(Math.floor(Math.random() * 50) + 12);
   const [activeTab, setActiveTab] = useState<'episodes' | 'guests' | 'schedule' | 'manage'>('episodes');
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // AI Voice
@@ -437,6 +442,22 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
                   <Square className="w-3 h-3" />
                 </button>
               )}
+              <button
+                onClick={openRestream}
+                className="h-8 w-8 rounded-full flex items-center justify-center text-white/50 bg-white/5 hover:bg-white/10 transition-colors"
+                aria-label="Open Restream Studio"
+                title="Restream Studio"
+              >
+                <Tv className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => window.open('/conference/streaming', '_blank')}
+                className="h-8 w-8 rounded-full flex items-center justify-center text-white/50 bg-white/5 hover:bg-white/10 transition-colors"
+                aria-label="Manage RTMP Streaming Destinations"
+                title="Multi-Stream Manager"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             {/* Right controls */}
@@ -468,9 +489,9 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
                 </button>
               )}
               <button
-                onClick={() => toast.info('Share link copied!', { description: `${window.location.origin}/podcast/${config.id}` })}
+                onClick={() => setShowShareDialog(true)}
                 className="h-8 w-8 rounded-full flex items-center justify-center text-white/50 bg-white/5 hover:bg-white/10 transition-colors"
-                aria-label="Share"
+                aria-label="Share this podcast"
               >
                 <Share2 className="w-3.5 h-3.5" />
               </button>
@@ -595,6 +616,151 @@ export default function PodcastRoom({ config, onBack }: PodcastRoomProps) {
           </div>
         </div>
       </div>
+
+      {/* ─── Social Sharing Dialog ─── */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Share2 className="w-5 h-5" style={{ color: config.theme.primary }} />
+              Share {config.title}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            {/* Copy Link */}
+            <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-2">
+              <Link2 className="w-4 h-4 text-white/40 shrink-0" />
+              <span className="text-xs text-white/60 truncate flex-1">{`${window.location.origin}/podcast/${config.id}`}</span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/podcast/${config.id}`);
+                  setLinkCopied(true);
+                  toast.success('Link copied!');
+                  setTimeout(() => setLinkCopied(false), 2000);
+                }}
+                className="shrink-0 px-3 py-1 rounded-md text-xs font-medium transition-colors"
+                style={{ background: linkCopied ? '#22c55e' : config.theme.primary, color: 'white' }}
+                aria-label="Copy podcast link"
+              >
+                {linkCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+
+            {/* Social Platforms Grid */}
+            <div className="grid grid-cols-3 gap-2">
+              {/* Twitter / X */}
+              <button
+                onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`🎙️ ${config.title} — ${config.subtitle}`)}&url=${encodeURIComponent(`${window.location.origin}/podcast/${config.id}`)}`, '_blank')}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+                aria-label="Share on X (Twitter)"
+              >
+                <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">𝕏</span>
+                </div>
+                <span className="text-[10px] text-white/60">X / Twitter</span>
+              </button>
+
+              {/* Facebook */}
+              <button
+                onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`${window.location.origin}/podcast/${config.id}`)}`, '_blank')}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+                aria-label="Share on Facebook"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">f</span>
+                </div>
+                <span className="text-[10px] text-white/60">Facebook</span>
+              </button>
+
+              {/* LinkedIn */}
+              <button
+                onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`${window.location.origin}/podcast/${config.id}`)}`, '_blank')}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+                aria-label="Share on LinkedIn"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#0A66C2] flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">in</span>
+                </div>
+                <span className="text-[10px] text-white/60">LinkedIn</span>
+              </button>
+
+              {/* WhatsApp */}
+              <button
+                onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`🎙️ ${config.title}\n${window.location.origin}/podcast/${config.id}`)}`, '_blank')}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+                aria-label="Share on WhatsApp"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">W</span>
+                </div>
+                <span className="text-[10px] text-white/60">WhatsApp</span>
+              </button>
+
+              {/* Telegram */}
+              <button
+                onClick={() => window.open(`https://t.me/share/url?url=${encodeURIComponent(`${window.location.origin}/podcast/${config.id}`)}&text=${encodeURIComponent(`🎙️ ${config.title} — ${config.subtitle}`)}`, '_blank')}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+                aria-label="Share on Telegram"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#0088CC] flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">T</span>
+                </div>
+                <span className="text-[10px] text-white/60">Telegram</span>
+              </button>
+
+              {/* Email */}
+              <button
+                onClick={() => window.open(`mailto:?subject=${encodeURIComponent(`Check out: ${config.title}`)}&body=${encodeURIComponent(`🎙️ ${config.title}\n\n${config.description}\n\nListen here: ${window.location.origin}/podcast/${config.id}`)}`, '_blank')}
+                className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+                aria-label="Share via Email"
+              >
+                <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">@</span>
+                </div>
+                <span className="text-[10px] text-white/60">Email</span>
+              </button>
+            </div>
+
+            {/* Native Share (mobile) */}
+            {typeof navigator !== 'undefined' && 'share' in navigator && (
+              <button
+                onClick={() => {
+                  navigator.share({
+                    title: config.title,
+                    text: `🎙️ ${config.title} — ${config.subtitle}`,
+                    url: `${window.location.origin}/podcast/${config.id}`,
+                  }).catch(() => {});
+                }}
+                className="w-full py-2.5 rounded-lg text-xs font-medium text-white transition-colors flex items-center justify-center gap-2"
+                style={{ background: config.theme.primary }}
+                aria-label="Share using device share menu"
+              >
+                <Share2 className="w-4 h-4" /> Share via Device
+              </button>
+            )}
+
+            {/* Embed Code */}
+            <div className="pt-2 border-t border-gray-700">
+              <p className="text-[10px] text-white/40 mb-1.5">Embed Code</p>
+              <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-2">
+                <code className="text-[10px] text-white/50 truncate flex-1">{`<iframe src="${window.location.origin}/podcast/${config.id}" width="100%" height="200" frameborder="0"></iframe>`}</code>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`<iframe src="${window.location.origin}/podcast/${config.id}" width="100%" height="200" frameborder="0"></iframe>`);
+                    toast.success('Embed code copied!');
+                  }}
+                  className="shrink-0 px-2 py-1 rounded text-[10px] bg-white/10 text-white/60 hover:bg-white/20"
+                  aria-label="Copy embed code"
+                >
+                  <Copy className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+
+            <p className="text-[9px] text-white/30 text-center">Canryn Production LLC — Powered by QUMUS</p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* CSS for wave animation */}
       <style>{`

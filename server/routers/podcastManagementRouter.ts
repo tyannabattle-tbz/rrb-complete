@@ -400,7 +400,8 @@ export const podcastManagementRouter = router({
     .input(z.object({ showId: z.number() }))
     .query(async ({ input }) => {
       const db = await getDb();
-      if (!db) return [];
+      if (!db) return { queue: [], totalToday: 0 };
+
       const queue = await db
         .select()
         .from(callInQueue)
@@ -410,7 +411,27 @@ export const podcastManagementRouter = router({
         ))
         .orderBy(callInQueue.queuePosition);
 
-      return queue;
+      // Map DB status 'on_air' to frontend 'on-air' for consistent display
+      const mappedQueue = queue.map(q => ({
+        ...q,
+        status: q.status === 'on_air' ? 'on-air' : q.status,
+      }));
+
+      // Count total callers today
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const [countResult] = await db
+        .select({ count: sql<number>`COUNT(*)` })
+        .from(callInQueue)
+        .where(and(
+          eq(callInQueue.showId, input.showId),
+          sql`created_at >= ${todayStart.getTime()}`,
+        ));
+
+      return {
+        queue: mappedQueue,
+        totalToday: countResult?.count ?? 0,
+      };
     }),
 
   /** Move a caller to on-air (host action) */
@@ -480,6 +501,129 @@ export const podcastManagementRouter = router({
         .where(eq(callInQueue.id, input.callInId));
 
       return { success: true };
+    }),
+
+  // ─── CALL-IN ALIASES (match frontend CallInSystem) ─────────
+
+  /** Alias for joinCallIn — used by CallerView component */
+  joinCallInQueue: publicProcedure
+    .input(z.object({
+      showId: z.number(),
+      callerName: z.string().min(1),
+      callerEmail: z.string().email().optional(),
+      topic: z.string().optional(),
+      peerId: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      const now = Date.now();
+
+      const [maxPos] = await db
+        .select({ maxPos: sql<number>`COALESCE(MAX(queue_position), 0)` })
+        .from(callInQueue)
+        .where(and(
+          eq(callInQueue.showId, input.showId),
+          eq(callInQueue.status, 'waiting'),
+        ));
+
+      const position = (maxPos?.maxPos ?? 0) + 1;
+
+      const [result] = await db.insert(callInQueue).values({
+        showId: input.showId,
+        callerName: input.callerName,
+        callerEmail: input.callerEmail ?? null,
+        topic: input.topic ?? null,
+        peerId: input.peerId ?? null,
+        status: 'waiting',
+        queuePosition: position,
+        connectionType: 'webrtc',
+        isMuted: 1,
+        joinedAt: now,
+        createdAt: now,
+      });
+
+      return { success: true, callInId: result.insertId, position };
+    }),
+
+  /** Leave the call-in queue — used by CallerView component */
+  leaveCallInQueue: publicProcedure
+    .input(z.object({
+      showId: z.number(),
+      callerName: z.string(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      // Find the caller by name and show, then mark as left
+      await db
+        .update(callInQueue)
+        .set({
+          status: 'rejected',
+          endedAt: Date.now(),
+          notes: 'Caller left queue',
+        })
+        .where(and(
+          eq(callInQueue.showId, input.showId),
+          eq(callInQueue.callerName, input.callerName),
+          sql`status IN ('waiting', 'screening', 'ready')`,
+        ));
+
+      return { success: true };
+    }),
+
+  /** Unified caller status update — used by HostControls component */
+  updateCallerStatus: protectedProcedure
+    .input(z.object({
+      showId: z.number(),
+      callerId: z.number(),
+      status: z.enum(['on-air', 'on-hold', 'disconnected', 'waiting']),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      const now = Date.now();
+
+      // Get caller info for response
+      const [caller] = await db
+        .select()
+        .from(callInQueue)
+        .where(eq(callInQueue.id, input.callerId))
+        .limit(1);
+
+      if (!caller) throw new Error("Caller not found");
+
+      // Map frontend status names to DB status values
+      const statusMap: Record<string, string> = {
+        'on-air': 'on_air',
+        'on-hold': 'waiting',
+        'disconnected': 'completed',
+        'waiting': 'waiting',
+      };
+      const dbStatus = statusMap[input.status] || input.status;
+
+      const updateData: Record<string, any> = { status: dbStatus };
+
+      if (input.status === 'on-air') {
+        updateData.onAirAt = now;
+        updateData.isMuted = 0;
+      } else if (input.status === 'disconnected') {
+        updateData.endedAt = now;
+        const durationOnAir = caller.onAirAt ? Math.round((now - Number(caller.onAirAt)) / 1000) : 0;
+        updateData.durationOnAir = durationOnAir;
+      }
+
+      await db
+        .update(callInQueue)
+        .set(updateData)
+        .where(eq(callInQueue.id, input.callerId));
+
+      return {
+        success: true,
+        status: input.status,
+        callerName: caller.callerName,
+        message: `${caller.callerName} is now ${input.status}`,
+      };
     }),
 
   // ─── WebRTC SIGNALING ──────────────────────────────────────
