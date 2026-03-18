@@ -4651,3 +4651,13 @@
 - [x] Enhance stream destination UI with inline edit, "Needs Stream Key" badges, and save controls
 - [x] Verify site live on all 4 domains (200 OK), 7/7 routes, 0 TS errors, QUMUS 18/18
 - [x] Final system health check: 54/54 streams, 10 scheduled posts, 7 RTMP destinations ready
+
+## FIX: Radio Channels - Dead Streams & Wrong Genres (March 18, 2026)
+- [x] Audit all 54 channels - found 12 dead (181fm 404s, Zeno.fm 401s)
+- [x] Remove all gospel/praise channels (ch-004 -> 80s Hits)
+- [x] Found Ty OS source of truth: shared/radioStationRegistry.ts - synced DB to match
+- [x] Replaced dead streams: 12 fixed with verified SomaFM/BBC replacements
+- [x] Added: 80s Hits, 90s R&B, 90s Hip-Hop, 2000s Hits, Classic Hip-Hop, R&B Slow Jams
+- [x] Updated registry (Ty OS source) to match all DB changes
+- [x] FINAL: 54/54 LIVE, 0 DEAD - every stream verified playing audio/mpeg
+- [x] All frequencies set to 432 Hz default

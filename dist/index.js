@@ -47439,14 +47439,14 @@ var RADIO_STATIONS = [
   {
     id: "ch-004",
     numericId: 4,
-    name: "Gospel & Praise",
-    description: "Uplifting gospel music and praise worship",
+    name: "80s Hits",
+    description: "The best of 80s pop, rock, and new wave",
     color: "#F97316",
     icon: "Music",
     category: "music",
     frequency: 432,
-    stream: { url: "https://listen.181fm.com/181-gospel_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
-    metadata: { genres: ["gospel", "praise", "worship"], bio: "Praise and worship", is24x7: true, platformLinks: [] },
+    stream: { url: "https://listen.181fm.com/181-awesome80s_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["80s", "pop", "rock", "new wave"], bio: "80s hits and classics", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.95 }
   },
   {
@@ -47458,7 +47458,7 @@ var RADIO_STATIONS = [
     icon: "Music",
     category: "music",
     frequency: 432,
-    stream: { url: "https://listen.181fm.com/181-hiphoptop40_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    stream: { url: "https://ice1.somafm.com/illstreet-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
     metadata: { genres: ["hip-hop", "rap", "urban"], bio: "Hip-hop and rap", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.95 }
   },
@@ -47575,7 +47575,7 @@ var RADIO_STATIONS = [
     icon: "Music",
     category: "music",
     frequency: 432,
-    stream: { url: "https://stream.zeno.fm/yn65fsaurfhvv", type: "icecast", bitrate: 128, format: "mp3" },
+    stream: { url: "https://ice1.somafm.com/suburbsofgoa-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
     metadata: { genres: ["afrobeats", "afropop", "african"], bio: "African music global", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.95 }
   },
@@ -47614,7 +47614,7 @@ var RADIO_STATIONS = [
     icon: "Music",
     category: "music",
     frequency: 432,
-    stream: { url: "https://listen.181fm.com/181-classicrock_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    stream: { url: "https://ice1.somafm.com/metal-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
     metadata: { genres: ["rock", "classic rock"], bio: "Rock legends", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.95 }
   },
@@ -47640,7 +47640,7 @@ var RADIO_STATIONS = [
     icon: "Music",
     category: "music",
     frequency: 432,
-    stream: { url: "https://ice1.somafm.com/groovesalad256-256-mp3", type: "icecast", bitrate: 256, format: "mp3" },
+    stream: { url: "https://ice1.somafm.com/groovesalad-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
     metadata: { genres: ["smooth", "quiet storm", "r&b"], bio: "Smooth grooves", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.95 }
   },
@@ -47653,7 +47653,7 @@ var RADIO_STATIONS = [
     icon: "Music",
     category: "music",
     frequency: 432,
-    stream: { url: "https://listen.181fm.com/181-oldies_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    stream: { url: "https://ice1.somafm.com/seventies-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
     metadata: { genres: ["oldies", "50s", "60s", "70s"], bio: "Timeless hits", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.95 }
   },
@@ -47693,7 +47693,7 @@ var RADIO_STATIONS = [
     icon: "Mic",
     category: "talk",
     frequency: 432,
-    stream: { url: "https://stream.zeno.fm/0r0xa792kwzuv", type: "icecast", bitrate: 128, format: "mp3" },
+    stream: { url: "https://ice1.somafm.com/sf1033-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
     metadata: { genres: ["sports", "commentary"], bio: "Sports talk", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.9 }
   },
@@ -47851,21 +47851,21 @@ var RADIO_STATIONS = [
     icon: "Gamepad",
     category: "specialty",
     frequency: 432,
-    stream: { url: "https://listen.181fm.com/181-anime_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    stream: { url: "https://ice1.somafm.com/vaporwaves-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
     metadata: { genres: ["anime", "gaming", "j-pop"], bio: "Anime and gaming music", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.95 }
   },
   {
     id: "ch-032",
     numericId: 32,
-    name: "Seasonal & Holiday",
-    description: "Seasonal music and holiday specials",
+    name: "90s R&B",
+    description: "90s R&B hits, New Jack Swing, and slow jams",
     color: "#10B981",
-    icon: "Calendar",
+    icon: "Music",
     category: "specialty",
     frequency: 432,
-    stream: { url: "https://ice1.somafm.com/christmas-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
-    metadata: { genres: ["seasonal", "holiday"], bio: "Seasonal and holiday music", is24x7: true, platformLinks: [] },
+    stream: { url: "https://listen.181fm.com/181-90srnb_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["90s", "r&b", "new jack swing"], bio: "90s R&B classics", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.95 }
   },
   // ─── WELLNESS (5 channels — Solfeggio frequencies) ───────────────
@@ -47891,7 +47891,7 @@ var RADIO_STATIONS = [
     icon: "Heart",
     category: "wellness",
     frequency: 528,
-    stream: { url: "https://ice1.somafm.com/drone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    stream: { url: "https://ice1.somafm.com/dronezone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
     metadata: { genres: ["healing", "solfeggio", "528hz"], bio: "528Hz miracle tone", is24x7: true, platformLinks: [] },
     qumus: { policyId: "wellness-528", autonomyLevel: 0.95 }
   },
@@ -47904,7 +47904,7 @@ var RADIO_STATIONS = [
     icon: "Heart",
     category: "wellness",
     frequency: 639,
-    stream: { url: "https://ice1.somafm.com/spacestation-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    stream: { url: "https://ice1.somafm.com/deepspaceone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
     metadata: { genres: ["healing", "solfeggio", "639hz"], bio: "639Hz connection frequency", is24x7: true, platformLinks: [] },
     qumus: { policyId: "wellness-639", autonomyLevel: 0.95 }
   },
@@ -47951,14 +47951,14 @@ var RADIO_STATIONS = [
   {
     id: "ch-044",
     numericId: 44,
-    name: "History Channel",
-    description: "Historical documentaries and stories",
+    name: "Classic Hip-Hop",
+    description: "Golden era hip-hop, 90s rap, and classic beats",
     color: "#92400E",
-    icon: "BookOpen",
+    icon: "Music",
     category: "education",
     frequency: 432,
-    stream: { url: "https://ice1.somafm.com/metal-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
-    metadata: { genres: ["history", "documentary"], bio: "History and stories", is24x7: true, platformLinks: [] },
+    stream: { url: "https://ice1.somafm.com/7soul-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["classic hip-hop", "90s rap", "golden era"], bio: "Classic hip-hop", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.9 }
   },
   {
@@ -47977,14 +47977,14 @@ var RADIO_STATIONS = [
   {
     id: "ch-046",
     numericId: 46,
-    name: "Language Lab",
-    description: "Language learning and multilingual content",
+    name: "R&B Slow Jams",
+    description: "R&B slow jams, love songs, and quiet storm",
     color: "#059669",
-    icon: "BookOpen",
-    category: "education",
+    icon: "Music",
+    category: "music",
     frequency: 432,
-    stream: { url: "https://ice1.somafm.com/sonicuniverse-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
-    metadata: { genres: ["language", "multilingual"], bio: "Language learning", is24x7: true, platformLinks: [] },
+    stream: { url: "https://listen.181fm.com/181-rnb_128k.mp3", type: "shoutcast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["r&b", "slow jams", "love songs"], bio: "R&B slow jams", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.9 }
   },
   // ─── ENTERTAINMENT (5 channels) ──────────────────────────────────
@@ -48030,14 +48030,14 @@ var RADIO_STATIONS = [
   {
     id: "ch-050",
     numericId: 50,
-    name: "Kids Zone",
-    description: "Children's programming, stories, and music",
+    name: "90s Hip-Hop",
+    description: "90s hip-hop, East Coast, West Coast, and underground",
     color: "#22C55E",
-    icon: "Star",
+    icon: "Music",
     category: "entertainment",
     frequency: 432,
-    stream: { url: "https://ice1.somafm.com/christmas-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
-    metadata: { genres: ["kids", "children", "family"], bio: "Kids zone", is24x7: true, platformLinks: [] },
+    stream: { url: "https://ice1.somafm.com/beatblender-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["90s hip-hop", "east coast", "west coast"], bio: "90s hip-hop", is24x7: true, platformLinks: [] },
     qumus: { autonomyLevel: 0.9 }
   },
   {
@@ -48096,15 +48096,15 @@ var RADIO_STATIONS = [
   {
     id: "ch-038",
     numericId: 38,
-    name: "Meditation & Yoga",
-    description: "Guided meditation, yoga sessions, and mindfulness",
+    name: "2000s Hits",
+    description: "2000s pop, R&B, and hip-hop hits",
     color: "#6366F1",
-    icon: "Heart",
-    category: "community",
+    icon: "Music",
+    category: "music",
     frequency: 432,
-    stream: { url: "https://ice1.somafm.com/dronezone-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
-    metadata: { genres: ["meditation", "yoga", "mindfulness"], bio: "Meditation and yoga", is24x7: true, platformLinks: [] },
-    qumus: { policyId: "wellness-meditation", autonomyLevel: 0.95 }
+    stream: { url: "https://ice1.somafm.com/poptron-128-mp3", type: "icecast", bitrate: 128, format: "mp3" },
+    metadata: { genres: ["2000s", "pop", "r&b", "hip-hop"], bio: "2000s hits", is24x7: true, platformLinks: [] },
+    qumus: { autonomyLevel: 0.95 }
   }
 ];
 function getChannelByNumericId(numericId) {
