@@ -592,7 +592,7 @@ export const conferenceRouter = router({
     // Create permanent test conference
     await db.execute(sql`
       INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, status, is_recurring, recurrence_pattern, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
-      VALUES ('RRB Conference Test Room', 'Permanent test conference room for the Canryn Production ecosystem. Always available for testing, demos, and walk-throughs. Powered by QUMUS autonomous orchestration.', 'meeting', 'zoom', 1, 'QUMUS System', 'rrb-TESTROOM001', ${process.env.VITE_ZOOM_URL || 'https://us06web.zoom.us/j/82026499318?pwd=QlaG26b1nnkvuHTX2dgTDaY583luUm.1'}, NULL, 480, 1000, 'live', false, NULL, true, true, 0, 'none', NOW(), NOW())
+      VALUES ('RRB Conference Test Room', 'Permanent test conference room for the Canryn Production ecosystem. Always available for testing, demos, and walk-throughs. Powered by QUMUS autonomous orchestration.', 'meeting', 'zoom', 1, 'QUMUS System', 'rrb-TESTROOM001', ${process.env.VITE_ZOOM_URL || 'https://us05web.zoom.us/j/8502225524'}, NULL, 480, 1000, 'live', false, NULL, true, true, 0, 'none', NOW(), NOW())
     `);
     const [result] = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
     const conferenceId = (result as any)[0]?.id;

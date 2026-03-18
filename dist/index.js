@@ -4938,208 +4938,6 @@ var init_storage = __esm({
   }
 });
 
-// server/socialMediaPublisher.ts
-var socialMediaPublisher_exports = {};
-__export(socialMediaPublisher_exports, {
-  checkAndPublishScheduledPosts: () => checkAndPublishScheduledPosts,
-  startSocialMediaPublisher: () => startSocialMediaPublisher,
-  stopSocialMediaPublisher: () => stopSocialMediaPublisher
-});
-import crypto2 from "crypto";
-import https from "https";
-function getTwitterOAuthHeader(method, url, params2 = {}) {
-  const apiKey = process.env.TWITTER_API_KEY || "";
-  const apiSecret = process.env.TWITTER_API_SECRET || "";
-  const accessToken = process.env.TWITTER_ACCESS_TOKEN || "";
-  const accessTokenSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET || "";
-  const oauthParams = {
-    oauth_consumer_key: apiKey,
-    oauth_nonce: crypto2.randomBytes(16).toString("hex"),
-    oauth_signature_method: "HMAC-SHA1",
-    oauth_timestamp: Math.floor(Date.now() / 1e3).toString(),
-    oauth_token: accessToken,
-    oauth_version: "1.0"
-  };
-  const allParams = { ...oauthParams, ...params2 };
-  const sortedParams = Object.keys(allParams).sort().map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(allParams[k])}`).join("&");
-  const signatureBase = `${method.toUpperCase()}&${encodeURIComponent(url)}&${encodeURIComponent(sortedParams)}`;
-  const signingKey = `${encodeURIComponent(apiSecret)}&${encodeURIComponent(accessTokenSecret)}`;
-  const signature = crypto2.createHmac("sha1", signingKey).update(signatureBase).digest("base64");
-  oauthParams["oauth_signature"] = signature;
-  const authHeader = "OAuth " + Object.keys(oauthParams).sort().map((k) => `${encodeURIComponent(k)}="${encodeURIComponent(oauthParams[k])}"`).join(", ");
-  return authHeader;
-}
-async function postToTwitter(content) {
-  const apiKey = process.env.TWITTER_API_KEY;
-  if (!apiKey) {
-    return { success: false, error: "Twitter API keys not configured" };
-  }
-  const url = "https://api.twitter.com/2/tweets";
-  const body = JSON.stringify({ text: content });
-  const authHeader = getTwitterOAuthHeader("POST", url);
-  return new Promise((resolve) => {
-    const req = https.request(url, {
-      method: "POST",
-      headers: {
-        "Authorization": authHeader,
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(body)
-      }
-    }, (res) => {
-      let data = "";
-      res.on("data", (chunk) => data += chunk);
-      res.on("end", () => {
-        try {
-          const parsed = JSON.parse(data);
-          if (res.statusCode === 201 && parsed.data?.id) {
-            console.log(`[QUMUS Social] Tweet posted: ${parsed.data.id}`);
-            resolve({ success: true, tweetId: parsed.data.id });
-          } else {
-            console.error(`[QUMUS Social] Twitter error ${res.statusCode}:`, data);
-            resolve({ success: false, error: `Twitter API ${res.statusCode}: ${parsed.detail || parsed.title || data}` });
-          }
-        } catch {
-          resolve({ success: false, error: `Twitter response parse error: ${data.substring(0, 200)}` });
-        }
-      });
-    });
-    req.on("error", (err) => resolve({ success: false, error: err.message }));
-    req.write(body);
-    req.end();
-  });
-}
-async function postToDiscord(content, webhookUrl) {
-  const url = webhookUrl || process.env.DISCORD_WEBHOOK_URL;
-  if (!url || !url.includes("discord.com/api/webhooks")) {
-    console.log("[QUMUS Social] Discord: No webhook URL configured, logging post for manual publishing");
-    return { success: true, error: "No webhook \u2014 logged for manual publish" };
-  }
-  const body = JSON.stringify({
-    content,
-    username: "QUMUS Campaign Bot",
-    avatar_url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/valanna-avatar-mYpqZPJmy73yGwB7kFmCe9.webp"
-  });
-  return new Promise((resolve) => {
-    const parsedUrl = new URL(url);
-    const req = https.request({
-      hostname: parsedUrl.hostname,
-      path: parsedUrl.pathname + parsedUrl.search,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(body)
-      }
-    }, (res) => {
-      let data = "";
-      res.on("data", (chunk) => data += chunk);
-      res.on("end", () => {
-        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
-          console.log("[QUMUS Social] Discord message posted");
-          resolve({ success: true });
-        } else {
-          console.error(`[QUMUS Social] Discord error ${res.statusCode}:`, data);
-          resolve({ success: false, error: `Discord API ${res.statusCode}` });
-        }
-      });
-    });
-    req.on("error", (err) => resolve({ success: false, error: err.message }));
-    req.write(body);
-    req.end();
-  });
-}
-async function postToInstagram(content) {
-  console.log("[QUMUS Social] Instagram: Post queued for manual publishing (Meta Business API required)");
-  console.log(`[QUMUS Social] Instagram content: ${content.substring(0, 100)}...`);
-  return { success: true, error: "Queued for manual publish \u2014 Meta Business API setup required" };
-}
-async function checkAndPublishScheduledPosts() {
-  const results = [];
-  try {
-    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-    const { socialMediaPosts: socialMediaPosts2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
-    const { eq: eq34, and: and23, lte: lte4 } = await import("drizzle-orm");
-    const db2 = await getDb5();
-    const now = Date.now();
-    const duePosts = await db2.select().from(socialMediaPosts2).where(
-      and23(
-        eq34(socialMediaPosts2.status, "scheduled"),
-        lte4(socialMediaPosts2.scheduledAt, now)
-      )
-    );
-    if (duePosts.length === 0) return results;
-    console.log(`[QUMUS Social] Found ${duePosts.length} posts due for publishing`);
-    for (const post of duePosts) {
-      let result2 = { success: false };
-      switch (post.platform) {
-        case "twitter":
-          result2 = await postToTwitter(post.content);
-          break;
-        case "discord": {
-          const { systemConfig: systemConfig2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
-          const { eq: eq210 } = await import("drizzle-orm");
-          const webhookRows = await db2.select().from(systemConfig2).where(eq210(systemConfig2.configKey, "discord_webhook_url"));
-          const dbWebhookUrl = webhookRows[0]?.configValue || void 0;
-          result2 = await postToDiscord(post.content, dbWebhookUrl);
-          break;
-        }
-        case "instagram":
-          result2 = await postToInstagram(post.content);
-          break;
-        case "facebook":
-        case "tiktok":
-        case "youtube":
-          console.log(`[QUMUS Social] ${post.platform}: Platform not yet integrated, logging for manual publish`);
-          result2 = { success: true, error: `${post.platform} not yet integrated \u2014 logged for manual publish` };
-          break;
-      }
-      const newStatus = result2.success ? "published" : "failed";
-      await db2.update(socialMediaPosts2).set({
-        status: newStatus,
-        publishedAt: result2.success ? Date.now() : void 0,
-        updatedAt: Date.now()
-      }).where(eq34(socialMediaPosts2.id, post.id));
-      results.push({
-        postId: post.id,
-        platform: post.platform,
-        success: result2.success,
-        error: result2.error,
-        externalId: result2.tweetId
-      });
-      console.log(`[QUMUS Social] ${post.platform} post #${post.id}: ${newStatus}${result2.error ? ` (${result2.error})` : ""}`);
-    }
-  } catch (error) {
-    console.error("[QUMUS Social] Auto-publish error:", error);
-  }
-  return results;
-}
-function startSocialMediaPublisher() {
-  console.log("[QUMUS Social] Social media auto-publisher started (checks every 5 minutes)");
-  checkAndPublishScheduledPosts().then((results) => {
-    if (results.length > 0) {
-      console.log(`[QUMUS Social] Initial check: ${results.length} posts processed`);
-    }
-  });
-  publishInterval = setInterval(async () => {
-    const results = await checkAndPublishScheduledPosts();
-    if (results.length > 0) {
-      console.log(`[QUMUS Social] Periodic check: ${results.length} posts processed`);
-    }
-  }, 5 * 60 * 1e3);
-}
-function stopSocialMediaPublisher() {
-  if (publishInterval) {
-    clearInterval(publishInterval);
-    publishInterval = null;
-    console.log("[QUMUS Social] Social media auto-publisher stopped");
-  }
-}
-var publishInterval;
-var init_socialMediaPublisher = __esm({
-  "server/socialMediaPublisher.ts"() {
-    publishInterval = null;
-  }
-});
-
 // server/qumus-orchestration.ts
 var qumus_orchestration_exports = {};
 __export(qumus_orchestration_exports, {
@@ -5560,6 +5358,328 @@ var init_qumus_orchestration = __esm({
         return action;
       }
     };
+  }
+});
+
+// server/socialMediaPublisher.ts
+var socialMediaPublisher_exports = {};
+__export(socialMediaPublisher_exports, {
+  checkAndPublishScheduledPosts: () => checkAndPublishScheduledPosts,
+  getCredentialStatuses: () => getCredentialStatuses,
+  retryFailedPosts: () => retryFailedPosts,
+  startSocialMediaPublisher: () => startSocialMediaPublisher,
+  stopSocialMediaPublisher: () => stopSocialMediaPublisher
+});
+import crypto2 from "crypto";
+import https from "https";
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+function getCredentialStatuses() {
+  return { ...credentialCache };
+}
+function validateTwitterCredentials() {
+  const keys = {
+    TWITTER_API_KEY: process.env.TWITTER_API_KEY,
+    TWITTER_API_SECRET: process.env.TWITTER_API_SECRET,
+    TWITTER_ACCESS_TOKEN: process.env.TWITTER_ACCESS_TOKEN,
+    TWITTER_ACCESS_TOKEN_SECRET: process.env.TWITTER_ACCESS_TOKEN_SECRET
+  };
+  const missing = Object.entries(keys).filter(([, v]) => !v).map(([k]) => k);
+  return { configured: missing.length === 0, missingKeys: missing };
+}
+function getTwitterOAuthHeader(method, url, params2 = {}) {
+  const apiKey = process.env.TWITTER_API_KEY || "";
+  const apiSecret = process.env.TWITTER_API_SECRET || "";
+  const accessToken = process.env.TWITTER_ACCESS_TOKEN || "";
+  const accessTokenSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET || "";
+  const oauthParams = {
+    oauth_consumer_key: apiKey,
+    oauth_nonce: crypto2.randomBytes(16).toString("hex"),
+    oauth_signature_method: "HMAC-SHA1",
+    oauth_timestamp: Math.floor(Date.now() / 1e3).toString(),
+    oauth_token: accessToken,
+    oauth_version: "1.0"
+  };
+  const allParams = { ...oauthParams, ...params2 };
+  const sortedParams = Object.keys(allParams).sort().map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(allParams[k])}`).join("&");
+  const signatureBase = `${method.toUpperCase()}&${encodeURIComponent(url)}&${encodeURIComponent(sortedParams)}`;
+  const signingKey = `${encodeURIComponent(apiSecret)}&${encodeURIComponent(accessTokenSecret)}`;
+  const signature = crypto2.createHmac("sha1", signingKey).update(signatureBase).digest("base64");
+  oauthParams["oauth_signature"] = signature;
+  const authHeader = "OAuth " + Object.keys(oauthParams).sort().map((k) => `${encodeURIComponent(k)}="${encodeURIComponent(oauthParams[k])}"`).join(", ");
+  return authHeader;
+}
+async function postToTwitter(content, attempt = 1) {
+  const { configured, missingKeys } = validateTwitterCredentials();
+  if (!configured) {
+    const error = `Twitter credentials missing: ${missingKeys.join(", ")}. Configure in Settings \u2192 Secrets.`;
+    credentialCache.twitter = { platform: "twitter", configured: false, valid: false, error, lastChecked: Date.now() };
+    return { success: false, error, retryable: false };
+  }
+  const url = "https://api.twitter.com/2/tweets";
+  const body = JSON.stringify({ text: content });
+  const authHeader = getTwitterOAuthHeader("POST", url);
+  return new Promise((resolve) => {
+    const req = https.request(url, {
+      method: "POST",
+      headers: {
+        "Authorization": authHeader,
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body)
+      },
+      timeout: 15e3
+    }, (res) => {
+      let data = "";
+      res.on("data", (chunk) => data += chunk);
+      res.on("end", () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (res.statusCode === 201 && parsed.data?.id) {
+            console.log(`[QUMUS Social] Tweet posted: ${parsed.data.id} (attempt ${attempt})`);
+            credentialCache.twitter = { platform: "twitter", configured: true, valid: true, lastChecked: Date.now() };
+            resolve({ success: true, tweetId: parsed.data.id });
+          } else if (res.statusCode === 401) {
+            const error = "Twitter OAuth 401: Access tokens expired or invalid. Regenerate at developer.twitter.com \u2192 Keys & Tokens \u2192 Regenerate, then update in Settings \u2192 Secrets.";
+            console.error(`[QUMUS Social] ${error}`);
+            credentialCache.twitter = { platform: "twitter", configured: true, valid: false, error, lastChecked: Date.now() };
+            resolve({ success: false, error, retryable: false });
+          } else if (res.statusCode === 403) {
+            const error = `Twitter 403 Forbidden: ${parsed.detail || "App permissions may need updating. Check developer.twitter.com \u2192 App Settings \u2192 User authentication settings \u2192 ensure Read and Write is enabled."}`;
+            console.error(`[QUMUS Social] ${error}`);
+            credentialCache.twitter = { platform: "twitter", configured: true, valid: false, error, lastChecked: Date.now() };
+            resolve({ success: false, error, retryable: false });
+          } else if (res.statusCode === 429) {
+            const error = "Twitter 429: Rate limited. Will retry automatically.";
+            console.warn(`[QUMUS Social] ${error}`);
+            resolve({ success: false, error, retryable: true });
+          } else if (res.statusCode && res.statusCode >= 500) {
+            const error = `Twitter server error ${res.statusCode}. Will retry.`;
+            console.warn(`[QUMUS Social] ${error}`);
+            resolve({ success: false, error, retryable: true });
+          } else {
+            const error = `Twitter API ${res.statusCode}: ${parsed.detail || parsed.title || JSON.stringify(parsed).substring(0, 200)}`;
+            console.error(`[QUMUS Social] ${error}`);
+            resolve({ success: false, error, retryable: res.statusCode !== void 0 && res.statusCode >= 500 });
+          }
+        } catch {
+          resolve({ success: false, error: `Twitter response parse error: ${data.substring(0, 200)}`, retryable: true });
+        }
+      });
+    });
+    req.on("timeout", () => {
+      req.destroy();
+      resolve({ success: false, error: "Twitter request timeout (15s)", retryable: true });
+    });
+    req.on("error", (err) => resolve({ success: false, error: `Twitter network error: ${err.message}`, retryable: true }));
+    req.write(body);
+    req.end();
+  });
+}
+async function postToDiscord(content, webhookUrl) {
+  const url = webhookUrl || process.env.DISCORD_WEBHOOK_URL;
+  if (!url || !url.includes("discord.com/api/webhooks")) {
+    console.log("[QUMUS Social] Discord: No webhook URL configured, logging post for manual publishing");
+    credentialCache.discord = { platform: "discord", configured: false, valid: false, error: "No webhook URL configured", lastChecked: Date.now() };
+    return { success: true, error: "No webhook \u2014 logged for manual publish", retryable: false };
+  }
+  const body = JSON.stringify({
+    content,
+    username: "QUMUS Campaign Bot",
+    avatar_url: "https://d2xsxph8kpxj0f.cloudfront.net/310519663286151344/eSHiAmKDzW4pqcyH7Ttb7c/valanna-avatar-mYpqZPJmy73yGwB7kFmCe9.webp"
+  });
+  return new Promise((resolve) => {
+    const parsedUrl = new URL(url);
+    const req = https.request({
+      hostname: parsedUrl.hostname,
+      path: parsedUrl.pathname + parsedUrl.search,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body)
+      },
+      timeout: 1e4
+    }, (res) => {
+      let data = "";
+      res.on("data", (chunk) => data += chunk);
+      res.on("end", () => {
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+          console.log("[QUMUS Social] Discord message posted");
+          credentialCache.discord = { platform: "discord", configured: true, valid: true, lastChecked: Date.now() };
+          resolve({ success: true });
+        } else if (res.statusCode === 429) {
+          resolve({ success: false, error: "Discord rate limited", retryable: true });
+        } else {
+          console.error(`[QUMUS Social] Discord error ${res.statusCode}:`, data);
+          resolve({ success: false, error: `Discord API ${res.statusCode}`, retryable: res.statusCode !== void 0 && res.statusCode >= 500 });
+        }
+      });
+    });
+    req.on("timeout", () => {
+      req.destroy();
+      resolve({ success: false, error: "Discord timeout", retryable: true });
+    });
+    req.on("error", (err) => resolve({ success: false, error: err.message, retryable: true }));
+    req.write(body);
+    req.end();
+  });
+}
+async function postToInstagram(content) {
+  console.log("[QUMUS Social] Instagram: Post queued for manual publishing (Meta Business API required)");
+  console.log(`[QUMUS Social] Instagram content: ${content.substring(0, 100)}...`);
+  credentialCache.instagram = { platform: "instagram", configured: false, valid: false, error: "Meta Business API setup required", lastChecked: Date.now() };
+  return { success: true, error: "Queued for manual publish \u2014 Meta Business API setup required", retryable: false };
+}
+async function publishWithRetry(platform, publishFn) {
+  let lastError = "";
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const result2 = await publishFn(attempt);
+    if (result2.success) return result2;
+    lastError = result2.error || "Unknown error";
+    if (result2.retryable === false) {
+      console.log(`[QUMUS Social] ${platform}: Non-retryable error, skipping retries`);
+      return result2;
+    }
+    if (attempt < MAX_RETRIES) {
+      const delay = BASE_DELAY_MS * Math.pow(2, attempt - 1);
+      console.log(`[QUMUS Social] ${platform}: Retry ${attempt}/${MAX_RETRIES} in ${delay}ms...`);
+      await sleep(delay);
+    }
+  }
+  return { success: false, error: `Failed after ${MAX_RETRIES} attempts: ${lastError}` };
+}
+async function checkAndPublishScheduledPosts() {
+  const results = [];
+  try {
+    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+    const { socialMediaPosts: socialMediaPosts2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
+    const { eq: eq34, and: and23, lte: lte4 } = await import("drizzle-orm");
+    const db2 = await getDb5();
+    const now = Date.now();
+    const duePosts = await db2.select().from(socialMediaPosts2).where(
+      and23(
+        eq34(socialMediaPosts2.status, "scheduled"),
+        lte4(socialMediaPosts2.scheduledAt, now)
+      )
+    );
+    if (duePosts.length === 0) return results;
+    console.log(`[QUMUS Social] Found ${duePosts.length} posts due for publishing`);
+    for (const post of duePosts) {
+      let result2 = { success: false };
+      switch (post.platform) {
+        case "twitter":
+          result2 = await publishWithRetry("twitter", (attempt) => postToTwitter(post.content, attempt));
+          break;
+        case "discord": {
+          const { systemConfig: systemConfig2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
+          const { eq: eq210 } = await import("drizzle-orm");
+          const webhookRows = await db2.select().from(systemConfig2).where(eq210(systemConfig2.configKey, "discord_webhook_url"));
+          const dbWebhookUrl = webhookRows[0]?.configValue || void 0;
+          result2 = await publishWithRetry("discord", () => postToDiscord(post.content, dbWebhookUrl));
+          break;
+        }
+        case "instagram":
+          result2 = await postToInstagram(post.content);
+          break;
+        case "facebook":
+        case "tiktok":
+        case "youtube":
+          console.log(`[QUMUS Social] ${post.platform}: Platform API not yet integrated, marking as published (manual publish)`);
+          result2 = { success: true, error: `${post.platform} API not yet integrated \u2014 logged for manual publish` };
+          break;
+      }
+      const newStatus = result2.success ? "published" : "failed";
+      await db2.update(socialMediaPosts2).set({
+        status: newStatus,
+        publishedAt: result2.success ? Date.now() : void 0,
+        updatedAt: Date.now()
+      }).where(eq34(socialMediaPosts2.id, post.id));
+      results.push({
+        postId: post.id,
+        platform: post.platform,
+        success: result2.success,
+        error: result2.error,
+        externalId: result2.tweetId
+      });
+      console.log(`[QUMUS Social] ${post.platform} post #${post.id}: ${newStatus}${result2.error ? ` (${result2.error})` : ""}`);
+    }
+    try {
+      const { qumusEngine: qumusEngine3 } = await Promise.resolve().then(() => (init_qumus_orchestration(), qumus_orchestration_exports));
+      const succeeded = results.filter((r) => r.success).length;
+      const failed = results.filter((r) => !r.success).length;
+      await qumusEngine3.logDecision({
+        policyId: "social_media_management",
+        action: "auto_publish_batch",
+        confidence: failed === 0 ? 0.95 : 0.6,
+        reasoning: `Auto-published ${succeeded}/${results.length} posts. ${failed > 0 ? `${failed} failed: ${results.filter((r) => !r.success).map((r) => `${r.platform}(${r.error?.substring(0, 50)})`).join(", ")}` : "All succeeded."}`,
+        metadata: { succeeded, failed, total: results.length }
+      });
+    } catch (e) {
+    }
+  } catch (error) {
+    console.error("[QUMUS Social] Auto-publish error:", error);
+  }
+  return results;
+}
+async function retryFailedPosts() {
+  const results = [];
+  try {
+    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+    const { socialMediaPosts: socialMediaPosts2 } = await Promise.resolve().then(() => (init_schema(), schema_exports));
+    const { eq: eq34 } = await import("drizzle-orm");
+    const db2 = await getDb5();
+    const failedPosts = await db2.select().from(socialMediaPosts2).where(eq34(socialMediaPosts2.status, "failed"));
+    if (failedPosts.length === 0) {
+      console.log("[QUMUS Social] No failed posts to retry");
+      return results;
+    }
+    console.log(`[QUMUS Social] Retrying ${failedPosts.length} failed posts`);
+    for (const post of failedPosts) {
+      await db2.update(socialMediaPosts2).set({
+        status: "scheduled",
+        scheduledAt: Date.now(),
+        // Schedule for now
+        updatedAt: Date.now()
+      }).where(eq34(socialMediaPosts2.id, post.id));
+    }
+    return await checkAndPublishScheduledPosts();
+  } catch (error) {
+    console.error("[QUMUS Social] Retry failed posts error:", error);
+    return results;
+  }
+}
+function startSocialMediaPublisher() {
+  console.log("[QUMUS Social] Social media auto-publisher started (checks every 5 minutes)");
+  console.log("[QUMUS Social] Credential check:", JSON.stringify({
+    twitter: validateTwitterCredentials().configured ? "configured" : `missing: ${validateTwitterCredentials().missingKeys.join(", ")}`,
+    discord: process.env.DISCORD_WEBHOOK_URL ? "configured" : "not configured"
+  }));
+  checkAndPublishScheduledPosts().then((results) => {
+    if (results.length > 0) {
+      console.log(`[QUMUS Social] Initial check: ${results.length} posts processed`);
+    }
+  });
+  publishInterval = setInterval(async () => {
+    const results = await checkAndPublishScheduledPosts();
+    if (results.length > 0) {
+      console.log(`[QUMUS Social] Periodic check: ${results.length} posts processed`);
+    }
+  }, 5 * 60 * 1e3);
+}
+function stopSocialMediaPublisher() {
+  if (publishInterval) {
+    clearInterval(publishInterval);
+    publishInterval = null;
+    console.log("[QUMUS Social] Social media auto-publisher stopped");
+  }
+}
+var MAX_RETRIES, BASE_DELAY_MS, credentialCache, publishInterval;
+var init_socialMediaPublisher = __esm({
+  "server/socialMediaPublisher.ts"() {
+    MAX_RETRIES = 3;
+    BASE_DELAY_MS = 2e3;
+    credentialCache = {};
+    publishInterval = null;
   }
 });
 
@@ -8405,328 +8525,6 @@ All systems are operational and monitoring is active.
       }
     };
     activationInstance = null;
-  }
-});
-
-// server/services/socialMediaAPIIntegration.ts
-var socialMediaAPIIntegration_exports = {};
-__export(socialMediaAPIIntegration_exports, {
-  SocialMediaAPIIntegration: () => SocialMediaAPIIntegration,
-  socialMediaAPIIntegration: () => socialMediaAPIIntegration
-});
-import axios5 from "axios";
-var SocialMediaAPIIntegration, socialMediaAPIIntegration;
-var init_socialMediaAPIIntegration = __esm({
-  "server/services/socialMediaAPIIntegration.ts"() {
-    init_db();
-    SocialMediaAPIIntegration = class {
-      twitterClient;
-      facebookClient;
-      instagramClient;
-      tiktokClient;
-      /**
-       * Initialize Twitter API client
-       */
-      async initializeTwitter(accessToken) {
-        try {
-          this.twitterClient = axios5.create({
-            baseURL: "https://api.twitter.com/2",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json"
-            }
-          });
-          await this.twitterClient.get("/users/me");
-          console.log("[Twitter] \u2713 API client initialized");
-        } catch (error) {
-          console.error("[Twitter] Failed to initialize API client:", error);
-          throw error;
-        }
-      }
-      /**
-       * Initialize Facebook API client
-       */
-      async initializeFacebook(accessToken) {
-        try {
-          this.facebookClient = axios5.create({
-            baseURL: "https://graph.facebook.com/v18.0",
-            params: {
-              access_token: accessToken
-            }
-          });
-          await this.facebookClient.get("/me");
-          console.log("[Facebook] \u2713 API client initialized");
-        } catch (error) {
-          console.error("[Facebook] Failed to initialize API client:", error);
-          throw error;
-        }
-      }
-      /**
-       * Initialize Instagram API client
-       */
-      async initializeInstagram(accessToken) {
-        try {
-          this.instagramClient = axios5.create({
-            baseURL: "https://graph.instagram.com/v18.0",
-            params: {
-              access_token: accessToken
-            }
-          });
-          await this.instagramClient.get("/me");
-          console.log("[Instagram] \u2713 API client initialized");
-        } catch (error) {
-          console.error("[Instagram] Failed to initialize API client:", error);
-          throw error;
-        }
-      }
-      /**
-       * Initialize TikTok API client
-       */
-      async initializeTikTok(accessToken) {
-        try {
-          this.tiktokClient = axios5.create({
-            baseURL: "https://open.tiktokapis.com/v1",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json"
-            }
-          });
-          await this.tiktokClient.get("/user/info/");
-          console.log("[TikTok] \u2713 API client initialized");
-        } catch (error) {
-          console.error("[TikTok] Failed to initialize API client:", error);
-          throw error;
-        }
-      }
-      /**
-       * Post to Twitter
-       */
-      async postToTwitter(content, mediaUrls) {
-        try {
-          if (!this.twitterClient) {
-            throw new Error("Twitter client not initialized");
-          }
-          const payload = {
-            text: content
-          };
-          if (mediaUrls && mediaUrls.length > 0) {
-            const mediaIds = await Promise.all(
-              mediaUrls.map((url) => this.uploadTwitterMedia(url))
-            );
-            payload.media = { media_ids: mediaIds };
-          }
-          const response = await this.twitterClient.post("/tweets", payload);
-          return {
-            platform: "twitter",
-            post_id: response.data.data.id,
-            url: `https://twitter.com/i/web/status/${response.data.data.id}`,
-            created_at: Date.now()
-          };
-        } catch (error) {
-          console.error("[Twitter] Failed to post:", error);
-          throw error;
-        }
-      }
-      /**
-       * Upload media to Twitter
-       */
-      async uploadTwitterMedia(mediaUrl) {
-        try {
-          if (!this.twitterClient) {
-            throw new Error("Twitter client not initialized");
-          }
-          const mediaResponse = await axios5.get(mediaUrl, {
-            responseType: "arraybuffer"
-          });
-          const mediaData = Buffer.from(mediaResponse.data).toString("base64");
-          const uploadResponse = await this.twitterClient.post("/tweets/search/stream", {
-            media_data: mediaData
-          });
-          return uploadResponse.data.media.media_id_string;
-        } catch (error) {
-          console.error("[Twitter] Failed to upload media:", error);
-          throw error;
-        }
-      }
-      /**
-       * Post to Facebook
-       */
-      async postToFacebook(pageId, content, mediaUrl) {
-        try {
-          if (!this.facebookClient) {
-            throw new Error("Facebook client not initialized");
-          }
-          const payload = {
-            message: content
-          };
-          if (mediaUrl) {
-            payload.picture = mediaUrl;
-          }
-          const response = await this.facebookClient.post(`/${pageId}/feed`, payload);
-          return {
-            platform: "facebook",
-            post_id: response.data.id,
-            url: `https://facebook.com/${response.data.id}`,
-            created_at: Date.now()
-          };
-        } catch (error) {
-          console.error("[Facebook] Failed to post:", error);
-          throw error;
-        }
-      }
-      /**
-       * Post to Instagram
-       */
-      async postToInstagram(businessAccountId, content, mediaUrl) {
-        try {
-          if (!this.instagramClient) {
-            throw new Error("Instagram client not initialized");
-          }
-          const containerResponse = await this.instagramClient.post(
-            `/${businessAccountId}/media`,
-            {
-              image_url: mediaUrl,
-              caption: content
-            }
-          );
-          const containerId = containerResponse.data.id;
-          const publishResponse = await this.instagramClient.post(
-            `/${businessAccountId}/media_publish`,
-            {
-              creation_id: containerId
-            }
-          );
-          return {
-            platform: "instagram",
-            post_id: publishResponse.data.id,
-            url: `https://instagram.com/p/${publishResponse.data.id}`,
-            created_at: Date.now()
-          };
-        } catch (error) {
-          console.error("[Instagram] Failed to post:", error);
-          throw error;
-        }
-      }
-      /**
-       * Post to TikTok
-       */
-      async postToTikTok(videoUrl, caption) {
-        try {
-          if (!this.tiktokClient) {
-            throw new Error("TikTok client not initialized");
-          }
-          const response = await this.tiktokClient.post("/video/publish/", {
-            video_url: videoUrl,
-            caption,
-            privacy_level: "PUBLIC"
-          });
-          return {
-            platform: "tiktok",
-            post_id: response.data.data.video_id,
-            url: `https://tiktok.com/@rockinrockinboogie/video/${response.data.data.video_id}`,
-            created_at: Date.now()
-          };
-        } catch (error) {
-          console.error("[TikTok] Failed to post:", error);
-          throw error;
-        }
-      }
-      /**
-       * Get engagement metrics
-       */
-      async getEngagementMetrics(platform, postId) {
-        try {
-          switch (platform) {
-            case "twitter":
-              if (!this.twitterClient) throw new Error("Twitter client not initialized");
-              const tweetResponse = await this.twitterClient.get(`/tweets/${postId}`, {
-                params: {
-                  "tweet.fields": "public_metrics"
-                }
-              });
-              return {
-                likes: tweetResponse.data.data.public_metrics.like_count,
-                retweets: tweetResponse.data.data.public_metrics.retweet_count,
-                replies: tweetResponse.data.data.public_metrics.reply_count
-              };
-            case "facebook":
-              if (!this.facebookClient) throw new Error("Facebook client not initialized");
-              const fbResponse = await this.facebookClient.get(`/${postId}/insights`, {
-                params: {
-                  metric: "engagement,impressions,reach"
-                }
-              });
-              return fbResponse.data.data;
-            case "instagram":
-              if (!this.instagramClient) throw new Error("Instagram client not initialized");
-              const igResponse = await this.instagramClient.get(`/${postId}/insights`, {
-                params: {
-                  metric: "engagement,impressions,reach"
-                }
-              });
-              return igResponse.data.data;
-            case "tiktok":
-              if (!this.tiktokClient) throw new Error("TikTok client not initialized");
-              const ttResponse = await this.tiktokClient.get(`/video/${postId}/analytics/`);
-              return {
-                views: ttResponse.data.data.video_views,
-                likes: ttResponse.data.data.video_likes,
-                shares: ttResponse.data.data.video_shares,
-                comments: ttResponse.data.data.video_comments
-              };
-            default:
-              throw new Error(`Unknown platform: ${platform}`);
-          }
-        } catch (error) {
-          console.error(`[${platform}] Failed to get metrics:`, error);
-          throw error;
-        }
-      }
-      /**
-       * Initialize all API clients from database credentials
-       */
-      async initializeAllClients() {
-        try {
-          const db2 = await getDb();
-          const credentials = await db2.all(
-            "SELECT * FROM social_media_credentials WHERE is_active = 1"
-          );
-          let initialized = 0;
-          let failed = 0;
-          for (const cred of credentials) {
-            try {
-              switch (cred.platform) {
-                case "twitter":
-                  await this.initializeTwitter(cred.access_token);
-                  initialized++;
-                  break;
-                case "facebook":
-                  await this.initializeFacebook(cred.access_token);
-                  initialized++;
-                  break;
-                case "instagram":
-                  await this.initializeInstagram(cred.access_token);
-                  initialized++;
-                  break;
-                case "tiktok":
-                  await this.initializeTikTok(cred.access_token);
-                  initialized++;
-                  break;
-              }
-            } catch (error) {
-              console.error(`[Init] Failed to initialize ${cred.platform}:`, error);
-              failed++;
-            }
-          }
-          console.log(`[Init] API clients initialized: ${initialized} success, ${failed} failed`);
-          return { initialized, failed };
-        } catch (error) {
-          console.error("[Init] Failed to initialize API clients:", error);
-          return { initialized: 0, failed: 0 };
-        }
-      }
-    };
-    socialMediaAPIIntegration = new SocialMediaAPIIntegration();
   }
 });
 
@@ -21242,7 +21040,7 @@ Room: ${conf.room_code}
     }
     await db2.execute(sql11`
       INSERT INTO conferences (title, description, type, platform, host_user_id, host_name, room_code, external_url, scheduled_at, duration_minutes, max_attendees, status, is_recurring, recurrence_pattern, recording_enabled, captions_enabled, actual_attendees, recording_status, created_at, updated_at)
-      VALUES ('RRB Conference Test Room', 'Permanent test conference room for the Canryn Production ecosystem. Always available for testing, demos, and walk-throughs. Powered by QUMUS autonomous orchestration.', 'meeting', 'zoom', 1, 'QUMUS System', 'rrb-TESTROOM001', ${process.env.VITE_ZOOM_URL || "https://us06web.zoom.us/j/82026499318?pwd=QlaG26b1nnkvuHTX2dgTDaY583luUm.1"}, NULL, 480, 1000, 'live', false, NULL, true, true, 0, 'none', NOW(), NOW())
+      VALUES ('RRB Conference Test Room', 'Permanent test conference room for the Canryn Production ecosystem. Always available for testing, demos, and walk-throughs. Powered by QUMUS autonomous orchestration.', 'meeting', 'zoom', 1, 'QUMUS System', 'rrb-TESTROOM001', ${process.env.VITE_ZOOM_URL || "https://us05web.zoom.us/j/8502225524"}, NULL, 480, 1000, 'live', false, NULL, true, true, 0, 'none', NOW(), NOW())
     `);
     const [result2] = await db2.execute(sql11`SELECT LAST_INSERT_ID() as id`);
     const conferenceId = result2[0]?.id;
@@ -45345,7 +45143,7 @@ var socialMediaQueueRouter = router({
     return await rawQuery8(query2, params2);
   }),
   /**
-   * Retry a single failed post
+   * Retry a single failed post — uses the QUMUS publisher with retry logic
    */
   retryPost: protectedProcedure.input(z103.object({ id: z103.number() })).mutation(async ({ input }) => {
     const posts = await rawQuery8("SELECT * FROM social_media_posts WHERE id = ?", [input.id]);
@@ -45356,58 +45154,67 @@ var socialMediaQueueRouter = router({
     if (post.status !== "failed") {
       throw new Error("Only failed posts can be retried");
     }
+    await rawQuery8(
+      "UPDATE social_media_posts SET status = ?, scheduled_at = ?, updated_at = ? WHERE id = ?",
+      ["scheduled", Date.now(), Date.now(), input.id]
+    );
     try {
-      const { SocialMediaAPIIntegration: SocialMediaAPIIntegration2 } = await Promise.resolve().then(() => (init_socialMediaAPIIntegration(), socialMediaAPIIntegration_exports));
-      const api = new SocialMediaAPIIntegration2();
-      if (post.platform === "twitter") {
-        const accessToken = process.env.TWITTER_BEARER_TOKEN || process.env.TWITTER_ACCESS_TOKEN;
-        if (!accessToken) {
-          throw new Error("Twitter credentials not configured. Update in Settings \u2192 Secrets.");
-        }
-        await api.initializeTwitter(accessToken);
-        const result2 = await api.postToTwitter(post.content);
-        await rawQuery8(
-          "UPDATE social_media_posts SET status = ?, published_at = ?, updated_at = ? WHERE id = ?",
-          ["published", Date.now(), Date.now(), input.id]
-        );
-        return { success: true, postId: result2.post_id, url: result2.url };
+      const { checkAndPublishScheduledPosts: checkAndPublishScheduledPosts2 } = await Promise.resolve().then(() => (init_socialMediaPublisher(), socialMediaPublisher_exports));
+      const results = await checkAndPublishScheduledPosts2();
+      const thisResult = results.find((r) => r.postId === input.id);
+      if (thisResult?.success) {
+        return { success: true, message: `${post.platform} post published successfully`, externalId: thisResult.externalId };
+      } else if (thisResult) {
+        return { success: false, message: `Retry failed: ${thisResult.error}` };
       } else {
-        await rawQuery8(
-          "UPDATE social_media_posts SET status = ?, updated_at = ? WHERE id = ?",
-          ["scheduled", Date.now(), input.id]
-        );
-        return { success: true, message: `Post re-scheduled for ${post.platform}` };
+        return { success: true, message: "Post re-scheduled for next publish cycle" };
       }
     } catch (error) {
-      await rawQuery8(
-        "UPDATE social_media_posts SET updated_at = ? WHERE id = ?",
-        [Date.now(), input.id]
-      );
-      throw new Error(`Retry failed: ${error.message}`);
+      return { success: false, message: `Retry error: ${error.message}` };
     }
   }),
   /**
-   * Retry all failed posts
+   * Retry all failed posts — re-schedules and triggers publisher
    */
   retryAllFailed: protectedProcedure.mutation(async () => {
     const failed = await rawQuery8(
       "SELECT id, platform FROM social_media_posts WHERE status = ?",
       ["failed"]
     );
-    let retried = 0;
-    let errors = 0;
+    if (failed.length === 0) {
+      return { retried: 0, errors: 0, total: 0, message: "No failed posts to retry" };
+    }
+    let rescheduled = 0;
     for (const post of failed) {
       try {
         await rawQuery8(
-          "UPDATE social_media_posts SET status = ?, updated_at = ? WHERE id = ?",
-          ["scheduled", Date.now(), post.id]
+          "UPDATE social_media_posts SET status = ?, scheduled_at = ?, updated_at = ? WHERE id = ?",
+          ["scheduled", Date.now(), Date.now(), post.id]
         );
-        retried++;
+        rescheduled++;
       } catch {
-        errors++;
       }
     }
-    return { retried, errors, total: failed.length };
+    try {
+      const { checkAndPublishScheduledPosts: checkAndPublishScheduledPosts2 } = await Promise.resolve().then(() => (init_socialMediaPublisher(), socialMediaPublisher_exports));
+      const results = await checkAndPublishScheduledPosts2();
+      const succeeded = results.filter((r) => r.success).length;
+      const errors = results.filter((r) => !r.success).length;
+      return {
+        retried: succeeded,
+        errors,
+        total: failed.length,
+        message: `${succeeded}/${failed.length} posts published. ${errors > 0 ? `${errors} still failing \u2014 check credential status.` : "All succeeded!"}`,
+        details: results.filter((r) => !r.success).map((r) => ({ platform: r.platform, error: r.error }))
+      };
+    } catch (error) {
+      return {
+        retried: 0,
+        errors: rescheduled,
+        total: failed.length,
+        message: `Re-scheduled ${rescheduled} posts but publisher error: ${error.message}`
+      };
+    }
   }),
   /**
    * Delete a post
@@ -45417,7 +45224,7 @@ var socialMediaQueueRouter = router({
     return { success: true };
   }),
   /**
-   * Validate social media API credentials
+   * Validate social media API credentials — checks all platforms
    */
   validateCredentials: protectedProcedure.query(async () => {
     const results = {};
@@ -45426,27 +45233,74 @@ var socialMediaQueueRouter = router({
     const twitterAccessToken = process.env.TWITTER_ACCESS_TOKEN;
     const twitterAccessSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET;
     const twitterBearer = process.env.TWITTER_BEARER_TOKEN;
-    if (twitterBearer || twitterKey && twitterSecret && twitterAccessToken && twitterAccessSecret) {
+    const twitterConfigured = !!(twitterKey && twitterSecret && twitterAccessToken && twitterAccessSecret);
+    if (twitterConfigured || twitterBearer) {
       try {
-        const axios6 = (await import("axios")).default;
-        const token = twitterBearer || twitterAccessToken;
-        const res = await axios6.get("https://api.twitter.com/2/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-          timeout: 5e3
+        const crypto5 = await import("crypto");
+        const https2 = await import("https");
+        const verifyResult = await new Promise((resolve) => {
+          const url = "https://api.twitter.com/2/users/me";
+          const oauthParams = {
+            oauth_consumer_key: twitterKey || "",
+            oauth_nonce: crypto5.randomBytes(16).toString("hex"),
+            oauth_signature_method: "HMAC-SHA1",
+            oauth_timestamp: Math.floor(Date.now() / 1e3).toString(),
+            oauth_token: twitterAccessToken || "",
+            oauth_version: "1.0"
+          };
+          const sortedParams = Object.keys(oauthParams).sort().map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(oauthParams[k])}`).join("&");
+          const signatureBase = `GET&${encodeURIComponent(url)}&${encodeURIComponent(sortedParams)}`;
+          const signingKey = `${encodeURIComponent(twitterSecret || "")}&${encodeURIComponent(twitterAccessSecret || "")}`;
+          const signature = crypto5.createHmac("sha1", signingKey).update(signatureBase).digest("base64");
+          oauthParams["oauth_signature"] = signature;
+          const authHeader = "OAuth " + Object.keys(oauthParams).sort().map((k) => `${encodeURIComponent(k)}="${encodeURIComponent(oauthParams[k])}"`).join(", ");
+          const req = https2.request(url, {
+            method: "GET",
+            headers: { "Authorization": authHeader },
+            timeout: 8e3
+          }, (res) => {
+            let data = "";
+            res.on("data", (chunk) => data += chunk);
+            res.on("end", () => {
+              if (res.statusCode === 200) {
+                resolve({ valid: true });
+              } else if (res.statusCode === 401) {
+                resolve({ valid: false, error: "OAuth tokens expired or invalid (401). Regenerate at developer.twitter.com \u2192 Keys & Tokens." });
+              } else if (res.statusCode === 403) {
+                resolve({ valid: false, error: "App permissions insufficient (403). Enable Read and Write at developer.twitter.com \u2192 App Settings." });
+              } else {
+                resolve({ valid: false, error: `Twitter API returned ${res.statusCode}` });
+              }
+            });
+          });
+          req.on("timeout", () => {
+            req.destroy();
+            resolve({ valid: false, error: "Connection timeout" });
+          });
+          req.on("error", (err) => resolve({ valid: false, error: `Network error: ${err.message}` }));
+          req.end();
         });
-        results.twitter = { valid: true };
+        results.twitter = { configured: true, ...verifyResult };
       } catch (err) {
-        results.twitter = { valid: false, error: err.response?.status === 401 ? "Invalid credentials (401)" : err.message };
+        results.twitter = { configured: true, valid: false, error: err.message };
       }
     } else {
-      results.twitter = { valid: false, error: "No credentials configured" };
+      const missing = [];
+      if (!twitterKey) missing.push("TWITTER_API_KEY");
+      if (!twitterSecret) missing.push("TWITTER_API_SECRET");
+      if (!twitterAccessToken) missing.push("TWITTER_ACCESS_TOKEN");
+      if (!twitterAccessSecret) missing.push("TWITTER_ACCESS_TOKEN_SECRET");
+      results.twitter = { configured: false, valid: false, error: `Missing: ${missing.join(", ")}` };
     }
+    const discordWebhook = process.env.DISCORD_WEBHOOK_URL;
+    results.discord = discordWebhook && discordWebhook.includes("discord.com/api/webhooks") ? { configured: true, valid: true } : { configured: false, valid: false, error: "No webhook URL configured" };
     const fbToken = process.env.FACEBOOK_ACCESS_TOKEN;
-    results.facebook = fbToken ? { valid: true } : { valid: false, error: "Not configured" };
+    results.facebook = fbToken ? { configured: true, valid: true } : { configured: false, valid: false, error: "Not configured \u2014 requires Meta Business API" };
     const igToken = process.env.INSTAGRAM_ACCESS_TOKEN;
-    results.instagram = igToken ? { valid: true } : { valid: false, error: "Not configured" };
+    results.instagram = igToken ? { configured: true, valid: true } : { configured: false, valid: false, error: "Not configured \u2014 requires Meta Business API" };
     const ytKey = process.env.YOUTUBE_API_KEY;
-    results.youtube = ytKey ? { valid: true } : { valid: false, error: "Not configured" };
+    results.youtube = ytKey ? { configured: true, valid: true } : { configured: false, valid: false, error: "Not configured" };
+    results.tiktok = { configured: false, valid: false, error: "Not configured \u2014 requires TikTok Developer API" };
     return results;
   }),
   /**
@@ -45471,8 +45325,20 @@ var socialMediaQueueRouter = router({
       byPlatform,
       total: stats.reduce((sum2, r) => sum2 + r.count, 0),
       failed: stats.filter((r) => r.status === "failed").reduce((sum2, r) => sum2 + r.count, 0),
-      published: stats.filter((r) => r.status === "published").reduce((sum2, r) => sum2 + r.count, 0)
+      published: stats.filter((r) => r.status === "published").reduce((sum2, r) => sum2 + r.count, 0),
+      scheduled: stats.filter((r) => r.status === "scheduled").reduce((sum2, r) => sum2 + r.count, 0)
     };
+  }),
+  /**
+   * Get credential status from the publisher cache
+   */
+  getCredentialStatus: protectedProcedure.query(async () => {
+    try {
+      const { getCredentialStatuses: getCredentialStatuses2 } = await Promise.resolve().then(() => (init_socialMediaPublisher(), socialMediaPublisher_exports));
+      return getCredentialStatuses2();
+    } catch {
+      return {};
+    }
   })
 });
 

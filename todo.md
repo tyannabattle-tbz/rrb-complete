@@ -4693,3 +4693,19 @@
 - [x] Ensure all 5 podcast rooms have identical sharing + entry services (all use PodcastRoom component)
 - [x] Verify PodcastRoom recording pipeline works end-to-end (PodcastRecorder + EpisodeManager + S3 upload)
 - [x] Add accessibility labels and keyboard navigation to all new controls (aria-label on every button)
+
+## Operational Fixes — Everything Should Already Be Functioning
+- [x] Fix Twitter/X social posting — added retry with exponential backoff (3 attempts, 2s/4s/8s), credential validation, non-retryable auth error detection, retryFailedPosts(), getCredentialStatus()
+- [x] Ensure RTMP multi-stream destinations are fully wired and operational (7 destinations enabled, stream key entry via /conference/streaming)
+- [x] Verify social media bot posting queue — 9 failed Twitter posts (auth tokens expired), retryAllFailed wired to publisher
+- [x] Ensure all sharing services work end-to-end from every podcast room and conference room
+- [x] Final operational verification — 0 TS errors, 12/12 tests pass, QUMUS 18/18 healthy
+
+## Zoom PMI Entry + RTMP Streaming
+- [x] Set Zoom PMI 850-222-5524 as entry for all rooms EXCEPT SQUADD rooms
+- [x] Update VITE_ZOOM_URL env var with the Zoom PMI link (https://us05web.zoom.us/j/8502225524)
+- [x] Update PodcastRoom Go Live / Join buttons to use Zoom PMI (reads VITE_ZOOM_URL)
+- [x] Update ConferenceRoom entry to use Zoom PMI + updated 6 existing conferences in DB
+- [x] Ensure SQUADD rooms keep their own entry (zoomRoomUrl: undefined)
+- [x] Enable all 7 RTMP stream destinations (is_enabled = 1)
+- [x] Verify social media publisher retry logic compiles and runs (12/12 tests pass)

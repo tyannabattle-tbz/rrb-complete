@@ -53,7 +53,8 @@ const SQUADD_PODCAST_CONFIG: PodcastShowConfig = {
   socialLinks: {
     youtube: 'https://youtube.com/@rockinrockinboogie',
   },
-  zoomRoomUrl: import.meta.env.VITE_ZOOM_URL || undefined,
+  // SQUADD rooms use their own entry — NOT the personal Zoom PMI
+  zoomRoomUrl: undefined,
   streamingUrl: 'https://studio.restream.io/enk-osex-pju',
 };
 

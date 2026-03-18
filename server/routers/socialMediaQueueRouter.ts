@@ -44,12 +44,11 @@ export const socialMediaQueueRouter = router({
     }),
 
   /**
-   * Retry a single failed post
+   * Retry a single failed post — uses the QUMUS publisher with retry logic
    */
   retryPost: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      // Get the post
       const posts = await rawQuery('SELECT * FROM social_media_posts WHERE id = ?', [input.id]);
       if (!posts || (posts as any[]).length === 0) {
         throw new Error('Post not found');
@@ -60,46 +59,32 @@ export const socialMediaQueueRouter = router({
         throw new Error('Only failed posts can be retried');
       }
 
-      // Try to post using the social media API integration
+      // Re-schedule for immediate publishing via QUMUS publisher
+      await rawQuery(
+        'UPDATE social_media_posts SET status = ?, scheduled_at = ?, updated_at = ? WHERE id = ?',
+        ['scheduled', Date.now(), Date.now(), input.id]
+      );
+
+      // Trigger the publisher immediately
       try {
-        const { SocialMediaAPIIntegration } = await import('../services/socialMediaAPIIntegration');
-        const api = new SocialMediaAPIIntegration();
-
-        if (post.platform === 'twitter') {
-          const accessToken = process.env.TWITTER_BEARER_TOKEN || process.env.TWITTER_ACCESS_TOKEN;
-          if (!accessToken) {
-            throw new Error('Twitter credentials not configured. Update in Settings → Secrets.');
-          }
-          await api.initializeTwitter(accessToken);
-          const result = await api.postToTwitter(post.content);
-
-          // Update status to published
-          await rawQuery(
-            'UPDATE social_media_posts SET status = ?, published_at = ?, updated_at = ? WHERE id = ?',
-            ['published', Date.now(), Date.now(), input.id]
-          );
-
-          return { success: true, postId: result.post_id, url: result.url };
+        const { checkAndPublishScheduledPosts } = await import('../socialMediaPublisher');
+        const results = await checkAndPublishScheduledPosts();
+        const thisResult = results.find(r => r.postId === input.id);
+        
+        if (thisResult?.success) {
+          return { success: true, message: `${post.platform} post published successfully`, externalId: thisResult.externalId };
+        } else if (thisResult) {
+          return { success: false, message: `Retry failed: ${thisResult.error}` };
         } else {
-          // For other platforms, just mark as scheduled for retry
-          await rawQuery(
-            'UPDATE social_media_posts SET status = ?, updated_at = ? WHERE id = ?',
-            ['scheduled', Date.now(), input.id]
-          );
-          return { success: true, message: `Post re-scheduled for ${post.platform}` };
+          return { success: true, message: 'Post re-scheduled for next publish cycle' };
         }
       } catch (error: any) {
-        // Update with latest error
-        await rawQuery(
-          'UPDATE social_media_posts SET updated_at = ? WHERE id = ?',
-          [Date.now(), input.id]
-        );
-        throw new Error(`Retry failed: ${error.message}`);
+        return { success: false, message: `Retry error: ${error.message}` };
       }
     }),
 
   /**
-   * Retry all failed posts
+   * Retry all failed posts — re-schedules and triggers publisher
    */
   retryAllFailed: protectedProcedure
     .mutation(async () => {
@@ -108,23 +93,46 @@ export const socialMediaQueueRouter = router({
         ['failed']
       ) as any[];
 
-      let retried = 0;
-      let errors = 0;
+      if (failed.length === 0) {
+        return { retried: 0, errors: 0, total: 0, message: 'No failed posts to retry' };
+      }
 
+      // Re-schedule all failed posts for immediate publishing
+      let rescheduled = 0;
       for (const post of failed) {
         try {
-          // Re-schedule failed posts
           await rawQuery(
-            'UPDATE social_media_posts SET status = ?, updated_at = ? WHERE id = ?',
-            ['scheduled', Date.now(), post.id]
+            'UPDATE social_media_posts SET status = ?, scheduled_at = ?, updated_at = ? WHERE id = ?',
+            ['scheduled', Date.now(), Date.now(), post.id]
           );
-          retried++;
+          rescheduled++;
         } catch {
-          errors++;
+          // Skip individual failures
         }
       }
 
-      return { retried, errors, total: failed.length };
+      // Trigger the publisher
+      try {
+        const { checkAndPublishScheduledPosts } = await import('../socialMediaPublisher');
+        const results = await checkAndPublishScheduledPosts();
+        const succeeded = results.filter(r => r.success).length;
+        const errors = results.filter(r => !r.success).length;
+        
+        return {
+          retried: succeeded,
+          errors,
+          total: failed.length,
+          message: `${succeeded}/${failed.length} posts published. ${errors > 0 ? `${errors} still failing — check credential status.` : 'All succeeded!'}`,
+          details: results.filter(r => !r.success).map(r => ({ platform: r.platform, error: r.error })),
+        };
+      } catch (error: any) {
+        return {
+          retried: 0,
+          errors: rescheduled,
+          total: failed.length,
+          message: `Re-scheduled ${rescheduled} posts but publisher error: ${error.message}`,
+        };
+      }
     }),
 
   /**
@@ -138,46 +146,113 @@ export const socialMediaQueueRouter = router({
     }),
 
   /**
-   * Validate social media API credentials
+   * Validate social media API credentials — checks all platforms
    */
   validateCredentials: protectedProcedure
     .query(async () => {
-      const results: Record<string, { valid: boolean; error?: string }> = {};
+      const results: Record<string, { valid: boolean; configured: boolean; error?: string }> = {};
 
-      // Twitter/X
+      // Twitter/X — check all 4 OAuth 1.0a keys
       const twitterKey = process.env.TWITTER_API_KEY;
       const twitterSecret = process.env.TWITTER_API_SECRET;
       const twitterAccessToken = process.env.TWITTER_ACCESS_TOKEN;
       const twitterAccessSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET;
       const twitterBearer = process.env.TWITTER_BEARER_TOKEN;
 
-      if (twitterBearer || (twitterKey && twitterSecret && twitterAccessToken && twitterAccessSecret)) {
+      const twitterConfigured = !!(twitterKey && twitterSecret && twitterAccessToken && twitterAccessSecret);
+      
+      if (twitterConfigured || twitterBearer) {
         try {
-          const axios = (await import('axios')).default;
-          const token = twitterBearer || twitterAccessToken;
-          const res = await axios.get('https://api.twitter.com/2/users/me', {
-            headers: { Authorization: `Bearer ${token}` },
-            timeout: 5000,
+          // Use OAuth 1.0a to verify (same method as the publisher)
+          const crypto = await import('crypto');
+          const https = await import('https');
+          
+          const verifyResult = await new Promise<{ valid: boolean; error?: string }>((resolve) => {
+            const url = 'https://api.twitter.com/2/users/me';
+            
+            // Build OAuth header
+            const oauthParams: Record<string, string> = {
+              oauth_consumer_key: twitterKey || '',
+              oauth_nonce: crypto.randomBytes(16).toString('hex'),
+              oauth_signature_method: 'HMAC-SHA1',
+              oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
+              oauth_token: twitterAccessToken || '',
+              oauth_version: '1.0',
+            };
+            const sortedParams = Object.keys(oauthParams).sort()
+              .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(oauthParams[k])}`)
+              .join('&');
+            const signatureBase = `GET&${encodeURIComponent(url)}&${encodeURIComponent(sortedParams)}`;
+            const signingKey = `${encodeURIComponent(twitterSecret || '')}&${encodeURIComponent(twitterAccessSecret || '')}`;
+            const signature = crypto.createHmac('sha1', signingKey).update(signatureBase).digest('base64');
+            oauthParams['oauth_signature'] = signature;
+            const authHeader = 'OAuth ' + Object.keys(oauthParams).sort()
+              .map(k => `${encodeURIComponent(k)}="${encodeURIComponent(oauthParams[k])}"`)
+              .join(', ');
+
+            const req = https.request(url, {
+              method: 'GET',
+              headers: { 'Authorization': authHeader },
+              timeout: 8000,
+            }, (res) => {
+              let data = '';
+              res.on('data', (chunk: any) => data += chunk);
+              res.on('end', () => {
+                if (res.statusCode === 200) {
+                  resolve({ valid: true });
+                } else if (res.statusCode === 401) {
+                  resolve({ valid: false, error: 'OAuth tokens expired or invalid (401). Regenerate at developer.twitter.com → Keys & Tokens.' });
+                } else if (res.statusCode === 403) {
+                  resolve({ valid: false, error: 'App permissions insufficient (403). Enable Read and Write at developer.twitter.com → App Settings.' });
+                } else {
+                  resolve({ valid: false, error: `Twitter API returned ${res.statusCode}` });
+                }
+              });
+            });
+            req.on('timeout', () => { req.destroy(); resolve({ valid: false, error: 'Connection timeout' }); });
+            req.on('error', (err: any) => resolve({ valid: false, error: `Network error: ${err.message}` }));
+            req.end();
           });
-          results.twitter = { valid: true };
+
+          results.twitter = { configured: true, ...verifyResult };
         } catch (err: any) {
-          results.twitter = { valid: false, error: err.response?.status === 401 ? 'Invalid credentials (401)' : err.message };
+          results.twitter = { configured: true, valid: false, error: err.message };
         }
       } else {
-        results.twitter = { valid: false, error: 'No credentials configured' };
+        const missing = [];
+        if (!twitterKey) missing.push('TWITTER_API_KEY');
+        if (!twitterSecret) missing.push('TWITTER_API_SECRET');
+        if (!twitterAccessToken) missing.push('TWITTER_ACCESS_TOKEN');
+        if (!twitterAccessSecret) missing.push('TWITTER_ACCESS_TOKEN_SECRET');
+        results.twitter = { configured: false, valid: false, error: `Missing: ${missing.join(', ')}` };
       }
+
+      // Discord
+      const discordWebhook = process.env.DISCORD_WEBHOOK_URL;
+      results.discord = discordWebhook && discordWebhook.includes('discord.com/api/webhooks')
+        ? { configured: true, valid: true }
+        : { configured: false, valid: false, error: 'No webhook URL configured' };
 
       // Facebook
       const fbToken = process.env.FACEBOOK_ACCESS_TOKEN;
-      results.facebook = fbToken ? { valid: true } : { valid: false, error: 'Not configured' };
+      results.facebook = fbToken
+        ? { configured: true, valid: true }
+        : { configured: false, valid: false, error: 'Not configured — requires Meta Business API' };
 
       // Instagram
       const igToken = process.env.INSTAGRAM_ACCESS_TOKEN;
-      results.instagram = igToken ? { valid: true } : { valid: false, error: 'Not configured' };
+      results.instagram = igToken
+        ? { configured: true, valid: true }
+        : { configured: false, valid: false, error: 'Not configured — requires Meta Business API' };
 
       // YouTube
       const ytKey = process.env.YOUTUBE_API_KEY;
-      results.youtube = ytKey ? { valid: true } : { valid: false, error: 'Not configured' };
+      results.youtube = ytKey
+        ? { configured: true, valid: true }
+        : { configured: false, valid: false, error: 'Not configured' };
+
+      // TikTok
+      results.tiktok = { configured: false, valid: false, error: 'Not configured — requires TikTok Developer API' };
 
       return results;
     }),
@@ -208,6 +283,20 @@ export const socialMediaQueueRouter = router({
         total: stats.reduce((sum, r) => sum + r.count, 0),
         failed: stats.filter(r => r.status === 'failed').reduce((sum, r) => sum + r.count, 0),
         published: stats.filter(r => r.status === 'published').reduce((sum, r) => sum + r.count, 0),
+        scheduled: stats.filter(r => r.status === 'scheduled').reduce((sum, r) => sum + r.count, 0),
       };
+    }),
+
+  /**
+   * Get credential status from the publisher cache
+   */
+  getCredentialStatus: protectedProcedure
+    .query(async () => {
+      try {
+        const { getCredentialStatuses } = await import('../socialMediaPublisher');
+        return getCredentialStatuses();
+      } catch {
+        return {};
+      }
     }),
 });
