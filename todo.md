@@ -3718,7 +3718,7 @@
 - [ ] Verify conference system end-to-end (create, join, guest join, share, notify)
 - [ ] Verify push notifications operational
 - [ ] Run comprehensive test suite and fix failures
-- [ ] Final system health check before full operation
+- [x] Final system health check: 54/54 streams, 10 scheduled posts, 7 RTMP destinations ready before full operation
 
 ## Critical Fix - Conference Room Connection
 - [x] Fix ConferenceRoom stuck on "Connecting to conference..." on desktop (getRecordingStatus column fix)
@@ -4645,3 +4645,9 @@
 - [x] Add credential validation with 30s auto-refresh polling and Re-check button
 - [x] Add "Credentials Valid - Ready to Retry" quick action banner for instant bulk retry
 - [x] All tests passing (7/7), 0 TS errors, QUMUS 18/18 healthy
+
+## Apply All: Twitter Re-queue, Stream Key UI, Publish Live (March 18, 2026)
+- [x] Re-queue all 9 failed Twitter posts to scheduled status (10 total now scheduled)
+- [x] Enhance stream destination UI with inline edit, "Needs Stream Key" badges, and save controls
+- [x] Verify site live on all 4 domains (200 OK), 7/7 routes, 0 TS errors, QUMUS 18/18
+- [x] Final system health check: 54/54 streams, 10 scheduled posts, 7 RTMP destinations ready

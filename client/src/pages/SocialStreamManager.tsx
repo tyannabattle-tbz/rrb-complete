@@ -41,6 +41,9 @@ export default function SocialStreamManager() {
   const [selectedDests, setSelectedDests] = useState<number[]>([]);
   const [streamTitle, setStreamTitle] = useState('');
   const [isGoingLive, setIsGoingLive] = useState(false);
+  const [editingDest, setEditingDest] = useState<number | null>(null);
+  const [editStreamKey, setEditStreamKey] = useState('');
+  const [editRtmpUrl, setEditRtmpUrl] = useState('');
 
   const utils = trpc.useUtils();
   const { data: platforms } = trpc.socialStream.getPlatformInfo.useQuery();
@@ -61,6 +64,25 @@ export default function SocialStreamManager() {
   const removeMutation = trpc.socialStream.removeDestination.useMutation({
     onSuccess: () => { toast({ title: 'Destination removed' }); utils.socialStream.getDestinations.invalidate(); },
   });
+
+  const updateMutation = trpc.socialStream.updateDestination.useMutation({
+    onSuccess: () => {
+      toast({ title: 'Destination updated', description: 'Stream key saved successfully' });
+      setEditingDest(null); setEditStreamKey(''); setEditRtmpUrl('');
+      utils.socialStream.getDestinations.invalidate();
+    },
+    onError: (e) => toast({ title: 'Update failed', description: e.message, variant: 'destructive' }),
+  });
+
+  const handleEditDest = (dest: any) => {
+    setEditingDest(dest.id);
+    setEditStreamKey(dest.stream_key || '');
+    setEditRtmpUrl(dest.rtmp_url || '');
+  };
+
+  const handleSaveEdit = (id: number) => {
+    updateMutation.mutate({ id, streamKey: editStreamKey, rtmpUrl: editRtmpUrl });
+  };
 
   const goLiveMutation = trpc.socialStream.goLive.useMutation({
     onSuccess: (data) => {
@@ -267,18 +289,46 @@ export default function SocialStreamManager() {
                             <Badge variant="outline" className={`text-[9px] ${dest.is_enabled ? 'border-green-500/50 text-green-400' : 'border-gray-600 text-gray-500'}`}>
                               {dest.is_enabled ? 'Active' : 'Disabled'}
                             </Badge>
-                          </div>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-white/30 text-[10px] font-mono truncate max-w-[200px]">{dest.rtmp_url || 'No RTMP URL set'}</span>
-                            {dest.stream_key && (
-                              <button onClick={(e) => { e.stopPropagation(); setShowStreamKeys(prev => ({ ...prev, [dest.id]: !prev[dest.id] })); }} className="text-white/30 hover:text-white/60">
-                                {showStreamKeys[dest.id] ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                              </button>
+                            {!dest.stream_key && (
+                              <Badge variant="outline" className="text-[9px] border-amber-500/50 text-amber-400 animate-pulse">
+                                Needs Stream Key
+                              </Badge>
                             )}
-                            {showStreamKeys[dest.id] && dest.stream_key && <span className="text-white/40 text-[10px] font-mono">{dest.stream_key}</span>}
+                            {dest.stream_key && (
+                              <Badge variant="outline" className="text-[9px] border-green-500/50 text-green-400">
+                                Key Set
+                              </Badge>
+                            )}
                           </div>
+                          {editingDest === dest.id ? (
+                            <div className="mt-2 space-y-2" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex gap-2">
+                                <Input value={editRtmpUrl} onChange={(e) => setEditRtmpUrl(e.target.value)} placeholder="RTMP URL" className="bg-gray-800 border-gray-700 text-white text-xs h-7 font-mono" />
+                              </div>
+                              <div className="flex gap-2">
+                                <Input value={editStreamKey} onChange={(e) => setEditStreamKey(e.target.value)} placeholder="Paste your stream key here" type="password" className="bg-gray-800 border-gray-700 text-white text-xs h-7 font-mono flex-1" />
+                                <Button size="sm" onClick={() => handleSaveEdit(dest.id)} disabled={updateMutation.isPending} className="bg-green-600 hover:bg-green-700 h-7 text-xs px-3">
+                                  {updateMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Save'}
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={() => setEditingDest(null)} className="border-gray-700 text-white/60 h-7 text-xs px-2">Cancel</Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-white/30 text-[10px] font-mono truncate max-w-[200px]">{dest.rtmp_url || 'No RTMP URL set'}</span>
+                              {dest.stream_key && (
+                                <button onClick={(e) => { e.stopPropagation(); setShowStreamKeys(prev => ({ ...prev, [dest.id]: !prev[dest.id] })); }} className="text-white/30 hover:text-white/60">
+                                  {showStreamKeys[dest.id] ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                                </button>
+                              )}
+                              {showStreamKeys[dest.id] && dest.stream_key && <span className="text-white/40 text-[10px] font-mono">{dest.stream_key}</span>}
+                            </div>
+                          )}
                         </div>
                         <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+                          <button onClick={() => handleEditDest(dest)} className="text-purple-400/50 hover:text-purple-400 p-1.5 rounded hover:bg-purple-500/10" title="Edit stream key">
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
                           {dest.stream_key && (
                             <button onClick={() => copyToClipboard(`${dest.rtmp_url || ''}/${dest.stream_key || ''}`)} className="text-white/30 hover:text-white/60 p-1.5 rounded hover:bg-gray-800" title="Copy full stream URL">
                               <Copy className="w-3.5 h-3.5" />
