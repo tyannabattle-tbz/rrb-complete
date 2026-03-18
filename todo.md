@@ -4637,3 +4637,11 @@
 - [x] Create queued posts viewer with retry controls (/admin/social-queue)
 - [x] Add Twitter credential validation endpoint (socialMedia.validateCredentials)
 - [x] Write tests for new features (2/2 passing)
+
+## Apply All: RTMP Keys, Twitter Fix, Branded Streams (March 18, 2026)
+- [x] Replace placeholder radio streams with genre-appropriate branded streams (44 channels updated, 54/54 unique)
+- [x] Enhance Twitter/X queue manager with credential refresh, auto-retry, detailed 5-step setup guide
+- [x] Pre-configure 7 RTMP social streaming destinations (YouTube, Facebook, Instagram, Twitter/X, TikTok, Twitch, LinkedIn)
+- [x] Add credential validation with 30s auto-refresh polling and Re-check button
+- [x] Add "Credentials Valid - Ready to Retry" quick action banner for instant bulk retry
+- [x] All tests passing (7/7), 0 TS errors, QUMUS 18/18 healthy

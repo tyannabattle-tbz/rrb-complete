@@ -50,7 +50,8 @@ export default function TwitterQueueManager() {
       toast({ title: 'Bulk Retry Failed', description: err.message, variant: 'destructive' });
     },
   });
-  const validateCredentials = trpc.socialMedia.validateCredentials.useQuery(undefined, { enabled: !!user });
+  const validateCredentials = trpc.socialMedia.validateCredentials.useQuery(undefined, { enabled: !!user, refetchInterval: 30000 });
+  const statsQuery = trpc.socialMedia.getStats.useQuery(undefined, { enabled: !!user });
   const deletePost = trpc.socialMedia.deletePost.useMutation({
     onSuccess: () => {
       toast({ title: 'Post Deleted' });
@@ -107,13 +108,17 @@ export default function TwitterQueueManager() {
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {creds && Object.entries(creds || {}).map(([platform, status]: [string, any]) => (
                   <Badge key={platform}
                     className={status?.valid ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}>
-                    {platform}: {status?.valid ? 'OK' : 'Invalid'}
+                    {platform}: {status?.valid ? 'OK' : status?.error || 'Invalid'}
                   </Badge>
                 ))}
+                <Button size="sm" variant="ghost" onClick={() => validateCredentials.refetch()}
+                  className="text-blue-400 hover:text-blue-300 text-xs">
+                  <RefreshCw className={`w-3 h-3 mr-1 ${validateCredentials.isFetching ? 'animate-spin' : ''}`} /> Re-check
+                </Button>
               </div>
             </div>
           </CardContent>
@@ -215,6 +220,27 @@ export default function TwitterQueueManager() {
           )}
         </div>
 
+        {/* Quick Actions */}
+        {stats.failed > 0 && creds?.twitter?.valid && (
+          <Card className="bg-green-900/20 border-green-500/30 mt-4 mb-4">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <Zap className="w-5 h-5 text-green-400" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-green-300">Credentials Valid — Ready to Retry</p>
+                  <p className="text-xs text-green-400/70">Your Twitter/X credentials are working. Click to retry all {stats.failed} failed posts.</p>
+                </div>
+                <Button size="sm" onClick={() => retryAllFailed.mutate()}
+                  disabled={retryAllFailed.isPending}
+                  className="bg-green-600 hover:bg-green-700 text-white">
+                  {retryAllFailed.isPending ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Zap className="w-3 h-3 mr-1" />}
+                  Retry All Now
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Setup Guide */}
         <Card className="bg-gray-900/40 border-gray-800 mt-6">
           <CardHeader>
@@ -228,24 +254,54 @@ export default function TwitterQueueManager() {
                 className="text-blue-400 hover:underline flex items-center gap-1">
                 developer.twitter.com <ExternalLink className="w-3 h-3" />
               </a>
+              <p className="text-xs text-gray-500">Sign in with the Twitter account you want to post from.</p>
             </div>
             <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
-              <p className="font-semibold text-white">Step 2: Regenerate Access Tokens</p>
-              <p className="text-gray-400">Go to your App → Keys and Tokens → Regenerate Access Token and Secret</p>
+              <p className="font-semibold text-white">Step 2: Navigate to Your App</p>
+              <p className="text-gray-400">Go to Projects & Apps → Your App → Keys and Tokens tab</p>
+              <p className="text-xs text-gray-500">If you don't have an app, create one under a Project with "Read and Write" permissions.</p>
             </div>
             <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
-              <p className="font-semibold text-white">Step 3: Update in Manus Settings</p>
-              <p className="text-gray-400">Go to Settings → Secrets and update these 4 values:</p>
-              <ul className="text-xs text-gray-500 space-y-1 ml-4">
-                <li>• TWITTER_API_KEY</li>
-                <li>• TWITTER_API_SECRET</li>
-                <li>• TWITTER_ACCESS_TOKEN</li>
-                <li>• TWITTER_ACCESS_TOKEN_SECRET</li>
+              <p className="font-semibold text-white">Step 3: Regenerate All Tokens</p>
+              <p className="text-gray-400">Click "Regenerate" for each of these (copy them immediately — they won't be shown again):</p>
+              <ul className="text-xs text-gray-400 space-y-1 ml-4">
+                <li>• <strong className="text-white">API Key</strong> (Consumer Key)</li>
+                <li>• <strong className="text-white">API Key Secret</strong> (Consumer Secret)</li>
+                <li>• <strong className="text-white">Access Token</strong></li>
+                <li>• <strong className="text-white">Access Token Secret</strong></li>
+                <li>• <strong className="text-white">Bearer Token</strong> (optional, for read-only)</li>
               </ul>
             </div>
             <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
-              <p className="font-semibold text-white">Step 4: Retry Failed Posts</p>
-              <p className="text-gray-400">Click "Retry All Failed" above to resend all 9 failed Twitter posts with the new credentials.</p>
+              <p className="font-semibold text-white">Step 4: Update in Manus Settings</p>
+              <p className="text-gray-400">Go to Settings → Secrets and update these values:</p>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div className="bg-gray-900/50 rounded p-2">
+                  <p className="text-xs text-gray-500">Secret Name</p>
+                  <p className="text-xs text-white font-mono">TWITTER_API_KEY</p>
+                </div>
+                <div className="bg-gray-900/50 rounded p-2">
+                  <p className="text-xs text-gray-500">Secret Name</p>
+                  <p className="text-xs text-white font-mono">TWITTER_API_SECRET</p>
+                </div>
+                <div className="bg-gray-900/50 rounded p-2">
+                  <p className="text-xs text-gray-500">Secret Name</p>
+                  <p className="text-xs text-white font-mono">TWITTER_ACCESS_TOKEN</p>
+                </div>
+                <div className="bg-gray-900/50 rounded p-2">
+                  <p className="text-xs text-gray-500">Secret Name</p>
+                  <p className="text-xs text-white font-mono">TWITTER_ACCESS_TOKEN_SECRET</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
+              <p className="font-semibold text-white">Step 5: Verify & Retry</p>
+              <p className="text-gray-400">After updating, click the "Re-check" button above to verify credentials, then "Retry All Failed" to resend all posts.</p>
+              <p className="text-xs text-gray-500">The QUMUS auto-publisher also checks every 5 minutes for scheduled posts.</p>
+            </div>
+            <div className="bg-amber-900/20 border border-amber-500/30 rounded-lg p-4 space-y-2">
+              <p className="font-semibold text-amber-300">⚠️ Important: App Permissions</p>
+              <p className="text-gray-400">Your Twitter app must have <strong className="text-white">Read and Write</strong> permissions. If it only has Read access, posting will fail with 403. To fix: App Settings → User authentication settings → Edit → Set to "Read and Write" → Save → Regenerate tokens.</p>
             </div>
           </CardContent>
         </Card>
