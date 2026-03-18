@@ -21,6 +21,7 @@ import {
   Minimize2,
   AlertCircle,
 } from 'lucide-react';
+import StudioShareBar from '@/components/StudioShareBar';
 
 export default function AdvancedStudioDashboard() {
   const [isRecording, setIsRecording] = useState(false);
@@ -165,6 +166,7 @@ export default function AdvancedStudioDashboard() {
               >
                 {isRecording ? '🟠 RECORDING' : '⚫ IDLE'}
               </Badge>
+              <StudioShareBar studioName="Advanced Studio" />
               <button
                 onClick={() => setFullscreen(!fullscreen)}
                 className="p-2 hover:bg-slate-700 rounded transition-colors"

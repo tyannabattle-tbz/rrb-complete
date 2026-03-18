@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
 import { trpc } from '@/lib/trpc';
+import StudioShareBar from '@/components/StudioShareBar';
 
 // ============================================================
 // TYPE DEFINITIONS
@@ -919,6 +920,8 @@ export function StudioSuite() {
             className={`px-1.5 py-0.5 rounded text-[10px] ${showEffects ? 'bg-[#4a6fa5] text-white' : 'text-[#888]'}`}>
             Effects
           </button>
+          <StudioShareBar studioName="RRB Studio Pro" compact />
+          <div className="w-px h-4 bg-[#3a3a3a] mx-1" />
           <button onClick={() => setFullscreen(!fullscreen)}
             className="px-1.5 py-0.5 rounded text-[#888] hover:text-white">
             {fullscreen ? <Minimize2 className="w-3 h-3" /> : <Maximize2 className="w-3 h-3" />}

@@ -4709,3 +4709,15 @@
 - [x] Ensure SQUADD rooms keep their own entry (zoomRoomUrl: undefined)
 - [x] Enable all 7 RTMP stream destinations (is_enabled = 1)
 - [x] Verify social media publisher retry logic compiles and runs (12/12 tests pass)
+
+## Recording Studio Scrub — Uniform Sharing + Entry Services
+- [x] Create shared StudioShareBar component with full social sharing dialog + Zoom PMI entry + Restream/Multi-Stream entry
+- [x] Add StudioShareBar to StudioControlRoom (/studio)
+- [x] Add StudioShareBar to StudioSuite (/studio-suite) — compact mode
+- [x] Add StudioShareBar to Studio (/studio-controls)
+- [x] Add StudioShareBar to MusicStudio (/music-studio) — compact mode
+- [x] Add StudioShareBar to MobileStudio (/mobile-studio)
+- [x] Add StudioShareBar to AdvancedStudioDashboard
+- [x] Fix MusicStudio "Share Project" placeholder to use real sharing dialog
+- [x] Verify 0 TypeScript errors after all changes
+- [x] Run vitest tests for studio sharing integration — 22/22 pass

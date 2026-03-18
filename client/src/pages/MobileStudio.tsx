@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Play, Pause, Upload, Trash2, Edit2, Send, Music, Video, Mic, BookOpen, Radio, Download } from 'lucide-react';
 import { toast } from 'sonner';
+import StudioShareBar from '@/components/StudioShareBar';
 
 interface ContentItem {
   id: string;
@@ -129,6 +130,7 @@ export default function MobileStudio() {
             <h1 className="text-4xl font-bold text-white">Mobile Studio</h1>
             <p className="text-slate-300">Create, manage, and stream content end-to-end</p>
           </div>
+          <StudioShareBar studioName="Mobile Studio" />
           {currentSession && (
             <div className="bg-red-600/20 border border-red-600 rounded-lg p-4 text-center">
               <p className="text-red-300 font-bold text-lg">🔴 LIVE</p>

@@ -11,6 +11,7 @@ import {
   Plus, Copy, UserPlus, Settings, Eye, Clock, Film,
   Tv, Earth, Headphones, PhoneCall, ScreenShare
 } from "lucide-react";
+import StudioShareBar from '@/components/StudioShareBar';
 
 type SessionType = "podcast" | "live_show" | "interview" | "panel" | "workshop" | "convention_panel" | "recording";
 type GuestStatus = "invited" | "accepted" | "declined" | "waiting" | "connected" | "on_air" | "muted" | "disconnected";
@@ -133,6 +134,7 @@ export default function StudioControlRoom() {
                 <span className="flex items-center gap-1"><Eye className="w-4 h-4" /> {studioStats.data.sessions?.totalViewers || 0} total views</span>
               </div>
             )}
+            <StudioShareBar studioName="Production Studio" />
             <Button onClick={() => setShowCreateForm(true)} className="bg-red-600 hover:bg-red-700">
               <Plus className="w-4 h-4 mr-2" /> New Session
             </Button>

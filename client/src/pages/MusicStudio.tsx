@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import StudioShareBar from '@/components/StudioShareBar';
 
 // Track types
 type TrackType = 'audio' | 'midi' | 'drum' | 'synth' | 'vocal' | 'master';
@@ -347,6 +348,7 @@ export default function MusicStudio() {
             <Button size="sm" variant="outline" onClick={handleExport} className="border-[#D4A843]/30 text-[#D4A843]">
               <Download className="w-4 h-4 mr-1" /> Export
             </Button>
+            <StudioShareBar studioName="Music Studio" compact />
           </div>
         </div>
       </div>
@@ -760,7 +762,11 @@ export default function MusicStudio() {
                   <Button size="sm" variant="ghost" className="w-full justify-start text-xs" onClick={() => toast.info('Connect to RRB Radio for live broadcast')}>
                     <Radio className="w-3 h-3 mr-2" /> Broadcast to RRB Radio
                   </Button>
-                  <Button size="sm" variant="ghost" className="w-full justify-start text-xs" onClick={() => toast.info('Share project with collaborators')}>
+                  <Button size="sm" variant="ghost" className="w-full justify-start text-xs" onClick={() => {
+                    const el = document.querySelector('[data-studio-share]') as HTMLButtonElement;
+                    if (el) el.click();
+                    else toast.info('Use the Share button in the toolbar');
+                  }}>
                     <Share2 className="w-3 h-3 mr-2" /> Share Project
                   </Button>
                 </div>

@@ -39,6 +39,7 @@ import TimelineEditor from "@/components/TimelineEditor";
 import BatchProcessing from "@/components/BatchProcessing";
 import EditingPresets from "@/components/EditingPresets";
 import RecordingControls from "@/components/RecordingControls";
+import StudioShareBar from "@/components/StudioShareBar";
 
 /**
  * Professional Studio Component
@@ -209,6 +210,7 @@ export default function Studio() {
                   Network Down
                 </Badge>
               )}
+              <StudioShareBar studioName="Professional Studio" />
               <Button
                 variant="ghost"
                 size="sm"
