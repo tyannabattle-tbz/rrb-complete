@@ -390,6 +390,68 @@ export default function SocialStreamManager() {
                   <a href="https://www.tiktok.com/studio" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white/40 hover:text-white/70 text-xs py-1"><ExternalLink className="w-3 h-3" /> TikTok Studio</a>
                   <a href="https://studio.twitter.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white/40 hover:text-white/70 text-xs py-1"><ExternalLink className="w-3 h-3" /> Twitter/X Studio</a>
                 </div>
+                <div className="space-y-2 pt-2 border-t border-gray-700/50">
+                  <h4 className="text-white/60 text-xs font-semibold">Platform Setup Guides</h4>
+                  <details className="bg-gray-800/50 rounded-lg p-2 border border-gray-700/30">
+                    <summary className="text-xs text-red-400 font-semibold cursor-pointer">YouTube — Get Stream Key</summary>
+                    <ol className="text-[10px] text-white/40 mt-2 space-y-1 list-decimal list-inside">
+                      <li>Go to YouTube Studio → Go Live → Stream</li>
+                      <li>Copy the Stream Key from the Stream Settings panel</li>
+                      <li>RTMP URL: rtmp://a.rtmp.youtube.com/live2</li>
+                      <li>Paste both into "Add Destination" above</li>
+                    </ol>
+                  </details>
+                  <details className="bg-gray-800/50 rounded-lg p-2 border border-gray-700/30">
+                    <summary className="text-xs text-blue-400 font-semibold cursor-pointer">Facebook — Get Stream Key</summary>
+                    <ol className="text-[10px] text-white/40 mt-2 space-y-1 list-decimal list-inside">
+                      <li>Go to facebook.com/live/producer</li>
+                      <li>Click "Go Live" → "Use Stream Key"</li>
+                      <li>Copy the Stream Key shown</li>
+                      <li>RTMP URL: rtmps://live-api-s.facebook.com:443/rtmp/</li>
+                    </ol>
+                  </details>
+                  <details className="bg-gray-800/50 rounded-lg p-2 border border-gray-700/30">
+                    <summary className="text-xs text-pink-400 font-semibold cursor-pointer">Instagram — Get Stream Key</summary>
+                    <ol className="text-[10px] text-white/40 mt-2 space-y-1 list-decimal list-inside">
+                      <li>Open Instagram app → + → Live</li>
+                      <li>Tap the streaming icon (OBS icon)</li>
+                      <li>Copy Stream Key and URL shown</li>
+                      <li>Requires Professional/Creator account</li>
+                    </ol>
+                  </details>
+                  <details className="bg-gray-800/50 rounded-lg p-2 border border-gray-700/30">
+                    <summary className="text-xs text-cyan-400 font-semibold cursor-pointer">TikTok — Get Stream Key</summary>
+                    <ol className="text-[10px] text-white/40 mt-2 space-y-1 list-decimal list-inside">
+                      <li>Go to TikTok Studio → Go Live</li>
+                      <li>Select "Go Live from PC" → "Custom Streaming Software"</li>
+                      <li>Copy Server URL and Stream Key</li>
+                      <li>Requires 1000+ followers for live access</li>
+                    </ol>
+                  </details>
+                  <details className="bg-gray-800/50 rounded-lg p-2 border border-gray-700/30">
+                    <summary className="text-xs text-sky-400 font-semibold cursor-pointer">Twitter/X — Get Stream Key</summary>
+                    <ol className="text-[10px] text-white/40 mt-2 space-y-1 list-decimal list-inside">
+                      <li>Go to x.com → Media Studio → Producer</li>
+                      <li>Create new source → RTMP</li>
+                      <li>Copy the RTMP URL and Stream Key</li>
+                      <li>Requires X Premium subscription</li>
+                    </ol>
+                  </details>
+                  <details className="bg-gray-800/50 rounded-lg p-2 border border-gray-700/30">
+                    <summary className="text-xs text-purple-400 font-semibold cursor-pointer">Twitch — Get Stream Key</summary>
+                    <ol className="text-[10px] text-white/40 mt-2 space-y-1 list-decimal list-inside">
+                      <li>Go to dashboard.twitch.tv → Settings → Stream</li>
+                      <li>Click "Show" next to Primary Stream Key</li>
+                      <li>RTMP URL: rtmp://live.twitch.tv/app/</li>
+                      <li>Copy and paste into "Add Destination" above</li>
+                    </ol>
+                  </details>
+                </div>
+                <div className="space-y-1.5 pt-2 border-t border-gray-700/50">
+                  <h4 className="text-white/60 text-xs font-semibold">Admin Tools</h4>
+                  <a href="/admin/stream-urls" className="flex items-center gap-2 text-purple-400 hover:text-purple-300 text-xs py-1"><Zap className="w-3 h-3" /> Stream URL Manager (Radio Channels)</a>
+                  <a href="/admin/social-queue" className="flex items-center gap-2 text-blue-400 hover:text-blue-300 text-xs py-1"><Clock className="w-3 h-3" /> Social Media Queue Manager</a>
+                </div>
               </CardContent>
             </Card>
           </div>

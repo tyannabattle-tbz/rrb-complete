@@ -4627,3 +4627,13 @@
 - [x] Replace all dead/broken URLs: 0 failures (was 4)
 - [x] Verify all 54 stream URLs reachable: 54/54 returning audio/mpeg
 - [x] Final state: PERFECT_SYNC, 100% uptime, 54/54 healthy, 0 degraded, 0 down
+
+## Apply All: Branded Streams, Social Streaming, Twitter Queue (March 18, 2026)
+- [x] Build admin Stream URL Manager page (/admin/stream-urls) for swapping radio channel stream URLs
+- [x] Add stream URL edit capability to radio station admin (uses radioStations.updateChannel)
+- [x] Pre-configure social streaming destinations with platform setup guides
+- [x] Add platform-specific RTMP setup instructions (YouTube, Facebook, Instagram, TikTok, Twitter/X, Twitch)
+- [x] Build Twitter/X post queue management and auto-retry system (socialMediaQueueRouter)
+- [x] Create queued posts viewer with retry controls (/admin/social-queue)
+- [x] Add Twitter credential validation endpoint (socialMedia.validateCredentials)
+- [x] Write tests for new features (2/2 passing)

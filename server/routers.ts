@@ -95,6 +95,7 @@ import { liveBroadcastRouter } from "./routers/liveBroadcastRouter";
 import { ecosystemSyncRouter } from "./routers/ecosystemSyncRouter";
 import { globalBroadcastRouter } from "./routers/globalBroadcastRouter";
 import { socialStreamRouter } from "./routers/socialStreamRouter";
+import { socialMediaQueueRouter } from "./routers/socialMediaQueueRouter";
 import { qumusAgentEngine } from "./routers/qumusAgentEngine";
 import { router as trpcRouter } from "./_core/trpc";
 
@@ -486,6 +487,9 @@ export const appRouter = router({
 
   // Social Streaming (manage destinations, go live to YouTube/FB/IG/X/TikTok)
   socialStream: socialStreamRouter,
+
+  // Social Media Queue Manager (retry failed posts, validate credentials)
+  socialMedia: socialMediaQueueRouter,
 
   // Email subscription for flyer and campaign updates
   emailSubscription: router({

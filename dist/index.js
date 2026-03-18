@@ -8408,6 +8408,328 @@ All systems are operational and monitoring is active.
   }
 });
 
+// server/services/socialMediaAPIIntegration.ts
+var socialMediaAPIIntegration_exports = {};
+__export(socialMediaAPIIntegration_exports, {
+  SocialMediaAPIIntegration: () => SocialMediaAPIIntegration,
+  socialMediaAPIIntegration: () => socialMediaAPIIntegration
+});
+import axios5 from "axios";
+var SocialMediaAPIIntegration, socialMediaAPIIntegration;
+var init_socialMediaAPIIntegration = __esm({
+  "server/services/socialMediaAPIIntegration.ts"() {
+    init_db();
+    SocialMediaAPIIntegration = class {
+      twitterClient;
+      facebookClient;
+      instagramClient;
+      tiktokClient;
+      /**
+       * Initialize Twitter API client
+       */
+      async initializeTwitter(accessToken) {
+        try {
+          this.twitterClient = axios5.create({
+            baseURL: "https://api.twitter.com/2",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json"
+            }
+          });
+          await this.twitterClient.get("/users/me");
+          console.log("[Twitter] \u2713 API client initialized");
+        } catch (error) {
+          console.error("[Twitter] Failed to initialize API client:", error);
+          throw error;
+        }
+      }
+      /**
+       * Initialize Facebook API client
+       */
+      async initializeFacebook(accessToken) {
+        try {
+          this.facebookClient = axios5.create({
+            baseURL: "https://graph.facebook.com/v18.0",
+            params: {
+              access_token: accessToken
+            }
+          });
+          await this.facebookClient.get("/me");
+          console.log("[Facebook] \u2713 API client initialized");
+        } catch (error) {
+          console.error("[Facebook] Failed to initialize API client:", error);
+          throw error;
+        }
+      }
+      /**
+       * Initialize Instagram API client
+       */
+      async initializeInstagram(accessToken) {
+        try {
+          this.instagramClient = axios5.create({
+            baseURL: "https://graph.instagram.com/v18.0",
+            params: {
+              access_token: accessToken
+            }
+          });
+          await this.instagramClient.get("/me");
+          console.log("[Instagram] \u2713 API client initialized");
+        } catch (error) {
+          console.error("[Instagram] Failed to initialize API client:", error);
+          throw error;
+        }
+      }
+      /**
+       * Initialize TikTok API client
+       */
+      async initializeTikTok(accessToken) {
+        try {
+          this.tiktokClient = axios5.create({
+            baseURL: "https://open.tiktokapis.com/v1",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json"
+            }
+          });
+          await this.tiktokClient.get("/user/info/");
+          console.log("[TikTok] \u2713 API client initialized");
+        } catch (error) {
+          console.error("[TikTok] Failed to initialize API client:", error);
+          throw error;
+        }
+      }
+      /**
+       * Post to Twitter
+       */
+      async postToTwitter(content, mediaUrls) {
+        try {
+          if (!this.twitterClient) {
+            throw new Error("Twitter client not initialized");
+          }
+          const payload = {
+            text: content
+          };
+          if (mediaUrls && mediaUrls.length > 0) {
+            const mediaIds = await Promise.all(
+              mediaUrls.map((url) => this.uploadTwitterMedia(url))
+            );
+            payload.media = { media_ids: mediaIds };
+          }
+          const response = await this.twitterClient.post("/tweets", payload);
+          return {
+            platform: "twitter",
+            post_id: response.data.data.id,
+            url: `https://twitter.com/i/web/status/${response.data.data.id}`,
+            created_at: Date.now()
+          };
+        } catch (error) {
+          console.error("[Twitter] Failed to post:", error);
+          throw error;
+        }
+      }
+      /**
+       * Upload media to Twitter
+       */
+      async uploadTwitterMedia(mediaUrl) {
+        try {
+          if (!this.twitterClient) {
+            throw new Error("Twitter client not initialized");
+          }
+          const mediaResponse = await axios5.get(mediaUrl, {
+            responseType: "arraybuffer"
+          });
+          const mediaData = Buffer.from(mediaResponse.data).toString("base64");
+          const uploadResponse = await this.twitterClient.post("/tweets/search/stream", {
+            media_data: mediaData
+          });
+          return uploadResponse.data.media.media_id_string;
+        } catch (error) {
+          console.error("[Twitter] Failed to upload media:", error);
+          throw error;
+        }
+      }
+      /**
+       * Post to Facebook
+       */
+      async postToFacebook(pageId, content, mediaUrl) {
+        try {
+          if (!this.facebookClient) {
+            throw new Error("Facebook client not initialized");
+          }
+          const payload = {
+            message: content
+          };
+          if (mediaUrl) {
+            payload.picture = mediaUrl;
+          }
+          const response = await this.facebookClient.post(`/${pageId}/feed`, payload);
+          return {
+            platform: "facebook",
+            post_id: response.data.id,
+            url: `https://facebook.com/${response.data.id}`,
+            created_at: Date.now()
+          };
+        } catch (error) {
+          console.error("[Facebook] Failed to post:", error);
+          throw error;
+        }
+      }
+      /**
+       * Post to Instagram
+       */
+      async postToInstagram(businessAccountId, content, mediaUrl) {
+        try {
+          if (!this.instagramClient) {
+            throw new Error("Instagram client not initialized");
+          }
+          const containerResponse = await this.instagramClient.post(
+            `/${businessAccountId}/media`,
+            {
+              image_url: mediaUrl,
+              caption: content
+            }
+          );
+          const containerId = containerResponse.data.id;
+          const publishResponse = await this.instagramClient.post(
+            `/${businessAccountId}/media_publish`,
+            {
+              creation_id: containerId
+            }
+          );
+          return {
+            platform: "instagram",
+            post_id: publishResponse.data.id,
+            url: `https://instagram.com/p/${publishResponse.data.id}`,
+            created_at: Date.now()
+          };
+        } catch (error) {
+          console.error("[Instagram] Failed to post:", error);
+          throw error;
+        }
+      }
+      /**
+       * Post to TikTok
+       */
+      async postToTikTok(videoUrl, caption) {
+        try {
+          if (!this.tiktokClient) {
+            throw new Error("TikTok client not initialized");
+          }
+          const response = await this.tiktokClient.post("/video/publish/", {
+            video_url: videoUrl,
+            caption,
+            privacy_level: "PUBLIC"
+          });
+          return {
+            platform: "tiktok",
+            post_id: response.data.data.video_id,
+            url: `https://tiktok.com/@rockinrockinboogie/video/${response.data.data.video_id}`,
+            created_at: Date.now()
+          };
+        } catch (error) {
+          console.error("[TikTok] Failed to post:", error);
+          throw error;
+        }
+      }
+      /**
+       * Get engagement metrics
+       */
+      async getEngagementMetrics(platform, postId) {
+        try {
+          switch (platform) {
+            case "twitter":
+              if (!this.twitterClient) throw new Error("Twitter client not initialized");
+              const tweetResponse = await this.twitterClient.get(`/tweets/${postId}`, {
+                params: {
+                  "tweet.fields": "public_metrics"
+                }
+              });
+              return {
+                likes: tweetResponse.data.data.public_metrics.like_count,
+                retweets: tweetResponse.data.data.public_metrics.retweet_count,
+                replies: tweetResponse.data.data.public_metrics.reply_count
+              };
+            case "facebook":
+              if (!this.facebookClient) throw new Error("Facebook client not initialized");
+              const fbResponse = await this.facebookClient.get(`/${postId}/insights`, {
+                params: {
+                  metric: "engagement,impressions,reach"
+                }
+              });
+              return fbResponse.data.data;
+            case "instagram":
+              if (!this.instagramClient) throw new Error("Instagram client not initialized");
+              const igResponse = await this.instagramClient.get(`/${postId}/insights`, {
+                params: {
+                  metric: "engagement,impressions,reach"
+                }
+              });
+              return igResponse.data.data;
+            case "tiktok":
+              if (!this.tiktokClient) throw new Error("TikTok client not initialized");
+              const ttResponse = await this.tiktokClient.get(`/video/${postId}/analytics/`);
+              return {
+                views: ttResponse.data.data.video_views,
+                likes: ttResponse.data.data.video_likes,
+                shares: ttResponse.data.data.video_shares,
+                comments: ttResponse.data.data.video_comments
+              };
+            default:
+              throw new Error(`Unknown platform: ${platform}`);
+          }
+        } catch (error) {
+          console.error(`[${platform}] Failed to get metrics:`, error);
+          throw error;
+        }
+      }
+      /**
+       * Initialize all API clients from database credentials
+       */
+      async initializeAllClients() {
+        try {
+          const db2 = await getDb();
+          const credentials = await db2.all(
+            "SELECT * FROM social_media_credentials WHERE is_active = 1"
+          );
+          let initialized = 0;
+          let failed = 0;
+          for (const cred of credentials) {
+            try {
+              switch (cred.platform) {
+                case "twitter":
+                  await this.initializeTwitter(cred.access_token);
+                  initialized++;
+                  break;
+                case "facebook":
+                  await this.initializeFacebook(cred.access_token);
+                  initialized++;
+                  break;
+                case "instagram":
+                  await this.initializeInstagram(cred.access_token);
+                  initialized++;
+                  break;
+                case "tiktok":
+                  await this.initializeTikTok(cred.access_token);
+                  initialized++;
+                  break;
+              }
+            } catch (error) {
+              console.error(`[Init] Failed to initialize ${cred.platform}:`, error);
+              failed++;
+            }
+          }
+          console.log(`[Init] API clients initialized: ${initialized} success, ${failed} failed`);
+          return { initialized, failed };
+        } catch (error) {
+          console.error("[Init] Failed to initialize API clients:", error);
+          return { initialized: 0, failed: 0 };
+        }
+      }
+    };
+    socialMediaAPIIntegration = new SocialMediaAPIIntegration();
+  }
+});
+
 // server/stripeService.ts
 var stripeService_exports = {};
 __export(stripeService_exports, {
@@ -8859,7 +9181,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z104 } from "zod";
+import { z as z105 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -43866,8 +44188,8 @@ function generateBroadcastId() {
   return result2;
 }
 async function rawQuery5(sql21, params2 = []) {
-  const mysql11 = await import("mysql2/promise");
-  const connection = await mysql11.createConnection(process.env.DATABASE_URL);
+  const mysql12 = await import("mysql2/promise");
+  const connection = await mysql12.createConnection(process.env.DATABASE_URL);
   try {
     const [rows] = await connection.execute(sql21, params2);
     return rows;
@@ -44887,13 +45209,182 @@ var socialStreamRouter = router({
   })
 });
 
-// server/routers/qumusAgentEngine.ts
+// server/routers/socialMediaQueueRouter.ts
 import { z as z103 } from "zod";
+import mysql8 from "mysql2/promise";
+async function rawQuery8(sql21, params2 = []) {
+  const connection = await mysql8.createConnection(process.env.DATABASE_URL);
+  try {
+    const [rows] = await connection.execute(sql21, params2);
+    return rows;
+  } finally {
+    await connection.end();
+  }
+}
+var socialMediaQueueRouter = router({
+  /**
+   * List all social media posts with optional filtering
+   */
+  listPosts: protectedProcedure.input(z103.object({
+    status: z103.enum(["draft", "scheduled", "published", "failed", "cancelled"]).optional(),
+    platform: z103.enum(["twitter", "instagram", "discord", "facebook", "tiktok", "youtube"]).optional()
+  }).optional()).query(async ({ input }) => {
+    let query2 = "SELECT * FROM social_media_posts";
+    const conditions = [];
+    const params2 = [];
+    if (input?.status) {
+      conditions.push("status = ?");
+      params2.push(input.status);
+    }
+    if (input?.platform) {
+      conditions.push("platform = ?");
+      params2.push(input.platform);
+    }
+    if (conditions.length > 0) {
+      query2 += " WHERE " + conditions.join(" AND ");
+    }
+    query2 += " ORDER BY created_at DESC";
+    return await rawQuery8(query2, params2);
+  }),
+  /**
+   * Retry a single failed post
+   */
+  retryPost: protectedProcedure.input(z103.object({ id: z103.number() })).mutation(async ({ input }) => {
+    const posts = await rawQuery8("SELECT * FROM social_media_posts WHERE id = ?", [input.id]);
+    if (!posts || posts.length === 0) {
+      throw new Error("Post not found");
+    }
+    const post = posts[0];
+    if (post.status !== "failed") {
+      throw new Error("Only failed posts can be retried");
+    }
+    try {
+      const { SocialMediaAPIIntegration: SocialMediaAPIIntegration2 } = await Promise.resolve().then(() => (init_socialMediaAPIIntegration(), socialMediaAPIIntegration_exports));
+      const api = new SocialMediaAPIIntegration2();
+      if (post.platform === "twitter") {
+        const accessToken = process.env.TWITTER_BEARER_TOKEN || process.env.TWITTER_ACCESS_TOKEN;
+        if (!accessToken) {
+          throw new Error("Twitter credentials not configured. Update in Settings \u2192 Secrets.");
+        }
+        await api.initializeTwitter(accessToken);
+        const result2 = await api.postToTwitter(post.content);
+        await rawQuery8(
+          "UPDATE social_media_posts SET status = ?, published_at = ?, updated_at = ? WHERE id = ?",
+          ["published", Date.now(), Date.now(), input.id]
+        );
+        return { success: true, postId: result2.post_id, url: result2.url };
+      } else {
+        await rawQuery8(
+          "UPDATE social_media_posts SET status = ?, updated_at = ? WHERE id = ?",
+          ["scheduled", Date.now(), input.id]
+        );
+        return { success: true, message: `Post re-scheduled for ${post.platform}` };
+      }
+    } catch (error) {
+      await rawQuery8(
+        "UPDATE social_media_posts SET updated_at = ? WHERE id = ?",
+        [Date.now(), input.id]
+      );
+      throw new Error(`Retry failed: ${error.message}`);
+    }
+  }),
+  /**
+   * Retry all failed posts
+   */
+  retryAllFailed: protectedProcedure.mutation(async () => {
+    const failed = await rawQuery8(
+      "SELECT id, platform FROM social_media_posts WHERE status = ?",
+      ["failed"]
+    );
+    let retried = 0;
+    let errors = 0;
+    for (const post of failed) {
+      try {
+        await rawQuery8(
+          "UPDATE social_media_posts SET status = ?, updated_at = ? WHERE id = ?",
+          ["scheduled", Date.now(), post.id]
+        );
+        retried++;
+      } catch {
+        errors++;
+      }
+    }
+    return { retried, errors, total: failed.length };
+  }),
+  /**
+   * Delete a post
+   */
+  deletePost: protectedProcedure.input(z103.object({ id: z103.number() })).mutation(async ({ input }) => {
+    await rawQuery8("DELETE FROM social_media_posts WHERE id = ?", [input.id]);
+    return { success: true };
+  }),
+  /**
+   * Validate social media API credentials
+   */
+  validateCredentials: protectedProcedure.query(async () => {
+    const results = {};
+    const twitterKey = process.env.TWITTER_API_KEY;
+    const twitterSecret = process.env.TWITTER_API_SECRET;
+    const twitterAccessToken = process.env.TWITTER_ACCESS_TOKEN;
+    const twitterAccessSecret = process.env.TWITTER_ACCESS_TOKEN_SECRET;
+    const twitterBearer = process.env.TWITTER_BEARER_TOKEN;
+    if (twitterBearer || twitterKey && twitterSecret && twitterAccessToken && twitterAccessSecret) {
+      try {
+        const axios6 = (await import("axios")).default;
+        const token = twitterBearer || twitterAccessToken;
+        const res = await axios6.get("https://api.twitter.com/2/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 5e3
+        });
+        results.twitter = { valid: true };
+      } catch (err) {
+        results.twitter = { valid: false, error: err.response?.status === 401 ? "Invalid credentials (401)" : err.message };
+      }
+    } else {
+      results.twitter = { valid: false, error: "No credentials configured" };
+    }
+    const fbToken = process.env.FACEBOOK_ACCESS_TOKEN;
+    results.facebook = fbToken ? { valid: true } : { valid: false, error: "Not configured" };
+    const igToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+    results.instagram = igToken ? { valid: true } : { valid: false, error: "Not configured" };
+    const ytKey = process.env.YOUTUBE_API_KEY;
+    results.youtube = ytKey ? { valid: true } : { valid: false, error: "Not configured" };
+    return results;
+  }),
+  /**
+   * Get post statistics
+   */
+  getStats: protectedProcedure.query(async () => {
+    const stats = await rawQuery8(
+      `SELECT 
+          platform,
+          status,
+          COUNT(*) as count
+        FROM social_media_posts 
+        GROUP BY platform, status
+        ORDER BY platform, status`
+    );
+    const byPlatform = {};
+    for (const row of stats) {
+      if (!byPlatform[row.platform]) byPlatform[row.platform] = {};
+      byPlatform[row.platform][row.status] = row.count;
+    }
+    return {
+      byPlatform,
+      total: stats.reduce((sum2, r) => sum2 + r.count, 0),
+      failed: stats.filter((r) => r.status === "failed").reduce((sum2, r) => sum2 + r.count, 0),
+      published: stats.filter((r) => r.status === "published").reduce((sum2, r) => sum2 + r.count, 0)
+    };
+  })
+});
+
+// server/routers/qumusAgentEngine.ts
+import { z as z104 } from "zod";
 import { randomUUID as randomUUID3 } from "crypto";
 init_storage();
-import mysql8 from "mysql2/promise";
+import mysql9 from "mysql2/promise";
 async function getConnection2() {
-  return mysql8.createConnection(process.env.DATABASE_URL);
+  return mysql9.createConnection(process.env.DATABASE_URL);
 }
 var uuid2 = () => randomUUID3();
 async function createTask2(userId, goal, priority, steps, constraints) {
@@ -44979,11 +45470,11 @@ var qumusAgentEngine = router({
   /**
    * Create content — documents, presentations, social posts, scripts, reports
    */
-  createContent: protectedProcedure.input(z103.object({
-    type: z103.enum(["document", "presentation", "spreadsheet", "social_post", "email", "script", "report", "campaign"]),
-    topic: z103.string(),
-    details: z103.string().default(""),
-    saveToCloud: z103.boolean().default(true)
+  createContent: protectedProcedure.input(z104.object({
+    type: z104.enum(["document", "presentation", "spreadsheet", "social_post", "email", "script", "report", "campaign"]),
+    topic: z104.string(),
+    details: z104.string().default(""),
+    saveToCloud: z104.boolean().default(true)
   })).mutation(async ({ input, ctx }) => {
     const taskId = await createTask2(ctx.user.id, `Create ${input.type}: ${input.topic}`, 5, ["generate", "save"], []);
     await updateTask2(taskId, "executing");
@@ -45013,10 +45504,10 @@ var qumusAgentEngine = router({
   /**
    * Execute autonomous task — QUMUS reasons about the goal and executes steps
    */
-  executeTask: protectedProcedure.input(z103.object({
-    goal: z103.string(),
-    priority: z103.number().min(1).max(10).default(5),
-    constraints: z103.array(z103.string()).default([])
+  executeTask: protectedProcedure.input(z104.object({
+    goal: z104.string(),
+    priority: z104.number().min(1).max(10).default(5),
+    constraints: z104.array(z104.string()).default([])
   })).mutation(async ({ input, ctx }) => {
     const taskId = await createTask2(ctx.user.id, input.goal, input.priority, [], input.constraints);
     await updateTask2(taskId, "executing");
@@ -45085,7 +45576,7 @@ Priority: ${input.priority}/10` }
   /**
    * Get task history from DB
    */
-  getTaskHistory: protectedProcedure.input(z103.object({ limit: z103.number().default(20), status: z103.string().optional() }).optional()).query(async ({ input }) => {
+  getTaskHistory: protectedProcedure.input(z104.object({ limit: z104.number().default(20), status: z104.string().optional() }).optional()).query(async ({ input }) => {
     const limit = input?.limit || 20;
     const statusFilter = input?.status ? `AND status = '${input.status}'` : "";
     const [rows] = await db.execute(
@@ -45097,13 +45588,13 @@ Priority: ${input.priority}/10` }
   /**
    * Schedule content — create a scheduled content generation task
    */
-  scheduleContent: protectedProcedure.input(z103.object({
-    type: z103.enum(["document", "presentation", "social_post", "script", "report"]),
-    topic: z103.string(),
-    scheduledFor: z103.string(),
+  scheduleContent: protectedProcedure.input(z104.object({
+    type: z104.enum(["document", "presentation", "social_post", "script", "report"]),
+    topic: z104.string(),
+    scheduledFor: z104.string(),
     // ISO date string
-    recurring: z103.boolean().default(false),
-    frequency: z103.enum(["daily", "weekly", "monthly"]).optional()
+    recurring: z104.boolean().default(false),
+    frequency: z104.enum(["daily", "weekly", "monthly"]).optional()
   })).mutation(async ({ input, ctx }) => {
     const taskId = await createTask2(
       ctx.user.id,
@@ -45142,9 +45633,9 @@ Priority: ${input.priority}/10` }
   /**
    * Sync with local Mac mini — push/pull ecosystem state
    */
-  syncWithLocal: protectedProcedure.input(z103.object({
-    direction: z103.enum(["push", "pull", "bidirectional"]).default("bidirectional"),
-    subsystems: z103.array(z103.string()).default(["all"])
+  syncWithLocal: protectedProcedure.input(z104.object({
+    direction: z104.enum(["push", "pull", "bidirectional"]).default("bidirectional"),
+    subsystems: z104.array(z104.string()).default(["all"])
   })).mutation(async ({ input }) => {
     const ecosystemStats = await analyzeEcosystem();
     const manifest = {
@@ -45169,9 +45660,9 @@ Priority: ${input.priority}/10` }
   /**
    * AI Chat — direct conversation with QUMUS brain
    */
-  chat: protectedProcedure.input(z103.object({
-    message: z103.string(),
-    context: z103.string().default("general")
+  chat: protectedProcedure.input(z104.object({
+    message: z104.string(),
+    context: z104.string().default("general")
   })).mutation(async ({ input, ctx }) => {
     const ecosystemStats = await analyzeEcosystem();
     const response = await invokeLLM({
@@ -45244,11 +45735,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z104.object({
-        goal: z104.string().min(1, "Goal is required"),
-        priority: z104.number().int().min(1).max(10).optional().default(5),
-        steps: z104.array(z104.string()).optional(),
-        constraints: z104.array(z104.string()).optional()
+      z105.object({
+        goal: z105.string().min(1, "Goal is required"),
+        priority: z105.number().int().min(1).max(10).optional().default(5),
+        steps: z105.array(z105.string()).optional(),
+        constraints: z105.array(z105.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -45260,7 +45751,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z104.object({ taskId: z104.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z105.object({ taskId: z105.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -45270,11 +45761,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z104.object({
-        target: z104.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z104.string().min(1, "Action is required"),
-        params: z104.record(z104.any()).optional().default({}),
-        priority: z104.number().int().min(1).max(10).optional().default(5)
+      z105.object({
+        target: z105.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z105.string().min(1, "Action is required"),
+        params: z105.record(z105.any()).optional().default({}),
+        priority: z105.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -45286,10 +45777,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z104.object({ commandId: z104.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z105.object({ commandId: z105.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z104.object({ target: z104.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z105.object({ target: z105.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -45384,12 +45875,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z104.object({
-      sessionName: z104.string().min(1),
-      systemPrompt: z104.string().optional(),
-      temperature: z104.number().min(0).max(100).optional(),
-      model: z104.string().optional(),
-      maxSteps: z104.number().min(1).optional()
+    createSession: protectedProcedure.input(z105.object({
+      sessionName: z105.string().min(1),
+      systemPrompt: z105.string().optional(),
+      temperature: z105.number().min(0).max(100).optional(),
+      model: z105.string().optional(),
+      maxSteps: z105.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -45410,7 +45901,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z104.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z105.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -45419,7 +45910,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z104.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z105.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -45463,9 +45954,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z104.object({
-      dateRange: z104.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z104.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z105.object({
+      dateRange: z105.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z105.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -45476,26 +45967,28 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z104.object({
-      dateRange: z104.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z105.object({
+      dateRange: z105.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z104.object({
-      dateRange: z104.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z105.object({
+      dateRange: z105.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
   }),
   // Social Streaming (manage destinations, go live to YouTube/FB/IG/X/TikTok)
   socialStream: socialStreamRouter,
+  // Social Media Queue Manager (retry failed posts, validate credentials)
+  socialMedia: socialMediaQueueRouter,
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z104.object({
-      email: z104.string().email(),
-      name: z104.string().optional(),
-      source: z104.string().optional(),
-      language: z104.string().optional()
+    subscribe: publicProcedure.input(z105.object({
+      email: z105.string().email(),
+      name: z105.string().optional(),
+      source: z105.string().optional(),
+      language: z105.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
@@ -47649,9 +48142,9 @@ function getCategorySummary() {
 }
 
 // server/rrbRadioApi.ts
-import mysql9 from "mysql2/promise";
+import mysql10 from "mysql2/promise";
 function getConnection3() {
-  return mysql9.createConnection(process.env.DATABASE_URL);
+  return mysql10.createConnection(process.env.DATABASE_URL);
 }
 function registerRRBRadioApi(app) {
   const BASE = "/api/radio/v1";
@@ -48301,9 +48794,9 @@ function registerRRBRadioApi(app) {
 init_qumusProductionIntegration();
 
 // server/services/autoDjEngine.ts
-import mysql10 from "mysql2/promise";
+import mysql11 from "mysql2/promise";
 function getConnection4() {
-  return mysql10.createConnection(process.env.DATABASE_URL);
+  return mysql11.createConnection(process.env.DATABASE_URL);
 }
 async function checkStreamHealth2(url) {
   const start = Date.now();
