@@ -4661,3 +4661,9 @@
 - [x] Updated registry (Ty OS source) to match all DB changes
 - [x] FINAL: 54/54 LIVE, 0 DEAD - every stream verified playing audio/mpeg
 - [x] All frequencies set to 432 Hz default
+
+## URGENT FIX: Restore Ty OS Stream URLs (March 18, 2026)
+- [x] Read radioStationRegistry.ts (Ty OS source of truth) - all 54 channel URLs extracted
+- [x] Synced ALL 54 DB channels to exact Ty OS registry URLs - ZERO substitutions
+- [x] Verified all streams match registry exactly
+- [x] Test playback: 54/54 LIVE, 0 DEAD - every stream HTTP 200 with audio/mpeg
