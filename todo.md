@@ -4667,3 +4667,12 @@
 - [x] Synced ALL 54 DB channels to exact Ty OS registry URLs - ZERO substitutions
 - [x] Verified all streams match registry exactly
 - [x] Test playback: 54/54 LIVE, 0 DEAD - every stream HTTP 200 with audio/mpeg
+
+## CRITICAL FIX: HybridCast Emergency Channel Sync (March 18, 2026)
+- [x] ROOT CAUSE: 53 stale duplicate entries in streaming_status (30000-series IDs) - different systems grabbed different entries
+- [x] Deleted all stale duplicates: 54 entries remaining, 0 duplicates, 0 orphans
+- [x] Synced all streaming_status URLs to match radio_channels exactly: 0 mismatches
+- [x] Verified HybridCast Emergency (ch-29) returns scanner-128-mp3 from ALL 3 APIs:
+  - ecosystemIntegration.getAllChannels (QUMUS): scanner-128-mp3
+  - globalBroadcast.verifySyncStatus (TBZ-OS): scanner-128-mp3
+  - RRB Radio API /channels/29 (RRB): scanner-128-mp3
