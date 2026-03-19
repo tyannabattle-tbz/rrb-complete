@@ -11,6 +11,9 @@ import { getPlanningEngine } from "./planningEngine";
 import { getEcosystemController } from "./ecosystemController";
 import { startSocialMediaPublisher } from "../socialMediaPublisher";
 import { startStreamHealthMonitor } from "../services/streamHealthMonitor";
+import { startSelfImprovement } from "./selfImprovementEngine";
+import { startSelfUpdate } from "./selfUpdateEngine";
+import { startSelfAudit } from "../services/qumusSelfAudit";
 
 export interface QumusConfig {
   maxConcurrentTasks: number;
@@ -90,6 +93,18 @@ export class QumusActivation {
 
       // Step 8: Start social media auto-publisher
       startSocialMediaPublisher();
+
+      // Step 9: Start Self-Improvement Engine (learns from decisions, optimizes policies)
+      startSelfImprovement();
+      console.log("[QUMUS] Self-Improvement Engine activated — continuous learning enabled");
+
+      // Step 10: Start Self-Update Engine (monitors endpoints, auto-repairs)
+      startSelfUpdate();
+      console.log("[QUMUS] Self-Update Engine activated — endpoint monitoring enabled");
+
+      // Step 11: Start Self-Audit Engine (ecosystem health, auto-correction)
+      startSelfAudit();
+      console.log("[QUMUS] Self-Audit Engine activated — 30min audit cycle");
       this.agent.registerPolicy('social_media_publishing', async (context: any) => {
         const { checkAndPublishScheduledPosts } = await import('../socialMediaPublisher');
         const results = await checkAndPublishScheduledPosts();
@@ -372,6 +387,9 @@ CAPABILITIES:
 ✓ Sweet Miracles Coordination
 ✓ Multi-Agent Coordination
 ✓ Self-Monitoring & Improvement
+✓ Self-Improvement Engine (learns from decisions)
+✓ Self-Update Engine (auto-repairs broken endpoints)
+✓ Self-Audit Engine (ecosystem health + auto-correction)
 ✓ Predictive Analytics
 
 STATISTICS:

@@ -3581,17 +3581,17 @@ async function getUserByOpenId(openId) {
   const result2 = await db2.select().from(users).where(eq2(users.openId, openId)).limit(1);
   return result2.length > 0 ? result2[0] : void 0;
 }
-async function createAgentSession(userId, sessionName, config = {}) {
+async function createAgentSession(userId, sessionName, config2 = {}) {
   const db2 = await getDb();
   if (!db2) throw new Error("Database not available");
   try {
     const result2 = await db2.insert(agentSessions).values({
       userId,
       sessionName,
-      systemPrompt: config.systemPrompt,
-      temperature: config.temperature ?? 70,
-      model: config.model ?? "gpt-4-turbo",
-      maxSteps: config.maxSteps ?? 50
+      systemPrompt: config2.systemPrompt,
+      temperature: config2.temperature ?? 70,
+      model: config2.model ?? "gpt-4-turbo",
+      maxSteps: config2.maxSteps ?? 50
     });
     const sessions = await db2.select().from(agentSessions).where(
       eq2(agentSessions.userId, userId)
@@ -3890,7 +3890,7 @@ async function getOrCreateQuota(userId) {
   });
   return db2.select().from(quotas).where(eq2(quotas.userId, userId)).limit(1).then((rows) => rows[0]);
 }
-async function createPlugin(userId, name, type, code, config) {
+async function createPlugin(userId, name, type, code, config2) {
   const db2 = await getDb();
   if (!db2) throw new Error("Database not available");
   const result2 = await db2.insert(plugins).values({
@@ -3898,7 +3898,7 @@ async function createPlugin(userId, name, type, code, config) {
     name,
     type,
     code,
-    config,
+    config: config2,
     isActive: true
   });
   return result2.insertId;
@@ -3921,7 +3921,7 @@ async function addTrainingData(userId, input, output, quality, tags, sessionId) 
   });
   return result2.insertId;
 }
-async function createSnapshot(userId, sessionId, name, config, memory, description) {
+async function createSnapshot(userId, sessionId, name, config2, memory, description) {
   const db2 = await getDb();
   if (!db2) throw new Error("Database not available");
   const result2 = await db2.insert(agentSnapshots).values({
@@ -3929,7 +3929,7 @@ async function createSnapshot(userId, sessionId, name, config, memory, descripti
     sessionId,
     name,
     description,
-    config,
+    config: config2,
     memory
   });
   return result2.insertId;
@@ -3959,7 +3959,7 @@ async function getFeatureFlag(userId, flagName) {
   const flags = await db2.select().from(featureFlags).where(and2(eq2(featureFlags.userId, userId), eq2(featureFlags.flagName, flagName))).limit(1);
   return flags[0];
 }
-async function setFeatureFlag(userId, flagName, isEnabled, rolloutPercentage, config) {
+async function setFeatureFlag(userId, flagName, isEnabled, rolloutPercentage, config2) {
   const db2 = await getDb();
   if (!db2) throw new Error("Database not available");
   const existing = await db2.select().from(featureFlags).where(and2(eq2(featureFlags.userId, userId), eq2(featureFlags.flagName, flagName))).limit(1);
@@ -3967,7 +3967,7 @@ async function setFeatureFlag(userId, flagName, isEnabled, rolloutPercentage, co
     await db2.update(featureFlags).set({
       isEnabled,
       rolloutPercentage,
-      config
+      config: config2
     }).where(eq2(featureFlags.id, existing[0].id));
   } else {
     await db2.insert(featureFlags).values({
@@ -3975,7 +3975,7 @@ async function setFeatureFlag(userId, flagName, isEnabled, rolloutPercentage, co
       flagName,
       isEnabled,
       rolloutPercentage,
-      config
+      config: config2
     });
   }
 }
@@ -4164,14 +4164,14 @@ async function getAllWebhookInstallations() {
   if (!database2) throw new Error("Database not available");
   return database2.select().from(webhookInstallations);
 }
-async function createWebhookInstallation(userId, templateId, name, config) {
+async function createWebhookInstallation(userId, templateId, name, config2) {
   const database2 = await getDb();
   if (!database2) throw new Error("Database not available");
   const result2 = await database2.insert(webhookInstallations).values({
     userId,
     templateId,
     name,
-    config,
+    config: config2,
     isActive: true
   });
   return result2[0].insertId;
@@ -4187,10 +4187,10 @@ async function getUserWebhookInstallations(userId) {
   if (!database2) throw new Error("Database not available");
   return database2.select().from(webhookInstallations).where(eq2(webhookInstallations.userId, userId));
 }
-async function updateWebhookInstallation(installationId, config) {
+async function updateWebhookInstallation(installationId, config2) {
   const database2 = await getDb();
   if (!database2) throw new Error("Database not available");
-  await database2.update(webhookInstallations).set({ config, updatedAt: /* @__PURE__ */ new Date() }).where(eq2(webhookInstallations.id, installationId));
+  await database2.update(webhookInstallations).set({ config: config2, updatedAt: /* @__PURE__ */ new Date() }).where(eq2(webhookInstallations.id, installationId));
 }
 async function deleteWebhookInstallation(installationId) {
   const database2 = await getDb();
@@ -6491,6 +6491,18 @@ var init_voiceTranscription = __esm({
 });
 
 // server/services/streamHealthMonitor.ts
+var streamHealthMonitor_exports = {};
+__export(streamHealthMonitor_exports, {
+  getChannelLeaderboard: () => getChannelLeaderboard,
+  getCriticalAlertStatus: () => getCriticalAlertStatus,
+  getHealthHistory: () => getHealthHistory,
+  getLatestReport: () => getLatestReport,
+  getMonitorStatus: () => getMonitorStatus,
+  getOutageHistory: () => getOutageHistory,
+  runHealthCheck: () => runHealthCheck,
+  startStreamHealthMonitor: () => startStreamHealthMonitor,
+  stopStreamHealthMonitor: () => stopStreamHealthMonitor
+});
 import { sql as sql16 } from "drizzle-orm";
 async function sendCriticalOutageAlert(downCount, totalCount, rootCauseDetails, downChannels) {
   const now = Date.now();
@@ -8386,6 +8398,1096 @@ var init_ecosystemController = __esm({
   }
 });
 
+// server/qumus/selfImprovementEngine.ts
+function recordDecision(record) {
+  const decision = {
+    ...record,
+    id: `dec-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+  };
+  decisionHistory2.push(decision);
+  if (decisionHistory2.length > config.maxHistorySize) {
+    decisionHistory2.splice(0, decisionHistory2.length - config.maxHistorySize);
+  }
+  updatePolicyPerformance(decision);
+  try {
+    const memory = getMemorySystem();
+    memory.storeFact(`last_decision_${decision.policyName}`, {
+      outcome: decision.outcome,
+      confidence: decision.confidence,
+      timestamp: decision.timestamp
+    }, decision.outcome === "success" ? 0.95 : 0.7, "self-improvement");
+  } catch {
+  }
+}
+function updatePolicyPerformance(decision) {
+  let perf = policyPerformance.get(decision.policyName);
+  if (!perf) {
+    perf = {
+      policyName: decision.policyName,
+      totalDecisions: 0,
+      successCount: 0,
+      failureCount: 0,
+      partialCount: 0,
+      successRate: 1,
+      avgConfidence: decision.confidence,
+      avgExecutionTimeMs: decision.executionTimeMs,
+      trend: "stable",
+      lastAdjusted: Date.now(),
+      adjustmentHistory: []
+    };
+  }
+  perf.totalDecisions++;
+  if (decision.outcome === "success") perf.successCount++;
+  else if (decision.outcome === "failure") perf.failureCount++;
+  else perf.partialCount++;
+  perf.successRate = (perf.successCount + perf.partialCount * 0.5) / perf.totalDecisions;
+  perf.avgConfidence = (perf.avgConfidence * (perf.totalDecisions - 1) + decision.confidence) / perf.totalDecisions;
+  perf.avgExecutionTimeMs = (perf.avgExecutionTimeMs * (perf.totalDecisions - 1) + decision.executionTimeMs) / perf.totalDecisions;
+  perf.trend = calculateTrend(decision.policyName);
+  policyPerformance.set(decision.policyName, perf);
+}
+function calculateTrend(policyName) {
+  const recentDecisions = decisionHistory2.filter((d) => d.policyName === policyName).slice(-config.trendWindowSize);
+  if (recentDecisions.length < 10) return "stable";
+  const midpoint = Math.floor(recentDecisions.length / 2);
+  const firstHalf = recentDecisions.slice(0, midpoint);
+  const secondHalf = recentDecisions.slice(midpoint);
+  const firstSuccessRate = firstHalf.filter((d) => d.outcome === "success").length / firstHalf.length;
+  const secondSuccessRate = secondHalf.filter((d) => d.outcome === "success").length / secondHalf.length;
+  const diff = secondSuccessRate - firstSuccessRate;
+  if (diff > 0.1) return "improving";
+  if (diff < -0.1) return "declining";
+  return "stable";
+}
+function runImprovementCycle() {
+  totalImprovementCycles++;
+  const startTime = Date.now();
+  const recommendations = [];
+  const learnings = [];
+  let adjustmentCount = 0;
+  for (const [name, perf] of policyPerformance) {
+    if (perf.totalDecisions < config.minDecisionsForAdjustment) continue;
+    if (perf.trend === "declining" && perf.successRate < config.successRateFloor) {
+      const oldThreshold = perf.avgConfidence;
+      const newThreshold = Math.max(0.3, oldThreshold - config.confidenceAdjustmentStep);
+      perf.adjustmentHistory.push({
+        timestamp: Date.now(),
+        policyName: name,
+        previousThreshold: oldThreshold,
+        newThreshold,
+        reason: `Declining success rate (${(perf.successRate * 100).toFixed(1)}%) \u2014 lowering confidence threshold for more human review`
+      });
+      perf.avgConfidence = newThreshold;
+      perf.lastAdjusted = Date.now();
+      adjustmentCount++;
+      recommendations.push(`Policy "${name}" is declining (${(perf.successRate * 100).toFixed(1)}% success). Consider reviewing its rules.`);
+      learnings.push(`Reduced confidence threshold for "${name}" from ${(oldThreshold * 100).toFixed(0)}% to ${(newThreshold * 100).toFixed(0)}%`);
+    }
+    if (perf.trend === "improving" && perf.successRate > config.successRateCeiling) {
+      const oldThreshold = perf.avgConfidence;
+      const newThreshold = Math.min(0.99, oldThreshold + config.confidenceAdjustmentStep);
+      perf.adjustmentHistory.push({
+        timestamp: Date.now(),
+        policyName: name,
+        previousThreshold: oldThreshold,
+        newThreshold,
+        reason: `High success rate (${(perf.successRate * 100).toFixed(1)}%) \u2014 increasing autonomy`
+      });
+      perf.avgConfidence = newThreshold;
+      perf.lastAdjusted = Date.now();
+      adjustmentCount++;
+      learnings.push(`Increased autonomy for "${name}" \u2014 success rate at ${(perf.successRate * 100).toFixed(1)}%`);
+    }
+    const recentFailures = decisionHistory2.filter((d) => d.policyName === name && d.outcome === "failure").slice(-20);
+    if (recentFailures.length > 5) {
+      const errorTypes = /* @__PURE__ */ new Map();
+      for (const f of recentFailures) {
+        const errType = f.errorType || "unknown";
+        errorTypes.set(errType, (errorTypes.get(errType) || 0) + 1);
+      }
+      const topError = [...errorTypes.entries()].sort((a, b) => b[1] - a[1])[0];
+      if (topError && topError[1] > 3) {
+        recommendations.push(`Policy "${name}" has recurring "${topError[0]}" errors (${topError[1]} times). Auto-adjusting retry strategy.`);
+        learnings.push(`Identified error pattern: "${topError[0]}" in policy "${name}"`);
+      }
+    }
+  }
+  const engagementLearnings = analyzeEngagementPatterns();
+  learnings.push(...engagementLearnings);
+  const apiLearnings = analyzeApiPatterns();
+  learnings.push(...apiLearnings);
+  let totalDecisions = 0;
+  let totalSuccess = 0;
+  let bestPolicy = "";
+  let bestRate = 0;
+  let worstPolicy = "";
+  let worstRate = 1;
+  for (const [name, perf] of policyPerformance) {
+    totalDecisions += perf.totalDecisions;
+    totalSuccess += perf.successCount;
+    if (perf.successRate > bestRate && perf.totalDecisions >= 5) {
+      bestRate = perf.successRate;
+      bestPolicy = name;
+    }
+    if (perf.successRate < worstRate && perf.totalDecisions >= 5) {
+      worstRate = perf.successRate;
+      worstPolicy = name;
+    }
+  }
+  const overallSuccessRate = totalDecisions > 0 ? totalSuccess / totalDecisions : 1;
+  const trends = [...policyPerformance.values()].map((p) => p.trend);
+  const improvingCount = trends.filter((t2) => t2 === "improving").length;
+  const decliningCount = trends.filter((t2) => t2 === "declining").length;
+  const overallTrend = improvingCount > decliningCount ? "improving" : decliningCount > improvingCount ? "declining" : "stable";
+  const report = {
+    reportId: `imp-${Date.now()}`,
+    timestamp: startTime,
+    totalDecisionsAnalyzed: totalDecisions,
+    policiesOptimized: adjustmentCount,
+    confidenceAdjustments: adjustmentCount,
+    overallSuccessRate,
+    overallTrend,
+    topPerformingPolicy: bestPolicy || "N/A",
+    worstPerformingPolicy: worstPolicy || "N/A",
+    recommendations,
+    learnings
+  };
+  improvementReports.push(report);
+  if (improvementReports.length > 100) {
+    improvementReports.splice(0, improvementReports.length - 100);
+  }
+  console.log(`[SelfImprovement] Cycle #${totalImprovementCycles}: ${totalDecisions} decisions analyzed, ${adjustmentCount} adjustments, overall success: ${(overallSuccessRate * 100).toFixed(1)}%, trend: ${overallTrend}`);
+  return report;
+}
+function analyzeEngagementPatterns() {
+  const learnings = [];
+  if (engagementHistory.length < 5) return learnings;
+  const timeSlotPerformance = /* @__PURE__ */ new Map();
+  for (const metric of engagementHistory) {
+    const hour = new Date(metric.timestamp).getHours();
+    const slot = `${hour}:00-${hour + 1}:00`;
+    const existing = timeSlotPerformance.get(slot) || { total: 0, engagements: 0 };
+    existing.total++;
+    existing.engagements += metric.engagementRate;
+    timeSlotPerformance.set(slot, existing);
+  }
+  let bestSlot = "";
+  let bestAvgEngagement = 0;
+  for (const [slot, data] of timeSlotPerformance) {
+    const avg = data.engagements / data.total;
+    if (avg > bestAvgEngagement) {
+      bestAvgEngagement = avg;
+      bestSlot = slot;
+    }
+  }
+  if (bestSlot) {
+    learnings.push(`Best engagement time slot: ${bestSlot} (avg rate: ${(bestAvgEngagement * 100).toFixed(1)}%)`);
+  }
+  const platformPerf = /* @__PURE__ */ new Map();
+  for (const metric of engagementHistory) {
+    const existing = platformPerf.get(metric.platform) || { total: 0, engagements: 0 };
+    existing.total++;
+    existing.engagements += metric.engagementRate;
+    platformPerf.set(metric.platform, existing);
+  }
+  for (const [platform, data] of platformPerf) {
+    const avg = data.engagements / data.total;
+    learnings.push(`${platform} avg engagement rate: ${(avg * 100).toFixed(1)}% across ${data.total} posts`);
+  }
+  return learnings;
+}
+function analyzeApiPatterns() {
+  const learnings = [];
+  const retryDecisions = decisionHistory2.filter((d) => d.retryCount > 0);
+  if (retryDecisions.length > 5) {
+    const avgRetries = retryDecisions.reduce((sum2, d) => sum2 + d.retryCount, 0) / retryDecisions.length;
+    const retrySuccessRate = retryDecisions.filter((d) => d.outcome === "success").length / retryDecisions.length;
+    learnings.push(`API retry analysis: avg ${avgRetries.toFixed(1)} retries, ${(retrySuccessRate * 100).toFixed(1)}% eventual success`);
+    if (retrySuccessRate < 0.5) {
+      learnings.push("Low retry success rate detected \u2014 consider increasing backoff intervals or checking API health");
+    }
+  }
+  const slowDecisions = decisionHistory2.filter((d) => d.executionTimeMs > 5e3);
+  if (slowDecisions.length > 10) {
+    const slowPolicies = /* @__PURE__ */ new Map();
+    for (const d of slowDecisions) {
+      slowPolicies.set(d.policyName, (slowPolicies.get(d.policyName) || 0) + 1);
+    }
+    for (const [policy, count6] of slowPolicies) {
+      if (count6 > 3) {
+        learnings.push(`Policy "${policy}" has ${count6} slow executions (>5s) \u2014 may need optimization`);
+      }
+    }
+  }
+  return learnings;
+}
+function startSelfImprovement() {
+  if (isRunning2) return;
+  isRunning2 = true;
+  console.log("[SelfImprovement] QUMUS Self-Improvement Engine activated \u2014 5min cycle");
+  setTimeout(() => {
+    runImprovementCycle();
+  }, 2 * 60 * 1e3);
+  improvementInterval = setInterval(() => {
+    runImprovementCycle();
+  }, config.improvementCycleMs);
+}
+var decisionHistory2, policyPerformance, engagementHistory, improvementReports, isRunning2, improvementInterval, totalImprovementCycles, config;
+var init_selfImprovementEngine = __esm({
+  "server/qumus/selfImprovementEngine.ts"() {
+    init_memorySystem();
+    decisionHistory2 = [];
+    policyPerformance = /* @__PURE__ */ new Map();
+    engagementHistory = [];
+    improvementReports = [];
+    isRunning2 = false;
+    improvementInterval = null;
+    totalImprovementCycles = 0;
+    config = {
+      minDecisionsForAdjustment: 10,
+      // Need at least 10 decisions before adjusting
+      successRateFloor: 0.5,
+      // Below this, trigger aggressive optimization
+      successRateCeiling: 0.95,
+      // Above this, increase autonomy
+      confidenceAdjustmentStep: 0.05,
+      // How much to adjust per cycle
+      maxHistorySize: 5e3,
+      // Max decision records to keep
+      improvementCycleMs: 5 * 60 * 1e3,
+      // Run improvement analysis every 5 minutes
+      engagementHistorySize: 1e3,
+      // Max engagement records
+      trendWindowSize: 50
+      // Last N decisions for trend calculation
+    };
+  }
+});
+
+// server/services/qumusSelfAudit.ts
+var qumusSelfAudit_exports = {};
+__export(qumusSelfAudit_exports, {
+  getAuditStatus: () => getAuditStatus,
+  getCorrectionHistory: () => getCorrectionHistory,
+  getLastReport: () => getLastReport,
+  setAuditEnabled: () => setAuditEnabled,
+  setAutoCorrectEnabled: () => setAutoCorrectEnabled,
+  startSelfAudit: () => startSelfAudit,
+  stopSelfAudit: () => stopSelfAudit,
+  triggerManualAudit: () => triggerManualAudit
+});
+async function auditStreams() {
+  const findings = [];
+  try {
+    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+    const db2 = await getDb5();
+    if (!db2) return findings;
+    const { sql: sql21 } = await import("drizzle-orm");
+    const rawChannels = await db2.execute(sql21`SELECT id, name, streamUrl, genre, metadata FROM radio_channels`);
+    const channels = Array.isArray(rawChannels) && Array.isArray(rawChannels[0]) ? rawChannels[0] : rawChannels;
+    if (!Array.isArray(channels)) return findings;
+    const urlMap = /* @__PURE__ */ new Map();
+    for (const ch of channels) {
+      const url = ch.streamUrl || "";
+      if (!urlMap.has(url)) urlMap.set(url, []);
+      urlMap.get(url).push(ch.name);
+    }
+    for (const [url, names] of urlMap) {
+      if (names.length > 3) {
+        findings.push({
+          id: `stream-dup-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          category: "stream",
+          severity: "info",
+          title: `Duplicate stream URL shared by ${names.length} channels`,
+          description: `URL "${url.substring(0, 60)}..." is used by: ${names.join(", ")}`,
+          autoFixable: false,
+          autoFixed: false,
+          timestamp: Date.now()
+        });
+      }
+    }
+    for (const ch of channels) {
+      if (!ch.streamUrl || ch.streamUrl.trim() === "") {
+        findings.push({
+          id: `stream-empty-${ch.id}`,
+          category: "stream",
+          severity: "critical",
+          title: `Channel "${ch.name}" has no stream URL`,
+          description: `Channel ID ${ch.id} has an empty or null stream URL`,
+          autoFixable: true,
+          autoFixed: false,
+          timestamp: Date.now()
+        });
+      }
+    }
+    const noFallbackCount = channels.filter((ch) => {
+      const meta = typeof ch.metadata === "string" ? JSON.parse(ch.metadata || "{}") : ch.metadata || {};
+      return !meta.fallbackUrl;
+    }).length;
+    if (noFallbackCount > 0) {
+      findings.push({
+        id: `stream-nofallback-summary-${Date.now()}`,
+        category: "stream",
+        severity: "info",
+        title: `${noFallbackCount} channels have no fallback stream configured`,
+        description: `${noFallbackCount}/54 channels lack a fallback URL. This is informational \u2014 primary streams are operational.`,
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+    const sampleSize = Math.min(5, channels.length);
+    const shuffled = [...channels].sort(() => Math.random() - 0.5);
+    const sample = shuffled.slice(0, sampleSize);
+    for (const ch of sample) {
+      if (!ch.streamUrl) continue;
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5e3);
+        const resp = await fetch(ch.streamUrl, {
+          method: "HEAD",
+          signal: controller.signal,
+          redirect: "follow"
+        });
+        clearTimeout(timeout);
+        if (resp.status >= 400) {
+          findings.push({
+            id: `stream-dead-${ch.id}`,
+            category: "stream",
+            severity: "critical",
+            title: `Channel "${ch.name}" stream is dead (HTTP ${resp.status})`,
+            description: `Stream URL returned ${resp.status}. Auto-swap to fallback if available.`,
+            autoFixable: true,
+            autoFixed: false,
+            timestamp: Date.now()
+          });
+        }
+      } catch (err) {
+        if (err.name === "AbortError") {
+          findings.push({
+            id: `stream-timeout-${ch.id}`,
+            category: "stream",
+            severity: "warning",
+            title: `Channel "${ch.name}" stream timed out`,
+            description: `Stream URL did not respond within 5 seconds`,
+            autoFixable: true,
+            autoFixed: false,
+            timestamp: Date.now()
+          });
+        }
+      }
+    }
+  } catch (err) {
+    console.error("[SelfAudit] Stream audit error:", err);
+  }
+  return findings;
+}
+async function auditDatabase() {
+  const findings = [];
+  try {
+    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+    const db2 = await getDb5();
+    if (!db2) {
+      findings.push({
+        id: `db-noconn-${Date.now()}`,
+        category: "database",
+        severity: "critical",
+        title: "Database connection unavailable",
+        description: "Cannot connect to the database",
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+      return findings;
+    }
+    const { sql: sql21 } = await import("drizzle-orm");
+    const rawCC = await db2.execute(sql21`SELECT COUNT(*) as cnt FROM radio_channels`);
+    const ccRows = Array.isArray(rawCC) && Array.isArray(rawCC[0]) ? rawCC[0] : rawCC;
+    const cnt = ccRows?.[0]?.cnt || 0;
+    if (cnt < 54) {
+      findings.push({
+        id: `db-channels-missing-${Date.now()}`,
+        category: "database",
+        severity: "warning",
+        title: `Only ${cnt}/54 radio channels in database`,
+        description: `Expected 54 channels, found ${cnt}. Some channels may be missing.`,
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+    try {
+      const rawSC = await db2.execute(sql21`SELECT COUNT(*) as cnt FROM broadcast_schedules`);
+      const scRows = Array.isArray(rawSC) && Array.isArray(rawSC[0]) ? rawSC[0] : rawSC;
+      const sCnt = scRows?.[0]?.cnt || 0;
+      if (sCnt === 0) {
+        findings.push({
+          id: `db-sched-empty-${Date.now()}`,
+          category: "database",
+          severity: "warning",
+          title: "Broadcast schedule is empty",
+          description: "No broadcast schedule entries found. Channels have no programming.",
+          autoFixable: false,
+          autoFixed: false,
+          timestamp: Date.now()
+        });
+      }
+    } catch {
+    }
+    try {
+      const rawOC = await db2.execute(
+        sql21`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'offline'`
+      );
+      const ocRows = Array.isArray(rawOC) && Array.isArray(rawOC[0]) ? rawOC[0] : rawOC;
+      const offCnt = ocRows?.[0]?.cnt || 0;
+      if (offCnt > 10) {
+        findings.push({
+          id: `db-offline-many-${Date.now()}`,
+          category: "database",
+          severity: "warning",
+          title: `${offCnt} channels marked as offline`,
+          description: `More than 10 channels are offline. Consider reactivating.`,
+          autoFixable: true,
+          autoFixed: false,
+          timestamp: Date.now()
+        });
+      }
+    } catch {
+    }
+  } catch (err) {
+    console.error("[SelfAudit] Database audit error:", err);
+  }
+  return findings;
+}
+async function auditPolicies() {
+  const findings = [];
+  try {
+    const { getQumusActivation: getQumusActivation2 } = await Promise.resolve().then(() => (init_qumusActivation(), qumusActivation_exports));
+    const qumus = getQumusActivation2();
+    const status = qumus.getStatus();
+    if (!status.isActive) {
+      findings.push({
+        id: `policy-inactive-${Date.now()}`,
+        category: "policy",
+        severity: "critical",
+        title: "QUMUS engine is not active",
+        description: "The QUMUS orchestration engine is not running. Autonomous operations are halted.",
+        autoFixable: true,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+  } catch (err) {
+    findings.push({
+      id: `policy-unavailable-${Date.now()}`,
+      category: "policy",
+      severity: "critical",
+      title: "QUMUS engine unavailable",
+      description: `Cannot reach QUMUS activation: ${String(err)}`,
+      autoFixable: false,
+      autoFixed: false,
+      timestamp: Date.now()
+    });
+  }
+  try {
+    const { getProductionIntegration: getProductionIntegration2 } = await Promise.resolve().then(() => (init_qumusProductionIntegration(), qumusProductionIntegration_exports));
+    const prodEngine = getProductionIntegration2();
+    const prodStatus = prodEngine.getStatus();
+    const subsystems = prodStatus.subsystems || [];
+    const healthyCount = subsystems.filter((s) => s.status === "ONLINE" || s.status === "healthy").length;
+    const totalCount = subsystems.length;
+    if (totalCount > 0 && healthyCount < totalCount * 0.8) {
+      findings.push({
+        id: `policy-subsystems-${Date.now()}`,
+        category: "policy",
+        severity: healthyCount < totalCount * 0.5 ? "critical" : "warning",
+        title: `Only ${healthyCount}/${totalCount} subsystems healthy`,
+        description: `${totalCount - healthyCount} subsystems are degraded or offline.`,
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+    if (prodStatus.errorCount > 5) {
+      findings.push({
+        id: `policy-errors-${Date.now()}`,
+        category: "policy",
+        severity: prodStatus.errorCount > 20 ? "critical" : "warning",
+        title: `QUMUS Production has ${prodStatus.errorCount} errors`,
+        description: `The QUMUS production engine has accumulated ${prodStatus.errorCount} errors since last restart.`,
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+  } catch {
+  }
+  return findings;
+}
+async function auditSystem() {
+  const findings = [];
+  const memUsage = process.memoryUsage();
+  const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
+  const heapTotalMB = Math.round(memUsage.heapTotal / 1024 / 1024);
+  if (heapUsedMB > 400) {
+    findings.push({
+      id: `sys-memory-${Date.now()}`,
+      category: "system",
+      severity: heapUsedMB > 600 ? "critical" : "warning",
+      title: `High memory usage: ${heapUsedMB}MB / ${heapTotalMB}MB`,
+      description: "Server memory usage is elevated. Consider restarting if it continues to grow.",
+      autoFixable: false,
+      autoFixed: false,
+      timestamp: Date.now()
+    });
+  }
+  const uptimeHours = Math.round(process.uptime() / 3600);
+  if (uptimeHours > 168) {
+    findings.push({
+      id: `sys-uptime-${Date.now()}`,
+      category: "system",
+      severity: "info",
+      title: `Server uptime: ${uptimeHours} hours`,
+      description: "Server has been running for over 7 days. Consider a scheduled restart.",
+      autoFixable: false,
+      autoFixed: false,
+      timestamp: Date.now()
+    });
+  }
+  return findings;
+}
+async function autoCorrect(findings) {
+  if (!autoCorrectEnabled) return 0;
+  let fixCount = 0;
+  const fixable = findings.filter((f) => f.autoFixable && !f.autoFixed);
+  for (const finding of fixable) {
+    if (fixCount >= MAX_CORRECTIONS_PER_CYCLE) break;
+    try {
+      let fixed = false;
+      let fixDesc = "";
+      switch (finding.id.split("-")[0] + "-" + finding.id.split("-")[1]) {
+        case "stream-dead":
+        case "stream-timeout": {
+          const channelId = parseInt(finding.id.split("-")[2]);
+          if (!isNaN(channelId)) {
+            const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+            const db2 = await getDb5();
+            if (db2) {
+              const { sql: sql21 } = await import("drizzle-orm");
+              const rawRows = await db2.execute(
+                sql21`SELECT metadata, streamUrl FROM radio_channels WHERE id = ${channelId}`
+              );
+              const rowArr = Array.isArray(rawRows) && Array.isArray(rawRows[0]) ? rawRows[0] : rawRows;
+              const ch = rowArr?.[0];
+              if (ch) {
+                const meta = typeof ch.metadata === "string" ? JSON.parse(ch.metadata || "{}") : ch.metadata || {};
+                if (meta.fallbackUrl && meta.fallbackUrl !== ch.streamUrl) {
+                  const oldUrl = ch.streamUrl;
+                  await db2.execute(
+                    sql21`UPDATE radio_channels SET streamUrl = ${meta.fallbackUrl} WHERE id = ${channelId}`
+                  );
+                  meta.fallbackUrl = oldUrl;
+                  meta.lastAutoSwap = Date.now();
+                  meta.autoSwapReason = finding.title;
+                  await db2.execute(
+                    sql21`UPDATE radio_channels SET metadata = ${JSON.stringify(meta)} WHERE id = ${channelId}`
+                  );
+                  fixed = true;
+                  fixDesc = `Swapped stream to fallback URL for channel ${channelId}`;
+                }
+              }
+            }
+          }
+          break;
+        }
+        case "stream-empty": {
+          const channelId = parseInt(finding.id.split("-")[2]);
+          if (!isNaN(channelId)) {
+            const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+            const db2 = await getDb5();
+            if (db2) {
+              const { sql: sql21 } = await import("drizzle-orm");
+              const defaultStream = "https://listen.181fm.com/181-rnb_128k.mp3";
+              await db2.execute(
+                sql21`UPDATE radio_channels SET streamUrl = ${defaultStream} WHERE id = ${channelId} AND (streamUrl IS NULL OR streamUrl = '')`
+              );
+              fixed = true;
+              fixDesc = `Assigned default R&B stream to channel ${channelId}`;
+            }
+          }
+          break;
+        }
+        case "db-offline": {
+          const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
+          const db2 = await getDb5();
+          if (db2) {
+            const { sql: sql21 } = await import("drizzle-orm");
+            await db2.execute(
+              sql21`UPDATE radio_channels SET status = 'active' WHERE status = 'offline'`
+            );
+            fixed = true;
+            fixDesc = "Reactivated all offline channels to active status";
+          }
+          break;
+        }
+        case "policy-inactive": {
+          try {
+            const { activateQumus: activateQumus2 } = await Promise.resolve().then(() => (init_qumusActivation(), qumusActivation_exports));
+            await activateQumus2({
+              maxConcurrentTasks: 20,
+              enableAutoScheduling: true,
+              enableSelfImprovement: true,
+              enableMultiAgentCoordination: true,
+              enablePredictiveAnalytics: true,
+              ecosystemIntegration: {
+                rrb: true,
+                hybridcast: true,
+                canryn: true,
+                sweetMiracles: true,
+                presentationBuilder: true,
+                musicStudio: true,
+                valanna: true,
+                seraph: true
+              }
+            });
+            fixed = true;
+            fixDesc = "Reactivated QUMUS orchestration engine";
+          } catch {
+          }
+          break;
+        }
+      }
+      if (fixed) {
+        finding.autoFixed = true;
+        finding.fixDescription = fixDesc;
+        fixCount++;
+        correctionHistory.push({
+          id: `fix-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          findingId: finding.id,
+          action: fixDesc,
+          before: finding.description,
+          after: "Auto-corrected",
+          success: true,
+          timestamp: Date.now()
+        });
+        console.log(`[SelfAudit] Auto-fixed: ${fixDesc}`);
+      }
+    } catch (err) {
+      console.error(`[SelfAudit] Auto-fix failed for ${finding.id}:`, err);
+      correctionHistory.push({
+        id: `fix-fail-${Date.now()}`,
+        findingId: finding.id,
+        action: "Attempted auto-fix",
+        before: finding.description,
+        after: `Failed: ${String(err)}`,
+        success: false,
+        timestamp: Date.now()
+      });
+    }
+  }
+  return fixCount;
+}
+async function sendDailyReport(report) {
+  const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+  if (lastDailyReportDate === today) return;
+  const hour = (/* @__PURE__ */ new Date()).getHours();
+  if (hour < 18) return;
+  lastDailyReportDate = today;
+  const healthEmoji = report.systemHealth >= 90 ? "\u{1F7E2}" : report.systemHealth >= 70 ? "\u{1F7E1}" : "\u{1F534}";
+  const content = [
+    `${healthEmoji} QUMUS Daily Ecosystem Report \u2014 ${today}`,
+    ``,
+    `System Health: ${report.systemHealth}%`,
+    `Total Checks: ${report.totalChecks}`,
+    `Passed: ${report.passed} | Warnings: ${report.warnings} | Critical: ${report.critical} | Info: ${report.findings.filter((f) => f.severity === "info").length}`,
+    `Auto-Fixed: ${report.autoFixed}`,
+    `Total Audits Today: ${totalAuditsRun}`,
+    `Total Auto-Fixes: ${totalAutoFixes}`,
+    ``,
+    report.findings.length > 0 ? `Top Findings:
+${report.findings.slice(0, 5).map((f) => `  \u2022 [${f.severity.toUpperCase()}] ${f.title}${f.autoFixed ? " \u2705 Fixed" : ""}`).join("\n")}` : "No issues found \u2014 all systems nominal.",
+    ``,
+    `Next audit: ${new Date(report.nextScheduledAudit).toLocaleTimeString()}`
+  ].join("\n");
+  try {
+    await notifyOwner({
+      title: `QUMUS Daily Report \u2014 ${report.systemHealth}% Health`,
+      content
+    });
+    console.log("[SelfAudit] Daily report sent");
+  } catch (err) {
+    console.error("[SelfAudit] Failed to send daily report:", err);
+  }
+}
+async function runFullAudit() {
+  const startTime = Date.now();
+  console.log("[SelfAudit] Starting full ecosystem audit...");
+  const [streamFindings, dbFindings, policyFindings, systemFindings] = await Promise.all([
+    auditStreams(),
+    auditDatabase(),
+    auditPolicies(),
+    auditSystem()
+  ]);
+  const allFindings = [...streamFindings, ...dbFindings, ...policyFindings, ...systemFindings];
+  const fixCount = await autoCorrect(allFindings);
+  totalAutoFixes += fixCount;
+  totalAuditsRun++;
+  const criticalCount = allFindings.filter((f) => f.severity === "critical" && !f.autoFixed).length;
+  const warningCount = allFindings.filter((f) => f.severity === "warning" && !f.autoFixed).length;
+  const infoCount = allFindings.filter((f) => f.severity === "info").length;
+  const healthScore = Math.max(0, Math.min(
+    100,
+    100 - criticalCount * 20 - warningCount * 8
+  ));
+  const report = {
+    reportId: `audit-${Date.now()}`,
+    timestamp: startTime,
+    duration: Date.now() - startTime,
+    totalChecks: allFindings.length + (54 - allFindings.filter((f) => f.category === "stream").length),
+    passed: allFindings.length === 0 ? 54 : 54 - allFindings.length,
+    warnings: warningCount,
+    critical: criticalCount,
+    autoFixed: fixCount,
+    findings: allFindings,
+    systemHealth: healthScore,
+    nextScheduledAudit: Date.now() + AUDIT_INTERVAL_MS
+  };
+  lastReport2 = report;
+  console.log(`[SelfAudit] Audit complete: Health=${healthScore}%, Findings=${allFindings.length} (C:${criticalCount} W:${warningCount} I:${infoCount}), AutoFixed=${fixCount}, Duration=${report.duration}ms`);
+  await sendDailyReport(report);
+  if (healthScore < 50) {
+    try {
+      await notifyOwner({
+        title: `\u26A0\uFE0F QUMUS CRITICAL: Ecosystem health at ${healthScore}%`,
+        content: `${criticalCount} critical issues detected. ${fixCount} auto-fixed. Manual intervention may be required.
+
+Top issues:
+${allFindings.filter((f) => f.severity === "critical").slice(0, 3).map((f) => `\u2022 ${f.title}`).join("\n")}`
+      });
+    } catch {
+    }
+  }
+  return report;
+}
+function startSelfAudit() {
+  if (isRunning3) return;
+  isRunning3 = true;
+  console.log("[SelfAudit] QUMUS Self-Audit Engine activated \u2014 30min cycle");
+  setTimeout(() => {
+    runFullAudit().catch((err) => console.error("[SelfAudit] Initial audit failed:", err));
+  }, 6e4);
+  auditInterval = setInterval(() => {
+    runFullAudit().catch((err) => console.error("[SelfAudit] Scheduled audit failed:", err));
+  }, AUDIT_INTERVAL_MS);
+}
+function stopSelfAudit() {
+  if (auditInterval) {
+    clearInterval(auditInterval);
+    auditInterval = null;
+  }
+  isRunning3 = false;
+  console.log("[SelfAudit] Self-Audit Engine stopped");
+}
+function getLastReport() {
+  return lastReport2;
+}
+function getCorrectionHistory() {
+  return correctionHistory.slice(-50);
+}
+function getAuditStatus() {
+  return {
+    isRunning: isRunning3,
+    auditEnabled,
+    autoCorrectEnabled,
+    totalAuditsRun,
+    totalAutoFixes,
+    lastAuditTime: lastReport2?.timestamp || null,
+    lastHealthScore: lastReport2?.systemHealth || null,
+    nextAuditTime: lastReport2?.nextScheduledAudit || null,
+    correctionCount: correctionHistory.length
+  };
+}
+function setAuditEnabled(enabled) {
+  auditEnabled = enabled;
+  console.log(`[SelfAudit] Audit ${enabled ? "enabled" : "disabled"}`);
+}
+function setAutoCorrectEnabled(enabled) {
+  autoCorrectEnabled = enabled;
+  console.log(`[SelfAudit] Auto-correct ${enabled ? "enabled" : "disabled"}`);
+}
+async function triggerManualAudit() {
+  return runFullAudit();
+}
+var isRunning3, auditInterval, lastReport2, correctionHistory, totalAuditsRun, totalAutoFixes, auditEnabled, autoCorrectEnabled, MAX_CORRECTIONS_PER_CYCLE, AUDIT_INTERVAL_MS, lastDailyReportDate;
+var init_qumusSelfAudit = __esm({
+  "server/services/qumusSelfAudit.ts"() {
+    init_notification();
+    isRunning3 = false;
+    auditInterval = null;
+    lastReport2 = null;
+    correctionHistory = [];
+    totalAuditsRun = 0;
+    totalAutoFixes = 0;
+    auditEnabled = true;
+    autoCorrectEnabled = true;
+    MAX_CORRECTIONS_PER_CYCLE = 10;
+    AUDIT_INTERVAL_MS = 30 * 60 * 1e3;
+    lastDailyReportDate = "";
+  }
+});
+
+// server/qumus/selfUpdateEngine.ts
+function initializeServiceRegistry() {
+  const services = [
+    // External APIs
+    { name: "Twitter/X API v2", type: "api", url: "https://api.x.com/2/tweets", envKey: "TWITTER_API_KEY" },
+    { name: "YouTube Data API", type: "api", url: "https://www.googleapis.com/youtube/v3/channels", envKey: "YOUTUBE_API_KEY" },
+    { name: "Spotify API", type: "api", url: "https://api.spotify.com/v1/me", envKey: "SPOTIFY_CLIENT_ID" },
+    { name: "xAI/Grok API", type: "api", envKey: "XAI_API_KEY" },
+    { name: "Stripe API", type: "api", url: "https://api.stripe.com/v1/balance", envKey: "STRIPE_SECRET_KEY" },
+    // Webhooks
+    { name: "Stripe Webhook", type: "webhook", url: "/api/stripe/webhook", envKey: "STRIPE_WEBHOOK_SECRET" },
+    { name: "Discord Webhook", type: "webhook", envKey: "VITE_DISCORD_URL" },
+    // Auth
+    { name: "Manus OAuth", type: "auth", envKey: "OAUTH_SERVER_URL" },
+    // Storage
+    { name: "S3 Storage", type: "storage" },
+    // Internal Services
+    { name: "QUMUS Orchestration", type: "api" },
+    { name: "QUMUS Self-Audit", type: "api" },
+    { name: "Social Media Publisher", type: "api" },
+    { name: "Stream Health Monitor", type: "api" },
+    { name: "HybridCast Emergency", type: "api" },
+    { name: "VAPID Push Notifications", type: "api", envKey: "VAPID_PUBLIC_KEY" },
+    { name: "LLM/Forge API", type: "api", envKey: "BUILT_IN_FORGE_API_KEY" }
+  ];
+  for (const svc of services) {
+    serviceRegistry.set(svc.name, {
+      ...svc,
+      lastChecked: 0,
+      lastSuccess: 0,
+      status: "unknown",
+      consecutiveFailures: 0,
+      responseTimeMs: 0,
+      autoRepairAttempts: 0,
+      lastRepairAttempt: 0
+    });
+  }
+  console.log(`[SelfUpdate] Initialized service registry with ${services.length} endpoints`);
+}
+function checkEnvVar(key) {
+  const val = process.env[key];
+  return !!val && val.trim().length > 0 && val !== "undefined" && val !== "null";
+}
+async function probeEndpoint(endpoint) {
+  const startTime = Date.now();
+  if (endpoint.envKey && !checkEnvVar(endpoint.envKey)) {
+    return { healthy: false, responseTimeMs: 0, error: `Missing env var: ${endpoint.envKey}` };
+  }
+  if (!endpoint.url || endpoint.url.startsWith("/")) {
+    return { healthy: true, responseTimeMs: Date.now() - startTime };
+  }
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8e3);
+    const resp = await fetch(endpoint.url, {
+      method: "HEAD",
+      signal: controller.signal,
+      redirect: "follow"
+    });
+    clearTimeout(timeout);
+    const responseTime = Date.now() - startTime;
+    if (resp.status < 400 || resp.status === 401 || resp.status === 403) {
+      return { healthy: true, responseTimeMs: responseTime };
+    }
+    if (resp.status === 503) {
+      return { healthy: false, responseTimeMs: responseTime, error: `Service unavailable (503) \u2014 known API issue` };
+    }
+    return { healthy: false, responseTimeMs: responseTime, error: `HTTP ${resp.status}` };
+  } catch (err) {
+    return {
+      healthy: false,
+      responseTimeMs: Date.now() - startTime,
+      error: err.name === "AbortError" ? "Timeout (8s)" : String(err.message || err)
+    };
+  }
+}
+async function attemptAutoRepair(endpoint) {
+  endpoint.autoRepairAttempts++;
+  endpoint.lastRepairAttempt = Date.now();
+  console.log(`[SelfUpdate] Attempting auto-repair for "${endpoint.name}" (attempt #${endpoint.autoRepairAttempts})`);
+  try {
+    switch (endpoint.name) {
+      case "QUMUS Orchestration": {
+        const { activateQumus: activateQumus2 } = await Promise.resolve().then(() => (init_qumusActivation(), qumusActivation_exports));
+        await activateQumus2();
+        return true;
+      }
+      case "Social Media Publisher": {
+        const { startSocialMediaPublisher: startSocialMediaPublisher2 } = await Promise.resolve().then(() => (init_socialMediaPublisher(), socialMediaPublisher_exports));
+        startSocialMediaPublisher2();
+        return true;
+      }
+      case "Stream Health Monitor": {
+        const { startStreamHealthMonitor: startStreamHealthMonitor2 } = await Promise.resolve().then(() => (init_streamHealthMonitor(), streamHealthMonitor_exports));
+        startStreamHealthMonitor2();
+        return true;
+      }
+      case "QUMUS Self-Audit": {
+        const { startSelfAudit: startSelfAudit2 } = await Promise.resolve().then(() => (init_qumusSelfAudit(), qumusSelfAudit_exports));
+        startSelfAudit2();
+        return true;
+      }
+      default:
+        return false;
+    }
+  } catch (err) {
+    console.error(`[SelfUpdate] Auto-repair failed for "${endpoint.name}":`, err);
+    return false;
+  }
+}
+async function runUpdateCycle() {
+  totalUpdateCycles++;
+  const startTime = Date.now();
+  console.log(`[SelfUpdate] Starting update cycle #${totalUpdateCycles}...`);
+  let healthy = 0;
+  let degraded = 0;
+  let down = 0;
+  let repairsAttempted = 0;
+  let repairsSucceeded = 0;
+  const staleConfigs = [];
+  const recommendations = [];
+  for (const [name, endpoint] of serviceRegistry) {
+    const result2 = await probeEndpoint(endpoint);
+    endpoint.lastChecked = Date.now();
+    endpoint.responseTimeMs = result2.responseTimeMs;
+    if (result2.healthy) {
+      endpoint.status = "healthy";
+      endpoint.consecutiveFailures = 0;
+      endpoint.lastSuccess = Date.now();
+      healthy++;
+    } else {
+      endpoint.consecutiveFailures++;
+      if (endpoint.consecutiveFailures >= 3) {
+        endpoint.status = "down";
+        down++;
+        if (endpoint.type === "api" && !endpoint.url?.startsWith("http")) {
+          repairsAttempted++;
+          const repaired = await attemptAutoRepair(endpoint);
+          if (repaired) {
+            repairsSucceeded++;
+            endpoint.status = "healthy";
+            endpoint.consecutiveFailures = 0;
+            down--;
+            healthy++;
+          }
+        }
+        if (endpoint.status === "down") {
+          recommendations.push(`"${name}" is DOWN (${endpoint.consecutiveFailures} consecutive failures): ${result2.error}`);
+        }
+      } else {
+        endpoint.status = "degraded";
+        degraded++;
+        if (result2.error) {
+          recommendations.push(`"${name}" is degraded: ${result2.error}`);
+        }
+      }
+    }
+    recordDecision({
+      policyName: "endpoint_health_check",
+      action: `check_${name.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase()}`,
+      outcome: result2.healthy ? "success" : "failure",
+      confidence: result2.healthy ? 0.95 : 0.5,
+      executionTimeMs: result2.responseTimeMs,
+      timestamp: Date.now(),
+      metadata: { endpoint: name, error: result2.error },
+      retryCount: 0,
+      errorType: result2.error
+    });
+  }
+  const criticalEnvVars = [
+    "TWITTER_API_KEY",
+    "TWITTER_API_SECRET",
+    "TWITTER_ACCESS_TOKEN",
+    "TWITTER_ACCESS_TOKEN_SECRET",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "YOUTUBE_API_KEY",
+    "SPOTIFY_CLIENT_ID",
+    "SPOTIFY_CLIENT_SECRET",
+    "XAI_API_KEY",
+    "VAPID_PUBLIC_KEY",
+    "VAPID_PRIVATE_KEY",
+    "JWT_SECRET",
+    "DATABASE_URL"
+  ];
+  for (const key of criticalEnvVars) {
+    if (!checkEnvVar(key)) {
+      staleConfigs.push(key);
+    }
+  }
+  if (staleConfigs.length > 0) {
+    recommendations.push(`Missing/stale environment variables: ${staleConfigs.join(", ")}`);
+  }
+  const report = {
+    reportId: `upd-${Date.now()}`,
+    timestamp: startTime,
+    endpointsChecked: serviceRegistry.size,
+    endpointsHealthy: healthy,
+    endpointsDegraded: degraded,
+    endpointsDown: down,
+    autoRepairsAttempted: repairsAttempted,
+    autoRepairsSucceeded: repairsSucceeded,
+    staleConfigs,
+    recommendations
+  };
+  updateReports.push(report);
+  if (updateReports.length > 50) {
+    updateReports.splice(0, updateReports.length - 50);
+  }
+  console.log(`[SelfUpdate] Cycle #${totalUpdateCycles} complete: ${healthy}/${serviceRegistry.size} healthy, ${degraded} degraded, ${down} down, ${repairsSucceeded}/${repairsAttempted} repairs succeeded`);
+  if (down > 3) {
+    try {
+      await notifyOwner({
+        title: `QUMUS Self-Update: ${down} endpoints DOWN`,
+        content: `${down} service endpoints are down after auto-repair attempts.
+
+Down services:
+${recommendations.filter((r) => r.includes("DOWN")).join("\n")}
+
+Stale configs: ${staleConfigs.join(", ") || "None"}`
+      });
+    } catch {
+    }
+  }
+  return report;
+}
+function startSelfUpdate() {
+  if (isRunning4) return;
+  isRunning4 = true;
+  initializeServiceRegistry();
+  console.log("[SelfUpdate] QUMUS Self-Update Engine activated \u2014 10min cycle");
+  setTimeout(() => {
+    runUpdateCycle().catch((err) => console.error("[SelfUpdate] Initial cycle failed:", err));
+  }, 9e4);
+  updateInterval = setInterval(() => {
+    runUpdateCycle().catch((err) => console.error("[SelfUpdate] Cycle failed:", err));
+  }, UPDATE_CYCLE_MS);
+}
+var serviceRegistry, updateReports, isRunning4, updateInterval, totalUpdateCycles, UPDATE_CYCLE_MS;
+var init_selfUpdateEngine = __esm({
+  "server/qumus/selfUpdateEngine.ts"() {
+    init_notification();
+    init_selfImprovementEngine();
+    serviceRegistry = /* @__PURE__ */ new Map();
+    updateReports = [];
+    isRunning4 = false;
+    updateInterval = null;
+    totalUpdateCycles = 0;
+    UPDATE_CYCLE_MS = 10 * 60 * 1e3;
+  }
+});
+
 // server/qumus/qumusActivation.ts
 var qumusActivation_exports = {};
 __export(qumusActivation_exports, {
@@ -8393,9 +9495,9 @@ __export(qumusActivation_exports, {
   activateQumus: () => activateQumus,
   getQumusActivation: () => getQumusActivation
 });
-async function activateQumus(config) {
+async function activateQumus(config2) {
   if (!activationInstance) {
-    activationInstance = new QumusActivation(config);
+    activationInstance = new QumusActivation(config2);
     await activationInstance.activate();
   }
   return activationInstance;
@@ -8416,12 +9518,15 @@ var init_qumusActivation = __esm({
     init_ecosystemController();
     init_socialMediaPublisher();
     init_streamHealthMonitor();
+    init_selfImprovementEngine();
+    init_selfUpdateEngine();
+    init_qumusSelfAudit();
     QumusActivation = class {
       agent;
       config;
       isActive = false;
       activationTime;
-      constructor(config = {}) {
+      constructor(config2 = {}) {
         this.config = {
           maxConcurrentTasks: 10,
           enableAutoScheduling: true,
@@ -8438,7 +9543,7 @@ var init_qumusActivation = __esm({
             valanna: true,
             seraph: true
           },
-          ...config
+          ...config2
         };
         this.agent = initializeQumus();
       }
@@ -8457,6 +9562,12 @@ var init_qumusActivation = __esm({
           await this.enableAutonomousPolicies();
           await this.startMonitoring();
           startSocialMediaPublisher();
+          startSelfImprovement();
+          console.log("[QUMUS] Self-Improvement Engine activated \u2014 continuous learning enabled");
+          startSelfUpdate();
+          console.log("[QUMUS] Self-Update Engine activated \u2014 endpoint monitoring enabled");
+          startSelfAudit();
+          console.log("[QUMUS] Self-Audit Engine activated \u2014 30min audit cycle");
           this.agent.registerPolicy("social_media_publishing", async (context) => {
             const { checkAndPublishScheduledPosts: checkAndPublishScheduledPosts2 } = await Promise.resolve().then(() => (init_socialMediaPublisher(), socialMediaPublisher_exports));
             const results = await checkAndPublishScheduledPosts2();
@@ -8682,6 +9793,9 @@ CAPABILITIES:
 \u2713 Sweet Miracles Coordination
 \u2713 Multi-Agent Coordination
 \u2713 Self-Monitoring & Improvement
+\u2713 Self-Improvement Engine (learns from decisions)
+\u2713 Self-Update Engine (auto-repairs broken endpoints)
+\u2713 Self-Audit Engine (ecosystem health + auto-correction)
 \u2713 Predictive Analytics
 
 STATISTICS:
@@ -13412,8 +14526,8 @@ var BatchVideoService = class {
       queueLength: this.processingJobs.size + allJobs.filter((j) => j.status === "pending").length
     };
   }
-  static setConfig(config) {
-    this.config = { ...this.config, ...config };
+  static setConfig(config2) {
+    this.config = { ...this.config, ...config2 };
   }
   static getConfig() {
     return { ...this.config };
@@ -13587,8 +14701,8 @@ var batchVideoRouter = router({
     return BatchVideoService.getConfig();
   }),
   setConfig: protectedProcedure.input(batchConfigSchema).mutation(({ input }) => {
-    const config = input;
-    BatchVideoService.setConfig(config);
+    const config2 = input;
+    BatchVideoService.setConfig(config2);
     return BatchVideoService.getConfig();
   })
 });
@@ -13976,14 +15090,14 @@ var watermarkRouter = router({
     if (!input.logo && !input.text) {
       throw new Error("At least one watermark type (logo or text) is required");
     }
-    const config = {
+    const config2 = {
       configId: input.configId,
       logo: input.logo,
       text: input.text,
       createdAt: /* @__PURE__ */ new Date()
     };
-    watermarkConfigs.set(input.configId, config);
-    return { success: true, config };
+    watermarkConfigs.set(input.configId, config2);
+    return { success: true, config: config2 };
   }),
   // Get configuration
   getConfiguration: protectedProcedure.input(z13.object({ configId: z13.string() })).query(({ input }) => {
@@ -14605,22 +15719,22 @@ var SMTPProvider = class {
 };
 var EmailService = class {
   provider;
-  constructor(providerType, config) {
+  constructor(providerType, config2) {
     switch (providerType) {
       case "sendgrid":
-        this.provider = new SendGridProvider(config.apiKey, config.fromEmail, config.fromName);
+        this.provider = new SendGridProvider(config2.apiKey, config2.fromEmail, config2.fromName);
         break;
       case "mailgun":
-        this.provider = new MailgunProvider(config.apiKey, config.domain, config.fromEmail, config.fromName);
+        this.provider = new MailgunProvider(config2.apiKey, config2.domain, config2.fromEmail, config2.fromName);
         break;
       case "smtp":
         this.provider = new SMTPProvider(
-          config.host,
-          config.port,
-          config.user,
-          config.password,
-          config.fromEmail,
-          config.fromName
+          config2.host,
+          config2.port,
+          config2.user,
+          config2.password,
+          config2.fromEmail,
+          config2.fromName
         );
         break;
       default:
@@ -14784,13 +15898,13 @@ var reportingRouter = router({
    */
   getEmailConfig: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.user) throw new TRPCError4({ code: "UNAUTHORIZED" });
-    const config = await getEmailConfig(ctx.user.id);
-    if (!config) return null;
+    const config2 = await getEmailConfig(ctx.user.id);
+    if (!config2) return null;
     return {
-      provider: config.provider,
-      fromEmail: config.fromEmail,
-      fromName: config.fromName,
-      isActive: config.isActive
+      provider: config2.provider,
+      fromEmail: config2.fromEmail,
+      fromName: config2.fromName,
+      isActive: config2.isActive
     };
   }),
   /**
@@ -37276,10 +38390,10 @@ function getDefaultOfflineConfig() {
   };
 }
 function getConfigFromEnv() {
-  const config = {};
+  const config2 = {};
   if (process.env.DATABASE_URL) {
     if (process.env.DATABASE_URL.startsWith("sqlite:")) {
-      config.database = {
+      config2.database = {
         type: "sqlite",
         sqlite: {
           path: process.env.DATABASE_URL.replace("sqlite://", ""),
@@ -37289,7 +38403,7 @@ function getConfigFromEnv() {
     }
   }
   if (process.env.OLLAMA_BASE_URL) {
-    config.llm = {
+    config2.llm = {
       primary: "ollama",
       ollama: {
         baseUrl: process.env.OLLAMA_BASE_URL,
@@ -37301,7 +38415,7 @@ function getConfigFromEnv() {
     };
   }
   if (process.env.OPENAI_API_KEY) {
-    config.llm = {
+    config2.llm = {
       primary: "openai",
       openai: {
         apiKey: process.env.OPENAI_API_KEY,
@@ -37312,7 +38426,7 @@ function getConfigFromEnv() {
     };
   }
   if (process.env.STORAGE_TYPE === "minio") {
-    config.storage = {
+    config2.storage = {
       type: "minio",
       minio: {
         endpoint: process.env.MINIO_ENDPOINT || "localhost",
@@ -37325,7 +38439,7 @@ function getConfigFromEnv() {
     };
   }
   if (process.env.SMTP_HOST) {
-    config.email = {
+    config2.email = {
       type: "smtp",
       smtp: {
         host: process.env.SMTP_HOST,
@@ -37339,14 +38453,14 @@ function getConfigFromEnv() {
     };
   }
   if (process.env.PORT || process.env.NODE_ENV) {
-    config.server = {
+    config2.server = {
       port: parseInt(process.env.PORT || "3000"),
       host: process.env.HOST || "localhost",
       environment: process.env.NODE_ENV || "offline",
       logLevel: process.env.LOG_LEVEL || "info"
     };
   }
-  return config;
+  return config2;
 }
 function mergeConfigs(defaults, overrides) {
   return {
@@ -37375,18 +38489,18 @@ var LocalLLMService = class {
   fallbackEnabled;
   requestTimeout;
   constructor() {
-    const config = offlineConfig;
-    if (config.llm.ollama) {
-      this.ollamaUrl = config.llm.ollama.baseUrl;
-      this.ollamaModel = config.llm.ollama.model;
-      this.ollamaPort = config.llm.ollama.port;
+    const config2 = offlineConfig;
+    if (config2.llm.ollama) {
+      this.ollamaUrl = config2.llm.ollama.baseUrl;
+      this.ollamaModel = config2.llm.ollama.model;
+      this.ollamaPort = config2.llm.ollama.port;
     } else {
       this.ollamaUrl = "http://localhost";
       this.ollamaModel = "mistral";
       this.ollamaPort = 11434;
     }
-    this.fallbackEnabled = config.llm.fallback === "cloud";
-    this.requestTimeout = config.llm.timeout || 3e4;
+    this.fallbackEnabled = config2.llm.fallback === "cloud";
+    this.requestTimeout = config2.llm.timeout || 3e4;
   }
   /**
    * Check if Ollama is available
@@ -41437,13 +42551,13 @@ var advancedFeaturesRouter = router({
         currentConfig: z91.record(z91.string(), z91.number()).optional()
       })
     ).query(async ({ input }) => {
-      const config = input.currentConfig || {
+      const config2 = input.currentConfig || {
         music: 0.4,
         wellness: 0.3,
         interviews: 0.2,
         news: 0.1
       };
-      return getStationVariationRecommendations(config);
+      return getStationVariationRecommendations(config2);
     }),
     /**
      * Predict churn risk
@@ -43368,557 +44482,8 @@ var streamHealthRouter = router({
 });
 
 // server/routers/selfAuditRouter.ts
+init_qumusSelfAudit();
 import { z as z97 } from "zod";
-
-// server/services/qumusSelfAudit.ts
-init_notification();
-var isRunning2 = false;
-var auditInterval = null;
-var lastReport2 = null;
-var correctionHistory = [];
-var totalAuditsRun = 0;
-var totalAutoFixes = 0;
-var auditEnabled = true;
-var autoCorrectEnabled = true;
-var MAX_CORRECTIONS_PER_CYCLE = 10;
-var AUDIT_INTERVAL_MS = 30 * 60 * 1e3;
-var lastDailyReportDate = "";
-async function auditStreams() {
-  const findings = [];
-  try {
-    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-    const db2 = await getDb5();
-    if (!db2) return findings;
-    const { sql: sql21 } = await import("drizzle-orm");
-    const rawChannels = await db2.execute(sql21`SELECT id, name, streamUrl, genre, metadata FROM radio_channels`);
-    const channels = Array.isArray(rawChannels) && Array.isArray(rawChannels[0]) ? rawChannels[0] : rawChannels;
-    if (!Array.isArray(channels)) return findings;
-    const urlMap = /* @__PURE__ */ new Map();
-    for (const ch of channels) {
-      const url = ch.streamUrl || "";
-      if (!urlMap.has(url)) urlMap.set(url, []);
-      urlMap.get(url).push(ch.name);
-    }
-    for (const [url, names] of urlMap) {
-      if (names.length > 3) {
-        findings.push({
-          id: `stream-dup-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          category: "stream",
-          severity: "info",
-          title: `Duplicate stream URL shared by ${names.length} channels`,
-          description: `URL "${url.substring(0, 60)}..." is used by: ${names.join(", ")}`,
-          autoFixable: false,
-          autoFixed: false,
-          timestamp: Date.now()
-        });
-      }
-    }
-    for (const ch of channels) {
-      if (!ch.streamUrl || ch.streamUrl.trim() === "") {
-        findings.push({
-          id: `stream-empty-${ch.id}`,
-          category: "stream",
-          severity: "critical",
-          title: `Channel "${ch.name}" has no stream URL`,
-          description: `Channel ID ${ch.id} has an empty or null stream URL`,
-          autoFixable: true,
-          autoFixed: false,
-          timestamp: Date.now()
-        });
-      }
-    }
-    const noFallbackCount = channels.filter((ch) => {
-      const meta = typeof ch.metadata === "string" ? JSON.parse(ch.metadata || "{}") : ch.metadata || {};
-      return !meta.fallbackUrl;
-    }).length;
-    if (noFallbackCount > 0) {
-      findings.push({
-        id: `stream-nofallback-summary-${Date.now()}`,
-        category: "stream",
-        severity: "info",
-        title: `${noFallbackCount} channels have no fallback stream configured`,
-        description: `${noFallbackCount}/54 channels lack a fallback URL. This is informational \u2014 primary streams are operational.`,
-        autoFixable: false,
-        autoFixed: false,
-        timestamp: Date.now()
-      });
-    }
-    const sampleSize = Math.min(5, channels.length);
-    const shuffled = [...channels].sort(() => Math.random() - 0.5);
-    const sample = shuffled.slice(0, sampleSize);
-    for (const ch of sample) {
-      if (!ch.streamUrl) continue;
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5e3);
-        const resp = await fetch(ch.streamUrl, {
-          method: "HEAD",
-          signal: controller.signal,
-          redirect: "follow"
-        });
-        clearTimeout(timeout);
-        if (resp.status >= 400) {
-          findings.push({
-            id: `stream-dead-${ch.id}`,
-            category: "stream",
-            severity: "critical",
-            title: `Channel "${ch.name}" stream is dead (HTTP ${resp.status})`,
-            description: `Stream URL returned ${resp.status}. Auto-swap to fallback if available.`,
-            autoFixable: true,
-            autoFixed: false,
-            timestamp: Date.now()
-          });
-        }
-      } catch (err) {
-        if (err.name === "AbortError") {
-          findings.push({
-            id: `stream-timeout-${ch.id}`,
-            category: "stream",
-            severity: "warning",
-            title: `Channel "${ch.name}" stream timed out`,
-            description: `Stream URL did not respond within 5 seconds`,
-            autoFixable: true,
-            autoFixed: false,
-            timestamp: Date.now()
-          });
-        }
-      }
-    }
-  } catch (err) {
-    console.error("[SelfAudit] Stream audit error:", err);
-  }
-  return findings;
-}
-async function auditDatabase() {
-  const findings = [];
-  try {
-    const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-    const db2 = await getDb5();
-    if (!db2) {
-      findings.push({
-        id: `db-noconn-${Date.now()}`,
-        category: "database",
-        severity: "critical",
-        title: "Database connection unavailable",
-        description: "Cannot connect to the database",
-        autoFixable: false,
-        autoFixed: false,
-        timestamp: Date.now()
-      });
-      return findings;
-    }
-    const { sql: sql21 } = await import("drizzle-orm");
-    const rawCC = await db2.execute(sql21`SELECT COUNT(*) as cnt FROM radio_channels`);
-    const ccRows = Array.isArray(rawCC) && Array.isArray(rawCC[0]) ? rawCC[0] : rawCC;
-    const cnt = ccRows?.[0]?.cnt || 0;
-    if (cnt < 54) {
-      findings.push({
-        id: `db-channels-missing-${Date.now()}`,
-        category: "database",
-        severity: "warning",
-        title: `Only ${cnt}/54 radio channels in database`,
-        description: `Expected 54 channels, found ${cnt}. Some channels may be missing.`,
-        autoFixable: false,
-        autoFixed: false,
-        timestamp: Date.now()
-      });
-    }
-    try {
-      const rawSC = await db2.execute(sql21`SELECT COUNT(*) as cnt FROM broadcast_schedules`);
-      const scRows = Array.isArray(rawSC) && Array.isArray(rawSC[0]) ? rawSC[0] : rawSC;
-      const sCnt = scRows?.[0]?.cnt || 0;
-      if (sCnt === 0) {
-        findings.push({
-          id: `db-sched-empty-${Date.now()}`,
-          category: "database",
-          severity: "warning",
-          title: "Broadcast schedule is empty",
-          description: "No broadcast schedule entries found. Channels have no programming.",
-          autoFixable: false,
-          autoFixed: false,
-          timestamp: Date.now()
-        });
-      }
-    } catch {
-    }
-    try {
-      const rawOC = await db2.execute(
-        sql21`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'offline'`
-      );
-      const ocRows = Array.isArray(rawOC) && Array.isArray(rawOC[0]) ? rawOC[0] : rawOC;
-      const offCnt = ocRows?.[0]?.cnt || 0;
-      if (offCnt > 10) {
-        findings.push({
-          id: `db-offline-many-${Date.now()}`,
-          category: "database",
-          severity: "warning",
-          title: `${offCnt} channels marked as offline`,
-          description: `More than 10 channels are offline. Consider reactivating.`,
-          autoFixable: true,
-          autoFixed: false,
-          timestamp: Date.now()
-        });
-      }
-    } catch {
-    }
-  } catch (err) {
-    console.error("[SelfAudit] Database audit error:", err);
-  }
-  return findings;
-}
-async function auditPolicies() {
-  const findings = [];
-  try {
-    const { getQumusActivation: getQumusActivation2 } = await Promise.resolve().then(() => (init_qumusActivation(), qumusActivation_exports));
-    const qumus = getQumusActivation2();
-    const status = qumus.getStatus();
-    if (!status.isActive) {
-      findings.push({
-        id: `policy-inactive-${Date.now()}`,
-        category: "policy",
-        severity: "critical",
-        title: "QUMUS engine is not active",
-        description: "The QUMUS orchestration engine is not running. Autonomous operations are halted.",
-        autoFixable: true,
-        autoFixed: false,
-        timestamp: Date.now()
-      });
-    }
-  } catch (err) {
-    findings.push({
-      id: `policy-unavailable-${Date.now()}`,
-      category: "policy",
-      severity: "critical",
-      title: "QUMUS engine unavailable",
-      description: `Cannot reach QUMUS activation: ${String(err)}`,
-      autoFixable: false,
-      autoFixed: false,
-      timestamp: Date.now()
-    });
-  }
-  try {
-    const { getProductionIntegration: getProductionIntegration2 } = await Promise.resolve().then(() => (init_qumusProductionIntegration(), qumusProductionIntegration_exports));
-    const prodEngine = getProductionIntegration2();
-    const prodStatus = prodEngine.getStatus();
-    const subsystems = prodStatus.subsystems || [];
-    const healthyCount = subsystems.filter((s) => s.status === "ONLINE" || s.status === "healthy").length;
-    const totalCount = subsystems.length;
-    if (totalCount > 0 && healthyCount < totalCount * 0.8) {
-      findings.push({
-        id: `policy-subsystems-${Date.now()}`,
-        category: "policy",
-        severity: healthyCount < totalCount * 0.5 ? "critical" : "warning",
-        title: `Only ${healthyCount}/${totalCount} subsystems healthy`,
-        description: `${totalCount - healthyCount} subsystems are degraded or offline.`,
-        autoFixable: false,
-        autoFixed: false,
-        timestamp: Date.now()
-      });
-    }
-    if (prodStatus.errorCount > 5) {
-      findings.push({
-        id: `policy-errors-${Date.now()}`,
-        category: "policy",
-        severity: prodStatus.errorCount > 20 ? "critical" : "warning",
-        title: `QUMUS Production has ${prodStatus.errorCount} errors`,
-        description: `The QUMUS production engine has accumulated ${prodStatus.errorCount} errors since last restart.`,
-        autoFixable: false,
-        autoFixed: false,
-        timestamp: Date.now()
-      });
-    }
-  } catch {
-  }
-  return findings;
-}
-async function auditSystem() {
-  const findings = [];
-  const memUsage = process.memoryUsage();
-  const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
-  const heapTotalMB = Math.round(memUsage.heapTotal / 1024 / 1024);
-  if (heapUsedMB > 400) {
-    findings.push({
-      id: `sys-memory-${Date.now()}`,
-      category: "system",
-      severity: heapUsedMB > 600 ? "critical" : "warning",
-      title: `High memory usage: ${heapUsedMB}MB / ${heapTotalMB}MB`,
-      description: "Server memory usage is elevated. Consider restarting if it continues to grow.",
-      autoFixable: false,
-      autoFixed: false,
-      timestamp: Date.now()
-    });
-  }
-  const uptimeHours = Math.round(process.uptime() / 3600);
-  if (uptimeHours > 168) {
-    findings.push({
-      id: `sys-uptime-${Date.now()}`,
-      category: "system",
-      severity: "info",
-      title: `Server uptime: ${uptimeHours} hours`,
-      description: "Server has been running for over 7 days. Consider a scheduled restart.",
-      autoFixable: false,
-      autoFixed: false,
-      timestamp: Date.now()
-    });
-  }
-  return findings;
-}
-async function autoCorrect(findings) {
-  if (!autoCorrectEnabled) return 0;
-  let fixCount = 0;
-  const fixable = findings.filter((f) => f.autoFixable && !f.autoFixed);
-  for (const finding of fixable) {
-    if (fixCount >= MAX_CORRECTIONS_PER_CYCLE) break;
-    try {
-      let fixed = false;
-      let fixDesc = "";
-      switch (finding.id.split("-")[0] + "-" + finding.id.split("-")[1]) {
-        case "stream-dead":
-        case "stream-timeout": {
-          const channelId = parseInt(finding.id.split("-")[2]);
-          if (!isNaN(channelId)) {
-            const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-            const db2 = await getDb5();
-            if (db2) {
-              const { sql: sql21 } = await import("drizzle-orm");
-              const rawRows = await db2.execute(
-                sql21`SELECT metadata, streamUrl FROM radio_channels WHERE id = ${channelId}`
-              );
-              const rowArr = Array.isArray(rawRows) && Array.isArray(rawRows[0]) ? rawRows[0] : rawRows;
-              const ch = rowArr?.[0];
-              if (ch) {
-                const meta = typeof ch.metadata === "string" ? JSON.parse(ch.metadata || "{}") : ch.metadata || {};
-                if (meta.fallbackUrl && meta.fallbackUrl !== ch.streamUrl) {
-                  const oldUrl = ch.streamUrl;
-                  await db2.execute(
-                    sql21`UPDATE radio_channels SET streamUrl = ${meta.fallbackUrl} WHERE id = ${channelId}`
-                  );
-                  meta.fallbackUrl = oldUrl;
-                  meta.lastAutoSwap = Date.now();
-                  meta.autoSwapReason = finding.title;
-                  await db2.execute(
-                    sql21`UPDATE radio_channels SET metadata = ${JSON.stringify(meta)} WHERE id = ${channelId}`
-                  );
-                  fixed = true;
-                  fixDesc = `Swapped stream to fallback URL for channel ${channelId}`;
-                }
-              }
-            }
-          }
-          break;
-        }
-        case "stream-empty": {
-          const channelId = parseInt(finding.id.split("-")[2]);
-          if (!isNaN(channelId)) {
-            const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-            const db2 = await getDb5();
-            if (db2) {
-              const { sql: sql21 } = await import("drizzle-orm");
-              const defaultStream = "https://listen.181fm.com/181-rnb_128k.mp3";
-              await db2.execute(
-                sql21`UPDATE radio_channels SET streamUrl = ${defaultStream} WHERE id = ${channelId} AND (streamUrl IS NULL OR streamUrl = '')`
-              );
-              fixed = true;
-              fixDesc = `Assigned default R&B stream to channel ${channelId}`;
-            }
-          }
-          break;
-        }
-        case "db-offline": {
-          const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-          const db2 = await getDb5();
-          if (db2) {
-            const { sql: sql21 } = await import("drizzle-orm");
-            await db2.execute(
-              sql21`UPDATE radio_channels SET status = 'active' WHERE status = 'offline'`
-            );
-            fixed = true;
-            fixDesc = "Reactivated all offline channels to active status";
-          }
-          break;
-        }
-        case "policy-inactive": {
-          try {
-            const { activateQumus: activateQumus2 } = await Promise.resolve().then(() => (init_qumusActivation(), qumusActivation_exports));
-            await activateQumus2({
-              maxConcurrentTasks: 20,
-              enableAutoScheduling: true,
-              enableSelfImprovement: true,
-              enableMultiAgentCoordination: true,
-              enablePredictiveAnalytics: true,
-              ecosystemIntegration: {
-                rrb: true,
-                hybridcast: true,
-                canryn: true,
-                sweetMiracles: true,
-                presentationBuilder: true,
-                musicStudio: true,
-                valanna: true,
-                seraph: true
-              }
-            });
-            fixed = true;
-            fixDesc = "Reactivated QUMUS orchestration engine";
-          } catch {
-          }
-          break;
-        }
-      }
-      if (fixed) {
-        finding.autoFixed = true;
-        finding.fixDescription = fixDesc;
-        fixCount++;
-        correctionHistory.push({
-          id: `fix-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          findingId: finding.id,
-          action: fixDesc,
-          before: finding.description,
-          after: "Auto-corrected",
-          success: true,
-          timestamp: Date.now()
-        });
-        console.log(`[SelfAudit] Auto-fixed: ${fixDesc}`);
-      }
-    } catch (err) {
-      console.error(`[SelfAudit] Auto-fix failed for ${finding.id}:`, err);
-      correctionHistory.push({
-        id: `fix-fail-${Date.now()}`,
-        findingId: finding.id,
-        action: "Attempted auto-fix",
-        before: finding.description,
-        after: `Failed: ${String(err)}`,
-        success: false,
-        timestamp: Date.now()
-      });
-    }
-  }
-  return fixCount;
-}
-async function sendDailyReport(report) {
-  const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
-  if (lastDailyReportDate === today) return;
-  const hour = (/* @__PURE__ */ new Date()).getHours();
-  if (hour < 18) return;
-  lastDailyReportDate = today;
-  const healthEmoji = report.systemHealth >= 90 ? "\u{1F7E2}" : report.systemHealth >= 70 ? "\u{1F7E1}" : "\u{1F534}";
-  const content = [
-    `${healthEmoji} QUMUS Daily Ecosystem Report \u2014 ${today}`,
-    ``,
-    `System Health: ${report.systemHealth}%`,
-    `Total Checks: ${report.totalChecks}`,
-    `Passed: ${report.passed} | Warnings: ${report.warnings} | Critical: ${report.critical} | Info: ${report.findings.filter((f) => f.severity === "info").length}`,
-    `Auto-Fixed: ${report.autoFixed}`,
-    `Total Audits Today: ${totalAuditsRun}`,
-    `Total Auto-Fixes: ${totalAutoFixes}`,
-    ``,
-    report.findings.length > 0 ? `Top Findings:
-${report.findings.slice(0, 5).map((f) => `  \u2022 [${f.severity.toUpperCase()}] ${f.title}${f.autoFixed ? " \u2705 Fixed" : ""}`).join("\n")}` : "No issues found \u2014 all systems nominal.",
-    ``,
-    `Next audit: ${new Date(report.nextScheduledAudit).toLocaleTimeString()}`
-  ].join("\n");
-  try {
-    await notifyOwner({
-      title: `QUMUS Daily Report \u2014 ${report.systemHealth}% Health`,
-      content
-    });
-    console.log("[SelfAudit] Daily report sent");
-  } catch (err) {
-    console.error("[SelfAudit] Failed to send daily report:", err);
-  }
-}
-async function runFullAudit() {
-  const startTime = Date.now();
-  console.log("[SelfAudit] Starting full ecosystem audit...");
-  const [streamFindings, dbFindings, policyFindings, systemFindings] = await Promise.all([
-    auditStreams(),
-    auditDatabase(),
-    auditPolicies(),
-    auditSystem()
-  ]);
-  const allFindings = [...streamFindings, ...dbFindings, ...policyFindings, ...systemFindings];
-  const fixCount = await autoCorrect(allFindings);
-  totalAutoFixes += fixCount;
-  totalAuditsRun++;
-  const criticalCount = allFindings.filter((f) => f.severity === "critical" && !f.autoFixed).length;
-  const warningCount = allFindings.filter((f) => f.severity === "warning" && !f.autoFixed).length;
-  const infoCount = allFindings.filter((f) => f.severity === "info").length;
-  const healthScore = Math.max(0, Math.min(
-    100,
-    100 - criticalCount * 20 - warningCount * 8
-  ));
-  const report = {
-    reportId: `audit-${Date.now()}`,
-    timestamp: startTime,
-    duration: Date.now() - startTime,
-    totalChecks: allFindings.length + (54 - allFindings.filter((f) => f.category === "stream").length),
-    passed: allFindings.length === 0 ? 54 : 54 - allFindings.length,
-    warnings: warningCount,
-    critical: criticalCount,
-    autoFixed: fixCount,
-    findings: allFindings,
-    systemHealth: healthScore,
-    nextScheduledAudit: Date.now() + AUDIT_INTERVAL_MS
-  };
-  lastReport2 = report;
-  console.log(`[SelfAudit] Audit complete: Health=${healthScore}%, Findings=${allFindings.length} (C:${criticalCount} W:${warningCount} I:${infoCount}), AutoFixed=${fixCount}, Duration=${report.duration}ms`);
-  await sendDailyReport(report);
-  if (healthScore < 50) {
-    try {
-      await notifyOwner({
-        title: `\u26A0\uFE0F QUMUS CRITICAL: Ecosystem health at ${healthScore}%`,
-        content: `${criticalCount} critical issues detected. ${fixCount} auto-fixed. Manual intervention may be required.
-
-Top issues:
-${allFindings.filter((f) => f.severity === "critical").slice(0, 3).map((f) => `\u2022 ${f.title}`).join("\n")}`
-      });
-    } catch {
-    }
-  }
-  return report;
-}
-function startSelfAudit() {
-  if (isRunning2) return;
-  isRunning2 = true;
-  console.log("[SelfAudit] QUMUS Self-Audit Engine activated \u2014 30min cycle");
-  setTimeout(() => {
-    runFullAudit().catch((err) => console.error("[SelfAudit] Initial audit failed:", err));
-  }, 6e4);
-  auditInterval = setInterval(() => {
-    runFullAudit().catch((err) => console.error("[SelfAudit] Scheduled audit failed:", err));
-  }, AUDIT_INTERVAL_MS);
-}
-function getLastReport() {
-  return lastReport2;
-}
-function getCorrectionHistory() {
-  return correctionHistory.slice(-50);
-}
-function getAuditStatus() {
-  return {
-    isRunning: isRunning2,
-    auditEnabled,
-    autoCorrectEnabled,
-    totalAuditsRun,
-    totalAutoFixes,
-    lastAuditTime: lastReport2?.timestamp || null,
-    lastHealthScore: lastReport2?.systemHealth || null,
-    nextAuditTime: lastReport2?.nextScheduledAudit || null,
-    correctionCount: correctionHistory.length
-  };
-}
-function setAuditEnabled(enabled) {
-  auditEnabled = enabled;
-  console.log(`[SelfAudit] Audit ${enabled ? "enabled" : "disabled"}`);
-}
-function setAutoCorrectEnabled(enabled) {
-  autoCorrectEnabled = enabled;
-  console.log(`[SelfAudit] Auto-correct ${enabled ? "enabled" : "disabled"}`);
-}
-async function triggerManualAudit() {
-  return runFullAudit();
-}
-
-// server/routers/selfAuditRouter.ts
 var selfAuditRouter = router({
   // Get current audit status
   status: publicProcedure.query(() => {
@@ -48913,6 +49478,7 @@ function registerRRBRadioApi(app) {
 
 // server/_core/index.ts
 init_qumusProductionIntegration();
+init_qumusSelfAudit();
 
 // server/services/autoDjEngine.ts
 import mysql11 from "mysql2/promise";
