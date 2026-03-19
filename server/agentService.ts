@@ -1,4 +1,5 @@
 import { invokeLLM } from "./_core/llm";
+import { invokeSmartLlm } from "./_core/xaiLlm";
 import type { Message } from "../drizzle/schema";
 
 export interface AgentExecutionContext {
@@ -51,13 +52,16 @@ export async function executeAgentStep(
       previousToolResults
     );
 
-    // Call the LLM
-    const response = await invokeLLM({
+    // Call the LLM — xAI/Grok (Ty Bat Zan brain) when available, Forge as fallback
+    const { result: response, provider } = await invokeSmartLlm({
       messages: [
         { role: "system", content: systemPromptWithTools },
         ...formattedMessages,
       ],
+      preferXai: true,
+      temperature: 0.7,
     });
+    console.log(`[Agent] Step executed via ${provider} provider`);
 
     // Parse the response
     let content = "No response from LLM";

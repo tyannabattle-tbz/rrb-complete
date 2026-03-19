@@ -63,7 +63,10 @@ describe('Stream Health Router', () => {
     expect(procedures).toContain('runCheck');
     expect(procedures).toContain('startMonitor');
     expect(procedures).toContain('stopMonitor');
-    expect(procedures.length).toBe(6);
+    expect(procedures).toContain('getOutages');
+    expect(procedures).toContain('getLeaderboard');
+    expect(procedures).toContain('getCriticalAlertStatus');
+    expect(procedures.length).toBe(9);
   });
 });
 
@@ -147,16 +150,29 @@ describe('Restream Room Creation', () => {
 });
 
 describe('54-Channel Consistency', () => {
-  it('should have exactly 54 channels in the frontend', async () => {
+  it('should have the RRBRadioIntegration component that loads channels from DB', async () => {
     const fs = await import('fs');
     const content = fs.readFileSync('/home/ubuntu/manus-agent-web/client/src/pages/RRBRadioIntegration.tsx', 'utf-8');
-    const channelMatches = content.match(/\{ id: \d+/g);
-    expect(channelMatches?.length).toBe(54);
+    // Channels are now loaded from the database via tRPC, not hardcoded
+    expect(content).toContain('ChannelData');
+    expect(content).toContain('trpc');
+    expect(content).toContain('getAllChannels');
   });
 
-  it('should reference 54 channels in text', async () => {
+  it('should have 54+ channels in the radioStationRegistry source of truth', async () => {
     const fs = await import('fs');
-    const content = fs.readFileSync('/home/ubuntu/manus-agent-web/client/src/pages/RRBRadioIntegration.tsx', 'utf-8');
-    expect(content).toContain('51');
+    const registryPath = '/home/ubuntu/manus-agent-web/shared/radioStationRegistry.ts';
+    const content = fs.readFileSync(registryPath, 'utf-8');
+    // Count channel entries in the registry using numericId field
+    const channelMatches = content.match(/numericId:\s*\d+/g);
+    expect(channelMatches).not.toBeNull();
+    expect(channelMatches!.length).toBeGreaterThanOrEqual(54);
+  });
+
+  it('should have the stream health monitor with 54-channel support', async () => {
+    const fs = await import('fs');
+    const content = fs.readFileSync('/home/ubuntu/manus-agent-web/server/services/streamHealthMonitor.ts', 'utf-8');
+    expect(content).toContain('checkStream');
+    expect(content).toContain('runHealthCheck');
   });
 });

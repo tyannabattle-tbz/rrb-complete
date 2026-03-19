@@ -26,4 +26,6 @@ export const ENV = {
   // VAPID for push notifications
   vapidPublicKey: process.env.VAPID_PUBLIC_KEY ?? "",
   vapidPrivateKey: process.env.VAPID_PRIVATE_KEY ?? "",
+  // xAI/Grok API - Ty Bat Zan AI Brain
+  xaiApiKey: process.env.XAI_API_KEY ?? "",
 };

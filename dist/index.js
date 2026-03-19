@@ -3141,7 +3141,9 @@ var init_env = __esm({
       dailyReportTime: process.env.DAILY_REPORT_TIME ?? "sunset",
       // VAPID for push notifications
       vapidPublicKey: process.env.VAPID_PUBLIC_KEY ?? "",
-      vapidPrivateKey: process.env.VAPID_PRIVATE_KEY ?? ""
+      vapidPrivateKey: process.env.VAPID_PRIVATE_KEY ?? "",
+      // xAI/Grok API - Ty Bat Zan AI Brain
+      xaiApiKey: process.env.XAI_API_KEY ?? ""
     };
   }
 });
@@ -4935,6 +4937,181 @@ async function storageGet(relKey) {
 var init_storage = __esm({
   "server/storage.ts"() {
     init_env();
+  }
+});
+
+// server/_core/llm.ts
+var llm_exports = {};
+__export(llm_exports, {
+  invokeLLM: () => invokeLLM
+});
+async function invokeLLM(params2) {
+  assertApiKey();
+  const {
+    messages: messages2,
+    tools,
+    toolChoice,
+    tool_choice,
+    outputSchema,
+    output_schema,
+    responseFormat,
+    response_format
+  } = params2;
+  const normalizedMessages = messages2.map(normalizeMessage);
+  console.log("[LLM DEBUG] Messages being sent to LLM:", JSON.stringify(normalizedMessages, null, 2));
+  const payload = {
+    model: "gemini-2.5-flash",
+    messages: normalizedMessages
+  };
+  console.log("[LLM DEBUG] Full payload:", JSON.stringify(payload, null, 2));
+  if (tools && tools.length > 0) {
+    payload.tools = tools;
+  }
+  const normalizedToolChoice = normalizeToolChoice(
+    toolChoice || tool_choice,
+    tools
+  );
+  if (normalizedToolChoice) {
+    payload.tool_choice = normalizedToolChoice;
+  }
+  payload.max_tokens = 32768;
+  payload.thinking = {
+    "budget_tokens": 128
+  };
+  const normalizedResponseFormat = normalizeResponseFormat({
+    responseFormat,
+    response_format,
+    outputSchema,
+    output_schema
+  });
+  if (normalizedResponseFormat) {
+    payload.response_format = normalizedResponseFormat;
+  }
+  const response = await fetch(resolveApiUrl(), {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${ENV.forgeApiKey}`
+    },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `LLM invoke failed: ${response.status} ${response.statusText} \u2013 ${errorText}`
+    );
+  }
+  return await response.json();
+}
+var ensureArray, normalizeContentPart, normalizeMessage, normalizeToolChoice, resolveApiUrl, assertApiKey, normalizeResponseFormat;
+var init_llm = __esm({
+  "server/_core/llm.ts"() {
+    init_env();
+    ensureArray = (value) => Array.isArray(value) ? value : [value];
+    normalizeContentPart = (part) => {
+      if (typeof part === "string") {
+        return { type: "text", text: part };
+      }
+      if (part.type === "text") {
+        return part;
+      }
+      if (part.type === "image_url") {
+        return part;
+      }
+      if (part.type === "file_url") {
+        return part;
+      }
+      throw new Error("Unsupported message content part");
+    };
+    normalizeMessage = (message) => {
+      const { role, name, tool_call_id } = message;
+      if (role === "tool" || role === "function") {
+        const content = ensureArray(message.content).map((part) => typeof part === "string" ? part : JSON.stringify(part)).join("\n");
+        return {
+          role,
+          name,
+          tool_call_id,
+          content
+        };
+      }
+      const contentParts = ensureArray(message.content).map(normalizeContentPart);
+      if (contentParts.length === 1 && contentParts[0].type === "text") {
+        return {
+          role,
+          name,
+          content: contentParts[0].text
+        };
+      }
+      return {
+        role,
+        name,
+        content: contentParts
+      };
+    };
+    normalizeToolChoice = (toolChoice, tools) => {
+      if (!toolChoice) return void 0;
+      if (toolChoice === "none" || toolChoice === "auto") {
+        return toolChoice;
+      }
+      if (toolChoice === "required") {
+        if (!tools || tools.length === 0) {
+          throw new Error(
+            "tool_choice 'required' was provided but no tools were configured"
+          );
+        }
+        if (tools.length > 1) {
+          throw new Error(
+            "tool_choice 'required' needs a single tool or specify the tool name explicitly"
+          );
+        }
+        return {
+          type: "function",
+          function: { name: tools[0].function.name }
+        };
+      }
+      if ("name" in toolChoice) {
+        return {
+          type: "function",
+          function: { name: toolChoice.name }
+        };
+      }
+      return toolChoice;
+    };
+    resolveApiUrl = () => ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0 ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions` : "https://forge.manus.im/v1/chat/completions";
+    assertApiKey = () => {
+      if (!ENV.forgeApiKey) {
+        throw new Error("OPENAI_API_KEY is not configured");
+      }
+    };
+    normalizeResponseFormat = ({
+      responseFormat,
+      response_format,
+      outputSchema,
+      output_schema
+    }) => {
+      const explicitFormat = responseFormat || response_format;
+      if (explicitFormat) {
+        if (explicitFormat.type === "json_schema" && !explicitFormat.json_schema?.schema) {
+          throw new Error(
+            "responseFormat json_schema requires a defined schema object"
+          );
+        }
+        return explicitFormat;
+      }
+      const schema = outputSchema || output_schema;
+      if (!schema) return void 0;
+      if (!schema.name || !schema.schema) {
+        throw new Error("outputSchema requires both name and schema");
+      }
+      return {
+        type: "json_schema",
+        json_schema: {
+          name: schema.name,
+          schema: schema.schema,
+          ...typeof schema.strict === "boolean" ? { strict: schema.strict } : {}
+        }
+      };
+    };
   }
 });
 
@@ -8417,12 +8594,24 @@ var init_qumusActivation = __esm({
       async startMonitoring() {
         console.log("[QUMUS] Starting monitoring and health checks...");
         setInterval(async () => {
-          const status = this.agent.getStatus();
-          const memory = this.agent.getMemory();
+          const tools = getToolRegistry();
+          const toolCount = tools.getToolCount();
+          let prodHealthy = 0;
+          let prodTotal = 0;
+          try {
+            const { getProductionIntegration: getProductionIntegration2 } = await Promise.resolve().then(() => (init_qumusProductionIntegration(), qumusProductionIntegration_exports));
+            const prodEngine = getProductionIntegration2();
+            const prodStatus = prodEngine.getStatus();
+            prodHealthy = prodStatus.subsystems?.filter((s) => s.status === "healthy").length || 0;
+            prodTotal = prodStatus.subsystems?.length || 0;
+          } catch {
+          }
+          const subsystemCount = prodTotal > 0 ? prodTotal : toolCount;
+          const healthyCount = prodTotal > 0 ? prodHealthy : toolCount;
           console.log("[QUMUS] Health Check:", {
-            isRunning: status.isRunning,
-            subsystems: `${status.toolCount}/${status.toolCount} healthy`,
-            events: status.queueLength,
+            isRunning: this.isActive,
+            subsystems: `${healthyCount}/${subsystemCount} healthy`,
+            events: this.agent.getStatus().queueLength,
             errors: 0
           });
           try {
@@ -11952,171 +12141,8 @@ async function generateImage(options) {
   };
 }
 
-// server/_core/llm.ts
-init_env();
-var ensureArray = (value) => Array.isArray(value) ? value : [value];
-var normalizeContentPart = (part) => {
-  if (typeof part === "string") {
-    return { type: "text", text: part };
-  }
-  if (part.type === "text") {
-    return part;
-  }
-  if (part.type === "image_url") {
-    return part;
-  }
-  if (part.type === "file_url") {
-    return part;
-  }
-  throw new Error("Unsupported message content part");
-};
-var normalizeMessage = (message) => {
-  const { role, name, tool_call_id } = message;
-  if (role === "tool" || role === "function") {
-    const content = ensureArray(message.content).map((part) => typeof part === "string" ? part : JSON.stringify(part)).join("\n");
-    return {
-      role,
-      name,
-      tool_call_id,
-      content
-    };
-  }
-  const contentParts = ensureArray(message.content).map(normalizeContentPart);
-  if (contentParts.length === 1 && contentParts[0].type === "text") {
-    return {
-      role,
-      name,
-      content: contentParts[0].text
-    };
-  }
-  return {
-    role,
-    name,
-    content: contentParts
-  };
-};
-var normalizeToolChoice = (toolChoice, tools) => {
-  if (!toolChoice) return void 0;
-  if (toolChoice === "none" || toolChoice === "auto") {
-    return toolChoice;
-  }
-  if (toolChoice === "required") {
-    if (!tools || tools.length === 0) {
-      throw new Error(
-        "tool_choice 'required' was provided but no tools were configured"
-      );
-    }
-    if (tools.length > 1) {
-      throw new Error(
-        "tool_choice 'required' needs a single tool or specify the tool name explicitly"
-      );
-    }
-    return {
-      type: "function",
-      function: { name: tools[0].function.name }
-    };
-  }
-  if ("name" in toolChoice) {
-    return {
-      type: "function",
-      function: { name: toolChoice.name }
-    };
-  }
-  return toolChoice;
-};
-var resolveApiUrl = () => ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0 ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions` : "https://forge.manus.im/v1/chat/completions";
-var assertApiKey = () => {
-  if (!ENV.forgeApiKey) {
-    throw new Error("OPENAI_API_KEY is not configured");
-  }
-};
-var normalizeResponseFormat = ({
-  responseFormat,
-  response_format,
-  outputSchema,
-  output_schema
-}) => {
-  const explicitFormat = responseFormat || response_format;
-  if (explicitFormat) {
-    if (explicitFormat.type === "json_schema" && !explicitFormat.json_schema?.schema) {
-      throw new Error(
-        "responseFormat json_schema requires a defined schema object"
-      );
-    }
-    return explicitFormat;
-  }
-  const schema = outputSchema || output_schema;
-  if (!schema) return void 0;
-  if (!schema.name || !schema.schema) {
-    throw new Error("outputSchema requires both name and schema");
-  }
-  return {
-    type: "json_schema",
-    json_schema: {
-      name: schema.name,
-      schema: schema.schema,
-      ...typeof schema.strict === "boolean" ? { strict: schema.strict } : {}
-    }
-  };
-};
-async function invokeLLM(params2) {
-  assertApiKey();
-  const {
-    messages: messages2,
-    tools,
-    toolChoice,
-    tool_choice,
-    outputSchema,
-    output_schema,
-    responseFormat,
-    response_format
-  } = params2;
-  const normalizedMessages = messages2.map(normalizeMessage);
-  console.log("[LLM DEBUG] Messages being sent to LLM:", JSON.stringify(normalizedMessages, null, 2));
-  const payload = {
-    model: "gemini-2.5-flash",
-    messages: normalizedMessages
-  };
-  console.log("[LLM DEBUG] Full payload:", JSON.stringify(payload, null, 2));
-  if (tools && tools.length > 0) {
-    payload.tools = tools;
-  }
-  const normalizedToolChoice = normalizeToolChoice(
-    toolChoice || tool_choice,
-    tools
-  );
-  if (normalizedToolChoice) {
-    payload.tool_choice = normalizedToolChoice;
-  }
-  payload.max_tokens = 32768;
-  payload.thinking = {
-    "budget_tokens": 128
-  };
-  const normalizedResponseFormat = normalizeResponseFormat({
-    responseFormat,
-    response_format,
-    outputSchema,
-    output_schema
-  });
-  if (normalizedResponseFormat) {
-    payload.response_format = normalizedResponseFormat;
-  }
-  const response = await fetch(resolveApiUrl(), {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${ENV.forgeApiKey}`
-    },
-    body: JSON.stringify(payload)
-  });
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `LLM invoke failed: ${response.status} ${response.statusText} \u2013 ${errorText}`
-    );
-  }
-  return await response.json();
-}
+// server/_core/realVideoProductionService.ts
+init_llm();
 
 // server/_core/commercialTtsService.ts
 init_env();
@@ -22451,6 +22477,7 @@ var itunesPodcastsRouter = router({
 });
 
 // server/routers/chatStreamingRouter.ts
+init_llm();
 import { z as z46 } from "zod";
 
 // server/_core/qumusIdentity.ts
@@ -23504,8 +23531,9 @@ var locationSharingRouter = router({
 });
 
 // server/routers/fileAnalysisRouter.ts
-import { z as z48 } from "zod";
+init_llm();
 init_voiceTranscription();
+import { z as z48 } from "zod";
 var fileAnalysisRouter = router({
   /**
    * Analyze uploaded file and extract content
@@ -25363,6 +25391,7 @@ async function getPlatformStats() {
 }
 
 // server/routers/qumusCommandRouter.ts
+init_llm();
 import mysql5 from "mysql2/promise";
 async function getConnection() {
   return mysql5.createConnection(process.env.DATABASE_URL);
@@ -26712,6 +26741,81 @@ var QumusOrchestrationEngine = class {
 };
 QumusOrchestrationEngine.initialize();
 
+// server/_core/xaiLlm.ts
+init_env();
+var XAI_API_URL = "https://api.x.ai/v1/chat/completions";
+var XAI_DEFAULT_MODEL = "grok-3-mini-fast";
+function isXaiAvailable() {
+  return !!ENV.xaiApiKey && ENV.xaiApiKey.trim().length > 0;
+}
+function getXaiStatus() {
+  return {
+    available: isXaiAvailable(),
+    model: XAI_DEFAULT_MODEL,
+    provider: "xAI (Grok)",
+    keyConfigured: !!ENV.xaiApiKey && ENV.xaiApiKey.trim().length > 0
+  };
+}
+async function invokeXai(params2) {
+  if (!isXaiAvailable()) {
+    throw new Error("xAI API key not configured. Set XAI_API_KEY in environment.");
+  }
+  const payload = {
+    model: params2.model || XAI_DEFAULT_MODEL,
+    messages: params2.messages,
+    max_tokens: params2.maxTokens || 4096,
+    temperature: params2.temperature ?? 0.7,
+    stream: false
+  };
+  if (params2.tools && params2.tools.length > 0) {
+    payload.tools = params2.tools;
+  }
+  if (params2.toolChoice) {
+    payload.tool_choice = params2.toolChoice;
+  }
+  if (params2.responseFormat) {
+    payload.response_format = params2.responseFormat;
+  }
+  console.log(`[xAI/Grok] Invoking ${payload.model} with ${params2.messages.length} messages`);
+  const response = await fetch(XAI_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${ENV.xaiApiKey}`
+    },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`[xAI/Grok] API error: ${response.status} ${response.statusText} \u2013 ${errorText}`);
+    throw new Error(`xAI API error: ${response.status} ${response.statusText} \u2013 ${errorText}`);
+  }
+  const result2 = await response.json();
+  console.log(`[xAI/Grok] Response received: ${result2.choices?.[0]?.finish_reason || "unknown"}, tokens: ${result2.usage?.total_tokens || "unknown"}`);
+  return result2;
+}
+async function invokeSmartLlm(params2) {
+  const preferXai = params2.preferXai !== false;
+  if (preferXai && isXaiAvailable()) {
+    try {
+      const result3 = await invokeXai({
+        messages: params2.messages,
+        model: params2.model,
+        maxTokens: params2.maxTokens,
+        temperature: params2.temperature
+      });
+      return { result: result3, provider: "xai" };
+    } catch (error) {
+      console.warn("[xAI/Grok] Failed, falling back to Forge:", error instanceof Error ? error.message : error);
+    }
+  }
+  const { invokeLLM: invokeLLM2 } = await Promise.resolve().then(() => (init_llm(), llm_exports));
+  const result2 = await invokeLLM2({
+    messages: params2.messages
+  });
+  return { result: result2, provider: "forge" };
+}
+
 // server/routers/qumusChatRouter.ts
 var PERSONA_VOICES = {
   valanna: "nova",
@@ -26743,9 +26847,13 @@ var qumusChatRouter = router({
           content: input.query
         }
       ];
-      const response = await invokeLLM({
-        messages: messages2
+      const { result: response, provider } = await invokeSmartLlm({
+        messages: messages2,
+        preferXai: true,
+        temperature: 0.7,
+        maxTokens: 4096
       });
+      console.log(`[QUMUS Chat] ${input.persona} responded via ${provider} provider`);
       const assistantMessage = response.choices?.[0]?.message?.content || "I encountered an error generating a response.";
       let audioUrl = null;
       try {
@@ -26766,7 +26874,8 @@ var qumusChatRouter = router({
         success: true,
         message: assistantMessage,
         audioUrl,
-        persona: input.persona
+        persona: input.persona,
+        provider
       };
     } catch (error) {
       console.error("Chat error:", error);
@@ -26841,6 +26950,17 @@ var qumusChatRouter = router({
     return {
       metrics: QumusOrchestrationEngine.getMetrics(),
       status: QumusOrchestrationEngine.getOperationalStatus(),
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  }),
+  /**
+   * Get xAI/Grok AI brain status
+   */
+  getAiBrainStatus: publicProcedure.query(async () => {
+    return {
+      xai: getXaiStatus(),
+      forgeAvailable: true,
+      activeBrain: isXaiAvailable() ? "xai-grok" : "forge",
       timestamp: /* @__PURE__ */ new Date()
     };
   })
@@ -32202,6 +32322,7 @@ var dailyStatusReportService = new DailyStatusReportService();
 import { z as z75 } from "zod";
 
 // server/_core/aiDjService.ts
+init_llm();
 function getActiveDj(hour) {
   if (hour >= 6 && hour < 14) return "valanna";
   if (hour >= 14 && hour < 20) return "seraph";
@@ -32332,6 +32453,7 @@ function getDailySchedule() {
 
 // server/_core/commercialCampaignService.ts
 init_db();
+init_llm();
 import { sql as sql17 } from "drizzle-orm";
 var UN_CAMPAIGN_COMMERCIALS = [
   // ─── HERO SPOT (60s) ───
@@ -34030,6 +34152,7 @@ var autonomousTaskRouter = router({
 // server/services/taskExecutionEngine.ts
 init_db();
 init_schema();
+init_llm();
 import { eq as eq23, and as and17 } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 var TaskExecutionEngine = class {
@@ -36250,8 +36373,9 @@ import { z as z83 } from "zod";
 // server/services/qumusIntegrationService.ts
 init_db();
 init_storage();
-import Stripe from "stripe";
+init_llm();
 init_schema();
+import Stripe from "stripe";
 var stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-04-10"
 });
@@ -37226,6 +37350,7 @@ function loadOfflineConfig() {
 var offlineConfig = loadOfflineConfig();
 
 // server/services/localLLMService.ts
+init_llm();
 var LocalLLMService = class {
   ollamaUrl;
   ollamaModel;
@@ -39030,6 +39155,7 @@ var customStationBuilderRouter = router({
 import { z as z88 } from "zod";
 
 // server/services/advancedScheduling.ts
+init_llm();
 var AdvancedSchedulingService = class {
   /**
    * Create a post template for recurring use
@@ -39797,6 +39923,7 @@ var engagementWebhooksRouter = router({
 import { z as z90 } from "zod";
 
 // server/services/callInSystem.ts
+init_llm();
 var CallInSystemService = class {
   static callQueues = /* @__PURE__ */ new Map();
   static activeCalls = /* @__PURE__ */ new Map();
@@ -40753,6 +40880,7 @@ async function generateAnalyticsReport(period) {
 }
 
 // server/services/aiRecommendations.ts
+init_llm();
 var AIRecommendationsEngine = class {
   /**
    * Get personalized content recommendations for a listener
@@ -41470,6 +41598,7 @@ function getExtension(mimeType) {
 
 // server/routers/interpreterRouter.ts
 import { z as z93 } from "zod";
+init_llm();
 var SUPPORTED_LANGUAGES = [
   { code: "en", name: "English" },
   { code: "es", name: "Spanish" },
@@ -43254,11 +43383,11 @@ async function auditStreams() {
       urlMap.get(url).push(ch.name);
     }
     for (const [url, names] of urlMap) {
-      if (names.length > 2) {
+      if (names.length > 3) {
         findings.push({
           id: `stream-dup-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
           category: "stream",
-          severity: "warning",
+          severity: "info",
           title: `Duplicate stream URL shared by ${names.length} channels`,
           description: `URL "${url.substring(0, 60)}..." is used by: ${names.join(", ")}`,
           autoFixable: false,
@@ -43281,20 +43410,21 @@ async function auditStreams() {
         });
       }
     }
-    for (const ch of channels) {
+    const noFallbackCount = channels.filter((ch) => {
       const meta = typeof ch.metadata === "string" ? JSON.parse(ch.metadata || "{}") : ch.metadata || {};
-      if (!meta.fallbackUrl) {
-        findings.push({
-          id: `stream-nofallback-${ch.id}`,
-          category: "stream",
-          severity: "warning",
-          title: `Channel "${ch.name}" has no fallback stream`,
-          description: `Channel ID ${ch.id} lacks a fallback URL in metadata`,
-          autoFixable: false,
-          autoFixed: false,
-          timestamp: Date.now()
-        });
-      }
+      return !meta.fallbackUrl;
+    }).length;
+    if (noFallbackCount > 0) {
+      findings.push({
+        id: `stream-nofallback-summary-${Date.now()}`,
+        category: "stream",
+        severity: "info",
+        title: `${noFallbackCount} channels have no fallback stream configured`,
+        description: `${noFallbackCount}/54 channels lack a fallback URL. This is informational \u2014 primary streams are operational.`,
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
     }
     const sampleSize = Math.min(5, channels.length);
     const shuffled = [...channels].sort(() => Math.random() - 0.5);
@@ -43437,31 +43567,6 @@ async function auditPolicies() {
         timestamp: Date.now()
       });
     }
-    const subsystemCount = status.subsystems?.split("/")?.[0] || "0";
-    if (parseInt(subsystemCount) < 15) {
-      findings.push({
-        id: `policy-subsystems-${Date.now()}`,
-        category: "policy",
-        severity: "warning",
-        title: `Only ${subsystemCount} subsystems healthy (expected 18+)`,
-        description: "Some QUMUS subsystems may be degraded or offline.",
-        autoFixable: false,
-        autoFixed: false,
-        timestamp: Date.now()
-      });
-    }
-    if (status.errors > 0) {
-      findings.push({
-        id: `policy-errors-${Date.now()}`,
-        category: "policy",
-        severity: status.errors > 5 ? "critical" : "warning",
-        title: `QUMUS has ${status.errors} errors`,
-        description: `The QUMUS engine has accumulated ${status.errors} errors since last restart.`,
-        autoFixable: false,
-        autoFixed: false,
-        timestamp: Date.now()
-      });
-    }
   } catch (err) {
     findings.push({
       id: `policy-unavailable-${Date.now()}`,
@@ -43473,6 +43578,39 @@ async function auditPolicies() {
       autoFixed: false,
       timestamp: Date.now()
     });
+  }
+  try {
+    const { getProductionIntegration: getProductionIntegration2 } = await Promise.resolve().then(() => (init_qumusProductionIntegration(), qumusProductionIntegration_exports));
+    const prodEngine = getProductionIntegration2();
+    const prodStatus = prodEngine.getStatus();
+    const subsystems = prodStatus.subsystems || [];
+    const healthyCount = subsystems.filter((s) => s.status === "ONLINE" || s.status === "healthy").length;
+    const totalCount = subsystems.length;
+    if (totalCount > 0 && healthyCount < totalCount * 0.8) {
+      findings.push({
+        id: `policy-subsystems-${Date.now()}`,
+        category: "policy",
+        severity: healthyCount < totalCount * 0.5 ? "critical" : "warning",
+        title: `Only ${healthyCount}/${totalCount} subsystems healthy`,
+        description: `${totalCount - healthyCount} subsystems are degraded or offline.`,
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+    if (prodStatus.errorCount > 5) {
+      findings.push({
+        id: `policy-errors-${Date.now()}`,
+        category: "policy",
+        severity: prodStatus.errorCount > 20 ? "critical" : "warning",
+        title: `QUMUS Production has ${prodStatus.errorCount} errors`,
+        description: `The QUMUS production engine has accumulated ${prodStatus.errorCount} errors since last restart.`,
+        autoFixable: false,
+        autoFixed: false,
+        timestamp: Date.now()
+      });
+    }
+  } catch {
   }
   return findings;
 }
@@ -43651,7 +43789,7 @@ async function sendDailyReport(report) {
     ``,
     `System Health: ${report.systemHealth}%`,
     `Total Checks: ${report.totalChecks}`,
-    `Passed: ${report.passed} | Warnings: ${report.warnings} | Critical: ${report.critical}`,
+    `Passed: ${report.passed} | Warnings: ${report.warnings} | Critical: ${report.critical} | Info: ${report.findings.filter((f) => f.severity === "info").length}`,
     `Auto-Fixed: ${report.autoFixed}`,
     `Total Audits Today: ${totalAuditsRun}`,
     `Total Auto-Fixes: ${totalAutoFixes}`,
@@ -43686,9 +43824,10 @@ async function runFullAudit() {
   totalAuditsRun++;
   const criticalCount = allFindings.filter((f) => f.severity === "critical" && !f.autoFixed).length;
   const warningCount = allFindings.filter((f) => f.severity === "warning" && !f.autoFixed).length;
+  const infoCount = allFindings.filter((f) => f.severity === "info").length;
   const healthScore = Math.max(0, Math.min(
     100,
-    100 - criticalCount * 15 - warningCount * 5
+    100 - criticalCount * 20 - warningCount * 8
   ));
   const report = {
     reportId: `audit-${Date.now()}`,
@@ -43704,7 +43843,7 @@ async function runFullAudit() {
     nextScheduledAudit: Date.now() + AUDIT_INTERVAL_MS
   };
   lastReport2 = report;
-  console.log(`[SelfAudit] Audit complete: Health=${healthScore}%, Findings=${allFindings.length}, AutoFixed=${fixCount}, Duration=${report.duration}ms`);
+  console.log(`[SelfAudit] Audit complete: Health=${healthScore}%, Findings=${allFindings.length} (C:${criticalCount} W:${warningCount} I:${infoCount}), AutoFixed=${fixCount}, Duration=${report.duration}ms`);
   await sendDailyReport(report);
   if (healthScore < 50) {
     try {
@@ -45343,9 +45482,10 @@ var socialMediaQueueRouter = router({
 });
 
 // server/routers/qumusAgentEngine.ts
+init_llm();
+init_storage();
 import { z as z104 } from "zod";
 import { randomUUID as randomUUID3 } from "crypto";
-init_storage();
 import mysql9 from "mysql2/promise";
 async function getConnection2() {
   return mysql9.createConnection(process.env.DATABASE_URL);

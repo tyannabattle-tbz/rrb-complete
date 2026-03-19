@@ -1,4 +1,5 @@
 import { invokeLLM } from "./_core/llm";
+import { invokeSmartLlm } from "./_core/xaiLlm";
 import type { ToolExecution } from "./agentBackendService";
 
 /**
@@ -317,9 +318,9 @@ export async function executeWithFallback(
     }
   }
 
-  // Fallback to direct LLM call
+  // Fallback to xAI/Grok (Ty Bat Zan brain) or Forge LLM
   try {
-    const response = await invokeLLM({
+    const { result: response, provider } = await invokeSmartLlm({
       messages: [
         {
           role: "system",
@@ -328,7 +329,9 @@ export async function executeWithFallback(
         },
         { role: "user", content: userMessage },
       ],
+      preferXai: true,
     });
+    console.log(`[Live Agent Fallback] Response via ${provider} provider`);
 
     const messageContent = response.choices[0]?.message?.content;
     const message =

@@ -1,4 +1,5 @@
 import { invokeLLM } from "./_core/llm";
+import { invokeSmartLlm } from "./_core/xaiLlm";
 import type { Message } from "../drizzle/schema";
 import { generateImage } from "./_core/imageGeneration";
 import { mockVideoService } from "./_core/mockVideoService";
@@ -58,9 +59,13 @@ Always explain your reasoning and the tools you use.`;
       { role: "user", content: request.userMessage },
     ];
 
-    const response = await invokeLLM({
+    // Use xAI/Grok (Ty Bat Zan brain) when available, Forge as fallback
+    const { result: response, provider } = await invokeSmartLlm({
       messages: messages as any,
+      preferXai: true,
+      temperature: 0.7,
     });
+    console.log(`[Agent Backend] Response via ${provider} provider`);
 
     const messageContent = response.choices[0]?.message?.content;
     const agentResponse =

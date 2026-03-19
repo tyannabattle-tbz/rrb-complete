@@ -289,13 +289,29 @@ export class QumusActivation {
 
     // Monitor system health every 60 seconds
     setInterval(async () => {
-      const status = this.agent.getStatus();
-      const memory = this.agent.getMemory();
+      // Use activation status (isActive) instead of agent queue status (isRunning)
+      // The agent's isRunning only reflects queue processing, not system health
+      const tools = getToolRegistry();
+      const toolCount = tools.getToolCount();
+      
+      // Also get production integration health if available
+      let prodHealthy = 0;
+      let prodTotal = 0;
+      try {
+        const { getProductionIntegration } = await import('../services/qumusProductionIntegration');
+        const prodEngine = getProductionIntegration();
+        const prodStatus = prodEngine.getStatus();
+        prodHealthy = prodStatus.subsystems?.filter((s: any) => s.status === 'healthy').length || 0;
+        prodTotal = prodStatus.subsystems?.length || 0;
+      } catch { /* production integration may not be started yet */ }
+
+      const subsystemCount = prodTotal > 0 ? prodTotal : toolCount;
+      const healthyCount = prodTotal > 0 ? prodHealthy : toolCount;
 
       console.log("[QUMUS] Health Check:", {
-        isRunning: status.isRunning,
-        subsystems: `${status.toolCount}/${status.toolCount} healthy`,
-        events: status.queueLength,
+        isRunning: this.isActive,
+        subsystems: `${healthyCount}/${subsystemCount} healthy`,
+        events: this.agent.getStatus().queueLength,
         errors: 0,
       });
 

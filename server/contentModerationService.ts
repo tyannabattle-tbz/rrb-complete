@@ -1,4 +1,5 @@
 import { invokeLLM } from "./_core/llm";
+import { invokeSmartLlm } from "./_core/xaiLlm";
 
 export interface ModerationResult {
   isApproved: boolean;
@@ -12,6 +13,7 @@ export async function moderateContent(
   contentType: "text" | "title" | "description" = "text"
 ): Promise<ModerationResult> {
   try {
+    // Use Forge for moderation (needs response_format support)
     const response = await invokeLLM({
       messages: [
         {

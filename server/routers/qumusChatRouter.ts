@@ -5,6 +5,7 @@ import { CandyIdentitySystem } from '../_core/candyIdentity';
 import { SeraphIdentitySystem } from '../_core/seraphIdentity';
 import { QumusOrchestrationEngine } from '../_core/qumusOrchestrationEngine';
 import { invokeLLM } from '../_core/llm';
+import { invokeSmartLlm, isXaiAvailable, getXaiStatus } from '../_core/xaiLlm';
 import { realTtsService } from '../_core/realTtsService';
 
 // Voice mapping for each persona (server-side Forge TTS)
@@ -48,9 +49,14 @@ export const qumusChatRouter = router({
           },
         ];
 
-        const response = await invokeLLM({
+        // Use xAI/Grok (Ty Bat Zan brain) when available, Forge as fallback
+        const { result: response, provider } = await invokeSmartLlm({
           messages: messages,
+          preferXai: true,
+          temperature: 0.7,
+          maxTokens: 4096,
         });
+        console.log(`[QUMUS Chat] ${input.persona} responded via ${provider} provider`);
 
         const assistantMessage = response.choices?.[0]?.message?.content || 'I encountered an error generating a response.';
 
@@ -80,6 +86,7 @@ export const qumusChatRouter = router({
           message: assistantMessage,
           audioUrl,
           persona: input.persona,
+          provider,
         };
       } catch (error) {
         console.error('Chat error:', error);
@@ -161,6 +168,18 @@ export const qumusChatRouter = router({
     return {
       metrics: QumusOrchestrationEngine.getMetrics(),
       status: QumusOrchestrationEngine.getOperationalStatus(),
+      timestamp: new Date(),
+    };
+  }),
+
+  /**
+   * Get xAI/Grok AI brain status
+   */
+  getAiBrainStatus: publicProcedure.query(async () => {
+    return {
+      xai: getXaiStatus(),
+      forgeAvailable: true,
+      activeBrain: isXaiAvailable() ? 'xai-grok' : 'forge',
       timestamp: new Date(),
     };
   }),

@@ -1,4 +1,5 @@
 import { invokeLLM } from "./_core/llm";
+import { invokeSmartLlm } from "./_core/xaiLlm";
 
 /**
  * Real Agent Backend Connector
@@ -190,9 +191,9 @@ class AgentBackendConnector {
     } catch (error) {
       console.warn("[Agent Backend] Falling back to LLM:", error);
 
-      // Fallback to LLM
+      // Fallback to xAI/Grok (Ty Bat Zan brain) or Forge LLM
       try {
-        const llmResponse = await invokeLLM({
+        const { result: llmResponse, provider } = await invokeSmartLlm({
           messages: [
             {
               role: "system",
@@ -202,7 +203,9 @@ class AgentBackendConnector {
             },
             { role: "user", content: message },
           ],
+          preferXai: true,
         });
+        console.log(`[Agent Backend Connector] Fallback via ${provider}`);
 
         const content = llmResponse.choices[0]?.message?.content;
         return typeof content === "string" ? content : "No response";
