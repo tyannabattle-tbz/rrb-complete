@@ -4735,3 +4735,11 @@
 - [x] Fix 13/54 channels operational — was transient external provider issue, now 54/54 healthy (100% uptime)
 - [x] Fix QUMUS CRITICAL 0% ecosystem health false alarm — root cause: 54 "no fallback URL" warnings each penalizing 5pts = 270pt penalty capped at 0%. Fixed by: (1) downgrading no-fallback to INFO severity, (2) consolidating duplicate URL warnings, (3) fixing subsystem count parsing bug (getStatus() had no subsystems field), (4) using production integration for real subsystem health. Now reporting 100% health.
 - [x] Ensure SQUADD Coalition Radio auto-heal is working correctly — all 54/54 streams verified healthy
+
+## Twitter/X OAuth Fix + GitHub Sync (March 19, 2026)
+- [ ] Update Twitter publisher with new OAuth 1.0a credentials (regenerated consumer key + access token)
+- [ ] Add 503 retry logic to Twitter publisher for pay-per-use API stability
+- [ ] Sync HybridCast updates from GitHub
+- [ ] Sync Ty OS updates from GitHub
+- [ ] Sync RRB updates from GitHub
+- [ ] Verify Twitter posting works once API 503 clears
