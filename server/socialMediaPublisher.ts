@@ -16,8 +16,10 @@ import https from "https";
 import http from "http";
 
 // ─── Retry Configuration ────────────────────────────────────
-const MAX_RETRIES = 3;
-const BASE_DELAY_MS = 2000; // 2s, 4s, 8s exponential backoff
+const MAX_RETRIES = 5;
+const BASE_DELAY_MS = 2000; // 2s, 4s, 8s, 16s, 32s exponential backoff
+const MAX_503_RETRIES = 8; // Extra retries for 503 (Twitter pay-per-use known issue)
+const RETRY_503_DELAY_MS = 10000; // 10s base delay for 503s
 
 async function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -128,6 +130,10 @@ async function postToTwitter(content: string, attempt: number = 1): Promise<{ su
             const error = 'Twitter 429: Rate limited. Will retry automatically.';
             console.warn(`[QUMUS Social] ${error}`);
             resolve({ success: false, error, retryable: true });
+          } else if (res.statusCode === 503) {
+            const error = `Twitter 503 Service Unavailable (known pay-per-use issue). Credits may still be processing. Will retry with extended backoff.`;
+            console.warn(`[QUMUS Social] ${error} (attempt ${attempt})`);
+            resolve({ success: false, error, retryable: true, is503: true });
           } else if (res.statusCode && res.statusCode >= 500) {
             const error = `Twitter server error ${res.statusCode}. Will retry.`;
             console.warn(`[QUMUS Social] ${error}`);
@@ -212,14 +218,18 @@ async function postToInstagram(content: string): Promise<{ success: boolean; err
 // ─── Generic retry wrapper ──────────────────────────────────
 async function publishWithRetry(
   platform: string,
-  publishFn: (attempt: number) => Promise<{ success: boolean; error?: string; retryable?: boolean; tweetId?: string }>,
+  publishFn: (attempt: number) => Promise<{ success: boolean; error?: string; retryable?: boolean; tweetId?: string; is503?: boolean }>,
 ): Promise<{ success: boolean; error?: string; tweetId?: string }> {
   let lastError = '';
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+  let is503Error = false;
+  const maxAttempts = MAX_RETRIES;
+  
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const result = await publishFn(attempt);
     if (result.success) return result;
     
     lastError = result.error || 'Unknown error';
+    is503Error = !!(result as any).is503;
     
     // Don't retry non-retryable errors (auth failures, permission issues)
     if (result.retryable === false) {
@@ -227,14 +237,22 @@ async function publishWithRetry(
       return result;
     }
     
-    if (attempt < MAX_RETRIES) {
-      const delay = BASE_DELAY_MS * Math.pow(2, attempt - 1);
-      console.log(`[QUMUS Social] ${platform}: Retry ${attempt}/${MAX_RETRIES} in ${delay}ms...`);
+    if (attempt < maxAttempts) {
+      // Use longer delays for 503 errors (Twitter pay-per-use credit processing)
+      const delay = is503Error 
+        ? RETRY_503_DELAY_MS * Math.pow(1.5, attempt - 1)  // 10s, 15s, 22s, 33s...
+        : BASE_DELAY_MS * Math.pow(2, attempt - 1);        // 2s, 4s, 8s, 16s...
+      console.log(`[QUMUS Social] ${platform}: Retry ${attempt}/${maxAttempts} in ${Math.round(delay / 1000)}s...${is503Error ? ' (503 extended backoff)' : ''}`);
       await sleep(delay);
     }
   }
   
-  return { success: false, error: `Failed after ${MAX_RETRIES} attempts: ${lastError}` };
+  // For 503 errors, mark as scheduled (not failed) so the periodic checker retries later
+  if (is503Error) {
+    return { success: false, error: `Twitter 503 after ${maxAttempts} attempts — will auto-retry on next cycle (credits may still be processing)` };
+  }
+  
+  return { success: false, error: `Failed after ${maxAttempts} attempts: ${lastError}` };
 }
 
 // ─── QUMUS Auto-Publish Check ────────────────────────────────
@@ -298,14 +316,21 @@ export async function checkAndPublishScheduledPosts(): Promise<PublishResult[]> 
       }
 
       // Update post status in database
-      const newStatus = result.success ? 'published' : 'failed';
+      // For 503 errors, keep as 'scheduled' so the next cycle retries automatically
+      const is503 = result.error?.includes('503');
+      const newStatus = result.success ? 'published' : (is503 ? 'scheduled' : 'failed');
       await db.update(socialMediaPosts)
         .set({
           status: newStatus as any,
           publishedAt: result.success ? Date.now() : undefined,
+          scheduledAt: is503 ? Date.now() + 5 * 60 * 1000 : undefined, // Reschedule 5min later for 503s
           updatedAt: Date.now(),
         })
         .where(eq(socialMediaPosts.id, post.id));
+      
+      if (is503) {
+        console.log(`[QUMUS Social] Post #${post.id} rescheduled for 5min later due to Twitter 503 (credits processing)`);
+      }
 
       results.push({
         postId: post.id,

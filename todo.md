@@ -4737,9 +4737,9 @@
 - [x] Ensure SQUADD Coalition Radio auto-heal is working correctly — all 54/54 streams verified healthy
 
 ## Twitter/X OAuth Fix + GitHub Sync (March 19, 2026)
-- [ ] Update Twitter publisher with new OAuth 1.0a credentials (regenerated consumer key + access token)
-- [ ] Add 503 retry logic to Twitter publisher for pay-per-use API stability
-- [ ] Sync HybridCast updates from GitHub
-- [ ] Sync Ty OS updates from GitHub
-- [ ] Sync RRB updates from GitHub
+- [x] Update Twitter publisher with new OAuth 1.0a credentials (regenerated consumer key + access token)
+- [x] Add 503 retry logic to Twitter publisher for pay-per-use API stability
+- [x] Sync HybridCast updates from GitHub (via checkpoint save/pull)
+- [x] Sync Ty OS updates from GitHub (via checkpoint save/pull)
+- [x] Sync RRB updates from GitHub (via checkpoint save/pull)
 - [ ] Verify Twitter posting works once API 503 clears

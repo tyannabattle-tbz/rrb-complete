@@ -5630,6 +5630,10 @@ async function postToTwitter(content, attempt = 1) {
             const error = "Twitter 429: Rate limited. Will retry automatically.";
             console.warn(`[QUMUS Social] ${error}`);
             resolve({ success: false, error, retryable: true });
+          } else if (res.statusCode === 503) {
+            const error = `Twitter 503 Service Unavailable (known pay-per-use issue). Credits may still be processing. Will retry with extended backoff.`;
+            console.warn(`[QUMUS Social] ${error} (attempt ${attempt})`);
+            resolve({ success: false, error, retryable: true, is503: true });
           } else if (res.statusCode && res.statusCode >= 500) {
             const error = `Twitter server error ${res.statusCode}. Will retry.`;
             console.warn(`[QUMUS Social] ${error}`);
@@ -5709,21 +5713,27 @@ async function postToInstagram(content) {
 }
 async function publishWithRetry(platform, publishFn) {
   let lastError = "";
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+  let is503Error = false;
+  const maxAttempts = MAX_RETRIES;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const result2 = await publishFn(attempt);
     if (result2.success) return result2;
     lastError = result2.error || "Unknown error";
+    is503Error = !!result2.is503;
     if (result2.retryable === false) {
       console.log(`[QUMUS Social] ${platform}: Non-retryable error, skipping retries`);
       return result2;
     }
-    if (attempt < MAX_RETRIES) {
-      const delay = BASE_DELAY_MS * Math.pow(2, attempt - 1);
-      console.log(`[QUMUS Social] ${platform}: Retry ${attempt}/${MAX_RETRIES} in ${delay}ms...`);
+    if (attempt < maxAttempts) {
+      const delay = is503Error ? RETRY_503_DELAY_MS * Math.pow(1.5, attempt - 1) : BASE_DELAY_MS * Math.pow(2, attempt - 1);
+      console.log(`[QUMUS Social] ${platform}: Retry ${attempt}/${maxAttempts} in ${Math.round(delay / 1e3)}s...${is503Error ? " (503 extended backoff)" : ""}`);
       await sleep(delay);
     }
   }
-  return { success: false, error: `Failed after ${MAX_RETRIES} attempts: ${lastError}` };
+  if (is503Error) {
+    return { success: false, error: `Twitter 503 after ${maxAttempts} attempts \u2014 will auto-retry on next cycle (credits may still be processing)` };
+  }
+  return { success: false, error: `Failed after ${maxAttempts} attempts: ${lastError}` };
 }
 async function checkAndPublishScheduledPosts() {
   const results = [];
@@ -5765,12 +5775,18 @@ async function checkAndPublishScheduledPosts() {
           result2 = { success: true, error: `${post.platform} API not yet integrated \u2014 logged for manual publish` };
           break;
       }
-      const newStatus = result2.success ? "published" : "failed";
+      const is503 = result2.error?.includes("503");
+      const newStatus = result2.success ? "published" : is503 ? "scheduled" : "failed";
       await db2.update(socialMediaPosts2).set({
         status: newStatus,
         publishedAt: result2.success ? Date.now() : void 0,
+        scheduledAt: is503 ? Date.now() + 5 * 60 * 1e3 : void 0,
+        // Reschedule 5min later for 503s
         updatedAt: Date.now()
       }).where(eq34(socialMediaPosts2.id, post.id));
+      if (is503) {
+        console.log(`[QUMUS Social] Post #${post.id} rescheduled for 5min later due to Twitter 503 (credits processing)`);
+      }
       results.push({
         postId: post.id,
         platform: post.platform,
@@ -5850,11 +5866,12 @@ function stopSocialMediaPublisher() {
     console.log("[QUMUS Social] Social media auto-publisher stopped");
   }
 }
-var MAX_RETRIES, BASE_DELAY_MS, credentialCache, publishInterval;
+var MAX_RETRIES, BASE_DELAY_MS, RETRY_503_DELAY_MS, credentialCache, publishInterval;
 var init_socialMediaPublisher = __esm({
   "server/socialMediaPublisher.ts"() {
-    MAX_RETRIES = 3;
+    MAX_RETRIES = 5;
     BASE_DELAY_MS = 2e3;
+    RETRY_503_DELAY_MS = 1e4;
     credentialCache = {};
     publishInterval = null;
   }
