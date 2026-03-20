@@ -10673,7 +10673,7 @@ var requireUser = t.middleware(async (opts) => {
   });
 });
 var protectedProcedure = t.procedure.use(requireUser);
-var adminProcedure2 = t.procedure.use(
+var adminProcedure = t.procedure.use(
   t.middleware(async (opts) => {
     const { ctx, next } = opts;
     if (!ctx.user || ctx.user.role !== "admin") {
@@ -10697,7 +10697,7 @@ var systemRouter = router({
   ).query(() => ({
     ok: true
   })),
-  notifyOwner: adminProcedure2.input(
+  notifyOwner: adminProcedure.input(
     z.object({
       title: z.string().min(1, "title is required"),
       content: z.string().min(1, "content is required")
@@ -17301,7 +17301,7 @@ var notificationSystemRouter = router({
     return { success: true };
   }),
   // Send job failure alert
-  sendJobFailureAlert: adminProcedure2.input(
+  sendJobFailureAlert: adminProcedure.input(
     z20.object({
       jobId: z20.string(),
       jobName: z20.string(),
@@ -17328,7 +17328,7 @@ var notificationSystemRouter = router({
     return notification;
   }),
   // Send system performance alert
-  sendPerformanceAlert: adminProcedure2.input(
+  sendPerformanceAlert: adminProcedure.input(
     z20.object({
       metric: z20.enum(["cpu", "memory", "disk", "api_latency"]),
       currentValue: z20.number(),
@@ -17354,7 +17354,7 @@ var notificationSystemRouter = router({
     return notification;
   }),
   // Send storyboard generation alert
-  sendStoryboardAlert: adminProcedure2.input(
+  sendStoryboardAlert: adminProcedure.input(
     z20.object({
       storyboardId: z20.string(),
       status: z20.enum(["completed", "failed", "started"]),
@@ -17387,7 +17387,7 @@ var notificationSystemRouter = router({
     return notification;
   }),
   // Send voice command alert
-  sendVoiceCommandAlert: adminProcedure2.input(
+  sendVoiceCommandAlert: adminProcedure.input(
     z20.object({
       commandId: z20.string(),
       command: z20.string(),
@@ -17432,7 +17432,7 @@ var notificationSystemRouter = router({
     };
   }),
   // Clear old notifications (keep last 100)
-  clearOldNotifications: adminProcedure2.mutation(({ ctx }) => {
+  clearOldNotifications: adminProcedure.mutation(({ ctx }) => {
     const userNotifications = notifications3.filter((n) => n.userId === ctx.user.id);
     if (userNotifications.length > 100) {
       const toRemove = userNotifications.length - 100;
@@ -37860,7 +37860,7 @@ var adminPoliciesRouter = router({
   /**
    * Get all policy decisions with optional filtering
    */
-  getPolicyDecisions: adminProcedure2.input(
+  getPolicyDecisions: adminProcedure.input(
     z81.object({
       limit: z81.number().default(50),
       offset: z81.number().default(0),
@@ -37936,7 +37936,7 @@ var adminPoliciesRouter = router({
   /**
    * Get human review queue
    */
-  getHumanReviewQueue: adminProcedure2.input(
+  getHumanReviewQueue: adminProcedure.input(
     z81.object({
       limit: z81.number().default(50),
       offset: z81.number().default(0),
@@ -37984,7 +37984,7 @@ var adminPoliciesRouter = router({
   /**
    * Get policy statistics
    */
-  getPolicyStats: adminProcedure2.query(async () => {
+  getPolicyStats: adminProcedure.query(async () => {
     try {
       const stats = await db.query(
         `SELECT 
@@ -38014,7 +38014,7 @@ var adminPoliciesRouter = router({
   /**
    * Get confidence trends (24 hour)
    */
-  getConfidenceTrends: adminProcedure2.query(async () => {
+  getConfidenceTrends: adminProcedure.query(async () => {
     try {
       const trends = await db.query(
         `SELECT 
@@ -38039,7 +38039,7 @@ var adminPoliciesRouter = router({
   /**
    * Approve human review
    */
-  approveReview: adminProcedure2.input(
+  approveReview: adminProcedure.input(
     z81.object({
       reviewId: z81.string(),
       notes: z81.string().optional()
@@ -38066,7 +38066,7 @@ var adminPoliciesRouter = router({
   /**
    * Deny human review
    */
-  denyReview: adminProcedure2.input(
+  denyReview: adminProcedure.input(
     z81.object({
       reviewId: z81.string(),
       reason: z81.string()
@@ -38093,7 +38093,7 @@ var adminPoliciesRouter = router({
   /**
    * Override policy decision
    */
-  overridePolicyDecision: adminProcedure2.input(
+  overridePolicyDecision: adminProcedure.input(
     z81.object({
       decisionId: z81.string(),
       override: z81.enum(["approve", "deny"]),
@@ -38136,7 +38136,7 @@ var adminPoliciesRouter = router({
   /**
    * Get policy audit trail
    */
-  getAuditTrail: adminProcedure2.input(
+  getAuditTrail: adminProcedure.input(
     z81.object({
       limit: z81.number().default(100),
       offset: z81.number().default(0),
@@ -38169,7 +38169,7 @@ var adminPoliciesRouter = router({
   /**
    * Get policy performance metrics
    */
-  getPolicyMetrics: adminProcedure2.query(async () => {
+  getPolicyMetrics: adminProcedure.query(async () => {
     try {
       const metrics2 = await db.query(
         `SELECT 

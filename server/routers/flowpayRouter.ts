@@ -1,4 +1,4 @@
-import { router, protectedProcedure, publicProcedure } from '../_core/trpc';
+import { router, protectedProcedure, publicProcedure, adminProcedure } from '../_core/trpc';
 import { z } from 'zod';
 import { FlowpayService } from '../services/flowpayService';
 import { FlowpayPolicies } from '../qumus/flowpayPolicies';
