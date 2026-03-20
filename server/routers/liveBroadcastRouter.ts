@@ -51,7 +51,7 @@ export const liveBroadcastRouter = router({
    */
   getCurrentBroadcast: publicProcedure.query(async () => {
     const rows = await rawQuery(
-      `SELECT ss.*, b.title, b.description, b.system, b.is_emergency as isEmergency
+      `SELECT ss.*, b.title, b.description, b.system, b.isEmergency
        FROM streaming_status ss
        LEFT JOIN broadcasts b ON ss.broadcast_id = b.id
        WHERE ss.status = 'live'
