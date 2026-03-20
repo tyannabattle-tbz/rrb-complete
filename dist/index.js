@@ -48408,7 +48408,7 @@ function vitePluginManusDebugCollector() {
 }
 var plugins2 = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
 var vite_config_default = defineConfig({
-  plugins: plugins2,
+  plugins: plugins2.filter((p) => p?.name !== "vite-plugin-manus-runtime" || process.env.NODE_ENV !== "production"),
   resolve: {
     alias: {
       "@": path2.resolve(import.meta.dirname, "client", "src"),
@@ -48418,6 +48418,9 @@ var vite_config_default = defineConfig({
     dedupe: ["react", "react-dom", "@trpc/react-query"]
   },
   envDir: path2.resolve(import.meta.dirname),
+  define: {
+    "process.env.VITE_HMR_HOST": JSON.stringify(process.env.HMR_HOST || "")
+  },
   root: path2.resolve(import.meta.dirname, "client"),
   publicDir: path2.resolve(import.meta.dirname, "client", "public"),
   build: {
@@ -48433,15 +48436,17 @@ var vite_config_default = defineConfig({
       ".manuscomputer.ai",
       ".manusvm.computer",
       "localhost",
-      "127.0.0.1"
+      "127.0.0.1",
+      "*.manus.space",
+      "*.manus.sbs"
     ],
     fs: {
-      strict: true,
-      deny: ["**/.*"]
+      strict: false,
+      allow: ["."]
     },
     hmr: {
       protocol: "wss",
-      host: void 0,
+      host: process.env.HMR_HOST || void 0,
       port: 443
     }
   }

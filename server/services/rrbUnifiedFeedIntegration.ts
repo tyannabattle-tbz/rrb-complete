@@ -14,10 +14,14 @@ interface RRBFeedConfig {
 
 class RRBUnifiedFeedIntegration {
   private config: RRBFeedConfig = {
-    syncInterval: 5000, // 5 seconds
+    syncInterval: 2000, // 2 seconds (aggressive sync)
     fallbackStreamUrl: 'https://ice1.somafm.com/groovesalad-128-mp3', // RRB Main Radio fallback
     enableDirectSiteFeed: true,
   };
+
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 10;
+  private reconnectDelay = 1000; // 1 second
 
   private currentChannel = 1; // Default to RRB Main Radio
   private isStreaming = false;
@@ -74,13 +78,31 @@ class RRBUnifiedFeedIntegration {
 
       if (feed.status === 'healthy') {
         this.isStreaming = true;
+        this.reconnectAttempts = 0; // Reset on success
         console.log(`[RRB Feed] Sync successful: ${feed.channels.length} channels available`);
       } else {
-        console.log('[RRB Feed] Sync degraded, using fallback...');
-        this.useFallbackStream();
+        console.log('[RRB Feed] Sync degraded, attempting reconnect...');
+        this.attemptReconnect();
       }
     } catch (error) {
       console.error('[RRB Feed] Sync failed:', error);
+      this.attemptReconnect();
+    }
+  }
+
+  private attemptReconnect() {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectAttempts++;
+      console.log(`[RRB Feed] Reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
+      
+      // Exponential backoff: 1s, 2s, 4s, 8s, etc.
+      const delay = Math.min(this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1), 30000);
+      
+      setTimeout(() => {
+        this.sync();
+      }, delay);
+    } else {
+      console.warn('[RRB Feed] Max reconnect attempts reached, using fallback');
       this.useFallbackStream();
     }
   }
@@ -166,8 +188,35 @@ class RRBUnifiedFeedIntegration {
       currentStreamUrl: this.getCurrentStreamUrl(),
       lastSync: this.lastSyncTime,
       syncInterval: this.config.syncInterval,
+      reconnectAttempts: this.reconnectAttempts,
+      maxReconnectAttempts: this.maxReconnectAttempts,
       tyOSStatus: tyOSFeedService.getSyncStatus(),
     };
+  }
+
+  /**
+   * Get team radio sync status (for dashboard)
+   */
+  getTeamRadioSyncStatus() {
+    return {
+      isStreaming: this.isStreaming,
+      currentChannel: this.currentChannel,
+      lastSyncTime: this.lastSyncTime,
+      reconnectAttempts: this.reconnectAttempts,
+      maxReconnectAttempts: this.maxReconnectAttempts,
+      streamUrl: this.getCurrentStreamUrl(),
+      channels: this.getAllChannels(),
+      syncHealthy: this.isStreaming && this.reconnectAttempts === 0,
+    };
+  }
+
+  /**
+   * Force immediate sync
+   */
+  forceSyncNow() {
+    console.log('[RRB Feed] Force sync triggered');
+    this.reconnectAttempts = 0; // Reset attempts on manual trigger
+    this.sync();
   }
 
   /**

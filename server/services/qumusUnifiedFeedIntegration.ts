@@ -15,11 +15,13 @@ interface QUMUSFeedConfig {
 
 class QUMUSUnifiedFeedIntegration {
   private config: QUMUSFeedConfig = {
-    syncInterval: 5000, // 5 seconds
-    reconnectDelay: 1000, // 1 second
-    maxReconnectAttempts: 5,
+    syncInterval: 2000, // 2 seconds (aggressive sync)
+    reconnectDelay: 500, // 500ms (faster reconnect)
+    maxReconnectAttempts: 15, // More attempts
     fallbackChannelId: 1, // RRB Main Radio
   };
+
+  private exponentialBackoffMultiplier = 1.5; // Exponential backoff factor
 
   private isConnected = false;
   private reconnectAttempts = 0;

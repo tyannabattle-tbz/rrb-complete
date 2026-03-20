@@ -7,6 +7,7 @@
 import { tyOSFeedService } from './tyOSUnifiedFeedService';
 import { qumusUnifiedFeedIntegration } from './qumusUnifiedFeedIntegration';
 import { rrbUnifiedFeedIntegration } from './rrbUnifiedFeedIntegration';
+import { unifiedFeedEmailAlerts } from './unifiedFeedEmailAlerts';
 
 interface HealthCheckResult {
   timestamp: number;
@@ -34,6 +35,8 @@ class UnifiedFeedHealthCheck {
   private lastCheck: HealthCheckResult | null = null;
   private healthHistory: HealthCheckResult[] = [];
   private maxHistorySize = 100;
+  private lastStatus: 'healthy' | 'degraded' | 'critical' | null = null;
+  private statusChangeTime = Date.now();
 
   constructor() {
     this.initialize();
@@ -83,13 +86,23 @@ class UnifiedFeedHealthCheck {
     this.lastCheck = result;
     this.addToHistory(result);
 
+    // Track status changes for recovery notifications
+    if (this.lastStatus && this.lastStatus !== result.overallStatus) {
+      const recoveryTime = Date.now() - this.statusChangeTime;
+      if (result.overallStatus === 'healthy' && this.lastStatus !== 'healthy') {
+        unifiedFeedEmailAlerts.sendRecoveryNotification('Unified Feed', recoveryTime).catch(console.error);
+      }
+    }
+    this.lastStatus = result.overallStatus;
+    this.statusChangeTime = Date.now();
+
     // Log health status
     if (result.overallStatus === 'critical') {
       console.error('[Health Check] CRITICAL:', JSON.stringify(result, null, 2));
-      this.handleCriticalStatus(result);
+      this.handleCriticalStatus(result).catch(console.error);
     } else if (result.overallStatus === 'degraded') {
       console.warn('[Health Check] DEGRADED:', JSON.stringify(result, null, 2));
-      this.handleDegradedStatus(result);
+      this.handleDegradedStatus(result).catch(console.error);
     } else {
       console.log('[Health Check] HEALTHY:', JSON.stringify(result, null, 2));
     }
@@ -105,11 +118,22 @@ class UnifiedFeedHealthCheck {
     return 'critical';
   }
 
-  private handleCriticalStatus(result: HealthCheckResult) {
+  private async handleCriticalStatus(result: HealthCheckResult) {
     console.error('[Health Check] CRITICAL STATUS DETECTED');
     console.error('[Health Check] Ty OS healthy:', result.tyOS.isHealthy);
     console.error('[Health Check] QUMUS connected:', result.qumus.isConnected);
     console.error('[Health Check] RRB streaming:', result.rrb.isStreaming);
+
+    // Send email alert if status changed
+    if (this.lastStatus !== 'critical') {
+      await unifiedFeedEmailAlerts.sendHealthFailureAlert({
+        timestamp: result.timestamp,
+        severity: 'critical',
+        system: 'all',
+        message: 'Unified feed system is in critical state',
+        details: result,
+      });
+    }
 
     // Attempt recovery
     if (!result.tyOS.isHealthy) {
@@ -128,7 +152,18 @@ class UnifiedFeedHealthCheck {
     }
   }
 
-  private handleDegradedStatus(result: HealthCheckResult) {
+  private async handleDegradedStatus(result: HealthCheckResult) {
+    // Send email alert if status changed from healthy
+    if (this.lastStatus === 'healthy') {
+      await unifiedFeedEmailAlerts.sendHealthFailureAlert({
+        timestamp: result.timestamp,
+        severity: 'warning',
+        system: 'all',
+        message: 'Unified feed system is degraded',
+        details: result,
+      });
+    }
+
     console.warn('[Health Check] DEGRADED STATUS - Attempting recovery...');
 
     // Attempt recovery for degraded systems
@@ -137,7 +172,7 @@ class UnifiedFeedHealthCheck {
       tyOSFeedService.setHealthStatus(true);
     }
 
-    if (!result.qumus.isConnected && result.qumus.reconnectAttempts < 5) {
+    if (!result.qumus.isConnected) {
       console.log('[Health Check] QUMUS degraded, attempting reconnect...');
       qumusUnifiedFeedIntegration.triggerSync();
     }
