@@ -241,6 +241,8 @@ import WebhookAutomationDashboard from '@/pages/WebhookAutomationDashboard';
 import RealtimeAnalyticsDashboard from '@/pages/RealtimeAnalyticsDashboard';
 import DonorRecognitionDashboard from '@/pages/DonorRecognitionDashboard';
 import EmailCampaignsDashboard from '@/pages/EmailCampaignsDashboard';
+import { UnifiedFeedHealthDashboard } from '@/pages/UnifiedFeedHealthDashboard';
+import { FallbackStatusIndicator } from '@/components/FallbackStatusIndicator';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -469,6 +471,7 @@ function Router() {
       <Route path="/analytics" component={RealtimeAnalyticsDashboard} />
       <Route path="/donors" component={DonorRecognitionDashboard} />
       <Route path="/email-campaigns" component={EmailCampaignsDashboard} />
+      <Route path="/unified-feed-health" component={UnifiedFeedHealthDashboard} />
       <Route component={NotFound} />
     </Switch>
     </>
@@ -526,6 +529,9 @@ function App() {
             <div className="hidden md:block">
               <AppHeaderEnhanced />
             </div>
+            
+            {/* Fallback Status Indicator - shows when system is degraded */}
+            <FallbackStatusIndicator />
             
             {/* Event Banners - positioned below fixed header */}
             <div className="pt-16">
