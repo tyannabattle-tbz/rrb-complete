@@ -227,6 +227,10 @@ import PresentationBuilder from '@/pages/PresentationBuilder';
 import MusicStudio from '@/pages/MusicStudio';
 import CSW70Campaign from '@/pages/CSW70Campaign';
 import LAWSCollective from '@/pages/LAWSCollective';
+import FlowPayDashboard from '@/pages/FlowPayDashboard';
+import FlowPaySendMoney from '@/pages/FlowPaySendMoney';
+import FlowPayPlans from '@/pages/FlowPayPlans';
+import FlowPayLinks from '@/pages/FlowPayLinks';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -441,6 +445,10 @@ function Router() {
       <Route path="/presentation" component={EcosystemPresentation} />
       <Route path="/presentation-builder" component={PresentationBuilder} />
       <Route path="/music-studio" component={MusicStudio} />
+      <Route path="/flowpay/dashboard" component={FlowPayDashboard} />
+      <Route path="/flowpay/send" component={FlowPaySendMoney} />
+      <Route path="/flowpay/plans" component={FlowPayPlans} />
+      <Route path="/flowpay/links" component={FlowPayLinks} />
       <Route component={NotFound} />
     </Switch>
     </>
