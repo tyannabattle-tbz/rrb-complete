@@ -98,6 +98,7 @@ import { globalBroadcastRouter } from "./routers/globalBroadcastRouter";
 import { socialStreamRouter } from "./routers/socialStreamRouter";
 import { socialMediaQueueRouter } from "./routers/socialMediaQueueRouter";
 import { qumusAgentEngine } from "./routers/qumusAgentEngine";
+import { unifiedFeedRouter } from "./routers/unifiedFeedRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -133,6 +134,9 @@ export const appRouter = router({
 
   // Global Broadcast State (Single Source of Truth for 54 channels)
   globalBroadcast: globalBroadcastRouter,
+
+  // Unified Feed (Ty OS Registry - feeds QUMUS, RRB, all subsystems)
+  unifiedFeed: unifiedFeedRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,

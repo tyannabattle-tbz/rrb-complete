@@ -10746,7 +10746,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z106 } from "zod";
+import { z as z107 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -47722,6 +47722,246 @@ Be helpful, specific, and proactive. You are the brain \u2014 act like it.` },
   })
 });
 
+// server/services/tyOSUnifiedFeedService.ts
+import { EventEmitter as EventEmitter5 } from "events";
+var TY_OS_REGISTRY = [
+  { numericId: 1, name: "RRB Main Radio", genre: "Soul, Funk, R&B", streamUrl: "https://ice1.somafm.com/groovesalad-128-mp3" },
+  { numericId: 2, name: "Soul & R&B Classics", genre: "Soul, R&B, Classics", streamUrl: "https://listen.181fm.com/181-soul_128k.mp3" },
+  { numericId: 3, name: "Jazz Lounge", genre: "Jazz, Smooth Jazz, Fusion", streamUrl: "https://ice1.somafm.com/secretagent-128-mp3" },
+  { numericId: 4, name: "80s Hits", genre: "80s, Pop, Rock, New Wave", streamUrl: "https://listen.181fm.com/181-awesome80s_128k.mp3" },
+  { numericId: 5, name: "Hip-Hop & Rap", genre: "Hip-Hop, Rap, Urban", streamUrl: "https://listen.181fm.com/181-hiphoptop40_128k.mp3" },
+  { numericId: 6, name: "Blues Highway", genre: "Blues, Delta Blues, Chicago Blues", streamUrl: "https://ice1.somafm.com/bootliquor-128-mp3" },
+  { numericId: 7, name: "Classical Masterworks", genre: "Classical, Orchestral, Chamber", streamUrl: "https://stream.radioparadise.com/mellow-128" },
+  { numericId: 8, name: "Latin Rhythms", genre: "Salsa, Bachata, Reggaeton", streamUrl: "https://listen.181fm.com/181-salsa_128k.mp3" },
+  { numericId: 9, name: "Reggae Island", genre: "Reggae, Dancehall, Caribbean", streamUrl: "https://listen.181fm.com/181-reggae_128k.mp3" },
+  { numericId: 10, name: "Neo-Soul Vibes", genre: "Neo-Soul, R&B, Alt Soul", streamUrl: "https://ice1.somafm.com/lush-128-mp3" },
+  { numericId: 11, name: "Country Roads", genre: "Country, Americana, Folk", streamUrl: "https://listen.181fm.com/181-kickincountry_128k.mp3" },
+  { numericId: 12, name: "Electronic Pulse", genre: "EDM, House, Techno", streamUrl: "https://ice1.somafm.com/deepspaceone-128-mp3" },
+  { numericId: 13, name: "Funk Factory", genre: "Funk, Disco, Groove", streamUrl: "https://ice1.somafm.com/seventies-128-mp3" },
+  { numericId: 14, name: "Afrobeats Global", genre: "Afrobeats, Amapiano, Afropop", streamUrl: "https://stream.zeno.fm/yn65fsaurfhvv" },
+  { numericId: 15, name: "Indie & Alternative", genre: "Indie, Alternative, Underground", streamUrl: "https://ice1.somafm.com/indiepop-128-mp3" },
+  { numericId: 16, name: "Pop Hits", genre: "Pop, Top 40, Hits", streamUrl: "https://listen.181fm.com/181-beat_128k.mp3" },
+  { numericId: 17, name: "Rock Legends", genre: "Rock, Classic Rock, Alternative", streamUrl: "https://listen.181fm.com/181-classicrock_128k.mp3" },
+  { numericId: 18, name: "World Music", genre: "World, Fusion, Global", streamUrl: "https://ice1.somafm.com/suburbsofgoa-128-mp3" },
+  { numericId: 19, name: "Smooth Grooves", genre: "Smooth R&B, Quiet Storm", streamUrl: "https://ice1.somafm.com/groovesalad256-256-mp3" },
+  { numericId: 20, name: "Oldies But Goodies", genre: "Oldies, 60s, 70s Classics", streamUrl: "https://listen.181fm.com/181-oldies_128k.mp3" },
+  { numericId: 21, name: "Acoustic Sessions", genre: "Acoustic, Folk, Singer-Songwriter", streamUrl: "https://ice1.somafm.com/folkfwd-128-mp3" },
+  { numericId: 22, name: "Chill & Lo-Fi", genre: "Lo-Fi, Chill, Downtempo", streamUrl: "https://ice1.somafm.com/covers-128-mp3" },
+  { numericId: 23, name: "Sports Talk", genre: "Sports, Analysis, Commentary", streamUrl: "https://stream.zeno.fm/0r0xa792kwzuv" },
+  { numericId: 24, name: "News & Current Events", genre: "News, Commentary, Current Affairs", streamUrl: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service" },
+  { numericId: 25, name: "Interview Hour", genre: "Interviews, Talk, Conversations", streamUrl: "https://ice1.somafm.com/fluid-128-mp3" },
+  { numericId: 26, name: "Panel Discussions", genre: "Panel, Debate, Discussion", streamUrl: "https://ice1.somafm.com/defcon-128-mp3" },
+  { numericId: 27, name: "Community Voices", genre: "Community, Talk, Call-In", streamUrl: "https://ice1.somafm.com/poptron-128-mp3" },
+  { numericId: 28, name: "Tech & Innovation", genre: "Technology, Innovation, AI", streamUrl: "https://ice1.somafm.com/sf1033-128-mp3" },
+  { numericId: 29, name: "HybridCast Emergency", genre: "Emergency, News, Public Safety", streamUrl: "https://ice1.somafm.com/scanner-128-mp3" },
+  { numericId: 30, name: "Special Events", genre: "Live Events, Concerts", streamUrl: "https://ice1.somafm.com/live-128-mp3" },
+  { numericId: 31, name: "Anime & Gaming", genre: "Anime, Gaming, J-Pop, Chiptune", streamUrl: "https://listen.181fm.com/181-anime_128k.mp3" },
+  { numericId: 32, name: "90s R&B", genre: "90s, R&B, New Jack Swing", streamUrl: "https://listen.181fm.com/181-90srnb_128k.mp3" },
+  { numericId: 33, name: "432Hz Healing", genre: "Healing, 432Hz, Ambient", streamUrl: "https://ice1.somafm.com/dronezone-128-mp3" },
+  { numericId: 34, name: "528Hz Miracle Tone", genre: "528Hz, Healing, Meditation", streamUrl: "https://ice1.somafm.com/drone-128-mp3" },
+  { numericId: 35, name: "639Hz Connection", genre: "639Hz, Harmony, Ambient", streamUrl: "https://ice1.somafm.com/spacestation-128-mp3" },
+  { numericId: 36, name: "741Hz Expression", genre: "741Hz, Expression, Ambient", streamUrl: "https://ice1.somafm.com/darkzone-128-mp3" },
+  { numericId: 37, name: "852Hz Intuition", genre: "852Hz, Intuition, Ambient", streamUrl: "https://ice1.somafm.com/thistle-128-mp3" },
+  { numericId: 38, name: "2000s Hits", genre: "2000s, Pop, R&B, Hip-Hop", streamUrl: "https://listen.181fm.com/181-2000srnb_128k.mp3" },
+  { numericId: 39, name: "Seraph AI Radio", genre: "AI-Curated, Experimental, Ambient", streamUrl: "https://ice1.somafm.com/dronezone-128-mp3" },
+  { numericId: 40, name: "Candy AI Radio", genre: "AI-Curated, 80s, Vaporwave", streamUrl: "https://ice1.somafm.com/u80s-128-mp3" },
+  { numericId: 41, name: "QUMUS Selections", genre: "AI-Curated, Eclectic, Discovery", streamUrl: "https://ice1.somafm.com/bagel-128-mp3" },
+  { numericId: 42, name: "AI Mashup Lab", genre: "AI-Curated, Electronic, Mashup", streamUrl: "https://ice1.somafm.com/cliqhop-128-mp3" },
+  { numericId: 43, name: "Education & Learning", genre: "Education, Learning, Ambient", streamUrl: "https://ice1.somafm.com/brfm-128-mp3" },
+  { numericId: 44, name: "Classic Hip-Hop", genre: "Classic Hip-Hop, 90s Rap, Golden Era", streamUrl: "https://listen.181fm.com/181-oldschoolhiphop_128k.mp3" },
+  { numericId: 45, name: "Science & Discovery", genre: "Science, Technology, Discovery", streamUrl: "https://ice1.somafm.com/vaporwaves-128-mp3" },
+  { numericId: 46, name: "R&B Slow Jams", genre: "R&B, Slow Jams, Love Songs", streamUrl: "https://listen.181fm.com/181-rnb_128k.mp3" },
+  { numericId: 47, name: "Audiobooks", genre: "Audiobooks, Stories, Narration", streamUrl: "https://ice1.somafm.com/illstreet-128-mp3" },
+  { numericId: 48, name: "Comedy Hour", genre: "Comedy, Stand-Up, Humor", streamUrl: "https://ice1.somafm.com/beatblender-128-mp3" },
+  { numericId: 49, name: "Drama & Stories", genre: "Drama, Radio Drama, Stories", streamUrl: "https://ice1.somafm.com/missioncontrol-128-mp3" },
+  { numericId: 50, name: "90s Hip-Hop", genre: "90s Hip-Hop, East Coast, West Coast", streamUrl: "https://listen.181fm.com/181-90ship-hop_128k.mp3" },
+  { numericId: 51, name: "C.J. Battle Radio", genre: "Hip-Hop, R&B, Live Battles", streamUrl: "https://ice1.somafm.com/digitalis-128-mp3" },
+  { numericId: 52, name: "Open Mic", genre: "Open Mic, Freestyle, Live", streamUrl: "https://ice1.somafm.com/doomed-128-mp3" },
+  { numericId: 53, name: "Local Voices", genre: "Local, Community, Talk", streamUrl: "https://ice1.somafm.com/7soul-128-mp3" },
+  { numericId: 54, name: "Canryn Production Radio", genre: "Production, Studio, Mixed", streamUrl: "https://ice1.somafm.com/synphaera-128-mp3" }
+];
+var TyOSUnifiedFeedService = class extends EventEmitter5 {
+  channels = /* @__PURE__ */ new Map();
+  channelStatus = /* @__PURE__ */ new Map();
+  isHealthy = true;
+  lastSync = Date.now();
+  constructor() {
+    super();
+    this.initializeChannels();
+    this.startHealthCheck();
+  }
+  initializeChannels() {
+    for (const channel of TY_OS_REGISTRY) {
+      this.channels.set(channel.numericId, channel);
+      this.channelStatus.set(channel.numericId, {
+        channel,
+        timestamp: Date.now(),
+        status: "live"
+      });
+    }
+  }
+  startHealthCheck() {
+    setInterval(() => {
+      this.lastSync = Date.now();
+      this.emit("health-check", {
+        isHealthy: this.isHealthy,
+        channelCount: this.channels.size,
+        liveChannels: Array.from(this.channelStatus.values()).filter((s) => s.status === "live").length,
+        timestamp: Date.now()
+      });
+    }, 5e3);
+  }
+  /**
+   * Get all channels (for QUMUS and RRB)
+   */
+  getAllChannels() {
+    return Array.from(this.channels.values());
+  }
+  /**
+   * Get single channel by ID
+   */
+  getChannel(numericId) {
+    return this.channels.get(numericId);
+  }
+  /**
+   * Get channels by genre (for QUMUS filtering)
+   */
+  getChannelsByGenre(genre) {
+    return Array.from(this.channels.values()).filter(
+      (ch) => ch.genre.toLowerCase().includes(genre.toLowerCase())
+    );
+  }
+  /**
+   * Get feed for QUMUS (WebSocket stream)
+   */
+  getFeedForQUMUS() {
+    return {
+      channels: this.getAllChannels(),
+      status: this.isHealthy ? "healthy" : "degraded",
+      lastSync: this.lastSync,
+      totalChannels: this.channels.size,
+      timestamp: Date.now()
+    };
+  }
+  /**
+   * Get feed for RRB (stream URLs only)
+   */
+  getFeedForRRB() {
+    return {
+      channels: this.getAllChannels().map((ch) => ({
+        id: ch.numericId,
+        name: ch.name,
+        streamUrl: ch.streamUrl
+      })),
+      status: this.isHealthy ? "healthy" : "degraded",
+      timestamp: Date.now()
+    };
+  }
+  /**
+   * Update channel status (called by health checks)
+   */
+  updateChannelStatus(numericId, status) {
+    const channel = this.channels.get(numericId);
+    if (channel) {
+      this.channelStatus.set(numericId, {
+        channel,
+        timestamp: Date.now(),
+        status
+      });
+      this.emit("channel-status-update", {
+        numericId,
+        status,
+        timestamp: Date.now()
+      });
+    }
+  }
+  /**
+   * Get channel status
+   */
+  getChannelStatus(numericId) {
+    return this.channelStatus.get(numericId);
+  }
+  /**
+   * Get all channel statuses
+   */
+  getAllChannelStatuses() {
+    return Array.from(this.channelStatus.values());
+  }
+  /**
+   * Set overall health status
+   */
+  setHealthStatus(isHealthy) {
+    this.isHealthy = isHealthy;
+    this.emit("health-status-change", { isHealthy, timestamp: Date.now() });
+  }
+  /**
+   * Get sync status
+   */
+  getSyncStatus() {
+    return {
+      isHealthy: this.isHealthy,
+      lastSync: this.lastSync,
+      channelCount: this.channels.size,
+      liveChannels: Array.from(this.channelStatus.values()).filter((s) => s.status === "live").length,
+      timestamp: Date.now()
+    };
+  }
+};
+var tyOSFeedService = new TyOSUnifiedFeedService();
+
+// server/routers/unifiedFeedRouter.ts
+import { z as z106 } from "zod";
+var unifiedFeedRouter = router({
+  /**
+   * Get all channels (for QUMUS and RRB)
+   */
+  getAllChannels: publicProcedure.query(async () => {
+    return tyOSFeedService.getAllChannels();
+  }),
+  /**
+   * Get single channel by ID
+   */
+  getChannel: publicProcedure.input(z106.object({ numericId: z106.number() })).query(async ({ input }) => {
+    return tyOSFeedService.getChannel(input.numericId);
+  }),
+  /**
+   * Get channels by genre (for QUMUS filtering)
+   */
+  getChannelsByGenre: publicProcedure.input(z106.object({ genre: z106.string() })).query(async ({ input }) => {
+    return tyOSFeedService.getChannelsByGenre(input.genre);
+  }),
+  /**
+   * Get feed for QUMUS (full metadata)
+   */
+  getFeedForQUMUS: publicProcedure.query(async () => {
+    return tyOSFeedService.getFeedForQUMUS();
+  }),
+  /**
+   * Get feed for RRB (stream URLs only)
+   */
+  getFeedForRRB: publicProcedure.query(async () => {
+    return tyOSFeedService.getFeedForRRB();
+  }),
+  /**
+   * Get channel status
+   */
+  getChannelStatus: publicProcedure.input(z106.object({ numericId: z106.number() })).query(async ({ input }) => {
+    return tyOSFeedService.getChannelStatus(input.numericId);
+  }),
+  /**
+   * Get all channel statuses
+   */
+  getAllChannelStatuses: publicProcedure.query(async () => {
+    return tyOSFeedService.getAllChannelStatuses();
+  }),
+  /**
+   * Get sync status
+   */
+  getSyncStatus: publicProcedure.query(async () => {
+    return tyOSFeedService.getSyncStatus();
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -47746,6 +47986,8 @@ var appRouter = router({
   ecosystemSync: ecosystemSyncRouter,
   // Global Broadcast State (Single Source of Truth for 54 channels)
   globalBroadcast: globalBroadcastRouter,
+  // Unified Feed (Ty OS Registry - feeds QUMUS, RRB, all subsystems)
+  unifiedFeed: unifiedFeedRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -47761,11 +48003,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z106.object({
-        goal: z106.string().min(1, "Goal is required"),
-        priority: z106.number().int().min(1).max(10).optional().default(5),
-        steps: z106.array(z106.string()).optional(),
-        constraints: z106.array(z106.string()).optional()
+      z107.object({
+        goal: z107.string().min(1, "Goal is required"),
+        priority: z107.number().int().min(1).max(10).optional().default(5),
+        steps: z107.array(z107.string()).optional(),
+        constraints: z107.array(z107.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -47777,7 +48019,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z106.object({ taskId: z106.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z107.object({ taskId: z107.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -47787,11 +48029,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z106.object({
-        target: z106.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z106.string().min(1, "Action is required"),
-        params: z106.record(z106.any()).optional().default({}),
-        priority: z106.number().int().min(1).max(10).optional().default(5)
+      z107.object({
+        target: z107.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z107.string().min(1, "Action is required"),
+        params: z107.record(z107.any()).optional().default({}),
+        priority: z107.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -47803,10 +48045,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z106.object({ commandId: z106.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z107.object({ commandId: z107.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z106.object({ target: z106.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z107.object({ target: z107.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -47901,12 +48143,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z106.object({
-      sessionName: z106.string().min(1),
-      systemPrompt: z106.string().optional(),
-      temperature: z106.number().min(0).max(100).optional(),
-      model: z106.string().optional(),
-      maxSteps: z106.number().min(1).optional()
+    createSession: protectedProcedure.input(z107.object({
+      sessionName: z107.string().min(1),
+      systemPrompt: z107.string().optional(),
+      temperature: z107.number().min(0).max(100).optional(),
+      model: z107.string().optional(),
+      maxSteps: z107.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -47927,7 +48169,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z106.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z107.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -47936,7 +48178,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z106.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z107.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -47980,9 +48222,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z106.object({
-      dateRange: z106.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z106.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z107.object({
+      dateRange: z107.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z107.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -47993,13 +48235,13 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z106.object({
-      dateRange: z106.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z107.object({
+      dateRange: z107.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z106.object({
-      dateRange: z106.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z107.object({
+      dateRange: z107.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
@@ -48010,11 +48252,11 @@ var appRouter = router({
   socialMedia: socialMediaQueueRouter,
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z106.object({
-      email: z106.string().email(),
-      name: z106.string().optional(),
-      source: z106.string().optional(),
-      language: z106.string().optional()
+    subscribe: publicProcedure.input(z107.object({
+      email: z107.string().email(),
+      name: z107.string().optional(),
+      source: z107.string().optional(),
+      language: z107.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
