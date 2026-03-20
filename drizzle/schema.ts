@@ -3050,3 +3050,105 @@ export const streamSessions = mysqlTable("stream_sessions", {
   notes: text(),
   createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 });
+
+
+// ─── FlowPay: Autonomous Payment Platform ─────────────────────────
+export const flowpayUsers = mysqlTable("flowpay_users", {
+  id: int().autoincrement().primaryKey(),
+  userId: int("user_id").notNull().unique(),
+  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }).notNull().unique(),
+  stripeConnectAccountId: varchar("stripe_connect_account_id", { length: 255 }),
+  displayName: varchar("display_name", { length: 255 }),
+  preferredPaymentMethod: varchar("preferred_payment_method", { length: 50 }).default('card'),
+  smartRoutingEnabled: tinyint("smart_routing_enabled").default(1),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+}, (table) => ({
+  userIdIdx: index("flowpay_users_user_id_idx").on(table.userId),
+  stripeCustomerIdx: index("flowpay_users_stripe_customer_idx").on(table.stripeCustomerId),
+}));
+
+export const flowpayTransactions = mysqlTable("flowpay_transactions", {
+  id: int().autoincrement().primaryKey(),
+  senderId: int("sender_id").notNull(),
+  recipientId: int("recipient_id").notNull(),
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default('USD'),
+  status: varchar("status", { length: 50 }).notNull(),
+  stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }).notNull().unique(),
+  description: text("description"),
+  metadata: json("metadata"),
+  failureReason: text("failure_reason"),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+  completedAt: bigint("completed_at", { mode: "number" }),
+}, (table) => ({
+  senderIdx: index("flowpay_transactions_sender_idx").on(table.senderId),
+  recipientIdx: index("flowpay_transactions_recipient_idx").on(table.recipientId),
+  statusIdx: index("flowpay_transactions_status_idx").on(table.status),
+}));
+
+export const flowpayPaymentPlans = mysqlTable("flowpay_payment_plans", {
+  id: int().autoincrement().primaryKey(),
+  senderId: int("sender_id").notNull(),
+  recipientId: int("recipient_id").notNull(),
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  frequency: varchar("frequency", { length: 50 }).notNull(),
+  totalInstallments: int("total_installments"),
+  completedInstallments: int("completed_installments").default(0),
+  status: varchar("status", { length: 50 }).notNull(),
+  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }).notNull().unique(),
+  nextChargeDate: bigint("next_charge_date", { mode: "number" }).notNull(),
+  description: text("description"),
+  metadata: json("metadata"),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+}, (table) => ({
+  senderIdx: index("flowpay_plans_sender_idx").on(table.senderId),
+  recipientIdx: index("flowpay_plans_recipient_idx").on(table.recipientId),
+  statusIdx: index("flowpay_plans_status_idx").on(table.status),
+  nextChargeDateIdx: index("flowpay_plans_next_charge_idx").on(table.nextChargeDate),
+}));
+
+export const flowpaySmartRoutes = mysqlTable("flowpay_smart_routes", {
+  id: int().autoincrement().primaryKey(),
+  userId: int("user_id").notNull().unique(),
+  preferredMethod: varchar("preferred_method", { length: 50 }).notNull(),
+  successRate: decimal("success_rate", { precision: 5, scale: 4 }).default('1.0000'),
+  avgProcessingTimeMs: int("avg_processing_time_ms").default(0),
+  totalTransactions: int("total_transactions").default(0),
+  totalFailed: int("total_failed").default(0),
+  lastUpdated: bigint("last_updated", { mode: "number" }).notNull(),
+}, (table) => ({
+  userIdx: index("flowpay_routes_user_idx").on(table.userId),
+}));
+
+export const flowpayPaymentLinks = mysqlTable("flowpay_payment_links", {
+  id: int().autoincrement().primaryKey(),
+  linkId: varchar("link_id", { length: 50 }).notNull().unique(),
+  senderId: int("sender_id").notNull(),
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  description: text("description"),
+  expiresAt: bigint("expires_at", { mode: "number" }),
+  maxUses: int("max_uses"),
+  currentUses: int("current_uses").default(0),
+  source: varchar("source", { length: 50 }),
+  metadata: json("metadata"),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+}, (table) => ({
+  linkIdIdx: index("flowpay_links_link_id_idx").on(table.linkId),
+  senderIdx: index("flowpay_links_sender_idx").on(table.senderId),
+  sourceIdx: index("flowpay_links_source_idx").on(table.source),
+}));
+
+export const flowpayAuditLog = mysqlTable("flowpay_audit_log", {
+  id: int().autoincrement().primaryKey(),
+  userId: int("user_id"),
+  action: varchar("action", { length: 100 }).notNull(),
+  entityType: varchar("entity_type", { length: 50 }),
+  entityId: int("entity_id"),
+  details: json("details"),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+}, (table) => ({
+  userIdx: index("flowpay_audit_user_idx").on(table.userId),
+  actionIdx: index("flowpay_audit_action_idx").on(table.action),
+}));

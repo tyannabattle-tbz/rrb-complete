@@ -396,7 +396,7 @@ export const customStationBuilderRouter = router({
     }),
 
   // Get current playback for a station
-  getCurrentPlayback: publicProcedure
+  getCurrentPlaybackStatus: publicProcedure
     .input(z.object({ stationId: z.number() }))
     .query(async ({ input }) => {
       const db = await getDb();
@@ -443,7 +443,7 @@ export const customStationBuilderRouter = router({
     }),
 
   // Get all content sources for a station
-  getContentSources: protectedProcedure
+  getContentSourcesByPriority: protectedProcedure
     .input(z.object({ stationId: z.number() }))
     .query(async ({ input }) => {
       const db = await getDb();
