@@ -232,6 +232,9 @@ import FlowPaySendMoney from '@/pages/FlowPaySendMoney';
 import FlowPayPlans from '@/pages/FlowPayPlans';
 import FlowPayLinks from '@/pages/FlowPayLinks';
 import FlowPayAdminDashboard from '@/pages/FlowPayAdminDashboard';
+import GrantBotDashboard from '@/pages/GrantBotDashboard';
+import FundingBotCampaigns from '@/pages/FundingBotCampaigns';
+import QumusOrchestrationDashboard from '@/pages/QumusOrchestrationDashboard';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -451,6 +454,9 @@ function Router() {
       <Route path="/flowpay/plans" component={FlowPayPlans} />
       <Route path="/flowpay/links" component={FlowPayLinks} />
       <Route path="/flowpay/admin" component={FlowPayAdminDashboard} />
+      <Route path="/grants" component={GrantBotDashboard} />
+      <Route path="/funding-campaigns" component={FundingBotCampaigns} />
+      <Route path="/qumus-orchestration" component={QumusOrchestrationDashboard} />
       <Route component={NotFound} />
     </Switch>
     </>
