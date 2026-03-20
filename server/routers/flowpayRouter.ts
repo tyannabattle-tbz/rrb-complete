@@ -305,4 +305,20 @@ export const flowpayRouter = router({
       smartRoute: route,
     };
   }),
+
+  /**
+   * QUMUS: Activate Autonomous Operation
+   */
+  activateAutonomousOperation: adminProcedure.mutation(async ({ ctx }) => {
+    const { startAutonomousOperation } = await import('../services/qumusAutonomousActivation');
+    return startAutonomousOperation();
+  }),
+
+  /**
+   * QUMUS: Get Autonomous Status
+   */
+  getAutonomousStatus: publicProcedure.query(async () => {
+    const { getAutonomousStatus } = await import('../services/qumusAutonomousActivation');
+    return getAutonomousStatus();
+  }),
 });
