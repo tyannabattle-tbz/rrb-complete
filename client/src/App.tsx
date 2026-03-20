@@ -231,6 +231,7 @@ import FlowPayDashboard from '@/pages/FlowPayDashboard';
 import FlowPaySendMoney from '@/pages/FlowPaySendMoney';
 import FlowPayPlans from '@/pages/FlowPayPlans';
 import FlowPayLinks from '@/pages/FlowPayLinks';
+import FlowPayAdminDashboard from '@/pages/FlowPayAdminDashboard';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -449,6 +450,7 @@ function Router() {
       <Route path="/flowpay/send" component={FlowPaySendMoney} />
       <Route path="/flowpay/plans" component={FlowPayPlans} />
       <Route path="/flowpay/links" component={FlowPayLinks} />
+      <Route path="/flowpay/admin" component={FlowPayAdminDashboard} />
       <Route component={NotFound} />
     </Switch>
     </>
