@@ -208,6 +208,78 @@ export const flowpayRouter = router({
   }),
 
   /**
+   * HybridCast: Create Incident Report
+   */
+  createHybridCastIncident: protectedProcedure
+    .input(
+      z.object({
+        broadcastId: z.string(),
+        broadcastTitle: z.string(),
+        region: z.string(),
+        coordinates: z.object({ lat: z.number(), lng: z.number() }),
+        description: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { createIncidentReport } = await import('../services/hybridcastMonitoringIntegration');
+      return createIncidentReport(
+        input.broadcastId,
+        input.broadcastTitle,
+        input.region,
+        input.coordinates,
+        input.description
+      );
+    }),
+
+  /**
+   * HybridCast: Link Donation to Incident
+   */
+  linkDonationToIncident: protectedProcedure
+    .input(
+      z.object({
+        incidentId: z.string(),
+        donationAmount: z.number().positive(),
+        donorName: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { linkDonationToIncident } = await import('../services/hybridcastMonitoringIntegration');
+      return linkDonationToIncident(input.incidentId, input.donationAmount, input.donorName);
+    }),
+
+  /**
+   * HybridCast: Get Incident Statistics
+   */
+  getIncidentStats: publicProcedure
+    .input(z.object({ region: z.string() }))
+    .query(async ({ input }) => {
+      const { getIncidentStats } = await import('../services/hybridcastMonitoringIntegration');
+      return getIncidentStats(input.region);
+    }),
+
+  /**
+   * HybridCast: Allocate Resources from Donations
+   */
+  allocateResourcesFromDonations: protectedProcedure
+    .input(
+      z.object({
+        campaignId: z.string(),
+        region: z.string(),
+        resourceType: z.enum(['medical', 'food', 'water', 'shelter', 'communication']),
+        donationAmount: z.number().positive(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { allocateResourcesFromDonations } = await import('../services/hybridcastMonitoringIntegration');
+      return allocateResourcesFromDonations(
+        input.campaignId,
+        input.region,
+        input.resourceType,
+        input.donationAmount
+      );
+    }),
+
+  /**
    * Get Dashboard Stats
    */
   getDashboardStats: protectedProcedure.query(async ({ ctx }) => {

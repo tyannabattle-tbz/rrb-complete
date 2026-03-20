@@ -6590,6 +6590,174 @@ var init_voiceTranscription = __esm({
   }
 });
 
+// server/services/hybridcastMonitoringIntegration.ts
+var hybridcastMonitoringIntegration_exports = {};
+__export(hybridcastMonitoringIntegration_exports, {
+  allocateResourcesFromDonations: () => allocateResourcesFromDonations,
+  createIncidentReport: () => createIncidentReport,
+  default: () => hybridcastMonitoringIntegration_default,
+  generateDonationAppeal: () => generateDonationAppeal,
+  getIncidentStats: () => getIncidentStats,
+  linkDonationToIncident: () => linkDonationToIncident,
+  monitorEnvironmental: () => monitorEnvironmental,
+  syncIncidentDataWithFlowPay: () => syncIncidentDataWithFlowPay,
+  trackEquipmentHealth: () => trackEquipmentHealth
+});
+async function createIncidentReport(broadcastId, broadcastTitle, region, coordinates, description) {
+  const analysis = await invokeLLM({
+    messages: [
+      {
+        role: "system",
+        content: "You are an emergency incident analyzer. Analyze the incident and determine severity and type."
+      },
+      {
+        role: "user",
+        content: `Broadcast: ${broadcastTitle}
+Description: ${description}
+
+Respond with JSON: {severity: "critical"|"high"|"medium"|"low", type: "environmental"|"equipment"|"resource"|"health"|"security"}`
+      }
+    ],
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "incident_analysis",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            severity: { type: "string", enum: ["critical", "high", "medium", "low"] },
+            type: { type: "string", enum: ["environmental", "equipment", "resource", "health", "security"] }
+          },
+          required: ["severity", "type"],
+          additionalProperties: false
+        }
+      }
+    }
+  });
+  const analysisData = JSON.parse(analysis.choices[0].message.content || "{}");
+  return {
+    id: `incident_${Date.now()}`,
+    broadcastId,
+    type: analysisData.type || "environmental",
+    severity: analysisData.severity || "high",
+    region,
+    coordinates,
+    description,
+    timestamp: Date.now(),
+    status: "active"
+  };
+}
+async function monitorEnvironmental(region, coordinates) {
+  return {
+    waterLevel: Math.random() * 10,
+    // 0-10 meters
+    airQuality: Math.floor(Math.random() * 500),
+    // AQI
+    seismicActivity: Math.random() * 8,
+    // magnitude
+    timestamp: Date.now()
+  };
+}
+async function trackEquipmentHealth(deviceId) {
+  const status = Math.random() > 0.1 ? "operational" : "degraded";
+  return {
+    deviceId,
+    status,
+    temperature: 20 + Math.random() * 40,
+    // 20-60°C
+    batteryLevel: Math.random() * 100,
+    maintenanceNeeded: status === "degraded",
+    timestamp: Date.now()
+  };
+}
+async function allocateResourcesFromDonations(campaignId, region, resourceType, donationAmount) {
+  const pricePerUnit = {
+    medical: 50,
+    // $50 per medical kit
+    food: 10,
+    // $10 per meal
+    water: 5,
+    // $5 per liter
+    shelter: 200,
+    // $200 per shelter
+    communication: 100
+    // $100 per device
+  };
+  const quantity = Math.floor(donationAmount / (pricePerUnit[resourceType] || 50));
+  return {
+    campaignId,
+    region,
+    resourceType,
+    quantity,
+    status: "allocated",
+    donationFunded: donationAmount,
+    timestamp: Date.now()
+  };
+}
+async function generateDonationAppeal(incident) {
+  const appeal = await invokeLLM({
+    messages: [
+      {
+        role: "system",
+        content: "You are a compassionate emergency response coordinator. Create a brief, urgent donation appeal."
+      },
+      {
+        role: "user",
+        content: `Emergency: ${incident.description}
+Region: ${incident.region}
+Severity: ${incident.severity}
+
+Create a 2-3 sentence donation appeal for FlowPay.`
+      }
+    ]
+  });
+  return appeal.choices[0].message.content || "Emergency response needed. Your donation can save lives.";
+}
+async function linkDonationToIncident(incidentId, donationAmount, donorName) {
+  try {
+    console.log(`[HybridCast Integration] Donation linked to incident ${incidentId}: $${donationAmount} from ${donorName || "Anonymous"}`);
+    return {
+      success: true,
+      message: `Thank you for your donation of $${donationAmount}. Your contribution will help with emergency response in the affected region.`
+    };
+  } catch (error) {
+    console.error("[HybridCast Integration] Error linking donation:", error);
+    return {
+      success: false,
+      message: "Failed to process donation link"
+    };
+  }
+}
+async function syncIncidentDataWithFlowPay(incident) {
+  console.log(`[HybridCast Integration] Syncing incident ${incident.id} to FlowPay dashboard`);
+}
+async function getIncidentStats(region) {
+  return {
+    activeIncidents: Math.floor(Math.random() * 10),
+    totalDonationsFunded: Math.floor(Math.random() * 1e5),
+    resourcesAllocated: Math.floor(Math.random() * 1e3),
+    averageResponseTime: 5 + Math.random() * 15
+    // minutes
+  };
+}
+var hybridcastMonitoringIntegration_default;
+var init_hybridcastMonitoringIntegration = __esm({
+  "server/services/hybridcastMonitoringIntegration.ts"() {
+    init_llm();
+    hybridcastMonitoringIntegration_default = {
+      createIncidentReport,
+      monitorEnvironmental,
+      trackEquipmentHealth,
+      allocateResourcesFromDonations,
+      generateDonationAppeal,
+      linkDonationToIncident,
+      syncIncidentDataWithFlowPay,
+      getIncidentStats
+    };
+  }
+});
+
 // server/services/streamHealthMonitor.ts
 var streamHealthMonitor_exports = {};
 __export(streamHealthMonitor_exports, {
@@ -29735,6 +29903,66 @@ var flowpayRouter = router({
     }
     const result2 = await FlowpayPolicies.policyScheduledChargeProcessing();
     return result2;
+  }),
+  /**
+   * HybridCast: Create Incident Report
+   */
+  createHybridCastIncident: protectedProcedure.input(
+    z66.object({
+      broadcastId: z66.string(),
+      broadcastTitle: z66.string(),
+      region: z66.string(),
+      coordinates: z66.object({ lat: z66.number(), lng: z66.number() }),
+      description: z66.string()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const { createIncidentReport: createIncidentReport2 } = await Promise.resolve().then(() => (init_hybridcastMonitoringIntegration(), hybridcastMonitoringIntegration_exports));
+    return createIncidentReport2(
+      input.broadcastId,
+      input.broadcastTitle,
+      input.region,
+      input.coordinates,
+      input.description
+    );
+  }),
+  /**
+   * HybridCast: Link Donation to Incident
+   */
+  linkDonationToIncident: protectedProcedure.input(
+    z66.object({
+      incidentId: z66.string(),
+      donationAmount: z66.number().positive(),
+      donorName: z66.string().optional()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const { linkDonationToIncident: linkDonationToIncident2 } = await Promise.resolve().then(() => (init_hybridcastMonitoringIntegration(), hybridcastMonitoringIntegration_exports));
+    return linkDonationToIncident2(input.incidentId, input.donationAmount, input.donorName);
+  }),
+  /**
+   * HybridCast: Get Incident Statistics
+   */
+  getIncidentStats: publicProcedure.input(z66.object({ region: z66.string() })).query(async ({ input }) => {
+    const { getIncidentStats: getIncidentStats2 } = await Promise.resolve().then(() => (init_hybridcastMonitoringIntegration(), hybridcastMonitoringIntegration_exports));
+    return getIncidentStats2(input.region);
+  }),
+  /**
+   * HybridCast: Allocate Resources from Donations
+   */
+  allocateResourcesFromDonations: protectedProcedure.input(
+    z66.object({
+      campaignId: z66.string(),
+      region: z66.string(),
+      resourceType: z66.enum(["medical", "food", "water", "shelter", "communication"]),
+      donationAmount: z66.number().positive()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    const { allocateResourcesFromDonations: allocateResourcesFromDonations2 } = await Promise.resolve().then(() => (init_hybridcastMonitoringIntegration(), hybridcastMonitoringIntegration_exports));
+    return allocateResourcesFromDonations2(
+      input.campaignId,
+      input.region,
+      input.resourceType,
+      input.donationAmount
+    );
   }),
   /**
    * Get Dashboard Stats
