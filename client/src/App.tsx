@@ -235,6 +235,9 @@ import FlowPayAdminDashboard from '@/pages/FlowPayAdminDashboard';
 import GrantBotDashboard from '@/pages/GrantBotDashboard';
 import FundingBotCampaigns from '@/pages/FundingBotCampaigns';
 import QumusOrchestrationDashboard from '@/pages/QumusOrchestrationDashboard';
+import LedgerDashboard from '@/pages/LedgerDashboard';
+import SocialEngagementDashboard from '@/pages/SocialEngagementDashboard';
+import WebhookAutomationDashboard from '@/pages/WebhookAutomationDashboard';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -457,6 +460,9 @@ function Router() {
       <Route path="/grants" component={GrantBotDashboard} />
       <Route path="/funding-campaigns" component={FundingBotCampaigns} />
       <Route path="/qumus-orchestration" component={QumusOrchestrationDashboard} />
+      <Route path="/ledger" component={LedgerDashboard} />
+      <Route path="/social-engagement" component={SocialEngagementDashboard} />
+      <Route path="/webhooks" component={WebhookAutomationDashboard} />
       <Route component={NotFound} />
     </Switch>
     </>
