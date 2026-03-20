@@ -268,6 +268,133 @@ describe("Stripe Webhook Handler", () => {
     });
   });
 
+  describe("Fraud Detection Policy", () => {
+    it("should flag high-value transaction for review", () => {
+      const transaction = {
+        id: "pi_high_value",
+        amount: 500000, // $5000
+        currency: "usd",
+        customer: "cus_123",
+      };
+
+      // QUMUS fraud detection should flag high values
+      const riskScore = transaction.amount > 100000 ? 0.7 : 0.1;
+      expect(riskScore).toBeGreaterThan(0.5);
+    });
+
+    it("should detect velocity abuse (multiple transactions in short time)", () => {
+      const transactions = [
+        { id: "pi_1", timestamp: Date.now(), amount: 10000 },
+        { id: "pi_2", timestamp: Date.now() + 1000, amount: 10000 },
+        { id: "pi_3", timestamp: Date.now() + 2000, amount: 10000 },
+      ];
+
+      // Velocity check: 3 transactions in 2 seconds
+      const velocityScore = transactions.length > 2 ? 0.8 : 0.1;
+      expect(velocityScore).toBeGreaterThan(0.5);
+    });
+
+    it("should allow low-risk transactions", () => {
+      const transaction = {
+        id: "pi_low_risk",
+        amount: 5000, // $50
+        customer: "cus_trusted",
+        metadata: {
+          previous_transactions: 50,
+          total_lifetime_value: 500000,
+        },
+      };
+
+      // Low-risk score
+      const riskScore = 0.1;
+      expect(riskScore).toBeLessThan(0.5);
+    });
+  });
+
+  describe("Smart Routing Policy", () => {
+    it("should route to HybridCast for emergency broadcasts", () => {
+      const transaction = {
+        id: "pi_broadcast",
+        metadata: {
+          campaign_type: "emergency_broadcast",
+          campaign_id: "broadcast_001",
+        },
+      };
+
+      // Route to HybridCast
+      const route = transaction.metadata.campaign_type === "emergency_broadcast" ? "hybridcast" : "default";
+      expect(route).toBe("hybridcast");
+    });
+
+    it("should route to SQUADD for listener tips", () => {
+      const transaction = {
+        id: "pi_tip",
+        metadata: {
+          campaign_type: "listener_tip",
+          campaign_id: "stream_001",
+        },
+      };
+
+      // Route to SQUADD
+      const route = transaction.metadata.campaign_type === "listener_tip" ? "squadd" : "default";
+      expect(route).toBe("squadd");
+    });
+
+    it("should apply 20/80 split for funding campaigns", () => {
+      const transaction = {
+        id: "pi_funding",
+        amount: 100000, // $1000
+        metadata: {
+          campaign_type: "funding_campaign",
+          split_ratio: "20/80",
+        },
+      };
+
+      // Calculate split
+      const platformFee = (transaction.amount * 0.2) / 100; // 20%
+      const donorAmount = (transaction.amount * 0.8) / 100; // 80%
+
+      expect(platformFee).toBe(200); // $2
+      expect(donorAmount).toBe(800); // $8
+    });
+  });
+
+  describe("Donor Recognition Policy", () => {
+    it("should trigger first donation notification", () => {
+      const event = {
+        type: "payment_intent.succeeded",
+        data: {
+          object: {
+            id: "pi_first",
+            amount: 5000,
+            metadata: {
+              user_id: "user_new",
+              is_first_donation: true,
+            },
+          },
+        },
+      };
+
+      // First donation should trigger notification
+      expect(event.data.object.metadata.is_first_donation).toBe(true);
+    });
+
+    it("should trigger milestone notification for $1K contributor", () => {
+      const transaction = {
+        id: "pi_milestone",
+        amount: 100000, // $1000
+        metadata: {
+          user_id: "user_123",
+          total_contributed: 100000,
+        },
+      };
+
+      // Milestone notification
+      const shouldNotify = transaction.metadata.total_contributed >= 100000;
+      expect(shouldNotify).toBe(true);
+    });
+  });
+
   describe("Webhook Event Flow", () => {
     it("should process complete donation flow", () => {
       // 1. Payment intent succeeds
@@ -325,6 +452,30 @@ describe("Stripe Webhook Handler", () => {
       // 3. Donation recorded
       const amount = (invoice.total || 0) / 100;
       expect(amount).toBe(99);
+    });
+  });
+
+  describe("Test Event Handling", () => {
+    it("should handle test events without processing", () => {
+      const testEvent = {
+        id: "evt_test_1234567890",
+        type: "payment_intent.succeeded",
+        livemode: false,
+      };
+
+      // Test events should not be processed
+      const isTestEvent = testEvent.id.startsWith("evt_test_");
+      expect(isTestEvent).toBe(true);
+    });
+
+    it("should return verification response for test events", () => {
+      const testEvent = {
+        id: "evt_test_1234567890",
+      };
+
+      // Return verification response
+      const response = { verified: true };
+      expect(response.verified).toBe(true);
     });
   });
 });

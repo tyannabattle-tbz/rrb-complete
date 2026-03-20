@@ -129,11 +129,11 @@ export default function DonorRecognitionDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-6 space-y-6">
+    <div className="min-h-screen bg-slate-900 text-white p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Donor Recognition Dashboard</h1>
-        <p className="text-gray-400 mt-1">Milestone badges, achievement cards, and leaderboard</p>
+        <h1 className="text-2xl md:text-3xl font-bold">Donor Recognition Dashboard</h1>
+        <p className="text-gray-400 mt-1 text-sm md:text-base">Milestone badges, achievement cards, and leaderboard</p>
       </div>
 
       {/* My Badges */}
@@ -143,11 +143,11 @@ export default function DonorRecognitionDashboard() {
           <CardDescription>Achievements unlocked through contributions</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
             {badges.map((badge) => (
               <div
                 key={badge.id}
-                className="bg-slate-700/50 rounded-lg p-4 border border-slate-600 hover:border-purple-500 transition-colors cursor-pointer"
+                className="bg-slate-700/50 rounded-lg p-3 md:p-4 border border-slate-600 hover:border-purple-500 transition-colors cursor-pointer text-center"
                 onClick={() => setSelectedBadge(badge.id)}
               >
                 <div className="text-4xl mb-2">{badge.title.split(' ')[0]}</div>

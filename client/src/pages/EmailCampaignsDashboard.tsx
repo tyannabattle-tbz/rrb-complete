@@ -144,11 +144,11 @@ export default function EmailCampaignsDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-6 space-y-6">
+    <div className="min-h-screen bg-slate-900 text-white p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Email Campaigns Dashboard</h1>
-        <p className="text-gray-400 mt-1">Automated campaigns for grants, donations, and impact reports</p>
+        <h1 className="text-2xl md:text-3xl font-bold">Email Campaigns Dashboard</h1>
+        <p className="text-gray-400 mt-1 text-sm md:text-base">Automated campaigns for grants, donations, and impact reports</p>
       </div>
 
       {/* Campaign Templates */}

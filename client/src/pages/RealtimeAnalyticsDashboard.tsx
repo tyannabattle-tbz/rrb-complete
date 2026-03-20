@@ -70,34 +70,34 @@ export default function RealtimeAnalyticsDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-6 space-y-6">
+    <div className="min-h-screen bg-slate-900 text-white p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Real-Time Analytics Dashboard</h1>
-        <p className="text-gray-400 mt-1">Live metrics across wealth, grants, campaigns, and engagement</p>
+        <h1 className="text-2xl md:text-3xl font-bold">Real-Time Analytics Dashboard</h1>
+        <p className="text-gray-400 mt-1 text-sm md:text-base">Live metrics across wealth, grants, campaigns, and engagement</p>
       </div>
 
       {/* System Health */}
       <Card className="bg-gradient-to-r from-purple-900 to-indigo-900 border-purple-700">
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <CardContent className="pt-4 md:pt-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
             <div className="text-center">
-              <p className="text-gray-300 text-sm mb-1">QUMUS Subsystems</p>
-              <p className="text-3xl font-bold text-purple-400">{systemHealth.qumusSubsystems}/20</p>
-              <Badge className="mt-2 bg-green-500/20 text-green-300">Healthy</Badge>
+              <p className="text-gray-300 text-xs md:text-sm mb-1">QUMUS Subsystems</p>
+              <p className="text-xl md:text-3xl font-bold text-purple-400">{systemHealth.qumusSubsystems}/20</p>
+              <Badge className="mt-1 md:mt-2 bg-green-500/20 text-green-300 text-xs">Healthy</Badge>
             </div>
             <div className="text-center">
-              <p className="text-gray-300 text-sm mb-1">Autonomy Level</p>
-              <p className="text-3xl font-bold text-blue-400">{systemHealth.autonomyLevel}%</p>
-              <Badge className="mt-2 bg-blue-500/20 text-blue-300">Active</Badge>
+              <p className="text-gray-300 text-xs md:text-sm mb-1">Autonomy Level</p>
+              <p className="text-xl md:text-3xl font-bold text-blue-400">{systemHealth.autonomyLevel}%</p>
+              <Badge className="mt-1 md:mt-2 bg-blue-500/20 text-blue-300 text-xs">Active</Badge>
             </div>
             <div className="text-center">
-              <p className="text-gray-300 text-sm mb-1">Event Processing</p>
-              <p className="text-3xl font-bold text-cyan-400">{systemHealth.eventProcessingRate}%</p>
-              <Badge className="mt-2 bg-cyan-500/20 text-cyan-300">Optimal</Badge>
+              <p className="text-gray-300 text-xs md:text-sm mb-1">Event Processing</p>
+              <p className="text-xl md:text-3xl font-bold text-cyan-400">{systemHealth.eventProcessingRate}%</p>
+              <Badge className="mt-1 md:mt-2 bg-cyan-500/20 text-cyan-300 text-xs">Optimal</Badge>
             </div>
             <div className="text-center">
-              <p className="text-gray-300 text-sm mb-1">System Uptime</p>
+              <p className="text-gray-300 text-xs md:text-sm mb-1">System Uptime</p>
               <p className="text-3xl font-bold text-emerald-400">{systemHealth.systemUptime}%</p>
               <Badge className="mt-2 bg-emerald-500/20 text-emerald-300">Excellent</Badge>
             </div>
