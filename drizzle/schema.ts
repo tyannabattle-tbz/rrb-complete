@@ -3152,3 +3152,50 @@ export const flowpayAuditLog = mysqlTable("flowpay_audit_log", {
   userIdx: index("flowpay_audit_user_idx").on(table.userId),
   actionIdx: index("flowpay_audit_action_idx").on(table.action),
 }));
+
+// SQUADD Community Tables
+export const goals = mysqlTable("squadd_goals", {
+  id: varchar("id", { length: 50 }).primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }).notNull(),
+  targetAmount: decimal("target_amount", { precision: 15, scale: 2 }),
+  currentAmount: decimal("current_amount", { precision: 15, scale: 2 }).default('0.00'),
+  deadline: timestamp("deadline", { mode: 'string' }),
+  status: mysqlEnum(['active', 'completed', 'paused', 'cancelled']).default('active'),
+  createdBy: varchar("created_by", { length: 50 }).notNull(),
+  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("goals_category_idx").on(table.category),
+  statusIdx: index("goals_status_idx").on(table.status),
+  createdByIdx: index("goals_created_by_idx").on(table.createdBy),
+}));
+
+export const communityMembers = mysqlTable("squadd_community_members", {
+  id: varchar("id", { length: 50 }).primaryKey(),
+  userId: varchar("user_id", { length: 50 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  role: mysqlEnum(['member', 'moderator', 'admin']).default('member'),
+  status: mysqlEnum(['active', 'inactive', 'suspended']).default('active'),
+  joinedAt: timestamp("joined_at", { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+  lastActive: timestamp("last_active", { mode: 'string' }),
+  metadata: json("metadata"),
+}, (table) => ({
+  userIdIdx: index("members_user_id_idx").on(table.userId),
+  statusIdx: index("members_status_idx").on(table.status),
+  roleIdx: index("members_role_idx").on(table.role),
+}));
+
+export const goalProgress = mysqlTable("squadd_goal_progress", {
+  id: varchar("id", { length: 50 }).primaryKey(),
+  goalId: varchar("goal_id", { length: 50 }).notNull().references(() => goals.id, { onDelete: "cascade" }),
+  userId: varchar("user_id", { length: 50 }).notNull(),
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  note: text("note"),
+  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+}, (table) => ({
+  goalIdIdx: index("progress_goal_id_idx").on(table.goalId),
+  userIdIdx: index("progress_user_id_idx").on(table.userId),
+}));
