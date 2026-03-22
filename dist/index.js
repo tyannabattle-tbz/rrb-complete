@@ -91,6 +91,7 @@ __export(schema_exports, {
   commercialBreaks: () => commercialBreaks,
   commercialImpressions: () => commercialImpressions,
   commercials: () => commercials,
+  communityMembers: () => communityMembers,
   conferenceAttendees: () => conferenceAttendees,
   conferenceSpeakers: () => conferenceSpeakers,
   conferences: () => conferences,
@@ -135,6 +136,8 @@ __export(schema_exports, {
   flowpayUsers: () => flowpayUsers,
   fundraisingGoals: () => fundraisingGoals,
   generatedContent: () => generatedContent,
+  goalProgress: () => goalProgress,
+  goals: () => goals,
   grants: () => grants,
   hrDepartments: () => hrDepartments,
   hrEmployees: () => hrEmployees,
@@ -258,7 +261,7 @@ __export(schema_exports, {
   wellnessCheckins: () => wellnessCheckins
 });
 import { mysqlTable, int, varchar, mysqlEnum, timestamp, decimal, text, json, bigint, index, tinyint, date } from "drizzle-orm/mysql-core";
-var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, meetingPresentations, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing, systemConfig, videoCaptions, videoLibrary, meetingRecordings, streamDestinations, streamSessions, flowpayUsers, flowpayTransactions, flowpayPaymentPlans, flowpaySmartRoutes, flowpayPaymentLinks, flowpayAuditLog;
+var accountingInvoices, accountingPayments, accountingReconciliation, activityLogs, adInventory, agentCollaboration, agentExecutionLogs, agentInstallations, agentMemory, agentPerformanceMetrics, agentRegistry, agentSessions, agentSnapshots, agentTools, agents, aiRecommendations, alertBroadcastLog, alertDeliveryLog, analyticsMetrics, anomalyBaselines, anomalyHistory, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, audioContent, audioPlayCounts, audioPlaybackHistory, auditLogs, autoSaveSettings, autonomousDecisions, autonomousTasks, bookkeepingAccounts, bookkeepingJournalEntries, bookkeepingLedgerLines, broadcastAuditLog, broadcastChatCommands, broadcastSchedules, broadcasts, commercialBreaks, commercialImpressions, commercials, conferenceAttendees, conferenceSpeakers, conferences, meetingPresentations, contentListenerHistory, contentSchedule, conventionAttendees, conventionSessions, conventions, detectedAnomalies, documentationPages, donations, donors, ecosystemCommands, ecosystemStatus, emailConfigs, emailSubscribers, emergencyAlerts, entertainmentMetrics, entertainmentPlaylistItems, entertainmentPlaylists, entertainmentUserPreferences, escalationPolicies, familyTree, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningEvaluations, finetuningJobs, finetuningModels, fundraisingGoals, generatedContent, grants, hrDepartments, hrEmployees, hrPayroll, hrTimeTracking, hybridcastNodes, integrationLogs, legalComplianceItems, legalContracts, legalIntellectualProperty, listenerAnalytics, listeners, mediaDistribution, mediaProjects, memoryStore, messages, modelComparisons, monetizationEvents, musicPlaylists, musicTracks, newsArticles, nonprofitOperations, notificationEvents, notificationPreferences, notifications, performanceMetrics, performanceTrends, playlistTracks, playlists, plugins, policyDecisions, predictiveAlerts, qumusAutonomousActions, qumusCorePolicies, qumusDecisionLogs, qumusHumanReview, qumusMetrics, qumusPolicyRecommendations, quotaAlerts, quotas, radioChannels, radioChannelsV2, radioChatMessages, radioStations, rateLimitEvents, reasoningChains, reportHistory, rockinBoogieContent, royaltyCollaborators, royaltyDistributions, royaltyPayments, royaltyProjects, royaltyStatements, rrbChannelStats, rrbChannels, rrbFrequencies, rrbListeningHistory, rrbStreamSources, scheduledReports, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, socialMediaPosts, solbonesFrequencyRolls, solbonesLeaderboard, squaddMembers, streamingStatus, studioGuests, studioRecordings, studioSessions, subscriptionTiers, suppressionRules, sweetMiraclesAlerts, systemAuditLog, systemCommands, systemMetrics, systemAlerts, systemMetricsV2, systemUpdates, taskExecutionLog, taskHistory, taskSteps, teamMembers, teamNotifications, teams, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, users, usersWithStripe, viewerMetrics, webhookEndpoints, webhookInstallations, webhookLogs, webhookMarketplaceReviews, webhookTemplates, wellnessCheckins, podcastShows, podcastEpisodes, callInQueue, clientProfiles, clientDonationHistory, clientContentUploads, reviews, reviewHelpfulness, reviewResponses, agentConnections, analyticsSummary, broadcastSchedule, bulkScheduleTemplates, contentCalendarPosts, customStations, decisionLogs, fileAccessLogs2, platformEngagementMetrics, stationContentSources, stationPlaybackHistory, userStationPreferences, decisions, files2, payments, subscriptions, stationAnalytics, stationTemplates, stationSharing, systemConfig, videoCaptions, videoLibrary, meetingRecordings, streamDestinations, streamSessions, flowpayUsers, flowpayTransactions, flowpayPaymentPlans, flowpaySmartRoutes, flowpayPaymentLinks, flowpayAuditLog, goals, communityMembers, goalProgress;
 var init_schema = __esm({
   "drizzle/schema.ts"() {
     accountingInvoices = mysqlTable("accounting_invoices", {
@@ -3206,6 +3209,49 @@ var init_schema = __esm({
     }, (table) => ({
       userIdx: index("flowpay_audit_user_idx").on(table.userId),
       actionIdx: index("flowpay_audit_action_idx").on(table.action)
+    }));
+    goals = mysqlTable("squadd_goals", {
+      id: varchar("id", { length: 50 }).primaryKey(),
+      title: varchar("title", { length: 255 }).notNull(),
+      description: text("description"),
+      category: varchar("category", { length: 100 }).notNull(),
+      targetAmount: decimal("target_amount", { precision: 15, scale: 2 }),
+      currentAmount: decimal("current_amount", { precision: 15, scale: 2 }).default("0.00"),
+      deadline: timestamp("deadline", { mode: "string" }),
+      status: mysqlEnum(["active", "completed", "paused", "cancelled"]).default("active"),
+      createdBy: varchar("created_by", { length: 50 }).notNull(),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().onUpdateNow().notNull()
+    }, (table) => ({
+      categoryIdx: index("goals_category_idx").on(table.category),
+      statusIdx: index("goals_status_idx").on(table.status),
+      createdByIdx: index("goals_created_by_idx").on(table.createdBy)
+    }));
+    communityMembers = mysqlTable("squadd_community_members", {
+      id: varchar("id", { length: 50 }).primaryKey(),
+      userId: varchar("user_id", { length: 50 }).notNull().unique(),
+      name: varchar("name", { length: 255 }).notNull(),
+      email: varchar("email", { length: 320 }).notNull(),
+      role: mysqlEnum(["member", "moderator", "admin"]).default("member"),
+      status: mysqlEnum(["active", "inactive", "suspended"]).default("active"),
+      joinedAt: timestamp("joined_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull(),
+      lastActive: timestamp("last_active", { mode: "string" }),
+      metadata: json("metadata")
+    }, (table) => ({
+      userIdIdx: index("members_user_id_idx").on(table.userId),
+      statusIdx: index("members_status_idx").on(table.status),
+      roleIdx: index("members_role_idx").on(table.role)
+    }));
+    goalProgress = mysqlTable("squadd_goal_progress", {
+      id: varchar("id", { length: 50 }).primaryKey(),
+      goalId: varchar("goal_id", { length: 50 }).notNull().references(() => goals.id, { onDelete: "cascade" }),
+      userId: varchar("user_id", { length: 50 }).notNull(),
+      amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+      note: text("note"),
+      createdAt: timestamp("created_at", { mode: "string" }).default("CURRENT_TIMESTAMP").notNull()
+    }, (table) => ({
+      goalIdIdx: index("progress_goal_id_idx").on(table.goalId),
+      userIdIdx: index("progress_user_id_idx").on(table.userId)
     }));
   }
 });
@@ -22112,8 +22158,8 @@ var squaddGoalsRouter = router({
   // Get all active fundraising goals
   getFundraisingGoals: publicProcedure.query(async () => {
     const db2 = await getDb();
-    const goals = await db2.select().from(fundraisingGoals).where(eq19(fundraisingGoals.isActive, true)).orderBy(desc12(fundraisingGoals.createdAt));
-    return goals;
+    const goals2 = await db2.select().from(fundraisingGoals).where(eq19(fundraisingGoals.isActive, true)).orderBy(desc12(fundraisingGoals.createdAt));
+    return goals2;
   }),
   // Get a specific fundraising goal by campaign
   getFundraisingGoalByCampaign: publicProcedure.input(z43.object({ campaign: z43.string() })).query(async ({ input }) => {
