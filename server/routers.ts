@@ -48,6 +48,7 @@ import { qumusAutonomousScalingRouter } from "./routers/qumusAutonomousScalingRo
 import { qumusChatRouter } from "./routers/qumusChatRouter";
 import { socialSharingRouter } from "./routers/socialSharingRouter";
 import { userPreferenceSyncRouter } from "./routers/userPreferenceSyncRouter";
+import { advancedMonetizationRouter } from "./routers/advancedMonetizationRouter";
 import { flowpayRouter } from "./routers/flowpayRouter";
 import { spotifyRouter } from "./routers/spotifyRouter";
 import { youtubeRouter } from "./routers/youtubeRouter";
@@ -523,6 +524,9 @@ export const appRouter = router({
 
   // FlowPay — Autonomous Payment Platform
   flowpay: flowpayRouter,
+
+  // Advanced Monetization (Analytics, Monetization, Social Media)
+  advancedMonetization: advancedMonetizationRouter,
 });
 
 
