@@ -102,6 +102,7 @@ import { qumusAgentEngine } from "./routers/qumusAgentEngine";
 import { unifiedFeedRouter } from "./routers/unifiedFeedRouter";
 import { podcastStudioAlignmentRouter } from "./routers/podcastStudioAlignmentRouter";
 import { podcastFeaturesRouter } from "./routers/podcastFeaturesRouter";
+import { architectureRestructuringRouter } from "./routers/architectureRestructuringRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -527,6 +528,9 @@ export const appRouter = router({
 
   // Advanced Monetization (Analytics, Monetization, Social Media)
   advancedMonetization: advancedMonetizationRouter,
+
+  // Architecture Restructuring (RRB Legacy Vault, Surround Sound, Navigation)
+  architectureRestructuring: architectureRestructuringRouter,
 });
 
 

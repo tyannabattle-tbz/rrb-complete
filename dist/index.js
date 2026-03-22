@@ -10792,7 +10792,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z109 } from "zod";
+import { z as z110 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -50385,6 +50385,624 @@ var podcastFeaturesRouter = router({
   })
 });
 
+// server/routers/architectureRestructuringRouter.ts
+import { z as z109 } from "zod";
+
+// server/services/rrbLegacyVaultService.ts
+var RRBLegacyVaultService = class {
+  legacyContent = /* @__PURE__ */ new Map();
+  categories = /* @__PURE__ */ new Map();
+  constructor() {
+    this.initializeCategories();
+  }
+  initializeCategories() {
+    this.categories.set("broadcast", []);
+    this.categories.set("podcast", []);
+    this.categories.set("interview", []);
+    this.categories.set("event", []);
+    this.categories.set("archive", []);
+  }
+  /**
+   * Add legacy content to the vault
+   */
+  addLegacyContent(content) {
+    const id = content.id || `legacy-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const legacyItem = { ...content, id };
+    this.legacyContent.set(id, legacyItem);
+    const categoryItems = this.categories.get(content.category) || [];
+    categoryItems.push(legacyItem);
+    this.categories.set(content.category, categoryItems);
+    return id;
+  }
+  /**
+   * Get all legacy content
+   */
+  getAllLegacyContent() {
+    return Array.from(this.legacyContent.values());
+  }
+  /**
+   * Get legacy content by category
+   */
+  getContentByCategory(category) {
+    return this.categories.get(category) || [];
+  }
+  /**
+   * Search legacy content
+   */
+  searchLegacyContent(query2) {
+    const lowerQuery = query2.toLowerCase();
+    return Array.from(this.legacyContent.values()).filter(
+      (item) => item.title.toLowerCase().includes(lowerQuery) || item.description.toLowerCase().includes(lowerQuery) || item.category.toLowerCase().includes(lowerQuery)
+    );
+  }
+  /**
+   * Get legacy content by date range
+   */
+  getContentByDateRange(startDate, endDate) {
+    return Array.from(this.legacyContent.values()).filter(
+      (item) => item.date >= startDate && item.date <= endDate
+    );
+  }
+  /**
+   * Get legacy vault metrics
+   */
+  getVaultMetrics() {
+    const allContent = Array.from(this.legacyContent.values());
+    const broadcasts4 = this.getContentByCategory("broadcast");
+    const podcasts = this.getContentByCategory("podcast");
+    const interviews = this.getContentByCategory("interview");
+    const events = this.getContentByCategory("event");
+    const archives = this.getContentByCategory("archive");
+    const totalDuration = allContent.reduce((sum2, item) => sum2 + (item.duration || 0), 0);
+    const dates = allContent.map((item) => item.date).sort();
+    return {
+      totalArchives: allContent.length,
+      totalBroadcasts: broadcasts4.length,
+      totalPodcasts: podcasts.length,
+      totalInterviews: interviews.length,
+      totalEvents: events.length,
+      oldestArchive: dates.length > 0 ? dates[0] : void 0,
+      newestArchive: dates.length > 0 ? dates[dates.length - 1] : void 0,
+      totalDuration
+    };
+  }
+  /**
+   * Generate Ty OS link for current streaming
+   */
+  generateTyOSLink(type, channel) {
+    const baseUrl = "https://tyos.manus.space";
+    switch (type) {
+      case "radio":
+        return {
+          type: "radio",
+          channel: channel || "RRB Main Radio",
+          url: `${baseUrl}/radio?channel=${encodeURIComponent(channel || "RRB Main Radio")}`,
+          label: `Listen on Ty OS - ${channel || "RRB Main Radio"}`
+        };
+      case "podcast":
+        return {
+          type: "podcast",
+          url: `${baseUrl}/podcasts`,
+          label: "Listen to Podcasts on Ty OS"
+        };
+      case "video":
+        return {
+          type: "video",
+          url: `${baseUrl}/videos`,
+          label: "Watch Videos on Ty OS"
+        };
+      default:
+        return {
+          type: "radio",
+          url: baseUrl,
+          label: "Listen Live on Ty OS"
+        };
+    }
+  }
+  /**
+   * Create legacy content summary
+   */
+  createLegacyContentSummary() {
+    return {
+      title: "RRB Legacy Vault",
+      description: "Rockin Rockin Boogie Legacy Archive - Historical broadcasts, podcasts, interviews, and events preserved for future generations",
+      metrics: this.getVaultMetrics(),
+      tyOSLink: this.generateTyOSLink("radio")
+    };
+  }
+  /**
+   * Export legacy content as JSON
+   */
+  exportLegacyContentAsJSON() {
+    const allContent = Array.from(this.legacyContent.values());
+    return JSON.stringify(
+      {
+        vault: "RRB Legacy Vault",
+        exportDate: (/* @__PURE__ */ new Date()).toISOString(),
+        metrics: this.getVaultMetrics(),
+        content: allContent
+      },
+      null,
+      2
+    );
+  }
+  /**
+   * Get featured legacy content
+   */
+  getFeaturedContent(limit = 5) {
+    const allContent = Array.from(this.legacyContent.values());
+    return allContent.slice(-limit).reverse();
+  }
+  /**
+   * Get legacy content statistics
+   */
+  getStatistics() {
+    const allContent = Array.from(this.legacyContent.values());
+    const byCategory = {
+      broadcast: this.getContentByCategory("broadcast").length,
+      podcast: this.getContentByCategory("podcast").length,
+      interview: this.getContentByCategory("interview").length,
+      event: this.getContentByCategory("event").length,
+      archive: this.getContentByCategory("archive").length
+    };
+    const totalDuration = allContent.reduce((sum2, item) => sum2 + (item.duration || 0), 0);
+    const averageDuration = allContent.length > 0 ? totalDuration / allContent.length : 0;
+    const totalHours = totalDuration / 3600;
+    return {
+      totalItems: allContent.length,
+      byCategory,
+      averageDuration,
+      totalHours
+    };
+  }
+};
+var rrbLegacyVaultService = new RRBLegacyVaultService();
+
+// server/services/rrbSurroundSoundService.ts
+var RRBSurroundSoundService = class {
+  activeSessions = /* @__PURE__ */ new Map();
+  productionMetadata = /* @__PURE__ */ new Map();
+  audioMetadata = /* @__PURE__ */ new Map();
+  defaultConfig = {
+    enableSpatialAudio: true,
+    enableImmersiveMode: true,
+    audioFormat: "7.1",
+    bassBoost: 0,
+    trebleBoost: 0,
+    volumeNormalization: true,
+    dynamicRangeCompression: true
+  };
+  /**
+   * Start a surround sound session
+   */
+  startSession(contentType, contentId, contentTitle, audioFormat = "7.1") {
+    const sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const session = {
+      sessionId,
+      contentType,
+      contentId,
+      contentTitle,
+      audioFormat,
+      spatialAudio: true,
+      immersiveMode: true,
+      startTime: /* @__PURE__ */ new Date()
+    };
+    this.activeSessions.set(sessionId, session);
+    return session;
+  }
+  /**
+   * End a surround sound session
+   */
+  endSession(sessionId) {
+    const session = this.activeSessions.get(sessionId);
+    if (session) {
+      session.endTime = /* @__PURE__ */ new Date();
+      return true;
+    }
+    return false;
+  }
+  /**
+   * Get active session
+   */
+  getSession(sessionId) {
+    return this.activeSessions.get(sessionId);
+  }
+  /**
+   * Add audio metadata
+   */
+  addAudioMetadata(contentId, metadata) {
+    this.audioMetadata.set(contentId, metadata);
+  }
+  /**
+   * Get audio metadata
+   */
+  getAudioMetadata(contentId) {
+    return this.audioMetadata.get(contentId);
+  }
+  /**
+   * Add production metadata
+   */
+  addProductionMetadata(contentId, metadata) {
+    this.productionMetadata.set(contentId, metadata);
+  }
+  /**
+   * Get production metadata
+   */
+  getProductionMetadata(contentId) {
+    return this.productionMetadata.get(contentId);
+  }
+  /**
+   * Get complete production information
+   */
+  getCompleteProduction(contentId) {
+    return {
+      audio: this.getAudioMetadata(contentId),
+      production: this.getProductionMetadata(contentId)
+    };
+  }
+  /**
+   * Enable spatial audio
+   */
+  enableSpatialAudio(sessionId) {
+    const session = this.activeSessions.get(sessionId);
+    if (session) {
+      session.spatialAudio = true;
+      return true;
+    }
+    return false;
+  }
+  /**
+   * Disable spatial audio
+   */
+  disableSpatialAudio(sessionId) {
+    const session = this.activeSessions.get(sessionId);
+    if (session) {
+      session.spatialAudio = false;
+      return true;
+    }
+    return false;
+  }
+  /**
+   * Enable immersive mode
+   */
+  enableImmersiveMode(sessionId) {
+    const session = this.activeSessions.get(sessionId);
+    if (session) {
+      session.immersiveMode = true;
+      return true;
+    }
+    return false;
+  }
+  /**
+   * Disable immersive mode
+   */
+  disableImmersiveMode(sessionId) {
+    const session = this.activeSessions.get(sessionId);
+    if (session) {
+      session.immersiveMode = false;
+      return true;
+    }
+    return false;
+  }
+  /**
+   * Change audio format
+   */
+  changeAudioFormat(sessionId, format) {
+    const session = this.activeSessions.get(sessionId);
+    if (session) {
+      session.audioFormat = format;
+      return true;
+    }
+    return false;
+  }
+  /**
+   * Get default surround sound config
+   */
+  getDefaultConfig() {
+    return { ...this.defaultConfig };
+  }
+  /**
+   * Apply custom config
+   */
+  applyCustomConfig(config2) {
+    return { ...this.defaultConfig, ...config2 };
+  }
+  /**
+   * Get all active sessions
+   */
+  getAllActiveSessions() {
+    return Array.from(this.activeSessions.values()).filter((s) => !s.endTime);
+  }
+  /**
+   * Get session statistics
+   */
+  getSessionStatistics() {
+    const allSessions = Array.from(this.activeSessions.values());
+    const activeSessions = allSessions.filter((s) => !s.endTime);
+    const contentTypeBreakdown = {
+      radio: 0,
+      podcast: 0,
+      video: 0
+    };
+    allSessions.forEach((session) => {
+      contentTypeBreakdown[session.contentType]++;
+    });
+    const completedSessions = allSessions.filter((s) => s.endTime);
+    const totalDuration = completedSessions.reduce((sum2, session) => {
+      const duration = session.endTime ? session.endTime.getTime() - session.startTime.getTime() : 0;
+      return sum2 + duration;
+    }, 0);
+    const averageSessionDuration = completedSessions.length > 0 ? totalDuration / completedSessions.length / 1e3 : 0;
+    return {
+      activeSessions: activeSessions.length,
+      totalSessions: allSessions.length,
+      averageSessionDuration,
+      contentTypeBreakdown
+    };
+  }
+  /**
+   * Create immersive visualization data
+   */
+  createImmersiveVisualization(sessionId) {
+    const session = this.activeSessions.get(sessionId);
+    if (!session) {
+      throw new Error("Session not found");
+    }
+    const channels = session.audioFormat === "7.1" ? 8 : session.audioFormat === "5.1" ? 6 : 2;
+    const frequency = Array.from({ length: 32 }, (_, i) => (i + 1) * 100);
+    const amplitude = Array.from({ length: 32 }, () => Math.random());
+    const phase = Array.from({ length: 32 }, () => Math.random() * Math.PI * 2);
+    return {
+      sessionId,
+      audioFormat: session.audioFormat,
+      spatialAudio: session.spatialAudio,
+      immersiveMode: session.immersiveMode,
+      visualization: {
+        channels,
+        frequency,
+        amplitude,
+        phase
+      }
+    };
+  }
+  /**
+   * Export production summary
+   */
+  exportProductionSummary(contentId) {
+    return {
+      contentId,
+      audio: this.getAudioMetadata(contentId),
+      production: this.getProductionMetadata(contentId),
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  }
+};
+var rrbSurroundSoundService = new RRBSurroundSoundService();
+
+// server/routers/architectureRestructuringRouter.ts
+var architectureRestructuringRouter = router({
+  // RRB Legacy Vault Procedures
+  vault: router({
+    addLegacyContent: protectedProcedure.input(
+      z109.object({
+        title: z109.string(),
+        description: z109.string(),
+        date: z109.date(),
+        category: z109.enum(["broadcast", "podcast", "interview", "event", "archive"]),
+        duration: z109.number().optional(),
+        archiveUrl: z109.string().optional(),
+        transcription: z109.string().optional()
+      })
+    ).mutation(({ input }) => {
+      return rrbLegacyVaultService.addLegacyContent({
+        id: `content-${Date.now()}`,
+        title: input.title,
+        description: input.description,
+        date: input.date,
+        category: input.category,
+        duration: input.duration,
+        archiveUrl: input.archiveUrl,
+        transcription: input.transcription
+      });
+    }),
+    getAllContent: publicProcedure.query(() => {
+      return rrbLegacyVaultService.getAllLegacyContent();
+    }),
+    getByCategory: publicProcedure.input(z109.enum(["broadcast", "podcast", "interview", "event", "archive"])).query(({ input }) => {
+      return rrbLegacyVaultService.getContentByCategory(input);
+    }),
+    search: publicProcedure.input(z109.object({ query: z109.string() })).query(({ input }) => {
+      return rrbLegacyVaultService.searchLegacyContent(input.query);
+    }),
+    getMetrics: publicProcedure.query(() => {
+      return rrbLegacyVaultService.getVaultMetrics();
+    }),
+    getSummary: publicProcedure.query(() => {
+      return rrbLegacyVaultService.createLegacyContentSummary();
+    }),
+    getStatistics: publicProcedure.query(() => {
+      return rrbLegacyVaultService.getStatistics();
+    }),
+    getFeaturedContent: publicProcedure.input(z109.object({ limit: z109.number().default(5) })).query(({ input }) => {
+      return rrbLegacyVaultService.getFeaturedContent(input.limit);
+    }),
+    getTyOSLink: publicProcedure.input(
+      z109.object({
+        type: z109.enum(["radio", "podcast", "video"]),
+        channel: z109.string().optional()
+      })
+    ).query(({ input }) => {
+      return rrbLegacyVaultService.generateTyOSLink(input.type, input.channel);
+    })
+  }),
+  // RRB Surround Sound Production Layer
+  surroundSound: router({
+    startSession: protectedProcedure.input(
+      z109.object({
+        contentType: z109.enum(["radio", "podcast", "video"]),
+        contentId: z109.string(),
+        contentTitle: z109.string(),
+        audioFormat: z109.enum(["5.1", "7.1", "stereo", "mono"]).default("7.1")
+      })
+    ).mutation(({ input }) => {
+      return rrbSurroundSoundService.startSession(
+        input.contentType,
+        input.contentId,
+        input.contentTitle,
+        input.audioFormat
+      );
+    }),
+    endSession: protectedProcedure.input(z109.object({ sessionId: z109.string() })).mutation(({ input }) => {
+      return rrbSurroundSoundService.endSession(input.sessionId);
+    }),
+    getSession: publicProcedure.input(z109.object({ sessionId: z109.string() })).query(({ input }) => {
+      return rrbSurroundSoundService.getSession(input.sessionId);
+    }),
+    enableSpatialAudio: protectedProcedure.input(z109.object({ sessionId: z109.string() })).mutation(({ input }) => {
+      return rrbSurroundSoundService.enableSpatialAudio(input.sessionId);
+    }),
+    disableSpatialAudio: protectedProcedure.input(z109.object({ sessionId: z109.string() })).mutation(({ input }) => {
+      return rrbSurroundSoundService.disableSpatialAudio(input.sessionId);
+    }),
+    enableImmersiveMode: protectedProcedure.input(z109.object({ sessionId: z109.string() })).mutation(({ input }) => {
+      return rrbSurroundSoundService.enableImmersiveMode(input.sessionId);
+    }),
+    disableImmersiveMode: protectedProcedure.input(z109.object({ sessionId: z109.string() })).mutation(({ input }) => {
+      return rrbSurroundSoundService.disableImmersiveMode(input.sessionId);
+    }),
+    changeAudioFormat: protectedProcedure.input(
+      z109.object({
+        sessionId: z109.string(),
+        format: z109.enum(["5.1", "7.1", "stereo", "mono"])
+      })
+    ).mutation(({ input }) => {
+      return rrbSurroundSoundService.changeAudioFormat(input.sessionId, input.format);
+    }),
+    getActiveSessions: publicProcedure.query(() => {
+      return rrbSurroundSoundService.getAllActiveSessions();
+    }),
+    getStatistics: publicProcedure.query(() => {
+      return rrbSurroundSoundService.getSessionStatistics();
+    }),
+    getVisualization: publicProcedure.input(z109.object({ sessionId: z109.string() })).query(({ input }) => {
+      return rrbSurroundSoundService.createImmersiveVisualization(input.sessionId);
+    }),
+    addAudioMetadata: protectedProcedure.input(
+      z109.object({
+        contentId: z109.string(),
+        title: z109.string(),
+        artist: z109.string().optional(),
+        duration: z109.number(),
+        bitrate: z109.number(),
+        sampleRate: z109.number(),
+        channels: z109.number(),
+        format: z109.string(),
+        production: z109.string().optional()
+      })
+    ).mutation(({ input }) => {
+      rrbSurroundSoundService.addAudioMetadata(input.contentId, {
+        title: input.title,
+        artist: input.artist,
+        duration: input.duration,
+        bitrate: input.bitrate,
+        sampleRate: input.sampleRate,
+        channels: input.channels,
+        format: input.format,
+        production: input.production
+      });
+      return { success: true };
+    }),
+    addProductionMetadata: protectedProcedure.input(
+      z109.object({
+        contentId: z109.string(),
+        producer: z109.string().optional(),
+        engineer: z109.string().optional(),
+        studio: z109.string().optional(),
+        recordDate: z109.date().optional(),
+        releaseDate: z109.date().optional(),
+        credits: z109.array(z109.string()).optional(),
+        notes: z109.string().optional()
+      })
+    ).mutation(({ input }) => {
+      rrbSurroundSoundService.addProductionMetadata(input.contentId, {
+        producer: input.producer,
+        engineer: input.engineer,
+        studio: input.studio,
+        recordDate: input.recordDate,
+        releaseDate: input.releaseDate,
+        credits: input.credits,
+        notes: input.notes
+      });
+      return { success: true };
+    }),
+    getCompleteProduction: publicProcedure.input(z109.object({ contentId: z109.string() })).query(({ input }) => {
+      return rrbSurroundSoundService.getCompleteProduction(input.contentId);
+    }),
+    exportProductionSummary: publicProcedure.input(z109.object({ contentId: z109.string() })).query(({ input }) => {
+      return rrbSurroundSoundService.exportProductionSummary(input.contentId);
+    })
+  }),
+  // Navigation and Redirects
+  navigation: router({
+    getTyOSRadioUrl: publicProcedure.query(() => {
+      return {
+        url: "https://tyos.manus.space/radio",
+        label: "Listen Live on Ty OS"
+      };
+    }),
+    getHybridCastUrl: publicProcedure.query(() => {
+      return {
+        url: "https://hybridcast.manus.space",
+        label: "HybridCast Emergency Broadcast"
+      };
+    }),
+    getRRBLegacyUrl: publicProcedure.query(() => {
+      return {
+        url: "https://rrb.manus.space",
+        label: "RRB Legacy Vault"
+      };
+    }),
+    getQumusControlUrl: publicProcedure.query(() => {
+      return {
+        url: "https://qumus.manus.space",
+        label: "QUMUS Control Center"
+      };
+    }),
+    getArchitectureStatus: publicProcedure.query(() => {
+      return {
+        tyOS: {
+          role: "Single Streaming Source",
+          status: "Active",
+          channels: 54,
+          url: "https://tyos.manus.space/radio"
+        },
+        qumus: {
+          role: "Backend Control & Orchestration",
+          status: "Active",
+          policies: 20,
+          autonomy: "90%",
+          url: "https://qumus.manus.space"
+        },
+        rrb: {
+          role: "Legacy Vault & Archive",
+          status: "Active",
+          url: "https://rrb.manus.space"
+        },
+        hybridCast: {
+          role: "Resilience & Emergency Broadcast",
+          status: "Active",
+          url: "https://hybridcast.manus.space"
+        },
+        rrbSurroundSound: {
+          role: "Final Production Layer",
+          status: "Active",
+          features: ["Spatial Audio", "Immersive Mode", "5.1/7.1 Surround"]
+        }
+      };
+    })
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -50430,11 +51048,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z109.object({
-        goal: z109.string().min(1, "Goal is required"),
-        priority: z109.number().int().min(1).max(10).optional().default(5),
-        steps: z109.array(z109.string()).optional(),
-        constraints: z109.array(z109.string()).optional()
+      z110.object({
+        goal: z110.string().min(1, "Goal is required"),
+        priority: z110.number().int().min(1).max(10).optional().default(5),
+        steps: z110.array(z110.string()).optional(),
+        constraints: z110.array(z110.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -50446,7 +51064,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z109.object({ taskId: z109.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z110.object({ taskId: z110.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -50456,11 +51074,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z109.object({
-        target: z109.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z109.string().min(1, "Action is required"),
-        params: z109.record(z109.any()).optional().default({}),
-        priority: z109.number().int().min(1).max(10).optional().default(5)
+      z110.object({
+        target: z110.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z110.string().min(1, "Action is required"),
+        params: z110.record(z110.any()).optional().default({}),
+        priority: z110.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -50472,10 +51090,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z109.object({ commandId: z109.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z110.object({ commandId: z110.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z109.object({ target: z109.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z110.object({ target: z110.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -50570,12 +51188,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z109.object({
-      sessionName: z109.string().min(1),
-      systemPrompt: z109.string().optional(),
-      temperature: z109.number().min(0).max(100).optional(),
-      model: z109.string().optional(),
-      maxSteps: z109.number().min(1).optional()
+    createSession: protectedProcedure.input(z110.object({
+      sessionName: z110.string().min(1),
+      systemPrompt: z110.string().optional(),
+      temperature: z110.number().min(0).max(100).optional(),
+      model: z110.string().optional(),
+      maxSteps: z110.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -50596,7 +51214,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z109.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z110.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -50605,7 +51223,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z109.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z110.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -50649,9 +51267,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z109.object({
-      dateRange: z109.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z109.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z110.object({
+      dateRange: z110.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z110.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -50662,13 +51280,13 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z109.object({
-      dateRange: z109.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z110.object({
+      dateRange: z110.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z109.object({
-      dateRange: z109.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z110.object({
+      dateRange: z110.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
@@ -50679,11 +51297,11 @@ var appRouter = router({
   socialMedia: socialMediaQueueRouter,
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z109.object({
-      email: z109.string().email(),
-      name: z109.string().optional(),
-      source: z109.string().optional(),
-      language: z109.string().optional()
+    subscribe: publicProcedure.input(z110.object({
+      email: z110.string().email(),
+      name: z110.string().optional(),
+      source: z110.string().optional(),
+      language: z110.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
@@ -50694,7 +51312,9 @@ var appRouter = router({
   // FlowPay — Autonomous Payment Platform
   flowpay: flowpayRouter,
   // Advanced Monetization (Analytics, Monetization, Social Media)
-  advancedMonetization: advancedMonetizationRouter
+  advancedMonetization: advancedMonetizationRouter,
+  // Architecture Restructuring (RRB Legacy Vault, Surround Sound, Navigation)
+  architectureRestructuring: architectureRestructuringRouter
 });
 
 // server/_core/context.ts
