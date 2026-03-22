@@ -45,6 +45,9 @@ import { HybridCastConfig } from "./pages/HybridCastConfig";
 import { VideoWatermarkEditor } from "./pages/VideoWatermarkEditor";
 import { BatchVideoGenerator } from './pages/BatchVideoGenerator';
 import { RRBRadioIntegration } from './pages/RRBRadioIntegration';
+import { InteractivePodcastPlayer } from './pages/InteractivePodcastPlayer';
+import { StudioBooking } from './pages/StudioBooking';
+import { PodcastDistribution } from './pages/PodcastDistribution';
 import { QumusChatInterface } from './components/QumusChatInterface';
 import { AppHeader } from './components/AppHeader';
 import { AppHeaderEnhanced } from './components/AppHeaderEnhanced';
@@ -472,6 +475,9 @@ function Router() {
       <Route path="/donors" component={DonorRecognitionDashboard} />
       <Route path="/email-campaigns" component={EmailCampaignsDashboard} />
       <Route path="/unified-feed-health" component={UnifiedFeedHealthDashboard} />
+      <Route path="/podcast-player" component={InteractivePodcastPlayer} />
+      <Route path="/studio-booking" component={StudioBooking} />
+      <Route path="/podcast-distribution" component={PodcastDistribution} />
       <Route component={NotFound} />
     </Switch>
     </>

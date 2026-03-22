@@ -100,6 +100,7 @@ import { socialMediaQueueRouter } from "./routers/socialMediaQueueRouter";
 import { qumusAgentEngine } from "./routers/qumusAgentEngine";
 import { unifiedFeedRouter } from "./routers/unifiedFeedRouter";
 import { podcastStudioAlignmentRouter } from "./routers/podcastStudioAlignmentRouter";
+import { podcastFeaturesRouter } from "./routers/podcastFeaturesRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -141,6 +142,9 @@ export const appRouter = router({
 
   // Podcast & Studio Alignment (align with Ty OS standards)
   podcastStudioAlignment: podcastStudioAlignmentRouter,
+
+  // Podcast Features (player, studio booking, distribution)
+  podcastFeatures: podcastFeaturesRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,

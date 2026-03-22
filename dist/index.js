@@ -10792,7 +10792,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z107 } from "zod";
+import { z as z108 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -48663,6 +48663,883 @@ var podcastStudioAlignmentRouter = router({
   })
 });
 
+// server/routers/podcastFeaturesRouter.ts
+import { z as z107 } from "zod";
+
+// server/services/interactivePodcastPlayerService.ts
+var InteractivePodcastPlayerService = class {
+  playerConfigs = /* @__PURE__ */ new Map();
+  gameScreens = /* @__PURE__ */ new Map();
+  callInSessions = /* @__PURE__ */ new Map();
+  aiAssistants = /* @__PURE__ */ new Map();
+  /**
+   * Create podcast player configuration
+   */
+  createPlayerConfig(config2) {
+    this.playerConfigs.set(config2.episodeId, config2);
+    console.log(`[Podcast Player] Created player for episode: ${config2.title}`);
+    return config2;
+  }
+  /**
+   * Get podcast player configuration
+   */
+  getPlayerConfig(episodeId) {
+    return this.playerConfigs.get(episodeId);
+  }
+  /**
+   * Create game screen for episode
+   */
+  createGameScreen(episodeId, gameConfig) {
+    this.gameScreens.set(episodeId, gameConfig);
+    console.log(`[Game Screen] Created ${gameConfig.type} game for episode: ${episodeId}`);
+    return gameConfig;
+  }
+  /**
+   * Get game screen configuration
+   */
+  getGameScreen(episodeId) {
+    return this.gameScreens.get(episodeId);
+  }
+  /**
+   * Generate trivia questions from transcript
+   */
+  async generateTriviaQuestions(transcript, questionCount = 5) {
+    const sentences = transcript.split(".").filter((s) => s.trim().length > 0);
+    const questions = [];
+    for (let i = 0; i < Math.min(questionCount, sentences.length); i++) {
+      const sentence = sentences[i].trim();
+      questions.push({
+        question: `What was mentioned about: "${sentence.substring(0, 50)}..."?`,
+        options: [
+          "Option A from transcript",
+          "Option B from transcript",
+          "Option C from transcript",
+          "Option D from transcript"
+        ],
+        correctAnswer: "Option A from transcript"
+      });
+    }
+    return questions;
+  }
+  /**
+   * Create call-in session
+   */
+  createCallInSession(episodeId, callerName, callerId) {
+    const sessionId = `call-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const session = {
+      sessionId,
+      episodeId,
+      callerName,
+      callerId,
+      callStartTime: /* @__PURE__ */ new Date(),
+      callDuration: 0,
+      audioUrl: "",
+      status: "queued",
+      transcript: ""
+    };
+    this.callInSessions.set(sessionId, session);
+    console.log(`[Call-In] Created session for caller: ${callerName}`);
+    return session;
+  }
+  /**
+   * Start call-in session
+   */
+  startCallInSession(sessionId) {
+    const session = this.callInSessions.get(sessionId);
+    if (session) {
+      session.status = "active";
+      session.callStartTime = /* @__PURE__ */ new Date();
+      console.log(`[Call-In] Started session: ${sessionId}`);
+      return session;
+    }
+    return null;
+  }
+  /**
+   * End call-in session
+   */
+  endCallInSession(sessionId) {
+    const session = this.callInSessions.get(sessionId);
+    if (session) {
+      session.status = "ended";
+      session.callDuration = Math.floor(
+        ((/* @__PURE__ */ new Date()).getTime() - session.callStartTime.getTime()) / 1e3
+      );
+      console.log(`[Call-In] Ended session: ${sessionId}, duration: ${session.callDuration}s`);
+      return session;
+    }
+    return null;
+  }
+  /**
+   * Get call-in session
+   */
+  getCallInSession(sessionId) {
+    return this.callInSessions.get(sessionId);
+  }
+  /**
+   * Get all active call-in sessions
+   */
+  getActiveCallInSessions() {
+    return Array.from(this.callInSessions.values()).filter((s) => s.status === "active");
+  }
+  /**
+   * Configure AI assistant for episode
+   */
+  configureAIAssistant(episodeId, assistantType) {
+    const config2 = {
+      type: assistantType,
+      personality: assistantType === "seraph" ? "wise_guide" : "joyful_companion",
+      responseMode: "real_time",
+      capabilities: [
+        "answer_questions",
+        "provide_context",
+        "generate_insights",
+        "engage_audience",
+        "moderate_calls"
+      ]
+    };
+    this.aiAssistants.set(episodeId, config2);
+    console.log(`[AI Assistant] Configured ${assistantType} for episode: ${episodeId}`);
+    return config2;
+  }
+  /**
+   * Get AI assistant configuration
+   */
+  getAIAssistant(episodeId) {
+    return this.aiAssistants.get(episodeId);
+  }
+  /**
+   * Generate AI response to caller question
+   */
+  async generateAIResponse(assistantType, question, context) {
+    const systemPrompt = assistantType === "seraph" ? "You are Seraph, a wise and compassionate guide. Provide thoughtful, insightful responses." : "You are Candy, a joyful and energetic companion. Provide engaging, fun responses.";
+    return `[${assistantType.toUpperCase()}] Response to: "${question}" in context of: "${context}"`;
+  }
+  /**
+   * Get player analytics
+   */
+  getPlayerAnalytics(episodeId) {
+    return {
+      totalPlays: Math.floor(Math.random() * 1e3),
+      averagePlayDuration: Math.floor(Math.random() * 3600),
+      gameParticipation: Math.floor(Math.random() * 500),
+      callInCount: this.callInSessions.size,
+      aiInteractions: Math.floor(Math.random() * 2e3)
+    };
+  }
+  /**
+   * Get all player configurations
+   */
+  getAllPlayerConfigs() {
+    return Array.from(this.playerConfigs.values());
+  }
+  /**
+   * Get all game screens
+   */
+  getAllGameScreens() {
+    return Array.from(this.gameScreens.values());
+  }
+};
+var interactivePodcastPlayerService = new InteractivePodcastPlayerService();
+
+// server/services/studioBookingService.ts
+var StudioBookingService = class {
+  reservations = /* @__PURE__ */ new Map();
+  equipmentCheckouts = /* @__PURE__ */ new Map();
+  sessionRecordings = /* @__PURE__ */ new Map();
+  studioCapacity = {
+    "studio-001": 4,
+    "studio-002": 1,
+    "studio-003": 6,
+    "studio-004": 8,
+    "studio-005": 2,
+    "studio-006": 2
+  };
+  /**
+   * Create studio reservation
+   */
+  createReservation(studioId, studioName, userId, userName, startTime, endTime, purpose, equipment = [], recordingEnabled = true) {
+    const reservationId = `res-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const duration = Math.floor((endTime.getTime() - startTime.getTime()) / (1e3 * 60));
+    const reservation = {
+      reservationId,
+      studioId,
+      studioName,
+      userId,
+      userName,
+      startTime,
+      endTime,
+      duration,
+      purpose,
+      status: "pending",
+      equipment,
+      notes: "",
+      recordingEnabled,
+      recordingUrl: ""
+    };
+    this.reservations.set(reservationId, reservation);
+    console.log(`[Studio Booking] Created reservation: ${reservationId} for ${studioName}`);
+    return reservation;
+  }
+  /**
+   * Confirm reservation
+   */
+  confirmReservation(reservationId) {
+    const reservation = this.reservations.get(reservationId);
+    if (reservation) {
+      reservation.status = "confirmed";
+      console.log(`[Studio Booking] Confirmed reservation: ${reservationId}`);
+      return reservation;
+    }
+    return null;
+  }
+  /**
+   * Start session (mark as active)
+   */
+  startSession(reservationId) {
+    const reservation = this.reservations.get(reservationId);
+    if (reservation) {
+      reservation.status = "active";
+      console.log(`[Studio Booking] Started session: ${reservationId}`);
+      return reservation;
+    }
+    return null;
+  }
+  /**
+   * End session and complete reservation
+   */
+  endSession(reservationId) {
+    const reservation = this.reservations.get(reservationId);
+    if (reservation) {
+      reservation.status = "completed";
+      console.log(`[Studio Booking] Completed session: ${reservationId}`);
+      return reservation;
+    }
+    return null;
+  }
+  /**
+   * Cancel reservation
+   */
+  cancelReservation(reservationId, reason) {
+    const reservation = this.reservations.get(reservationId);
+    if (reservation) {
+      reservation.status = "cancelled";
+      reservation.notes = reason;
+      console.log(`[Studio Booking] Cancelled reservation: ${reservationId}`);
+      return reservation;
+    }
+    return null;
+  }
+  /**
+   * Get reservation
+   */
+  getReservation(reservationId) {
+    return this.reservations.get(reservationId);
+  }
+  /**
+   * Get user's reservations
+   */
+  getUserReservations(userId) {
+    return Array.from(this.reservations.values()).filter((r) => r.userId === userId);
+  }
+  /**
+   * Get studio's reservations
+   */
+  getStudioReservations(studioId) {
+    return Array.from(this.reservations.values()).filter((r) => r.studioId === studioId);
+  }
+  /**
+   * Checkout equipment
+   */
+  checkoutEquipment(reservationId, equipment) {
+    const checkoutId = `checkout-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const checkout = {
+      checkoutId,
+      reservationId,
+      equipment: equipment.map((e) => ({
+        ...e,
+        condition: "excellent",
+        checkoutTime: /* @__PURE__ */ new Date()
+      })),
+      status: "checked_out"
+    };
+    this.equipmentCheckouts.set(checkoutId, checkout);
+    console.log(`[Equipment Checkout] Checked out equipment for reservation: ${reservationId}`);
+    return checkout;
+  }
+  /**
+   * Return equipment
+   */
+  returnEquipment(checkoutId) {
+    const checkout = this.equipmentCheckouts.get(checkoutId);
+    if (checkout) {
+      checkout.status = "returned";
+      checkout.equipment.forEach((e) => {
+        e.returnTime = /* @__PURE__ */ new Date();
+      });
+      console.log(`[Equipment Checkout] Returned equipment: ${checkoutId}`);
+      return checkout;
+    }
+    return null;
+  }
+  /**
+   * Start session recording
+   */
+  startRecording(reservationId, studioId, title, artist, genre) {
+    const recordingId = `rec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const recording = {
+      recordingId,
+      reservationId,
+      studioId,
+      startTime: /* @__PURE__ */ new Date(),
+      endTime: /* @__PURE__ */ new Date(),
+      duration: 0,
+      fileUrl: `https://recordings.rockinrockinboogie.com/${recordingId}.wav`,
+      format: "WAV",
+      bitrate: 320,
+      sampleRate: 48e3,
+      status: "recording",
+      metadata: {
+        title,
+        artist,
+        genre,
+        tags: []
+      }
+    };
+    this.sessionRecordings.set(recordingId, recording);
+    console.log(`[Session Recording] Started recording: ${recordingId}`);
+    return recording;
+  }
+  /**
+   * Stop recording
+   */
+  stopRecording(recordingId) {
+    const recording = this.sessionRecordings.get(recordingId);
+    if (recording) {
+      recording.endTime = /* @__PURE__ */ new Date();
+      recording.duration = Math.floor(
+        (recording.endTime.getTime() - recording.startTime.getTime()) / 1e3
+      );
+      recording.status = "processing";
+      console.log(`[Session Recording] Stopped recording: ${recordingId}`);
+      return recording;
+    }
+    return null;
+  }
+  /**
+   * Complete recording
+   */
+  completeRecording(recordingId) {
+    const recording = this.sessionRecordings.get(recordingId);
+    if (recording) {
+      recording.status = "completed";
+      console.log(`[Session Recording] Completed recording: ${recordingId}`);
+      return recording;
+    }
+    return null;
+  }
+  /**
+   * Get recording
+   */
+  getRecording(recordingId) {
+    return this.sessionRecordings.get(recordingId);
+  }
+  /**
+   * Get studio availability
+   */
+  getStudioAvailability(studioId, date2) {
+    const timeSlots = this.generateTimeSlots(date2);
+    const studioReservations = this.getStudioReservations(studioId).filter(
+      (r) => r.startTime.toDateString() === date2.toDateString()
+    );
+    const availability = {
+      studioId,
+      date: date2,
+      timeSlots: timeSlots.map((slot) => {
+        const isBooked = studioReservations.some(
+          (r) => r.startTime.getHours() === parseInt(slot.startTime.split(":")[0]) && r.status !== "cancelled"
+        );
+        return {
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          available: !isBooked,
+          reservationId: isBooked ? "reserved" : void 0
+        };
+      })
+    };
+    return availability;
+  }
+  /**
+   * Generate time slots for a day
+   */
+  generateTimeSlots(date2) {
+    const slots = [];
+    for (let hour = 6; hour < 22; hour++) {
+      slots.push({
+        startTime: `${hour.toString().padStart(2, "0")}:00`,
+        endTime: `${(hour + 1).toString().padStart(2, "0")}:00`
+      });
+    }
+    return slots;
+  }
+  /**
+   * Get all reservations
+   */
+  getAllReservations() {
+    return Array.from(this.reservations.values());
+  }
+  /**
+   * Get all recordings
+   */
+  getAllRecordings() {
+    return Array.from(this.sessionRecordings.values());
+  }
+};
+var studioBookingService = new StudioBookingService();
+
+// server/services/podcastDistributionService.ts
+var PodcastDistributionService = class {
+  episodes = /* @__PURE__ */ new Map();
+  platforms = /* @__PURE__ */ new Map();
+  distributionResults = /* @__PURE__ */ new Map();
+  constructor() {
+    this.initializePlatforms();
+  }
+  /**
+   * Initialize default platforms
+   */
+  initializePlatforms() {
+    const defaultPlatforms = [
+      {
+        name: "Spotify",
+        type: "streaming",
+        enabled: true,
+        status: "connected",
+        publishUrl: "https://podcasters.spotify.com/api/v1/episodes"
+      },
+      {
+        name: "Apple Podcasts",
+        type: "streaming",
+        enabled: true,
+        status: "connected",
+        publishUrl: "https://podcastsconnect.apple.com/api/v1/episodes"
+      },
+      {
+        name: "YouTube",
+        type: "streaming",
+        enabled: true,
+        status: "connected",
+        publishUrl: "https://www.youtube.com/upload"
+      },
+      {
+        name: "RSS Feed",
+        type: "rss",
+        enabled: true,
+        status: "connected",
+        publishUrl: "https://rockinrockinboogie.com/podcast/feed.xml"
+      },
+      {
+        name: "Custom Website",
+        type: "custom",
+        enabled: true,
+        status: "connected",
+        publishUrl: "https://rockinrockinboogie.com/episodes"
+      }
+    ];
+    defaultPlatforms.forEach((p) => this.platforms.set(p.name, p));
+  }
+  /**
+   * Register podcast episode
+   */
+  registerEpisode(episode) {
+    this.episodes.set(episode.episodeId, episode);
+    console.log(`[Podcast Distribution] Registered episode: ${episode.title}`);
+    return episode;
+  }
+  /**
+   * Auto-publish episode to all enabled platforms
+   */
+  async publishEpisodeToAllPlatforms(episodeId) {
+    const episode = this.episodes.get(episodeId);
+    if (!episode) {
+      console.error(`[Podcast Distribution] Episode not found: ${episodeId}`);
+      return [];
+    }
+    const results = [];
+    const enabledPlatforms = Array.from(this.platforms.values()).filter((p) => p.enabled);
+    for (const platform of enabledPlatforms) {
+      const result2 = await this.publishToSinglePlatform(episode, platform);
+      results.push(result2);
+    }
+    this.distributionResults.set(episodeId, results);
+    console.log(`[Podcast Distribution] Published episode to ${results.length} platforms`);
+    return results;
+  }
+  /**
+   * Publish to single platform
+   */
+  async publishToSinglePlatform(episode, platform) {
+    try {
+      const optimizedMetadata = this.optimizeMetadataForPlatform(episode, platform.name);
+      const result2 = {
+        episodeId: episode.episodeId,
+        platform: platform.name,
+        status: "success",
+        publishUrl: `${platform.publishUrl}/${episode.episodeId}`,
+        publishedDate: /* @__PURE__ */ new Date(),
+        metadata: optimizedMetadata
+      };
+      platform.lastPublished = /* @__PURE__ */ new Date();
+      console.log(`[Podcast Distribution] Published to ${platform.name}: ${episode.title}`);
+      return result2;
+    } catch (error) {
+      return {
+        episodeId: episode.episodeId,
+        platform: platform.name,
+        status: "failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+        metadata: {
+          title: episode.title,
+          description: episode.description,
+          duration: episode.duration,
+          artwork: episode.artwork
+        }
+      };
+    }
+  }
+  /**
+   * Optimize metadata for specific platform
+   */
+  optimizeMetadataForPlatform(episode, platformName) {
+    let title = episode.title;
+    let description = episode.description;
+    switch (platformName) {
+      case "Spotify":
+        title = title.substring(0, 100);
+        description = description.substring(0, 4e3);
+        break;
+      case "Apple Podcasts":
+        title = title.substring(0, 255);
+        description = description.substring(0, 4e3);
+        break;
+      case "YouTube":
+        title = title.substring(0, 100);
+        description = description.substring(0, 5e3);
+        break;
+      case "RSS Feed":
+        description = this.addMetadataToDescription(description, episode);
+        break;
+      case "Custom Website":
+        description = this.formatDescriptionForWeb(description);
+        break;
+    }
+    return {
+      title,
+      description,
+      duration: episode.duration,
+      artwork: episode.artwork
+    };
+  }
+  /**
+   * Add metadata to RSS description
+   */
+  addMetadataToDescription(description, episode) {
+    return `${description}
+
+Author: ${episode.author}
+Duration: ${this.formatDuration(episode.duration)}
+Tags: ${episode.tags.join(", ")}`;
+  }
+  /**
+   * Format description for web display
+   */
+  formatDescriptionForWeb(description) {
+    return description.replace(/\n/g, "<br/>").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/\*(.*?)\*/g, "<em>$1</em>");
+  }
+  /**
+   * Format duration (seconds to HH:MM:SS)
+   */
+  formatDuration(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor(seconds % 3600 / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  }
+  /**
+   * Get distribution results for episode
+   */
+  getDistributionResults(episodeId) {
+    return this.distributionResults.get(episodeId) || [];
+  }
+  /**
+   * Get platform status
+   */
+  getPlatformStatus(platformName) {
+    return this.platforms.get(platformName);
+  }
+  /**
+   * Get all platforms
+   */
+  getAllPlatforms() {
+    return Array.from(this.platforms.values());
+  }
+  /**
+   * Enable platform
+   */
+  enablePlatform(platformName) {
+    const platform = this.platforms.get(platformName);
+    if (platform) {
+      platform.enabled = true;
+      console.log(`[Podcast Distribution] Enabled platform: ${platformName}`);
+      return platform;
+    }
+    return null;
+  }
+  /**
+   * Disable platform
+   */
+  disablePlatform(platformName) {
+    const platform = this.platforms.get(platformName);
+    if (platform) {
+      platform.enabled = false;
+      console.log(`[Podcast Distribution] Disabled platform: ${platformName}`);
+      return platform;
+    }
+    return null;
+  }
+  /**
+   * Schedule episode for auto-publish
+   */
+  scheduleEpisodePublish(episodeId, publishDate) {
+    const episode = this.episodes.get(episodeId);
+    if (episode) {
+      episode.releaseDate = publishDate;
+      console.log(`[Podcast Distribution] Scheduled episode for publish: ${publishDate.toISOString()}`);
+    }
+  }
+  /**
+   * Get distribution statistics
+   */
+  getDistributionStats() {
+    const allResults = Array.from(this.distributionResults.values()).flat();
+    const successful = allResults.filter((r) => r.status === "success").length;
+    const failed = allResults.filter((r) => r.status === "failed").length;
+    const enabledPlatforms = Array.from(this.platforms.values()).filter((p) => p.enabled).length;
+    return {
+      totalEpisodes: this.episodes.size,
+      totalPlatforms: this.platforms.size,
+      enabledPlatforms,
+      successfulDistributions: successful,
+      failedDistributions: failed
+    };
+  }
+};
+var podcastDistributionService = new PodcastDistributionService();
+
+// server/routers/podcastFeaturesRouter.ts
+var podcastFeaturesRouter = router({
+  // Interactive Podcast Player procedures
+  player: router({
+    createPlayer: publicProcedure.input(
+      z107.object({
+        episodeId: z107.string(),
+        title: z107.string(),
+        description: z107.string(),
+        audioUrl: z107.string(),
+        videoUrl: z107.string().optional(),
+        duration: z107.number(),
+        transcript: z107.string(),
+        aiAssistant: z107.enum(["seraph", "candy", "none"]),
+        gameEnabled: z107.boolean(),
+        callInEnabled: z107.boolean()
+      })
+    ).mutation(({ input }) => {
+      return interactivePodcastPlayerService.createPlayerConfig({
+        ...input,
+        chapters: []
+      });
+    }),
+    getPlayer: publicProcedure.input(z107.object({ episodeId: z107.string() })).query(({ input }) => {
+      return interactivePodcastPlayerService.getPlayerConfig(input.episodeId);
+    }),
+    createGameScreen: publicProcedure.input(
+      z107.object({
+        episodeId: z107.string(),
+        type: z107.enum(["trivia", "poll", "quiz", "interactive_story"]),
+        questionCount: z107.number().default(5),
+        mobileOptimized: z107.boolean().default(true)
+      })
+    ).mutation(async ({ input }) => {
+      const transcript = interactivePodcastPlayerService.getPlayerConfig(input.episodeId)?.transcript;
+      if (!transcript) throw new Error("Episode not found");
+      const questions = await interactivePodcastPlayerService.generateTriviaQuestions(
+        transcript,
+        input.questionCount
+      );
+      const gameConfig = {
+        type: input.type,
+        questions: questions.map((q, i) => ({
+          id: `q-${i}`,
+          question: q.question,
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          points: 10
+        })),
+        duration: 300,
+        mobileOptimized: input.mobileOptimized
+      };
+      return interactivePodcastPlayerService.createGameScreen(input.episodeId, gameConfig);
+    }),
+    getGameScreen: publicProcedure.input(z107.object({ episodeId: z107.string() })).query(({ input }) => {
+      return interactivePodcastPlayerService.getGameScreen(input.episodeId);
+    }),
+    createCallIn: publicProcedure.input(
+      z107.object({
+        episodeId: z107.string(),
+        callerName: z107.string(),
+        callerId: z107.string()
+      })
+    ).mutation(({ input }) => {
+      return interactivePodcastPlayerService.createCallInSession(
+        input.episodeId,
+        input.callerName,
+        input.callerId
+      );
+    }),
+    startCallIn: publicProcedure.input(z107.object({ sessionId: z107.string() })).mutation(({ input }) => {
+      return interactivePodcastPlayerService.startCallInSession(input.sessionId);
+    }),
+    endCallIn: publicProcedure.input(z107.object({ sessionId: z107.string() })).mutation(({ input }) => {
+      return interactivePodcastPlayerService.endCallInSession(input.sessionId);
+    }),
+    configureAI: publicProcedure.input(
+      z107.object({
+        episodeId: z107.string(),
+        assistantType: z107.enum(["seraph", "candy"])
+      })
+    ).mutation(({ input }) => {
+      return interactivePodcastPlayerService.configureAIAssistant(
+        input.episodeId,
+        input.assistantType
+      );
+    }),
+    getPlayerAnalytics: publicProcedure.input(z107.object({ episodeId: z107.string() })).query(({ input }) => {
+      return interactivePodcastPlayerService.getPlayerAnalytics(input.episodeId);
+    })
+  }),
+  // Studio Booking procedures
+  booking: router({
+    createReservation: publicProcedure.input(
+      z107.object({
+        studioId: z107.string(),
+        studioName: z107.string(),
+        userId: z107.string(),
+        userName: z107.string(),
+        startTime: z107.date(),
+        endTime: z107.date(),
+        purpose: z107.string(),
+        equipment: z107.array(z107.string()).optional(),
+        recordingEnabled: z107.boolean().default(true)
+      })
+    ).mutation(({ input }) => {
+      return studioBookingService.createReservation(
+        input.studioId,
+        input.studioName,
+        input.userId,
+        input.userName,
+        input.startTime,
+        input.endTime,
+        input.purpose,
+        input.equipment,
+        input.recordingEnabled
+      );
+    }),
+    confirmReservation: publicProcedure.input(z107.object({ reservationId: z107.string() })).mutation(({ input }) => {
+      return studioBookingService.confirmReservation(input.reservationId);
+    }),
+    startSession: publicProcedure.input(z107.object({ reservationId: z107.string() })).mutation(({ input }) => {
+      return studioBookingService.startSession(input.reservationId);
+    }),
+    endSession: publicProcedure.input(z107.object({ reservationId: z107.string() })).mutation(({ input }) => {
+      return studioBookingService.endSession(input.reservationId);
+    }),
+    getReservation: publicProcedure.input(z107.object({ reservationId: z107.string() })).query(({ input }) => {
+      return studioBookingService.getReservation(input.reservationId);
+    }),
+    getUserReservations: publicProcedure.input(z107.object({ userId: z107.string() })).query(({ input }) => {
+      return studioBookingService.getUserReservations(input.userId);
+    }),
+    getStudioAvailability: publicProcedure.input(
+      z107.object({
+        studioId: z107.string(),
+        date: z107.date()
+      })
+    ).query(({ input }) => {
+      return studioBookingService.getStudioAvailability(input.studioId, input.date);
+    }),
+    startRecording: publicProcedure.input(
+      z107.object({
+        reservationId: z107.string(),
+        studioId: z107.string(),
+        title: z107.string(),
+        artist: z107.string(),
+        genre: z107.string()
+      })
+    ).mutation(({ input }) => {
+      return studioBookingService.startRecording(
+        input.reservationId,
+        input.studioId,
+        input.title,
+        input.artist,
+        input.genre
+      );
+    }),
+    stopRecording: publicProcedure.input(z107.object({ recordingId: z107.string() })).mutation(({ input }) => {
+      return studioBookingService.stopRecording(input.recordingId);
+    })
+  }),
+  // Podcast Distribution procedures
+  distribution: router({
+    registerEpisode: publicProcedure.input(
+      z107.object({
+        episodeId: z107.string(),
+        title: z107.string(),
+        description: z107.string(),
+        audioUrl: z107.string(),
+        duration: z107.number(),
+        releaseDate: z107.date(),
+        author: z107.string(),
+        artwork: z107.string(),
+        transcript: z107.string(),
+        tags: z107.array(z107.string()),
+        explicit: z107.boolean().default(false)
+      })
+    ).mutation(({ input }) => {
+      return podcastDistributionService.registerEpisode(input);
+    }),
+    publishToAllPlatforms: publicProcedure.input(z107.object({ episodeId: z107.string() })).mutation(async ({ input }) => {
+      return await podcastDistributionService.publishEpisodeToAllPlatforms(input.episodeId);
+    }),
+    getDistributionResults: publicProcedure.input(z107.object({ episodeId: z107.string() })).query(({ input }) => {
+      return podcastDistributionService.getDistributionResults(input.episodeId);
+    }),
+    getPlatformStatus: publicProcedure.input(z107.object({ platformName: z107.string() })).query(({ input }) => {
+      return podcastDistributionService.getPlatformStatus(input.platformName);
+    }),
+    getAllPlatforms: publicProcedure.query(() => {
+      return podcastDistributionService.getAllPlatforms();
+    }),
+    enablePlatform: publicProcedure.input(z107.object({ platformName: z107.string() })).mutation(({ input }) => {
+      return podcastDistributionService.enablePlatform(input.platformName);
+    }),
+    disablePlatform: publicProcedure.input(z107.object({ platformName: z107.string() })).mutation(({ input }) => {
+      return podcastDistributionService.disablePlatform(input.platformName);
+    }),
+    getDistributionStats: publicProcedure.query(() => {
+      return podcastDistributionService.getDistributionStats();
+    })
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -48691,6 +49568,8 @@ var appRouter = router({
   unifiedFeed: unifiedFeedRouter,
   // Podcast & Studio Alignment (align with Ty OS standards)
   podcastStudioAlignment: podcastStudioAlignmentRouter,
+  // Podcast Features (player, studio booking, distribution)
+  podcastFeatures: podcastFeaturesRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -48706,11 +49585,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z107.object({
-        goal: z107.string().min(1, "Goal is required"),
-        priority: z107.number().int().min(1).max(10).optional().default(5),
-        steps: z107.array(z107.string()).optional(),
-        constraints: z107.array(z107.string()).optional()
+      z108.object({
+        goal: z108.string().min(1, "Goal is required"),
+        priority: z108.number().int().min(1).max(10).optional().default(5),
+        steps: z108.array(z108.string()).optional(),
+        constraints: z108.array(z108.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -48722,7 +49601,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z107.object({ taskId: z107.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z108.object({ taskId: z108.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -48732,11 +49611,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z107.object({
-        target: z107.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z107.string().min(1, "Action is required"),
-        params: z107.record(z107.any()).optional().default({}),
-        priority: z107.number().int().min(1).max(10).optional().default(5)
+      z108.object({
+        target: z108.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z108.string().min(1, "Action is required"),
+        params: z108.record(z108.any()).optional().default({}),
+        priority: z108.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -48748,10 +49627,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z107.object({ commandId: z107.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z108.object({ commandId: z108.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z107.object({ target: z107.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z108.object({ target: z108.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -48846,12 +49725,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z107.object({
-      sessionName: z107.string().min(1),
-      systemPrompt: z107.string().optional(),
-      temperature: z107.number().min(0).max(100).optional(),
-      model: z107.string().optional(),
-      maxSteps: z107.number().min(1).optional()
+    createSession: protectedProcedure.input(z108.object({
+      sessionName: z108.string().min(1),
+      systemPrompt: z108.string().optional(),
+      temperature: z108.number().min(0).max(100).optional(),
+      model: z108.string().optional(),
+      maxSteps: z108.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -48872,7 +49751,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z107.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z108.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -48881,7 +49760,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z107.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z108.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -48925,9 +49804,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z107.object({
-      dateRange: z107.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z107.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z108.object({
+      dateRange: z108.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z108.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -48938,13 +49817,13 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z107.object({
-      dateRange: z107.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z108.object({
+      dateRange: z108.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z107.object({
-      dateRange: z107.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z108.object({
+      dateRange: z108.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
@@ -48955,11 +49834,11 @@ var appRouter = router({
   socialMedia: socialMediaQueueRouter,
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z107.object({
-      email: z107.string().email(),
-      name: z107.string().optional(),
-      source: z107.string().optional(),
-      language: z107.string().optional()
+    subscribe: publicProcedure.input(z108.object({
+      email: z108.string().email(),
+      name: z108.string().optional(),
+      source: z108.string().optional(),
+      language: z108.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
