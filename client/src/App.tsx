@@ -48,6 +48,9 @@ import { RRBRadioIntegration } from './pages/RRBRadioIntegration';
 import { InteractivePodcastPlayer } from './pages/InteractivePodcastPlayer';
 import { StudioBooking } from './pages/StudioBooking';
 import { PodcastDistribution } from './pages/PodcastDistribution';
+import NotificationPreferencesDashboard from './pages/NotificationPreferencesDashboard';
+import AffiliateProgramDashboard from './pages/AffiliateProgramDashboard';
+import RealtimeLeaderboard from './pages/RealtimeLeaderboard';
 import { ListenerAnalyticsDashboard } from './pages/ListenerAnalyticsDashboard';
 import { PodcastMonetizationDashboard } from './pages/PodcastMonetizationDashboard';
 import { SocialMediaPublishingDashboard } from './pages/SocialMediaPublishingDashboard';
@@ -484,6 +487,9 @@ function Router() {
       <Route path="/listener-analytics" component={ListenerAnalyticsDashboard} />
       <Route path="/podcast-monetization" component={PodcastMonetizationDashboard} />
       <Route path="/social-media-publishing" component={SocialMediaPublishingDashboard} />
+      <Route path="/notifications" component={NotificationPreferencesDashboard} />
+      <Route path="/affiliate" component={AffiliateProgramDashboard} />
+      <Route path="/leaderboard" component={RealtimeLeaderboard} />
       <Route component={NotFound} />
     </Switch>
     </>

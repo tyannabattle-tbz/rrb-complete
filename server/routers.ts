@@ -103,6 +103,7 @@ import { unifiedFeedRouter } from "./routers/unifiedFeedRouter";
 import { podcastStudioAlignmentRouter } from "./routers/podcastStudioAlignmentRouter";
 import { podcastFeaturesRouter } from "./routers/podcastFeaturesRouter";
 import { architectureRestructuringRouter } from "./routers/architectureRestructuringRouter";
+import { finalFeaturesRouter } from "./routers/finalFeaturesRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -531,6 +532,9 @@ export const appRouter = router({
 
   // Architecture Restructuring (RRB Legacy Vault, Surround Sound, Navigation)
   architectureRestructuring: architectureRestructuringRouter,
+
+  // Final Features (Notifications, Affiliate Program, Leaderboard)
+  finalFeatures: finalFeaturesRouter,
 });
 
 

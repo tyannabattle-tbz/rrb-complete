@@ -16,6 +16,7 @@ import { registerRRBRadioApi } from "../rrbRadioApi";
 import { startProductionIntegration } from "../services/qumusProductionIntegration";
 import { startSelfAudit } from "../services/qumusSelfAudit";
 import { startAutoDj } from "../services/autoDjEngine";
+import { initializeSyncJobs, cleanupSyncJobs } from "../jobs/initializeSyncJobs";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -315,8 +316,24 @@ async function startServer() {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
+  // Initialize background sync jobs
+  initializeSyncJobs();
+
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+  });
+
+  // Cleanup on shutdown
+  process.on('SIGINT', () => {
+    console.log('\nShutting down server...');
+    cleanupSyncJobs();
+    process.exit(0);
+  });
+
+  process.on('SIGTERM', () => {
+    console.log('\nShutting down server...');
+    cleanupSyncJobs();
+    process.exit(0);
   });
 }
 
