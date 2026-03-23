@@ -256,6 +256,7 @@ import FundingBotCampaigns from '@/pages/FundingBotCampaigns';
 import QumusOrchestrationDashboard from '@/pages/QumusOrchestrationDashboard';
 import LedgerDashboard from '@/pages/LedgerDashboard';
 import SocialEngagementDashboard from '@/pages/SocialEngagementDashboard';
+import { CrossSystemBridgeDiagnostics } from './pages/CrossSystemBridgeDiagnostics';
 import WebhookAutomationDashboard from '@/pages/WebhookAutomationDashboard';
 import RealtimeAnalyticsDashboard from '@/pages/RealtimeAnalyticsDashboard';
 import DonorRecognitionDashboard from '@/pages/DonorRecognitionDashboard';
@@ -563,6 +564,8 @@ function Router() {
       <Route path="/notifications" component={NotificationPreferencesDashboard} />
       <Route path="/affiliate" component={AffiliateProgramDashboard} />
       <Route path="/leaderboard" component={RealtimeLeaderboard} />
+      <Route path="/bridge-diagnostics" component={CrossSystemBridgeDiagnostics} />
+      <Route path="/stream-health" component={CrossSystemBridgeDiagnostics} />
       <Route component={NotFound} />
     </Switch>
     </>
