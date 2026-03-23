@@ -236,6 +236,7 @@ import AvatarPanelPodcast from '@/pages/AvatarPanelPodcast';
 import EcosystemPresentation from '@/pages/EcosystemPresentation';
 import SystemStatusPage from '@/pages/SystemStatusPage';
 import RouteAnalyticsDashboard from '@/pages/RouteAnalyticsDashboard';
+import QUMUSControlPanel from '@/pages/QUMUSControlPanel';
 import PresentationBuilder from '@/pages/PresentationBuilder';
 import MusicStudio from '@/pages/MusicStudio';
 import CSW70Campaign from '@/pages/CSW70Campaign';
@@ -485,6 +486,7 @@ function Router() {
       <Route path="/webhooks" component={WebhookAutomationDashboard} />
       <Route path="/analytics" component={RealtimeAnalyticsDashboard} />
       <Route path="/route-analytics" component={RouteAnalyticsDashboard} />
+      <Route path="/qumus-control" component={QUMUSControlPanel} />
       <Route path="/donors" component={DonorRecognitionDashboard} />
       <Route path="/email-campaigns" component={EmailCampaignsDashboard} />
       <Route path="/unified-feed-health" component={UnifiedFeedHealthDashboard} />
