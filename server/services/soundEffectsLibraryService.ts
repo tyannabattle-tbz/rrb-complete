@@ -320,4 +320,64 @@ export const soundEffectsLibraryService = {
       ratedAt: new Date(),
     };
   },
+
+  /**
+   * Get collections for user
+   */
+  getCollections: async (userId?: string) => {
+    return [
+      {
+        id: 'col-001',
+        name: 'Documentary Effects',
+        description: 'Effects for documentary projects',
+        createdAt: new Date('2026-01-15'),
+        effectsCount: 45,
+      },
+      {
+        id: 'col-002',
+        name: 'Commercial Transitions',
+        description: 'Quick transitions for commercials',
+        createdAt: new Date('2026-02-01'),
+        effectsCount: 28,
+      },
+      {
+        id: 'col-003',
+        name: 'Podcast Essentials',
+        description: 'Essential effects for podcasts',
+        createdAt: new Date('2026-02-15'),
+        effectsCount: 52,
+      },
+    ];
+  },
+
+  /**
+   * Get detailed usage analytics
+   */
+  getDetailedUsageAnalytics: async (userId?: string) => {
+    return {
+      totalUsed: 156,
+      mostUsedCategory: 'Sound Effects',
+      categoryUsageCount: 67,
+      averageDuration: 3.2,
+      topEffects: [
+        { id: 'se-002', name: 'Whoosh Transition', usageCount: 45 },
+        { id: 'se-001', name: 'Thunder Crack', usageCount: 38 },
+        { id: 'se-003', name: 'Forest Ambience', usageCount: 32 },
+        { id: 'se-004', name: 'Door Slam', usageCount: 28 },
+        { id: 'se-005', name: 'Glass Break', usageCount: 25 },
+        { id: 'se-006', name: 'Wind Howl', usageCount: 22 },
+        { id: 'se-007', name: 'Footsteps', usageCount: 20 },
+        { id: 'se-008', name: 'Phone Ring', usageCount: 18 },
+        { id: 'se-009', name: 'Water Splash', usageCount: 15 },
+        { id: 'se-010', name: 'Beep Notification', usageCount: 12 },
+      ],
+      categoryDistribution: [
+        { category: 'Sound Effects', count: 67 },
+        { category: 'Ambient', count: 34 },
+        { category: 'Music', count: 28 },
+        { category: 'Dialogue', count: 18 },
+        { category: 'Nature', count: 9 },
+      ],
+    };
+  },
 };

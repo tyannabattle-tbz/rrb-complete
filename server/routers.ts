@@ -112,6 +112,12 @@ import { adminFeaturesRouter } from "./routers/adminFeaturesRouter";
 import { rrbNavigationRouter } from "./routers/rrbNavigationRouter";
 import { autonomousMaintenanceRouter } from "./routers/autonomousMaintenanceRouter";
 import { productionEcosystemRouter } from "./routers/productionEcosystemRouter";
+import { productionDashboardRouter } from "./routers/productionDashboard";
+import { soundEffectsRouter } from "./routers/soundEffects";
+import { podcastDistributionAnalyticsRouter } from "./routers/podcastDistributionAnalytics";
+import { qumusAutonomousBrainRouter } from "./routers/qumusAutonomousBrainRouter";
+import { tyOsMasterControlRouter } from "./routers/tyOsMasterControlRouter";
+import { autonomyFrameworkRouter } from "./routers/autonomyFrameworkRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -180,6 +186,24 @@ export const appRouter = router({
 
   // Production Ecosystem (video, audio, transcoding, QA, compliance)
   production: productionEcosystemRouter,
+
+  // Production Dashboard (project management, transcoding queue, live monitoring)
+  productionDashboard: productionDashboardRouter,
+
+  // Sound Effects (library, collections, analytics)
+  soundEffects: soundEffectsRouter,
+
+  // Podcast Distribution Analytics (multi-platform metrics, revenue, audience)
+  podcastAnalytics: podcastDistributionAnalyticsRouter,
+
+  // QUMUS Autonomous Brain (12+ policies, 90% autonomy, real-time orchestration)
+  qumusAutonomousBrain: qumusAutonomousBrainRouter,
+
+  // Ty OS Master Control (bidirectional control over QUMUS and 54 channels)
+  tyOsMasterControl: tyOsMasterControlRouter,
+
+  // Autonomy Framework (90% autonomous, 10% human override)
+  autonomyFramework: autonomyFrameworkRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,

@@ -317,4 +317,22 @@ export const productionDashboardService = {
       addedAt: new Date(),
     };
   },
+
+  /**
+   * Get live project monitoring metrics
+   */
+  getLiveProjectMonitoring: async () => {
+    return {
+      queuePosition: 2,
+      totalInQueue: 8,
+      estimatedCompletion: new Date(Date.now() + 1800000).toLocaleTimeString(),
+      estimatedMinutes: 30,
+      cpuUsage: 78,
+      memoryUsage: 65,
+      activeTranscodingJobs: 3,
+      completedToday: 12,
+      averageSpeed: 2.5,
+      systemHealth: 'excellent',
+    };
+  },
 };
