@@ -118,6 +118,9 @@ import { podcastDistributionAnalyticsRouter } from "./routers/podcastDistributio
 import { qumusAutonomousBrainRouter } from "./routers/qumusAutonomousBrainRouter";
 import { tyOsMasterControlRouter } from "./routers/tyOsMasterControlRouter";
 import { autonomyFrameworkRouter } from "./routers/autonomyFrameworkRouter";
+import { realtimeAnalyticsDashboardRouter } from "./routers/realtimeAnalyticsDashboardRouter";
+import { aiContentRecommendationsRouter } from "./routers/aiContentRecommendationsRouter";
+import { multiLanguageSupportRouter } from "./routers/multiLanguageSupportRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -204,6 +207,15 @@ export const appRouter = router({
 
   // Autonomy Framework (90% autonomous, 10% human override)
   autonomyFramework: autonomyFrameworkRouter,
+
+  // Real-Time Analytics Dashboard (live metrics, engagement, revenue)
+  realtimeAnalytics: realtimeAnalyticsDashboardRouter,
+
+  // AI-Powered Content Recommendations (QUMUS-driven personalization)
+  aiRecommendations: aiContentRecommendationsRouter,
+
+  // Multi-Language Support (transcription, subtitles, translation)
+  multiLanguage: multiLanguageSupportRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
