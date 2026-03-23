@@ -81,6 +81,7 @@ import PolicyDecisionLogging from '@/pages/PolicyDecisionLogging';
 import { AdminErrorDashboard } from '@/pages/AdminErrorDashboard';
 import { HealthChecksDashboard } from '@/pages/HealthChecksDashboard';
 import { FeedbackWidget } from '@/components/FeedbackWidget';
+import { sessionReplay } from '@/lib/sessionReplay';
 import AdminDecisionDashboard from '@/pages/AdminDecisionDashboard';
 import ComplianceAuditViewer from '@/pages/ComplianceAuditViewer';
 import ServiceHealthAlerts from '@/pages/ServiceHealthAlerts';
