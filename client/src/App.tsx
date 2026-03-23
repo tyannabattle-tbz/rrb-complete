@@ -261,11 +261,10 @@ import { FallbackStatusIndicator } from '@/components/FallbackStatusIndicator';
 import UnifiedAvatarManagement from '@/pages/UnifiedAvatarManagement';
 import BroadcastChannelManagement from '@/pages/BroadcastChannelManagement';
 import { useState } from 'react';
-
+import { useLocation } from 'wouter';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
-  const [, setLocation] = useLocation();
   // Determine which home page to show based on hostname
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isRRBDomain = hostname.includes('rockinrockinboogie.com') || hostname.includes('rrb') || hostname.includes('manusweb-eshiamkd') || hostname.includes('www.manuweb.sbs') || hostname.includes('manuweb.sbs');
