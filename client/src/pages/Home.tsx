@@ -4,7 +4,7 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { LogIn, LogOut, Zap, Video, Users, ArrowRight, Radio, Headphones, Podcast, BarChart3 } from 'lucide-react';
+import { LogIn, LogOut, Zap, Video, Users, ArrowRight, Radio, Headphones, Podcast, BarChart3, AlertTriangle } from 'lucide-react';
 import { getLoginUrl } from '@/const';
 import { trpc } from '@/lib/trpc';
 import { Link } from 'wouter';

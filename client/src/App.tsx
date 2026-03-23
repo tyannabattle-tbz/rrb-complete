@@ -51,7 +51,6 @@ import { PodcastDistribution } from './pages/PodcastDistribution';
 import NotificationPreferencesDashboard from './pages/NotificationPreferencesDashboard';
 import AffiliateProgramDashboard from './pages/AffiliateProgramDashboard';
 import RealtimeLeaderboard from './pages/RealtimeLeaderboard';
-import { ListenerAnalyticsDashboard } from './pages/ListenerAnalyticsDashboard';
 import { PodcastMonetizationDashboard } from './pages/PodcastMonetizationDashboard';
 import { SocialMediaPublishingDashboard } from './pages/SocialMediaPublishingDashboard';
 import { QumusChatInterface } from './components/QumusChatInterface';
@@ -484,7 +483,6 @@ function Router() {
       <Route path="/podcast-player" component={InteractivePodcastPlayer} />
       <Route path="/studio-booking" component={StudioBooking} />
       <Route path="/podcast-distribution" component={PodcastDistribution} />
-      <Route path="/listener-analytics" component={ListenerAnalyticsDashboard} />
       <Route path="/podcast-monetization" component={PodcastMonetizationDashboard} />
       <Route path="/social-media-publishing" component={SocialMediaPublishingDashboard} />
       <Route path="/notifications" component={NotificationPreferencesDashboard} />
