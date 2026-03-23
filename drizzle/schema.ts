@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, int, varchar, mysqlEnum, timestamp, decimal, text, json, foreignKey, bigint, index, tinyint, date } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, int, varchar, mysqlEnum, timestamp, decimal, text, json, foreignKey, bigint, date, index, tinyint, float } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 export const accountingInvoices = mysqlTable("accounting_invoices", {
@@ -91,6 +91,16 @@ export const agentCollaboration = mysqlTable("agent_collaboration", {
 	response: text(),
 	status: mysqlEnum(['pending','acknowledged','completed','failed']).notNull(),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const agentConnections = mysqlTable("agent_connections", {
+	id: int().autoincrement().notNull(),
+	agentId: int("agent_id").notNull(),
+	connectedAgentId: int("connected_agent_id").notNull(),
+	status: varchar({ length: 50 }).default('active'),
+	connectionType: varchar("connection_type", { length: 100 }).default('peer'),
+	metadata: json(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 });
 
 export const agentExecutionLogs = mysqlTable("agent_execution_logs", {
@@ -230,7 +240,7 @@ export const aiRecommendations = mysqlTable("ai_recommendations", {
 export const alertBroadcastLog = mysqlTable("alert_broadcast_log", {
 	id: int().autoincrement().notNull(),
 	alertId: int().notNull().references(() => emergencyAlerts.id, { onDelete: "cascade" } ),
-	channelId: int().notNull().references(() => radioChannels.id, { onDelete: "set null" } ),
+	channelId: int().notNull().references(() => radioChannels.id),
 	status: mysqlEnum(['pending','broadcasting','delivered','failed']).default('pending'),
 	listenersReached: int().default(0),
 	interruptedRegularContent: tinyint().default(0),
@@ -243,7 +253,7 @@ export const alertBroadcastLog = mysqlTable("alert_broadcast_log", {
 export const alertDeliveryLog = mysqlTable("alert_delivery_log", {
 	id: int().autoincrement().notNull(),
 	alertId: int().notNull().references(() => emergencyAlerts.id, { onDelete: "cascade" } ),
-	nodeId: int().references(() => hybridcastNodes.id, { onDelete: "set null" } ),
+	nodeId: int().references(() => hybridcastNodes.id),
 	region: varchar({ length: 255 }).notNull(),
 	status: mysqlEnum(['pending','delivered','failed']).default('pending'),
 	recipientsReached: int().default(0),
@@ -263,6 +273,18 @@ export const analyticsMetrics = mysqlTable("analytics_metrics", {
 	systemUptime: decimal({ precision: 5, scale: 2 }).default('100'),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
+export const analyticsSummary = mysqlTable("analytics_summary", {
+	id: int().autoincrement().notNull(),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	date: date({ mode: 'string' }).notNull(),
+	platform: varchar({ length: 100 }),
+	totalViews: int("total_views").default(0),
+	totalEngagement: int("total_engagement").default(0),
+	totalShares: int("total_shares").default(0),
+	totalComments: int("total_comments").default(0),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 });
 
 export const anomalyBaselines = mysqlTable("anomaly_baselines", {
@@ -545,6 +567,19 @@ export const broadcastChatCommands = mysqlTable("broadcast_chat_commands", {
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
 });
 
+export const broadcastSchedule = mysqlTable("broadcast_schedule", {
+	id: int().autoincrement().notNull(),
+	channelId: int("channel_id"),
+	title: varchar({ length: 500 }).notNull(),
+	description: text(),
+	startTime: timestamp("start_time", { mode: 'string' }),
+	endTime: timestamp("end_time", { mode: 'string' }),
+	status: varchar({ length: 50 }).default('scheduled'),
+	contentType: varchar("content_type", { length: 100 }),
+	contentUrl: text("content_url"),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
 export const broadcastSchedules = mysqlTable("broadcast_schedules", {
 	id: int().autoincrement().notNull(),
 	userId: int("user_id").notNull(),
@@ -577,6 +612,71 @@ export const broadcasts = mysqlTable("broadcasts", {
 	metadata: json(),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
+export const bulkScheduleTemplates = mysqlTable("bulk_schedule_templates", {
+	id: int().autoincrement().notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	description: text(),
+	templateData: json("template_data"),
+	createdBy: int("created_by"),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const callInQueue = mysqlTable("call_in_queue", {
+	id: int().autoincrement().notNull(),
+	showId: int("show_id").notNull(),
+	sessionId: int("session_id"),
+	userId: int("user_id"),
+	callerName: varchar("caller_name", { length: 255 }).notNull(),
+	callerEmail: varchar("caller_email", { length: 255 }),
+	topic: text(),
+	status: mysqlEnum(['waiting','screening','ready','on_air','completed','dropped','rejected']).default('waiting').notNull(),
+	queuePosition: int("queue_position").default(0),
+	peerId: varchar("peer_id", { length: 255 }),
+	connectionType: mysqlEnum("connection_type", ['webrtc','phone','sip']).default('webrtc').notNull(),
+	isMuted: tinyint("is_muted").default(1),
+	joinedAt: bigint("joined_at", { mode: "number" }).notNull(),
+	onAirAt: bigint("on_air_at", { mode: "number" }),
+	endedAt: bigint("ended_at", { mode: "number" }),
+	durationOnAir: int("duration_on_air"),
+	rating: int(),
+	notes: text(),
+	createdAt: bigint("created_at", { mode: "number" }).notNull(),
+});
+
+export const clientContentUploads = mysqlTable("client_content_uploads", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id").notNull(),
+	fileName: varchar("file_name", { length: 500 }).notNull(),
+	fileUrl: text("file_url").notNull(),
+	fileKey: varchar("file_key", { length: 500 }),
+	fileType: varchar("file_type", { length: 100 }),
+	fileSize: int("file_size"),
+	status: varchar({ length: 50 }).default('uploaded'),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const clientDonationHistory = mysqlTable("client_donation_history", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id").notNull(),
+	amount: decimal({ precision: 10, scale: 2 }).notNull(),
+	currency: varchar({ length: 10 }).default('USD'),
+	status: varchar({ length: 50 }).default('completed'),
+	stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
+	campaign: varchar({ length: 255 }),
+	message: text(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const clientProfiles = mysqlTable("client_profiles", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id").notNull(),
+	displayName: varchar("display_name", { length: 255 }),
+	bio: text(),
+	avatarUrl: text("avatar_url"),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
 });
 
 export const commercialBreaks = mysqlTable("commercial_breaks", {
@@ -620,7 +720,7 @@ export const commercials = mysqlTable("commercials", {
 export const conferenceAttendees = mysqlTable("conference_attendees", {
 	id: int().autoincrement().notNull(),
 	conferenceId: int("conference_id").notNull().references(() => conferences.id, { onDelete: "cascade" } ),
-	userId: int("user_id").references(() => users.id, { onDelete: "set null" } ),
+	userId: int("user_id").references(() => users.id),
 	name: varchar({ length: 255 }),
 	email: varchar({ length: 320 }),
 	rsvpStatus: mysqlEnum("rsvp_status", ['invited','accepted','declined','tentative','attended']).default('invited').notNull(),
@@ -689,19 +789,18 @@ export const conferences = mysqlTable("conferences", {
 	restreamPlatforms: text("restream_platforms"),
 });
 
-export const meetingPresentations = mysqlTable("meeting_presentations", {
+export const contentCalendarPosts = mysqlTable("content_calendar_posts", {
 	id: int().autoincrement().notNull(),
-	conferenceId: int("conference_id").references(() => conferences.id, { onDelete: "cascade" }),
-	roomCode: varchar("room_code", { length: 100 }),
 	title: varchar({ length: 500 }).notNull(),
-	filename: varchar({ length: 500 }).notNull(),
-	fileUrl: text("file_url").notNull(),
-	fileKey: text("file_key").notNull(),
-	fileSize: int("file_size"),
-	mimeType: varchar("mime_type", { length: 100 }),
-	uploadedBy: int("uploaded_by").references(() => users.id, { onDelete: "set null" }),
-	uploadedByName: varchar("uploaded_by_name", { length: 255 }),
+	content: text(),
+	platform: varchar({ length: 100 }),
+	scheduledAt: timestamp("scheduled_at", { mode: 'string' }),
+	status: varchar({ length: 50 }).default('draft'),
+	mediaUrls: json("media_urls"),
+	hashtags: json(),
+	createdBy: int("created_by"),
 	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
 });
 
 export const contentListenerHistory = mysqlTable("content_listener_history", {
@@ -795,6 +894,44 @@ export const conventions = mysqlTable("conventions", {
 	updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
 });
 
+export const customStations = mysqlTable("custom_stations", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id").notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	description: text(),
+	genre: varchar({ length: 100 }),
+	themeColor: varchar("theme_color", { length: 20 }),
+	logoUrl: text("logo_url"),
+	isPublic: tinyint("is_public").default(1),
+	listenerCount: int("listener_count").default(0),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
+export const decisionLogs = mysqlTable("decision_logs", {
+	id: int().autoincrement().notNull(),
+	decisionId: varchar("decision_id", { length: 255 }),
+	policyId: varchar("policy_id", { length: 255 }),
+	action: varchar({ length: 255 }),
+	result: text(),
+	confidence: decimal({ precision: 5, scale: 2 }),
+	metadata: json(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const decisions = mysqlTable("decisions", {
+	id: int().autoincrement().notNull(),
+	policyId: varchar("policy_id", { length: 255 }),
+	decisionType: varchar("decision_type", { length: 100 }),
+	action: varchar({ length: 255 }),
+	confidence: decimal({ precision: 5, scale: 2 }),
+	status: varchar({ length: 50 }).default('pending'),
+	result: text(),
+	metadata: json(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	executedAt: timestamp("executed_at", { mode: 'string' }),
+});
+
 export const detectedAnomalies = mysqlTable("detected_anomalies", {
 	id: int().autoincrement().notNull(),
 	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
@@ -812,6 +949,25 @@ export const detectedAnomalies = mysqlTable("detected_anomalies", {
 	resolvedAt: timestamp({ mode: 'string' }),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
+
+export const djProfiles = mysqlTable("dj_profiles", {
+	id: int().autoincrement().notNull(),
+	name: varchar({ length: 128 }).notNull(),
+	displayName: varchar({ length: 255 }).notNull(),
+	personality: text(),
+	voiceConfig: json(),
+	avatar: varchar({ length: 500 }),
+	isAi: tinyint().default(1),
+	status: mysqlEnum(['active','inactive','maintenance']).default('active'),
+	totalShows: int().default(0),
+	totalHoursOnAir: decimal({ precision: 10, scale: 2 }).default('0'),
+	assignedChannels: json(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+},
+(table) => [
+	index("idx_name").on(table.name),
+]);
 
 export const documentationPages = mysqlTable("documentation_pages", {
 	id: int().autoincrement().notNull(),
@@ -1007,6 +1163,29 @@ export const featureFlags = mysqlTable("feature_flags", {
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
 
+export const fileAccessLogs = mysqlTable("file_access_logs", {
+	id: int().autoincrement().notNull(),
+	fileId: int("file_id").notNull(),
+	userId: int("user_id"),
+	action: varchar({ length: 50 }).notNull(),
+	ipAddress: varchar("ip_address", { length: 45 }),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const files = mysqlTable("files", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id"),
+	fileName: varchar("file_name", { length: 500 }).notNull(),
+	fileUrl: text("file_url").notNull(),
+	fileKey: varchar("file_key", { length: 500 }),
+	mimeType: varchar("mime_type", { length: 100 }),
+	fileSize: int("file_size"),
+	category: varchar({ length: 100 }),
+	isPublic: tinyint("is_public").default(0),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
 export const filterHistory = mysqlTable("filter_history", {
 	id: int().autoincrement().notNull(),
 	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
@@ -1122,6 +1301,28 @@ export const generatedContent = mysqlTable("generated_content", {
 	metadata: json(),
 	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
+export const globalBroadcastState = mysqlTable("global_broadcast_state", {
+	id: int().autoincrement().notNull(),
+	currentContentTitle: varchar("current_content_title", { length: 255 }).default('RRB Live Radio').notNull(),
+	currentContentDescription: text("current_content_description"),
+	contentType: varchar("content_type", { length: 64 }).default('music'),
+	frequency: varchar({ length: 32 }).default('432Hz'),
+	startTime: bigint("start_time", { mode: "number" }),
+	endTime: bigint("end_time", { mode: "number" }),
+	duration: int().default(7200000),
+	allChannels: int("all_channels").default(54),
+	listenerCount: int("listener_count").default(0),
+	isLive: tinyint("is_live").default(1),
+	syncStatus: mysqlEnum("sync_status", ['PERFECT_SYNC','PARTIAL_SYNC','OUT_OF_SYNC','CHECKING']).default('PERFECT_SYNC'),
+	channelsInSync: int("channels_in_sync").default(54),
+	lastSyncVerification: timestamp("last_sync_verification", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	syncIntervalSeconds: int("sync_interval_seconds").default(60),
+	nextContentTitle: varchar("next_content_title", { length: 255 }),
+	nextContentStartTime: bigint("next_content_start_time", { mode: "number" }),
+	lastUpdated: timestamp("last_updated", { mode: 'string' }).defaultNow().onUpdateNow(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 });
 
 export const grants = mysqlTable("grants", {
@@ -1297,7 +1498,7 @@ export const listenerAnalytics = mysqlTable("listener_analytics", {
 export const listeners = mysqlTable("listeners", {
 	id: int().autoincrement().notNull(),
 	broadcastId: int().notNull().references(() => broadcasts.id, { onDelete: "cascade" } ),
-	userId: int().references(() => users.id, { onDelete: "set null" } ),
+	userId: int().references(() => users.id),
 	sessionId: varchar({ length: 255 }).notNull(),
 	joinedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
 	leftAt: timestamp({ mode: 'string' }),
@@ -1331,6 +1532,54 @@ export const mediaProjects = mysqlTable("media_projects", {
 	metadata: json(),
 	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
+export const meditationSessions = mysqlTable("meditation_sessions", {
+	id: int().autoincrement().notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	description: text(),
+	category: varchar({ length: 100 }).default('mindfulness'),
+	frequency: float().default(432),
+	frequencyName: varchar("frequency_name", { length: 100 }).default('Solfeggio 432Hz'),
+	durationMinutes: int("duration_minutes").default(10),
+	audioUrl: text("audio_url"),
+	imageUrl: text("image_url"),
+	isActive: tinyint("is_active").default(1),
+	playCount: int("play_count").default(0),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
+export const meetingPresentations = mysqlTable("meeting_presentations", {
+	id: int().autoincrement().notNull(),
+	conferenceId: int("conference_id").references(() => conferences.id, { onDelete: "cascade" } ),
+	roomCode: varchar("room_code", { length: 100 }),
+	title: varchar({ length: 500 }).notNull(),
+	filename: varchar({ length: 500 }).notNull(),
+	fileUrl: text("file_url").notNull(),
+	fileKey: text("file_key").notNull(),
+	fileSize: int("file_size"),
+	mimeType: varchar("mime_type", { length: 100 }),
+	uploadedBy: int("uploaded_by").references(() => users.id),
+	uploadedByName: varchar("uploaded_by_name", { length: 255 }),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const meetingRecordings = mysqlTable("meeting_recordings", {
+	id: int().autoincrement().notNull(),
+	roomId: varchar("room_id", { length: 100 }).notNull(),
+	roomName: varchar("room_name", { length: 255 }).notNull(),
+	recordingUrl: text("recording_url"),
+	recordingKey: varchar("recording_key", { length: 500 }),
+	duration: int(),
+	fileSizeMb: decimal("file_size_mb", { precision: 10, scale: 2 }),
+	recordedBy: int("recorded_by"),
+	recordedByName: varchar("recorded_by_name", { length: 255 }),
+	participants: json(),
+	status: mysqlEnum(['recording','uploading','processing','ready','failed']).default('recording').notNull(),
+	startedAt: bigint("started_at", { mode: "number" }).notNull(),
+	endedAt: bigint("ended_at", { mode: "number" }),
+	createdAt: bigint("created_at", { mode: "number" }).notNull(),
 });
 
 export const memoryStore = mysqlTable("memory_store", {
@@ -1485,6 +1734,18 @@ export const notifications = mysqlTable("notifications", {
 	archivedAt: timestamp({ mode: 'string' }),
 });
 
+export const payments = mysqlTable("payments", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id").notNull(),
+	stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
+	amount: decimal({ precision: 10, scale: 2 }).notNull(),
+	currency: varchar({ length: 10 }).default('USD'),
+	status: varchar({ length: 50 }).default('pending'),
+	description: text(),
+	metadata: json(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
 export const performanceMetrics = mysqlTable("performance_metrics", {
 	id: int().autoincrement().notNull(),
 	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
@@ -1507,6 +1768,18 @@ export const performanceTrends = mysqlTable("performance_trends", {
 	totalTokensUsed: int().default(0),
 	estimatedCost: decimal({ precision: 10, scale: 4 }).default('0'),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+});
+
+export const platformEngagementMetrics = mysqlTable("platform_engagement_metrics", {
+	id: int().autoincrement().notNull(),
+	platform: varchar({ length: 100 }).notNull(),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	date: date({ mode: 'string' }).notNull(),
+	impressions: int().default(0),
+	clicks: int().default(0),
+	engagementRate: decimal("engagement_rate", { precision: 5, scale: 2 }).default('0'),
+	followersGained: int("followers_gained").default(0),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 });
 
 export const playlistTracks = mysqlTable("playlist_tracks", {
@@ -1541,6 +1814,62 @@ export const plugins = mysqlTable("plugins", {
 	version: varchar({ length: 32 }).default('1.0.0'),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const podcastEpisodes = mysqlTable("podcast_episodes", {
+	id: int().autoincrement().notNull(),
+	showId: int("show_id").notNull(),
+	episodeNumber: int("episode_number").notNull(),
+	title: varchar({ length: 500 }).notNull(),
+	description: text(),
+	audioUrl: text("audio_url"),
+	audioFileKey: varchar("audio_file_key", { length: 500 }),
+	videoUrl: text("video_url"),
+	thumbnailUrl: text("thumbnail_url"),
+	duration: int(),
+	fileSize: int("file_size"),
+	status: mysqlEnum(['draft','uploading','processing','ready','published','scheduled','archived']).default('draft').notNull(),
+	publishedAt: bigint("published_at", { mode: "number" }),
+	scheduledPublishAt: bigint("scheduled_publish_at", { mode: "number" }),
+	spotifyEpisodeId: varchar("spotify_episode_id", { length: 255 }),
+	appleEpisodeId: varchar("apple_episode_id", { length: 255 }),
+	youtubeVideoId: varchar("youtube_video_id", { length: 255 }),
+	distributionStatus: json("distribution_status"),
+	playCount: int("play_count").default(0),
+	downloadCount: int("download_count").default(0),
+	likeCount: int("like_count").default(0),
+	tags: json(),
+	guestNames: json("guest_names"),
+	showNotes: text("show_notes"),
+	transcriptUrl: text("transcript_url"),
+	chapters: json(),
+	createdAt: bigint("created_at", { mode: "number" }).notNull(),
+	updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+});
+
+export const podcastShows = mysqlTable("podcast_shows", {
+	id: int().autoincrement().notNull(),
+	slug: varchar({ length: 100 }).notNull(),
+	title: varchar({ length: 500 }).notNull(),
+	subtitle: varchar({ length: 500 }),
+	description: text(),
+	hostPersona: mysqlEnum("host_persona", ['candy','valanna','seraph']).notNull(),
+	hostName: varchar("host_name", { length: 255 }).notNull(),
+	coverImageUrl: text("cover_image_url"),
+	themeColor: varchar("theme_color", { length: 20 }).default('#a78bfa'),
+	scheduleDay: varchar("schedule_day", { length: 100 }),
+	scheduleTime: varchar("schedule_time", { length: 50 }),
+	scheduleTimezone: varchar("schedule_timezone", { length: 20 }).default('CT'),
+	isLive: tinyint("is_live").default(0),
+	totalEpisodes: int("total_episodes").default(0),
+	totalListeners: int("total_listeners").default(0),
+	spotifyUrl: text("spotify_url"),
+	appleUrl: text("apple_url"),
+	youtubeUrl: text("youtube_url"),
+	rssFeedUrl: text("rss_feed_url"),
+	isActive: tinyint("is_active").default(1).notNull(),
+	createdAt: bigint("created_at", { mode: "number" }).notNull(),
+	updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
 });
 
 export const policyDecisions = mysqlTable("policy_decisions", {
@@ -1633,6 +1962,26 @@ export const qumusDecisionLogs = mysqlTable("qumus_decision_logs", {
 	index("qumus_decision_logs_decision_id_unique").on(table.decisionId),
 ]);
 
+export const qumusDecisions = mysqlTable("qumus_decisions", {
+	id: int().autoincrement().notNull(),
+	decisionId: varchar({ length: 128 }).notNull(),
+	policyName: varchar({ length: 128 }).notNull(),
+	action: varchar({ length: 255 }).notNull(),
+	input: json(),
+	output: json(),
+	confidence: decimal({ precision: 5, scale: 4 }).default('0.9000'),
+	isAutonomous: tinyint().default(1),
+	humanOverride: tinyint().default(0),
+	executionTimeMs: int().default(0),
+	status: mysqlEnum(['pending','approved','executed','rejected','failed']).default('executed'),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
+},
+(table) => [
+	index("idx_policy").on(table.policyName),
+	index("idx_created").on(table.createdAt),
+	index("idx_decision").on(table.decisionId),
+]);
+
 export const qumusHumanReview = mysqlTable("qumus_human_review", {
 	id: int().autoincrement().notNull(),
 	decisionId: varchar("decision_id", { length: 255 }).notNull(),
@@ -1712,21 +2061,7 @@ export const quotas = mysqlTable("quotas", {
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
 
-export const radioChannels = mysqlTable("radioChannels", {
-	id: int().autoincrement().notNull(),
-	name: varchar({ length: 255 }).notNull(),
-	description: text(),
-	frequency: decimal({ precision: 6, scale: 2 }),
-	healingFrequency: int(),
-	streamUrl: varchar({ length: 2048 }),
-	status: mysqlEnum(['active','inactive','maintenance']).default('active'),
-	listeners: int().default(0),
-	metadata: json(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
-	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
-});
-
-export const radioChannelsV2 = mysqlTable("radio_channels", {
+export const radioChannels = mysqlTable("radio_channels", {
 	id: int().autoincrement().notNull(),
 	stationId: int().notNull().references(() => radioStations.id, { onDelete: "cascade" } ),
 	name: varchar({ length: 255 }).notNull(),
@@ -1805,6 +2140,34 @@ export const reportHistory = mysqlTable("report_history", {
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
 
+export const reviewHelpfulness = mysqlTable("review_helpfulness", {
+	id: int().autoincrement().notNull(),
+	reviewId: int("review_id").notNull(),
+	userId: int("user_id").notNull(),
+	helpful: tinyint().default(1),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const reviewResponses = mysqlTable("review_responses", {
+	id: int().autoincrement().notNull(),
+	reviewId: int("review_id").notNull(),
+	userId: int("user_id").notNull(),
+	content: text().notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const reviews = mysqlTable("reviews", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id").notNull(),
+	targetType: varchar("target_type", { length: 100 }).notNull(),
+	targetId: int("target_id").notNull(),
+	rating: int().notNull(),
+	title: varchar({ length: 500 }),
+	content: text(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
 export const rockinBoogieContent = mysqlTable("rockin_boogie_content", {
 	id: int().autoincrement().notNull(),
 	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
@@ -1826,7 +2189,7 @@ export const rockinBoogieContent = mysqlTable("rockin_boogie_content", {
 export const royaltyCollaborators = mysqlTable("royalty_collaborators", {
 	id: int().autoincrement().notNull(),
 	projectId: int().notNull().references(() => royaltyProjects.id, { onDelete: "cascade" } ),
-	userId: int().references(() => users.id, { onDelete: "set null" } ),
+	userId: int().references(() => users.id),
 	artistName: varchar({ length: 255 }).notNull(),
 	role: mysqlEnum(['artist','producer','songwriter','engineer','featured','session_musician','other']).default('artist').notNull(),
 	splitPercentage: decimal({ precision: 5, scale: 2 }).default('0.00').notNull(),
@@ -1843,7 +2206,7 @@ export const royaltyCollaborators = mysqlTable("royalty_collaborators", {
 export const royaltyDistributions = mysqlTable("royalty_distributions", {
 	id: int().autoincrement().notNull(),
 	paymentId: int().notNull().references(() => royaltyPayments.id, { onDelete: "cascade" } ),
-	collaboratorId: int().notNull().references(() => royaltyCollaborators.id, { onDelete: "set null" } ),
+	collaboratorId: int().notNull().references(() => royaltyCollaborators.id),
 	amount: decimal({ precision: 12, scale: 2 }).notNull(),
 	splitPercentage: decimal({ precision: 5, scale: 2 }).notNull(),
 	status: mysqlEnum(['calculated','pending_payment','paid','disputed']).default('calculated').notNull(),
@@ -1864,7 +2227,7 @@ export const royaltyPayments = mysqlTable("royalty_payments", {
 	periodEnd: timestamp({ mode: 'string' }),
 	statementRef: varchar({ length: 255 }),
 	notes: text(),
-	recordedBy: int().notNull().references(() => users.id, { onDelete: "set null" } ),
+	recordedBy: int().notNull().references(() => users.id),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
 
@@ -1887,7 +2250,7 @@ export const royaltyProjects = mysqlTable("royalty_projects", {
 export const royaltyStatements = mysqlTable("royalty_statements", {
 	id: int().autoincrement().notNull(),
 	collaboratorId: int().notNull().references(() => royaltyCollaborators.id, { onDelete: "cascade" } ),
-	projectId: int().notNull().references(() => royaltyProjects.id, { onDelete: "set null" } ),
+	projectId: int().notNull().references(() => royaltyProjects.id),
 	periodStart: timestamp({ mode: 'string' }).notNull(),
 	periodEnd: timestamp({ mode: 'string' }).notNull(),
 	totalEarnings: decimal({ precision: 12, scale: 2 }).default('0.00').notNull(),
@@ -1939,7 +2302,7 @@ export const rrbFrequencies = mysqlTable("rrb_frequencies", {
 export const rrbListeningHistory = mysqlTable("rrb_listening_history", {
 	id: int().autoincrement().notNull(),
 	userId: int().references(() => users.id, { onDelete: "cascade" } ),
-	channelId: int().notNull().references(() => rrbChannels.id, { onDelete: "set null" } ),
+	channelId: int().notNull().references(() => rrbChannels.id),
 	frequencyId: int().references(() => rrbFrequencies.id, { onDelete: "set null" } ),
 	sessionStartTime: timestamp({ mode: 'string' }).notNull(),
 	sessionEndTime: timestamp({ mode: 'string' }),
@@ -2071,6 +2434,56 @@ export const solbonesLeaderboard = mysqlTable("solbones_leaderboard", {
 	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 });
 
+export const squaddCommunityMembers = mysqlTable("squadd_community_members", {
+	id: varchar({ length: 50 }).notNull(),
+	userId: varchar({ length: 50 }).notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	email: varchar({ length: 320 }).notNull(),
+	role: mysqlEnum(['member','moderator','admin']).default('member'),
+	status: mysqlEnum(['active','inactive','suspended']).default('active'),
+	joinedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	lastActive: timestamp({ mode: 'string' }),
+	metadata: json(),
+},
+(table) => [
+	index("members_user_id_idx").on(table.userId),
+	index("members_status_idx").on(table.status),
+	index("members_role_idx").on(table.role),
+	index("userId").on(table.userId),
+]);
+
+export const squaddGoalProgress = mysqlTable("squadd_goal_progress", {
+	id: varchar({ length: 50 }).notNull(),
+	goalId: varchar({ length: 50 }).notNull().references(() => squaddGoals.id, { onDelete: "cascade" } ),
+	userId: varchar({ length: 50 }).notNull(),
+	amount: decimal({ precision: 15, scale: 2 }).notNull(),
+	note: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
+},
+(table) => [
+	index("progress_goal_id_idx").on(table.goalId),
+	index("progress_user_id_idx").on(table.userId),
+]);
+
+export const squaddGoals = mysqlTable("squadd_goals", {
+	id: varchar({ length: 50 }).notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	description: text(),
+	category: varchar({ length: 100 }).notNull(),
+	targetAmount: decimal({ precision: 15, scale: 2 }),
+	currentAmount: decimal({ precision: 15, scale: 2 }).default('0.00'),
+	deadline: timestamp({ mode: 'string' }),
+	status: mysqlEnum(['active','completed','paused','cancelled']).default('active'),
+	createdBy: varchar({ length: 50 }).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
+},
+(table) => [
+	index("goals_category_idx").on(table.category),
+	index("goals_status_idx").on(table.status),
+	index("goals_created_by_idx").on(table.createdBy),
+]);
+
 export const squaddMembers = mysqlTable("squadd_members", {
 	id: int().autoincrement().notNull(),
 	name: varchar({ length: 255 }).notNull(),
@@ -2089,6 +2502,84 @@ export const squaddMembers = mysqlTable("squadd_members", {
 	isActive: tinyint("is_active").default(1).notNull(),
 	createdAt: bigint("created_at", { mode: "number" }).notNull(),
 	updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+});
+
+export const stationAnalytics = mysqlTable("station_analytics", {
+	id: int().autoincrement().notNull(),
+	stationId: int("station_id").notNull(),
+	// you can use { mode: 'date' }, if you want to have Date as type for this column
+	date: date({ mode: 'string' }),
+	listeners: int().default(0),
+	peakListeners: int("peak_listeners").default(0),
+	totalPlayTime: int("total_play_time").default(0),
+	avgSessionDuration: int("avg_session_duration").default(0),
+	tracksPlayed: int("tracks_played").default(0),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const stationContentSources = mysqlTable("station_content_sources", {
+	id: int().autoincrement().notNull(),
+	stationId: int("station_id").notNull(),
+	sourceType: varchar("source_type", { length: 100 }).notNull(),
+	sourceUrl: text("source_url"),
+	isActive: tinyint("is_active").default(1),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const stationPlaybackHistory = mysqlTable("station_playback_history", {
+	id: int().autoincrement().notNull(),
+	stationId: int("station_id").notNull(),
+	trackTitle: varchar("track_title", { length: 500 }),
+	artist: varchar({ length: 255 }),
+	playedAt: timestamp("played_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	duration: int(),
+});
+
+export const stationSharing = mysqlTable("station_sharing", {
+	id: int().autoincrement().notNull(),
+	stationId: int("station_id").notNull(),
+	sharedWithUserId: int("shared_with_user_id").notNull(),
+	permission: varchar({ length: 50 }).default('listen'),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const stationTemplates = mysqlTable("station_templates", {
+	id: int().autoincrement().notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	description: text(),
+	genre: varchar({ length: 100 }),
+	defaultConfig: json("default_config"),
+	previewUrl: text("preview_url"),
+	isActive: tinyint("is_active").default(1),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
+export const streamDestinations = mysqlTable("stream_destinations", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id").notNull(),
+	platform: mysqlEnum(['youtube','facebook','instagram','twitter','tiktok','twitch','linkedin','custom']).notNull(),
+	label: varchar({ length: 255 }).notNull(),
+	rtmpUrl: text("rtmp_url"),
+	streamKey: text("stream_key"),
+	isEnabled: tinyint("is_enabled").default(1),
+	lastUsedAt: timestamp("last_used_at", { mode: 'string' }),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
+export const streamSessions = mysqlTable("stream_sessions", {
+	id: int().autoincrement().notNull(),
+	conferenceId: int("conference_id").references(() => conferences.id, { onDelete: "cascade" } ),
+	title: varchar({ length: 500 }).notNull(),
+	startedBy: int("started_by").notNull(),
+	startedAt: timestamp("started_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	endedAt: timestamp("ended_at", { mode: 'string' }),
+	status: mysqlEnum(['live','ended','failed']).default('live'),
+	platforms: text(),
+	viewerCount: int("viewer_count").default(0),
+	peakViewers: int("peak_viewers").default(0),
+	notes: text(),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
 });
 
 export const streamingStatus = mysqlTable("streaming_status", {
@@ -2197,6 +2688,19 @@ export const subscriptionTiers = mysqlTable("subscription_tiers", {
 	index("subscription_tiers_name_unique").on(table.name),
 ]);
 
+export const subscriptions = mysqlTable("subscriptions", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id").notNull(),
+	plan: varchar({ length: 100 }).notNull(),
+	stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+	status: varchar({ length: 50 }).default('active'),
+	currentPeriodStart: timestamp("current_period_start", { mode: 'string' }),
+	currentPeriodEnd: timestamp("current_period_end", { mode: 'string' }),
+	cancelAtPeriodEnd: tinyint("cancel_at_period_end").default(0),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
+});
+
 export const suppressionRules = mysqlTable("suppression_rules", {
 	id: int().autoincrement().notNull(),
 	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
@@ -2259,21 +2763,6 @@ export const systemCommands = mysqlTable("systemCommands", {
 	index("commandId").on(table.commandId),
 ]);
 
-export const systemMetrics = mysqlTable("systemMetrics", {
-	id: int().autoincrement().notNull(),
-	system: mysqlEnum(['qumus','rrb','hybridcast']).notNull(),
-	timestamp: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
-	activeListeners: int().default(0),
-	totalBroadcasts: int().default(0),
-	totalDonations: decimal({ precision: 15, scale: 2 }).default('0'),
-	uptime: decimal({ precision: 5, scale: 2 }).default('100'),
-	cpuUsage: decimal({ precision: 5, scale: 2 }),
-	memoryUsage: decimal({ precision: 5, scale: 2 }),
-	bandwidth: int(),
-	metadata: json(),
-	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
 export const systemAlerts = mysqlTable("system_alerts", {
 	id: int().autoincrement().notNull(),
 	severity: mysqlEnum(['critical','warning','info']).default('info'),
@@ -2286,7 +2775,16 @@ export const systemAlerts = mysqlTable("system_alerts", {
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 });
 
-export const systemMetricsV2 = mysqlTable("system_metrics", {
+export const systemConfig = mysqlTable("system_config", {
+	id: int().autoincrement().notNull(),
+	configKey: varchar("config_key", { length: 255 }).notNull(),
+	configValue: text("config_value").notNull(),
+	description: varchar({ length: 500 }),
+	updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+	updatedBy: varchar("updated_by", { length: 255 }),
+});
+
+export const systemMetrics = mysqlTable("system_metrics", {
 	id: int().autoincrement().notNull(),
 	timestamp: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	activeUsers: int().default(0),
@@ -2442,6 +2940,15 @@ export const usageQuotas = mysqlTable("usage_quotas", {
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 });
 
+export const userStationPreferences = mysqlTable("user_station_preferences", {
+	id: int().autoincrement().notNull(),
+	userId: int("user_id").notNull(),
+	stationId: int("station_id").notNull(),
+	isFavorite: tinyint("is_favorite").default(0),
+	volume: int().default(80),
+	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
+});
+
 export const userSubscriptions = mysqlTable("user_subscriptions", {
 	id: int().autoincrement().notNull(),
 	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
@@ -2482,6 +2989,40 @@ export const usersWithStripe = mysqlTable("users_with_stripe", {
 	stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
 	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+});
+
+export const videoCaptions = mysqlTable("video_captions", {
+	id: int().autoincrement().notNull(),
+	videoId: varchar("video_id", { length: 100 }).notNull(),
+	language: varchar({ length: 10 }).default('en').notNull(),
+	label: varchar({ length: 100 }).default('English').notNull(),
+	captions: json().notNull(),
+	uploadedBy: int("uploaded_by"),
+	isDefault: tinyint("is_default").default(1),
+	createdAt: bigint("created_at", { mode: "number" }).notNull(),
+	updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+});
+
+export const videoLibrary = mysqlTable("video_library", {
+	id: int().autoincrement().notNull(),
+	videoId: varchar("video_id", { length: 100 }).notNull(),
+	title: varchar({ length: 500 }).notNull(),
+	description: text(),
+	videoUrl: text("video_url").notNull(),
+	videoKey: varchar("video_key", { length: 500 }),
+	posterUrl: text("poster_url"),
+	duration: varchar({ length: 20 }),
+	type: mysqlEnum(['narrated','instrumental','social','vertical','presentation','recording','upload']).default('upload').notNull(),
+	aspectRatio: varchar("aspect_ratio", { length: 10 }).default('16:9'),
+	narratedBy: varchar("narrated_by", { length: 255 }),
+	tags: json(),
+	uploadedBy: int("uploaded_by"),
+	uploadedByName: varchar("uploaded_by_name", { length: 255 }),
+	status: mysqlEnum(['draft','processing','published','archived']).default('published').notNull(),
+	viewCount: int("view_count").default(0),
+	downloadCount: int("download_count").default(0),
+	createdAt: bigint("created_at", { mode: "number" }).notNull(),
+	updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
 });
 
 export const viewerMetrics = mysqlTable("viewer_metrics", {
@@ -2575,627 +3116,170 @@ export const wellnessCheckins = mysqlTable("wellness_checkins", {
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow(),
 });
 
-// ─── Podcast Shows ─────────────────────────────────────────
-export const podcastShows = mysqlTable("podcast_shows", {
-  id: int().autoincrement().notNull(),
-  slug: varchar({ length: 100 }).notNull(),
-  title: varchar({ length: 500 }).notNull(),
-  subtitle: varchar({ length: 500 }),
-  description: text(),
-  hostPersona: mysqlEnum("host_persona", ['candy', 'valanna', 'seraph']).notNull(),
-  hostName: varchar("host_name", { length: 255 }).notNull(),
-  coverImageUrl: text("cover_image_url"),
-  themeColor: varchar("theme_color", { length: 20 }).default('#a78bfa'),
-  scheduleDay: varchar("schedule_day", { length: 100 }),
-  scheduleTime: varchar("schedule_time", { length: 50 }),
-  scheduleTimezone: varchar("schedule_timezone", { length: 20 }).default('CT'),
-  isLive: tinyint("is_live").default(0),
-  totalEpisodes: int("total_episodes").default(0),
-  totalListeners: int("total_listeners").default(0),
-  spotifyUrl: text("spotify_url"),
-  appleUrl: text("apple_url"),
-  youtubeUrl: text("youtube_url"),
-  rssFeedUrl: text("rss_feed_url"),
-  isActive: tinyint("is_active").default(1).notNull(),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
-  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
-});
 
-// ─── Podcast Episodes ──────────────────────────────────────
-export const podcastEpisodes = mysqlTable("podcast_episodes", {
-  id: int().autoincrement().notNull(),
-  showId: int("show_id").notNull(),
-  episodeNumber: int("episode_number").notNull(),
-  title: varchar({ length: 500 }).notNull(),
-  description: text(),
-  audioUrl: text("audio_url"),
-  audioFileKey: varchar("audio_file_key", { length: 500 }),
-  videoUrl: text("video_url"),
-  thumbnailUrl: text("thumbnail_url"),
-  duration: int(),
-  fileSize: int("file_size"),
-  status: mysqlEnum("status", ['draft', 'uploading', 'processing', 'ready', 'published', 'scheduled', 'archived']).default('draft').notNull(),
-  publishedAt: bigint("published_at", { mode: "number" }),
-  scheduledPublishAt: bigint("scheduled_publish_at", { mode: "number" }),
-  spotifyEpisodeId: varchar("spotify_episode_id", { length: 255 }),
-  appleEpisodeId: varchar("apple_episode_id", { length: 255 }),
-  youtubeVideoId: varchar("youtube_video_id", { length: 255 }),
-  distributionStatus: json("distribution_status"),
-  playCount: int("play_count").default(0),
-  downloadCount: int("download_count").default(0),
-  likeCount: int("like_count").default(0),
-  tags: json("tags"),
-  guestNames: json("guest_names"),
-  showNotes: text("show_notes"),
-  transcriptUrl: text("transcript_url"),
-  chapters: json("chapters"),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
-  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
-});
-
-// ─── Call-In Queue ─────────────────────────────────────────
-export const callInQueue = mysqlTable("call_in_queue", {
-  id: int().autoincrement().notNull(),
-  showId: int("show_id").notNull(),
-  sessionId: int("session_id"),
-  userId: int("user_id"),
-  callerName: varchar("caller_name", { length: 255 }).notNull(),
-  callerEmail: varchar("caller_email", { length: 255 }),
-  topic: text(),
-  status: mysqlEnum("status", ['waiting', 'screening', 'ready', 'on_air', 'completed', 'dropped', 'rejected']).default('waiting').notNull(),
-  queuePosition: int("queue_position").default(0),
-  peerId: varchar("peer_id", { length: 255 }),
-  connectionType: mysqlEnum("connection_type", ['webrtc', 'phone', 'sip']).default('webrtc').notNull(),
-  isMuted: tinyint("is_muted").default(1),
-  joinedAt: bigint("joined_at", { mode: "number" }).notNull(),
-  onAirAt: bigint("on_air_at", { mode: "number" }),
-  endedAt: bigint("ended_at", { mode: "number" }),
-  durationOnAir: int("duration_on_air"),
-  rating: int(),
-  notes: text(),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
-});
-
-// ─── Client Profiles ──────────────────────────────────────
-export const clientProfiles = mysqlTable("client_profiles", {
-  id: int().autoincrement().notNull(),
-  userId: int("user_id").notNull(),
-  displayName: varchar("display_name", { length: 255 }),
-  bio: text(),
-  avatarUrl: text("avatar_url"),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
-});
-
-// ─── Client Donation History ──────────────────────────────
-export const clientDonationHistory = mysqlTable("client_donation_history", {
-  id: int().autoincrement().notNull(),
-  userId: int("user_id").notNull(),
-  amount: decimal({ precision: 10, scale: 2 }).notNull(),
-  currency: varchar({ length: 10 }).default('USD'),
-  status: varchar({ length: 50 }).default('completed'),
-  stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
-  campaign: varchar({ length: 255 }),
-  message: text(),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Client Content Uploads ───────────────────────────────
-export const clientContentUploads = mysqlTable("client_content_uploads", {
-  id: int().autoincrement().notNull(),
-  userId: int("user_id").notNull(),
-  fileName: varchar("file_name", { length: 500 }).notNull(),
-  fileUrl: text("file_url").notNull(),
-  fileKey: varchar("file_key", { length: 500 }),
-  fileType: varchar("file_type", { length: 100 }),
-  fileSize: int("file_size"),
-  status: varchar({ length: 50 }).default('uploaded'),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Reviews ──────────────────────────────────────────────
-export const reviews = mysqlTable("reviews", {
-  id: int().autoincrement().notNull(),
-  userId: int("user_id").notNull(),
-  targetType: varchar("target_type", { length: 100 }).notNull(),
-  targetId: int("target_id").notNull(),
-  rating: int().notNull(),
-  title: varchar({ length: 500 }),
-  content: text(),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
-});
-
-// ─── Review Helpfulness ───────────────────────────────────
-export const reviewHelpfulness = mysqlTable("review_helpfulness", {
-  id: int().autoincrement().notNull(),
-  reviewId: int("review_id").notNull(),
-  userId: int("user_id").notNull(),
-  helpful: tinyint().default(1),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Review Responses ─────────────────────────────────────
-export const reviewResponses = mysqlTable("review_responses", {
-  id: int().autoincrement().notNull(),
-  reviewId: int("review_id").notNull(),
-  userId: int("user_id").notNull(),
-  content: text().notNull(),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Agent Connections ────────────────────────────────────
-export const agentConnections = mysqlTable("agent_connections", {
-  id: int().autoincrement().notNull(),
-  agentId: int("agent_id").notNull(),
-  connectedAgentId: int("connected_agent_id").notNull(),
-  status: varchar({ length: 50 }).default('active'),
-  connectionType: varchar("connection_type", { length: 100 }).default('peer'),
-  metadata: json(),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Analytics Summary ────────────────────────────────────
-export const analyticsSummary = mysqlTable("analytics_summary", {
-  id: int().autoincrement().notNull(),
-  date: date().notNull(),
-  platform: varchar({ length: 100 }),
-  totalViews: int("total_views").default(0),
-  totalEngagement: int("total_engagement").default(0),
-  totalShares: int("total_shares").default(0),
-  totalComments: int("total_comments").default(0),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Broadcast Schedule ───────────────────────────────────
-export const broadcastSchedule = mysqlTable("broadcast_schedule", {
-  id: int().autoincrement().notNull(),
-  channelId: int("channel_id"),
-  title: varchar({ length: 500 }).notNull(),
-  description: text(),
-  startTime: timestamp("start_time", { mode: 'string' }),
-  endTime: timestamp("end_time", { mode: 'string' }),
-  status: varchar({ length: 50 }).default('scheduled'),
-  contentType: varchar("content_type", { length: 100 }),
-  contentUrl: text("content_url"),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Bulk Schedule Templates ──────────────────────────────
-export const bulkScheduleTemplates = mysqlTable("bulk_schedule_templates", {
-  id: int().autoincrement().notNull(),
-  name: varchar({ length: 255 }).notNull(),
-  description: text(),
-  templateData: json("template_data"),
-  createdBy: int("created_by"),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Content Calendar Posts ───────────────────────────────
-export const contentCalendarPosts = mysqlTable("content_calendar_posts", {
-  id: int().autoincrement().notNull(),
-  title: varchar({ length: 500 }).notNull(),
-  content: text(),
-  platform: varchar({ length: 100 }),
-  scheduledAt: timestamp("scheduled_at", { mode: 'string' }),
-  status: varchar({ length: 50 }).default('draft'),
-  mediaUrls: json("media_urls"),
-  hashtags: json(),
-  createdBy: int("created_by"),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
-});
-
-// ─── Custom Stations ──────────────────────────────────────
-export const customStations = mysqlTable("custom_stations", {
-  id: int().autoincrement().notNull(),
-  userId: int("user_id").notNull(),
-  name: varchar({ length: 255 }).notNull(),
-  description: text(),
-  genre: varchar({ length: 100 }),
-  themeColor: varchar("theme_color", { length: 20 }),
-  logoUrl: text("logo_url"),
-  isPublic: tinyint("is_public").default(1),
-  listenerCount: int("listener_count").default(0),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
-});
-
-// ─── Decision Logs ────────────────────────────────────────
-export const decisionLogs = mysqlTable("decision_logs", {
-  id: int().autoincrement().notNull(),
-  decisionId: varchar("decision_id", { length: 255 }),
-  policyId: varchar("policy_id", { length: 255 }),
-  action: varchar({ length: 255 }),
-  result: text(),
-  confidence: decimal({ precision: 5, scale: 2 }),
-  metadata: json(),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── File Access Logs ─────────────────────────────────────
-export const fileAccessLogs = mysqlTable("file_access_logs", {
-  id: int().autoincrement().notNull(),
-  fileId: int("file_id").notNull(),
-  userId: int("user_id"),
-  action: varchar({ length: 50 }).notNull(),
-  ipAddress: varchar("ip_address", { length: 45 }),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Platform Engagement Metrics ──────────────────────────
-export const platformEngagementMetrics = mysqlTable("platform_engagement_metrics", {
-  id: int().autoincrement().notNull(),
-  platform: varchar({ length: 100 }).notNull(),
-  date: date().notNull(),
-  impressions: int().default(0),
-  clicks: int().default(0),
-  engagementRate: decimal("engagement_rate", { precision: 5, scale: 2 }).default('0'),
-  followersGained: int("followers_gained").default(0),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Station Content Sources ──────────────────────────────
-export const stationContentSources = mysqlTable("station_content_sources", {
-  id: int().autoincrement().notNull(),
-  stationId: int("station_id").notNull(),
-  sourceType: varchar("source_type", { length: 100 }).notNull(),
-  sourceUrl: text("source_url"),
-  isActive: tinyint("is_active").default(1),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Station Playback History ─────────────────────────────
-export const stationPlaybackHistory = mysqlTable("station_playback_history", {
-  id: int().autoincrement().notNull(),
-  stationId: int("station_id").notNull(),
-  trackTitle: varchar("track_title", { length: 500 }),
-  artist: varchar({ length: 255 }),
-  playedAt: timestamp("played_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  duration: int(),
-});
-
-// ─── User Station Preferences ─────────────────────────────
-export const userStationPreferences = mysqlTable("user_station_preferences", {
-  id: int().autoincrement().notNull(),
-  userId: int("user_id").notNull(),
-  stationId: int("station_id").notNull(),
-  isFavorite: tinyint("is_favorite").default(0),
-  volume: int().default(80),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Decisions ────────────────────────────────────────────
-export const decisions = mysqlTable("decisions", {
-  id: int().autoincrement().notNull(),
-  policyId: varchar("policy_id", { length: 255 }),
-  decisionType: varchar("decision_type", { length: 100 }),
-  action: varchar({ length: 255 }),
-  confidence: decimal({ precision: 5, scale: 2 }),
-  status: varchar({ length: 50 }).default('pending'),
-  result: text(),
-  metadata: json(),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  executedAt: timestamp("executed_at", { mode: 'string' }),
-});
-
-// ─── Files ────────────────────────────────────────────────
-export const files = mysqlTable("files", {
-  id: int().autoincrement().notNull(),
-  userId: int("user_id"),
-  fileName: varchar("file_name", { length: 500 }).notNull(),
-  fileUrl: text("file_url").notNull(),
-  fileKey: varchar("file_key", { length: 500 }),
-  mimeType: varchar("mime_type", { length: 100 }),
-  fileSize: int("file_size"),
-  category: varchar({ length: 100 }),
-  isPublic: tinyint("is_public").default(0),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
-});
-
-// ─── Payments ─────────────────────────────────────────────
-export const payments = mysqlTable("payments", {
-  id: int().autoincrement().notNull(),
-  userId: int("user_id").notNull(),
-  stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
-  amount: decimal({ precision: 10, scale: 2 }).notNull(),
-  currency: varchar({ length: 10 }).default('USD'),
-  status: varchar({ length: 50 }).default('pending'),
-  description: text(),
-  metadata: json(),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Subscriptions ────────────────────────────────────────
-export const subscriptions = mysqlTable("subscriptions", {
-  id: int().autoincrement().notNull(),
-  userId: int("user_id").notNull(),
-  plan: varchar({ length: 100 }).notNull(),
-  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
-  status: varchar({ length: 50 }).default('active'),
-  currentPeriodStart: timestamp("current_period_start", { mode: 'string' }),
-  currentPeriodEnd: timestamp("current_period_end", { mode: 'string' }),
-  cancelAtPeriodEnd: tinyint("cancel_at_period_end").default(0),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
-});
-
-// ─── Station Analytics ────────────────────────────────────
-export const stationAnalytics = mysqlTable("station_analytics", {
-  id: int().autoincrement().notNull(),
-  stationId: int("station_id").notNull(),
-  date: date(),
-  listeners: int().default(0),
-  peakListeners: int("peak_listeners").default(0),
-  totalPlayTime: int("total_play_time").default(0),
-  avgSessionDuration: int("avg_session_duration").default(0),
-  tracksPlayed: int("tracks_played").default(0),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Station Templates ────────────────────────────────────
-export const stationTemplates = mysqlTable("station_templates", {
-  id: int().autoincrement().notNull(),
-  name: varchar({ length: 255 }).notNull(),
-  description: text(),
-  genre: varchar({ length: 100 }),
-  defaultConfig: json("default_config"),
-  previewUrl: text("preview_url"),
-  isActive: tinyint("is_active").default(1),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-// ─── Station Sharing ──────────────────────────────────────
-export const stationSharing = mysqlTable("station_sharing", {
-  id: int().autoincrement().notNull(),
-  stationId: int("station_id").notNull(),
-  sharedWithUserId: int("shared_with_user_id").notNull(),
-  permission: varchar({ length: 50 }).default('listen'),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-
-// System-wide configuration (Restream URL, platform settings, etc.)
-export const systemConfig = mysqlTable("system_config", {
-  id: int().autoincrement().notNull(),
-  configKey: varchar("config_key", { length: 255 }).notNull(),
-  configValue: text("config_value").notNull(),
-  description: varchar({ length: 500 }),
-  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
-  updatedBy: varchar("updated_by", { length: 255 }),
-});
-
-// ─── Video Captions (CC/Subtitles) ───────────────────────
-export const videoCaptions = mysqlTable("video_captions", {
-  id: int().autoincrement().notNull(),
-  videoId: varchar("video_id", { length: 100 }).notNull(),
-  language: varchar({ length: 10 }).default('en').notNull(),
-  label: varchar({ length: 100 }).default('English').notNull(),
-  captions: json().notNull(), // Array of { start: number, end: number, text: string }
-  uploadedBy: int("uploaded_by"),
-  isDefault: tinyint("is_default").default(1),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
-  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
-});
-
-// ─── Video Library (All produced & uploaded videos) ──────
-export const videoLibrary = mysqlTable("video_library", {
-  id: int().autoincrement().notNull(),
-  videoId: varchar("video_id", { length: 100 }).notNull(),
-  title: varchar({ length: 500 }).notNull(),
-  description: text(),
-  videoUrl: text("video_url").notNull(),
-  videoKey: varchar("video_key", { length: 500 }),
-  posterUrl: text("poster_url"),
-  duration: varchar({ length: 20 }),
-  type: mysqlEnum("type", ['narrated', 'instrumental', 'social', 'vertical', 'presentation', 'recording', 'upload']).default('upload').notNull(),
-  aspectRatio: varchar("aspect_ratio", { length: 10 }).default('16:9'),
-  narratedBy: varchar("narrated_by", { length: 255 }),
-  tags: json(),
-  uploadedBy: int("uploaded_by"),
-  uploadedByName: varchar("uploaded_by_name", { length: 255 }),
-  status: mysqlEnum("status", ['draft', 'processing', 'published', 'archived']).default('published').notNull(),
-  viewCount: int("view_count").default(0),
-  downloadCount: int("download_count").default(0),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
-  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
-});
-
-// ─── Meeting Recordings ──────────────────────────────────
-export const meetingRecordings = mysqlTable("meeting_recordings", {
-  id: int().autoincrement().notNull(),
-  roomId: varchar("room_id", { length: 100 }).notNull(),
-  roomName: varchar("room_name", { length: 255 }).notNull(),
-  recordingUrl: text("recording_url"),
-  recordingKey: varchar("recording_key", { length: 500 }),
-  duration: int(),
-  fileSizeMb: decimal("file_size_mb", { precision: 10, scale: 2 }),
-  recordedBy: int("recorded_by"),
-  recordedByName: varchar("recorded_by_name", { length: 255 }),
-  participants: json(),
-  status: mysqlEnum("status", ['recording', 'uploading', 'processing', 'ready', 'failed']).default('recording').notNull(),
-  startedAt: bigint("started_at", { mode: "number" }).notNull(),
-  endedAt: bigint("ended_at", { mode: "number" }),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
-});
-
-
-// ─── Social Streaming Destinations ─────────────────────────
-export const streamDestinations = mysqlTable("stream_destinations", {
-  id: int().autoincrement().primaryKey(),
-  userId: int("user_id").notNull(),
-  platform: mysqlEnum("platform", ['youtube', 'facebook', 'instagram', 'twitter', 'tiktok', 'twitch', 'linkedin', 'custom']).notNull(),
-  label: varchar({ length: 255 }).notNull(),
-  rtmpUrl: text("rtmp_url"),
-  streamKey: text("stream_key"),
-  isEnabled: tinyint("is_enabled").default(1),
-  lastUsedAt: timestamp("last_used_at", { mode: 'string' }),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow(),
-});
-
-// ─── Stream Sessions (tracks each go-live event) ─────────────────────────
-export const streamSessions = mysqlTable("stream_sessions", {
-  id: int().autoincrement().primaryKey(),
-  conferenceId: int("conference_id").references(() => conferences.id, { onDelete: "set null" }),
-  title: varchar({ length: 500 }).notNull(),
-  startedBy: int("started_by").notNull(),
-  startedAt: timestamp("started_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-  endedAt: timestamp("ended_at", { mode: 'string' }),
-  status: mysqlEnum("status", ['live', 'ended', 'failed']).default('live'),
-  platforms: text(),
-  viewerCount: int("viewer_count").default(0),
-  peakViewers: int("peak_viewers").default(0),
-  notes: text(),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
-
-
-// ─── FlowPay: Autonomous Payment Platform ─────────────────────────
-export const flowpayUsers = mysqlTable("flowpay_users", {
-  id: int().autoincrement().primaryKey(),
-  userId: int("user_id").notNull().unique(),
-  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }).notNull().unique(),
-  stripeConnectAccountId: varchar("stripe_connect_account_id", { length: 255 }),
-  displayName: varchar("display_name", { length: 255 }),
-  preferredPaymentMethod: varchar("preferred_payment_method", { length: 50 }).default('card'),
-  smartRoutingEnabled: tinyint("smart_routing_enabled").default(1),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
-  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+// Push Notification System Tables
+export const pushSubscriptions = mysqlTable("push_subscriptions", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	endpoint: text().notNull(),
+	p256dh: text().notNull(),
+	auth: text().notNull(),
+	userAgent: text(),
+	isActive: tinyint().default(1).notNull(),
+	lastUsed: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
-  userIdIdx: index("flowpay_users_user_id_idx").on(table.userId),
-  stripeCustomerIdx: index("flowpay_users_stripe_customer_idx").on(table.stripeCustomerId),
+	userIdx: index("push_subscriptions_user_idx").on(table.userId),
+	endpointIdx: index("push_subscriptions_endpoint_idx").on(table.endpoint),
 }));
 
-export const flowpayTransactions = mysqlTable("flowpay_transactions", {
-  id: int().autoincrement().primaryKey(),
-  senderId: int("sender_id").notNull(),
-  recipientId: int("recipient_id").notNull(),
-  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
-  currency: varchar("currency", { length: 3 }).default('USD'),
-  status: varchar("status", { length: 50 }).notNull(),
-  stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }).notNull().unique(),
-  description: text("description"),
-  metadata: json("metadata"),
-  failureReason: text("failure_reason"),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
-  completedAt: bigint("completed_at", { mode: "number" }),
+export const pushNotificationLogs = mysqlTable("push_notification_logs", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	notificationType: varchar({ length: 64 }).notNull(),
+	title: varchar({ length: 255 }).notNull(),
+	body: text().notNull(),
+	icon: text(),
+	badge: text(),
+	tag: varchar({ length: 128 }),
+	data: json(),
+	status: mysqlEnum(['queued','sent','failed','delivered']).default('queued').notNull(),
+	error: text(),
+	sentAt: timestamp({ mode: 'string' }),
+	deliveredAt: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 }, (table) => ({
-  senderIdx: index("flowpay_transactions_sender_idx").on(table.senderId),
-  recipientIdx: index("flowpay_transactions_recipient_idx").on(table.recipientId),
-  statusIdx: index("flowpay_transactions_status_idx").on(table.status),
+	userIdx: index("push_logs_user_idx").on(table.userId),
+	typeIdx: index("push_logs_type_idx").on(table.notificationType),
+	statusIdx: index("push_logs_status_idx").on(table.status),
+	createdIdx: index("push_logs_created_idx").on(table.createdAt),
 }));
 
-export const flowpayPaymentPlans = mysqlTable("flowpay_payment_plans", {
-  id: int().autoincrement().primaryKey(),
-  senderId: int("sender_id").notNull(),
-  recipientId: int("recipient_id").notNull(),
-  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
-  frequency: varchar("frequency", { length: 50 }).notNull(),
-  totalInstallments: int("total_installments"),
-  completedInstallments: int("completed_installments").default(0),
-  status: varchar("status", { length: 50 }).notNull(),
-  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }).notNull().unique(),
-  nextChargeDate: bigint("next_charge_date", { mode: "number" }).notNull(),
-  description: text("description"),
-  metadata: json("metadata"),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
-  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+export const pushNotificationPreferences = mysqlTable("push_notification_preferences", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	qumusPolicyDecisions: tinyint().default(1).notNull(),
+	contentUploads: tinyint().default(1).notNull(),
+	listenerEngagement: tinyint().default(1).notNull(),
+	revenueAlerts: tinyint().default(1).notNull(),
+	systemAlerts: tinyint().default(1).notNull(),
+	creatorUpdates: tinyint().default(1).notNull(),
+	radioChannelUpdates: tinyint().default(0).notNull(),
+	quietHoursStart: varchar({ length: 5 }),
+	quietHoursEnd: varchar({ length: 5 }),
+	timezone: varchar({ length: 64 }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
-  senderIdx: index("flowpay_plans_sender_idx").on(table.senderId),
-  recipientIdx: index("flowpay_plans_recipient_idx").on(table.recipientId),
-  statusIdx: index("flowpay_plans_status_idx").on(table.status),
-  nextChargeDateIdx: index("flowpay_plans_next_charge_idx").on(table.nextChargeDate),
+	userIdx: index("push_prefs_user_idx").on(table.userId),
 }));
 
-export const flowpaySmartRoutes = mysqlTable("flowpay_smart_routes", {
-  id: int().autoincrement().primaryKey(),
-  userId: int("user_id").notNull().unique(),
-  preferredMethod: varchar("preferred_method", { length: 50 }).notNull(),
-  successRate: decimal("success_rate", { precision: 5, scale: 4 }).default('1.0000'),
-  avgProcessingTimeMs: int("avg_processing_time_ms").default(0),
-  totalTransactions: int("total_transactions").default(0),
-  totalFailed: int("total_failed").default(0),
-  lastUpdated: bigint("last_updated", { mode: "number" }).notNull(),
+// Content Moderation System Tables
+export const contentModerationQueue = mysqlTable("content_moderation_queue", {
+	id: int().autoincrement().notNull(),
+	contentId: int().notNull(),
+	contentType: mysqlEnum(['audio','video','image','text','metadata']).notNull(),
+	creatorId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	title: varchar({ length: 255 }).notNull(),
+	description: text(),
+	contentUrl: text().notNull(),
+	thumbnailUrl: text(),
+	aiFlags: json(),
+	aiRiskScore: decimal({ precision: 3, scale: 2 }).default('0.00'),
+	manualReviewRequired: tinyint().default(0),
+	status: mysqlEnum(['pending','in_review','approved','rejected','appealed']).default('pending').notNull(),
+	reviewedBy: int().references(() => users.id, { onDelete: "set null" } ),
+	reviewNotes: text(),
+	violationCategories: json(),
+	appealReason: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	reviewedAt: timestamp({ mode: 'string' }),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
-  userIdx: index("flowpay_routes_user_idx").on(table.userId),
+	creatorIdx: index("moderation_creator_idx").on(table.creatorId),
+	statusIdx: index("moderation_status_idx").on(table.status),
+	riskIdx: index("moderation_risk_idx").on(table.aiRiskScore),
+	createdIdx: index("moderation_created_idx").on(table.createdAt),
 }));
 
-export const flowpayPaymentLinks = mysqlTable("flowpay_payment_links", {
-  id: int().autoincrement().primaryKey(),
-  linkId: varchar("link_id", { length: 50 }).notNull().unique(),
-  senderId: int("sender_id").notNull(),
-  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
-  description: text("description"),
-  expiresAt: bigint("expires_at", { mode: "number" }),
-  maxUses: int("max_uses"),
-  currentUses: int("current_uses").default(0),
-  source: varchar("source", { length: 50 }),
-  metadata: json("metadata"),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+export const contentModerationPolicies = mysqlTable("content_moderation_policies", {
+	id: int().autoincrement().notNull(),
+	name: varchar({ length: 255 }).notNull(),
+	description: text(),
+	category: mysqlEnum(['violence','hate_speech','explicit','misinformation','spam','copyright','other']).notNull(),
+	severity: mysqlEnum(['low','medium','high','critical']).notNull(),
+	autoRejectThreshold: decimal({ precision: 3, scale: 2 }).notNull(),
+	action: mysqlEnum(['flag','review','reject','quarantine']).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
-  linkIdIdx: index("flowpay_links_link_id_idx").on(table.linkId),
-  senderIdx: index("flowpay_links_sender_idx").on(table.senderId),
-  sourceIdx: index("flowpay_links_source_idx").on(table.source),
+	categoryIdx: index("policy_category_idx").on(table.category),
+	severityIdx: index("policy_severity_idx").on(table.severity),
 }));
 
-export const flowpayAuditLog = mysqlTable("flowpay_audit_log", {
-  id: int().autoincrement().primaryKey(),
-  userId: int("user_id"),
-  action: varchar("action", { length: 100 }).notNull(),
-  entityType: varchar("entity_type", { length: 50 }),
-  entityId: int("entity_id"),
-  details: json("details"),
-  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+export const contentModerationAppeal = mysqlTable("content_moderation_appeal", {
+	id: int().autoincrement().notNull(),
+	moderationId: int().notNull().references(() => contentModerationQueue.id, { onDelete: "cascade" } ),
+	creatorId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	reason: text().notNull(),
+	evidence: json(),
+	status: mysqlEnum(['pending','approved','rejected']).default('pending').notNull(),
+	reviewedBy: int().references(() => users.id, { onDelete: "set null" } ),
+	reviewNotes: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	reviewedAt: timestamp({ mode: 'string' }),
 }, (table) => ({
-  userIdx: index("flowpay_audit_user_idx").on(table.userId),
-  actionIdx: index("flowpay_audit_action_idx").on(table.action),
+	moderationIdx: index("appeal_moderation_idx").on(table.moderationId),
+	creatorIdx: index("appeal_creator_idx").on(table.creatorId),
+	statusIdx: index("appeal_status_idx").on(table.status),
 }));
 
-// SQUADD Community Tables
-export const goals = mysqlTable("squadd_goals", {
-  id: varchar("id", { length: 50 }).primaryKey(),
-  title: varchar("title", { length: 255 }).notNull(),
-  description: text("description"),
-  category: varchar("category", { length: 100 }).notNull(),
-  targetAmount: decimal("target_amount", { precision: 15, scale: 2 }),
-  currentAmount: decimal("current_amount", { precision: 15, scale: 2 }).default('0.00'),
-  deadline: timestamp("deadline", { mode: 'string' }),
-  status: mysqlEnum(['active', 'completed', 'paused', 'cancelled']).default('active'),
-  createdBy: varchar("created_by", { length: 50 }).notNull(),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-  updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+// Admin Analytics Export Tables
+export const analyticsExports = mysqlTable("analytics_exports", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	exportType: mysqlEnum(['listener_demographics','channel_performance','revenue_reports','content_analytics','creator_stats','system_health']).notNull(),
+	format: mysqlEnum(['csv','pdf','json','html']).notNull(),
+	dateRangeStart: timestamp({ mode: 'string' }).notNull(),
+	dateRangeEnd: timestamp({ mode: 'string' }).notNull(),
+	filters: json(),
+	fileUrl: text(),
+	fileSize: int(),
+	status: mysqlEnum(['queued','processing','completed','failed']).default('queued').notNull(),
+	error: text(),
+	downloadCount: int().default(0),
+	expiresAt: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	completedAt: timestamp({ mode: 'string' }),
 }, (table) => ({
-  categoryIdx: index("goals_category_idx").on(table.category),
-  statusIdx: index("goals_status_idx").on(table.status),
-  createdByIdx: index("goals_created_by_idx").on(table.createdBy),
+	userIdx: index("export_user_idx").on(table.userId),
+	typeIdx: index("export_type_idx").on(table.exportType),
+	statusIdx: index("export_status_idx").on(table.status),
+	createdIdx: index("export_created_idx").on(table.createdAt),
 }));
 
-export const communityMembers = mysqlTable("squadd_community_members", {
-  id: varchar("id", { length: 50 }).primaryKey(),
-  userId: varchar("user_id", { length: 50 }).notNull().unique(),
-  name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 320 }).notNull(),
-  role: mysqlEnum(['member', 'moderator', 'admin']).default('member'),
-  status: mysqlEnum(['active', 'inactive', 'suspended']).default('active'),
-  joinedAt: timestamp("joined_at", { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-  lastActive: timestamp("last_active", { mode: 'string' }),
-  metadata: json("metadata"),
+export const analyticsExportSchedules = mysqlTable("analytics_export_schedules", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	name: varchar({ length: 255 }).notNull(),
+	exportType: mysqlEnum(['listener_demographics','channel_performance','revenue_reports','content_analytics','creator_stats','system_health']).notNull(),
+	format: mysqlEnum(['csv','pdf','json','html']).notNull(),
+	frequency: mysqlEnum(['daily','weekly','monthly','quarterly']).notNull(),
+	dayOfWeek: int(),
+	dayOfMonth: int(),
+	hour: int().default(0),
+	minute: int().default(0),
+	timezone: varchar({ length: 64 }),
+	emailRecipients: json(),
+	filters: json(),
+	isActive: tinyint().default(1).notNull(),
+	lastRun: timestamp({ mode: 'string' }),
+	nextRun: timestamp({ mode: 'string' }),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
-  userIdIdx: index("members_user_id_idx").on(table.userId),
-  statusIdx: index("members_status_idx").on(table.status),
-  roleIdx: index("members_role_idx").on(table.role),
-}));
-
-export const goalProgress = mysqlTable("squadd_goal_progress", {
-  id: varchar("id", { length: 50 }).primaryKey(),
-  goalId: varchar("goal_id", { length: 50 }).notNull().references(() => goals.id, { onDelete: "cascade" }),
-  userId: varchar("user_id", { length: 50 }).notNull(),
-  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
-  note: text("note"),
-  createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
-}, (table) => ({
-  goalIdIdx: index("progress_goal_id_idx").on(table.goalId),
-  userIdIdx: index("progress_user_id_idx").on(table.userId),
+	userIdx: index("schedule_user_idx").on(table.userId),
+	frequencyIdx: index("schedule_frequency_idx").on(table.frequency),
+	nextRunIdx: index("schedule_next_run_idx").on(table.nextRun),
 }));

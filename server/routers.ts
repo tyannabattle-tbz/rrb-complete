@@ -104,6 +104,7 @@ import { podcastStudioAlignmentRouter } from "./routers/podcastStudioAlignmentRo
 import { podcastFeaturesRouter } from "./routers/podcastFeaturesRouter";
 import { architectureRestructuringRouter } from "./routers/architectureRestructuringRouter";
 import { finalFeaturesRouter } from "./routers/finalFeaturesRouter";
+import { operationalDeploymentRouter } from "./routers/operationalDeploymentRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -148,6 +149,9 @@ export const appRouter = router({
 
   // Podcast Features (player, studio booking, distribution)
   podcastFeatures: podcastFeaturesRouter,
+
+  // Operational Deployment (push notifications, analytics export, content moderation)
+  operationalDeployment: operationalDeploymentRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,

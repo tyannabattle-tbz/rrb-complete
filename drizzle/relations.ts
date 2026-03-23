@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { users, activityLogs, agentSessions, agentCollaboration, agentRegistry, agentExecutionLogs, agentMemory, agentPerformanceMetrics, agentSnapshots, agentTools, emergencyAlerts, alertBroadcastLog, radioChannels, alertDeliveryLog, hybridcastNodes, analyticsMetrics, anomalyBaselines, anomalyHistory, detectedAnomalies, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, autoSaveSettings, autonomousTasks, broadcasts, conferences, conferenceAttendees, conferenceSpeakers, rockinBoogieContent, contentListenerHistory, conventions, conventionAttendees, conventionSessions, donations, ecosystemCommands, emailConfigs, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningJobs, finetuningEvaluations, finetuningModels, integrationLogs, listeners, memoryStore, messages, modelComparisons, notifications, notificationEvents, notificationPreferences, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioStations, rateLimitEvents, reasoningChains, scheduledReports, reportHistory, royaltyProjects, royaltyCollaborators, royaltyPayments, royaltyDistributions, royaltyStatements, rrbChannels, rrbChannelStats, rrbListeningHistory, rrbFrequencies, rrbStreamSources, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, studioSessions, studioGuests, studioRecordings, suppressionRules, systemAuditLog, taskExecutionLog, taskHistory, taskSteps, teams, teamMembers, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, subscriptionTiers, usersWithStripe, webhookEndpoints, webhookInstallations, webhookTemplates, webhookLogs, webhookMarketplaceReviews } from "./schema";
+import { users, activityLogs, agentSessions, agentCollaboration, agentRegistry, agentExecutionLogs, agentMemory, agentPerformanceMetrics, agentSnapshots, agentTools, emergencyAlerts, alertBroadcastLog, radioChannels, alertDeliveryLog, hybridcastNodes, analyticsMetrics, anomalyBaselines, anomalyHistory, detectedAnomalies, anomalyInsights, anomalyPatterns, anomalyReports, anomalyRules, apiKeys, apiUsage, autoSaveSettings, autonomousTasks, broadcasts, conferences, conferenceAttendees, conferenceSpeakers, rockinBoogieContent, contentListenerHistory, conventions, conventionAttendees, conventionSessions, donations, ecosystemCommands, emailConfigs, escalationPolicies, featureFlags, filterHistory, filterPresets, finetuningDatasets, finetuningJobs, finetuningEvaluations, finetuningModels, integrationLogs, listeners, meetingPresentations, memoryStore, messages, modelComparisons, notifications, notificationEvents, notificationPreferences, performanceMetrics, performanceTrends, plugins, policyDecisions, predictiveAlerts, quotaAlerts, quotas, radioStations, rateLimitEvents, reasoningChains, scheduledReports, reportHistory, royaltyProjects, royaltyCollaborators, royaltyPayments, royaltyDistributions, royaltyStatements, rrbChannels, rrbChannelStats, rrbListeningHistory, rrbFrequencies, rrbStreamSources, sessionAnnotations, sessionMetrics, sessionShares, sessionVersions, squaddGoals, squaddGoalProgress, streamSessions, studioSessions, studioGuests, studioRecordings, suppressionRules, systemAuditLog, taskExecutionLog, taskHistory, taskSteps, teams, teamMembers, toolExecutions, toolUsageStats, trainingData, usageQuotas, userSubscriptions, subscriptionTiers, usersWithStripe, webhookEndpoints, webhookInstallations, webhookTemplates, webhookLogs, webhookMarketplaceReviews } from "./schema";
 
 export const activityLogsRelations = relations(activityLogs, ({one}) => ({
 	user: one(users, {
@@ -51,6 +51,7 @@ export const usersRelations = relations(users, ({many}) => ({
 	hybridcastNodes: many(hybridcastNodes),
 	integrationLogs: many(integrationLogs),
 	listeners: many(listeners),
+	meetingPresentations: many(meetingPresentations),
 	modelComparisons: many(modelComparisons),
 	notificationPreferences: many(notificationPreferences),
 	notifications: many(notifications),
@@ -381,6 +382,8 @@ export const conferencesRelations = relations(conferences, ({one, many}) => ({
 		fields: [conferences.hostUserId],
 		references: [users.id]
 	}),
+	meetingPresentations: many(meetingPresentations),
+	streamSessions: many(streamSessions),
 }));
 
 export const conferenceSpeakersRelations = relations(conferenceSpeakers, ({one}) => ({
@@ -537,6 +540,17 @@ export const listenersRelations = relations(listeners, ({one}) => ({
 	}),
 	user: one(users, {
 		fields: [listeners.userId],
+		references: [users.id]
+	}),
+}));
+
+export const meetingPresentationsRelations = relations(meetingPresentations, ({one}) => ({
+	conference: one(conferences, {
+		fields: [meetingPresentations.conferenceId],
+		references: [conferences.id]
+	}),
+	user: one(users, {
+		fields: [meetingPresentations.uploadedBy],
 		references: [users.id]
 	}),
 }));
@@ -832,6 +846,24 @@ export const sessionVersionsRelations = relations(sessionVersions, ({one}) => ({
 	user: one(users, {
 		fields: [sessionVersions.createdBy],
 		references: [users.id]
+	}),
+}));
+
+export const squaddGoalProgressRelations = relations(squaddGoalProgress, ({one}) => ({
+	squaddGoal: one(squaddGoals, {
+		fields: [squaddGoalProgress.goalId],
+		references: [squaddGoals.id]
+	}),
+}));
+
+export const squaddGoalsRelations = relations(squaddGoals, ({many}) => ({
+	squaddGoalProgresses: many(squaddGoalProgress),
+}));
+
+export const streamSessionsRelations = relations(streamSessions, ({one}) => ({
+	conference: one(conferences, {
+		fields: [streamSessions.conferenceId],
+		references: [conferences.id]
 	}),
 }));
 
