@@ -111,6 +111,7 @@ import { crossSystemBridgeRouter } from "./routers/crossSystemBridgeRouter";
 import { adminFeaturesRouter } from "./routers/adminFeaturesRouter";
 import { rrbNavigationRouter } from "./routers/rrbNavigationRouter";
 import { autonomousMaintenanceRouter } from "./routers/autonomousMaintenanceRouter";
+import { productionEcosystemRouter } from "./routers/productionEcosystemRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -176,6 +177,9 @@ export const appRouter = router({
 
   // Autonomous Maintenance (health checks, auto-fix, upgrades, system sync)
   autonomousMaintenance: autonomousMaintenanceRouter,
+
+  // Production Ecosystem (video, audio, transcoding, QA, compliance)
+  production: productionEcosystemRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
