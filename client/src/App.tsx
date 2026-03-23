@@ -260,6 +260,9 @@ import { UnifiedFeedHealthDashboard } from '@/pages/UnifiedFeedHealthDashboard';
 import { FallbackStatusIndicator } from '@/components/FallbackStatusIndicator';
 import UnifiedAvatarManagement from '@/pages/UnifiedAvatarManagement';
 import BroadcastChannelManagement from '@/pages/BroadcastChannelManagement';
+import AdminDecisionReview from '@/pages/AdminDecisionReview';
+import PushNotificationTesting from '@/pages/PushNotificationTesting';
+import ListenerEngagementHeatmap from '@/pages/ListenerEngagementHeatmap';
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 
@@ -282,6 +285,9 @@ function Router() {
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
       <Route path="/admin/errors" component={AdminErrorDashboard} />
       <Route path="/admin/health" component={HealthChecksDashboard} />
+      <Route path="/admin/decisions" component={AdminDecisionReview} />
+      <Route path="/admin/push-testing" component={PushNotificationTesting} />
+      <Route path="/admin/engagement-heatmap" component={ListenerEngagementHeatmap} />
       <Route path="/canryn" component={CanrynDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
