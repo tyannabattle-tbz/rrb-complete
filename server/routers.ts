@@ -110,6 +110,7 @@ import { tyOsQumusIntegrationRouter } from "./routers/tyOsQumusIntegrationRouter
 import { crossSystemBridgeRouter } from "./routers/crossSystemBridgeRouter";
 import { adminFeaturesRouter } from "./routers/adminFeaturesRouter";
 import { rrbNavigationRouter } from "./routers/rrbNavigationRouter";
+import { autonomousMaintenanceRouter } from "./routers/autonomousMaintenanceRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -172,6 +173,9 @@ export const appRouter = router({
 
   // RRB Navigation (all RRB menu routes and broadcast management)
   rrbNavigation: rrbNavigationRouter,
+
+  // Autonomous Maintenance (health checks, auto-fix, upgrades, system sync)
+  autonomousMaintenance: autonomousMaintenanceRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
