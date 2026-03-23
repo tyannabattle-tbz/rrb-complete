@@ -78,6 +78,9 @@ import MobileStudio from '@/pages/MobileStudio';
 import EnhancedChatPage from '@/pages/EnhancedChatPage';
 import QumusMonitoringDashboard from '@/pages/QumusMonitoringDashboard';
 import PolicyDecisionLogging from '@/pages/PolicyDecisionLogging';
+import { AdminErrorDashboard } from '@/pages/AdminErrorDashboard';
+import { HealthChecksDashboard } from '@/pages/HealthChecksDashboard';
+import { FeedbackWidget } from '@/components/FeedbackWidget';
 import AdminDecisionDashboard from '@/pages/AdminDecisionDashboard';
 import ComplianceAuditViewer from '@/pages/ComplianceAuditViewer';
 import ServiceHealthAlerts from '@/pages/ServiceHealthAlerts';
@@ -266,6 +269,8 @@ function Router() {
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
+      <Route path="/admin/errors" component={AdminErrorDashboard} />
+      <Route path="/admin/health" component={HealthChecksDashboard} />
       <Route path="/canryn" component={CanrynDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
@@ -576,6 +581,9 @@ function App() {
             
             {/* Getting Started Onboarding Tour */}
             <OnboardingTour />
+
+            {/* User Feedback Widget */}
+            <FeedbackWidget />
           </TooltipProvider>
           </RadioProvider>
           </MeetingProvider>

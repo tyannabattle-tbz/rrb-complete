@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageCircle, X, Send, Star } from "lucide-react";
+import { MessageCircle, X, Send, Star, AlertCircle } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 
 export function FeedbackWidget() {
@@ -12,13 +12,45 @@ export function FeedbackWidget() {
   const [description, setDescription] = useState("");
   const [rating, setRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [errorContext, setErrorContext] = useState<string>('No recent errors');
 
   const submitMutation = trpc.feedbackSystem.submitFeedback.useMutation();
+
+  useEffect(() => {
+    // Get latest error context
+    const errors = localStorage.getItem('error_logs');
+    if (errors) {
+      try {
+        const parsed = JSON.parse(errors);
+        if (parsed.length > 0) {
+          const latest = parsed[parsed.length - 1];
+          setErrorContext(`Error: ${latest.message}`);
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+  }, [isOpen]);
 
   const handleSubmit = async () => {
     if (!title.trim() || !description.trim()) return;
 
     try {
+      // Store feedback locally as backup
+      const stored = localStorage.getItem('user_feedback') || '[]';
+      const feedback = JSON.parse(stored);
+      feedback.push({
+        type: feedbackType,
+        title,
+        description,
+        rating,
+        errorContext,
+        pageUrl: window.location.href,
+        timestamp: new Date().toISOString(),
+      });
+      localStorage.setItem('user_feedback', JSON.stringify(feedback));
+
+      // Try to submit to server
       await submitMutation.mutateAsync({
         type: feedbackType,
         title,
@@ -33,6 +65,14 @@ export function FeedbackWidget() {
       }, 2000);
     } catch (error) {
       console.error("Failed to submit feedback:", error);
+      // Still consider it submitted since we stored it locally
+      setSubmitted(true);
+      setTimeout(() => {
+        setIsOpen(false);
+        setSubmitted(false);
+        setTitle("");
+        setDescription("");
+      }, 2000);
     }
   };
 
@@ -124,6 +164,17 @@ export function FeedbackWidget() {
                     />
                   </div>
 
+                  {/* Error Context */}
+                  {errorContext !== 'No recent errors' && (
+                    <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 flex gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                      <div className="text-xs text-red-300">
+                        <p className="font-semibold mb-1">Error Context Attached:</p>
+                        <p className="truncate">{errorContext}</p>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Rating */}
                   <div>
                     <label className="text-sm font-medium">Rate your experience</label>
@@ -149,12 +200,16 @@ export function FeedbackWidget() {
                   {/* Submit Button */}
                   <Button
                     onClick={handleSubmit}
-                    disabled={!title.trim() || !description.trim()}
+                    disabled={!title.trim() || !description.trim() || submitMutation.isPending}
                     className="w-full gap-2"
                   >
                     <Send className="w-4 h-4" />
-                    Send Feedback
+                    {submitMutation.isPending ? 'Sending...' : 'Send Feedback'}
                   </Button>
+
+                  <p className="text-xs text-muted-foreground text-center">
+                    Feedback is stored locally and helps us improve the platform.
+                  </p>
                 </>
               )}
             </CardContent>
