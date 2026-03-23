@@ -6462,12 +6462,12 @@ var init_qumusProductionIntegration = __esm({
         setInterval(async () => {
           try {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-            const { sql: sql26 } = await import("drizzle-orm");
+            const { sql: sql27 } = await import("drizzle-orm");
             const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
             const db2 = await getDb5();
             const now = /* @__PURE__ */ new Date();
             const fifteenMinLater = new Date(now.getTime() + 15 * 60 * 1e3);
-            const [upcomingRows] = await db2.execute(sql26`
+            const [upcomingRows] = await db2.execute(sql27`
           SELECT id, title, room_code, platform, scheduled_at, host_name
           FROM conferences 
           WHERE status = 'scheduled' 
@@ -6476,7 +6476,7 @@ var init_qumusProductionIntegration = __esm({
             const upcoming = upcomingRows;
             for (const conf of upcoming) {
               const [attendeeRows] = await db2.execute(
-                sql26`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
+                sql27`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
               );
               const attendeeCount = attendeeRows.length;
               if (attendeeCount > 0 || true) {
@@ -6486,7 +6486,7 @@ var init_qumusProductionIntegration = __esm({
                 });
                 console.log(`[QUMUS-CRON] Auto-notified for conference ${conf.id}: ${conf.title} (${attendeeCount} attendees)`);
               }
-              await db2.execute(sql26`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
+              await db2.execute(sql27`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
             }
             if (upcoming.length > 0) {
               console.log(`[QUMUS-CRON] Conference auto-notification: ${upcoming.length} conferences starting within 15 minutes`);
@@ -6501,13 +6501,13 @@ var init_qumusProductionIntegration = __esm({
             const now = /* @__PURE__ */ new Date();
             if (now.getDay() === 0 && now.getHours() === 20 && now.getMinutes() < 60) {
               const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-              const { sql: sql26 } = await import("drizzle-orm");
+              const { sql: sql27 } = await import("drizzle-orm");
               const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
               const db2 = await getDb5();
               const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
-              const [weekSessions] = await db2.execute(sql26`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-              const [weekAttendees] = await db2.execute(sql26`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-              const [completedSessions] = await db2.execute(sql26`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+              const [weekSessions] = await db2.execute(sql27`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [weekAttendees] = await db2.execute(sql27`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [completedSessions] = await db2.execute(sql27`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
               const sessions = weekSessions[0]?.count || 0;
               const attendees = weekAttendees[0]?.total || 0;
               const completed = completedSessions[0]?.count || 0;
@@ -9308,8 +9308,8 @@ async function auditStreams() {
     const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
     const db2 = await getDb5();
     if (!db2) return findings;
-    const { sql: sql26 } = await import("drizzle-orm");
-    const rawChannels = await db2.execute(sql26`SELECT id, name, streamUrl, genre, metadata FROM radio_channels`);
+    const { sql: sql27 } = await import("drizzle-orm");
+    const rawChannels = await db2.execute(sql27`SELECT id, name, streamUrl, genre, metadata FROM radio_channels`);
     const channels = Array.isArray(rawChannels) && Array.isArray(rawChannels[0]) ? rawChannels[0] : rawChannels;
     if (!Array.isArray(channels)) return findings;
     const urlMap = /* @__PURE__ */ new Map();
@@ -9426,8 +9426,8 @@ async function auditDatabase() {
       });
       return findings;
     }
-    const { sql: sql26 } = await import("drizzle-orm");
-    const rawCC = await db2.execute(sql26`SELECT COUNT(*) as cnt FROM radio_channels`);
+    const { sql: sql27 } = await import("drizzle-orm");
+    const rawCC = await db2.execute(sql27`SELECT COUNT(*) as cnt FROM radio_channels`);
     const ccRows = Array.isArray(rawCC) && Array.isArray(rawCC[0]) ? rawCC[0] : rawCC;
     const cnt = ccRows?.[0]?.cnt || 0;
     if (cnt < 54) {
@@ -9443,7 +9443,7 @@ async function auditDatabase() {
       });
     }
     try {
-      const rawSC = await db2.execute(sql26`SELECT COUNT(*) as cnt FROM broadcast_schedules`);
+      const rawSC = await db2.execute(sql27`SELECT COUNT(*) as cnt FROM broadcast_schedules`);
       const scRows = Array.isArray(rawSC) && Array.isArray(rawSC[0]) ? rawSC[0] : rawSC;
       const sCnt = scRows?.[0]?.cnt || 0;
       if (sCnt === 0) {
@@ -9462,7 +9462,7 @@ async function auditDatabase() {
     }
     try {
       const rawOC = await db2.execute(
-        sql26`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'offline'`
+        sql27`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'offline'`
       );
       const ocRows = Array.isArray(rawOC) && Array.isArray(rawOC[0]) ? rawOC[0] : rawOC;
       const offCnt = ocRows?.[0]?.cnt || 0;
@@ -9599,9 +9599,9 @@ async function autoCorrect(findings) {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
             const db2 = await getDb5();
             if (db2) {
-              const { sql: sql26 } = await import("drizzle-orm");
+              const { sql: sql27 } = await import("drizzle-orm");
               const rawRows = await db2.execute(
-                sql26`SELECT metadata, streamUrl FROM radio_channels WHERE id = ${channelId}`
+                sql27`SELECT metadata, streamUrl FROM radio_channels WHERE id = ${channelId}`
               );
               const rowArr = Array.isArray(rawRows) && Array.isArray(rawRows[0]) ? rawRows[0] : rawRows;
               const ch = rowArr?.[0];
@@ -9610,13 +9610,13 @@ async function autoCorrect(findings) {
                 if (meta.fallbackUrl && meta.fallbackUrl !== ch.streamUrl) {
                   const oldUrl = ch.streamUrl;
                   await db2.execute(
-                    sql26`UPDATE radio_channels SET streamUrl = ${meta.fallbackUrl} WHERE id = ${channelId}`
+                    sql27`UPDATE radio_channels SET streamUrl = ${meta.fallbackUrl} WHERE id = ${channelId}`
                   );
                   meta.fallbackUrl = oldUrl;
                   meta.lastAutoSwap = Date.now();
                   meta.autoSwapReason = finding.title;
                   await db2.execute(
-                    sql26`UPDATE radio_channels SET metadata = ${JSON.stringify(meta)} WHERE id = ${channelId}`
+                    sql27`UPDATE radio_channels SET metadata = ${JSON.stringify(meta)} WHERE id = ${channelId}`
                   );
                   fixed = true;
                   fixDesc = `Swapped stream to fallback URL for channel ${channelId}`;
@@ -9632,10 +9632,10 @@ async function autoCorrect(findings) {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
             const db2 = await getDb5();
             if (db2) {
-              const { sql: sql26 } = await import("drizzle-orm");
+              const { sql: sql27 } = await import("drizzle-orm");
               const defaultStream = "https://listen.181fm.com/181-rnb_128k.mp3";
               await db2.execute(
-                sql26`UPDATE radio_channels SET streamUrl = ${defaultStream} WHERE id = ${channelId} AND (streamUrl IS NULL OR streamUrl = '')`
+                sql27`UPDATE radio_channels SET streamUrl = ${defaultStream} WHERE id = ${channelId} AND (streamUrl IS NULL OR streamUrl = '')`
               );
               fixed = true;
               fixDesc = `Assigned default R&B stream to channel ${channelId}`;
@@ -9647,9 +9647,9 @@ async function autoCorrect(findings) {
           const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
           const db2 = await getDb5();
           if (db2) {
-            const { sql: sql26 } = await import("drizzle-orm");
+            const { sql: sql27 } = await import("drizzle-orm");
             await db2.execute(
-              sql26`UPDATE radio_channels SET status = 'active' WHERE status = 'offline'`
+              sql27`UPDATE radio_channels SET status = 'active' WHERE status = 'offline'`
             );
             fixed = true;
             fixDesc = "Reactivated all offline channels to active status";
@@ -11115,7 +11115,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z114 } from "zod";
+import { z as z115 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -11292,10 +11292,10 @@ var rockinBoogieRouter = router({
 // server/routers/hybridcastRouter.ts
 import { z as z3 } from "zod";
 import mysql from "mysql2/promise";
-async function rawQuery(sql26, params2 = []) {
+async function rawQuery(sql27, params2 = []) {
   const conn = await mysql.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await conn.execute(sql26, params2);
+    const [rows] = await conn.execute(sql27, params2);
     return rows;
   } finally {
     await conn.end();
@@ -15947,10 +15947,10 @@ var watermarkRouter = router({
 init_notification();
 import { z as z14 } from "zod";
 import mysql2 from "mysql2/promise";
-async function rawQuery2(sql26, params2 = []) {
+async function rawQuery2(sql27, params2 = []) {
   const connection = await mysql2.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql26, params2);
+    const [rows] = await connection.execute(sql27, params2);
     return rows;
   } finally {
     await connection.end();
@@ -25894,10 +25894,10 @@ var dashboardRouter = router({
 // server/routers/broadcastRouter.ts
 import { z as z50 } from "zod";
 import mysql3 from "mysql2/promise";
-async function rawQuery3(sql26, params2 = []) {
+async function rawQuery3(sql27, params2 = []) {
   const connection = await mysql3.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql26, params2);
+    const [rows] = await connection.execute(sql27, params2);
     return rows;
   } finally {
     await connection.end();
@@ -26884,10 +26884,10 @@ var reviewRouter = router({
 // server/routers/meditation.ts
 import { z as z55 } from "zod";
 import mysql4 from "mysql2/promise";
-async function rawQuery4(sql26, params2 = []) {
+async function rawQuery4(sql27, params2 = []) {
   const connection = await mysql4.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql26, params2);
+    const [rows] = await connection.execute(sql27, params2);
     return rows;
   } finally {
     await connection.end();
@@ -47391,11 +47391,11 @@ function generateBroadcastId() {
   }
   return result2;
 }
-async function rawQuery5(sql26, params2 = []) {
+async function rawQuery5(sql27, params2 = []) {
   const mysql12 = await import("mysql2/promise");
   const connection = await mysql12.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql26, params2);
+    const [rows] = await connection.execute(sql27, params2);
     return rows;
   } finally {
     await connection.end();
@@ -47603,10 +47603,10 @@ import { z as z102 } from "zod";
 
 // server/ecosystemSyncEngine.ts
 import mysql6 from "mysql2/promise";
-async function rawQuery6(sql26, params2 = []) {
+async function rawQuery6(sql27, params2 = []) {
   const conn = await mysql6.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await conn.execute(sql26, params2);
+    const [rows] = await conn.execute(sql27, params2);
     return rows;
   } finally {
     await conn.end();
@@ -47981,10 +47981,10 @@ var ecosystemSyncRouter = router({
 // server/routers/globalBroadcastRouter.ts
 import { z as z103 } from "zod";
 import mysql7 from "mysql2/promise";
-async function rawQuery7(sql26, params2 = []) {
+async function rawQuery7(sql27, params2 = []) {
   const connection = await mysql7.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql26, params2);
+    const [rows] = await connection.execute(sql27, params2);
     return rows;
   } finally {
     await connection.end();
@@ -48416,10 +48416,10 @@ var socialStreamRouter = router({
 // server/routers/socialMediaQueueRouter.ts
 import { z as z105 } from "zod";
 import mysql8 from "mysql2/promise";
-async function rawQuery8(sql26, params2 = []) {
+async function rawQuery8(sql27, params2 = []) {
   const connection = await mysql8.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql26, params2);
+    const [rows] = await connection.execute(sql27, params2);
     return rows;
   } finally {
     await connection.end();
@@ -48544,13 +48544,13 @@ var socialMediaQueueRouter = router({
     const twitterConfigured = !!(twitterKey && twitterSecret && twitterAccessToken && twitterAccessSecret);
     if (twitterConfigured || twitterBearer) {
       try {
-        const crypto5 = await import("crypto");
+        const crypto6 = await import("crypto");
         const https2 = await import("https");
         const verifyResult = await new Promise((resolve) => {
           const url = "https://api.twitter.com/2/users/me";
           const oauthParams = {
             oauth_consumer_key: twitterKey || "",
-            oauth_nonce: crypto5.randomBytes(16).toString("hex"),
+            oauth_nonce: crypto6.randomBytes(16).toString("hex"),
             oauth_signature_method: "HMAC-SHA1",
             oauth_timestamp: Math.floor(Date.now() / 1e3).toString(),
             oauth_token: twitterAccessToken || "",
@@ -48559,7 +48559,7 @@ var socialMediaQueueRouter = router({
           const sortedParams = Object.keys(oauthParams).sort().map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(oauthParams[k])}`).join("&");
           const signatureBase = `GET&${encodeURIComponent(url)}&${encodeURIComponent(sortedParams)}`;
           const signingKey = `${encodeURIComponent(twitterSecret || "")}&${encodeURIComponent(twitterAccessSecret || "")}`;
-          const signature = crypto5.createHmac("sha1", signingKey).update(signatureBase).digest("base64");
+          const signature = crypto6.createHmac("sha1", signingKey).update(signatureBase).digest("base64");
           oauthParams["oauth_signature"] = signature;
           const authHeader = "OAuth " + Object.keys(oauthParams).sort().map((k) => `${encodeURIComponent(k)}="${encodeURIComponent(oauthParams[k])}"`).join(", ");
           const req = https2.request(url, {
@@ -53553,8 +53553,8 @@ async function createBlockchainHash(decision, auditTrail) {
       auditTrail,
       timestamp: (/* @__PURE__ */ new Date()).toISOString()
     });
-    const crypto5 = __require("crypto");
-    const hash = crypto5.createHash("sha256").update(data).digest("hex");
+    const crypto6 = __require("crypto");
+    const hash = crypto6.createHash("sha256").update(data).digest("hex");
     await db2.execute(
       sql25`
         INSERT INTO blockchain_verification (
@@ -53849,6 +53849,406 @@ var tyOsQumusIntegrationRouter = router({
   })
 });
 
+// server/routers/crossSystemBridgeRouter.ts
+import { z as z114 } from "zod";
+
+// server/middleware/crossSystemBridgeSecurity.ts
+import crypto5 from "crypto";
+import { sql as sql26 } from "drizzle-orm";
+var SYSTEM_SECRETS = {
+  rrb: process.env.RRB_SYSTEM_SECRET || "rrb-secret-key-change-in-production",
+  tyos: process.env.TYOS_SYSTEM_SECRET || "tyos-secret-key-change-in-production",
+  qumus: process.env.QUMUS_SYSTEM_SECRET || "qumus-secret-key-change-in-production"
+};
+var RATE_LIMITS = {
+  rrb_to_tyos: { requests: 1e3, windowMs: 6e4 },
+  // 1000 req/min
+  tyos_to_qumus: { requests: 5e3, windowMs: 6e4 },
+  // 5000 req/min
+  qumus_to_rrb: { requests: 1e4, windowMs: 6e4 }
+  // 10000 req/min
+};
+var requestCounts = {};
+function verifyRequestSignature(sourceSystem, payload, signature, timestamp2) {
+  try {
+    const now = Date.now();
+    if (Math.abs(now - timestamp2) > 5 * 60 * 1e3) {
+      console.error("[CrossSystemBridge] Request timestamp too old:", { timestamp: timestamp2, now });
+      return false;
+    }
+    const secret = SYSTEM_SECRETS[sourceSystem];
+    if (!secret) {
+      console.error("[CrossSystemBridge] Unknown source system:", sourceSystem);
+      return false;
+    }
+    const data = JSON.stringify({ payload, timestamp: timestamp2 });
+    const expectedSignature = crypto5.createHmac("sha256", secret).update(data).digest("hex");
+    const isValid = crypto5.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+    return isValid;
+  } catch (error) {
+    console.error("[CrossSystemBridge] Signature verification error:", error);
+    return false;
+  }
+}
+function createRequestSignature(sourceSystem, payload, timestamp2) {
+  const secret = SYSTEM_SECRETS[sourceSystem];
+  if (!secret) {
+    throw new Error(`Unknown source system: ${sourceSystem}`);
+  }
+  const data = JSON.stringify({ payload, timestamp: timestamp2 });
+  return crypto5.createHmac("sha256", secret).update(data).digest("hex");
+}
+function checkRateLimit(sourceSystem, targetSystem) {
+  const key = `${sourceSystem}_to_${targetSystem}`;
+  const limit = RATE_LIMITS[key];
+  if (!limit) {
+    console.warn("[CrossSystemBridge] No rate limit configured for:", key);
+    return true;
+  }
+  const now = Date.now();
+  if (!requestCounts[key]) {
+    requestCounts[key] = [];
+  }
+  requestCounts[key] = requestCounts[key].filter(
+    (req) => now - req.timestamp < limit.windowMs
+  );
+  if (requestCounts[key].length >= limit.requests) {
+    console.warn("[CrossSystemBridge] Rate limit exceeded:", { key, limit });
+    return false;
+  }
+  requestCounts[key].push({ timestamp: now });
+  return true;
+}
+async function logCrosSystemCommunication(sourceSystem, targetSystem, action, payload, success, error) {
+  try {
+    const db2 = await Promise.resolve().then(() => (init_db(), db_exports)).then((m) => m.getDb());
+    await db2.execute(
+      sql26`
+        INSERT INTO cross_system_bridge_logs (
+          source_system, target_system, action, payload, success, error, created_at
+        ) VALUES (
+          ${sourceSystem}, ${targetSystem}, ${action},
+          ${JSON.stringify(payload)}, ${success}, ${error || null}, ${/* @__PURE__ */ new Date()}
+        )
+      `
+    );
+  } catch (error2) {
+    console.error("[CrossSystemBridge] Failed to log communication:", error2);
+  }
+}
+function createCrossSystemRequest(sourceSystem, targetSystem, action, payload) {
+  const timestamp2 = Date.now();
+  const signature = createRequestSignature(sourceSystem, payload, timestamp2);
+  return {
+    sourceSystem,
+    targetSystem,
+    action,
+    payload,
+    signature,
+    timestamp: timestamp2
+  };
+}
+async function getCrosSystemBridgeStatus() {
+  try {
+    const bridges = [
+      { source: "rrb", target: "tyos" },
+      { source: "tyos", target: "qumus" },
+      { source: "qumus", target: "rrb" },
+      { source: "rrb", target: "qumus" },
+      { source: "tyos", target: "rrb" },
+      { source: "qumus", target: "tyos" }
+    ];
+    const bridgeStatus = bridges.map((bridge) => {
+      const key = `${bridge.source}_to_${bridge.target}`;
+      const requests = requestCounts[key] || [];
+      const recentRequests = requests.filter(
+        (r) => Date.now() - r.timestamp < 6e4
+      ).length;
+      return {
+        source: bridge.source,
+        target: bridge.target,
+        status: recentRequests > 0 ? "operational" : "degraded",
+        latency: Math.random() * 50 + 10,
+        // Placeholder
+        requestCount: recentRequests
+      };
+    });
+    const allOperational = bridgeStatus.every((b) => b.status === "operational");
+    return {
+      status: allOperational ? "operational" : "degraded",
+      bridges: bridgeStatus,
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  } catch (error) {
+    console.error("[CrossSystemBridge] Error getting bridge status:", error);
+    return {
+      status: "offline",
+      bridges: [],
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  }
+}
+
+// server/routers/crossSystemBridgeRouter.ts
+var crossSystemBridgeRouter = router({
+  /**
+   * Send cross-system request
+   */
+  sendCrossSystemRequest: protectedProcedure.input(
+    z114.object({
+      sourceSystem: z114.enum(["rrb", "tyos", "qumus"]),
+      targetSystem: z114.enum(["rrb", "tyos", "qumus"]),
+      action: z114.string(),
+      payload: z114.record(z114.any())
+    })
+  ).mutation(async ({ ctx, input }) => {
+    try {
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      if (!checkRateLimit(input.sourceSystem, input.targetSystem)) {
+        throw new Error("Rate limit exceeded for this bridge");
+      }
+      const request = createCrossSystemRequest(
+        input.sourceSystem,
+        input.targetSystem,
+        input.action,
+        input.payload
+      );
+      await logCrosSystemCommunication(
+        input.sourceSystem,
+        input.targetSystem,
+        input.action,
+        input.payload,
+        true
+      );
+      return {
+        success: true,
+        request,
+        timestamp: /* @__PURE__ */ new Date()
+      };
+    } catch (error) {
+      console.error("Error sending cross-system request:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Verify cross-system request signature
+   */
+  verifyCrossSystemRequest: publicProcedure.input(
+    z114.object({
+      sourceSystem: z114.enum(["rrb", "tyos", "qumus"]),
+      payload: z114.record(z114.any()),
+      signature: z114.string(),
+      timestamp: z114.number()
+    })
+  ).query(async ({ input }) => {
+    try {
+      const isValid = verifyRequestSignature(
+        input.sourceSystem,
+        input.payload,
+        input.signature,
+        input.timestamp
+      );
+      return {
+        valid: isValid,
+        timestamp: /* @__PURE__ */ new Date()
+      };
+    } catch (error) {
+      console.error("Error verifying cross-system request:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get cross-system bridge status
+   */
+  getBridgeStatus: publicProcedure.query(async () => {
+    try {
+      return await getCrosSystemBridgeStatus();
+    } catch (error) {
+      console.error("Error getting bridge status:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get bridge health metrics
+   */
+  getBridgeHealthMetrics: publicProcedure.query(async () => {
+    try {
+      const status = await getCrosSystemBridgeStatus();
+      const metrics2 = {
+        overallStatus: status.status,
+        operationalBridges: status.bridges.filter((b) => b.status === "operational").length,
+        totalBridges: status.bridges.length,
+        averageLatency: status.bridges.reduce((sum2, b) => sum2 + b.latency, 0) / status.bridges.length,
+        totalRequests: status.bridges.reduce((sum2, b) => sum2 + b.requestCount, 0),
+        bridges: status.bridges,
+        timestamp: status.timestamp
+      };
+      return metrics2;
+    } catch (error) {
+      console.error("Error getting bridge health metrics:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Check specific bridge status
+   */
+  checkBridgeStatus: publicProcedure.input(
+    z114.object({
+      sourceSystem: z114.enum(["rrb", "tyos", "qumus"]),
+      targetSystem: z114.enum(["rrb", "tyos", "qumus"])
+    })
+  ).query(async ({ input }) => {
+    try {
+      const status = await getCrosSystemBridgeStatus();
+      const bridge = status.bridges.find(
+        (b) => b.source === input.sourceSystem && b.target === input.targetSystem
+      );
+      if (!bridge) {
+        throw new Error("Bridge not found");
+      }
+      return {
+        ...bridge,
+        operational: bridge.status === "operational",
+        timestamp: /* @__PURE__ */ new Date()
+      };
+    } catch (error) {
+      console.error("Error checking bridge status:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get all bridge connections
+   */
+  getAllBridgeConnections: publicProcedure.query(async () => {
+    try {
+      const status = await getCrosSystemBridgeStatus();
+      return {
+        connections: status.bridges.map((bridge) => ({
+          id: `${bridge.source}-${bridge.target}`,
+          source: bridge.source,
+          target: bridge.target,
+          status: bridge.status,
+          latency: `${bridge.latency.toFixed(2)}ms`,
+          requestsPerMinute: bridge.requestCount,
+          operational: bridge.status === "operational"
+        })),
+        summary: {
+          totalConnections: status.bridges.length,
+          operationalConnections: status.bridges.filter((b) => b.status === "operational").length,
+          overallHealth: status.status
+        },
+        timestamp: /* @__PURE__ */ new Date()
+      };
+    } catch (error) {
+      console.error("Error getting all bridge connections:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get cross-system communication audit log
+   */
+  getAuditLog: protectedProcedure.input(
+    z114.object({
+      sourceSystem: z114.enum(["rrb", "tyos", "qumus"]).optional(),
+      targetSystem: z114.enum(["rrb", "tyos", "qumus"]).optional(),
+      limit: z114.number().min(1).max(1e3).default(100)
+    })
+  ).query(async ({ ctx, input }) => {
+    try {
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      return {
+        logs: [],
+        total: 0,
+        limit: input.limit,
+        timestamp: /* @__PURE__ */ new Date()
+      };
+    } catch (error) {
+      console.error("Error getting audit log:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Test bridge connectivity
+   */
+  testBridgeConnectivity: protectedProcedure.input(
+    z114.object({
+      sourceSystem: z114.enum(["rrb", "tyos", "qumus"]),
+      targetSystem: z114.enum(["rrb", "tyos", "qumus"])
+    })
+  ).mutation(async ({ ctx, input }) => {
+    try {
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      const startTime = Date.now();
+      const testRequest = createCrossSystemRequest(
+        input.sourceSystem,
+        input.targetSystem,
+        "test_connectivity",
+        { test: true }
+      );
+      const latency = Date.now() - startTime;
+      await logCrosSystemCommunication(
+        input.sourceSystem,
+        input.targetSystem,
+        "test_connectivity",
+        { test: true },
+        true
+      );
+      return {
+        success: true,
+        sourceSystem: input.sourceSystem,
+        targetSystem: input.targetSystem,
+        latency,
+        request: testRequest,
+        timestamp: /* @__PURE__ */ new Date()
+      };
+    } catch (error) {
+      console.error("Error testing bridge connectivity:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get system interconnection map
+   */
+  getInterconnectionMap: publicProcedure.query(async () => {
+    try {
+      const status = await getCrosSystemBridgeStatus();
+      const systems = ["rrb", "tyos", "qumus"];
+      const interconnectionMap = {};
+      systems.forEach((system) => {
+        interconnectionMap[system] = {
+          outgoing: status.bridges.filter((b) => b.source === system).map((b) => ({
+            target: b.target,
+            status: b.status,
+            latency: b.latency
+          })),
+          incoming: status.bridges.filter((b) => b.target === system).map((b) => ({
+            source: b.source,
+            status: b.status,
+            latency: b.latency
+          }))
+        };
+      });
+      return {
+        interconnectionMap,
+        overallStatus: status.status,
+        timestamp: /* @__PURE__ */ new Date()
+      };
+    } catch (error) {
+      console.error("Error getting interconnection map:", error);
+      throw error;
+    }
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -53885,6 +54285,8 @@ var appRouter = router({
   realtimeMetrics: realtimeMetricsRouter,
   // Ty OS ↔ QUMUS Bidirectional Control (policy decisions, user actions, blockchain verification)
   tyOsQumusIntegration: tyOsQumusIntegrationRouter,
+  // Cross-System Bridge Security (RRB ↔ Ty OS ↔ QUMUS secure communication)
+  crossSystemBridge: crossSystemBridgeRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -53900,11 +54302,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z114.object({
-        goal: z114.string().min(1, "Goal is required"),
-        priority: z114.number().int().min(1).max(10).optional().default(5),
-        steps: z114.array(z114.string()).optional(),
-        constraints: z114.array(z114.string()).optional()
+      z115.object({
+        goal: z115.string().min(1, "Goal is required"),
+        priority: z115.number().int().min(1).max(10).optional().default(5),
+        steps: z115.array(z115.string()).optional(),
+        constraints: z115.array(z115.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -53916,7 +54318,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z114.object({ taskId: z114.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z115.object({ taskId: z115.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -53926,11 +54328,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z114.object({
-        target: z114.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z114.string().min(1, "Action is required"),
-        params: z114.record(z114.any()).optional().default({}),
-        priority: z114.number().int().min(1).max(10).optional().default(5)
+      z115.object({
+        target: z115.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z115.string().min(1, "Action is required"),
+        params: z115.record(z115.any()).optional().default({}),
+        priority: z115.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -53942,10 +54344,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z114.object({ commandId: z114.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z115.object({ commandId: z115.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z114.object({ target: z114.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z115.object({ target: z115.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -54040,12 +54442,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z114.object({
-      sessionName: z114.string().min(1),
-      systemPrompt: z114.string().optional(),
-      temperature: z114.number().min(0).max(100).optional(),
-      model: z114.string().optional(),
-      maxSteps: z114.number().min(1).optional()
+    createSession: protectedProcedure.input(z115.object({
+      sessionName: z115.string().min(1),
+      systemPrompt: z115.string().optional(),
+      temperature: z115.number().min(0).max(100).optional(),
+      model: z115.string().optional(),
+      maxSteps: z115.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -54066,7 +54468,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z114.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z115.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -54075,7 +54477,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z114.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z115.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -54119,9 +54521,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z114.object({
-      dateRange: z114.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z114.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z115.object({
+      dateRange: z115.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z115.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -54132,13 +54534,13 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z114.object({
-      dateRange: z114.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z115.object({
+      dateRange: z115.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z114.object({
-      dateRange: z114.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z115.object({
+      dateRange: z115.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
@@ -54149,11 +54551,11 @@ var appRouter = router({
   socialMedia: socialMediaQueueRouter,
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z114.object({
-      email: z114.string().email(),
-      name: z114.string().optional(),
-      source: z114.string().optional(),
-      language: z114.string().optional()
+    subscribe: publicProcedure.input(z115.object({
+      email: z115.string().email(),
+      name: z115.string().optional(),
+      source: z115.string().optional(),
+      language: z115.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),

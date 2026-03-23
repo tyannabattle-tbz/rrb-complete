@@ -127,6 +127,7 @@ import Music from '@/pages/Music';
 import Proof from '@/pages/Proof';
 import Legacy from '@/pages/Legacy';
 import RRBHome from '@/pages/RRBHome';
+import TyOSHome from '@/pages/TyOSHome';
 import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
@@ -259,13 +260,19 @@ import { UnifiedFeedHealthDashboard } from '@/pages/UnifiedFeedHealthDashboard';
 import { FallbackStatusIndicator } from '@/components/FallbackStatusIndicator';
 import UnifiedAvatarManagement from '@/pages/UnifiedAvatarManagement';
 import BroadcastChannelManagement from '@/pages/BroadcastChannelManagement';
+import { useState } from 'react';
+
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
+  const [, setLocation] = useLocation();
   // Determine which home page to show based on hostname
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-  const isRRBDomain = hostname.includes('rockinrockinboogie.com') || hostname.includes('rrb');
-  const HomeComponent = isRRBDomain ? RRBHome : Home;
+  const isRRBDomain = hostname.includes('rockinrockinboogie.com') || hostname.includes('rrb') || hostname.includes('manusweb-eshiamkd') || hostname.includes('www.manuweb.sbs') || hostname.includes('manuweb.sbs');
+  const isTyOSDomain = hostname.includes('tyos') || hostname.includes('tyos.manus.space');
+  let HomeComponent = Home;
+  if (isRRBDomain) HomeComponent = RRBHome;
+  if (isTyOSDomain) HomeComponent = TyOSHome; // Will create this
   
   return (
     <>
