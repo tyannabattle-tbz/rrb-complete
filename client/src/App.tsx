@@ -281,6 +281,7 @@ import {
   RRBDonatePage,
   RRBContactPage,
 } from '@/pages/RRBNavigationPages';
+import RRBContentManagement from '@/pages/RRBContentManagement';
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 
@@ -330,6 +331,7 @@ function Router() {
       <Route path="/rrb/solbones-game" component={RRBSolbonesGamePage} />
       <Route path="/rrb/donate" component={RRBDonatePage} />
       <Route path="/rrb/contact" component={RRBContactPage} />
+      <Route path="/admin/rrb-content" component={RRBContentManagement} />
       <Route path="/marketplace" component={WebhookMarketplace} />
       <Route path="/finetuning" component={ModelFineTuning} />
       <Route path="/production" component={ProductionDashboard} />
