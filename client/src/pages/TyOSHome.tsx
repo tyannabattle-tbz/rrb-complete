@@ -58,7 +58,7 @@ export default function TyOSHome() {
         'Solfeggio Frequencies',
         '24/7 Streaming',
       ],
-      path: '/radio-station',
+      path: '/listen',
       color: 'from-pink-600 to-orange-600',
       status: 'active',
     },

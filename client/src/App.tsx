@@ -151,6 +151,7 @@ import RRBEcosystemDashboard from "@/pages/RRBEcosystemDashboard";
 import StudioDashboard from "@/pages/StudioDashboard";
 import SoundEffectsBrowser from "@/pages/SoundEffectsBrowser";
 import PodcastRecordingStudio from "@/pages/PodcastRecordingStudio";
+import TyOSRadioListener from "@/pages/TyOSRadioListener";
 import SolbonesGame from "@/pages/SolbonesGame";
 import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
 import EcosystemMasterDashboard from "@/pages/EcosystemMasterDashboard";
@@ -315,6 +316,8 @@ function Router() {
       <Route path="/studio/dashboard" component={StudioDashboard} />
       <Route path="/studio/effects" component={SoundEffectsBrowser} />
       <Route path="/studio/podcast/record" component={PodcastRecordingStudio} />
+      <Route path="/listen" component={TyOSRadioListener} />
+      <Route path="/listen-on-tyos-radio" component={TyOSRadioListener} />
       <Route path="/canryn" component={CanrynDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
