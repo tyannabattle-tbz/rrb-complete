@@ -265,6 +265,22 @@ import PushNotificationTesting from '@/pages/PushNotificationTesting';
 import ListenerEngagementHeatmap from '@/pages/ListenerEngagementHeatmap';
 import AnalyticsExportScheduler from '@/pages/AnalyticsExportScheduler';
 import CreatorAppealWorkflow from '@/pages/CreatorAppealWorkflow';
+import {
+  RRBLegacyPage,
+  RRBMusicPage,
+  RRBProofVaultPage,
+  RRBTestimonialsPage,
+  RRBGrandmaHelenPage,
+  RRBFamilyLegacyPage,
+  RRBAboutPage,
+  RRBCanrynProdPage,
+  RRBRadioPage,
+  RRBPodcastVideoPage,
+  RRBWellnessPage,
+  RRBSolbonesGamePage,
+  RRBDonatePage,
+  RRBContactPage,
+} from '@/pages/RRBNavigationPages';
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 
@@ -298,6 +314,22 @@ function Router() {
       <Route path="/team" component={TeamManagement} />
       <Route path="/unified-avatar-management" component={UnifiedAvatarManagement} />
       <Route path="/broadcast-channel-management" component={BroadcastChannelManagement} />
+      
+      {/* RRB Navigation Routes */}
+      <Route path="/rrb/legacy" component={RRBLegacyPage} />
+      <Route path="/rrb/music" component={RRBMusicPage} />
+      <Route path="/rrb/proof-vault" component={RRBProofVaultPage} />
+      <Route path="/rrb/testimonials" component={RRBTestimonialsPage} />
+      <Route path="/rrb/grandma-helen" component={RRBGrandmaHelenPage} />
+      <Route path="/rrb/family-legacy" component={RRBFamilyLegacyPage} />
+      <Route path="/rrb/about" component={RRBAboutPage} />
+      <Route path="/rrb/canryn" component={RRBCanrynProdPage} />
+      <Route path="/rrb/radio" component={RRBRadioPage} />
+      <Route path="/rrb/podcast-video" component={RRBPodcastVideoPage} />
+      <Route path="/rrb/wellness" component={RRBWellnessPage} />
+      <Route path="/rrb/solbones-game" component={RRBSolbonesGamePage} />
+      <Route path="/rrb/donate" component={RRBDonatePage} />
+      <Route path="/rrb/contact" component={RRBContactPage} />
       <Route path="/marketplace" component={WebhookMarketplace} />
       <Route path="/finetuning" component={ModelFineTuning} />
       <Route path="/production" component={ProductionDashboard} />

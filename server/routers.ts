@@ -109,6 +109,7 @@ import { realtimeMetricsRouter } from "./routers/realtimeMetricsRouter";
 import { tyOsQumusIntegrationRouter } from "./routers/tyOsQumusIntegrationRouter";
 import { crossSystemBridgeRouter } from "./routers/crossSystemBridgeRouter";
 import { adminFeaturesRouter } from "./routers/adminFeaturesRouter";
+import { rrbNavigationRouter } from "./routers/rrbNavigationRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -168,6 +169,9 @@ export const appRouter = router({
 
   // Admin Features (decision notifications, analytics export, creator appeals)
   adminFeatures: adminFeaturesRouter,
+
+  // RRB Navigation (all RRB menu routes and broadcast management)
+  rrbNavigation: rrbNavigationRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
