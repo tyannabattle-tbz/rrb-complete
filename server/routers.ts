@@ -108,6 +108,7 @@ import { operationalDeploymentRouter } from "./routers/operationalDeploymentRout
 import { realtimeMetricsRouter } from "./routers/realtimeMetricsRouter";
 import { tyOsQumusIntegrationRouter } from "./routers/tyOsQumusIntegrationRouter";
 import { crossSystemBridgeRouter } from "./routers/crossSystemBridgeRouter";
+import { adminFeaturesRouter } from "./routers/adminFeaturesRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -164,6 +165,9 @@ export const appRouter = router({
 
   // Cross-System Bridge Security (RRB ↔ Ty OS ↔ QUMUS secure communication)
   crossSystemBridge: crossSystemBridgeRouter,
+
+  // Admin Features (decision notifications, analytics export, creator appeals)
+  adminFeatures: adminFeaturesRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,

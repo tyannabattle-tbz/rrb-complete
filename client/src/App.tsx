@@ -263,6 +263,8 @@ import BroadcastChannelManagement from '@/pages/BroadcastChannelManagement';
 import AdminDecisionReview from '@/pages/AdminDecisionReview';
 import PushNotificationTesting from '@/pages/PushNotificationTesting';
 import ListenerEngagementHeatmap from '@/pages/ListenerEngagementHeatmap';
+import AnalyticsExportScheduler from '@/pages/AnalyticsExportScheduler';
+import CreatorAppealWorkflow from '@/pages/CreatorAppealWorkflow';
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 
@@ -288,6 +290,8 @@ function Router() {
       <Route path="/admin/decisions" component={AdminDecisionReview} />
       <Route path="/admin/push-testing" component={PushNotificationTesting} />
       <Route path="/admin/engagement-heatmap" component={ListenerEngagementHeatmap} />
+      <Route path="/admin/scheduled-exports" component={AnalyticsExportScheduler} />
+      <Route path="/admin/appeals" component={CreatorAppealWorkflow} />
       <Route path="/canryn" component={CanrynDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />

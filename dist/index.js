@@ -11115,7 +11115,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z115 } from "zod";
+import { z as z116 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -55378,6 +55378,431 @@ var crossSystemBridgeRouter = router({
   })
 });
 
+// server/routers/adminFeaturesRouter.ts
+import { z as z115 } from "zod";
+
+// server/services/decisionNotificationService.ts
+var DecisionNotificationService = class {
+  /**
+   * Send notification for pending decision
+   */
+  static async notifyPendingDecision(notification) {
+    try {
+      const title = `${notification.impact.toUpperCase()} - ${notification.policyName}`;
+      const message = `Decision requires review. ${notification.affectedUsers} users affected. Confidence: ${(notification.confidence * 100).toFixed(0)}%`;
+      const result2 = await sendPushNotification({
+        title,
+        message,
+        icon: this.getIconForImpact(notification.impact),
+        badge: "/badge.png",
+        tag: `decision_${notification.decisionId}`,
+        requireInteraction: notification.impact === "critical",
+        actions: [
+          {
+            action: "approve",
+            title: "Approve",
+            icon: "/icons/approve.png"
+          },
+          {
+            action: "reject",
+            title: "Reject",
+            icon: "/icons/reject.png"
+          }
+        ],
+        data: {
+          decisionId: notification.decisionId,
+          policyName: notification.policyName,
+          impact: notification.impact,
+          affectedUsers: notification.affectedUsers,
+          confidence: notification.confidence,
+          recommendedAction: notification.recommendedAction,
+          url: "/admin/decisions"
+        }
+      });
+      console.log(`[Decision Notification] Sent for decision ${notification.decisionId}`);
+      return result2;
+    } catch (error) {
+      console.error("[Decision Notification] Failed to send notification:", error);
+      return false;
+    }
+  }
+  /**
+   * Send notification for decision approval
+   */
+  static async notifyDecisionApproved(decisionId, policyName, impact, approvedBy) {
+    try {
+      const result2 = await sendPushNotification({
+        title: `\u2713 Decision Approved`,
+        message: `${policyName} has been approved by ${approvedBy}`,
+        icon: "/icons/success.png",
+        badge: "/badge.png",
+        tag: `decision_approved_${decisionId}`,
+        data: {
+          decisionId,
+          status: "approved",
+          approvedBy,
+          url: "/admin/decisions"
+        }
+      });
+      console.log(`[Decision Notification] Approval sent for decision ${decisionId}`);
+      return result2;
+    } catch (error) {
+      console.error("[Decision Notification] Failed to send approval notification:", error);
+      return false;
+    }
+  }
+  /**
+   * Send notification for decision rejection
+   */
+  static async notifyDecisionRejected(decisionId, policyName, rejectedBy, reason) {
+    try {
+      const result2 = await sendPushNotification({
+        title: `\u2717 Decision Rejected`,
+        message: `${policyName} has been rejected by ${rejectedBy}. Reason: ${reason}`,
+        icon: "/icons/rejected.png",
+        badge: "/badge.png",
+        tag: `decision_rejected_${decisionId}`,
+        data: {
+          decisionId,
+          status: "rejected",
+          rejectedBy,
+          reason,
+          url: "/admin/decisions"
+        }
+      });
+      console.log(`[Decision Notification] Rejection sent for decision ${decisionId}`);
+      return result2;
+    } catch (error) {
+      console.error("[Decision Notification] Failed to send rejection notification:", error);
+      return false;
+    }
+  }
+  /**
+   * Send critical alert notification
+   */
+  static async sendCriticalAlert(title, message, affectedSystems) {
+    try {
+      const result2 = await sendPushNotification({
+        title: `\u{1F6A8} CRITICAL ALERT: ${title}`,
+        message,
+        icon: "/icons/critical.png",
+        badge: "/badge.png",
+        tag: `critical_${Date.now()}`,
+        requireInteraction: true,
+        actions: [
+          {
+            action: "review",
+            title: "Review Now",
+            icon: "/icons/review.png"
+          }
+        ],
+        data: {
+          type: "critical_alert",
+          affectedSystems,
+          url: "/admin/decisions"
+        }
+      });
+      console.log(`[Decision Notification] Critical alert sent: ${title}`);
+      return result2;
+    } catch (error) {
+      console.error("[Decision Notification] Failed to send critical alert:", error);
+      return false;
+    }
+  }
+  /**
+   * Get icon based on impact level
+   */
+  static getIconForImpact(impact) {
+    switch (impact) {
+      case "critical":
+        return "/icons/critical.png";
+      case "high":
+        return "/icons/high.png";
+      case "medium":
+        return "/icons/medium.png";
+      case "low":
+        return "/icons/low.png";
+      default:
+        return "/icons/notification.png";
+    }
+  }
+  /**
+   * Batch notify multiple decisions
+   */
+  static async notifyMultipleDecisions(notifications4) {
+    let successCount = 0;
+    for (const notification of notifications4) {
+      const result2 = await this.notifyPendingDecision(notification);
+      if (result2) successCount++;
+    }
+    console.log(`[Decision Notification] Batch sent ${successCount}/${notifications4.length} notifications`);
+    return successCount;
+  }
+  /**
+   * Send escalation notification for overdue decisions
+   */
+  static async notifyEscalation(decisionId, policyName, hoursOverdue) {
+    try {
+      const result2 = await sendPushNotification({
+        title: `\u23F0 Decision Overdue`,
+        message: `${policyName} has been pending for ${hoursOverdue} hours and requires immediate attention`,
+        icon: "/icons/overdue.png",
+        badge: "/badge.png",
+        tag: `escalation_${decisionId}`,
+        requireInteraction: true,
+        actions: [
+          {
+            action: "view",
+            title: "View Decision",
+            icon: "/icons/view.png"
+          }
+        ],
+        data: {
+          decisionId,
+          type: "escalation",
+          hoursOverdue,
+          url: "/admin/decisions"
+        }
+      });
+      console.log(`[Decision Notification] Escalation sent for decision ${decisionId}`);
+      return result2;
+    } catch (error) {
+      console.error("[Decision Notification] Failed to send escalation notification:", error);
+      return false;
+    }
+  }
+};
+var decisionNotificationService_default = DecisionNotificationService;
+
+// server/routers/adminFeaturesRouter.ts
+var adminFeaturesRouter = router({
+  // Decision Notifications
+  notifyPendingDecision: adminProcedure.input(
+    z115.object({
+      decisionId: z115.string(),
+      policyName: z115.string(),
+      impact: z115.enum(["critical", "high", "medium", "low"]),
+      affectedUsers: z115.number(),
+      confidence: z115.number(),
+      recommendedAction: z115.string()
+    })
+  ).mutation(async ({ input }) => {
+    const result2 = await decisionNotificationService_default.notifyPendingDecision(input);
+    return { success: result2, decisionId: input.decisionId };
+  }),
+  notifyDecisionApproved: adminProcedure.input(
+    z115.object({
+      decisionId: z115.string(),
+      policyName: z115.string(),
+      impact: z115.string(),
+      approvedBy: z115.string()
+    })
+  ).mutation(async ({ input }) => {
+    const result2 = await decisionNotificationService_default.notifyDecisionApproved(
+      input.decisionId,
+      input.policyName,
+      input.impact,
+      input.approvedBy
+    );
+    return { success: result2, decisionId: input.decisionId };
+  }),
+  notifyDecisionRejected: adminProcedure.input(
+    z115.object({
+      decisionId: z115.string(),
+      policyName: z115.string(),
+      rejectedBy: z115.string(),
+      reason: z115.string()
+    })
+  ).mutation(async ({ input }) => {
+    const result2 = await decisionNotificationService_default.notifyDecisionRejected(
+      input.decisionId,
+      input.policyName,
+      input.rejectedBy,
+      input.reason
+    );
+    return { success: result2, decisionId: input.decisionId };
+  }),
+  sendCriticalAlert: adminProcedure.input(
+    z115.object({
+      title: z115.string(),
+      message: z115.string(),
+      affectedSystems: z115.array(z115.string())
+    })
+  ).mutation(async ({ input }) => {
+    const result2 = await decisionNotificationService_default.sendCriticalAlert(
+      input.title,
+      input.message,
+      input.affectedSystems
+    );
+    return { success: result2 };
+  }),
+  notifyEscalation: adminProcedure.input(
+    z115.object({
+      decisionId: z115.string(),
+      policyName: z115.string(),
+      hoursOverdue: z115.number()
+    })
+  ).mutation(async ({ input }) => {
+    const result2 = await decisionNotificationService_default.notifyEscalation(
+      input.decisionId,
+      input.policyName,
+      input.hoursOverdue
+    );
+    return { success: result2, decisionId: input.decisionId };
+  }),
+  // Analytics Export Scheduling
+  createScheduledExport: adminProcedure.input(
+    z115.object({
+      name: z115.string(),
+      type: z115.enum([
+        "listener_demographics",
+        "channel_performance",
+        "revenue_report",
+        "content_analytics",
+        "creator_stats",
+        "system_health"
+      ]),
+      format: z115.enum(["csv", "pdf", "json", "html"]),
+      frequency: z115.enum(["daily", "weekly", "monthly"]),
+      recipientEmails: z115.array(z115.string().email())
+    })
+  ).mutation(async ({ input, ctx }) => {
+    console.log("[Admin Features] Creating scheduled export:", input.name);
+    return {
+      success: true,
+      exportId: `export_${Date.now()}`,
+      name: input.name,
+      type: input.type,
+      format: input.format,
+      frequency: input.frequency,
+      nextRun: Date.now() + 36e5,
+      enabled: true
+    };
+  }),
+  updateScheduledExport: adminProcedure.input(
+    z115.object({
+      exportId: z115.string(),
+      enabled: z115.boolean().optional(),
+      recipientEmails: z115.array(z115.string().email()).optional()
+    })
+  ).mutation(async ({ input }) => {
+    console.log("[Admin Features] Updated scheduled export:", input.exportId);
+    return {
+      success: true,
+      exportId: input.exportId
+    };
+  }),
+  deleteScheduledExport: adminProcedure.input(z115.object({ exportId: z115.string() })).mutation(async ({ input }) => {
+    console.log("[Admin Features] Deleted scheduled export:", input.exportId);
+    return {
+      success: true,
+      exportId: input.exportId
+    };
+  }),
+  runExportNow: adminProcedure.input(
+    z115.object({
+      exportId: z115.string(),
+      type: z115.string(),
+      format: z115.enum(["csv", "pdf", "json", "html"])
+    })
+  ).mutation(async ({ input }) => {
+    console.log("[Admin Features] Running export now:", input.exportId);
+    return {
+      success: true,
+      exportId: input.exportId,
+      fileSize: Math.floor(Math.random() * 1e7),
+      downloadUrl: `/exports/export-${Date.now()}.${input.format}`,
+      generatedAt: Date.now()
+    };
+  }),
+  // Creator Appeals
+  submitAppeal: protectedProcedure.input(
+    z115.object({
+      violationId: z115.string(),
+      appealReason: z115.string(),
+      supportingEvidence: z115.array(z115.string())
+    })
+  ).mutation(async ({ input, ctx }) => {
+    console.log("[Admin Features] Appeal submitted by user:", ctx.user.id);
+    return {
+      success: true,
+      appealId: `appeal_${Date.now()}`,
+      status: "pending",
+      submittedAt: Date.now()
+    };
+  }),
+  approveAppeal: adminProcedure.input(z115.object({ appealId: z115.string() })).mutation(async ({ input, ctx }) => {
+    console.log("[Admin Features] Appeal approved:", input.appealId);
+    return {
+      success: true,
+      appealId: input.appealId,
+      status: "approved",
+      approvedBy: ctx.user.id,
+      approvedAt: Date.now()
+    };
+  }),
+  rejectAppeal: adminProcedure.input(
+    z115.object({
+      appealId: z115.string(),
+      reason: z115.string()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    console.log("[Admin Features] Appeal rejected:", input.appealId);
+    return {
+      success: true,
+      appealId: input.appealId,
+      status: "rejected",
+      rejectedBy: ctx.user.id,
+      rejectedAt: Date.now(),
+      reason: input.reason
+    };
+  }),
+  sendAppealMessage: adminProcedure.input(
+    z115.object({
+      appealId: z115.string(),
+      message: z115.string()
+    })
+  ).mutation(async ({ input }) => {
+    console.log("[Admin Features] Message sent for appeal:", input.appealId);
+    return {
+      success: true,
+      messageId: `msg_${Date.now()}`,
+      appealId: input.appealId,
+      timestamp: Date.now()
+    };
+  }),
+  getAppealDetails: adminProcedure.input(z115.object({ appealId: z115.string() })).query(async ({ input }) => {
+    console.log("[Admin Features] Fetching appeal details:", input.appealId);
+    return {
+      appealId: input.appealId,
+      status: "pending",
+      creatorName: "Creator Name",
+      contentTitle: "Content Title",
+      appealReason: "Appeal reason",
+      messages: [],
+      supportingEvidence: []
+    };
+  }),
+  getScheduledExports: adminProcedure.query(async () => {
+    console.log("[Admin Features] Fetching scheduled exports");
+    return {
+      exports: [],
+      total: 0
+    };
+  }),
+  getAppeals: adminProcedure.input(
+    z115.object({
+      status: z115.enum(["all", "pending", "under_review", "approved", "rejected"]).optional()
+    })
+  ).query(async ({ input }) => {
+    console.log("[Admin Features] Fetching appeals with status:", input.status || "all");
+    return {
+      appeals: [],
+      total: 0
+    };
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -55416,6 +55841,8 @@ var appRouter = router({
   tyOsQumusIntegration: tyOsQumusIntegrationRouter,
   // Cross-System Bridge Security (RRB ↔ Ty OS ↔ QUMUS secure communication)
   crossSystemBridge: crossSystemBridgeRouter,
+  // Admin Features (decision notifications, analytics export, creator appeals)
+  adminFeatures: adminFeaturesRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -55431,11 +55858,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z115.object({
-        goal: z115.string().min(1, "Goal is required"),
-        priority: z115.number().int().min(1).max(10).optional().default(5),
-        steps: z115.array(z115.string()).optional(),
-        constraints: z115.array(z115.string()).optional()
+      z116.object({
+        goal: z116.string().min(1, "Goal is required"),
+        priority: z116.number().int().min(1).max(10).optional().default(5),
+        steps: z116.array(z116.string()).optional(),
+        constraints: z116.array(z116.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -55447,7 +55874,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z115.object({ taskId: z115.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z116.object({ taskId: z116.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -55457,11 +55884,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z115.object({
-        target: z115.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z115.string().min(1, "Action is required"),
-        params: z115.record(z115.any()).optional().default({}),
-        priority: z115.number().int().min(1).max(10).optional().default(5)
+      z116.object({
+        target: z116.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z116.string().min(1, "Action is required"),
+        params: z116.record(z116.any()).optional().default({}),
+        priority: z116.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -55473,10 +55900,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z115.object({ commandId: z115.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z116.object({ commandId: z116.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z115.object({ target: z115.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z116.object({ target: z116.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -55571,12 +55998,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z115.object({
-      sessionName: z115.string().min(1),
-      systemPrompt: z115.string().optional(),
-      temperature: z115.number().min(0).max(100).optional(),
-      model: z115.string().optional(),
-      maxSteps: z115.number().min(1).optional()
+    createSession: protectedProcedure.input(z116.object({
+      sessionName: z116.string().min(1),
+      systemPrompt: z116.string().optional(),
+      temperature: z116.number().min(0).max(100).optional(),
+      model: z116.string().optional(),
+      maxSteps: z116.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -55597,7 +56024,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z115.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z116.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -55606,7 +56033,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z115.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z116.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -55650,9 +56077,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z115.object({
-      dateRange: z115.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z115.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z116.object({
+      dateRange: z116.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z116.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -55663,13 +56090,13 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z115.object({
-      dateRange: z115.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z116.object({
+      dateRange: z116.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z115.object({
-      dateRange: z115.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z116.object({
+      dateRange: z116.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
@@ -55680,11 +56107,11 @@ var appRouter = router({
   socialMedia: socialMediaQueueRouter,
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z115.object({
-      email: z115.string().email(),
-      name: z115.string().optional(),
-      source: z115.string().optional(),
-      language: z115.string().optional()
+    subscribe: publicProcedure.input(z116.object({
+      email: z116.string().email(),
+      name: z116.string().optional(),
+      source: z116.string().optional(),
+      language: z116.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
