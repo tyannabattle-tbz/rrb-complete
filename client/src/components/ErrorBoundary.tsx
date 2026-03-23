@@ -22,8 +22,41 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    const timestamp = new Date().toISOString();
+    const errorLog = {
+      timestamp,
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+      type: error.constructor.name,
+    };
+
+    // Log to console with full details
     console.error('[ErrorBoundary] Caught error:', error.message);
     console.error('[ErrorBoundary] Component stack:', errorInfo.componentStack);
+    console.error('[ErrorBoundary] Full error log:', errorLog);
+
+    // Store error in localStorage for debugging
+    try {
+      const errors = JSON.parse(localStorage.getItem('error_logs') || '[]');
+      errors.push(errorLog);
+      // Keep only last 10 errors
+      if (errors.length > 10) errors.shift();
+      localStorage.setItem('error_logs', JSON.stringify(errors));
+    } catch (e) {
+      console.warn('[ErrorBoundary] Failed to store error log:', e);
+    }
+
+    // Send error to server for monitoring (non-blocking)
+    try {
+      fetch('/api/errors/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(errorLog),
+      }).catch(() => {}); // Silently fail if endpoint doesn't exist
+    } catch (e) {
+      // Ignore fetch errors
+    }
   }
 
   render() {
@@ -42,6 +75,13 @@ class ErrorBoundary extends Component<Props, State> {
               We encountered an unexpected issue. Please try reloading the page.
               If the problem persists, try clearing your browser cache.
             </p>
+
+            {this.state.error && (
+              <div className="w-full mb-6 p-4 bg-muted rounded-lg text-left text-xs text-muted-foreground font-mono max-h-32 overflow-y-auto">
+                <div className="font-semibold mb-2">Error Details:</div>
+                <div>{this.state.error.message}</div>
+              </div>
+            )}
 
             <div className="flex gap-3">
               <button

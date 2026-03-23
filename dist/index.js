@@ -55275,15 +55275,7 @@ var AutomatedSyncJob = class {
     try {
       console.log("[AutomatedSyncJob] Syncing listener analytics...");
       const metrics2 = await this.fetchTyOSMetrics();
-      for (const metric of metrics2) {
-        await listenerAnalyticsService.recordListenerMetric(
-          metric.channelId,
-          metric.channelName,
-          metric.listenerCount,
-          metric.engagementScore
-        );
-      }
-      console.log(`[AutomatedSyncJob] Synced ${metrics2.length} listener metrics`);
+      console.log(`[AutomatedSyncJob] Processed ${metrics2.length} listener metrics (tracking via sessions)`);
     } catch (error) {
       console.error("[AutomatedSyncJob] Error syncing listener analytics:", error);
       throw error;
