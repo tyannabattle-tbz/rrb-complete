@@ -148,6 +148,9 @@ import HybridCastPort3002 from "@/pages/HybridCastPort3002";
 import RRBMusicStreaming from "@/pages/RRBMusicStreaming";
 import RRBLegacySite from "@/pages/RRBLegacySite";
 import RRBEcosystemDashboard from "@/pages/RRBEcosystemDashboard";
+import StudioDashboard from "@/pages/StudioDashboard";
+import SoundEffectsBrowser from "@/pages/SoundEffectsBrowser";
+import PodcastRecordingStudio from "@/pages/PodcastRecordingStudio";
 import SolbonesGame from "@/pages/SolbonesGame";
 import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
 import EcosystemMasterDashboard from "@/pages/EcosystemMasterDashboard";
@@ -309,6 +312,9 @@ function Router() {
       <Route path="/admin/engagement-heatmap" component={ListenerEngagementHeatmap} />
       <Route path="/admin/scheduled-exports" component={AnalyticsExportScheduler} />
       <Route path="/admin/appeals" component={CreatorAppealWorkflow} />
+      <Route path="/studio/dashboard" component={StudioDashboard} />
+      <Route path="/studio/effects" component={SoundEffectsBrowser} />
+      <Route path="/studio/podcast/record" component={PodcastRecordingStudio} />
       <Route path="/canryn" component={CanrynDashboard} />
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
