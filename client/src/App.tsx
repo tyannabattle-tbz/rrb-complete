@@ -235,6 +235,7 @@ import SquaddPodcast from '@/pages/SquaddPodcast';
 import AvatarPanelPodcast from '@/pages/AvatarPanelPodcast';
 import EcosystemPresentation from '@/pages/EcosystemPresentation';
 import SystemStatusPage from '@/pages/SystemStatusPage';
+import RouteAnalyticsDashboard from '@/pages/RouteAnalyticsDashboard';
 import PresentationBuilder from '@/pages/PresentationBuilder';
 import MusicStudio from '@/pages/MusicStudio';
 import CSW70Campaign from '@/pages/CSW70Campaign';
@@ -483,6 +484,7 @@ function Router() {
       <Route path="/social-engagement" component={SocialEngagementDashboard} />
       <Route path="/webhooks" component={WebhookAutomationDashboard} />
       <Route path="/analytics" component={RealtimeAnalyticsDashboard} />
+      <Route path="/route-analytics" component={RouteAnalyticsDashboard} />
       <Route path="/donors" component={DonorRecognitionDashboard} />
       <Route path="/email-campaigns" component={EmailCampaignsDashboard} />
       <Route path="/unified-feed-health" component={UnifiedFeedHealthDashboard} />

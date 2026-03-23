@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import { ChevronRight, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { tbzOSIntegrationSystem } from '@/lib/tbzOSIntegration';
 
 interface BreadcrumbItem {
   label: string;
@@ -11,8 +12,19 @@ interface BreadcrumbItem {
 export function BreadcrumbNavigation() {
   const [location, navigate] = useLocation();
 
-  // Generate breadcrumbs from current path
+  // Generate breadcrumbs from current path with TBZ OS integration
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
+    // Try to get breadcrumbs from TBZ OS system first
+    const systemInfo = tbzOSIntegrationSystem.getSystemByRoute(location);
+    if (systemInfo.system) {
+      const tbzBreadcrumbs = tbzOSIntegrationSystem.getBreadcrumbs(
+        systemInfo.system.id,
+        systemInfo.subsystem?.id
+      );
+      return tbzBreadcrumbs.map(b => ({ label: b.label, path: b.route }));
+    }
+
+    // Fallback: generate from URL path
     const paths = location.split('/').filter(Boolean);
     const breadcrumbs: BreadcrumbItem[] = [
       { label: 'Home', path: '/' }
