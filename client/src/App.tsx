@@ -257,6 +257,8 @@ import DonorRecognitionDashboard from '@/pages/DonorRecognitionDashboard';
 import EmailCampaignsDashboard from '@/pages/EmailCampaignsDashboard';
 import { UnifiedFeedHealthDashboard } from '@/pages/UnifiedFeedHealthDashboard';
 import { FallbackStatusIndicator } from '@/components/FallbackStatusIndicator';
+import UnifiedAvatarManagement from '@/pages/UnifiedAvatarManagement';
+import BroadcastChannelManagement from '@/pages/BroadcastChannelManagement';
 
 // Version: 3.0.0 - Mobile-first header redesign
 function Router() {
@@ -278,6 +280,8 @@ function Router() {
       <Route path="/settings" component={SettingsPanel} />
       <Route path="/api-docs" component={APIDocumentation} />
       <Route path="/team" component={TeamManagement} />
+      <Route path="/unified-avatar-management" component={UnifiedAvatarManagement} />
+      <Route path="/broadcast-channel-management" component={BroadcastChannelManagement} />
       <Route path="/marketplace" component={WebhookMarketplace} />
       <Route path="/finetuning" component={ModelFineTuning} />
       <Route path="/production" component={ProductionDashboard} />

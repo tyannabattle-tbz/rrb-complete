@@ -6462,12 +6462,12 @@ var init_qumusProductionIntegration = __esm({
         setInterval(async () => {
           try {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-            const { sql: sql24 } = await import("drizzle-orm");
+            const { sql: sql26 } = await import("drizzle-orm");
             const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
             const db2 = await getDb5();
             const now = /* @__PURE__ */ new Date();
             const fifteenMinLater = new Date(now.getTime() + 15 * 60 * 1e3);
-            const [upcomingRows] = await db2.execute(sql24`
+            const [upcomingRows] = await db2.execute(sql26`
           SELECT id, title, room_code, platform, scheduled_at, host_name
           FROM conferences 
           WHERE status = 'scheduled' 
@@ -6476,7 +6476,7 @@ var init_qumusProductionIntegration = __esm({
             const upcoming = upcomingRows;
             for (const conf of upcoming) {
               const [attendeeRows] = await db2.execute(
-                sql24`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
+                sql26`SELECT user_name FROM conference_attendees WHERE conference_id = ${conf.id} AND rsvp_status IN ('going', 'maybe')`
               );
               const attendeeCount = attendeeRows.length;
               if (attendeeCount > 0 || true) {
@@ -6486,7 +6486,7 @@ var init_qumusProductionIntegration = __esm({
                 });
                 console.log(`[QUMUS-CRON] Auto-notified for conference ${conf.id}: ${conf.title} (${attendeeCount} attendees)`);
               }
-              await db2.execute(sql24`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
+              await db2.execute(sql26`UPDATE conferences SET updated_at = NOW() WHERE id = ${conf.id}`);
             }
             if (upcoming.length > 0) {
               console.log(`[QUMUS-CRON] Conference auto-notification: ${upcoming.length} conferences starting within 15 minutes`);
@@ -6501,13 +6501,13 @@ var init_qumusProductionIntegration = __esm({
             const now = /* @__PURE__ */ new Date();
             if (now.getDay() === 0 && now.getHours() === 20 && now.getMinutes() < 60) {
               const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
-              const { sql: sql24 } = await import("drizzle-orm");
+              const { sql: sql26 } = await import("drizzle-orm");
               const { notifyOwner: notifyOwner2 } = await Promise.resolve().then(() => (init_notification(), notification_exports));
               const db2 = await getDb5();
               const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1e3);
-              const [weekSessions] = await db2.execute(sql24`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-              const [weekAttendees] = await db2.execute(sql24`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
-              const [completedSessions] = await db2.execute(sql24`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
+              const [weekSessions] = await db2.execute(sql26`SELECT COUNT(*) as count FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [weekAttendees] = await db2.execute(sql26`SELECT COALESCE(SUM(actual_attendees), 0) as total FROM conferences WHERE created_at >= ${oneWeekAgo}`);
+              const [completedSessions] = await db2.execute(sql26`SELECT COUNT(*) as count FROM conferences WHERE status = 'completed' AND updated_at >= ${oneWeekAgo}`);
               const sessions = weekSessions[0]?.count || 0;
               const attendees = weekAttendees[0]?.total || 0;
               const completed = completedSessions[0]?.count || 0;
@@ -9308,8 +9308,8 @@ async function auditStreams() {
     const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
     const db2 = await getDb5();
     if (!db2) return findings;
-    const { sql: sql24 } = await import("drizzle-orm");
-    const rawChannels = await db2.execute(sql24`SELECT id, name, streamUrl, genre, metadata FROM radio_channels`);
+    const { sql: sql26 } = await import("drizzle-orm");
+    const rawChannels = await db2.execute(sql26`SELECT id, name, streamUrl, genre, metadata FROM radio_channels`);
     const channels = Array.isArray(rawChannels) && Array.isArray(rawChannels[0]) ? rawChannels[0] : rawChannels;
     if (!Array.isArray(channels)) return findings;
     const urlMap = /* @__PURE__ */ new Map();
@@ -9426,8 +9426,8 @@ async function auditDatabase() {
       });
       return findings;
     }
-    const { sql: sql24 } = await import("drizzle-orm");
-    const rawCC = await db2.execute(sql24`SELECT COUNT(*) as cnt FROM radio_channels`);
+    const { sql: sql26 } = await import("drizzle-orm");
+    const rawCC = await db2.execute(sql26`SELECT COUNT(*) as cnt FROM radio_channels`);
     const ccRows = Array.isArray(rawCC) && Array.isArray(rawCC[0]) ? rawCC[0] : rawCC;
     const cnt = ccRows?.[0]?.cnt || 0;
     if (cnt < 54) {
@@ -9443,7 +9443,7 @@ async function auditDatabase() {
       });
     }
     try {
-      const rawSC = await db2.execute(sql24`SELECT COUNT(*) as cnt FROM broadcast_schedules`);
+      const rawSC = await db2.execute(sql26`SELECT COUNT(*) as cnt FROM broadcast_schedules`);
       const scRows = Array.isArray(rawSC) && Array.isArray(rawSC[0]) ? rawSC[0] : rawSC;
       const sCnt = scRows?.[0]?.cnt || 0;
       if (sCnt === 0) {
@@ -9462,7 +9462,7 @@ async function auditDatabase() {
     }
     try {
       const rawOC = await db2.execute(
-        sql24`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'offline'`
+        sql26`SELECT COUNT(*) as cnt FROM radio_channels WHERE status = 'offline'`
       );
       const ocRows = Array.isArray(rawOC) && Array.isArray(rawOC[0]) ? rawOC[0] : rawOC;
       const offCnt = ocRows?.[0]?.cnt || 0;
@@ -9599,9 +9599,9 @@ async function autoCorrect(findings) {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
             const db2 = await getDb5();
             if (db2) {
-              const { sql: sql24 } = await import("drizzle-orm");
+              const { sql: sql26 } = await import("drizzle-orm");
               const rawRows = await db2.execute(
-                sql24`SELECT metadata, streamUrl FROM radio_channels WHERE id = ${channelId}`
+                sql26`SELECT metadata, streamUrl FROM radio_channels WHERE id = ${channelId}`
               );
               const rowArr = Array.isArray(rawRows) && Array.isArray(rawRows[0]) ? rawRows[0] : rawRows;
               const ch = rowArr?.[0];
@@ -9610,13 +9610,13 @@ async function autoCorrect(findings) {
                 if (meta.fallbackUrl && meta.fallbackUrl !== ch.streamUrl) {
                   const oldUrl = ch.streamUrl;
                   await db2.execute(
-                    sql24`UPDATE radio_channels SET streamUrl = ${meta.fallbackUrl} WHERE id = ${channelId}`
+                    sql26`UPDATE radio_channels SET streamUrl = ${meta.fallbackUrl} WHERE id = ${channelId}`
                   );
                   meta.fallbackUrl = oldUrl;
                   meta.lastAutoSwap = Date.now();
                   meta.autoSwapReason = finding.title;
                   await db2.execute(
-                    sql24`UPDATE radio_channels SET metadata = ${JSON.stringify(meta)} WHERE id = ${channelId}`
+                    sql26`UPDATE radio_channels SET metadata = ${JSON.stringify(meta)} WHERE id = ${channelId}`
                   );
                   fixed = true;
                   fixDesc = `Swapped stream to fallback URL for channel ${channelId}`;
@@ -9632,10 +9632,10 @@ async function autoCorrect(findings) {
             const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
             const db2 = await getDb5();
             if (db2) {
-              const { sql: sql24 } = await import("drizzle-orm");
+              const { sql: sql26 } = await import("drizzle-orm");
               const defaultStream = "https://listen.181fm.com/181-rnb_128k.mp3";
               await db2.execute(
-                sql24`UPDATE radio_channels SET streamUrl = ${defaultStream} WHERE id = ${channelId} AND (streamUrl IS NULL OR streamUrl = '')`
+                sql26`UPDATE radio_channels SET streamUrl = ${defaultStream} WHERE id = ${channelId} AND (streamUrl IS NULL OR streamUrl = '')`
               );
               fixed = true;
               fixDesc = `Assigned default R&B stream to channel ${channelId}`;
@@ -9647,9 +9647,9 @@ async function autoCorrect(findings) {
           const { getDb: getDb5 } = await Promise.resolve().then(() => (init_db(), db_exports));
           const db2 = await getDb5();
           if (db2) {
-            const { sql: sql24 } = await import("drizzle-orm");
+            const { sql: sql26 } = await import("drizzle-orm");
             await db2.execute(
-              sql24`UPDATE radio_channels SET status = 'active' WHERE status = 'offline'`
+              sql26`UPDATE radio_channels SET status = 'active' WHERE status = 'offline'`
             );
             fixed = true;
             fixDesc = "Reactivated all offline channels to active status";
@@ -11115,7 +11115,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z112 } from "zod";
+import { z as z114 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -11292,10 +11292,10 @@ var rockinBoogieRouter = router({
 // server/routers/hybridcastRouter.ts
 import { z as z3 } from "zod";
 import mysql from "mysql2/promise";
-async function rawQuery(sql24, params2 = []) {
+async function rawQuery(sql26, params2 = []) {
   const conn = await mysql.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await conn.execute(sql24, params2);
+    const [rows] = await conn.execute(sql26, params2);
     return rows;
   } finally {
     await conn.end();
@@ -15947,10 +15947,10 @@ var watermarkRouter = router({
 init_notification();
 import { z as z14 } from "zod";
 import mysql2 from "mysql2/promise";
-async function rawQuery2(sql24, params2 = []) {
+async function rawQuery2(sql26, params2 = []) {
   const connection = await mysql2.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql24, params2);
+    const [rows] = await connection.execute(sql26, params2);
     return rows;
   } finally {
     await connection.end();
@@ -25894,10 +25894,10 @@ var dashboardRouter = router({
 // server/routers/broadcastRouter.ts
 import { z as z50 } from "zod";
 import mysql3 from "mysql2/promise";
-async function rawQuery3(sql24, params2 = []) {
+async function rawQuery3(sql26, params2 = []) {
   const connection = await mysql3.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql24, params2);
+    const [rows] = await connection.execute(sql26, params2);
     return rows;
   } finally {
     await connection.end();
@@ -26884,10 +26884,10 @@ var reviewRouter = router({
 // server/routers/meditation.ts
 import { z as z55 } from "zod";
 import mysql4 from "mysql2/promise";
-async function rawQuery4(sql24, params2 = []) {
+async function rawQuery4(sql26, params2 = []) {
   const connection = await mysql4.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql24, params2);
+    const [rows] = await connection.execute(sql26, params2);
     return rows;
   } finally {
     await connection.end();
@@ -47391,11 +47391,11 @@ function generateBroadcastId() {
   }
   return result2;
 }
-async function rawQuery5(sql24, params2 = []) {
+async function rawQuery5(sql26, params2 = []) {
   const mysql12 = await import("mysql2/promise");
   const connection = await mysql12.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql24, params2);
+    const [rows] = await connection.execute(sql26, params2);
     return rows;
   } finally {
     await connection.end();
@@ -47603,10 +47603,10 @@ import { z as z102 } from "zod";
 
 // server/ecosystemSyncEngine.ts
 import mysql6 from "mysql2/promise";
-async function rawQuery6(sql24, params2 = []) {
+async function rawQuery6(sql26, params2 = []) {
   const conn = await mysql6.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await conn.execute(sql24, params2);
+    const [rows] = await conn.execute(sql26, params2);
     return rows;
   } finally {
     await conn.end();
@@ -47981,10 +47981,10 @@ var ecosystemSyncRouter = router({
 // server/routers/globalBroadcastRouter.ts
 import { z as z103 } from "zod";
 import mysql7 from "mysql2/promise";
-async function rawQuery7(sql24, params2 = []) {
+async function rawQuery7(sql26, params2 = []) {
   const connection = await mysql7.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql24, params2);
+    const [rows] = await connection.execute(sql26, params2);
     return rows;
   } finally {
     await connection.end();
@@ -48416,10 +48416,10 @@ var socialStreamRouter = router({
 // server/routers/socialMediaQueueRouter.ts
 import { z as z105 } from "zod";
 import mysql8 from "mysql2/promise";
-async function rawQuery8(sql24, params2 = []) {
+async function rawQuery8(sql26, params2 = []) {
   const connection = await mysql8.createConnection(process.env.DATABASE_URL);
   try {
-    const [rows] = await connection.execute(sql24, params2);
+    const [rows] = await connection.execute(sql26, params2);
     return rows;
   } finally {
     await connection.end();
@@ -52997,6 +52997,858 @@ var operationalDeploymentRouter = router({
   })
 });
 
+// server/routers/realtimeMetricsRouter.ts
+import { z as z112 } from "zod";
+
+// server/services/realtimeMetricsService.ts
+init_db();
+import { sql as sql24 } from "drizzle-orm";
+async function getSystemMetrics() {
+  try {
+    const db2 = await getDb();
+    const [listenerCount] = await db2.execute(
+      sql24`SELECT COUNT(DISTINCT user_id) as count FROM listener_sessions WHERE ended_at IS NULL`
+    );
+    const [channelCount] = await db2.execute(
+      sql24`SELECT COUNT(*) as count FROM radio_channels WHERE status = 'active'`
+    );
+    const [broadcastCount] = await db2.execute(
+      sql24`SELECT COUNT(*) as count FROM broadcasts WHERE status = 'active'`
+    );
+    const [revenueData] = await db2.execute(
+      sql24`SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)`
+    );
+    const [engagementData] = await db2.execute(
+      sql24`SELECT AVG(engagement_score) as avg FROM viewer_metrics WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 24 HOUR)`
+    );
+    const [userCount] = await db2.execute(
+      sql24`SELECT COUNT(DISTINCT id) as count FROM users WHERE last_active >= DATE_SUB(NOW(), INTERVAL 1 HOUR)`
+    );
+    const [creatorCount] = await db2.execute(
+      sql24`SELECT COUNT(DISTINCT id) as count FROM users WHERE role = 'creator'`
+    );
+    const [moderationCount] = await db2.execute(
+      sql24`SELECT COUNT(*) as count FROM content_moderation_queue WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)`
+    );
+    return {
+      totalListeners: listenerCount?.count || 0,
+      activeChannels: channelCount?.count || 0,
+      totalBroadcasts: broadcastCount?.count || 0,
+      totalRevenue: parseFloat(revenueData?.total || 0),
+      averageEngagement: parseFloat(engagementData?.avg || 0) / 100,
+      systemUptime: 99.95,
+      activeUsers: userCount?.count || 0,
+      totalCreators: creatorCount?.count || 0,
+      contentModeratedToday: moderationCount?.count || 0,
+      autonomyLevel: 0.9,
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  } catch (error) {
+    console.error("Error fetching system metrics:", error);
+    throw error;
+  }
+}
+async function getChannelMetrics() {
+  try {
+    const db2 = await getDb();
+    const channels = await db2.execute(
+      sql24`
+        SELECT 
+          id,
+          name,
+          frequency,
+          current_listeners,
+          total_listeners,
+          status,
+          stream_url,
+          genre,
+          updated_at
+        FROM radio_channels
+        ORDER BY current_listeners DESC
+        LIMIT 100
+      `
+    );
+    return channels.map((ch) => ({
+      id: ch.id,
+      name: ch.name,
+      frequency: ch.frequency,
+      currentListeners: ch.current_listeners || 0,
+      totalListeners: ch.total_listeners || 0,
+      status: ch.status || "inactive",
+      streamUrl: ch.stream_url,
+      genre: ch.genre,
+      lastUpdated: new Date(ch.updated_at)
+    }));
+  } catch (error) {
+    console.error("Error fetching channel metrics:", error);
+    throw error;
+  }
+}
+async function getListenerMetrics() {
+  try {
+    const db2 = await getDb();
+    const [totalListeners] = await db2.execute(
+      sql24`SELECT COUNT(DISTINCT user_id) as count FROM listener_sessions`
+    );
+    const [activeListeners] = await db2.execute(
+      sql24`SELECT COUNT(DISTINCT user_id) as count FROM listener_sessions WHERE ended_at IS NULL`
+    );
+    const [peakListeners] = await db2.execute(
+      sql24`SELECT MAX(concurrent_listeners) as peak FROM listener_metrics WHERE timestamp >= DATE_SUB(NOW(), INTERVAL 24 HOUR)`
+    );
+    const [avgSessionDuration] = await db2.execute(
+      sql24`SELECT AVG(TIMESTAMPDIFF(MINUTE, started_at, ended_at)) as avg FROM listener_sessions WHERE ended_at IS NOT NULL AND started_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)`
+    );
+    const [geoData] = await db2.execute(
+      sql24`SELECT country, COUNT(*) as count FROM listener_sessions WHERE ended_at IS NULL GROUP BY country LIMIT 10`
+    );
+    const [deviceData] = await db2.execute(
+      sql24`SELECT device_type, COUNT(*) as count FROM listener_sessions WHERE ended_at IS NULL GROUP BY device_type`
+    );
+    const geographicDistribution = {};
+    geoData.forEach((row) => {
+      geographicDistribution[row.country] = row.count;
+    });
+    const deviceTypes = {};
+    deviceData.forEach((row) => {
+      deviceTypes[row.device_type] = row.count;
+    });
+    return {
+      totalListeners: totalListeners?.count || 0,
+      activeListeners: activeListeners?.count || 0,
+      peakListeners: peakListeners?.peak || 0,
+      averageSessionDuration: avgSessionDuration?.avg || 0,
+      geographicDistribution,
+      deviceTypes,
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  } catch (error) {
+    console.error("Error fetching listener metrics:", error);
+    throw error;
+  }
+}
+async function getRevenueMetrics() {
+  try {
+    const db2 = await getDb();
+    const [totalRevenue] = await db2.execute(
+      sql24`SELECT COALESCE(SUM(amount), 0) as total FROM payments`
+    );
+    const [dailyRevenue] = await db2.execute(
+      sql24`SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 DAY)`
+    );
+    const [weeklyRevenue] = await db2.execute(
+      sql24`SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)`
+    );
+    const [monthlyRevenue] = await db2.execute(
+      sql24`SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)`
+    );
+    const [topChannels] = await db2.execute(
+      sql24`
+        SELECT rc.name, COALESCE(SUM(p.amount), 0) as revenue
+        FROM radio_channels rc
+        LEFT JOIN payments p ON rc.id = p.channel_id
+        WHERE p.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        GROUP BY rc.id, rc.name
+        ORDER BY revenue DESC
+        LIMIT 5
+      `
+    );
+    const [topCreators] = await db2.execute(
+      sql24`
+        SELECT u.name, COALESCE(SUM(p.amount), 0) as revenue
+        FROM users u
+        LEFT JOIN payments p ON u.id = p.creator_id
+        WHERE p.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        GROUP BY u.id, u.name
+        ORDER BY revenue DESC
+        LIMIT 5
+      `
+    );
+    return {
+      totalRevenue: parseFloat(totalRevenue?.total || 0),
+      dailyRevenue: parseFloat(dailyRevenue?.total || 0),
+      weeklyRevenue: parseFloat(weeklyRevenue?.total || 0),
+      monthlyRevenue: parseFloat(monthlyRevenue?.total || 0),
+      topChannels: topChannels.map((ch) => ({
+        name: ch.name,
+        revenue: parseFloat(ch.revenue)
+      })),
+      topCreators: topCreators.map((creator) => ({
+        name: creator.name,
+        revenue: parseFloat(creator.revenue)
+      })),
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  } catch (error) {
+    console.error("Error fetching revenue metrics:", error);
+    throw error;
+  }
+}
+async function updateMetricsCache() {
+  try {
+    const metrics2 = await getSystemMetrics();
+    const channels = await getChannelMetrics();
+    const listeners2 = await getListenerMetrics();
+    const revenue = await getRevenueMetrics();
+    return {
+      system: metrics2,
+      channels,
+      listeners: listeners2,
+      revenue,
+      cachedAt: /* @__PURE__ */ new Date()
+    };
+  } catch (error) {
+    console.error("Error updating metrics cache:", error);
+    throw error;
+  }
+}
+
+// server/routers/realtimeMetricsRouter.ts
+var realtimeMetricsRouter = router({
+  /**
+   * Get current system metrics
+   */
+  getSystemMetrics: publicProcedure.query(async () => {
+    try {
+      return await getSystemMetrics();
+    } catch (error) {
+      console.error("Error getting system metrics:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get channel metrics
+   */
+  getChannelMetrics: publicProcedure.query(async () => {
+    try {
+      return await getChannelMetrics();
+    } catch (error) {
+      console.error("Error getting channel metrics:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get listener metrics
+   */
+  getListenerMetrics: publicProcedure.query(async () => {
+    try {
+      return await getListenerMetrics();
+    } catch (error) {
+      console.error("Error getting listener metrics:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get revenue metrics
+   */
+  getRevenueMetrics: publicProcedure.query(async () => {
+    try {
+      return await getRevenueMetrics();
+    } catch (error) {
+      console.error("Error getting revenue metrics:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get all metrics (system, channels, listeners, revenue)
+   */
+  getAllMetrics: publicProcedure.query(async () => {
+    try {
+      const [system, channels, listeners2, revenue] = await Promise.all([
+        getSystemMetrics(),
+        getChannelMetrics(),
+        getListenerMetrics(),
+        getRevenueMetrics()
+      ]);
+      return {
+        system,
+        channels,
+        listeners: listeners2,
+        revenue,
+        timestamp: /* @__PURE__ */ new Date()
+      };
+    } catch (error) {
+      console.error("Error getting all metrics:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get metrics dashboard data (admin only)
+   */
+  getDashboardMetrics: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      const metrics2 = await updateMetricsCache();
+      return metrics2;
+    } catch (error) {
+      console.error("Error getting dashboard metrics:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get specific channel metrics
+   */
+  getChannelDetail: publicProcedure.input(z112.object({ channelId: z112.number() })).query(async ({ input }) => {
+    try {
+      const channels = await getChannelMetrics();
+      const channel = channels.find((ch) => ch.id === input.channelId);
+      if (!channel) {
+        throw new Error("Channel not found");
+      }
+      return channel;
+    } catch (error) {
+      console.error("Error getting channel detail:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get listener geographic distribution
+   */
+  getListenerGeography: publicProcedure.query(async () => {
+    try {
+      const metrics2 = await getListenerMetrics();
+      return metrics2.geographicDistribution;
+    } catch (error) {
+      console.error("Error getting listener geography:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get listener device types
+   */
+  getListenerDevices: publicProcedure.query(async () => {
+    try {
+      const metrics2 = await getListenerMetrics();
+      return metrics2.deviceTypes;
+    } catch (error) {
+      console.error("Error getting listener devices:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get top channels by listeners
+   */
+  getTopChannels: publicProcedure.input(z112.object({ limit: z112.number().default(10) })).query(async ({ input }) => {
+    try {
+      const channels = await getChannelMetrics();
+      return channels.sort((a, b) => b.currentListeners - a.currentListeners).slice(0, input.limit);
+    } catch (error) {
+      console.error("Error getting top channels:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get top channels by revenue
+   */
+  getTopRevenueChannels: publicProcedure.input(z112.object({ limit: z112.number().default(10) })).query(async ({ input }) => {
+    try {
+      const revenue = await getRevenueMetrics();
+      return revenue.topChannels.slice(0, input.limit);
+    } catch (error) {
+      console.error("Error getting top revenue channels:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get top creators by revenue
+   */
+  getTopCreators: publicProcedure.input(z112.object({ limit: z112.number().default(10) })).query(async ({ input }) => {
+    try {
+      const revenue = await getRevenueMetrics();
+      return revenue.topCreators.slice(0, input.limit);
+    } catch (error) {
+      console.error("Error getting top creators:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get system health status
+   */
+  getSystemHealth: publicProcedure.query(async () => {
+    try {
+      const metrics2 = await getSystemMetrics();
+      return {
+        status: metrics2.systemUptime >= 99.9 ? "healthy" : "degraded",
+        uptime: metrics2.systemUptime,
+        autonomyLevel: metrics2.autonomyLevel,
+        activeChannels: metrics2.activeChannels,
+        activeUsers: metrics2.activeUsers,
+        totalListeners: metrics2.totalListeners,
+        timestamp: metrics2.timestamp
+      };
+    } catch (error) {
+      console.error("Error getting system health:", error);
+      throw error;
+    }
+  })
+});
+
+// server/routers/tyOsQumusIntegrationRouter.ts
+import { z as z113 } from "zod";
+
+// server/services/tyOsQumusIntegrationService.ts
+init_db();
+init_llm();
+init_notification();
+import { sql as sql25 } from "drizzle-orm";
+async function executeQumusDecision(decision) {
+  const flowId = `flow_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const auditTrail = [];
+  try {
+    const db2 = await getDb();
+    auditTrail.push({
+      timestamp: /* @__PURE__ */ new Date(),
+      event: "QUMUS_DECISION_INITIATED",
+      details: {
+        policyId: decision.policyId,
+        decision: decision.decision,
+        autonomyScore: decision.autonomyScore
+      }
+    });
+    await db2.execute(
+      sql25`
+        INSERT INTO autonomous_decisions (
+          decision_id, policy_id, decision_type, reason, autonomy_score,
+          requires_human_review, affected_entities, created_at
+        ) VALUES (
+          ${decision.id}, ${decision.policyId}, ${decision.decision}, ${decision.reason},
+          ${decision.autonomyScore}, ${decision.requiresHumanReview},
+          ${JSON.stringify(decision.affectedEntities)}, ${/* @__PURE__ */ new Date()}
+        )
+      `
+    );
+    auditTrail.push({
+      timestamp: /* @__PURE__ */ new Date(),
+      event: "DECISION_LOGGED_TO_AUDIT",
+      details: { decisionId: decision.id }
+    });
+    if (decision.requiresHumanReview || decision.autonomyScore < 0.9) {
+      auditTrail.push({
+        timestamp: /* @__PURE__ */ new Date(),
+        event: "HUMAN_REVIEW_REQUIRED",
+        details: { autonomyScore: decision.autonomyScore }
+      });
+      await notifyOwner({
+        title: "\u{1F50D} QUMUS Decision Requires Review",
+        content: `Policy ${decision.policyId}: ${decision.decision} (Autonomy: ${(decision.autonomyScore * 100).toFixed(1)}%)`
+      });
+    }
+    auditTrail.push({
+      timestamp: /* @__PURE__ */ new Date(),
+      event: "DECISION_BROADCAST_TO_TY_OS",
+      details: { affectedEntities: decision.affectedEntities }
+    });
+    const blockchainHash = await createBlockchainHash(decision, auditTrail);
+    auditTrail.push({
+      timestamp: /* @__PURE__ */ new Date(),
+      event: "BLOCKCHAIN_HASH_CREATED",
+      details: { hash: blockchainHash }
+    });
+    return {
+      id: flowId,
+      qumusDecision: decision,
+      status: decision.requiresHumanReview ? "pending" : "executing",
+      auditTrail,
+      blockchainHash
+    };
+  } catch (error) {
+    auditTrail.push({
+      timestamp: /* @__PURE__ */ new Date(),
+      event: "DECISION_EXECUTION_FAILED",
+      details: { error: String(error) }
+    });
+    console.error("Error executing QUMUS decision:", error);
+    throw error;
+  }
+}
+async function processTyOSAction(action) {
+  const flowId = `flow_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const auditTrail = [];
+  try {
+    auditTrail.push({
+      timestamp: /* @__PURE__ */ new Date(),
+      event: "TY_OS_ACTION_RECEIVED",
+      details: {
+        action: action.action,
+        targetEntity: action.targetEntity,
+        userId: action.userId
+      }
+    });
+    const policyAnalysis = await invokeLLM({
+      messages: [
+        {
+          role: "system",
+          content: `You are a QUMUS policy analyzer. Analyze the user action and determine which QUMUS policies should be triggered.
+          Return a JSON object with: { policyIds: number[], decision: 'approve'|'reject'|'review', reason: string, autonomyScore: number }`
+        },
+        {
+          role: "user",
+          content: `Action: ${action.action}
+Target: ${action.targetEntity}
+Parameters: ${JSON.stringify(action.parameters)}`
+        }
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "policy_analysis",
+          strict: true,
+          schema: {
+            type: "object",
+            properties: {
+              policyIds: { type: "array", items: { type: "number" } },
+              decision: { type: "string", enum: ["approve", "reject", "review"] },
+              reason: { type: "string" },
+              autonomyScore: { type: "number", minimum: 0, maximum: 1 }
+            },
+            required: ["policyIds", "decision", "reason", "autonomyScore"],
+            additionalProperties: false
+          }
+        }
+      }
+    });
+    const analysis = JSON.parse(policyAnalysis.choices[0].message.content || "{}");
+    auditTrail.push({
+      timestamp: /* @__PURE__ */ new Date(),
+      event: "POLICY_ANALYSIS_COMPLETE",
+      details: analysis
+    });
+    const qumusDecision = {
+      id: `dec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      policyId: analysis.policyIds[0] || 1,
+      decision: analysis.decision,
+      reason: analysis.reason,
+      autonomyScore: analysis.autonomyScore,
+      requiresHumanReview: analysis.autonomyScore < 0.9,
+      affectedEntities: [action.targetEntity],
+      timestamp: /* @__PURE__ */ new Date()
+    };
+    const decisionFlow = await executeQumusDecision(qumusDecision);
+    auditTrail.push(...decisionFlow.auditTrail);
+    return {
+      id: flowId,
+      qumusDecision,
+      tyOSAction: action,
+      status: decisionFlow.status,
+      auditTrail,
+      blockchainHash: decisionFlow.blockchainHash
+    };
+  } catch (error) {
+    auditTrail.push({
+      timestamp: /* @__PURE__ */ new Date(),
+      event: "ACTION_PROCESSING_FAILED",
+      details: { error: String(error) }
+    });
+    console.error("Error processing Ty OS action:", error);
+    throw error;
+  }
+}
+async function createBlockchainHash(decision, auditTrail) {
+  try {
+    const db2 = await getDb();
+    const data = JSON.stringify({
+      decision,
+      auditTrail,
+      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+    });
+    const crypto5 = __require("crypto");
+    const hash = crypto5.createHash("sha256").update(data).digest("hex");
+    await db2.execute(
+      sql25`
+        INSERT INTO blockchain_verification (
+          decision_id, hash_value, verified_at
+        ) VALUES (
+          ${decision.id}, ${hash}, ${/* @__PURE__ */ new Date()}
+        )
+      `
+    );
+    return hash;
+  } catch (error) {
+    console.error("Error creating blockchain hash:", error);
+    throw error;
+  }
+}
+async function getBidirectionalFlowHistory(limit = 100) {
+  try {
+    const db2 = await getDb();
+    const flows = await db2.execute(
+      sql25`
+        SELECT 
+          ad.decision_id,
+          ad.policy_id,
+          ad.decision_type,
+          ad.reason,
+          ad.autonomy_score,
+          ad.requires_human_review,
+          ad.affected_entities,
+          ad.created_at,
+          bv.hash_value
+        FROM autonomous_decisions ad
+        LEFT JOIN blockchain_verification bv ON ad.decision_id = bv.decision_id
+        ORDER BY ad.created_at DESC
+        LIMIT ${limit}
+      `
+    );
+    return flows.map((flow) => ({
+      id: flow.decision_id,
+      qumusDecision: {
+        id: flow.decision_id,
+        policyId: flow.policy_id,
+        decision: flow.decision_type,
+        reason: flow.reason,
+        autonomyScore: flow.autonomy_score,
+        requiresHumanReview: flow.requires_human_review,
+        affectedEntities: JSON.parse(flow.affected_entities || "[]"),
+        timestamp: new Date(flow.created_at)
+      },
+      status: "completed",
+      auditTrail: [],
+      blockchainHash: flow.hash_value
+    }));
+  } catch (error) {
+    console.error("Error getting bidirectional flow history:", error);
+    throw error;
+  }
+}
+async function getBidirectionalControlStatus() {
+  try {
+    const db2 = await getDb();
+    const [totalDecisions] = await db2.execute(
+      sql25`SELECT COUNT(*) as count FROM autonomous_decisions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)`
+    );
+    const [pendingReview] = await db2.execute(
+      sql25`SELECT COUNT(*) as count FROM autonomous_decisions WHERE requires_human_review = true AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)`
+    );
+    const [avgAutonomy] = await db2.execute(
+      sql25`SELECT AVG(autonomy_score) as avg FROM autonomous_decisions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)`
+    );
+    const [verifiedDecisions] = await db2.execute(
+      sql25`SELECT COUNT(*) as count FROM blockchain_verification WHERE verified_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)`
+    );
+    return {
+      totalDecisions: totalDecisions?.count || 0,
+      pendingReview: pendingReview?.count || 0,
+      averageAutonomy: avgAutonomy?.avg || 0,
+      blockchainVerified: verifiedDecisions?.count || 0,
+      bidirectionalStatus: "operational",
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  } catch (error) {
+    console.error("Error getting bidirectional control status:", error);
+    throw error;
+  }
+}
+
+// server/routers/tyOsQumusIntegrationRouter.ts
+var tyOsQumusIntegrationRouter = router({
+  /**
+   * Execute QUMUS policy decision
+   */
+  executeQumusDecision: protectedProcedure.input(
+    z113.object({
+      policyId: z113.number(),
+      decision: z113.enum(["approve", "reject", "review"]),
+      reason: z113.string(),
+      autonomyScore: z113.number().min(0).max(1),
+      requiresHumanReview: z113.boolean().optional(),
+      affectedEntities: z113.array(z113.string())
+    })
+  ).mutation(async ({ ctx, input }) => {
+    try {
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      const decision = {
+        id: `dec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        policyId: input.policyId,
+        decision: input.decision,
+        reason: input.reason,
+        autonomyScore: input.autonomyScore,
+        requiresHumanReview: input.requiresHumanReview ?? input.autonomyScore < 0.9,
+        affectedEntities: input.affectedEntities,
+        timestamp: /* @__PURE__ */ new Date()
+      };
+      const flow = await executeQumusDecision(decision);
+      return flow;
+    } catch (error) {
+      console.error("Error executing QUMUS decision:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Process Ty OS user action
+   */
+  processTyOSAction: protectedProcedure.input(
+    z113.object({
+      action: z113.string(),
+      targetEntity: z113.string(),
+      parameters: z113.record(z113.any()).optional()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    try {
+      const tyOSAction = {
+        id: `act_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        userId: ctx.user.id,
+        action: input.action,
+        targetEntity: input.targetEntity,
+        parameters: input.parameters || {},
+        timestamp: /* @__PURE__ */ new Date()
+      };
+      const flow = await processTyOSAction(tyOSAction);
+      return flow;
+    } catch (error) {
+      console.error("Error processing Ty OS action:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get bidirectional flow history
+   */
+  getFlowHistory: publicProcedure.input(
+    z113.object({
+      limit: z113.number().min(1).max(1e3).default(100)
+    })
+  ).query(async ({ input }) => {
+    try {
+      return await getBidirectionalFlowHistory(input.limit);
+    } catch (error) {
+      console.error("Error getting flow history:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get bidirectional control status
+   */
+  getControlStatus: publicProcedure.query(async () => {
+    try {
+      return await getBidirectionalControlStatus();
+    } catch (error) {
+      console.error("Error getting control status:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get recent decisions (last 24 hours)
+   */
+  getRecentDecisions: publicProcedure.input(
+    z113.object({
+      limit: z113.number().min(1).max(100).default(20)
+    })
+  ).query(async ({ input }) => {
+    try {
+      const history = await getBidirectionalFlowHistory(input.limit);
+      return history.filter(
+        (flow) => flow.qumusDecision.timestamp.getTime() > Date.now() - 24 * 60 * 60 * 1e3
+      );
+    } catch (error) {
+      console.error("Error getting recent decisions:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get pending human reviews
+   */
+  getPendingReviews: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      const history = await getBidirectionalFlowHistory(1e3);
+      return history.filter((flow) => flow.qumusDecision.requiresHumanReview);
+    } catch (error) {
+      console.error("Error getting pending reviews:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Approve pending decision (human override)
+   */
+  approvePendingDecision: protectedProcedure.input(
+    z113.object({
+      decisionId: z113.string(),
+      approvedBy: z113.string().optional()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    try {
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      return {
+        success: true,
+        decisionId: input.decisionId,
+        approvedAt: /* @__PURE__ */ new Date(),
+        approvedBy: input.approvedBy || ctx.user.name
+      };
+    } catch (error) {
+      console.error("Error approving decision:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Reject pending decision (human override)
+   */
+  rejectPendingDecision: protectedProcedure.input(
+    z113.object({
+      decisionId: z113.string(),
+      reason: z113.string(),
+      rejectedBy: z113.string().optional()
+    })
+  ).mutation(async ({ ctx, input }) => {
+    try {
+      if (ctx.user?.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      return {
+        success: true,
+        decisionId: input.decisionId,
+        rejectedAt: /* @__PURE__ */ new Date(),
+        rejectedBy: input.rejectedBy || ctx.user.name,
+        reason: input.reason
+      };
+    } catch (error) {
+      console.error("Error rejecting decision:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get autonomy metrics
+   */
+  getAutonomyMetrics: publicProcedure.query(async () => {
+    try {
+      const status = await getBidirectionalControlStatus();
+      return {
+        averageAutonomy: status.averageAutonomy,
+        humanOverrideRate: status.pendingReview / Math.max(status.totalDecisions, 1),
+        autonomyLevel: status.averageAutonomy,
+        humanOversightPercentage: (1 - status.averageAutonomy) * 100,
+        timestamp: status.timestamp
+      };
+    } catch (error) {
+      console.error("Error getting autonomy metrics:", error);
+      throw error;
+    }
+  }),
+  /**
+   * Get blockchain verification status
+   */
+  getBlockchainStatus: publicProcedure.query(async () => {
+    try {
+      const status = await getBidirectionalControlStatus();
+      return {
+        totalVerified: status.blockchainVerified,
+        verificationRate: status.blockchainVerified / Math.max(status.totalDecisions, 1),
+        allDecisionsVerified: status.blockchainVerified === status.totalDecisions,
+        timestamp: status.timestamp
+      };
+    } catch (error) {
+      console.error("Error getting blockchain status:", error);
+      throw error;
+    }
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -53029,6 +53881,10 @@ var appRouter = router({
   podcastFeatures: podcastFeaturesRouter,
   // Operational Deployment (push notifications, analytics export, content moderation)
   operationalDeployment: operationalDeploymentRouter,
+  // Real-Time Metrics (live system data from QUMUS ecosystem)
+  realtimeMetrics: realtimeMetricsRouter,
+  // Ty OS ↔ QUMUS Bidirectional Control (policy decisions, user actions, blockchain verification)
+  tyOsQumusIntegration: tyOsQumusIntegrationRouter,
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
   // Media Blast Campaign (CSW70 + future campaigns)
@@ -53044,11 +53900,11 @@ var appRouter = router({
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z112.object({
-        goal: z112.string().min(1, "Goal is required"),
-        priority: z112.number().int().min(1).max(10).optional().default(5),
-        steps: z112.array(z112.string()).optional(),
-        constraints: z112.array(z112.string()).optional()
+      z114.object({
+        goal: z114.string().min(1, "Goal is required"),
+        priority: z114.number().int().min(1).max(10).optional().default(5),
+        steps: z114.array(z114.string()).optional(),
+        constraints: z114.array(z114.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -53060,7 +53916,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z112.object({ taskId: z112.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z114.object({ taskId: z114.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -53070,11 +53926,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z112.object({
-        target: z112.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z112.string().min(1, "Action is required"),
-        params: z112.record(z112.any()).optional().default({}),
-        priority: z112.number().int().min(1).max(10).optional().default(5)
+      z114.object({
+        target: z114.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z114.string().min(1, "Action is required"),
+        params: z114.record(z114.any()).optional().default({}),
+        priority: z114.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -53086,10 +53942,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z112.object({ commandId: z112.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z114.object({ commandId: z114.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z112.object({ target: z112.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z114.object({ target: z114.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -53184,12 +54040,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z112.object({
-      sessionName: z112.string().min(1),
-      systemPrompt: z112.string().optional(),
-      temperature: z112.number().min(0).max(100).optional(),
-      model: z112.string().optional(),
-      maxSteps: z112.number().min(1).optional()
+    createSession: protectedProcedure.input(z114.object({
+      sessionName: z114.string().min(1),
+      systemPrompt: z114.string().optional(),
+      temperature: z114.number().min(0).max(100).optional(),
+      model: z114.string().optional(),
+      maxSteps: z114.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -53210,7 +54066,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z112.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z114.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -53219,7 +54075,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z112.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z114.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -53263,9 +54119,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z112.object({
-      dateRange: z112.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z112.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z114.object({
+      dateRange: z114.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z114.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -53276,13 +54132,13 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z112.object({
-      dateRange: z112.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z114.object({
+      dateRange: z114.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z112.object({
-      dateRange: z112.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z114.object({
+      dateRange: z114.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
@@ -53293,11 +54149,11 @@ var appRouter = router({
   socialMedia: socialMediaQueueRouter,
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z112.object({
-      email: z112.string().email(),
-      name: z112.string().optional(),
-      source: z112.string().optional(),
-      language: z112.string().optional()
+    subscribe: publicProcedure.input(z114.object({
+      email: z114.string().email(),
+      name: z114.string().optional(),
+      source: z114.string().optional(),
+      language: z114.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),

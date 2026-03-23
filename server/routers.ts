@@ -105,6 +105,8 @@ import { podcastFeaturesRouter } from "./routers/podcastFeaturesRouter";
 import { architectureRestructuringRouter } from "./routers/architectureRestructuringRouter";
 import { finalFeaturesRouter } from "./routers/finalFeaturesRouter";
 import { operationalDeploymentRouter } from "./routers/operationalDeploymentRouter";
+import { realtimeMetricsRouter } from "./routers/realtimeMetricsRouter";
+import { tyOsQumusIntegrationRouter } from "./routers/tyOsQumusIntegrationRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -152,6 +154,12 @@ export const appRouter = router({
 
   // Operational Deployment (push notifications, analytics export, content moderation)
   operationalDeployment: operationalDeploymentRouter,
+
+  // Real-Time Metrics (live system data from QUMUS ecosystem)
+  realtimeMetrics: realtimeMetricsRouter,
+
+  // Ty OS ↔ QUMUS Bidirectional Control (policy decisions, user actions, blockchain verification)
+  tyOsQumusIntegration: tyOsQumusIntegrationRouter,
 
   // Language Interpreter (real-time translation via LLM)
   interpreter: interpreterRouter,
