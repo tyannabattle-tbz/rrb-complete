@@ -212,3 +212,13 @@
 - [x] Implement locale-specific formatting and currencies
 - [x] Create language preference persistence
 - [x] Add accessibility features for non-native speakers
+
+
+## Bug Fixes - Phase 22: Ecosystem Stability
+
+- [x] Fix 404 error on tyos.manus.space domain routing - Added /tyos and /ty-os routes to App.tsx
+- [ ] Fix audio streaming service reconnection issue ("Stream temporarily unavailable")
+- [x] Verify all domain routing - tyos.manus.space not in available domains, use manusweb-eshiamkd.manus.space/tyos instead
+- [x] Test DNS propagation and server routing - Routes working on main domain
+- [ ] Ensure Ty OS Radio streaming service is stable
+- [ ] Verify all cross-system bridges are operational

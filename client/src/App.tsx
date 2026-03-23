@@ -316,6 +316,8 @@ function Router() {
       <Route path="/studio/dashboard" component={StudioDashboard} />
       <Route path="/studio/effects" component={SoundEffectsBrowser} />
       <Route path="/studio/podcast/record" component={PodcastRecordingStudio} />
+      <Route path="/tyos" component={TyOSHome} />
+      <Route path="/ty-os" component={TyOSHome} />
       <Route path="/listen" component={TyOSRadioListener} />
       <Route path="/listen-on-tyos-radio" component={TyOSRadioListener} />
       <Route path="/canryn" component={CanrynDashboard} />
