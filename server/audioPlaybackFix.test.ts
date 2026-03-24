@@ -8,7 +8,6 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 describe('Audio Engine Initialization and Playback', () => {
   describe('Web Audio API Context', () => {
     it('should create AudioContext successfully', () => {
-      // Mock AudioContext
       const mockAudioContext = {
         state: 'running',
         sampleRate: 48000,
@@ -202,7 +201,6 @@ describe('Audio Engine Initialization and Playback', () => {
       const onEndedCallback = vi.fn();
       mockSource.onended = onEndedCallback;
 
-      // Simulate playback end
       if (mockSource.onended) {
         mockSource.onended();
       }
@@ -213,11 +211,9 @@ describe('Audio Engine Initialization and Playback', () => {
     it('should manage playback state', () => {
       let isPlaying = false;
 
-      // Start playback
       isPlaying = true;
       expect(isPlaying).toBe(true);
 
-      // Stop playback
       isPlaying = false;
       expect(isPlaying).toBe(false);
     });
@@ -278,7 +274,6 @@ describe('Audio Engine Initialization and Playback', () => {
       const mockAnalyser = {
         frequencyBinCount: 1024,
         getByteFrequencyData: vi.fn((array) => {
-          // Simulate frequency data
           for (let i = 0; i < array.length; i++) {
             array[i] = Math.floor(Math.random() * 256);
           }
@@ -297,7 +292,6 @@ describe('Audio Engine Initialization and Playback', () => {
       const mockAnalyser = {
         fftSize: 2048,
         getByteTimeDomainData: vi.fn((array) => {
-          // Simulate waveform data
           for (let i = 0; i < array.length; i++) {
             array[i] = 128 + Math.floor(Math.sin((i / array.length) * Math.PI * 2) * 127);
           }
