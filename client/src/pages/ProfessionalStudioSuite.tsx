@@ -11,6 +11,9 @@ import { StudioFileMenu } from '@/components/StudioFileMenu';
 import { MultiTrackMixer } from '@/components/MultiTrackMixer';
 import { AudioRecorder } from '@/components/AudioRecorder';
 import { WaveformEditor } from '@/components/WaveformEditor';
+import { LiveStreamer } from '@/components/LiveStreamer';
+import { PresetManager } from '@/components/PresetManager';
+import { AudioVisualizerEnhanced } from '@/components/AudioVisualizerEnhanced';
 
 interface ColorGradingPreset {
   name: string;
@@ -47,7 +50,7 @@ export default function ProfessionalStudioSuite() {
   const [audioBuffers, setAudioBuffers] = useState<Map<string, AudioBuffer>>(new Map());
   const [currentAudioSource, setCurrentAudioSource] = useState<AudioBufferSourceNode | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'mixer' | 'recorder' | 'editor'>('mixer');
+  const [activeTab, setActiveTab] = useState<'mixer' | 'recorder' | 'editor' | 'stream' | 'presets' | 'visualizer'>('mixer');
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioStreamRef = useRef<MediaStream | null>(null);
@@ -451,6 +454,27 @@ export default function ProfessionalStudioSuite() {
           >
             Waveform Editor
           </Button>
+          <Button
+            variant={activeTab === 'stream' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('stream')}
+            className="text-sm"
+          >
+            Live Streaming
+          </Button>
+          <Button
+            variant={activeTab === 'presets' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('presets')}
+            className="text-sm"
+          >
+            Presets
+          </Button>
+          <Button
+            variant={activeTab === 'visualizer' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('visualizer')}
+            className="text-sm"
+          >
+            Visualizer
+          </Button>
         </div>
 
         {/* Advanced Features */}
@@ -458,6 +482,9 @@ export default function ProfessionalStudioSuite() {
           {activeTab === 'mixer' && <MultiTrackMixer audioBuffers={audioBuffers} />}
           {activeTab === 'recorder' && <AudioRecorder />}
           {activeTab === 'editor' && <WaveformEditor />}
+          {activeTab === 'stream' && <LiveStreamer />}
+          {activeTab === 'presets' && <PresetManager />}
+          {activeTab === 'visualizer' && <AudioVisualizerEnhanced />}
         </div>
 
         {/* Status Bar */}
