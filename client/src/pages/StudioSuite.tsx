@@ -16,6 +16,9 @@ import StudioShareBar from '@/components/StudioShareBar';
 import { RRBAdvancedStudio } from './RRBAdvancedStudio';
 import { PerformanceAnalyticsDashboard } from '../components/PerformanceAnalyticsDashboard';
 import { BandMemberMobileApp } from '../components/BandMemberMobileApp';
+import { BroadcastMonitoringDashboard } from '../components/BroadcastMonitoringDashboard';
+import { RevenueSplitCalculator } from '../components/RevenueSplitCalculator';
+import { AIDJVoiceIntegration } from '../components/AIDJVoiceIntegration';
 
 // ============================================================
 // TYPE DEFINITIONS
@@ -231,7 +234,7 @@ export function StudioSuite() {
   const [showFileMenu, setShowFileMenu] = useState(false);
   const [projectName, setProjectName] = useState('Untitled Project');
   const [isDirty, setIsDirty] = useState(false);
-  const [studioMode, setStudioMode] = useState<'daw' | 'rrb-advanced' | 'analytics' | 'mobile'>('daw');
+  const [studioMode, setStudioMode] = useState<'daw' | 'rrb-advanced' | 'analytics' | 'mobile' | 'broadcast' | 'revenue' | 'ai-dj'>('daw');
   const [dragOverTrackId, setDragOverTrackId] = useState<string | null>(null);
   const [draggingRegion, setDraggingRegion] = useState<{ trackId: string; regionId: string; startX: number; startBeat: number } | null>(null);
 
@@ -881,6 +884,33 @@ export function StudioSuite() {
     );
   }
 
+  if (studioMode === 'broadcast') {
+    return (
+      <div className="w-full min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+        <button onClick={() => setStudioMode('daw')} className="mb-4 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm">Back to DAW</button>
+        <BroadcastMonitoringDashboard />
+      </div>
+    );
+  }
+
+  if (studioMode === 'revenue') {
+    return (
+      <div className="w-full min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+        <button onClick={() => setStudioMode('daw')} className="mb-4 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm">Back to DAW</button>
+        <RevenueSplitCalculator />
+      </div>
+    );
+  }
+
+  if (studioMode === 'ai-dj') {
+    return (
+      <div className="w-full min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+        <button onClick={() => setStudioMode('daw')} className="mb-4 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm">Back to DAW</button>
+        <AIDJVoiceIntegration />
+      </div>
+    );
+  }
+
   return (
     <div className={`flex flex-col bg-[#1a1a1a] text-[#cccccc] select-none ${fullscreen ? 'fixed inset-0 z-[9999]' : 'min-h-screen'}`}
       style={{ fontFamily: "'SF Mono', 'Fira Code', 'Consolas', monospace", fontSize: '11px' }}>
@@ -894,6 +924,9 @@ export function StudioSuite() {
           <button onClick={() => setStudioMode('rrb-advanced')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'rrb-advanced' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>RRB Advanced</button>
           <button onClick={() => setStudioMode('analytics')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'analytics' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>Analytics</button>
           <button onClick={() => setStudioMode('mobile')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'mobile' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>Band App</button>
+          <button onClick={() => setStudioMode('broadcast')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'broadcast' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>Broadcast</button>
+          <button onClick={() => setStudioMode('revenue')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'revenue' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>Revenue</button>
+          <button onClick={() => setStudioMode('ai-dj')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'ai-dj' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>AI DJ</button>
         </div>
         {/* File Menu with dropdown */}
         <div className="relative">

@@ -186,6 +186,18 @@ const SOLFEGGIO_FREQUENCIES = [
 export function RRBAdvancedStudio() {
   // ─── Audio State ─────────────────────
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Initialize audio element on mount
+  useEffect(() => {
+    if (!audioRef.current && containerRef.current) {
+      const audio = document.createElement('audio');
+      audio.crossOrigin = 'anonymous';
+      audio.style.display = 'none';
+      containerRef.current.appendChild(audio);
+      audioRef.current = audio;
+    }
+  }, []);
   const [activeChannel, setActiveChannel] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(70);
@@ -419,7 +431,7 @@ export function RRBAdvancedStudio() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white p-4 md:p-8">
+    <div ref={containerRef} className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white p-4 md:p-8">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
