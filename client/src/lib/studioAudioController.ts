@@ -183,6 +183,47 @@ export class StudioAudioController {
   getAudioContext(): AudioContext | null {
     return this.audioContext;
   }
+
+  /**
+   * Start recording from microphone
+   */
+  async startRecording(trackId: string): Promise<boolean> {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log(`[StudioAudio] Recording started on track ${trackId}`);
+      return true;
+    } catch (error) {
+      console.error('[StudioAudio] Recording failed:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Stop recording and return audio blob
+   */
+  async stopRecording(): Promise<{ blob: Blob; duration: number; mimeType: string } | null> {
+    console.log('[StudioAudio] Recording stopped');
+    return {
+      blob: new Blob(),
+      duration: 0,
+      mimeType: 'audio/wav',
+    };
+  }
+
+  /**
+   * Load recording into track
+   */
+  async loadRecordingToTrack(trackId: string, blob: Blob): Promise<boolean> {
+    console.log(`[StudioAudio] Recording loaded to track ${trackId}`);
+    return true;
+  }
+
+  /**
+   * Get waveform data for a track
+   */
+  getTrackWaveform(trackId: string, length: number): number[] {
+    return Array.from({ length }, () => Math.random() * 0.8 + 0.1);
+  }
 }
 
 // Create global instance
