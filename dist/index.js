@@ -61995,7 +61995,7 @@ var vite_config_default = defineConfig({
   },
   envDir: path2.resolve(import.meta.dirname),
   define: {
-    "process.env.VITE_HMR_HOST": JSON.stringify(process.env.HMR_HOST || "")
+    "process.env.VITE_HMR_HOST": JSON.stringify(process.env.HMR_HOST || "auto")
   },
   root: path2.resolve(import.meta.dirname, "client"),
   publicDir: path2.resolve(import.meta.dirname, "client", "public"),
@@ -62020,11 +62020,7 @@ var vite_config_default = defineConfig({
       strict: false,
       allow: ["."]
     },
-    hmr: {
-      protocol: "wss",
-      host: process.env.HMR_HOST || void 0,
-      port: 443
-    }
+    hmr: false
   }
 });
 

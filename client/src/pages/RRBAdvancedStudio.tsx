@@ -171,18 +171,6 @@ const RECORDINGS: Recording[] = [
   },
 ];
 
-const SOLFEGGIO_FREQUENCIES = [
-  { hz: 174, name: 'Foundation', description: 'Pain relief & physical healing' },
-  { hz: 285, name: 'Restoration', description: 'Tissue regeneration' },
-  { hz: 396, name: 'Liberation', description: 'Liberating guilt & fear' },
-  { hz: 417, name: 'Change', description: 'Facilitating change' },
-  { hz: 432, name: 'Universal', description: 'Universal harmony' },
-  { hz: 528, name: 'Miracle', description: 'DNA repair & transformation' },
-  { hz: 639, name: 'Connection', description: 'Harmonizing relationships' },
-  { hz: 741, name: 'Awakening', description: 'Awakening intuition' },
-  { hz: 852, name: 'Spiritual', description: 'Returning to spiritual order' },
-  { hz: 963, name: 'Divine', description: 'Pineal gland activation' },
-];
 
 export function RRBAdvancedStudio() {
   // ─── Audio State ─────────────────────
