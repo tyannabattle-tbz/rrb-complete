@@ -151,6 +151,9 @@ import RRBEcosystemDashboard from "@/pages/RRBEcosystemDashboard";
 import StudioDashboard from "@/pages/StudioDashboard";
 import SoundEffectsBrowser from "@/pages/SoundEffectsBrowser";
 import PodcastRecordingStudio from "@/pages/PodcastRecordingStudio";
+import RealtimeListenerActivityFeed from "@/pages/RealtimeListenerActivityFeed";
+import AdvancedSearchDiscovery from "@/pages/AdvancedSearchDiscovery";
+import ListenerEngagementGamification from "@/pages/ListenerEngagementGamification";
 import TyOSRadioListener from "@/pages/TyOSRadioListener";
 import SolbonesGame from "@/pages/SolbonesGame";
 import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
@@ -317,6 +320,9 @@ function Router() {
       <Route path="/studio/dashboard" component={StudioDashboard} />
       <Route path="/studio/effects" component={SoundEffectsBrowser} />
       <Route path="/studio/podcast/record" component={PodcastRecordingStudio} />
+      <Route path="/listener-activity" component={RealtimeListenerActivityFeed} />
+      <Route path="/search-discovery" component={AdvancedSearchDiscovery} />
+      <Route path="/gamification" component={ListenerEngagementGamification} />
       <Route path="/tyos" component={TyOSHome} />
       <Route path="/ty-os" component={TyOSHome} />
       <Route path="/listen" component={TyOSRadioListener} />
