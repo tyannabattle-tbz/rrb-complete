@@ -144,6 +144,7 @@ import SweetMiraclesManager from "@/pages/SweetMiraclesManager";
 import RRBListenerAnalytics from "@/pages/RRBListenerAnalytics";
 import QumusPort3000 from "@/pages/QumusPort3000";
 import RRBPort3001 from "@/pages/RRBPort3001";
+import RRBPort3001Enhanced from "@/pages/RRBPort3001Enhanced";
 import HybridCastPort3002 from "@/pages/HybridCastPort3002";
 import RRBMusicStreaming from "@/pages/RRBMusicStreaming";
 import RRBLegacySite from "@/pages/RRBLegacySite";
@@ -458,6 +459,8 @@ function Router() {
       <Route path="/qumus-monitoring" component={QumusMonitoringDashboard} />
       <Route path="/qumus" component={QumusPort3000} />
       <Route path="/rrb" component={RRBPort3001} />
+      <Route path="/rrb-studio-pro" component={RRBPort3001Enhanced} />
+      <Route path="/studio/pro" component={RRBPort3001Enhanced} />
       <Route path="/legacy" component={RRBLegacySite} />
       <Route path="/ecosystem-dashboard" component={EcosystemMasterDashboard} />
       <Route path="/ecosystem-sync" component={EcosystemSyncDashboard} />
