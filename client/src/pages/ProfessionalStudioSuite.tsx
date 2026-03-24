@@ -62,35 +62,54 @@ export default function ProfessionalStudioSuite() {
   const audioStreamRef = useRef<MediaStream | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  // Initialize audio engine
+  // Initialize audio engine with test tone generation
   useEffect(() => {
     const initAudio = async () => {
       try {
         await audioEngine.resumeContext();
-        toast.success('Audio engine initialized');
+        console.log('[Audio] Engine initialized');
         
-        // Load audio files
-        const files = [
-          { id: 'lead_vocals', path: '/audio/lead_vocals.mp3' },
-          { id: 'drums', path: '/audio/drums.mp3' },
-          { id: 'bass', path: '/audio/bass.mp3' },
-        ];
-
+        // Generate test audio buffers using Web Audio API
+        const ctx = audioEngine.getContext();
+        if (!ctx) throw new Error('Audio context not available');
+        
         const buffers = new Map();
-        for (const file of files) {
-          try {
-            const buffer = await audioEngine.loadAudioFile(file.path);
-            buffers.set(file.id, buffer);
-            console.log('Loaded', file.id, 'successfully');
-          } catch (err) {
-            console.error('Failed to load', file.id, ':', err);
-          }
+        
+        // Generate lead vocals (440 Hz sine wave - A4 note)
+        const leadVocalsBuffer = ctx.createBuffer(2, ctx.sampleRate * 3, ctx.sampleRate);
+        const lvData = leadVocalsBuffer.getChannelData(0);
+        for (let i = 0; i < leadVocalsBuffer.length; i++) {
+          lvData[i] = Math.sin((i / ctx.sampleRate) * 440 * 2 * Math.PI) * 0.3;
         }
+        buffers.set('lead_vocals', leadVocalsBuffer);
+        console.log('[Audio] Generated lead_vocals buffer');
+        
+        // Generate drums (kick drum - low frequency)
+        const drumsBuffer = ctx.createBuffer(2, ctx.sampleRate * 3, ctx.sampleRate);
+        const dData = drumsBuffer.getChannelData(0);
+        for (let i = 0; i < drumsBuffer.length; i++) {
+          const t = i / ctx.sampleRate;
+          const kick = Math.sin(t * 150 * 2 * Math.PI) * Math.exp(-t * 5);
+          dData[i] = (i % (ctx.sampleRate / 2) < ctx.sampleRate / 4) ? kick * 0.4 : 0;
+        }
+        buffers.set('drums', drumsBuffer);
+        console.log('[Audio] Generated drums buffer');
+        
+        // Generate bass (110 Hz sine wave - A2 note)
+        const bassBuffer = ctx.createBuffer(2, ctx.sampleRate * 3, ctx.sampleRate);
+        const bData = bassBuffer.getChannelData(0);
+        for (let i = 0; i < bassBuffer.length; i++) {
+          bData[i] = Math.sin((i / ctx.sampleRate) * 110 * 2 * Math.PI) * 0.25;
+        }
+        buffers.set('bass', bassBuffer);
+        console.log('[Audio] Generated bass buffer');
+        
         setAudioBuffers(buffers);
+        toast.success('Audio engine ready - test tones generated');
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
         setError('Failed to initialize: ' + msg);
-        console.error('Audio initialization failed:', error);
+        console.error('[Audio] Initialization failed:', error);
         toast.error('Audio system failed to initialize');
       }
     };
@@ -157,38 +176,60 @@ export default function ProfessionalStudioSuite() {
         currentAudioSource.stop();
         setCurrentAudioSource(null);
         setIsPlaying(false);
+        console.log('[Audio] Playback stopped');
         toast.success('Audio stopped');
       } catch (err) {
-        console.error('Error stopping audio:', err);
+        console.error('[Audio] Error stopping:', err);
       }
     } else {
       const buffer = audioBuffers.get('lead_vocals');
       if (buffer) {
         try {
-          const source = audioEngine.playAudioBufferWithId(buffer, 'lead_vocals');
+          console.log('[Audio] Starting playback of lead_vocals buffer');
+          const ctx = audioEngine.getContext();
+          if (!ctx) throw new Error('Audio context not available');
+          
+          // Create source and connect to destination
+          const source = ctx.createBufferSource();
+          source.buffer = buffer;
+          source.connect(ctx.destination);
+          source.start(0);
+          
           setCurrentAudioSource(source);
           setIsPlaying(true);
-          toast.success('Playing audio...');
+          console.log('[Audio] Playback started - audio should be playing now');
+          toast.success('▶ Playing audio through speakers...');
+          
           source.onended = () => {
+            console.log('[Audio] Playback ended');
             setIsPlaying(false);
             setCurrentAudioSource(null);
           };
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
           setError('Playback failed: ' + msg);
-          toast.error('Playback failed: ' + msg);
-          console.error('Playback error:', err);
+          console.error('[Audio] Playback error:', err);
+          toast.error('❌ Playback failed: ' + msg);
         }
       } else {
-        setError('Audio file not loaded');
-        toast.error('Audio file not loaded');
+        setError('Audio buffer not ready');
+        console.error('[Audio] No lead_vocals buffer found');
+        toast.error('❌ Audio buffer not ready - waiting for generation');
       }
     }
   };
 
   const handleVolumeChange = (value: number) => {
     setVolume(value);
-    audioEngine.setVolume(value / 100);
+    try {
+      const ctx = audioEngine.getContext();
+      if (ctx && ctx.destination) {
+        ctx.destination.gain.value = value / 100;
+        console.log('[Audio] Volume set to:', value / 100);
+      }
+    } catch (err) {
+      console.error('[Audio] Volume control error:', err);
+    }
   };
 
   const formatTime = (seconds: number) => {
