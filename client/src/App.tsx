@@ -52,6 +52,7 @@ import { StudioFree } from './pages/StudioFree';
 import { StudioPro } from './pages/StudioPro';
 import { StudioPublic } from './pages/StudioPublic';
 import { CheckoutPage } from './pages/CheckoutPage';
+import { StudioLegendary } from './pages/StudioLegendary';
 import NotificationPreferencesDashboard from './pages/NotificationPreferencesDashboard';
 import AffiliateProgramDashboard from './pages/AffiliateProgramDashboard';
 import RealtimeLeaderboard from './pages/RealtimeLeaderboard';
@@ -598,6 +599,7 @@ function Router() {
       <Route path="/studio" component={StudioPublic} />
       <Route path="/studio/public" component={StudioPublic} />
       <Route path="/checkout" component={CheckoutPage} />
+      <Route path="/studio-legendary" component={StudioLegendary} />
       <Route component={NotFound} />
     </Switch>
     </>
