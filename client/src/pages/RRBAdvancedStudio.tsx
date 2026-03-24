@@ -264,6 +264,7 @@ export function RRBAdvancedStudio() {
     if (!audioRef.current) {
       audioRef.current = new Audio();
       audioRef.current.crossOrigin = 'anonymous';
+      audioRef.current.preload = 'auto';
     }
 
     const audio = audioRef.current;
@@ -271,12 +272,23 @@ export function RRBAdvancedStudio() {
 
     audio.src = channel.streamUrl;
     audio.volume = isMuted ? 0 : volume / 100;
+    audio.preload = 'auto';
+    audio.crossOrigin = 'anonymous';
 
-    const onPlaying = () => setStreamHealth('connected');
+    const onPlaying = () => {
+      console.log('[Audio] Stream playing:', channel.name);
+      setStreamHealth('connected');
+    };
+    
     const onError = () => {
+      console.error('[Audio] Stream error:', audio.error?.message);
       if (channel.streamFallback && audio.src !== channel.streamFallback) {
+        console.log('[Audio] Trying fallback stream');
         audio.src = channel.streamFallback;
-        audio.play().catch(() => setStreamHealth('error'));
+        audio.play().catch(err => {
+          console.error('[Audio] Fallback failed:', err);
+          setStreamHealth('error');
+        });
       } else {
         setStreamHealth('error');
         toast.error('Stream temporarily unavailable');
@@ -288,9 +300,18 @@ export function RRBAdvancedStudio() {
     audio.addEventListener('playing', onPlaying);
     audio.addEventListener('error', onError);
 
-    audio.play().catch(() => {
-      setStreamHealth('error');
-    });
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          console.log('[Audio] Playback started successfully');
+        })
+        .catch(err => {
+          console.error('[Audio] Playback failed:', err.message);
+          setStreamHealth('error');
+          toast.error('Audio playback blocked - check browser permissions');
+        });
+    }
   }, [volume, isMuted]);
 
   // ─── Frequency Tuner ─────────────────────
