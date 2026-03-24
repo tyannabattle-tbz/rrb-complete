@@ -1,35 +1,13 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect, useRef } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Video,
-  Mic,
-  Settings,
-  Play,
-  Pause,
-  Square,
-  Sliders,
-  Layers,
-  Zap,
-  Download,
-  Share2,
-  Eye,
-  Volume2,
-  Radio,
-  Maximize,
-  Minimize,
-} from 'lucide-react';
-
-interface TimelineTrack {
-  id: string;
-  type: 'video' | 'audio' | 'text';
-  name: string;
-  duration: number;
-  startTime: number;
-}
+import { Video, Mic, Settings, Play, Pause, Square, Sliders, Zap, Download, Share2, Volume2, Maximize } from 'lucide-react';
+import { toast } from 'sonner';
+import { audioEngine } from '@/lib/audioEngineService';
+import { StudioFileMenu } from '@/components/StudioFileMenu';
 
 interface ColorGradingPreset {
   name: string;
@@ -53,11 +31,6 @@ const colorGradingPresets: ColorGradingPreset[] = [
     description: 'Elegant, timeless elegance',
     colors: { shadows: '#2d2d2d', midtones: '#d4af37', highlights: '#ffd700' },
   },
-  {
-    name: 'Noir',
-    description: 'Classic black and white',
-    colors: { shadows: '#000000', midtones: '#808080', highlights: '#ffffff' },
-  },
 ];
 
 export default function ProfessionalStudioSuite() {
@@ -66,16 +39,85 @@ export default function ProfessionalStudioSuite() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(3600);
   const [selectedPreset, setSelectedPreset] = useState(0);
-  const [showTimeline, setShowTimeline] = useState(true);
-  const [showEffects, setShowEffects] = useState(false);
+  const [volume, setVolume] = useState(80);
+  const [frequencyData, setFrequencyData] = useState<Uint8Array | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioStreamRef = useRef<MediaStream | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
 
-  const mockTracks: TimelineTrack[] = [
-    { id: '1', type: 'video', name: 'Main Camera', duration: 3600, startTime: 0 },
-    { id: '2', type: 'audio', name: 'Microphone', duration: 3600, startTime: 0 },
-    { id: '3', type: 'audio', name: 'Background Music', duration: 3600, startTime: 0 },
-    { id: '4', type: 'text', name: 'Lower Third', duration: 1800, startTime: 600 },
-  ];
+  // Initialize audio engine
+  useEffect(() => {
+    const initAudio = async () => {
+      try {
+        await audioEngine.resumeContext();
+        toast.success('Audio engine initialized');
+      } catch (error) {
+        console.error('Audio initialization failed:', error);
+        toast.error('Audio system failed to initialize');
+      }
+    };
+
+    initAudio();
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+
+  // Update visualization
+  useEffect(() => {
+    const updateVisualization = () => {
+      const freq = audioEngine.getFrequencyData();
+      setFrequencyData(freq);
+      animationFrameRef.current = requestAnimationFrame(updateVisualization);
+    };
+
+    if (isRecording) {
+      animationFrameRef.current = requestAnimationFrame(updateVisualization);
+    }
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [isRecording]);
+
+  const handleStartRecording = async () => {
+    try {
+      const stream = await audioEngine.startAudioCapture();
+      audioStreamRef.current = stream;
+
+      const recorder = audioEngine.createRecorder(stream);
+      mediaRecorderRef.current = recorder;
+      recorder.start();
+
+      setIsRecording(true);
+      toast.success('Recording started');
+    } catch (error) {
+      console.error('Failed to start recording:', error);
+      toast.error('Failed to start recording - check microphone permissions');
+    }
+  };
+
+  const handleStopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      if (audioStreamRef.current) {
+        audioEngine.stopAudioCapture(audioStreamRef.current);
+      }
+      setIsRecording(false);
+      toast.success('Recording stopped');
+    }
+  };
+
+  const handleVolumeChange = (value: number) => {
+    setVolume(value);
+    audioEngine.setVolume(value / 100);
+  };
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -84,28 +126,70 @@ export default function ProfessionalStudioSuite() {
     return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const renderFrequencyBars = () => {
+    if (!frequencyData) return null;
+
+    const bars = [];
+    const barCount = 32;
+
+    for (let i = 0; i < barCount; i++) {
+      const dataIndex = Math.floor((i / barCount) * frequencyData.length);
+      const height = (frequencyData[dataIndex] / 255) * 100;
+
+      bars.push(
+        <div
+          key={i}
+          className="flex-1 bg-gradient-to-t from-green-500 to-green-400 rounded-sm"
+          style={{
+            height: `${height}%`,
+            minHeight: '2px',
+            margin: '0 1px',
+          }}
+        />
+      );
+    }
+
+    return bars;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header - Premium Studio Branding */}
+        {/* Header */}
         <div className="mb-8 border-b border-slate-700 pb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-purple-400 to-pink-400 mb-2">
                 PROFESSIONAL STUDIO SUITE
               </h1>
-              <p className="text-slate-300 text-lg">
-                Cinematic Production. Legendary Quality. Your Vision, Amplified.
-              </p>
+              <p className="text-slate-300 text-lg">Cinematic Production. Legendary Quality. Your Vision, Amplified.</p>
             </div>
             <div className="flex gap-2">
               <Badge className="bg-red-900/30 text-red-300 border-red-500 px-4 py-2 text-sm">
                 {isRecording ? '● RECORDING' : 'READY'}
               </Badge>
-              <Badge className="bg-blue-900/30 text-blue-300 border-blue-500 px-4 py-2 text-sm">
-                4K • 60FPS
-              </Badge>
+              <Badge className="bg-blue-900/30 text-blue-300 border-blue-500 px-4 py-2 text-sm">4K • 60FPS</Badge>
             </div>
+          </div>
+
+          {/* Menu Bar */}
+          <div className="flex gap-2 bg-slate-800 p-3 rounded-lg border border-slate-700">
+            <StudioFileMenu
+              onNewProject={() => toast.success('New project created')}
+              onOpenProject={(file) => toast.success(`Opened: ${file.name}`)}
+              onSaveProject={() => toast.success('Project saved')}
+              onExportAudio={() => toast.success('Exporting audio...')}
+              onImportProject={(file) => toast.success(`Imported: ${file.name}`)}
+            />
+            <Button variant="ghost" className="text-slate-300 hover:text-white">
+              Edit
+            </Button>
+            <Button variant="ghost" className="text-slate-300 hover:text-white">
+              Track
+            </Button>
+            <Button variant="ghost" className="text-slate-300 hover:text-white">
+              Mix
+            </Button>
           </div>
         </div>
 
@@ -114,22 +198,15 @@ export default function ProfessionalStudioSuite() {
           <div className="lg:col-span-3">
             <Card className="bg-black border-slate-700 overflow-hidden">
               <div className="relative aspect-video bg-black flex items-center justify-center group">
-                {/* Video Canvas */}
                 <div
                   className="w-full h-full"
                   style={{
                     background: `linear-gradient(135deg, ${colorGradingPresets[selectedPreset].colors.shadows} 0%, ${colorGradingPresets[selectedPreset].colors.midtones} 50%, ${colorGradingPresets[selectedPreset].colors.highlights} 100%)`,
                   }}
                 >
-                  <video
-                    ref={videoRef}
-                    className="w-full h-full object-cover"
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                  />
+                  <video ref={videoRef} className="w-full h-full object-cover" />
                 </div>
 
-                {/* Recording Indicator */}
                 {isRecording && (
                   <div className="absolute top-4 right-4 flex items-center gap-2 bg-red-900/80 px-3 py-2 rounded">
                     <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
@@ -137,7 +214,6 @@ export default function ProfessionalStudioSuite() {
                   </div>
                 )}
 
-                {/* Playback Controls Overlay */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
                   <Button
                     size="lg"
@@ -146,8 +222,10 @@ export default function ProfessionalStudioSuite() {
                       if (videoRef.current) {
                         if (isPlaying) {
                           videoRef.current.pause();
+                          setIsPlaying(false);
                         } else {
                           videoRef.current.play();
+                          setIsPlaying(true);
                         }
                       }
                     }}
@@ -159,7 +237,6 @@ export default function ProfessionalStudioSuite() {
 
               {/* Video Controls */}
               <CardContent className="bg-slate-900 p-6 space-y-4">
-                {/* Progress Bar */}
                 <div className="space-y-2">
                   <input
                     type="range"
@@ -181,17 +258,12 @@ export default function ProfessionalStudioSuite() {
                   </div>
                 </div>
 
-                {/* Control Buttons */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Button
                       size="sm"
-                      className={`${
-                        isRecording
-                          ? 'bg-red-600 hover:bg-red-700'
-                          : 'bg-green-600 hover:bg-green-700'
-                      }`}
-                      onClick={() => setIsRecording(!isRecording)}
+                      className={isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'}
+                      onClick={isRecording ? handleStopRecording : handleStartRecording}
                     >
                       {isRecording ? (
                         <>
@@ -216,12 +288,7 @@ export default function ProfessionalStudioSuite() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="border-slate-600"
-                      onClick={() => setShowEffects(!showEffects)}
-                    >
+                    <Button size="sm" variant="outline" className="border-slate-600">
                       <Sliders className="w-4 h-4" />
                     </Button>
 
@@ -234,9 +301,9 @@ export default function ProfessionalStudioSuite() {
             </Card>
           </div>
 
-          {/* Right Sidebar - Color Grading & Effects */}
+          {/* Right Sidebar */}
           <div className="space-y-6">
-            {/* Color Grading Presets */}
+            {/* Color Grading */}
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white text-sm flex items-center gap-2">
@@ -250,9 +317,7 @@ export default function ProfessionalStudioSuite() {
                     key={idx}
                     onClick={() => setSelectedPreset(idx)}
                     className={`w-full text-left p-3 rounded-lg transition ${
-                      selectedPreset === idx
-                        ? 'bg-purple-900/40 border border-purple-500'
-                        : 'bg-slate-700 hover:bg-slate-600'
+                      selectedPreset === idx ? 'bg-purple-900/40 border border-purple-500' : 'bg-slate-700 hover:bg-slate-600'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-2">
@@ -270,98 +335,38 @@ export default function ProfessionalStudioSuite() {
               </CardContent>
             </Card>
 
-            {/* Quick Settings */}
+            {/* Audio Levels */}
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-white text-sm">Settings</CardTitle>
+                <CardTitle className="text-white text-sm">Audio Levels</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {[
-                  { label: 'Brightness', value: 75 },
-                  { label: 'Contrast', value: 60 },
-                  { label: 'Saturation', value: 80 },
-                ].map((setting, idx) => (
-                  <div key={idx}>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-slate-300 text-xs font-semibold">{setting.label}</span>
-                      <span className="text-white text-xs">{setting.value}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      defaultValue={setting.value}
-                      className="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                    />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Export Options */}
-            <Card className="bg-slate-800 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white text-sm">Export</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-sm">
-                  <Download className="w-4 h-4 mr-2" />
-                  Export 4K
-                </Button>
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-sm">
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share
-                </Button>
+              <CardContent>
+                <div className="h-24 bg-slate-900 rounded flex items-end justify-center gap-1 p-2 border border-slate-700">
+                  {renderFrequencyBars()}
+                </div>
+                <div className="mt-4 space-y-2">
+                  <label className="text-xs text-slate-400">Master Volume</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={volume}
+                    onChange={(e) => handleVolumeChange(parseInt(e.target.value))}
+                    className="w-full"
+                  />
+                  <div className="text-xs text-slate-400 text-center">{volume}%</div>
+                </div>
               </CardContent>
             </Card>
           </div>
         </div>
 
-        {/* Timeline Editor */}
-        {showTimeline && (
-          <Card className="bg-slate-800 border-slate-700">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Layers className="w-5 h-5 text-purple-400" />
-                  Timeline Editor
-                </CardTitle>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-slate-600"
-                  onClick={() => setShowTimeline(!showTimeline)}
-                >
-                  <Minimize className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {mockTracks.map(track => (
-                <div key={track.id} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {track.type === 'video' && <Video className="w-4 h-4 text-blue-400" />}
-                      {track.type === 'audio' && <Mic className="w-4 h-4 text-green-400" />}
-                      {track.type === 'text' && <Radio className="w-4 h-4 text-yellow-400" />}
-                      <span className="text-white text-sm font-semibold">{track.name}</span>
-                    </div>
-                    <span className="text-slate-400 text-xs">{formatTime(track.duration)}</span>
-                  </div>
-                  <div className="relative h-12 bg-slate-700 rounded overflow-hidden">
-                    <div
-                      className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-600 to-purple-400 opacity-70"
-                      style={{
-                        width: `${(track.duration / duration) * 100}%`,
-                        marginLeft: `${(track.startTime / duration) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
+        {/* Status Bar */}
+        <div className="bg-slate-900 border border-slate-700 rounded p-3 flex justify-between text-xs text-slate-400">
+          <div>Audio Engine: Ready</div>
+          <div>Status: {isRecording ? 'Recording' : 'Idle'}</div>
+          <div>Volume: {volume}%</div>
+        </div>
       </div>
     </div>
   );
