@@ -24,6 +24,7 @@ import {
   Waves,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { getAudioEngine, initializeAudioEngine, SOLFEGGIO_FREQUENCIES } from '@/lib/audioEngine';
 
 interface Channel {
   id: number;
@@ -187,16 +188,29 @@ export function RRBAdvancedStudio() {
   // ─── Audio State ─────────────────────
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const audioEngineRef = useRef(getAudioEngine());
+  const [audioReady, setAudioReady] = useState(false);
 
-  // Initialize audio element on mount
+  // Initialize Web Audio API engine on mount
   useEffect(() => {
-    if (!audioRef.current && containerRef.current) {
-      const audio = document.createElement('audio');
-      audio.crossOrigin = 'anonymous';
-      audio.style.display = 'none';
-      containerRef.current.appendChild(audio);
-      audioRef.current = audio;
-    }
+    const initAudio = async () => {
+      try {
+        await initializeAudioEngine();
+        setAudioReady(true);
+        console.log('[RRBAdvancedStudio] Audio engine initialized');
+      } catch (error) {
+        console.error('[RRBAdvancedStudio] Audio engine initialization failed:', error);
+        toast.error('Audio engine failed to initialize');
+      }
+    };
+
+    initAudio();
+
+    return () => {
+      if (audioEngineRef.current) {
+        audioEngineRef.current.stopAll();
+      }
+    };
   }, []);
   const [activeChannel, setActiveChannel] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -250,69 +264,51 @@ export function RRBAdvancedStudio() {
 
   // ─── Real Audio Stream Playback (from RRBPort3001) ─────────────────────
   const stopAudioStream = useCallback(() => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = '';
-      audioRef.current.load();
+    if (activeChannel !== null) {
+      const engine = audioEngineRef.current;
+      engine.stopChannel(activeChannel);
+      setActiveChannel(null);
+      setIsPlaying(false);
+      console.log('[RRBAdvancedStudio] Stopped channel', activeChannel);
     }
     setStreamHealth('idle');
-  }, []);
+  }, [activeChannel]);
 
   const playAudioStream = useCallback((channel: Channel) => {
-    if (!channel.streamUrl) return;
-
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.crossOrigin = 'anonymous';
-      audioRef.current.preload = 'auto';
+    if (!audioReady) {
+      toast.error('Audio engine not ready');
+      return;
     }
 
-    const audio = audioRef.current;
-    setStreamHealth('connecting');
+    try {
+      setStreamHealth('connecting');
+      const engine = audioEngineRef.current;
+      const frequency = parseInt(channel.frequency) || 432;
 
-    audio.src = channel.streamUrl;
-    audio.volume = isMuted ? 0 : volume / 100;
-    audio.preload = 'auto';
-    audio.crossOrigin = 'anonymous';
-
-    const onPlaying = () => {
-      console.log('[Audio] Stream playing:', channel.name);
-      setStreamHealth('connected');
-    };
-    
-    const onError = () => {
-      console.error('[Audio] Stream error:', audio.error?.message);
-      if (channel.streamFallback && audio.src !== channel.streamFallback) {
-        console.log('[Audio] Trying fallback stream');
-        audio.src = channel.streamFallback;
-        audio.play().catch(err => {
-          console.error('[Audio] Fallback failed:', err);
-          setStreamHealth('error');
+      let audioChannel = engine.getChannel(channel.id);
+      if (!audioChannel) {
+        audioChannel = engine.createChannel({
+          id: channel.id,
+          name: channel.name,
+          frequency,
+          waveType: 'sine',
+          volume: isMuted ? 0 : volume / 100,
         });
-      } else {
-        setStreamHealth('error');
-        toast.error('Stream temporarily unavailable');
       }
-    };
 
-    audio.removeEventListener('playing', onPlaying);
-    audio.removeEventListener('error', onError);
-    audio.addEventListener('playing', onPlaying);
-    audio.addEventListener('error', onError);
+      audioChannel.play(frequency);
+      setActiveChannel(channel.id);
+      setIsPlaying(true);
+      setStreamHealth('connected');
 
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          console.log('[Audio] Playback started successfully');
-        })
-        .catch(err => {
-          console.error('[Audio] Playback failed:', err.message);
-          setStreamHealth('error');
-          toast.error('Audio playback blocked - check browser permissions');
-        });
+      console.log(`[RRBAdvancedStudio] Playing ${channel.name} at ${frequency}Hz`);
+      toast.success(`Now playing: ${channel.name}`);
+    } catch (error) {
+      console.error('[RRBAdvancedStudio] Playback error:', error);
+      setStreamHealth('error');
+      toast.error('Audio playback failed');
     }
-  }, [volume, isMuted]);
+  }, [audioReady, volume, isMuted]);
 
   // ─── Frequency Tuner ─────────────────────
   const startTuner = (hz: number) => {
@@ -583,7 +579,11 @@ export function RRBAdvancedStudio() {
                   min="0"
                   max="100"
                   value={volume}
-                  onChange={e => setVolume(Number(e.target.value))}
+                  onChange={e => {
+                    const newVolume = Number(e.target.value);
+                    setVolume(newVolume);
+                    audioEngineRef.current.setMasterVolume(newVolume / 100);
+                  }}
                   className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
                 />
                 <span className="text-sm text-slate-400 w-12">{volume}%</span>
