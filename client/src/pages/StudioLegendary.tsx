@@ -21,9 +21,14 @@ import {
   Trash2,
   Download,
   Radio,
+  Activity,
+  HardDrive,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { HybridCastIntegration } from '../components/HybridCastIntegration';
+import { StreamQualityMonitor } from '../components/StreamQualityMonitor';
+import { RecordingBackupSystem } from '../components/RecordingBackupSystem';
+import { MultiOperatorDashboard } from '../components/MultiOperatorDashboard';
 
 interface Channel {
   id: number;
@@ -351,7 +356,7 @@ export function StudioLegendary() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 bg-slate-800/40 border border-slate-700/30">
+        <TabsList className="grid w-full grid-cols-8 bg-slate-800/40 border border-slate-700/30">
           <TabsTrigger value="channels" className="flex items-center gap-2">
             <Music className="w-4 h-4" />
             Channels
@@ -371,6 +376,18 @@ export function StudioLegendary() {
           <TabsTrigger value="hybridcast" className="flex items-center gap-2">
             <Radio className="w-4 h-4" />
             HybridCast
+          </TabsTrigger>
+          <TabsTrigger value="quality" className="flex items-center gap-2">
+            <Activity className="w-4 h-4" />
+            Quality
+          </TabsTrigger>
+          <TabsTrigger value="backup" className="flex items-center gap-2">
+            <HardDrive className="w-4 h-4" />
+            Backup
+          </TabsTrigger>
+          <TabsTrigger value="operators" className="flex items-center gap-2">
+            <Users className="w-4 h-4" />
+            Operators
           </TabsTrigger>
         </TabsList>
 
@@ -518,6 +535,21 @@ export function StudioLegendary() {
         {/* HybridCast Tab */}
         <TabsContent value="hybridcast" className="space-y-4">
           <HybridCastIntegration />
+        </TabsContent>
+
+        {/* Stream Quality Tab */}
+        <TabsContent value="quality" className="space-y-4">
+          <StreamQualityMonitor />
+        </TabsContent>
+
+        {/* Recording Backup Tab */}
+        <TabsContent value="backup" className="space-y-4">
+          <RecordingBackupSystem />
+        </TabsContent>
+
+        {/* Multi-Operator Dashboard Tab */}
+        <TabsContent value="operators" className="space-y-4">
+          <MultiOperatorDashboard />
         </TabsContent>
 
         {/* Setlist Tab */}
