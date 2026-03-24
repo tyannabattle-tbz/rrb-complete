@@ -7,9 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Music, Radio, Users, Archive, Zap, Lock, ArrowLeft } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { BandMemberChat } from '@/components/BandMemberChat';
-import { PerformanceRecordingArchive } from '@/components/PerformanceRecordingArchive';
-import { SetlistGenerator } from '@/components/SetlistGenerator';
+import { BandMemberChatFunctional } from '@/components/BandMemberChatFunctional';
+import { PerformanceRecordingArchiveFunctional } from '@/components/PerformanceRecordingArchiveFunctional';
+import { SetlistGeneratorFunctional } from '@/components/SetlistGeneratorFunctional';
 
 export function StudioFree() {
   const [, setLocation] = useLocation();
@@ -89,39 +89,39 @@ export function StudioFree() {
 
         {/* Band Member Chat Tab */}
         <TabsContent value="chat" className="space-y-4">
-          <Card className="bg-slate-800/40 border-slate-700/30">
+            <Card className="bg-slate-800/40 border-slate-700/30">
             <CardHeader>
               <CardTitle className="text-white">Real-time Band Communication</CardTitle>
               <CardDescription>Connect with band members during performances</CardDescription>
             </CardHeader>
             <CardContent>
-              <BandMemberChat />
+              <BandMemberChatFunctional />
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* Recording Archive Tab */}
         <TabsContent value="archive" className="space-y-4">
-          <Card className="bg-slate-800/40 border-slate-700/30">
+            <Card className="bg-slate-800/40 border-slate-700/30">
             <CardHeader>
               <CardTitle className="text-white">Performance Archive</CardTitle>
               <CardDescription>Free tier: View and download your recordings</CardDescription>
             </CardHeader>
             <CardContent>
-              <PerformanceRecordingArchive />
+              <PerformanceRecordingArchiveFunctional />
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* Setlist Generator Tab */}
         <TabsContent value="setlist" className="space-y-4">
-          <Card className="bg-slate-800/40 border-slate-700/30">
+            <Card className="bg-slate-800/40 border-slate-700/30">
             <CardHeader>
               <CardTitle className="text-white">Setlist Generator</CardTitle>
               <CardDescription>Plan your performances with AI assistance</CardDescription>
             </CardHeader>
             <CardContent>
-              <SetlistGenerator />
+              <SetlistGeneratorFunctional />
             </CardContent>
           </Card>
         </TabsContent>

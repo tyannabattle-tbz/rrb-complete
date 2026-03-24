@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { 
-  Zap, Brain, Music, Waveform, Sparkles, BarChart3, 
+  Zap, Brain, Music, Waves, Sparkles, BarChart3, 
   Radio, Volume2, Cpu, Target, TrendingUp, Settings 
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -141,7 +141,7 @@ export function LegendaryAudioFeatures() {
               : 'text-slate-400 hover:text-slate-300'
           }`}
         >
-          <Waveform className="w-4 h-4 inline mr-2" />
+          <Waves className="w-4 h-4 inline mr-2" />
           Frequency-Aware Mastering
         </button>
       </div>
