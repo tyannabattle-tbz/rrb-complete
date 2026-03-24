@@ -51,6 +51,7 @@ import { PodcastDistribution } from './pages/PodcastDistribution';
 import { StudioFree } from './pages/StudioFree';
 import { StudioPro } from './pages/StudioPro';
 import { StudioPublic } from './pages/StudioPublic';
+import { CheckoutPage } from './pages/CheckoutPage';
 import NotificationPreferencesDashboard from './pages/NotificationPreferencesDashboard';
 import AffiliateProgramDashboard from './pages/AffiliateProgramDashboard';
 import RealtimeLeaderboard from './pages/RealtimeLeaderboard';
@@ -596,6 +597,7 @@ function Router() {
       <Route path="/studio/pro" component={StudioPro} />
       <Route path="/studio" component={StudioPublic} />
       <Route path="/studio/public" component={StudioPublic} />
+      <Route path="/checkout" component={CheckoutPage} />
       <Route component={NotFound} />
     </Switch>
     </>
