@@ -392,6 +392,8 @@ function Router() {
       <Route path="/radio-station" component={RadioStation} />
       <Route path="/rrb-radio" component={RRBRadioIntegration} />
       <Route path="/studio-suite" component={StudioSuite} />
+      <Route path="/professional-studio" component={ProfessionalStudioSuite} />
+      <Route path="/studio/pro" component={ProfessionalStudioSuite} />
       <Route path="/media-library" component={MediaLibrary} />
       <Route path="/podcasts" component={PodcastsHub} />
       <Route path="/listener-analytics" component={ListenerAnalyticsDashboard} />

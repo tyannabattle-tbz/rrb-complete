@@ -13,17 +13,26 @@ export class AudioEngineService {
   private audioDevices: MediaDeviceInfo[] = [];
 
   constructor() {
-    this.initializeAudioContext();
+    // Lazy initialization - wait for user gesture
     this.enumerateAudioDevices();
   }
 
   /**
-   * Initialize Web Audio API context
+   * Initialize Web Audio API context (lazy - requires user gesture)
    */
-  private async initializeAudioContext() {
+  async initializeAudioContext() {
+    if (this.audioContext) {
+      return; // Already initialized
+    }
+
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       this.audioContext = audioContext;
+
+      // Resume context if suspended (required by browser autoplay policy)
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
 
       // Create gain node for volume control
       this.gainNode = audioContext.createGain();
@@ -37,6 +46,7 @@ export class AudioEngineService {
 
       this.isInitialized = true;
       this.emit('initialized', { sampleRate: audioContext.sampleRate });
+      console.log('[AudioEngine] Initialized with context state:', audioContext.state);
     } catch (error) {
       console.error('[AudioEngine] Failed to initialize:', error);
       this.emit('error', { message: 'Audio context initialization failed' });
@@ -63,6 +73,11 @@ export class AudioEngineService {
    */
   async startAudioCapture(deviceId?: string): Promise<MediaStream> {
     try {
+      // Initialize audio context if not already done
+      if (!this.audioContext) {
+        await this.initializeAudioContext();
+      }
+
       if (!this.audioContext) {
         throw new Error('Audio context not initialized');
       }
@@ -146,6 +161,11 @@ export class AudioEngineService {
    */
   async playAudioBuffer(arrayBuffer: ArrayBuffer) {
     try {
+      // Initialize audio context if not already done
+      if (!this.audioContext) {
+        await this.initializeAudioContext();
+      }
+
       if (!this.audioContext) throw new Error('Audio context not initialized');
 
       const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
@@ -226,6 +246,10 @@ export class AudioEngineService {
    * Resume audio context (required after user interaction)
    */
   async resumeContext() {
+    if (!this.audioContext) {
+      await this.initializeAudioContext();
+    }
+
     if (this.audioContext && this.audioContext.state === 'suspended') {
       await this.audioContext.resume();
       this.emit('contextResumed', {});
