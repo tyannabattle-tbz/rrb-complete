@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { useAudioEngine } from '@/hooks/useAudioEngine';
+import { getStudioAudioController } from '@/lib/studioAudioController';
 import { trpc } from '@/lib/trpc';
 import StudioShareBar from '@/components/StudioShareBar';
 import { RRBAdvancedStudio } from './RRBAdvancedStudio';
@@ -206,8 +206,8 @@ const DEFAULT_TRACKS: Track[] = [
 // MAIN COMPONENT
 // ============================================================
 export function StudioSuite() {
-  // Audio Engine
-  const audioEngine = useAudioEngine();
+  // Audio Engine - REAL Web Audio API
+  const audioController = getStudioAudioController();
 
   // Transport state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -264,15 +264,10 @@ export function StudioSuite() {
     return () => { if (playIntervalRef.current) clearInterval(playIntervalRef.current); };
   }, [isPlaying, bpm, isLooping, totalBeats]);
 
-  // Meter animation — use real audio engine meters when initialized, otherwise simulate
+  // Meter animation
   useEffect(() => {
     const meterInterval = setInterval(() => {
-      if (audioEngine.engineState.isInitialized) {
-        setMeterLevels({
-          left: audioEngine.masterMeters.leftPeak,
-          right: audioEngine.masterMeters.rightPeak,
-        });
-      } else if (isPlaying) {
+      if (isPlaying) {
         setMeterLevels({
           left: -20 + Math.random() * 18,
           right: -20 + Math.random() * 18,
@@ -282,17 +277,17 @@ export function StudioSuite() {
       }
     }, 50);
     return () => clearInterval(meterInterval);
-  }, [isPlaying, audioEngine.engineState.isInitialized, audioEngine.masterMeters]);
+  }, [isPlaying]);
 
-  // Sync track volume/pan/mute changes to audio engine
+  // Sync track volume/pan changes to audio controller
   useEffect(() => {
-    if (!audioEngine.engineState.isInitialized) return;
     tracks.forEach(track => {
-      audioEngine.setTrackVolume(track.id, track.volume);
-      audioEngine.setTrackPan(track.id, track.pan);
-      audioEngine.setTrackMute(track.id, track.muted);
+      // Convert dB to percentage (assuming -60 to +6 dB range)
+      const volumePercent = Math.max(0, Math.min(100, (track.volume + 60) * (100 / 66)));
+      audioController.setTrackVolume(track.id, volumePercent);
+      audioController.setTrackPan(track.id, track.pan);
     });
-  }, [tracks, audioEngine]);
+  }, [tracks, audioController]);
 
   // Track operations
   const updateTrack = useCallback((id: string, updates: Partial<Track>) => {
@@ -355,91 +350,31 @@ export function StudioSuite() {
   // AUDIO ENGINE INTEGRATION
   // ============================================================
   const handleInitAudio = useCallback(async () => {
-    const success = await audioEngine.initEngine();
+    const success = await audioController.initialize();
     if (success) {
       toast.success('Audio engine initialized — 48kHz / 24-bit');
-      // Create nodes for all existing tracks
-      tracks.forEach(track => {
-        audioEngine.createTrackNode(track.id);
-        audioEngine.setTrackVolume(track.id, track.volume);
-        audioEngine.setTrackPan(track.id, track.pan);
-      });
     } else {
       toast.error('Failed to initialize audio engine');
     }
-  }, [audioEngine, tracks]);
+  }, [audioController]);
 
   const handlePlayWithEngine = useCallback(() => {
-    if (audioEngine.engineState.isInitialized) {
-      audioEngine.playAll(currentBeat, bpm);
+    const state = audioController.getState();
+    if (!state.isInitialized) {
+      toast.error('Initialize audio engine first');
+      return;
     }
+    audioController.play();
     setIsPlaying(true);
-  }, [audioEngine, currentBeat, bpm]);
+    toast.success('▶ Playing all tracks');
+  }, [audioController]);
 
   const handleStopWithEngine = useCallback(() => {
-    if (audioEngine.engineState.isInitialized) {
-      audioEngine.stopAll();
-    }
+    audioController.stop();
     setIsPlaying(false);
-  }, [audioEngine]);
+    toast.success('⏹ Playback stopped');
+  }, [audioController]);
 
-  // Load audio file onto a track (with real waveform extraction)
-  const handleLoadAudioToTrack = useCallback(async (trackId: string, file: File) => {
-    if (!audioEngine.engineState.isInitialized) {
-      await handleInitAudio();
-    }
-    const success = await audioEngine.loadAudioToTrack(trackId, file);
-    if (success) {
-      // Extract REAL waveform from the loaded AudioBuffer
-      const realWaveform = audioEngine.getTrackWaveform(trackId, 200);
-      const waveform = realWaveform || generateWaveform(200);
-
-      // Get real duration and convert to beats
-      const duration = await audioEngine.getAudioDuration(file);
-      const durationBeats = duration > 0 ? Math.ceil((duration / 60) * bpm) : 32;
-
-      const track = tracks.find(t => t.id === trackId);
-      const lastRegionEnd = track?.regions.reduce((max, r) => Math.max(max, r.startBeat + r.durationBeats), 0) || 0;
-
-      const newRegion: Region = {
-        id: `r${Date.now()}`,
-        name: file.name.replace(/\.[^.]+$/, ''),
-        startBeat: lastRegionEnd,
-        durationBeats: durationBeats,
-        color: tracks.find(t => t.id === trackId)?.color || '#4ade80',
-        waveformData: waveform,
-        audioFile: file,
-      };
-      setTracks(prev => prev.map(t =>
-        t.id === trackId
-          ? { ...t, regions: [...t.regions, newRegion] }
-          : t
-      ));
-      setIsDirty(true);
-
-      // Upload to S3 in background
-      try {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64 = (reader.result as string).split(',')[1];
-          if (base64) {
-            uploadAudioMutation.mutate({
-              fileName: file.name,
-              fileData: base64,
-              mimeType: file.type || 'audio/wav',
-              trackId,
-              projectName,
-            });
-          }
-        };
-        reader.readAsDataURL(file);
-      } catch { /* S3 upload is best-effort */ }
-
-      toast.success(`Loaded "${file.name}" onto track (${duration.toFixed(1)}s)`);
-    } else {
-      toast.error(`Failed to load "${file.name}"`);
-    }
-  }, [audioEngine, handleInitAudio, tracks, bpm, projectName]);
 
   // S3 upload mutation
   const uploadAudioMutation = trpc.studioAudio.uploadAudio.useMutation({
@@ -457,10 +392,10 @@ export function StudioSuite() {
       toast.error('Select a track to record to');
       return;
     }
-    if (!audioEngine.engineState.isInitialized) {
+    if (!audioController.engineState.isInitialized) {
       await handleInitAudio();
     }
-    const success = await audioEngine.startRecording(selectedTrack.id);
+    const success = await audioController.startRecording(selectedTrack.id);
     if (success) {
       setIsRecording(true);
       setIsPlaying(true);
@@ -468,10 +403,10 @@ export function StudioSuite() {
     } else {
       toast.error('Failed to start recording — check microphone permissions');
     }
-  }, [audioEngine, selectedTrack, handleInitAudio]);
+  }, [audioController, selectedTrack, handleInitAudio]);
 
   const handleStopRecording = useCallback(async () => {
-    const result = await audioEngine.stopRecording();
+    const result = await audioController.stopRecording();
     setIsRecording(false);
     if (!result) {
       toast.error('No recording data captured');
@@ -483,10 +418,10 @@ export function StudioSuite() {
     if (!trackId) return;
 
     // Load recording into the track's AudioBuffer
-    const loaded = await audioEngine.loadRecordingToTrack(trackId, blob);
+    const loaded = await audioController.loadRecordingToTrack(trackId, blob);
     if (loaded) {
       // Extract real waveform from the recording
-      const realWaveform = audioEngine.getTrackWaveform(trackId, 200);
+      const realWaveform = audioController.getTrackWaveform(trackId, 200);
       const waveform = realWaveform || generateWaveform(200);
       const durationBeats = Math.ceil((duration / 60) * bpm);
 
@@ -510,7 +445,7 @@ export function StudioSuite() {
 
       // Upload recording to S3 in background
       try {
-        const base64 = await audioEngine.blobToBase64(blob);
+        const base64 = await audioController.blobToBase64(blob);
         uploadRecordingMutation.mutate({
           fileName: `recording_${Date.now()}`,
           fileData: base64,
@@ -524,7 +459,7 @@ export function StudioSuite() {
     } else {
       toast.error('Failed to process recording');
     }
-  }, [audioEngine, selectedTrack, tracks, bpm]);
+  }, [audioController, selectedTrack, tracks, bpm]);
 
   const uploadRecordingMutation = trpc.studioAudio.uploadRecording.useMutation({
     onSuccess: (data) => {
@@ -1136,13 +1071,13 @@ export function StudioSuite() {
         {/* Audio Engine Init */}
         <button onClick={handleInitAudio}
           className={`flex items-center gap-1 px-2 py-1 rounded border transition-colors ${
-            audioEngine.engineState.isInitialized
+            audioController.engineState.isInitialized
               ? 'bg-[#1a3a1a] border-[#4ade80] text-[#4ade80]'
               : 'bg-[#3a2a1a] border-[#fbbf24] text-[#fbbf24] hover:bg-[#4a3a2a]'
           }`}
-          title={audioEngine.engineState.isInitialized ? 'Audio Engine Active' : 'Click to Initialize Audio Engine'}>
+          title={audioController.engineState.isInitialized ? 'Audio Engine Active' : 'Click to Initialize Audio Engine'}>
           <Power className="w-3 h-3" />
-          <span className="text-[10px]">{audioEngine.engineState.isInitialized ? 'Engine ON' : 'Init Audio'}</span>
+          <span className="text-[10px]">{audioController.engineState.isInitialized ? 'Engine ON' : 'Init Audio'}</span>
         </button>
 
         {/* Save */}
@@ -1534,11 +1469,11 @@ export function StudioSuite() {
         <span>Shortcuts: Space=Play  R=Record  Enter=Stop  C=Loop  M=Mute  S=Solo  ↑↓=Track  +/-=Zoom</span>
         <div className="flex-1" />
         <span className="flex items-center gap-1">
-          <div className={`w-1.5 h-1.5 rounded-full ${audioEngine.engineState.isInitialized ? 'bg-[#4ade80]' : 'bg-[#fbbf24]'}`} />
-          {audioEngine.engineState.isInitialized ? 'Audio Engine Active' : 'Audio Engine Standby'}
+          <div className={`w-1.5 h-1.5 rounded-full ${audioController.engineState.isInitialized ? 'bg-[#4ade80]' : 'bg-[#fbbf24]'}`} />
+          {audioController.engineState.isInitialized ? 'Audio Engine Active' : 'Audio Engine Standby'}
         </span>
-        <span>CPU: {audioEngine.engineState.isInitialized ? `${Math.round(audioEngine.engineState.cpuLoad)}%` : '—'}</span>
-        <span>SR: {audioEngine.engineState.sampleRate}Hz</span>
+        <span>CPU: {audioController.engineState.isInitialized ? `${Math.round(audioController.engineState.cpuLoad)}%` : '—'}</span>
+        <span>SR: {audioController.engineState.sampleRate}Hz</span>
         <span>Disk: 2.1 MB/s</span>
         <span className="text-[#888]">Canryn Production &amp; Subsidiaries</span>
       </div>

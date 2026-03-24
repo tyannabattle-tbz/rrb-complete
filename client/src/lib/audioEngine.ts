@@ -343,17 +343,17 @@ export class ChannelNode {
 /**
  * Solfeggio frequency presets
  */
-export const SOLFEGGIO_FREQUENCIES = {
-  UT: { hz: 174, name: 'UT', description: 'Root chakra activation' },
-  RE: { hz: 285, name: 'RE', description: 'Sacral chakra activation' },
-  MI: { hz: 369, name: 'MI', description: 'Solar plexus activation' },
-  FA: { hz: 432, name: 'FA', description: 'Heart chakra activation' },
-  SOL: { hz: 528, name: 'SOL', description: 'Throat chakra activation' },
-  LA: { hz: 639, name: 'LA', description: 'Third eye activation' },
-  TI: { hz: 741, name: 'TI', description: 'Crown chakra activation' },
-  SI: { hz: 852, name: 'SI', description: 'Spiritual awakening' },
-  DO: { hz: 963, name: 'DO', description: 'Divine connection' },
-};
+export const SOLFEGGIO_FREQUENCIES = [
+  { hz: 174, name: 'UT', description: 'Root chakra activation' },
+  { hz: 285, name: 'RE', description: 'Sacral chakra activation' },
+  { hz: 369, name: 'MI', description: 'Solar plexus activation' },
+  { hz: 432, name: 'FA', description: 'Heart chakra activation' },
+  { hz: 528, name: 'SOL', description: 'Throat chakra activation' },
+  { hz: 639, name: 'LA', description: 'Third eye activation' },
+  { hz: 741, name: 'TI', description: 'Crown chakra activation' },
+  { hz: 852, name: 'SI', description: 'Spiritual awakening' },
+  { hz: 963, name: 'DO', description: 'Divine connection' },
+];
 
 /**
  * Create a global audio engine instance
