@@ -50,6 +50,7 @@ import { StudioBooking } from './pages/StudioBooking';
 import { PodcastDistribution } from './pages/PodcastDistribution';
 import { StudioFree } from './pages/StudioFree';
 import { StudioPro } from './pages/StudioPro';
+import { StudioPublic } from './pages/StudioPublic';
 import NotificationPreferencesDashboard from './pages/NotificationPreferencesDashboard';
 import AffiliateProgramDashboard from './pages/AffiliateProgramDashboard';
 import RealtimeLeaderboard from './pages/RealtimeLeaderboard';
@@ -593,6 +594,8 @@ function Router() {
       <Route path="/gamification" component={ListenerEngagementGamification} />
       <Route path="/studio/free" component={StudioFree} />
       <Route path="/studio/pro" component={StudioPro} />
+      <Route path="/studio" component={StudioPublic} />
+      <Route path="/studio/public" component={StudioPublic} />
       <Route component={NotFound} />
     </Switch>
     </>
