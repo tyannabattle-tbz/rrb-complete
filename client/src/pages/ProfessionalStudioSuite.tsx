@@ -14,6 +14,9 @@ import { WaveformEditor } from '@/components/WaveformEditor';
 import { LiveStreamer } from '@/components/LiveStreamer';
 import { PresetManager } from '@/components/PresetManager';
 import { AudioVisualizerEnhanced } from '@/components/AudioVisualizerEnhanced';
+import { CollaborationManager } from '@/components/CollaborationManager';
+import { MasteringEngine } from '@/components/MasteringEngine';
+import { MobileController } from '@/components/MobileController';
 
 interface ColorGradingPreset {
   name: string;
@@ -50,7 +53,7 @@ export default function ProfessionalStudioSuite() {
   const [audioBuffers, setAudioBuffers] = useState<Map<string, AudioBuffer>>(new Map());
   const [currentAudioSource, setCurrentAudioSource] = useState<AudioBufferSourceNode | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'mixer' | 'recorder' | 'editor' | 'stream' | 'presets' | 'visualizer'>('mixer');
+  const [activeTab, setActiveTab] = useState<'mixer' | 'recorder' | 'editor' | 'stream' | 'presets' | 'visualizer' | 'collab' | 'mastering' | 'mobile'>('mixer');
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioStreamRef = useRef<MediaStream | null>(null);
@@ -475,6 +478,27 @@ export default function ProfessionalStudioSuite() {
           >
             Visualizer
           </Button>
+          <Button
+            variant={activeTab === 'collab' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('collab')}
+            className="text-sm"
+          >
+            Collaboration
+          </Button>
+          <Button
+            variant={activeTab === 'mastering' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('mastering')}
+            className="text-sm"
+          >
+            AI Mastering
+          </Button>
+          <Button
+            variant={activeTab === 'mobile' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('mobile')}
+            className="text-sm"
+          >
+            Mobile Control
+          </Button>
         </div>
 
         {/* Advanced Features */}
@@ -485,6 +509,9 @@ export default function ProfessionalStudioSuite() {
           {activeTab === 'stream' && <LiveStreamer />}
           {activeTab === 'presets' && <PresetManager />}
           {activeTab === 'visualizer' && <AudioVisualizerEnhanced />}
+          {activeTab === 'collab' && <CollaborationManager />}
+          {activeTab === 'mastering' && <MasteringEngine />}
+          {activeTab === 'mobile' && <MobileController />}
         </div>
 
         {/* Status Bar */}
