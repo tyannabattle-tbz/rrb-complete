@@ -150,6 +150,7 @@ import RRBListenerAnalytics from "@/pages/RRBListenerAnalytics";
 import QumusPort3000 from "@/pages/QumusPort3000";
 import RRBPort3001 from "@/pages/RRBPort3001";
 import RRBPort3001Enhanced from "@/pages/RRBPort3001Enhanced";
+import { RRBAdvancedStudio } from "@/pages/RRBAdvancedStudio";
 import HybridCastPort3002 from "@/pages/HybridCastPort3002";
 import RRBMusicStreaming from "@/pages/RRBMusicStreaming";
 import RRBLegacySite from "@/pages/RRBLegacySite";
@@ -600,6 +601,8 @@ function Router() {
       <Route path="/studio/public" component={StudioPublic} />
       <Route path="/checkout" component={CheckoutPage} />
       <Route path="/studio-legendary" component={StudioLegendary} />
+      <Route path="/rrb-advanced" component={RRBAdvancedStudio} />
+      <Route path="/studio-advanced" component={RRBAdvancedStudio} />
       <Route component={NotFound} />
     </Switch>
     </>
