@@ -154,6 +154,10 @@ import PodcastRecordingStudio from "@/pages/PodcastRecordingStudio";
 import RealtimeListenerActivityFeed from "@/pages/RealtimeListenerActivityFeed";
 import AdvancedSearchDiscovery from "@/pages/AdvancedSearchDiscovery";
 import ListenerEngagementGamification from "@/pages/ListenerEngagementGamification";
+import PodcastVideoIntegration from "@/pages/PodcastVideoIntegration";
+import ListenerFeedbackLoop from "@/pages/ListenerFeedbackLoop";
+import CreatorAnalyticsDashboard from "@/pages/CreatorAnalyticsDashboard";
+import ProfessionalStudioSuite from "@/pages/ProfessionalStudioSuite";
 import TyOSRadioListener from "@/pages/TyOSRadioListener";
 import SolbonesGame from "@/pages/SolbonesGame";
 import SweetMiraclesDonation from "@/pages/SweetMiraclesDonation";
@@ -572,6 +576,14 @@ function Router() {
       <Route path="/leaderboard" component={RealtimeLeaderboard} />
       <Route path="/bridge-diagnostics" component={CrossSystemBridgeDiagnostics} />
       <Route path="/stream-health" component={CrossSystemBridgeDiagnostics} />
+      <Route path="/podcast-video" component={PodcastVideoIntegration} />
+      <Route path="/listener-feedback" component={ListenerFeedbackLoop} />
+      <Route path="/creator-analytics" component={CreatorAnalyticsDashboard} />
+      <Route path="/professional-studio" component={ProfessionalStudioSuite} />
+      <Route path="/podcast-recording" component={PodcastRecordingStudio} />
+      <Route path="/activity-feed" component={RealtimeListenerActivityFeed} />
+      <Route path="/search-discovery" component={AdvancedSearchDiscovery} />
+      <Route path="/gamification" component={ListenerEngagementGamification} />
       <Route component={NotFound} />
     </Switch>
     </>
