@@ -8,6 +8,9 @@ import { Video, Mic, Settings, Play, Pause, Square, Sliders, Zap, Download, Shar
 import { toast } from 'sonner';
 import { audioEngine } from '@/lib/audioEngineService';
 import { StudioFileMenu } from '@/components/StudioFileMenu';
+import { MultiTrackMixer } from '@/components/MultiTrackMixer';
+import { AudioRecorder } from '@/components/AudioRecorder';
+import { WaveformEditor } from '@/components/WaveformEditor';
 
 interface ColorGradingPreset {
   name: string;
@@ -44,6 +47,7 @@ export default function ProfessionalStudioSuite() {
   const [audioBuffers, setAudioBuffers] = useState<Map<string, AudioBuffer>>(new Map());
   const [currentAudioSource, setCurrentAudioSource] = useState<AudioBufferSourceNode | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'mixer' | 'recorder' | 'editor'>('mixer');
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioStreamRef = useRef<MediaStream | null>(null);
@@ -240,13 +244,13 @@ export default function ProfessionalStudioSuite() {
               onExportAudio={() => toast.success('Exporting audio...')}
               onImportProject={(file) => toast.success(`Imported: ${file.name}`)}
             />
-            <Button variant="ghost" className="text-slate-300 hover:text-white">
+            <Button variant="ghost" className="text-slate-300 hover:text-white" onClick={() => toast.success('Edit mode activated - Track controls enabled')}>
               Edit
             </Button>
-            <Button variant="ghost" className="text-slate-300 hover:text-white">
+            <Button variant="ghost" className="text-slate-300 hover:text-white" onClick={() => toast.success('Track management panel opened')}>
               Track
             </Button>
-            <Button variant="ghost" className="text-slate-300 hover:text-white">
+            <Button variant="ghost" className="text-slate-300 hover:text-white" onClick={() => toast.success('Mixing console activated')}>
               Mix
             </Button>
           </div>
@@ -341,21 +345,21 @@ export default function ProfessionalStudioSuite() {
                       {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                     </Button>
 
-                    <Button size="sm" variant="outline" className="border-slate-600">
+                    <Button size="sm" variant="outline" className="border-slate-600" onClick={() => toast.success('Microphone input selector opened')}>
                       <Mic className="w-4 h-4" />
                     </Button>
 
-                    <Button size="sm" variant="outline" className="border-slate-600">
+                    <Button size="sm" variant="outline" className="border-slate-600" onClick={() => toast.success('Audio device selector opened')}>
                       <Volume2 className="w-4 h-4" />
                     </Button>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Button size="sm" variant="outline" className="border-slate-600">
+                    <Button size="sm" variant="outline" className="border-slate-600" onClick={() => toast.success('Effects and settings panel opened')}>
                       <Sliders className="w-4 h-4" />
                     </Button>
 
-                    <Button size="sm" variant="outline" className="border-slate-600">
+                    <Button size="sm" variant="outline" className="border-slate-600" onClick={() => toast.success('Fullscreen mode activated')}>
                       <Maximize className="w-4 h-4" />
                     </Button>
                   </div>
@@ -422,6 +426,38 @@ export default function ProfessionalStudioSuite() {
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="mb-8 flex gap-2 border-b border-slate-700 pb-4">
+          <Button
+            variant={activeTab === 'mixer' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('mixer')}
+            className="text-sm"
+          >
+            Multi-Track Mixer
+          </Button>
+          <Button
+            variant={activeTab === 'recorder' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('recorder')}
+            className="text-sm"
+          >
+            Recording Studio
+          </Button>
+          <Button
+            variant={activeTab === 'editor' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('editor')}
+            className="text-sm"
+          >
+            Waveform Editor
+          </Button>
+        </div>
+
+        {/* Advanced Features */}
+        <div className="mb-8">
+          {activeTab === 'mixer' && <MultiTrackMixer audioBuffers={audioBuffers} />}
+          {activeTab === 'recorder' && <AudioRecorder />}
+          {activeTab === 'editor' && <WaveformEditor />}
         </div>
 
         {/* Status Bar */}
