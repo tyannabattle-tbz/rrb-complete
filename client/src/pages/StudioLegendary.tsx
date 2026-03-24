@@ -20,8 +20,10 @@ import {
   Plus,
   Trash2,
   Download,
+  Radio,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { HybridCastIntegration } from '../components/HybridCastIntegration';
 
 interface Channel {
   id: number;
@@ -349,7 +351,7 @@ export function StudioLegendary() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 bg-slate-800/40 border border-slate-700/30">
+        <TabsList className="grid w-full grid-cols-5 bg-slate-800/40 border border-slate-700/30">
           <TabsTrigger value="channels" className="flex items-center gap-2">
             <Music className="w-4 h-4" />
             Channels
@@ -365,6 +367,10 @@ export function StudioLegendary() {
           <TabsTrigger value="setlist" className="flex items-center gap-2">
             <Sparkles className="w-4 h-4" />
             Setlist
+          </TabsTrigger>
+          <TabsTrigger value="hybridcast" className="flex items-center gap-2">
+            <Radio className="w-4 h-4" />
+            HybridCast
           </TabsTrigger>
         </TabsList>
 
@@ -507,6 +513,11 @@ export function StudioLegendary() {
               </div>
             </div>
           </Card>
+        </TabsContent>
+
+        {/* HybridCast Tab */}
+        <TabsContent value="hybridcast" className="space-y-4">
+          <HybridCastIntegration />
         </TabsContent>
 
         {/* Setlist Tab */}
