@@ -25,9 +25,15 @@ export class AudioEngineService {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       this.audioContext = audioContext;
 
+      // Resume audio context if suspended
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+        console.log('[AudioEngine] Audio context resumed from suspended state');
+      }
+
       // Create gain node for volume control
       this.gainNode = audioContext.createGain();
-      this.gainNode.gain.value = 0.8; // 80% default volume
+      this.gainNode.gain.value = 0.8;
       this.gainNode.connect(audioContext.destination);
 
       // Create analyser for visualization
@@ -36,10 +42,12 @@ export class AudioEngineService {
       this.analyser.connect(this.gainNode);
 
       this.isInitialized = true;
+      console.log('[AudioEngine] Successfully initialized');
       this.emit('initialized', { sampleRate: audioContext.sampleRate });
     } catch (error) {
-      console.error('[AudioEngine] Failed to initialize:', error);
-      this.emit('error', { message: 'Audio context initialization failed' });
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error('[AudioEngine] Failed to initialize:', msg);
+      this.emit('error', { message: 'Audio context initialization failed: ' + msg });
     }
   }
 
@@ -228,8 +236,49 @@ export class AudioEngineService {
   async resumeContext() {
     if (this.audioContext && this.audioContext.state === 'suspended') {
       await this.audioContext.resume();
+      console.log('[AudioEngine] Context resumed');
       this.emit('contextResumed', {});
     }
+  }
+
+  /**
+   * Load audio file from URL and decode
+   */
+  async loadAudioFile(url: string): Promise<AudioBuffer> {
+    try {
+      if (!this.audioContext) throw new Error('Audio context not initialized');
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Failed to fetch audio file: ${response.statusText}`);
+
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+
+      console.log('[AudioEngine] Loaded audio file:', url, 'Duration:', audioBuffer.duration);
+      return audioBuffer;
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error('[AudioEngine] Failed to load audio file:', msg);
+      this.emit('error', { message: 'Failed to load audio file: ' + msg });
+      throw error;
+    }
+  }
+
+  /**
+   * Play audio buffer with ID tracking
+   */
+  playAudioBufferWithId(audioBuffer: AudioBuffer, id: string): AudioBufferSourceNode {
+    if (!this.audioContext) throw new Error('Audio context not initialized');
+
+    const source = this.audioContext.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(this.gainNode!);
+    source.start(0);
+
+    console.log('[AudioEngine] Playing audio buffer:', id, 'Duration:', audioBuffer.duration);
+    this.emit('playbackStarted', { id, duration: audioBuffer.duration });
+
+    return source;
   }
 }
 

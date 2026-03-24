@@ -41,6 +41,9 @@ export default function ProfessionalStudioSuite() {
   const [selectedPreset, setSelectedPreset] = useState(0);
   const [volume, setVolume] = useState(80);
   const [frequencyData, setFrequencyData] = useState<Uint8Array | null>(null);
+  const [audioBuffers, setAudioBuffers] = useState<Map<string, AudioBuffer>>(new Map());
+  const [currentAudioSource, setCurrentAudioSource] = useState<AudioBufferSourceNode | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioStreamRef = useRef<MediaStream | null>(null);
@@ -52,7 +55,28 @@ export default function ProfessionalStudioSuite() {
       try {
         await audioEngine.resumeContext();
         toast.success('Audio engine initialized');
+        
+        // Load audio files
+        const files = [
+          { id: 'lead_vocals', path: '/audio/lead_vocals.mp3' },
+          { id: 'drums', path: '/audio/drums.mp3' },
+          { id: 'bass', path: '/audio/bass.mp3' },
+        ];
+
+        const buffers = new Map();
+        for (const file of files) {
+          try {
+            const buffer = await audioEngine.loadAudioFile(file.path);
+            buffers.set(file.id, buffer);
+            console.log('Loaded', file.id, 'successfully');
+          } catch (err) {
+            console.error('Failed to load', file.id, ':', err);
+          }
+        }
+        setAudioBuffers(buffers);
       } catch (error) {
+        const msg = error instanceof Error ? error.message : String(error);
+        setError('Failed to initialize: ' + msg);
         console.error('Audio initialization failed:', error);
         toast.error('Audio system failed to initialize');
       }
@@ -111,6 +135,41 @@ export default function ProfessionalStudioSuite() {
       }
       setIsRecording(false);
       toast.success('Recording stopped');
+    }
+  };
+
+  const handlePlayAudio = () => {
+    if (isPlaying && currentAudioSource) {
+      try {
+        currentAudioSource.stop();
+        setCurrentAudioSource(null);
+        setIsPlaying(false);
+        toast.success('Audio stopped');
+      } catch (err) {
+        console.error('Error stopping audio:', err);
+      }
+    } else {
+      const buffer = audioBuffers.get('lead_vocals');
+      if (buffer) {
+        try {
+          const source = audioEngine.playAudioBufferWithId(buffer, 'lead_vocals');
+          setCurrentAudioSource(source);
+          setIsPlaying(true);
+          toast.success('Playing audio...');
+          source.onended = () => {
+            setIsPlaying(false);
+            setCurrentAudioSource(null);
+          };
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          setError('Playback failed: ' + msg);
+          toast.error('Playback failed: ' + msg);
+          console.error('Playback error:', err);
+        }
+      } else {
+        setError('Audio file not loaded');
+        toast.error('Audio file not loaded');
+      }
     }
   };
 
@@ -278,6 +337,10 @@ export default function ProfessionalStudioSuite() {
                       )}
                     </Button>
 
+                    <Button size="sm" variant="outline" className="border-slate-600" onClick={handlePlayAudio}>
+                      {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    </Button>
+
                     <Button size="sm" variant="outline" className="border-slate-600">
                       <Mic className="w-4 h-4" />
                     </Button>
@@ -363,9 +426,11 @@ export default function ProfessionalStudioSuite() {
 
         {/* Status Bar */}
         <div className="bg-slate-900 border border-slate-700 rounded p-3 flex justify-between text-xs text-slate-400">
-          <div>Audio Engine: Ready</div>
-          <div>Status: {isRecording ? 'Recording' : 'Idle'}</div>
+          <div>Audio Engine: {error ? 'Error' : 'Ready'}</div>
+          <div>Status: {isRecording ? 'Recording' : isPlaying ? 'Playing' : 'Idle'}</div>
+          <div>Buffers: {audioBuffers.size}</div>
           <div>Volume: {volume}%</div>
+          {error && <div className="text-red-400">{error}</div>}
         </div>
       </div>
     </div>

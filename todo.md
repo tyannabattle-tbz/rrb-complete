@@ -400,3 +400,17 @@
 - [x] Implement cover art generation and upload
 - [x] Create episode scheduling for future release
 - [x] Build distribution status tracking dashboard
+
+
+## Critical Bugs - Phase 32: Audio Playback Fix
+
+- [ ] Fix "Failed to initialize audio engine" error
+- [ ] Implement proper Web Audio API context creation with error handling
+- [ ] Add browser permission request for audio access
+- [ ] Implement real audio file loading from S3/storage
+- [ ] Create audio buffer decoding for WAV/MP3 files
+- [ ] Wire play/pause buttons to actual audio playback
+- [ ] Create sample audio files for testing (Lead Vocals, Drums, Bass, etc.)
+- [ ] Implement audio level monitoring and visualization
+- [ ] Add audio device selection and enumeration
+- [ ] Test playback across all tracks in mixing console
