@@ -255,6 +255,34 @@ export class AudioEngineService {
       this.emit('contextResumed', {});
     }
   }
+
+  /**
+   * Load and decode an audio file
+   */
+  async loadAudioFile(path: string): Promise<AudioBuffer> {
+    if (!this.audioContext) {
+      await this.initializeAudioContext();
+    }
+
+    if (!this.audioContext) {
+      throw new Error('AudioEngine not initialized');
+    }
+
+    try {
+      const response = await fetch(path);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch audio file: ${response.statusText}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      console.log('[AudioEngine] Loaded audio file:', path);
+      return audioBuffer;
+    } catch (error) {
+      console.error('[AudioEngine] Failed to load audio file:', path, error);
+      throw error;
+    }
+  }
 }
 
 // Singleton instance
