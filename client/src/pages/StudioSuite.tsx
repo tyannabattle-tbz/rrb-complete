@@ -14,6 +14,8 @@ import { useAudioEngine } from '@/hooks/useAudioEngine';
 import { trpc } from '@/lib/trpc';
 import StudioShareBar from '@/components/StudioShareBar';
 import { RRBAdvancedStudio } from './RRBAdvancedStudio';
+import { PerformanceAnalyticsDashboard } from '../components/PerformanceAnalyticsDashboard';
+import { BandMemberMobileApp } from '../components/BandMemberMobileApp';
 
 // ============================================================
 // TYPE DEFINITIONS
@@ -229,7 +231,7 @@ export function StudioSuite() {
   const [showFileMenu, setShowFileMenu] = useState(false);
   const [projectName, setProjectName] = useState('Untitled Project');
   const [isDirty, setIsDirty] = useState(false);
-  const [studioMode, setStudioMode] = useState<'daw' | 'rrb-advanced'>('daw');
+  const [studioMode, setStudioMode] = useState<'daw' | 'rrb-advanced' | 'analytics' | 'mobile'>('daw');
   const [dragOverTrackId, setDragOverTrackId] = useState<string | null>(null);
   const [draggingRegion, setDraggingRegion] = useState<{ trackId: string; regionId: string; startX: number; startBeat: number } | null>(null);
 
@@ -856,9 +858,27 @@ export function StudioSuite() {
   // ============================================================
   // RENDER
   // ============================================================
-  // Render RRB Advanced Studio if selected
+  // Render different studio modes
   if (studioMode === 'rrb-advanced') {
     return <RRBAdvancedStudio />;
+  }
+
+  if (studioMode === 'analytics') {
+    return (
+      <div className="w-full min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+        <button onClick={() => setStudioMode('daw')} className="mb-4 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm">Back to DAW</button>
+        <PerformanceAnalyticsDashboard />
+      </div>
+    );
+  }
+
+  if (studioMode === 'mobile') {
+    return (
+      <div className="w-full min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 flex flex-col items-center">
+        <button onClick={() => setStudioMode('daw')} className="mb-4 px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm">Back to DAW</button>
+        <BandMemberMobileApp />
+      </div>
+    );
   }
 
   return (
@@ -871,7 +891,9 @@ export function StudioSuite() {
         <span className="font-bold text-[#e0e0e0] mr-3" style={{ fontSize: '12px' }}>⚡ RRB Studio Pro</span>
         <div className="flex gap-1 ml-auto">
           <button onClick={() => setStudioMode('daw')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'daw' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>DAW</button>
-          <button onClick={() => setStudioMode('rrb-advanced')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'rrb-advanced' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>🀄️ RRB Advanced</button>
+          <button onClick={() => setStudioMode('rrb-advanced')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'rrb-advanced' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>RRB Advanced</button>
+          <button onClick={() => setStudioMode('analytics')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'analytics' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>Analytics</button>
+          <button onClick={() => setStudioMode('mobile')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'mobile' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>Band App</button>
         </div>
         {/* File Menu with dropdown */}
         <div className="relative">
