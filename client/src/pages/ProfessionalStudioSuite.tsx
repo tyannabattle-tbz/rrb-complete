@@ -17,6 +17,9 @@ import { AudioVisualizerEnhanced } from '@/components/AudioVisualizerEnhanced';
 import { CollaborationManager } from '@/components/CollaborationManager';
 import { MasteringEngine } from '@/components/MasteringEngine';
 import { MobileController } from '@/components/MobileController';
+import { PluginManager } from '@/components/PluginManager';
+import { MIDIControllerIntegration } from '@/components/MIDIControllerIntegration';
+import { CloudSyncManager } from '@/components/CloudSyncManager';
 
 interface ColorGradingPreset {
   name: string;
@@ -53,7 +56,7 @@ export default function ProfessionalStudioSuite() {
   const [audioBuffers, setAudioBuffers] = useState<Map<string, AudioBuffer>>(new Map());
   const [currentAudioSource, setCurrentAudioSource] = useState<AudioBufferSourceNode | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'mixer' | 'recorder' | 'editor' | 'stream' | 'presets' | 'visualizer' | 'collab' | 'mastering' | 'mobile'>('mixer');
+  const [activeTab, setActiveTab] = useState<'mixer' | 'recorder' | 'editor' | 'streaming' | 'presets' | 'visualizer' | 'collaboration' | 'mastering' | 'mobile' | 'plugins' | 'midi' | 'cloudsync'>('mixer');
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioStreamRef = useRef<MediaStream | null>(null);
@@ -499,6 +502,27 @@ export default function ProfessionalStudioSuite() {
           >
             Mobile Control
           </Button>
+          <Button
+            variant={activeTab === 'plugins' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('plugins')}
+            className="text-sm"
+          >
+            Plugin Ecosystem
+          </Button>
+          <Button
+            variant={activeTab === 'midi' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('midi')}
+            className="text-sm"
+          >
+            MIDI Control
+          </Button>
+          <Button
+            variant={activeTab === 'cloudsync' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('cloudsync')}
+            className="text-sm"
+          >
+            Cloud Sync
+          </Button>
         </div>
 
         {/* Advanced Features */}
@@ -512,6 +536,9 @@ export default function ProfessionalStudioSuite() {
           {activeTab === 'collab' && <CollaborationManager />}
           {activeTab === 'mastering' && <MasteringEngine />}
           {activeTab === 'mobile' && <MobileController />}
+          {activeTab === 'plugins' && <PluginManager />}
+          {activeTab === 'midi' && <MIDIControllerIntegration />}
+          {activeTab === 'cloudsync' && <CloudSyncManager />}
         </div>
 
         {/* Status Bar */}
