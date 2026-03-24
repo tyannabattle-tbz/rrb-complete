@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { useAudioEngine } from '@/hooks/useAudioEngine';
 import { trpc } from '@/lib/trpc';
 import StudioShareBar from '@/components/StudioShareBar';
+import { RRBAdvancedStudio } from './RRBAdvancedStudio';
 
 // ============================================================
 // TYPE DEFINITIONS
@@ -224,10 +225,11 @@ export function StudioSuite() {
   const [zoom, setZoom] = useState(1);
   const [snapToGrid, setSnapToGrid] = useState(true);
   const [fullscreen, setFullscreen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'tracks' | 'mixer' | 'editor'>('tracks');
+  const [activeTab, setActiveTab] = useState<'tracks' | 'mixer' | 'editor' | 'rrb-advanced'>('tracks');
   const [showFileMenu, setShowFileMenu] = useState(false);
   const [projectName, setProjectName] = useState('Untitled Project');
   const [isDirty, setIsDirty] = useState(false);
+  const [studioMode, setStudioMode] = useState<'daw' | 'rrb-advanced'>('daw');
   const [dragOverTrackId, setDragOverTrackId] = useState<string | null>(null);
   const [draggingRegion, setDraggingRegion] = useState<{ trackId: string; regionId: string; startX: number; startBeat: number } | null>(null);
 
@@ -854,6 +856,11 @@ export function StudioSuite() {
   // ============================================================
   // RENDER
   // ============================================================
+  // Render RRB Advanced Studio if selected
+  if (studioMode === 'rrb-advanced') {
+    return <RRBAdvancedStudio />;
+  }
+
   return (
     <div className={`flex flex-col bg-[#1a1a1a] text-[#cccccc] select-none ${fullscreen ? 'fixed inset-0 z-[9999]' : 'min-h-screen'}`}
       style={{ fontFamily: "'SF Mono', 'Fira Code', 'Consolas', monospace", fontSize: '11px' }}>
@@ -862,6 +869,10 @@ export function StudioSuite() {
       <div className="flex items-center h-7 bg-[#2a2a2a] border-b border-[#3a3a3a] px-2 gap-1 shrink-0"
         style={{ fontSize: '11px' }}>
         <span className="font-bold text-[#e0e0e0] mr-3" style={{ fontSize: '12px' }}>⚡ RRB Studio Pro</span>
+        <div className="flex gap-1 ml-auto">
+          <button onClick={() => setStudioMode('daw')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'daw' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>DAW</button>
+          <button onClick={() => setStudioMode('rrb-advanced')} className={`px-2 py-0.5 rounded text-xs ${studioMode === 'rrb-advanced' ? 'bg-[#4a6fa5] text-white' : 'text-[#bbbbbb] hover:bg-[#4a4a4a]'}`}>🀄️ RRB Advanced</button>
+        </div>
         {/* File Menu with dropdown */}
         <div className="relative">
           <button className={`px-2 py-0.5 rounded text-[#bbbbbb] transition-colors ${showFileMenu ? 'bg-[#4a4a4a]' : 'hover:bg-[#4a4a4a]'}`}
