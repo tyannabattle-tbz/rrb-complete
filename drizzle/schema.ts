@@ -2970,6 +2970,7 @@ export const users = mysqlTable("users", {
 	email: varchar({ length: 320 }),
 	loginMethod: varchar({ length: 64 }),
 	role: mysqlEnum(['user','admin','editor']).default('user').notNull(),
+	tier: mysqlEnum(['free','professional','advanced']).default('free').notNull(),
 	systemRoles: json(),
 	accessibleSystems: json(),
 	preferences: json(),

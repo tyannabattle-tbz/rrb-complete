@@ -4,7 +4,7 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { LogIn, LogOut, Zap, Video, Users, ArrowRight, Radio, Headphones, Podcast, BarChart3, AlertTriangle } from 'lucide-react';
+import { LogIn, LogOut, Zap, Video, Users, ArrowRight, Radio, Headphones, Podcast, BarChart3, AlertTriangle, Music, Sparkles } from 'lucide-react';
 import { getLoginUrl } from '@/const';
 import { trpc } from '@/lib/trpc';
 import { Link } from 'wouter';
@@ -71,7 +71,15 @@ function QuickAccessButtons() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="mb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Button
+        onClick={() => setLocation('/studio/free')}
+        className="h-16 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 hover:from-purple-700 hover:via-pink-700 hover:to-red-700 text-white font-bold text-lg shadow-lg hover:shadow-purple-500/50 transition-all"
+      >
+        <Sparkles className="w-6 h-6 mr-2 animate-pulse" />
+        🀄️ ENTER STUDIO 🐲
+      </Button>
+
       <Button
         onClick={() => window.open('https://tyos.manus.space', '_blank')}
         className="h-16 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold text-lg"
