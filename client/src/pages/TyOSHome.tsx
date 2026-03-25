@@ -113,6 +113,24 @@ export default function TyOSHome() {
       color: 'from-slate-600 to-gray-600',
       status: 'operational',
     },
+    {
+      id: 'hybridcast',
+      icon: AlertCircle,
+      title: '🚨 HybridCast Emergency Broadcast',
+      description: 'Offline-first emergency communication with mesh networking',
+      features: ['93+ Tabs', 'Offline-First', 'Mesh Networking', 'Multi-Platform'],
+      path: '/emergency',
+      color: 'from-orange-600 to-red-600',
+      status: 'operational',
+    },
+  ];
+
+  // 4-Port Ecosystem Configuration
+  const ecosystemPorts = [
+    { port: 3000, name: 'QUMUS', service: 'Master Orchestration Brain - 20 Policies, 90% Autonomy' },
+    { port: 3001, name: 'RRB Radio', service: '54-Channel Radio Network with Healing Frequencies' },
+    { port: 3002, name: 'HybridCast', service: 'Emergency Broadcast System - Offline-First PWA' },
+    { port: 3003, name: 'Ty OS', service: 'Master Control Interface - System Coordinator' },
   ];
 
   const metricsCards = [
