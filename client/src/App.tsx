@@ -400,7 +400,6 @@ function Router() {
       <Route path="/rrb-radio" component={RRBRadioIntegration} />
       <Route path="/studio-suite" component={StudioSuite} />
       <Route path="/professional-studio" component={ProfessionalStudioSuite} />
-      <Route path="/studio/pro" component={ProfessionalStudioSuite} />
       <Route path="/media-library" component={MediaLibrary} />
       <Route path="/podcasts" component={PodcastsHub} />
       <Route path="/listener-analytics" component={ListenerAnalyticsDashboard} />
@@ -466,7 +465,6 @@ function Router() {
       <Route path="/qumus" component={QumusPort3000} />
       <Route path="/rrb" component={RRBPort3001} />
       <Route path="/rrb-studio-pro" component={RRBPort3001Enhanced} />
-      <Route path="/studio/pro" component={RRBPort3001Enhanced} />
       <Route path="/legacy" component={RRBLegacySite} />
       <Route path="/ecosystem-dashboard" component={EcosystemMasterDashboard} />
       <Route path="/ecosystem-sync" component={EcosystemSyncDashboard} />
@@ -597,8 +595,8 @@ function Router() {
       <Route path="/gamification" component={ListenerEngagementGamification} />
       <Route path="/studio/free" component={StudioFree} />
       <Route path="/studio/pro" component={StudioPro} />
-      <Route path="/studio" component={StudioPublic} />
       <Route path="/studio/public" component={StudioPublic} />
+      <Route path="/studio" component={StudioControlRoom} />
       <Route path="/checkout" component={CheckoutPage} />
       <Route path="/studio-legendary" component={StudioLegendary} />
       <Route path="/rrb-advanced" component={RRBAdvancedStudio} />
