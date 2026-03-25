@@ -61,6 +61,7 @@ export default function TyOSHome() {
       path: '/listen',
       color: 'from-pink-600 to-orange-600',
       status: 'active',
+      studioIntegration: true,
     },
     {
       id: 'analytics',
@@ -90,6 +91,16 @@ export default function TyOSHome() {
       features: ['AI Moderation', 'Audit Logs', 'Blockchain Hash', 'Policy Enforcement'],
       path: '/admin/moderation',
       color: 'from-red-600 to-pink-600',
+      status: 'operational',
+    },
+    {
+      id: 'studio',
+      icon: Radio,
+      title: '🎙️ Production Studio',
+      description: 'Professional audio/video production with AI integration',
+      features: ['Multi-Track Mixing', 'Video Production', 'Podcast Recording', 'AI Mastering'],
+      path: '/studio',
+      color: 'from-cyan-600 to-blue-600',
       status: 'operational',
     },
     {

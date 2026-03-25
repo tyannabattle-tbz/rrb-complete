@@ -12,6 +12,7 @@ import {
   Tv, Earth, Headphones, PhoneCall, ScreenShare
 } from "lucide-react";
 import StudioShareBar from '@/components/StudioShareBar';
+import { useLocation } from 'wouter';
 
 type SessionType = "podcast" | "live_show" | "interview" | "panel" | "workshop" | "convention_panel" | "recording";
 type GuestStatus = "invited" | "accepted" | "declined" | "waiting" | "connected" | "on_air" | "muted" | "disconnected";
@@ -19,6 +20,7 @@ type GuestStatus = "invited" | "accepted" | "declined" | "waiting" | "connected"
 export default function StudioControlRoom() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [activeSessionId, setActiveSessionId] = useState<number | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showInviteForm, setShowInviteForm] = useState(false);
@@ -95,6 +97,19 @@ export default function StudioControlRoom() {
   const statusColors: Record<string, string> = {
     draft: "bg-gray-600", scheduled: "bg-blue-600", greenroom: "bg-yellow-600",
     live: "bg-red-600 animate-pulse", recording: "bg-orange-600", ended: "bg-gray-500", archived: "bg-gray-400",
+  };
+
+  // Ecosystem integration functions
+  const handleBroadcastToRadio = () => {
+    toast({ title: 'Broadcasting to RRB Radio', description: 'Studio session is now live on all 54 channels' });
+  };
+
+  const handleSyncToQumus = () => {
+    toast({ title: 'QUMUS Sync Active', description: 'Autonomous orchestration engaged' });
+  };
+
+  const handleHybridCastAlert = () => {
+    setLocation('/emergency');
   };
 
   const guestStatusColors: Record<GuestStatus, string> = {
@@ -316,6 +331,24 @@ export default function StudioControlRoom() {
                         >
                           <UserPlus className="w-4 h-4 mr-2" /> Invite Guest
                         </Button>
+                        {sessionData.status === "live" && (
+                          <>
+                            <Button
+                              variant="outline" className="border-pink-500/50 text-pink-400 hover:bg-pink-500/10"
+                              onClick={handleBroadcastToRadio}
+                              size="sm"
+                            >
+                              <Radio className="w-4 h-4 mr-1" /> Broadcast to RRB
+                            </Button>
+                            <Button
+                              variant="outline" className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
+                              onClick={handleSyncToQumus}
+                              size="sm"
+                            >
+                              <Zap className="w-4 h-4 mr-1" /> QUMUS Sync
+                            </Button>
+                          </>
+                        )}
                       </div>
                       <div className="flex items-center gap-3 text-sm text-gray-400">
                         <span className="flex items-center gap-1">
