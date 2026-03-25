@@ -84,10 +84,10 @@ export class EcosystemCrossPortService {
   static initialize(): void {
     console.log('🌐 Ecosystem Cross-Port Communication Initializing...');
     console.log('📡 Connecting 4 ecosystem ports...');
-    console.log('🔗 Port 3000 (Studio Suite) ← → Port 3003 (Ty OS)');
-    console.log('🔗 Port 3001 (RRB Radio) ← → Port 3003 (Ty OS)');
-    console.log('🔗 Port 3002 (HybridCast) ← → Port 3003 (Ty OS)');
-    console.log('✅ Cross-Port Communication Ready');
+    console.log('🔗 Port 3000 (QUMUS Brain) ← → Port 3003 (Ty OS Master Control)');
+    console.log('🔗 Port 3001 (RRB Radio) ← → Port 3003 (Ty OS Master Control)');
+    console.log('🔗 Port 3002 (HybridCast) ← → Port 3003 (Ty OS Master Control)');
+    console.log('✅ 4-Port Ecosystem Communication Ready');
   }
 
   /**
