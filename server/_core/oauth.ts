@@ -129,7 +129,37 @@ export function registerOAuthRoutes(app: Express) {
       res.redirect(302, redirectUrl);
     } catch (error) {
       console.error("[OAuth] Callback failed", error);
-      res.status(500).json({ error: "OAuth callback failed" });
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Return HTML page with error details instead of JSON
+      // This prevents black screen on mobile
+      res.status(500).send(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Login Error</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+              .container { max-width: 500px; margin: 100px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+              h1 { color: #d32f2f; margin: 0 0 10px 0; }
+              p { color: #666; margin: 10px 0; }
+              .error-details { background: #f5f5f5; padding: 10px; border-radius: 4px; margin: 20px 0; font-size: 12px; color: #999; text-align: left; word-break: break-all; }
+              a { color: #1976d2; text-decoration: none; margin-top: 20px; display: inline-block; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>⚠️ Login Failed</h1>
+              <p>We encountered an error during the login process.</p>
+              <div class="error-details">${errorMessage}</div>
+              <p>Please try again or contact support if the problem persists.</p>
+              <a href="/">← Return Home</a>
+            </div>
+          </body>
+        </html>
+      `);
     }
   });
 }

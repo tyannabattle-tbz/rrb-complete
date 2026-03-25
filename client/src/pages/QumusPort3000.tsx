@@ -640,7 +640,7 @@ export default function QumusPort3000() {
           <Button onClick={() => setLocation('/radio-station')} variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10">
             <Radio className="w-4 h-4 mr-2" /> Radio Station
           </Button>
-          <Button onClick={() => setLocation('/studio-suite')} variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10">
+          <Button onClick={() => setLocation('/studio')} variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10">
             <Cpu className="w-4 h-4 mr-2" /> Studio Suite
           </Button>
           <Button onClick={() => setLocation('/convention-hub')} variant="outline" className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10">
