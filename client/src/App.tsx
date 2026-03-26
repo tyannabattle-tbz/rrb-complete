@@ -99,6 +99,7 @@ import HybridCastBroadcastManagement from '@/pages/HybridCastBroadcastManagement
 import RockinBoogieContentManager from '@/pages/RockinBoogieContentManager';
 import EmergencyAlertSystem from '@/pages/EmergencyAlertSystem';
 import MasterControlDashboard from '@/pages/MasterControlDashboard';
+import RealtimeOrchestrationDashboard from '@/pages/RealtimeOrchestrationDashboard';
 import AnalyticsReportingDashboard from '@/pages/AnalyticsReportingDashboard';
 import PlatformMonitoringDashboard from '@/pages/PlatformMonitoringDashboard';
 import Studio from '@/pages/Studio';
@@ -606,6 +607,7 @@ function Router() {
       <Route path="/studio-advanced" component={RRBAdvancedStudio} />
       <Route path="/studio/advanced" component={RRBAdvancedStudio} />
       <Route path="/master-control" component={MasterControlDashboard} />
+      <Route path="/orchestration" component={RealtimeOrchestrationDashboard} />
       <Route component={NotFound} />
     </Switch>
     </>

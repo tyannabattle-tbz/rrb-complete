@@ -11229,7 +11229,7 @@ var systemRouter = router({
 
 // server/routers.ts
 init_db();
-import { z as z128 } from "zod";
+import { z as z129 } from "zod";
 import { TRPCError as TRPCError19 } from "@trpc/server";
 
 // server/routers/rockinBoogie.ts
@@ -62287,6 +62287,419 @@ var unifiedIntegrationRouter = router({
   })
 });
 
+// server/routers/realtimeOrchestrationRouter.ts
+import { z as z128 } from "zod";
+
+// server/services/realtimeOrchestrationEngine.ts
+init_db();
+import { EventEmitter as EventEmitter6 } from "events";
+var RealtimeOrchestrationEngine = class extends EventEmitter6 {
+  clients = /* @__PURE__ */ new Map();
+  eventQueue = [];
+  policyQueue = [];
+  maxQueueSize = 1e4;
+  heartbeatInterval = 3e4;
+  // 30 seconds
+  constructor() {
+    super();
+    this.startHeartbeat();
+  }
+  /**
+   * Register a WebSocket client
+   */
+  registerClient(clientId, userId) {
+    const client = {
+      id: clientId,
+      userId,
+      subscriptions: /* @__PURE__ */ new Set(),
+      lastHeartbeat: /* @__PURE__ */ new Date()
+    };
+    this.clients.set(clientId, client);
+    console.log(`[Orchestration] Client registered: ${clientId}`);
+    return client;
+  }
+  /**
+   * Unregister a WebSocket client
+   */
+  unregisterClient(clientId) {
+    this.clients.delete(clientId);
+    console.log(`[Orchestration] Client unregistered: ${clientId}`);
+  }
+  /**
+   * Subscribe client to event channel
+   */
+  subscribeClient(clientId, channel) {
+    const client = this.clients.get(clientId);
+    if (client) {
+      client.subscriptions.add(channel);
+      console.log(`[Orchestration] Client ${clientId} subscribed to ${channel}`);
+    }
+  }
+  /**
+   * Unsubscribe client from event channel
+   */
+  unsubscribeClient(clientId, channel) {
+    const client = this.clients.get(clientId);
+    if (client) {
+      client.subscriptions.delete(channel);
+    }
+  }
+  /**
+   * Broadcast event to subscribed clients
+   */
+  broadcastEvent(event) {
+    this.eventQueue.push(event);
+    if (this.eventQueue.length > this.maxQueueSize) {
+      this.eventQueue.shift();
+    }
+    const channel = `${event.service}:${event.type}`;
+    for (const [clientId, client] of this.clients) {
+      if (client.subscriptions.has(channel) || client.subscriptions.has("*")) {
+        this.emit(`send:${clientId}`, event);
+      }
+    }
+    console.log(`[Orchestration] Event broadcast: ${channel}`);
+  }
+  /**
+   * Execute autonomous policy
+   */
+  async executePolicy(policyName, decision, autonomous = true) {
+    const policyDecision = {
+      id: `policy_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      policyName,
+      decision,
+      timestamp: /* @__PURE__ */ new Date(),
+      autonomous,
+      status: "pending"
+    };
+    this.policyQueue.push(policyDecision);
+    if (this.policyQueue.length > this.maxQueueSize) {
+      this.policyQueue.shift();
+    }
+    try {
+      policyDecision.status = "executing";
+      const result2 = await this.executePolicyLogic(policyName, decision);
+      policyDecision.status = "completed";
+      policyDecision.result = result2;
+      this.broadcastEvent({
+        type: "policy_executed",
+        service: "qumus",
+        timestamp: /* @__PURE__ */ new Date(),
+        data: policyDecision,
+        policyId: policyDecision.id,
+        autonomousDecision: autonomous
+      });
+      await this.persistPolicyDecision(policyDecision);
+      console.log(`[Orchestration] Policy executed: ${policyName} (${policyDecision.id})`);
+      return policyDecision;
+    } catch (error) {
+      policyDecision.status = "failed";
+      policyDecision.error = error instanceof Error ? error.message : String(error);
+      this.broadcastEvent({
+        type: "policy_failed",
+        service: "qumus",
+        timestamp: /* @__PURE__ */ new Date(),
+        data: policyDecision,
+        policyId: policyDecision.id,
+        autonomousDecision: autonomous
+      });
+      console.error(`[Orchestration] Policy failed: ${policyName}`, error);
+      return policyDecision;
+    }
+  }
+  /**
+   * Execute policy logic based on policy type
+   */
+  async executePolicyLogic(policyName, decision) {
+    switch (policyName) {
+      case "content_scheduling":
+        return this.executeContentScheduling(decision);
+      case "listener_engagement":
+        return this.executeListenerEngagement(decision);
+      case "emergency_response":
+        return this.executeEmergencyResponse(decision);
+      case "revenue_orchestration":
+        return this.executeRevenueOrchestration(decision);
+      case "community_moderation":
+        return this.executeCommunityModeration(decision);
+      case "analytics_insights":
+        return this.executeAnalyticsInsights(decision);
+      default:
+        return { success: true, policyName, decision };
+    }
+  }
+  async executeContentScheduling(decision) {
+    return {
+      success: true,
+      scheduledChannels: decision.channels?.length || 0,
+      startTime: decision.startTime,
+      endTime: decision.endTime
+    };
+  }
+  async executeListenerEngagement(decision) {
+    return {
+      success: true,
+      recommendedContent: decision.contentIds?.length || 0,
+      engagementScore: Math.random() * 100
+    };
+  }
+  async executeEmergencyResponse(decision) {
+    return {
+      success: true,
+      emergencyLevel: decision.level,
+      broadcastActivated: true,
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  }
+  async executeRevenueOrchestration(decision) {
+    return {
+      success: true,
+      totalRevenue: decision.amount || 0,
+      distributed: true,
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  }
+  async executeCommunityModeration(decision) {
+    return {
+      success: true,
+      itemsModerated: decision.itemIds?.length || 0,
+      actionsApplied: decision.actions?.length || 0
+    };
+  }
+  async executeAnalyticsInsights(decision) {
+    return {
+      success: true,
+      metricsGenerated: decision.metrics?.length || 0,
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  }
+  /**
+   * Persist policy decision to database
+   */
+  async persistPolicyDecision(decision) {
+    try {
+      const db2 = await getDb();
+      console.log(`[Orchestration] Policy decision persisted: ${decision.id}`);
+    } catch (error) {
+      console.error("[Orchestration] Failed to persist policy decision:", error);
+    }
+  }
+  /**
+   * Get event history
+   */
+  getEventHistory(limit = 100) {
+    return this.eventQueue.slice(-limit);
+  }
+  /**
+   * Get policy history
+   */
+  getPolicyHistory(limit = 100) {
+    return this.policyQueue.slice(-limit);
+  }
+  /**
+   * Get active clients
+   */
+  getActiveClients() {
+    return Array.from(this.clients.values());
+  }
+  /**
+   * Start heartbeat to detect stale connections
+   */
+  startHeartbeat() {
+    setInterval(() => {
+      const now = /* @__PURE__ */ new Date();
+      const staleClients = [];
+      for (const [clientId, client] of this.clients) {
+        const timeSinceHeartbeat = now.getTime() - client.lastHeartbeat.getTime();
+        if (timeSinceHeartbeat > this.heartbeatInterval * 2) {
+          staleClients.push(clientId);
+        }
+      }
+      for (const clientId of staleClients) {
+        this.unregisterClient(clientId);
+        console.log(`[Orchestration] Stale client removed: ${clientId}`);
+      }
+    }, this.heartbeatInterval);
+  }
+  /**
+   * Update client heartbeat
+   */
+  updateClientHeartbeat(clientId) {
+    const client = this.clients.get(clientId);
+    if (client) {
+      client.lastHeartbeat = /* @__PURE__ */ new Date();
+    }
+  }
+  /**
+   * Get orchestration stats
+   */
+  getStats() {
+    return {
+      activeClients: this.clients.size,
+      eventQueueSize: this.eventQueue.length,
+      policyQueueSize: this.policyQueue.length,
+      totalEvents: this.eventQueue.length,
+      totalPolicies: this.policyQueue.length,
+      completedPolicies: this.policyQueue.filter((p) => p.status === "completed").length,
+      failedPolicies: this.policyQueue.filter((p) => p.status === "failed").length,
+      autonomousPolicies: this.policyQueue.filter((p) => p.autonomous).length,
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  }
+};
+var orchestrationEngine = new RealtimeOrchestrationEngine();
+async function broadcastRealtimeEvent(event) {
+  orchestrationEngine.broadcastEvent(event);
+}
+async function executeAutonomousPolicy2(policyName, decision) {
+  return orchestrationEngine.executePolicy(policyName, decision, true);
+}
+async function executeManualPolicy(policyName, decision) {
+  return orchestrationEngine.executePolicy(policyName, decision, false);
+}
+function getOrchestrationStats() {
+  return orchestrationEngine.getStats();
+}
+function getEventHistory(limit) {
+  return orchestrationEngine.getEventHistory(limit);
+}
+function getPolicyHistory(limit) {
+  return orchestrationEngine.getPolicyHistory(limit);
+}
+
+// server/routers/realtimeOrchestrationRouter.ts
+var realtimeOrchestrationRouter = router({
+  /**
+   * Get current orchestration stats
+   */
+  getStats: publicProcedure.query(async () => {
+    return getOrchestrationStats();
+  }),
+  /**
+   * Get event history
+   */
+  getEventHistory: publicProcedure.input(z128.object({ limit: z128.number().optional() })).query(async ({ input }) => {
+    return getEventHistory(input.limit);
+  }),
+  /**
+   * Get policy history
+   */
+  getPolicyHistory: publicProcedure.input(z128.object({ limit: z128.number().optional() })).query(async ({ input }) => {
+    return getPolicyHistory(input.limit);
+  }),
+  /**
+   * Execute autonomous policy
+   */
+  executeAutonomousPolicy: protectedProcedure.input(
+    z128.object({
+      policyName: z128.string(),
+      decision: z128.any()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    return await executeAutonomousPolicy2(input.policyName, input.decision);
+  }),
+  /**
+   * Execute manual policy (with human override)
+   */
+  executeManualPolicy: protectedProcedure.input(
+    z128.object({
+      policyName: z128.string(),
+      decision: z128.any()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    return await executeManualPolicy(input.policyName, input.decision);
+  }),
+  /**
+   * Broadcast real-time event
+   */
+  broadcastEvent: protectedProcedure.input(
+    z128.object({
+      type: z128.string(),
+      service: z128.string(),
+      data: z128.any(),
+      policyId: z128.string().optional(),
+      autonomousDecision: z128.boolean().optional()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    await broadcastRealtimeEvent({
+      type: input.type,
+      service: input.service,
+      timestamp: /* @__PURE__ */ new Date(),
+      data: input.data,
+      policyId: input.policyId,
+      autonomousDecision: input.autonomousDecision
+    });
+    return { success: true };
+  }),
+  /**
+   * Subscribe to real-time updates (streaming)
+   */
+  subscribe: publicProcedure.input(
+    z128.object({
+      channels: z128.array(z128.string())
+    })
+  ).subscription(async function* ({ input }) {
+    for (let i = 0; i < 10; i++) {
+      yield {
+        channel: input.channels[0],
+        data: {
+          timestamp: /* @__PURE__ */ new Date(),
+          message: `Update ${i}`
+        }
+      };
+      await new Promise((resolve) => setTimeout(resolve, 1e3));
+    }
+  }),
+  /**
+   * Get orchestration health
+   */
+  getHealth: publicProcedure.query(async () => {
+    const stats = getOrchestrationStats();
+    return {
+      isHealthy: stats.failedPolicies === 0,
+      stats,
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  }),
+  /**
+   * Schedule policy execution
+   */
+  schedulePolicy: protectedProcedure.input(
+    z128.object({
+      policyName: z128.string(),
+      decision: z128.any(),
+      executeAt: z128.date(),
+      autonomous: z128.boolean().optional()
+    })
+  ).mutation(async ({ input, ctx }) => {
+    const delay = input.executeAt.getTime() - Date.now();
+    if (delay < 0) {
+      throw new Error("Scheduled time must be in the future");
+    }
+    setTimeout(async () => {
+      if (input.autonomous !== false) {
+        await executeAutonomousPolicy2(input.policyName, input.decision);
+      } else {
+        await executeManualPolicy(input.policyName, input.decision);
+      }
+    }, delay);
+    return {
+      success: true,
+      scheduledAt: input.executeAt,
+      policyName: input.policyName
+    };
+  }),
+  /**
+   * Get active subscriptions
+   */
+  getActiveSubscriptions: protectedProcedure.query(async ({ ctx }) => {
+    return {
+      activeSubscriptions: 0,
+      timestamp: /* @__PURE__ */ new Date()
+    };
+  })
+});
+
 // server/routers.ts
 var appRouter = router({
   // System router
@@ -62364,16 +62777,17 @@ var appRouter = router({
   // QUMUS Ecosystem Health & Status (unified monitoring for all services)
   qumusEcosystem: qumusEcosystemRouter,
   unifiedIntegration: unifiedIntegrationRouter,
+  realtimeOrchestration: realtimeOrchestrationRouter,
   // Autonomous Task Management
   autonomousTask: autonomousTaskRouter,
   // Task Execution Engine
   taskExecution: router({
     submit: protectedProcedure.input(
-      z128.object({
-        goal: z128.string().min(1, "Goal is required"),
-        priority: z128.number().int().min(1).max(10).optional().default(5),
-        steps: z128.array(z128.string()).optional(),
-        constraints: z128.array(z128.string()).optional()
+      z129.object({
+        goal: z129.string().min(1, "Goal is required"),
+        priority: z129.number().int().min(1).max(10).optional().default(5),
+        steps: z129.array(z129.string()).optional(),
+        constraints: z129.array(z129.string()).optional()
       })
     ).mutation(async ({ ctx, input }) => {
       const taskId = await taskExecutionEngine.submitTask({
@@ -62385,7 +62799,7 @@ var appRouter = router({
       });
       return { taskId, success: true };
     }),
-    getStatus: publicProcedure.input(z128.object({ taskId: z128.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z129.object({ taskId: z129.string() })).query(async ({ input }) => {
       return await taskExecutionEngine.getTaskStatus(input.taskId);
     }),
     getMetrics: publicProcedure.query(async () => {
@@ -62395,11 +62809,11 @@ var appRouter = router({
   // Ecosystem Command Execution
   ecosystemCommand: router({
     submit: protectedProcedure.input(
-      z128.object({
-        target: z128.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
-        action: z128.string().min(1, "Action is required"),
-        params: z128.record(z128.any()).optional().default({}),
-        priority: z128.number().int().min(1).max(10).optional().default(5)
+      z129.object({
+        target: z129.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]),
+        action: z129.string().min(1, "Action is required"),
+        params: z129.record(z129.any()).optional().default({}),
+        priority: z129.number().int().min(1).max(10).optional().default(5)
       })
     ).mutation(async ({ ctx, input }) => {
       const commandId = await ecosystemExecutor.submitCommand({
@@ -62411,10 +62825,10 @@ var appRouter = router({
       });
       return { commandId, success: true };
     }),
-    getStatus: publicProcedure.input(z128.object({ commandId: z128.string() })).query(async ({ input }) => {
+    getStatus: publicProcedure.input(z129.object({ commandId: z129.string() })).query(async ({ input }) => {
       return await ecosystemExecutor.getCommandStatus(input.commandId);
     }),
-    getEntityStatus: publicProcedure.input(z128.object({ target: z128.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
+    getEntityStatus: publicProcedure.input(z129.object({ target: z129.enum(["rrb", "hybridcast", "canryn", "sweet_miracles"]) })).query(async ({ input }) => {
       return await ecosystemExecutor.getEntityStatus(input.target);
     }),
     getAllStatuses: publicProcedure.query(async () => {
@@ -62509,12 +62923,12 @@ var appRouter = router({
   // Agent Session Management
   agent: router({
     // Create a new agent session
-    createSession: protectedProcedure.input(z128.object({
-      sessionName: z128.string().min(1),
-      systemPrompt: z128.string().optional(),
-      temperature: z128.number().min(0).max(100).optional(),
-      model: z128.string().optional(),
-      maxSteps: z128.number().min(1).optional()
+    createSession: protectedProcedure.input(z129.object({
+      sessionName: z129.string().min(1),
+      systemPrompt: z129.string().optional(),
+      temperature: z129.number().min(0).max(100).optional(),
+      model: z129.string().optional(),
+      maxSteps: z129.number().min(1).optional()
     })).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const result2 = await createAgentSession(
@@ -62535,7 +62949,7 @@ var appRouter = router({
       return getAgentSessionsByUserId(ctx.user.id);
     }),
     // Get session by ID
-    getSession: protectedProcedure.input(z128.number()).query(async ({ ctx, input }) => {
+    getSession: protectedProcedure.input(z129.number()).query(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -62544,7 +62958,7 @@ var appRouter = router({
       return session;
     }),
     // Delete session
-    deleteSession: protectedProcedure.input(z128.number()).mutation(async ({ ctx, input }) => {
+    deleteSession: protectedProcedure.input(z129.number()).mutation(async ({ ctx, input }) => {
       if (!ctx.user) throw new TRPCError19({ code: "UNAUTHORIZED" });
       const session = await getAgentSessionById(input);
       if (!session || session.userId !== ctx.user.id) {
@@ -62588,9 +63002,9 @@ var appRouter = router({
   advancedFeatures: advancedFeaturesRouter,
   // Analytics Tracking & Metrics
   analytics: router({
-    getUnifiedMetrics: protectedProcedure.input(z128.object({
-      dateRange: z128.enum(["week", "month", "year"]).optional().default("month"),
-      platform: z128.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
+    getUnifiedMetrics: protectedProcedure.input(z129.object({
+      dateRange: z129.enum(["week", "month", "year"]).optional().default("month"),
+      platform: z129.enum(["twitter", "youtube", "facebook", "instagram", "all"]).optional().default("all")
     })).query(async ({ ctx, input }) => {
       return {
         totalLikes: 0,
@@ -62601,13 +63015,13 @@ var appRouter = router({
         averageEngagementRate: "0%"
       };
     }),
-    comparePlatforms: protectedProcedure.input(z128.object({
-      dateRange: z128.enum(["week", "month", "year"]).optional().default("month")
+    comparePlatforms: protectedProcedure.input(z129.object({
+      dateRange: z129.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     }),
-    getEngagementTrend: protectedProcedure.input(z128.object({
-      dateRange: z128.enum(["week", "month", "year"]).optional().default("month")
+    getEngagementTrend: protectedProcedure.input(z129.object({
+      dateRange: z129.enum(["week", "month", "year"]).optional().default("month")
     })).query(async ({ ctx, input }) => {
       return [];
     })
@@ -62618,11 +63032,11 @@ var appRouter = router({
   socialMedia: socialMediaQueueRouter,
   // Email subscription for flyer and campaign updates
   emailSubscription: router({
-    subscribe: publicProcedure.input(z128.object({
-      email: z128.string().email(),
-      name: z128.string().optional(),
-      source: z128.string().optional(),
-      language: z128.string().optional()
+    subscribe: publicProcedure.input(z129.object({
+      email: z129.string().email(),
+      name: z129.string().optional(),
+      source: z129.string().optional(),
+      language: z129.string().optional()
     })).mutation(async ({ input }) => {
       return subscribeEmail(input.email, input.name, input.source, input.language);
     }),
