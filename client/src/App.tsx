@@ -132,7 +132,8 @@ import Music from '@/pages/Music';
 import Proof from '@/pages/Proof';
 import Legacy from '@/pages/Legacy';
 import RRBHome from '@/pages/RRBHome';
-import TyOSHome from '@/pages/TyOSHome';
+import TyOSHome from "@/pages/TyOSHome";
+import EcosystemHub from "@/components/EcosystemHub";
 import ClientPortal from '@/pages/ClientPortal';
 import Review from '@/pages/Review';
 import AdminModeration from '@/pages/AdminModeration';
@@ -317,7 +318,8 @@ function Router() {
   return (
     <>
       <Switch>
-      <Route path="/" component={HomeComponent} />
+      <Route path="/" component={EcosystemHub} />
+      <Route path="/home" component={Home} />
       <Route path="/agent" component={AgentDashboard} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/analytics" component={AdminAnalyticsDashboard} />
