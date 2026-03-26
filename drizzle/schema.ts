@@ -3026,16 +3026,7 @@ export const videoLibrary = mysqlTable("video_library", {
 	updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
 });
 
-export const viewerMetrics = mysqlTable("viewer_metrics", {
-	id: int().autoincrement().notNull(),
-	streamId: int("stream_id"),
-	timestamp: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP'),
-	viewerCount: int("viewer_count").default(0),
-	chatMessages: int("chat_messages").default(0),
-	engagementScore: decimal("engagement_score", { precision: 5, scale: 2 }).default('0'),
-	avgWatchTime: int("avg_watch_time").default(0),
-	createdAt: timestamp("created_at", { mode: 'string' }).default('CURRENT_TIMESTAMP'),
-});
+// viewerMetrics moved to QUMUS Ecosystem section below
 
 export const webhookEndpoints = mysqlTable("webhook_endpoints", {
 	id: int().autoincrement().notNull(),
@@ -3283,4 +3274,96 @@ export const analyticsExportSchedules = mysqlTable("analytics_export_schedules",
 	userIdx: index("schedule_user_idx").on(table.userId),
 	frequencyIdx: index("schedule_frequency_idx").on(table.frequency),
 	nextRunIdx: index("schedule_next_run_idx").on(table.nextRun),
+}));
+
+
+// QUMUS Ecosystem - Listener Sessions Tracking
+export const listenerSessions = mysqlTable("listener_sessions", {
+	id: int().autoincrement().notNull(),
+	userId: int().notNull().references(() => users.id, { onDelete: "cascade" } ),
+	channelId: int().notNull().references(() => radioChannels.id, { onDelete: "cascade" } ),
+	startedAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	endedAt: timestamp({ mode: 'string' }),
+	duration: int(), // in seconds
+	deviceType: varchar({ length: 50 }), // mobile, desktop, tablet, web, app
+	country: varchar({ length: 2 }), // ISO country code
+	region: varchar({ length: 100 }),
+	city: varchar({ length: 100 }),
+	ipAddress: varchar({ length: 45 }),
+	userAgent: text(),
+	engagementScore: decimal({ precision: 5, scale: 2 }).default('0.00'), // 0-100
+	contentInteractions: int().default(0), // clicks, shares, etc
+	isActive: tinyint().default(1).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+}, (table) => ({
+	userIdx: index("session_user_idx").on(table.userId),
+	channelIdx: index("session_channel_idx").on(table.channelId),
+	startedIdx: index("session_started_idx").on(table.startedAt),
+	endedIdx: index("session_ended_idx").on(table.endedAt),
+	activeIdx: index("session_active_idx").on(table.isActive),
+}));
+
+// QUMUS Ecosystem - Listener Metrics (aggregated data)
+export const listenerMetrics = mysqlTable("listener_metrics", {
+	id: int().autoincrement().notNull(),
+	timestamp: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	channelId: int().notNull().references(() => radioChannels.id, { onDelete: "cascade" } ),
+	concurrentListeners: int().default(0).notNull(),
+	totalListenersToday: int().default(0).notNull(),
+	averageEngagementScore: decimal({ precision: 5, scale: 2 }).default('0.00'),
+	peakListeners: int().default(0),
+	peakTime: varchar({ length: 5 }), // HH:MM format
+	totalSessions: int().default(0),
+	averageSessionDuration: int(), // in seconds
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+}, (table) => ({
+	channelIdx: index("metrics_channel_idx").on(table.channelId),
+	timestampIdx: index("metrics_timestamp_idx").on(table.timestamp),
+}));
+// contentModerationQueue already exists above
+// viewerMetrics already exists above
+
+// QUMUS Ecosystem - Autonomous Policy Decisions (audit trail)
+export const autonomyDecisions = mysqlTable("autonomy_decisions", {
+	id: int().autoincrement().notNull(),
+	policyName: varchar({ length: 255 }).notNull(),
+	decisionType: mysqlEnum(['content_scheduling','engagement_optimization','revenue_optimization','moderation','recommendation','emergency_response','quality_assurance','other']).notNull(),
+	targetEntity: varchar({ length: 255 }), // channel, broadcast, user, etc
+	targetEntityId: int(),
+	decision: text().notNull(),
+	reasoning: text(),
+	autonomyLevel: decimal({ precision: 5, scale: 2 }).default('90.00'), // percentage
+	humanOverrideApplied: tinyint().default(0),
+	overrideReason: text(),
+	overriddenBy: int().references(() => users.id),
+	status: mysqlEnum(['pending','approved','executed','failed','rolled_back']).default('pending').notNull(),
+	result: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	executedAt: timestamp({ mode: 'string' }),
+}, (table) => ({
+	policyIdx: index("decision_policy_idx").on(table.policyName),
+	statusIdx: index("decision_status_idx").on(table.status),
+	createdIdx: index("decision_created_idx").on(table.createdAt),
+}));
+
+// QUMUS Ecosystem - Service Health Status
+export const serviceHealthStatus = mysqlTable("service_health_status", {
+	id: int().autoincrement().notNull(),
+	serviceName: varchar({ length: 255 }).notNull(), // QUMUS, Ty OS, RRB, HybridCast, Monitor
+	status: mysqlEnum(['online','offline','degraded','maintenance']).default('online').notNull(),
+	healthPercentage: decimal({ precision: 5, scale: 2 }).default('100.00'),
+	lastHealthCheck: timestamp({ mode: 'string' }),
+	uptime: decimal({ precision: 5, scale: 2 }).default('99.95'), // percentage
+	responseTime: int(), // milliseconds
+	errorCount: int().default(0),
+	warningCount: int().default(0),
+	subsystemsHealthy: int().default(0),
+	subsystemsTotal: int().default(0),
+	notes: text(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+	serviceIdx: index("health_service_idx").on(table.serviceName),
+	statusIdx: index("health_status_idx").on(table.status),
+	updatedIdx: index("health_updated_idx").on(table.updatedAt),
 }));

@@ -122,6 +122,7 @@ import { realtimeAnalyticsDashboardRouter } from "./routers/realtimeAnalyticsDas
 import { aiContentRecommendationsRouter } from "./routers/aiContentRecommendationsRouter";
 import { multiLanguageSupportRouter } from "./routers/multiLanguageSupportRouter";
 import { qumusEcosystemRouter } from "./routers/qumusEcosystemRouter";
+import { unifiedIntegrationRouter } from "./routers/unifiedIntegrationRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -235,6 +236,7 @@ export const appRouter = router({
 
   // QUMUS Ecosystem Health & Status (unified monitoring for all services)
   qumusEcosystem: qumusEcosystemRouter,
+  unifiedIntegration: unifiedIntegrationRouter,
 
   // Autonomous Task Management
   autonomousTask: autonomousTaskRouter,
