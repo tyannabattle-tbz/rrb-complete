@@ -32,9 +32,13 @@ export default function TyOSHome() {
   const [, setLocation] = useLocation();
   const [hoveredSystem, setHoveredSystem] = useState<string | null>(null);
 
-  // Fetch real-time metrics
-  const { data: systemMetrics } = trpc.realtimeMetrics.getSystemMetrics.useQuery();
-  const { data: controlStatus } = trpc.tyOsQumusIntegration.getControlStatus.useQuery();
+  // Fetch real-time metrics with error handling
+  const { data: systemMetrics, isLoading: metricsLoading, error: metricsError } = trpc.realtimeMetrics.getSystemMetrics.useQuery(undefined, {
+    retry: 1,
+  });
+  const { data: controlStatus, isLoading: statusLoading, error: statusError } = trpc.tyOsQumusIntegration.getControlStatus.useQuery(undefined, {
+    retry: 1,
+  });
 
   const ecosystemSystems = [
     {
@@ -184,9 +188,18 @@ export default function TyOSHome() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30">
-                <CheckCircle className="w-3 h-3 mr-1" />
-                All Systems Operational
+              <Badge variant="outline" className={`${metricsError || statusError ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' : 'bg-green-500/10 text-green-400 border-green-500/30'}`}>
+                {metricsError || statusError ? (
+                  <>
+                    <AlertCircle className="w-3 h-3 mr-1" />
+                    Partial Connection
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    All Systems Operational
+                  </>
+                )}
               </Badge>
             </div>
           </div>

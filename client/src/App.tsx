@@ -601,6 +601,7 @@ function Router() {
       <Route path="/studio-legendary" component={StudioLegendary} />
       <Route path="/rrb-advanced" component={RRBAdvancedStudio} />
       <Route path="/studio-advanced" component={RRBAdvancedStudio} />
+      <Route path="/studio/advanced" component={RRBAdvancedStudio} />
       <Route component={NotFound} />
     </Switch>
     </>
