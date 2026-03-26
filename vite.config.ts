@@ -189,6 +189,10 @@ export default defineConfig({
       strict: false,
       allow: ["."],
     },
-    hmr: false,
+    hmr: {
+      host: process.env.HMR_HOST || 'localhost',
+      port: process.env.HMR_PORT ? parseInt(process.env.HMR_PORT) : 443,
+      protocol: process.env.HMR_PROTOCOL || 'wss',
+    },
   },
 });

@@ -121,6 +121,7 @@ import { autonomyFrameworkRouter } from "./routers/autonomyFrameworkRouter";
 import { realtimeAnalyticsDashboardRouter } from "./routers/realtimeAnalyticsDashboardRouter";
 import { aiContentRecommendationsRouter } from "./routers/aiContentRecommendationsRouter";
 import { multiLanguageSupportRouter } from "./routers/multiLanguageSupportRouter";
+import { qumusEcosystemRouter } from "./routers/qumusEcosystemRouter";
 import { router as trpcRouter } from "./_core/trpc";
 
 export const appRouter = router({
@@ -231,6 +232,9 @@ export const appRouter = router({
 
   // New Ecosystem Router (Broadcasts, Listeners, Donations, Metrics)
   ecosystem: ecosystemRouter,
+
+  // QUMUS Ecosystem Health & Status (unified monitoring for all services)
+  qumusEcosystem: qumusEcosystemRouter,
 
   // Autonomous Task Management
   autonomousTask: autonomousTaskRouter,
